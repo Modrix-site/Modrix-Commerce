@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Storefront;
 
+use App\Core\Extensions\StorefrontSlots;
 use App\Core\Settings\Countries;
 use App\Domains\Cart\CartManager;
 use App\Domains\Checkout\CheckoutData;
@@ -173,7 +174,7 @@ class CheckoutController extends Controller
         return redirect()->route('checkout.complete', $order);
     }
 
-    public function complete(Request $request, Order $order, OrderPresenter $presenter): Response
+    public function complete(Request $request, Order $order, OrderPresenter $presenter, StorefrontSlots $slots): Response
     {
         $this->ensureOwner($request, $order);
 
@@ -194,6 +195,7 @@ class CheckoutController extends Controller
                 },
                 'method' => $order->payment_method_name,
             ] : null,
+            'slots' => $slots->render('order.confirmation', ['order' => $order]),
         ]);
     }
 

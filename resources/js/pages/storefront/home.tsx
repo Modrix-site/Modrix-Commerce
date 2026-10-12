@@ -1,4 +1,6 @@
 import { Head, Link, usePage } from '@inertiajs/react';
+import { ExtensionSlot } from '@/components/extensions/extension-slot';
+import type { SlotItem } from '@/components/extensions/extension-slot';
 import { ProductGrid } from '@/components/storefront/product-card';
 import { Button } from '@/components/ui/button';
 import { category, search } from '@/routes/storefront';
@@ -12,9 +14,10 @@ type Props = {
         slug: string;
         description: string | null;
     }[];
+    slots: SlotItem[];
 };
 
-export default function Home({ products, categories }: Props) {
+export default function Home({ products, categories, slots }: Props) {
     const { storefront } = usePage().props;
 
     return (
@@ -82,6 +85,8 @@ export default function Home({ products, categories }: Props) {
                     </p>
                 )}
             </section>
+
+            <ExtensionSlot items={slots} className="grid gap-8 py-10" />
         </>
     );
 }

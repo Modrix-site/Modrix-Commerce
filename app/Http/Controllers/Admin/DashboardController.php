@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Core\Audit\AuditLog;
+use App\Core\Extensions\DashboardWidgets;
 use App\Core\Settings\StoreSettings;
 use App\Domains\Inventory\InventoryService;
 use App\Domains\Orders\Models\Order;
@@ -18,7 +19,7 @@ use Inertia\Response;
 
 class DashboardController extends Controller
 {
-    public function __invoke(Request $request, StoreSettings $store, SalesReport $report, InventoryService $inventory, OrderPresenter $presenter): Response
+    public function __invoke(Request $request, StoreSettings $store, SalesReport $report, InventoryService $inventory, OrderPresenter $presenter, DashboardWidgets $widgets): Response
     {
         /** @var User $user */
         $user = $request->user();
@@ -52,6 +53,7 @@ class DashboardController extends Controller
                 ? AuditLogResource::collection(AuditLog::query()->latest('id')->limit(8)->get())->resolve()
                 : null,
             'warnings' => $warnings,
+            'widgets' => $widgets->forUser($user),
         ]);
     }
 

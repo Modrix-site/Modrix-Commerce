@@ -2,6 +2,7 @@
 
 namespace App\Domains\Catalog;
 
+use App\Domains\Catalog\Contracts\SearchProvider;
 use App\Domains\Catalog\Models\Category;
 use App\Domains\Catalog\Models\Product;
 use App\Domains\Catalog\Models\ProductImage;
@@ -14,12 +15,14 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Read model for the storefront: visible products, search, sorting and
- * product-card data. Database-backed (LIKE search); advanced search
- * providers can replace this through a module later.
+ * product-card data. Matching is delegated to the bound SearchProvider
+ * (LIKE search by default; modules can replace it).
  */
 final class StorefrontCatalog
 {
     public const SORTS = ['newest', 'price_asc', 'price_desc', 'name'];
+
+    public function __construct(private readonly SearchProvider $search) {}
 
     /**
      * @return LengthAwarePaginator<int, array<string, mixed>>
@@ -34,12 +37,8 @@ final class StorefrontCatalog
         }
 
         if ($search !== null && trim($search) !== '') {
-            $term = trim($search);
-            $query->where(function ($q) use ($term) {
-                Like::where($q, 'products.name', $term);
-                Like::orWhere($q, 'products.short_description', $term);
-                $q->orWhereHas('variants', fn ($v) => Like::where($v, 'sku', $term));
-            });
+            // Wrapped so a provider's OR conditions cannot escape the visibility constraints.
+            $query->where(fn (Builder $q) => $this->search->apply($q, trim($search)));
         }
 
         match ($sort) {

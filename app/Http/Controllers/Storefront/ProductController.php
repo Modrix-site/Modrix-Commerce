@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Storefront;
 
+use App\Core\Extensions\StorefrontSlots;
 use App\Core\Settings\StoreSettings;
 use App\Domains\Catalog\Models\Category;
 use App\Domains\Catalog\Models\ProductAttributeValue;
@@ -15,7 +16,7 @@ use Inertia\Response;
 
 class ProductController extends Controller
 {
-    public function show(string $slug, StorefrontCatalog $catalog, StoreSettings $store): Response
+    public function show(string $slug, StorefrontCatalog $catalog, StoreSettings $store, StorefrontSlots $slots): Response
     {
         $product = $catalog->findVisible($slug);
         abort_if($product === null, 404);
@@ -70,6 +71,7 @@ class ProductController extends Controller
                 ? collect($category->ancestors())->push($category)
                     ->map(fn (Category $c) => ['name' => $c->name, 'slug' => $c->slug])->values()
                 : [],
+            'slots' => $slots->render('product.after_details', ['product' => $product]),
         ]);
     }
 }

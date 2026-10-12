@@ -2,6 +2,8 @@ import { Form, Head, Link, router, usePage } from '@inertiajs/react';
 import { CircleAlert, CircleCheck, Clock } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import CheckoutController from '@/actions/App/Http/Controllers/Storefront/CheckoutController';
+import { ExtensionSlot } from '@/components/extensions/extension-slot';
+import type { SlotItem } from '@/components/extensions/extension-slot';
 import { OrderView } from '@/components/storefront/order-view';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -22,10 +24,12 @@ export default function OrderComplete({
     order,
     paymentInstructions,
     onlinePayment,
+    slots,
 }: {
     order: OrderDetail;
     paymentInstructions: string | null;
     onlinePayment: OnlinePayment | null;
+    slots: SlotItem[];
 }) {
     const { auth } = usePage().props;
     const [polls, setPolls] = useState(0);
@@ -85,6 +89,7 @@ export default function OrderComplete({
                 </Alert>
             )}
             <OrderView order={order} />
+            <ExtensionSlot items={slots} className="mt-8 grid gap-6" />
             <div className="mt-8 flex gap-2">
                 <Button asChild>
                     <Link href={home()}>Continue shopping</Link>

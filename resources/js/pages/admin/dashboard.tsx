@@ -1,3 +1,5 @@
+import { ExtensionSlot } from '@/components/extensions/extension-slot';
+import type { SlotItem } from '@/components/extensions/extension-slot';
 import { Head, Link } from '@inertiajs/react';
 import { TriangleAlert } from 'lucide-react';
 import { AuditTable } from '@/components/admin/audit-table';
@@ -36,6 +38,7 @@ type Props = {
     recentOrders: OrderSummary[] | null;
     recentActivity: AuditLogEntry[] | null;
     warnings: string[];
+    widgets: (SlotItem & { title: string })[];
 };
 
 export default function AdminDashboard({
@@ -45,6 +48,7 @@ export default function AdminDashboard({
     recentOrders,
     recentActivity,
     warnings,
+    widgets,
 }: Props) {
     return (
         <>
@@ -180,6 +184,21 @@ export default function AdminDashboard({
                             )}
                         </CardContent>
                     </Card>
+                )}
+
+                {widgets.length > 0 && (
+                    <div className="grid gap-4 md:grid-cols-2">
+                        {widgets.map((widget) => (
+                            <Card key={widget.key}>
+                                <CardHeader>
+                                    <CardTitle>{widget.title}</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <ExtensionSlot items={[widget]} />
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
                 )}
 
                 {recentActivity !== null && (

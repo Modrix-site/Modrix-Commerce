@@ -35,8 +35,9 @@ use Illuminate\Validation\ValidationException;
  *
  *  1. lock the cart (and short-circuit a repeated submission by idempotency key);
  *  2. reprice everything on the server for the chosen destination and method;
- *  3. refuse if anything is unavailable, the coupon no longer applies, or the
- *     total differs from what the shopper saw;
+ *  3. refuse if anything is unavailable, the coupon no longer applies, the
+ *     total differs from what the shopper saw, or a module's checkout
+ *     validator refuses;
  *  4. allocate stock under row locks (all-or-nothing);
  *  5. snapshot items, money and addresses; redeem the coupon under a lock;
  *  6. empty the cart; dispatch OrderPlaced after commit.
@@ -54,6 +55,7 @@ final class PlaceOrder
         private readonly CartManager $carts,
         private readonly SettingsRepository $settings,
         private readonly AuditLogger $audit,
+        private readonly CheckoutValidators $validators,
     ) {}
 
     public function handle(Cart $cart, CheckoutData $data, ?User $user, ?string $ipAddress = null): Order
@@ -93,6 +95,7 @@ final class PlaceOrder
             ));
 
             $this->assertCheckoutable($priced, $data);
+            $this->validators->assertValid($priced, $data);
             $paymentMethod = $this->paymentMethods->availableFor($priced)[$data->paymentMethod]
                 ?? throw ValidationException::withMessages(['payment_method' => 'Choose an available payment method.']);
 

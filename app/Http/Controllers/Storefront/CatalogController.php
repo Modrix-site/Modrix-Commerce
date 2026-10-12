@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Storefront;
 
+use App\Core\Extensions\StorefrontSlots;
 use App\Core\Settings\StoreSettings;
 use App\Domains\Catalog\Models\Category;
 use App\Domains\Catalog\StorefrontCatalog;
@@ -13,12 +14,13 @@ use Inertia\Response;
 
 class CatalogController extends Controller
 {
-    public function home(StorefrontCatalog $catalog, StoreSettings $store): Response
+    public function home(StorefrontCatalog $catalog, StoreSettings $store, StorefrontSlots $slots): Response
     {
         return Inertia::render('storefront/home', [
             'products' => $catalog->latest($store->currency(), 8),
             'categories' => Category::query()->active()->whereNull('parent_id')
                 ->orderBy('position')->orderBy('name')->get(['id', 'name', 'slug', 'description']),
+            'slots' => $slots->render('home.after_featured', []),
         ]);
     }
 

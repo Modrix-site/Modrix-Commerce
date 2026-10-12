@@ -2,6 +2,8 @@ import { Form, Head, Link } from '@inertiajs/react';
 import { ImageOff } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import CartController from '@/actions/App/Http/Controllers/Storefront/CartController';
+import { ExtensionSlot } from '@/components/extensions/extension-slot';
+import type { SlotItem } from '@/components/extensions/extension-slot';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -40,9 +42,10 @@ type Props = {
         variants: Variant[];
     };
     breadcrumbs: { name: string; slug: string }[];
+    slots: SlotItem[];
 };
 
-export default function ProductPage({ product, breadcrumbs }: Props) {
+export default function ProductPage({ product, breadcrumbs, slots }: Props) {
     const [imageIndex, setImageIndex] = useState(0);
     const firstPurchasable =
         product.variants.find((v) => v.purchasable) ?? product.variants[0];
@@ -297,6 +300,7 @@ export default function ProductPage({ product, breadcrumbs }: Props) {
                     )}
                 </div>
             </div>
+            <ExtensionSlot items={slots} className="mt-12 grid gap-8" />
         </>
     );
 }
