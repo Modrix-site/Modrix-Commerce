@@ -84,3 +84,43 @@ Each entry records a decision, its context, and its consequences. Entries are ap
 - **Status:** Accepted
 - **Context:** Baseline `npm run types:check` failed: `Route::redirect()` registers all verbs including Laravel 13's `QUERY`, which Wayfinder emits but `@inertiajs/core@3.9.1`'s `Method` type does not include.
 - **Decision:** Replace `Route::redirect('settings', …)` with an explicit `GET` route. Avoid `Route::redirect`/`Route::any` in application routes.
+
+## ADR-012 — Every product has variants; simple products have exactly one
+
+- **Date:** 2026-10-12
+- **Status:** Accepted
+- **Decision:** SKUs, prices, stock and weight live on `product_variants`. A simple product has one default variant; a variable product has one variant per combination of up to three option attributes (`product_attributes` / `product_attribute_values`). Carts, orders and inventory always reference a variant.
+- **Consequences:** One code path for pricing and stock. Option combinations are validated server-side (one value per option, unique combinations). Variants removed from a product are soft-deleted so order and stock history stay intact.
+
+## ADR-013 — Stock is decremented when an order is placed (no separate reservation table)
+
+- **Date:** 2026-10-12
+- **Status:** Accepted
+- **Decision:** `InventoryService::allocate()` locks the affected `inventory_stocks` rows (`SELECT … FOR UPDATE`, ascending variant id to avoid deadlocks) and decrements `on_hand` inside the order-placement transaction. Cancellation and refund restocks release stock with their own ledger rows. Variants with `allow_backorder` may go negative; untracked variants are ignored.
+- **Consequences:** Simple, race-free overselling protection. Unpaid manual-payment orders hold stock until they are cancelled. Time-limited holds for redirect-based payment flows will be revisited in Phase 3 if needed.
+
+## ADR-014 — One store currency in version 1
+
+- **Date:** 2026-10-12
+- **Status:** Accepted
+- **Decision:** `product_prices` is keyed by `(variant_id, currency)`, so multi-currency pricing is supported by the schema, but v1 prices, carts and orders all use the store's default currency. A variant without a price in that currency is not purchasable. Changing the default currency never converts existing prices.
+
+## ADR-015 — Product translations deferred
+
+- **Date:** 2026-10-12
+- **Status:** Accepted
+- **Context:** The spec's suggested schema lists `product_translations`.
+- **Decision:** Not built in v1 (single locale). The planned design is a `product_translations (product_id, locale, name, description, …)` table with the base row as the default locale; no existing columns need to change.
+
+## ADR-016 — Uploaded images are re-encoded
+
+- **Date:** 2026-10-12
+- **Status:** Accepted
+- **Decision:** Product images are type-checked (`getimagesize`), size-limited (pixels checked before decoding), decoded with GD and re-encoded before storage under a random name with a type-derived extension. This strips EXIF/GPS metadata and any appended payloads (polyglot files).
+
+## ADR-017 — Money values from the database are always strings
+
+- **Date:** 2026-10-12
+- **Status:** Accepted
+- **Context:** A test showed SQLite returning DECIMAL columns as PHP floats; PHP then silently coerced `24.5` to the `int` branch of `Money::of(BigNumber|int|string)`, producing `24`.
+- **Decision:** All money columns use the `decimal:4` Eloquent cast (exact strings on every driver), and `Money::of()` throws on floats instead of letting PHP coerce them.

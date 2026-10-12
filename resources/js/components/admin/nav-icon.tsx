@@ -1,12 +1,22 @@
 import {
     Activity,
+    ChartColumn,
     Circle,
+    CreditCard,
+    FolderTree,
     LayoutGrid,
+    Package,
+    Percent,
+    Receipt,
     ScrollText,
     Settings,
     ShieldCheck,
+    ShoppingCart,
+    Tags,
+    Truck,
     UserRound,
     Users,
+    Warehouse,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -16,6 +26,16 @@ import type { LucideIcon } from 'lucide-react';
  */
 const icons: Record<string, LucideIcon> = {
     activity: Activity,
+    'chart-column': ChartColumn,
+    'credit-card': CreditCard,
+    'folder-tree': FolderTree,
+    package: Package,
+    percent: Percent,
+    receipt: Receipt,
+    'shopping-cart': ShoppingCart,
+    tags: Tags,
+    truck: Truck,
+    warehouse: Warehouse,
     'layout-grid': LayoutGrid,
     'scroll-text': ScrollText,
     settings: Settings,

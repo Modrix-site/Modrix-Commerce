@@ -76,7 +76,7 @@ class AdminAccessTest extends TestCase
                 ->where('adminNavigation', fn ($groups) => collect($groups)
                     ->flatMap(fn ($g) => collect($g['items'])->pluck('key'))
                     ->values()
-                    ->all() === ['dashboard'])
+                    ->all() === ['dashboard', 'products', 'categories', 'attributes', 'inventory'])
                 ->where('auth.isOwner', false));
     }
 
@@ -87,8 +87,8 @@ class AdminAccessTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->where('adminNavigation', fn ($groups) => collect($groups)
                     ->flatMap(fn ($g) => collect($g['items'])->pluck('key'))
-                    ->diff(['dashboard', 'users', 'roles', 'settings', 'audit', 'system'])
-                    ->isEmpty() && count($groups) === 2));
+                    ->diff(['dashboard', 'products', 'categories', 'attributes', 'inventory', 'users', 'roles', 'settings', 'audit', 'system'])
+                    ->isEmpty() && count($groups) === 3));
     }
 
     public function test_page_props_never_include_role_relations_or_secrets()

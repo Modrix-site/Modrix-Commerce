@@ -73,3 +73,20 @@ export type CurrencyOption = {
     code: string;
     name: string;
 };
+
+export type MoneyValue = {
+    amount: string;
+    currency: string;
+    formatted: string;
+};
+
+export type Option = {
+    value: string;
+    label: string;
+};
+
+export type CategoryOption = {
+    id: number;
+    name: string;
+    depth: number;
+};
