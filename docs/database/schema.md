@@ -147,12 +147,36 @@ Payments, refunds and shipments use `restrictOnDelete` on `order_id`, so an orde
 
 Webhook payloads contain no card data (Stripe never sends full card numbers). They may contain customer emails and are kept for audit; retention and pruning arrive with Phase 7.
 
+## Phase 4 tables (implemented)
+
+### `extensions`
+
+| Column                              | Type               | Notes                                                                     |
+| ----------------------------------- | ------------------ | ------------------------------------------------------------------------- |
+| name                                | string(100) unique | `vendor/package`                                                          |
+| type                                | string(16)         | `module` (themes will reuse this table in Phase 5)                        |
+| display_name, description           | string             | from the manifest                                                         |
+| state                               | string(20) indexed | discovered, invalid, installed, enabled, disabled, update_pending, failed |
+| version                             | string null        | installed version; null when not installed                                |
+| available_version                   | string null        | version of the files on disk                                              |
+| path                                | string             | relative to the modules directory                                         |
+| manifest                            | json null          | last validated manifest                                                   |
+| errors                              | json null          | validation errors                                                         |
+| enabled_before_update               | bool               | restores the enabled state after an update or recovery                    |
+| failure                             | text null          | why the module is failed                                                  |
+| installed_at, enabled_at, failed_at | timestamp null     |                                                                           |
+
+### `extension_events` (append-only)
+
+`extension`, `action` (discovered, installed, enabled, configured, disabled, updated, uninstalled, quarantined, state_changed, files_missing), `from_state`, `to_state`, `version`, `success`, `message`, `actor_id` (nullOnDelete), `created_at`. The model refuses updates and deletes.
+
+Module settings use the `settings` table under `extension.<vendor>.<package>.*`; module permissions use `permissions.source = <vendor>/<package>`. Bundled sample modules add `product_reviews` and `order_alert_deliveries` when installed.
+
 ## Planned tables
 
 The tables below follow §13 of the master specification and are designed when each phase starts:
 
 - **Deferred from Phase 2:** `product_translations` (storefront localisation is a Phase 8 item)
-- **Phase 4:** `extensions`, `extension_versions`, `extension_installations`, `extension_dependencies`, `extension_settings`, `extension_permissions`, `extension_events`
 - **Phase 5:** `themes`, `theme_settings`, `theme_assignments`
 - **Phase 6:** `marketplace_products`, `marketplace_releases`, `marketplace_orders`, `marketplace_order_items`, `licenses`, `license_activations`, `license_events`, `download_tokens`
 - **Post-launch:** `vendors`, `vendor_payouts`, `marketplace_commissions`, `vendor_verifications`

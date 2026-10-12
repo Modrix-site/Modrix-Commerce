@@ -51,3 +51,18 @@ DB_CONNECTION=mysql DB_DATABASE=ecomodular_test php artisan test   # MySQL run
 - Stripe is faked at the HTTP layer (`Http::fake`, `Http::preventStrayRequests`) and webhooks are signed exactly as Stripe signs them (`tests/Support/StripeFixtures.php`).
 - `vendor/bin/phpstan analyse`: 0 errors. `vendor/bin/pint --test`: passed. `npm run types:check`, `npm run check`, `npm run build`: passed.
 - **Not yet executed:** a test-mode purchase against a real Stripe account. It needs the merchant's Stripe test keys and webhook secret; follow `docs/payments/stripe.md` §5.
+
+## Phase 4 results (2026-10-15, local, PHP 8.4.25, SQLite)
+
+- `php artisan test`: 324 tests, 323 passed, 1 skipped (MySQL group), 0 failed.
+- Module coverage (`tests/Feature/Extensions`, `tests/Unit/ManifestSchemaTest.php`):
+    - **Validation:** 21 rejection cases, including unknown keys, incompatible platform, unknown or missing capabilities, path escapes, reserved namespaces, permission and migration conflicts, dependency cycles, malformed and oversized manifests.
+    - **Lifecycle:** the full install → enable → configure → disable → update → uninstall cycle on a fixture module and on the bundled reviews module, including a schema change across versions.
+    - **Dependencies:** installation, enabling and version constraints; a dependency cannot be disabled or uninstalled under an enabled or installed dependent.
+    - **Failure handling:** trust confirmation; quarantine of a module failing at enable or at a later boot; rollback and retry of a failed install; failed and retried update; downgraded and missing files; safe mode; CLI.
+    - **Permissions and admin:** module admin routes require a declared permission; module permissions are kept but ineffective while disabled; admin pages and the permission matrix.
+    - **Extension points:** checkout validators (refuse, fail closed), search providers cannot reveal drafts, storefront slots and dashboard widgets (permission-filtered, failures isolated).
+    - **Sample modules:** reviews, sales widget, and idempotent order alerts.
+- `ModuleBootTest` boots separate PHP processes against a throwaway database. It found two fresh-boot defects that in-process tests could not see (now fixed; see ADR-029).
+- `vendor/bin/phpstan analyse` (now including `modules/`): 0 errors. `pint`, `npm run types:check`, `npm run check`, `npm run build`: passed.
+- Browser check: the reviews module was installed and enabled on the dev store. A review was submitted from the product page, moderated on the module's admin page, and then shown with its rating. The sales widget appears on the dashboard and the Reviews item in the admin navigation.

@@ -8,7 +8,7 @@ Status legend: ✅ Complete · 🟡 In progress · ⬜ Not started · ⛔ Blocke
 | 1     | Application foundation (auth, owner install, RBAC, audit, settings, admin shell, CI)                    | ✅     |
 | 2     | Commerce core (catalog, customers, cart, checkout, orders, inventory, discounts, shipping/tax, reports) | ⬜     |
 | 3     | Payment integrations (gateway contract, Stripe test mode, webhooks, refunds)                            | 🟡     |
-| 4     | Module engine (manifest, lifecycle, dependencies, sample modules)                                       | ⬜     |
+| 4     | Module engine (manifest, lifecycle, dependencies, sample modules)                                       | ✅     |
 | 5     | Theme engine (manifests, contracts, default + 2 sample themes)                                          | ⬜     |
 | 6     | Official marketplace & licensing                                                                        | ⬜     |
 | 7     | Production hardening                                                                                    | ⬜     |
@@ -58,9 +58,23 @@ Known limitations carried forward: weight-based shipping rates are not implement
 - [x] Replayed and forged webhooks are rejected or ignored by tests; a redirect alone cannot mark an order paid.
 - [ ] **Test-mode purchase end to end against a real Stripe account.** Blocked on the merchant's Stripe test keys; see `docs/payments/stripe.md` §5. Phase 3 stays 🟡 until this passes.
 
-### Phase 4 — Module engine (next)
+### Phase 4 — Module engine
 
-- Manifest schema and validation, module lifecycle (install, enable, disable, update, uninstall, recovery), dependency resolution, permissions and settings registered by modules, sample modules.
+- [x] Manifest schema and validation (invalid manifests, unknown capabilities, conflicts, incompatible versions, cycles and path escapes rejected).
+- [x] Module registry and lifecycle state machine with audit trail.
+- [x] Dependency and version resolution.
+- [x] Guarded service provider registration, quarantine, safe mode.
+- [x] Contracts and events: checkout validators, search provider, storefront slots, dashboard widgets, plus the Phase 2–3 contracts; compatibility policy documented.
+- [x] Settings and permissions from the manifest.
+- [x] Migration lifecycle and documented error recovery (`docs/extensions/recovery.md`).
+- [x] Extension admin interface.
+- [x] Sample modules with a full install → enable → configure → disable → update lifecycle (Product Reviews).
+
+Known limitations: no package upload yet (packages arrive through deployment; upload and signed downloads come with the marketplace); module UI requires an asset rebuild; product type/attribute providers are not yet an extension point.
+
+### Phase 5 — Theme engine (next)
+
+- Theme manifests and contracts, default theme plus two sample themes, theme settings and assignment, safe switching without checkout regressions.
 
 ## Progress log
 
@@ -82,9 +96,16 @@ Known limitations carried forward: weight-based shipping rates are not implement
 - Slices 3.1–3.4 implemented (see CHANGELOG and `docs/plans/phase-3-payments.md`); ADRs 025–027; Stripe setup guide.
 - Blockers/limitations: no Stripe test account on this machine, so the real test-mode purchase is still to be run (all provider interaction is covered with faked HTTP and correctly signed webhook fixtures). Still no local MySQL or Docker.
 
+### 2026-10-15 — Phase 4
+
+- Slices 4.1–4.5 implemented (see CHANGELOG and `docs/plans/phase-4-modules.md`); ADRs 028–030; module developer and recovery guides.
+- Found and fixed through a process-level test: enabled modules did not load on a fresh boot (deferred cache and the Eloquent resolver are not ready while providers register), and the module autoloader could attach to the wrong Composer loader.
+- Phase 3 remains 🟡 until the Stripe test-mode purchase is run with real test keys.
+
 ## Continuation instructions
 
 1. Put PHP 8.4 first on PATH (`C:\php84` on the reference machine).
 2. `composer install && npm install`, `cp .env.example .env`, `php artisan key:generate`, `php artisan migrate`.
 3. Run quality gates: `composer test`, `npm run types:check`, `npm run check`, `npm run build`.
-4. Close Phase 3 by running the Stripe test-mode purchase (`docs/payments/stripe.md` §5) with real test keys. Then start Phase 4: write `docs/plans/phase-4-modules.md` first.
+4. Close Phase 3 by running the Stripe test-mode purchase (`docs/payments/stripe.md` §5) with real test keys.
+5. Start Phase 5: write `docs/plans/phase-5-themes.md` first; reuse the `extensions` table (`type = theme`) and the lifecycle patterns from Phase 4.

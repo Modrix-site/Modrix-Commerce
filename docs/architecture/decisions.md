@@ -189,3 +189,33 @@ Each entry records a decision, its context, and its consequences. Entries are ap
 - **Status:** Accepted
 - **Decision:** Provider facts reach orders only through `PaymentReconciler` → `OrderWorkflow`. The facts come from three sources: a verified webhook, a server-side retrieval of the session (on the customer's return and in the five-minute `ecomodular:payments:reconcile` job), or the response to our own refund request. Each transition locks the order and payment rows, is idempotent, and checks that the amount and currency match the payment we created. Webhooks are verified before anything is stored and are stored once per `(provider, event_id)`. Late, duplicate and out-of-order facts are recorded rather than dropped: a payment after cancellation, or a second payment, is flagged for refund. A session that expires unpaid cancels the order and releases its stock.
 - **Consequences:** The return URL carries no authority; forging it changes nothing. Card orders are announced by email only once paid, so abandoned checkouts do not produce confirmation or cancellation emails. Refunds against an order paid twice go against the latest payment; refunding beyond that payment is refused by the provider.
+
+## ADR-028 — Module packages on disk, lifecycle state in the database
+
+- **Date:** 2026-10-15
+- **Status:** Accepted
+- **Decision:** A module is a directory `modules/<vendor>/<name>/` with a data-only `module.json`, validated by a PHP validator (with a published JSON Schema for authors), never executed. The `extensions` table records the merchant's decisions (state, installed version, timestamps, last valid manifest), and `extension_events` is an append-only lifecycle log. States: discovered, invalid, installed, enabled, disabled, update_pending and failed; only enabled modules are loaded. Newer files on disk put a module into update_pending and stop it from loading until its migrations have run. `ModuleManager` is the only code that changes state, one operation at a time under a lock, audited including refusals. The spec's suggested `extension_versions`, `extension_dependencies`, `extension_settings` and `extension_permissions` tables are covered by the manifest snapshot, the settings namespace and `permissions.source`, so they are not separate tables.
+- **Consequences:** Deployment (git, Composer, rsync) remains the way code reaches a server, and installing, enabling and updating are explicit administrator actions. Package upload and signed downloads arrive with the marketplace (Phase 6) and will feed the same lifecycle.
+
+## ADR-029 — Modules run in-process; guard, quarantine and safe mode instead of a sandbox
+
+- **Date:** 2026-10-15
+- **Status:** Accepted
+- **Decision:** Module PHP runs in the application process with full privileges; PHP offers no practical sandbox. Mitigations:
+    - explicit trust confirmation and password re-confirmation to enable;
+    - declared capabilities shown to the administrator;
+    - path, namespace, permission and migration confinement in the validator;
+    - platform-controlled route prefixes and middleware, and a refusal of module admin routes without a `can:` middleware;
+    - a guard that quarantines a module whose provider throws during register or boot;
+    - `ECOMODULAR_SAFE_MODE` for fatal errors the guard cannot catch.
+
+    Modules load in the application's `booting` phase, after every provider registered (deferred services such as the cache are then resolvable) and before any provider boots. They use a dedicated Composer class loader.
+
+- **Consequences:** Documented plainly in the developer guide: only trusted code may be enabled, and public third-party submissions need review and isolation first (Phase 8). Process-level tests (`ModuleBootTest`) cover the fresh-boot path, which in-process tests cannot.
+
+## ADR-030 — Module UI is compiled with the application
+
+- **Date:** 2026-10-15
+- **Status:** Accepted
+- **Decision:** Module React pages and slot components live in the module package and are included in the application's Vite build through `import.meta.glob`. Pages are addressed as `module/<vendor>/<name>/<page>`; slot and widget components are referenced by the server and rendered inside an error boundary. Modules must not import generated route helpers; URLs come from server props.
+- **Consequences:** One build pipeline, one design system, type-checked and linted with the core. Adding or updating a module with UI requires `npm run build`. Runtime-loaded, separately built module bundles may come later for marketplace packages.

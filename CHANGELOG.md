@@ -4,6 +4,17 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added (Phase 4: module engine)
+
+- Module packages under `modules/<vendor>/<name>/` with a validated, data-only `module.json` (JSON Schema in `docs/extensions/module.schema.json`).
+- Lifecycle: discover, install (migrations with rollback on failure), enable (trust confirmation, dependency checks, trial boot), configure (typed settings), disable (keeps data), update (update-pending files are not loaded until migrated), uninstall (typed confirmation); dependency and version resolution with `composer/semver`; lifecycle log and audit.
+- Guarded loading: a module that throws while booting is quarantined and the store keeps running; `ECOMODULAR_SAFE_MODE`; `ecomodular:modules` command.
+- Module routes under fixed prefixes and middleware; module admin routes must declare a permission; permissions, navigation and settings from the manifest.
+- Extension points: checkout validators, search provider, storefront slots, dashboard widgets; module React pages and components compiled with the app.
+- Admin → Extensions: list, detail, lifecycle actions, generated settings form, lifecycle log.
+- Sample modules: Product Reviews, Sales Trend Widget, Paid Order Alerts.
+- Module developer guide, recovery guide, ADRs 028–030.
+
 ### Added (Phase 3: payment integrations)
 
 - `PaymentGateway` contract with provider-neutral payment and refund facts; gateway registry.
