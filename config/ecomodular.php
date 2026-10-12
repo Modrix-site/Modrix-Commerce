@@ -23,4 +23,15 @@ return [
     */
     'csv_import_max_rows' => (int) env('ECOMODULAR_CSV_IMPORT_MAX_ROWS', 5000),
 
+    /*
+    | Modules (docs/extensions/module-development.md). Packages live in
+    | `path/<vendor>/<name>/module.json`, outside the public web root.
+    | Safe mode boots without loading any module: use it to recover when a
+    | module breaks every request (docs/extensions/recovery.md).
+    */
+    'modules' => [
+        'path' => env('ECOMODULAR_MODULES_PATH', base_path('modules')),
+        'safe_mode' => (bool) env('ECOMODULAR_SAFE_MODE', false),
+    ],
+
 ];

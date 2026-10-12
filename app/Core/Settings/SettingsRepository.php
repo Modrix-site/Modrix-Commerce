@@ -52,6 +52,20 @@ final class SettingsRepository
     }
 
     /**
+     * Deletes the given keys (used when an extension is uninstalled).
+     *
+     * @param  list<string>  $keys
+     */
+    public function forget(array $keys): void
+    {
+        if ($keys !== []) {
+            DB::table('settings')->whereIn('key', $keys)->delete();
+        }
+
+        $this->flush();
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function all(): array

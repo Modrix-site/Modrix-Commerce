@@ -45,8 +45,9 @@ final class CorePermissions
             ],
             'Extensions' => [
                 'extensions.view' => 'View extensions',
-                'extensions.install' => 'Install extensions',
+                'extensions.install' => 'Install and uninstall extensions',
                 'extensions.enable' => 'Enable extensions',
+                'extensions.configure' => 'Configure extensions',
                 'extensions.disable' => 'Disable extensions',
                 'extensions.update' => 'Update extensions',
                 'themes.manage' => 'Manage themes',
