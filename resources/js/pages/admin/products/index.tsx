@@ -1,11 +1,23 @@
 import { Form, Head, Link } from '@inertiajs/react';
-import { ImageOff, Plus } from 'lucide-react';
+import { Download, ImageOff, Plus, Upload } from 'lucide-react';
+import ProductCsvController from '@/actions/App/Http/Controllers/Admin/Catalog/ProductCsvController';
 import { EmptyState } from '@/components/admin/empty-state';
 import { NativeSelect } from '@/components/admin/form-field';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Pagination } from '@/components/admin/pagination';
+import InputError from '@/components/input-error';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { StatusBadge } from '@/components/admin/status-badge';
 import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -37,6 +49,7 @@ type Props = {
     filters: { search: string; status: string; category: string; sort: string };
     categories: CategoryOption[];
     statuses: Option[];
+    importErrors: string[];
 };
 
 export default function ProductsIndex({
@@ -44,6 +57,7 @@ export default function ProductsIndex({
     filters,
     categories,
     statuses,
+    importErrors,
 }: Props) {
     const can = useCan();
     const filtered =
@@ -59,15 +73,40 @@ export default function ProductsIndex({
                     title="Products"
                     description="Manage your catalog. Prices are shown in the store currency."
                     actions={
-                        can('products.create') && (
-                            <Button asChild>
-                                <Link href={create()}>
-                                    <Plus /> Add product
-                                </Link>
+                        <div className="flex flex-wrap gap-2">
+                            <Button variant="outline" asChild>
+                                {/* Plain anchor: a file download, not an Inertia visit */}
+                                <a href={ProductCsvController.export.url()}>
+                                    <Download /> Export CSV
+                                </a>
                             </Button>
-                        )
+                            {can('products.create') &&
+                                can('products.update') && <ImportDialog />}
+                            {can('products.create') && (
+                                <Button asChild>
+                                    <Link href={create()}>
+                                        <Plus /> Add product
+                                    </Link>
+                                </Button>
+                            )}
+                        </div>
                     }
                 />
+
+                {importErrors.length > 0 && (
+                    <Alert variant="destructive">
+                        <AlertTitle>
+                            Import failed. No changes were made.
+                        </AlertTitle>
+                        <AlertDescription>
+                            <ul className="list-disc pl-4">
+                                {importErrors.map((error, i) => (
+                                    <li key={i}>{error}</li>
+                                ))}
+                            </ul>
+                        </AlertDescription>
+                    </Alert>
+                )}
 
                 <Form
                     {...index.form()}
@@ -228,6 +267,55 @@ export default function ProductsIndex({
                 />
             </AdminPage>
         </>
+    );
+}
+
+function ImportDialog() {
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button variant="outline">
+                    <Upload /> Import CSV
+                </Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogTitle>Import products</DialogTitle>
+                <DialogDescription>
+                    Use the same columns as the export. Rows are matched by SKU:
+                    existing SKUs are updated and new SKUs create simple
+                    products. If any row has an error, nothing is imported.
+                </DialogDescription>
+                <Form
+                    {...ProductCsvController.import.form()}
+                    resetOnSuccess
+                    className="grid gap-4"
+                >
+                    {({ processing, errors }) => (
+                        <>
+                            <div className="grid gap-2">
+                                <Label htmlFor="csv-file">CSV file</Label>
+                                <Input
+                                    id="csv-file"
+                                    type="file"
+                                    name="file"
+                                    accept=".csv,text/csv"
+                                    required
+                                />
+                                <InputError message={errors.file} />
+                            </div>
+                            <DialogFooter className="gap-2">
+                                <DialogClose asChild>
+                                    <Button variant="secondary">Cancel</Button>
+                                </DialogClose>
+                                <Button type="submit" disabled={processing}>
+                                    Import
+                                </Button>
+                            </DialogFooter>
+                        </>
+                    )}
+                </Form>
+            </DialogContent>
+        </Dialog>
     );
 }
 

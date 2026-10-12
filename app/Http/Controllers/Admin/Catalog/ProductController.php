@@ -86,6 +86,7 @@ class ProductController extends Controller
             ],
             'categories' => $this->categoryOptions(),
             'statuses' => $this->statusOptions(),
+            'importErrors' => session(ProductCsvController::SESSION_ERRORS, []),
         ]);
     }
 

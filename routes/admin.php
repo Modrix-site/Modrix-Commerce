@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\Catalog\AttributeController;
 use App\Http\Controllers\Admin\Catalog\CategoryController;
 use App\Http\Controllers\Admin\Catalog\ProductController;
+use App\Http\Controllers\Admin\Catalog\ProductCsvController;
 use App\Http\Controllers\Admin\Catalog\ProductImageController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\CustomerController;
@@ -58,7 +59,11 @@ Route::middleware('can:settings.manage')->group(function () {
 // Catalog
 Route::middleware('can:products.view')->group(function () {
     Route::get('products', [ProductController::class, 'index'])->name('products.index');
+    Route::get('products/export', [ProductCsvController::class, 'export'])->name('products.export');
 });
+Route::post('products/import', [ProductCsvController::class, 'import'])
+    ->middleware(['can:products.create', 'can:products.update', 'throttle:10,1'])
+    ->name('products.import');
 Route::middleware('can:products.create')->group(function () {
     Route::get('products/create', [ProductController::class, 'create'])->name('products.create');
     Route::post('products', [ProductController::class, 'store'])->name('products.store');
