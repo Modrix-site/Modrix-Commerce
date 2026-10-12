@@ -17,7 +17,7 @@ export function FormField({
     children: ReactNode;
 }) {
     return (
-        <div className="grid gap-2">
+        <div className="grid content-start gap-2">
             <Label htmlFor={id}>{label}</Label>
             {children}
             {hint && !error && (
