@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HealthController;
 use App\Http\Controllers\ThemeAssetController;
 use App\Http\Middleware\BlockAfterInstallation;
 use App\Http\Middleware\EnsureMarketplaceServer;
@@ -28,6 +29,8 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::get('theme-assets/{vendor}/{theme}/{path}', ThemeAssetController::class)
                 ->where(['vendor' => '[a-z0-9-]+', 'theme' => '[a-z0-9-]+', 'path' => '[A-Za-z0-9_./-]+'])
                 ->name('theme.asset');
+            // Readiness for monitors: overall status only, details with ECOMODULAR_HEALTH_TOKEN.
+            Route::get('health', HealthController::class)->middleware('throttle:60,1')->name('health');
             require base_path('routes/marketplace.php');
             Route::middleware('installed')
                 ->prefix('webhooks')

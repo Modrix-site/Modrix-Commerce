@@ -1,5 +1,5 @@
 import { Head } from '@inertiajs/react';
-import { TriangleAlert } from 'lucide-react';
+import { CircleCheck, CircleX, TriangleAlert } from 'lucide-react';
 import { ChecksList } from '@/components/admin/checks-list';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -10,10 +10,50 @@ import type { RequirementCheck } from '@/types';
 type Props = {
     environment: { label: string; value: string }[];
     checks: RequirementCheck[];
+    health: HealthItem[];
     warnings: string[];
 };
 
-export default function SystemStatus({ environment, checks, warnings }: Props) {
+type HealthItem = {
+    key: string;
+    label: string;
+    status: 'ok' | 'warning' | 'failed';
+    detail: string;
+};
+
+function HealthIcon({ status }: { status: HealthItem['status'] }) {
+    if (status === 'ok') {
+        return (
+            <CircleCheck
+                className="size-4 shrink-0 text-green-600"
+                aria-label="OK"
+            />
+        );
+    }
+
+    if (status === 'warning') {
+        return (
+            <TriangleAlert
+                className="size-4 shrink-0 text-amber-600"
+                aria-label="Warning"
+            />
+        );
+    }
+
+    return (
+        <CircleX
+            className="size-4 shrink-0 text-destructive"
+            aria-label="Failed"
+        />
+    );
+}
+
+export default function SystemStatus({
+    environment,
+    checks,
+    health,
+    warnings,
+}: Props) {
     return (
         <>
             <Head title="System status" />
@@ -30,6 +70,35 @@ export default function SystemStatus({ environment, checks, warnings }: Props) {
                         <AlertDescription>{warning}</AlertDescription>
                     </Alert>
                 ))}
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Health</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <ul className="divide-y text-sm">
+                            {health.map((item) => (
+                                <li
+                                    key={item.key}
+                                    className="flex flex-col gap-1 py-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4"
+                                >
+                                    <span className="flex items-center gap-2">
+                                        <HealthIcon status={item.status} />
+                                        {item.label}
+                                    </span>
+                                    <span className="text-muted-foreground sm:text-right">
+                                        {item.detail}
+                                    </span>
+                                </li>
+                            ))}
+                        </ul>
+                        <p className="mt-3 text-xs text-muted-foreground">
+                            Monitors can poll /health (and use
+                            ECOMODULAR_HEALTH_TOKEN for details) or run php
+                            artisan ecomodular:health.
+                        </p>
+                    </CardContent>
+                </Card>
 
                 <div className="grid gap-6 lg:grid-cols-2">
                     <Card>

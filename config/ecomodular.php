@@ -51,6 +51,30 @@ return [
     | marketplace Stripe credentials (separate from any store's own) and
     | licensing timings.
     */
+    'health' => [
+        // Bearer token that unlocks per-check details on /health (empty: overall status only).
+        'token' => env('ECOMODULAR_HEALTH_TOKEN', ''),
+        'disk_warn_percent' => (float) env('ECOMODULAR_HEALTH_DISK_WARN_PERCENT', 10),
+        'disk_fail_percent' => (float) env('ECOMODULAR_HEALTH_DISK_FAIL_PERCENT', 5),
+        'backup_max_age_hours' => (int) env('ECOMODULAR_HEALTH_BACKUP_MAX_AGE_HOURS', 26),
+    ],
+
+    'backup' => [
+        'path' => env('ECOMODULAR_BACKUP_PATH', storage_path('app/private/backups')),
+        // Root of storage/app, modules/ and themes/ (tests point this at a scratch tree).
+        'files_root' => env('ECOMODULAR_BACKUP_FILES_ROOT', base_path()),
+        // AES-256 encrypts every archive entry when set. Store it outside this server too.
+        'password' => env('ECOMODULAR_BACKUP_PASSWORD', ''),
+        'keep' => (int) env('ECOMODULAR_BACKUP_KEEP', 7),
+        // Daily time (server timezone) for the scheduled backup; empty disables it.
+        'schedule' => env('ECOMODULAR_BACKUP_SCHEDULE', '02:30'),
+        'mysqldump' => env('ECOMODULAR_MYSQLDUMP', 'mysqldump'),
+        'mysql' => env('ECOMODULAR_MYSQL', 'mysql'),
+        'pg_dump' => env('ECOMODULAR_PG_DUMP', 'pg_dump'),
+        'psql' => env('ECOMODULAR_PSQL', 'psql'),
+        'timeout' => (int) env('ECOMODULAR_BACKUP_TIMEOUT', 3600),
+    ],
+
     'security' => [
         // Content-Security-Policy: enforce, report-only or off.
         'csp' => env('ECOMODULAR_CSP', 'enforce'),

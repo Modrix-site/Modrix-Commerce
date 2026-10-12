@@ -100,6 +100,16 @@ jobs:
           php artisan migrate:rollback --force
           php artisan migrate --force
 
+      - name: Backup and restore drill on MySQL (mysqldump / mysql client)
+        env:
+          ECOMODULAR_BACKUP_PASSWORD: ci-only-backup-password
+        run: |
+          php artisan ecomodular:backup --database-only
+          name=$(php artisan ecomodular:backup --list | grep -o 'ecomodular-backup-[^ ]*\.zip' | head -1)
+          php artisan tinker --execute="DB::table('settings')->insert(['key' => 'drill.marker', 'value' => json_encode('after-backup'), 'created_at' => now(), 'updated_at' => now()]);"
+          php artisan ecomodular:restore "$name" --force
+          test "$(php artisan tinker --execute="echo DB::table('settings')->where('key', 'drill.marker')->count();")" = "0"
+
       - name: PHPUnit on MySQL
         run: php artisan test
 
@@ -129,3 +139,6 @@ jobs:
 
       - name: npm audit (production dependencies, high and above)
         run: npm audit --omit=dev --audit-level=high
+
+      - name: npm audit (build tooling, critical)
+        run: npm audit --audit-level=critical
