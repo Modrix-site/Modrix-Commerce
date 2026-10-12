@@ -72,6 +72,15 @@ class CoreServiceProvider extends ServiceProvider
         $navigation->add('settings', 'Store settings', 'admin.settings.store.edit', 'settings', 'Administration', 'settings.manage', 920);
         $navigation->add('appearance', 'Appearance', 'admin.themes.index', 'palette', 'Configuration', 'themes.manage', 790);
         $navigation->add('extensions', 'Extensions', 'admin.extensions.index', 'puzzle', 'Administration', 'extensions.view', 925);
+        $navigation->add('marketplace-client', 'Marketplace', 'admin.marketplace-client.index', 'store', 'Administration', 'extensions.view', 926);
+
+        // Server-side marketplace administration exists only on the platform owner's marketplace instance.
+        if ((bool) config('ecomodular.marketplace.server.enabled')) {
+            $navigation->add('marketplace-products', 'Products', 'admin.marketplace.products.index', 'package', 'Marketplace', 'marketplace.manage', 950);
+            $navigation->add('marketplace-orders', 'Orders', 'admin.marketplace.orders.index', 'receipt', 'Marketplace', 'marketplace.manage', 951);
+            $navigation->add('marketplace-licenses', 'Licenses', 'admin.marketplace.licenses.index', 'key-round', 'Marketplace', 'licenses.manage', 952);
+        }
+
         $navigation->add('audit', 'Audit log', 'admin.audit-logs.index', 'scroll-text', 'Administration', 'audit.view', 930);
         $navigation->add('system', 'System status', 'admin.system.status', 'activity', 'Administration', 'system.view', 940);
     }

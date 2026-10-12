@@ -18,6 +18,8 @@ use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ExtensionController;
 use App\Http\Controllers\Admin\InventoryController;
+use App\Http\Controllers\Admin\MarketplaceAdminController;
+use App\Http\Controllers\Admin\MarketplaceClientController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PaymentSettingsController;
 use App\Http\Controllers\Admin\PaymentWebhookEventController;
@@ -31,6 +33,9 @@ use App\Http\Controllers\Admin\TaxController;
 use App\Http\Controllers\Admin\ThemeController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
+
+// Numeric ids only, so named paths such as extensions/marketplace are never captured.
+Route::pattern('extension', '[0-9]+');
 
 Route::get('/', DashboardController::class)->name('dashboard');
 
@@ -177,6 +182,38 @@ Route::middleware('can:themes.manage')->group(function () {
     Route::put('themes/{theme}/sections', [ThemeController::class, 'sections'])->name('themes.sections');
     Route::post('themes/{theme}/reset', [ThemeController::class, 'reset'])->name('themes.reset');
     Route::post('themes/{theme}/demo', [ThemeController::class, 'demo'])->middleware('throttle:5,1')->name('themes.demo');
+});
+
+// Marketplace client (every store): licenses, installs and updates from the official marketplace.
+Route::middleware('can:extensions.view')->group(function () {
+    Route::get('extensions/marketplace', [MarketplaceClientController::class, 'index'])->name('marketplace-client.index');
+});
+Route::middleware(['can:licenses.manage', 'throttle:20,1'])->group(function () {
+    Route::post('extensions/marketplace/licenses', [MarketplaceClientController::class, 'activate'])->name('marketplace-client.licenses.activate');
+    Route::post('extensions/marketplace/licenses/{license}/check', [MarketplaceClientController::class, 'check'])->name('marketplace-client.licenses.check');
+    Route::delete('extensions/marketplace/licenses/{license}', [MarketplaceClientController::class, 'deactivate'])->name('marketplace-client.licenses.deactivate');
+});
+Route::middleware(['can:extensions.install', 'password.confirm', 'throttle:10,1'])->group(function () {
+    Route::post('extensions/marketplace/licenses/{license}/install', [MarketplaceClientController::class, 'install'])->name('marketplace-client.install');
+    Route::post('extensions/marketplace/history/{entry}/rollback', [MarketplaceClientController::class, 'rollback'])->name('marketplace-client.rollback');
+});
+
+// Marketplace server administration (platform owner's marketplace instance only).
+Route::middleware(['marketplace.server', 'can:marketplace.manage'])->prefix('marketplace')->name('marketplace.')->group(function () {
+    Route::get('products', [MarketplaceAdminController::class, 'products'])->name('products.index');
+    Route::get('products/create', [MarketplaceAdminController::class, 'create'])->name('products.create');
+    Route::post('products', [MarketplaceAdminController::class, 'store'])->name('products.store');
+    Route::get('products/{product}/edit', [MarketplaceAdminController::class, 'edit'])->name('products.edit');
+    Route::put('products/{product}', [MarketplaceAdminController::class, 'update'])->name('products.update');
+    Route::post('products/{product}/releases', [MarketplaceAdminController::class, 'upload'])->middleware('throttle:10,1')->name('releases.store');
+    Route::post('releases/{release}/review', [MarketplaceAdminController::class, 'review'])->middleware('password.confirm')->name('releases.review');
+    Route::post('releases/{release}/withdraw', [MarketplaceAdminController::class, 'withdraw'])->name('releases.withdraw');
+    Route::get('orders', [MarketplaceAdminController::class, 'orders'])->name('orders.index');
+    Route::post('orders/{order}/refund', [MarketplaceAdminController::class, 'refund'])->middleware('password.confirm')->name('orders.refund');
+});
+Route::middleware(['marketplace.server', 'can:licenses.manage'])->prefix('marketplace')->name('marketplace.')->group(function () {
+    Route::get('licenses', [MarketplaceAdminController::class, 'licenses'])->name('licenses.index');
+    Route::post('licenses/{license}/status', [MarketplaceAdminController::class, 'licenseStatus'])->name('licenses.status');
 });
 
 // Extensions. Actions that run, change or remove code and data need a recent password confirmation.

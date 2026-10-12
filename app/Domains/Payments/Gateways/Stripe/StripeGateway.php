@@ -7,18 +7,13 @@ use App\Domains\Orders\Models\Order;
 use App\Domains\Payments\Contracts\PaymentGateway;
 use App\Domains\Payments\Gateway\GatewayEvent;
 use App\Domains\Payments\Gateway\GatewayException;
-use App\Domains\Payments\Gateway\InvalidWebhook;
 use App\Domains\Payments\Gateway\PaymentSession;
 use App\Domains\Payments\Gateway\PaymentUpdate;
 use App\Domains\Payments\Gateway\PaymentUpdateKind;
 use App\Domains\Payments\Gateway\RefundUpdate;
 use App\Domains\Payments\Models\Payment;
 use App\Domains\Pricing\Money;
-use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Http\Client\PendingRequest;
-use Illuminate\Http\Client\Response;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -30,11 +25,9 @@ use Illuminate\Support\Facades\Log;
  */
 final class StripeGateway implements PaymentGateway
 {
-    /** Pinned so payload shapes do not change underneath us. */
-    public const API_VERSION = '2024-06-20';
+    public const API_VERSION = StripeApi::API_VERSION;
 
-    /** Maximum accepted age of a webhook signature timestamp, in seconds. */
-    public const SIGNATURE_TOLERANCE = 300;
+    public const SIGNATURE_TOLERANCE = StripeApi::SIGNATURE_TOLERANCE;
 
     public function __construct(private readonly StripeSettings $settings) {}
 
@@ -136,43 +129,7 @@ final class StripeGateway implements PaymentGateway
 
     public function verifyWebhook(string $payload, array $headers): array
     {
-        $secret = $this->settings->webhookSecret() ?? throw new InvalidWebhook('Stripe webhooks are not configured.');
-        $header = $headers['stripe-signature'] ?? '';
-        $timestamp = null;
-        $signatures = [];
-
-        foreach (explode(',', $header) as $part) {
-            [$key, $value] = array_pad(explode('=', trim($part), 2), 2, '');
-
-            if ($key === 't' && ctype_digit($value)) {
-                $timestamp = (int) $value;
-            } elseif ($key === 'v1' && $value !== '') {
-                $signatures[] = $value;
-            }
-        }
-
-        if ($timestamp === null || $signatures === []) {
-            throw new InvalidWebhook('Missing or malformed Stripe-Signature header.');
-        }
-
-        if (abs(time() - $timestamp) > self::SIGNATURE_TOLERANCE) {
-            throw new InvalidWebhook('Stripe signature timestamp is outside the tolerance window.');
-        }
-
-        $expected = hash_hmac('sha256', "{$timestamp}.{$payload}", $secret);
-        $valid = array_filter($signatures, fn (string $signature) => hash_equals($expected, $signature));
-
-        if ($valid === []) {
-            throw new InvalidWebhook('Stripe signature does not match.');
-        }
-
-        $event = json_decode($payload, true);
-
-        if (! is_array($event) || ! is_string($event['id'] ?? null) || ! is_string($event['type'] ?? null) || ! is_array($event['data']['object'] ?? null)) {
-            throw new InvalidWebhook('Stripe event payload is malformed.');
-        }
-
-        return $event;
+        return StripeApi::verifyWebhook($payload, $headers, $this->settings->webhookSecret());
     }
 
     public function normalizeEvent(array $event): GatewayEvent
@@ -287,43 +244,6 @@ final class StripeGateway implements PaymentGateway
     {
         $key = $this->settings->secretKey() ?? throw new GatewayException('Stripe is not configured.');
 
-        try {
-            $response = $this->client($key, $idempotencyKey)->{$method}($path, $params);
-        } catch (ConnectionException) {
-            throw new GatewayException('Could not reach Stripe. Please try again.', retryable: true);
-        }
-
-        if ($response->failed()) {
-            throw $this->error($response);
-        }
-
-        $body = $response->json();
-
-        return is_array($body) ? $body : throw new GatewayException('Stripe returned an unreadable response.');
-    }
-
-    private function client(string $key, ?string $idempotencyKey): PendingRequest
-    {
-        $request = Http::baseUrl((string) config('services.stripe.base_url', 'https://api.stripe.com'))
-            ->withToken($key)
-            ->withHeaders(['Stripe-Version' => self::API_VERSION])
-            ->acceptJson()
-            ->asForm()
-            ->connectTimeout(5)
-            ->timeout(20)
-            // Safe to retry: creating requests carry an idempotency key.
-            ->retry(2, 300, fn ($e) => $e instanceof ConnectionException, throw: false);
-
-        return $idempotencyKey === null ? $request : $request->withHeaders(['Idempotency-Key' => $idempotencyKey]);
-    }
-
-    private function error(Response $response): GatewayException
-    {
-        $message = (string) ($response->json('error.message') ?? 'Stripe rejected the request.');
-        // Never echo anything that looks like a key back to the UI or logs.
-        $message = (string) preg_replace('/\b(sk|rk|pk|whsec)_[A-Za-z0-9_]+/', '[redacted]', $message);
-        $retryable = $response->status() === 429 || $response->serverError();
-
-        return new GatewayException("Stripe: {$message}", $retryable);
+        return StripeApi::request($key, $method, $path, $params, $idempotencyKey);
     }
 }

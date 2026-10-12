@@ -97,6 +97,9 @@ class CommerceServiceProvider extends ServiceProvider
         ]);
 
         // Generous: providers send bursts and retry anything that is refused.
+        // Merchant stores call the marketplace API a few times a day; generous, per IP.
+        RateLimiter::for('marketplace-api', fn (Request $request) => Limit::perMinute(60)->by('marketplace:'.$request->ip()));
+
         RateLimiter::for('webhooks', fn (Request $request) => Limit::perMinute(600)->by('webhook:'.$request->ip()));
     }
 }

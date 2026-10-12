@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ThemeAssetController;
 use App\Http\Middleware\BlockAfterInstallation;
+use App\Http\Middleware\EnsureMarketplaceServer;
 use App\Http\Middleware\EnsureUserIsStaff;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -26,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::get('theme-assets/{vendor}/{theme}/{path}', ThemeAssetController::class)
                 ->where(['vendor' => '[a-z0-9-]+', 'theme' => '[a-z0-9-]+', 'path' => '[A-Za-z0-9_./-]+'])
                 ->name('theme.asset');
+            require base_path('routes/marketplace.php');
             Route::middleware('installed')
                 ->prefix('webhooks')
                 ->name('webhooks.')
@@ -50,6 +52,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'staff' => EnsureUserIsStaff::class,
             'installed' => RequireInstallation::class,
             'not-installed' => BlockAfterInstallation::class,
+            'marketplace.server' => EnsureMarketplaceServer::class,
         ]);
 
         // Before installation there are no accounts, so send visitors to the installer, not the login page.

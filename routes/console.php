@@ -10,3 +10,6 @@ Artisan::command('inspire', function () {
 
 // Catches payments whose webhooks were missed or delayed, and abandoned payment pages.
 Schedule::command('ecomodular:payments:reconcile')->everyFiveMinutes()->withoutOverlapping();
+
+// Marketplace license status and update availability (never disables anything).
+Schedule::command('ecomodular:marketplace:check')->daily()->withoutOverlapping();

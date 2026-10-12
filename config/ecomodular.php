@@ -39,6 +39,35 @@ return [
     | `path/<vendor>/<name>/theme.json`. The default theme is used until the
     | merchant activates one, and whenever the active theme is unusable.
     */
+    /*
+    | Official marketplace (docs/marketplace/licensing.md, ADR-033).
+    |
+    | Client (every merchant store): where the marketplace lives and which
+    | publisher keys are trusted to sign releases (comma-separated
+    | base64 Ed25519 public keys). Packages signed by any other key are refused.
+    |
+    | Server (only the platform owner's marketplace instance): the signing
+    | key (base64 Ed25519 secret key, keep it out of version control),
+    | marketplace Stripe credentials (separate from any store's own) and
+    | licensing timings.
+    */
+    'marketplace' => [
+        'url' => rtrim((string) env('ECOMODULAR_MARKETPLACE_URL', 'https://marketplace.ecomodular.dev'), '/'),
+        'trusted_keys' => array_values(array_filter(array_map('trim', explode(',', (string) env('ECOMODULAR_MARKETPLACE_TRUSTED_KEYS', ''))))),
+        'grace_days' => (int) env('ECOMODULAR_MARKETPLACE_GRACE_DAYS', 14),
+        'timeout' => (int) env('ECOMODULAR_MARKETPLACE_TIMEOUT', 10),
+
+        'server' => [
+            'enabled' => (bool) env('ECOMODULAR_MARKETPLACE_SERVER', false),
+            'signing_key' => env('ECOMODULAR_MARKETPLACE_SIGNING_KEY'),
+            'token_days' => (int) env('ECOMODULAR_MARKETPLACE_TOKEN_DAYS', 30),
+            'download_minutes' => (int) env('ECOMODULAR_MARKETPLACE_DOWNLOAD_MINUTES', 10),
+            'max_package_mb' => (int) env('ECOMODULAR_MARKETPLACE_MAX_PACKAGE_MB', 50),
+            'stripe_secret' => env('MARKETPLACE_STRIPE_SECRET'),
+            'stripe_webhook_secret' => env('MARKETPLACE_STRIPE_WEBHOOK_SECRET'),
+        ],
+    ],
+
     'themes' => [
         'path' => env('ECOMODULAR_THEMES_PATH', base_path('themes')),
         'default' => env('ECOMODULAR_DEFAULT_THEME', 'ecomodular/essence'),
