@@ -124,3 +124,47 @@ Each entry records a decision, its context, and its consequences. Entries are ap
 - **Status:** Accepted
 - **Context:** A test showed SQLite returning DECIMAL columns as PHP floats; PHP then silently coerced `24.5` to the `int` branch of `Money::of(BigNumber|int|string)`, producing `24`.
 - **Decision:** All money columns use the `decimal:4` Eloquent cast (exact strings on every driver), and `Money::of()` throws on floats instead of letting PHP coerce them.
+
+## ADR-018 — Pricing is a server-side pipeline; checkout re-prices and compares
+
+- **Date:** 2026-10-12
+- **Status:** Accepted
+- **Decision:** `CartPricer` prices a cart from catalog data, then runs registered `PricingStep`s in order: discounts → shipping → tax. The same pipeline produces the cart page, the checkout summary and the order. Checkout accepts only identifiers (variant ids, shipping method code, payment method code, coupon code). The total the shopper saw is submitted as `expected_total` solely to detect a price change; if it differs, the order is refused with the new total instead of charging a different amount.
+- **Consequences:** Tampered amounts have no effect (tested). Modules can add pricing steps.
+
+## ADR-019 — Discount allocation and rounding
+
+- **Date:** 2026-10-12
+- **Status:** Accepted
+- **Decision:** Line subtotals are rounded to minor units; the coupon discount is computed on the eligible subtotal, capped at it, and spread across eligible lines proportionally (rounded down), with the last line absorbing the remainder so line discounts always sum to the order discount. Tax is computed per line on (subtotal − discount) and summed.
+
+## ADR-020 — Separate order, payment and fulfilment states with an explicit workflow
+
+- **Date:** 2026-10-12
+- **Status:** Accepted
+- **Decision:** `orders.status` (pending, processing, completed, cancelled), `payment_status` (unpaid, paid, partially_refunded, refunded) and `fulfillment_status` (unfulfilled, shipped, delivered) change only through `OrderWorkflow` operations (record payment, ship, mark delivered, cancel, refund), each locking the order row and appending history. There is no generic status setter. Cancellation requires an unshipped order without an unrefunded payment and returns stock; refunds may restock specific quantities.
+- **Consequences:** Invalid transitions are rejected with explanations (tested). Gateway-driven payments (Phase 3) will call the same workflow from verified webhooks.
+
+## ADR-021 — Manual payment methods in Phase 2
+
+- **Date:** 2026-10-12
+- **Status:** Accepted
+- **Decision:** Two built-in, merchant-enabled methods: bank transfer (ship after payment) and cash on delivery (may ship before payment). Orders are always placed unpaid; staff with `orders.manage` record the payment after verifying it. This is the "explicitly configured payment method" of the Phase 2 exit criteria; it is not a simulated card payment.
+
+## ADR-022 — Guest orders are linked to an account only after email verification
+
+- **Date:** 2026-10-12
+- **Status:** Accepted
+- **Decision:** Guest checkouts create guest `customers` rows. When a user verifies an email address, earlier guest orders with that email are attached to the account. Linking on registration alone would let anyone read another person's order history by registering with their email.
+
+## ADR-023 — Reports aggregate in PHP for v1
+
+- **Date:** 2026-10-12
+- **Status:** Accepted
+- **Decision:** Sales reports load the orders of the period (max 366 days) and aggregate with `Money` in the store timezone. This is exact and portable (SQLite sums DECIMAL as floating point). Larger stores will need summary tables; tracked in the roadmap.
+
+## ADR-024 — Idempotent order emails
+
+- **Date:** 2026-10-12
+- **Status:** Accepted
+- **Decision:** Order emails are sent by a queued subscriber. Each sent email is recorded as an `order_events` row with a key (e.g. `placed`, `refunded:<total>`); a cache lock prevents concurrent duplicates and the record prevents repeats after retries or duplicate event delivery.

@@ -6,6 +6,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { home } from '@/routes';
+import { show as checkout } from '@/routes/checkout';
 import { product as productRoute } from '@/routes/storefront';
 import type { CartLine, PricedCart } from '@/types';
 
@@ -49,18 +50,33 @@ export default function CartPage({ cart }: { cart: PricedCart | null }) {
                                 {cart.subtotal.formatted}
                             </dd>
                         </div>
+                        {Number(cart.discount_total.amount) > 0 && (
+                            <div className="flex justify-between">
+                                <dt>Discount ({cart.coupon_code})</dt>
+                                <dd className="tabular-nums">
+                                    −{cart.discount_total.formatted}
+                                </dd>
+                            </div>
+                        )}
                         <div className="flex justify-between text-muted-foreground">
                             <dt>Shipping and taxes</dt>
                             <dd>Calculated at checkout</dd>
                         </div>
                     </dl>
+
+                    <CouponForm cart={cart} />
+
                     {cart.issues.map((issue) => (
                         <Alert key={issue}>
                             <TriangleAlert />
                             <AlertDescription>{issue}</AlertDescription>
                         </Alert>
                     ))}
-                    {!cart.can_checkout && (
+                    {cart.can_checkout ? (
+                        <Button asChild>
+                            <Link href={checkout()}>Checkout</Link>
+                        </Button>
+                    ) : (
                         <p className="text-sm text-muted-foreground">
                             Resolve the highlighted items before checking out.
                         </p>
@@ -68,6 +84,60 @@ export default function CartPage({ cart }: { cart: PricedCart | null }) {
                 </aside>
             </div>
         </>
+    );
+}
+
+function CouponForm({ cart }: { cart: PricedCart }) {
+    if (cart.coupon_code) {
+        return (
+            <div className="flex items-center justify-between gap-2 text-sm">
+                <span>
+                    Coupon <strong>{cart.coupon_code}</strong>
+                    {cart.coupon_error && (
+                        <span className="block text-destructive">
+                            {cart.coupon_error}
+                        </span>
+                    )}
+                </span>
+                <Form
+                    {...CartController.removeCoupon.form()}
+                    options={{ preserveScroll: true }}
+                >
+                    <Button type="submit" variant="ghost" size="sm">
+                        Remove
+                    </Button>
+                </Form>
+            </div>
+        );
+    }
+
+    return (
+        <Form
+            {...CartController.applyCoupon.form()}
+            options={{ preserveScroll: true }}
+            className="grid gap-2"
+        >
+            {({ processing, errors }) => (
+                <>
+                    <div className="flex gap-2">
+                        <Input
+                            name="code"
+                            placeholder="Coupon code"
+                            aria-label="Coupon code"
+                            autoComplete="off"
+                        />
+                        <Button
+                            type="submit"
+                            variant="outline"
+                            disabled={processing}
+                        >
+                            Apply
+                        </Button>
+                    </div>
+                    <InputError message={errors.code} />
+                </>
+            )}
+        </Form>
     );
 }
 

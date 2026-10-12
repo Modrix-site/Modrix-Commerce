@@ -12,11 +12,18 @@ use App\Http\Controllers\Admin\Catalog\AttributeController;
 use App\Http\Controllers\Admin\Catalog\CategoryController;
 use App\Http\Controllers\Admin\Catalog\ProductController;
 use App\Http\Controllers\Admin\Catalog\ProductImageController;
+use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\InventoryController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\PaymentSettingsController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\ShippingMethodController;
 use App\Http\Controllers\Admin\StoreSettingsController;
 use App\Http\Controllers\Admin\SystemStatusController;
+use App\Http\Controllers\Admin\TaxController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -86,6 +93,59 @@ Route::middleware('can:inventory.view')->group(function () {
     Route::get('inventory/movements', [InventoryController::class, 'movements'])->name('inventory.movements');
 });
 Route::post('inventory/{variant}/adjust', [InventoryController::class, 'adjust'])->middleware('can:inventory.manage')->name('inventory.adjust');
+
+// Orders
+Route::middleware('can:orders.view')->group(function () {
+    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+});
+Route::middleware('can:orders.manage')->group(function () {
+    Route::post('orders/{order}/payments', [OrderController::class, 'recordPayment'])->name('orders.payments.store');
+    Route::post('orders/{order}/ship', [OrderController::class, 'ship'])->name('orders.ship');
+    Route::post('orders/{order}/deliver', [OrderController::class, 'deliver'])->name('orders.deliver');
+    Route::post('orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+    Route::post('orders/{order}/notes', [OrderController::class, 'note'])->name('orders.notes.store');
+});
+Route::post('orders/{order}/refunds', [OrderController::class, 'refund'])->middleware('can:orders.refund')->name('orders.refunds.store');
+
+// Customers
+Route::middleware('can:customers.view')->group(function () {
+    Route::get('customers', [CustomerController::class, 'index'])->name('customers.index');
+    Route::get('customers/{customer}', [CustomerController::class, 'show'])->name('customers.show');
+});
+Route::put('customers/{customer}', [CustomerController::class, 'update'])->middleware('can:customers.manage')->name('customers.update');
+
+// Discounts
+Route::get('coupons', [CouponController::class, 'index'])->middleware('can:discounts.view')->name('coupons.index');
+Route::middleware('can:discounts.manage')->group(function () {
+    Route::get('coupons/create', [CouponController::class, 'create'])->name('coupons.create');
+    Route::post('coupons', [CouponController::class, 'store'])->name('coupons.store');
+    Route::get('coupons/{coupon}/edit', [CouponController::class, 'edit'])->name('coupons.edit');
+    Route::put('coupons/{coupon}', [CouponController::class, 'update'])->name('coupons.update');
+    Route::delete('coupons/{coupon}', [CouponController::class, 'destroy'])->name('coupons.destroy');
+});
+
+// Shipping, taxes, payments
+Route::middleware('can:shipping.manage')->group(function () {
+    Route::get('shipping-methods', [ShippingMethodController::class, 'index'])->name('shipping-methods.index');
+    Route::post('shipping-methods', [ShippingMethodController::class, 'store'])->name('shipping-methods.store');
+    Route::put('shipping-methods/{method}', [ShippingMethodController::class, 'update'])->name('shipping-methods.update');
+    Route::delete('shipping-methods/{method}', [ShippingMethodController::class, 'destroy'])->name('shipping-methods.destroy');
+});
+Route::middleware('can:settings.manage')->group(function () {
+    Route::get('tax-rates', [TaxController::class, 'index'])->name('tax-rates.index');
+    Route::put('tax-rates/settings', [TaxController::class, 'updateSettings'])->name('tax-rates.settings');
+    Route::post('tax-rates', [TaxController::class, 'store'])->name('tax-rates.store');
+    Route::put('tax-rates/{rate}', [TaxController::class, 'update'])->name('tax-rates.update');
+    Route::delete('tax-rates/{rate}', [TaxController::class, 'destroy'])->name('tax-rates.destroy');
+});
+Route::middleware('can:payments.manage')->group(function () {
+    Route::get('payments', [PaymentSettingsController::class, 'edit'])->name('payments.settings');
+    Route::put('payments', [PaymentSettingsController::class, 'update'])->name('payments.settings.update');
+});
+
+// Reports
+Route::get('reports', [ReportController::class, 'index'])->middleware('can:reports.view')->name('reports.index');
 
 Route::get('audit-logs', AuditLogController::class)->middleware('can:audit.view')->name('audit-logs.index');
 Route::get('system', SystemStatusController::class)->middleware('can:system.view')->name('system.status');

@@ -72,3 +72,65 @@ export type Address = {
 };
 
 export type Country = { code: string; name: string };
+
+export type OrderSummary = {
+    number: string;
+    email: string;
+    status: string;
+    status_label: string;
+    payment_status: string;
+    fulfillment_status: string;
+    grand_total: MoneyValue;
+    placed_at: string;
+};
+
+export type OrderItemData = {
+    id: number;
+    sku: string;
+    product_name: string;
+    variant_name: string | null;
+    quantity: number;
+    restocked_quantity: number;
+    unit_price: MoneyValue;
+    subtotal: MoneyValue;
+    discount: MoneyValue;
+    tax: MoneyValue;
+    total: MoneyValue;
+};
+
+export type OrderAddressData = Omit<
+    Address,
+    'id' | 'is_default_shipping' | 'is_default_billing'
+> & {
+    type: string;
+};
+
+export type OrderDetail = OrderSummary & {
+    currency: string;
+    subtotal: MoneyValue;
+    discount_total: MoneyValue;
+    shipping_total: MoneyValue;
+    tax_total: MoneyValue;
+    prices_include_tax: boolean;
+    payment_method: string;
+    shipping_method: string | null;
+    coupon_code: string | null;
+    customer_note: string | null;
+    items: OrderItemData[];
+    addresses: Record<string, OrderAddressData>;
+    shipments: {
+        carrier: string | null;
+        tracking_number: string | null;
+        tracking_url: string | null;
+        shipped_at: string;
+        delivered_at: string | null;
+    }[];
+    history: {
+        id?: number;
+        type?: string;
+        message: string;
+        customer_visible?: boolean;
+        actor?: string | null;
+        created_at: string;
+    }[];
+};

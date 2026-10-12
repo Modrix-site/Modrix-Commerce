@@ -1,7 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { logout } from '@/routes';
-import { addresses, show } from '@/routes/account';
+import { addresses, orders, show } from '@/routes/account';
 import { edit as profileEdit } from '@/routes/profile';
 import { edit as securityEdit } from '@/routes/security';
 
@@ -9,6 +9,7 @@ export function AccountNav() {
     const { isCurrentUrl } = useCurrentUrl();
     const items = [
         { title: 'Overview', href: show() },
+        { title: 'Orders', href: orders() },
         { title: 'Addresses', href: addresses() },
         { title: 'Profile', href: profileEdit() },
         { title: 'Password & security', href: securityEdit() },

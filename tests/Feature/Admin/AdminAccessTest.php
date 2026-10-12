@@ -67,28 +67,47 @@ class AdminAccessTest extends TestCase
             ->assertStatus($status);
     }
 
-    public function test_navigation_is_filtered_by_permission()
+    /**
+     * @return list<string>
+     */
+    private function navigationKeysFor(User $user): array
     {
-        $this->actingAs($this->userWithRole('store-manager'))
+        $keys = [];
+
+        $this->actingAs($user)
             ->get(route('admin.dashboard'))
-            ->assertInertia(fn (Assert $page) => $page
-                ->component('admin/dashboard')
-                ->where('adminNavigation', fn ($groups) => collect($groups)
+            ->assertInertia(function (Assert $page) use (&$keys) {
+                $keys = collect($page->toArray()['props']['adminNavigation'])
                     ->flatMap(fn ($g) => collect($g['items'])->pluck('key'))
                     ->values()
-                    ->all() === ['dashboard', 'products', 'categories', 'attributes', 'inventory'])
-                ->where('auth.isOwner', false));
+                    ->all();
+            });
+
+        return $keys;
     }
 
-    public function test_owner_navigation_includes_administration()
+    public function test_navigation_is_filtered_by_permission()
     {
-        $this->actingAs($this->owner())
-            ->get(route('admin.dashboard'))
-            ->assertInertia(fn (Assert $page) => $page
-                ->where('adminNavigation', fn ($groups) => collect($groups)
-                    ->flatMap(fn ($g) => collect($g['items'])->pluck('key'))
-                    ->diff(['dashboard', 'products', 'categories', 'attributes', 'inventory', 'users', 'roles', 'settings', 'audit', 'system'])
-                    ->isEmpty() && count($groups) === 3));
+        $keys = $this->navigationKeysFor($this->userWithRole('store-manager'));
+
+        foreach (['dashboard', 'orders', 'customers', 'discounts', 'reports', 'products', 'inventory', 'shipping'] as $expected) {
+            $this->assertContains($expected, $keys);
+        }
+
+        foreach (['users', 'roles', 'settings', 'audit', 'system', 'taxes', 'payments'] as $hidden) {
+            $this->assertNotContains($hidden, $keys);
+        }
+
+        $this->assertSame(['dashboard', 'orders', 'customers'], $this->navigationKeysFor($this->userWithRole('support-agent')));
+    }
+
+    public function test_owner_navigation_includes_every_section()
+    {
+        $keys = $this->navigationKeysFor($this->owner());
+
+        foreach (['dashboard', 'orders', 'customers', 'discounts', 'reports', 'products', 'categories', 'attributes', 'inventory', 'shipping', 'taxes', 'payments', 'users', 'roles', 'settings', 'audit', 'system'] as $expected) {
+            $this->assertContains($expected, $keys);
+        }
     }
 
     public function test_page_props_never_include_role_relations_or_secrets()

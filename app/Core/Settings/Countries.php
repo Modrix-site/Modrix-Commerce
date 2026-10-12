@@ -11,8 +11,11 @@ use ResourceBundle;
  */
 final class Countries
 {
-    /** Codes in ICU's region list that are not countries. */
-    private const EXCLUDED = ['EU', 'EZ', 'UN', 'QO', 'XA', 'XB', 'ZZ'];
+    /**
+     * Codes in ICU's region list that are not ISO 3166-1 assigned countries:
+     * groupings, pseudo-regions and "exceptionally reserved" codes.
+     */
+    private const EXCLUDED = ['EU', 'EZ', 'UN', 'QO', 'XA', 'XB', 'ZZ', 'AC', 'CP', 'DG', 'EA', 'IC', 'TA'];
 
     /** @var array<string, string>|null */
     private static ?array $cache = null;

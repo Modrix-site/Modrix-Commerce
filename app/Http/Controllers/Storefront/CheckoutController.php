@@ -1,0 +1,149 @@
+<?php
+
+namespace App\Http\Controllers\Storefront;
+
+use App\Core\Settings\Countries;
+use App\Domains\Cart\CartManager;
+use App\Domains\Checkout\CheckoutData;
+use App\Domains\Checkout\PlaceOrder;
+use App\Domains\Checkout\Pricing\CartPricer;
+use App\Domains\Checkout\Pricing\PricingContext;
+use App\Domains\Customers\AddressRules;
+use App\Domains\Customers\CustomerProfiles;
+use App\Domains\Customers\Models\CustomerAddress;
+use App\Domains\Orders\Models\Order;
+use App\Domains\Payments\Contracts\PaymentMethod;
+use App\Domains\Payments\PaymentMethods;
+use App\Http\Controllers\Controller;
+use App\Http\Presenters\OrderPresenter;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
+
+class CheckoutController extends Controller
+{
+    public const SESSION_ORDERS = 'checkout.placed_orders';
+
+    public function __construct(
+        private readonly CartManager $carts,
+        private readonly CartPricer $pricer,
+        private readonly PaymentMethods $paymentMethods,
+    ) {}
+
+    public function show(Request $request, PlaceOrder $placeOrder, CustomerProfiles $profiles): Response|RedirectResponse
+    {
+        $user = $this->user($request);
+        $cart = $this->carts->current($request->session(), $user);
+
+        if ($cart === null || ! $cart->items()->exists()) {
+            return redirect()->route('cart.show');
+        }
+
+        if ($user === null && ! $placeOrder->guestCheckoutEnabled()) {
+            return redirect()->guest(route('login'));
+        }
+
+        // Destination and method are only used to quote; amounts always come from the server.
+        $destination = $request->validate([
+            'country' => ['nullable', 'string', 'size:2', Rule::in(Countries::codes())],
+            'region' => ['nullable', 'string', 'max:120'],
+            'postal_code' => ['nullable', 'string', 'max:32'],
+            'shipping_method' => ['nullable', 'string', 'max:64'],
+        ]);
+
+        $customer = $user !== null ? $profiles->forUser($user) : null;
+
+        return Inertia::render('storefront/checkout', [
+            'summary' => function () use ($cart, $destination, $customer, $request) {
+                $priced = $this->pricer->price($cart, new PricingContext(
+                    customerId: $customer?->id,
+                    email: $customer->email ?? $request->string('email')->toString() ?: null,
+                    countryCode: $destination['country'] ?? null,
+                    region: $destination['region'] ?? null,
+                    postalCode: $destination['postal_code'] ?? null,
+                    shippingMethod: $destination['shipping_method'] ?? null,
+                ));
+
+                return $priced->toArray();
+            },
+            'paymentMethods' => fn () => array_values(array_map(fn (PaymentMethod $m) => [
+                'code' => $m->code(),
+                'label' => $m->label(),
+                'instructions' => $m->instructions(),
+            ], $this->paymentMethods->enabled())),
+            'addresses' => fn () => $customer?->addresses()->get()->map(fn (CustomerAddress $a) => $a->toPresentable())->all() ?? [],
+            'email' => $user?->email,
+            'countries' => fn () => Countries::options(),
+            'checkoutToken' => fn () => (string) Str::uuid(),
+        ]);
+    }
+
+    public function store(Request $request, PlaceOrder $placeOrder): RedirectResponse
+    {
+        $user = $this->user($request);
+        $cart = $this->carts->current($request->session(), $user);
+        abort_if($cart === null, 404);
+
+        $request->merge(['billing_same' => $request->boolean('billing_same', true), 'save_address' => $request->boolean('save_address')]);
+        $billingSame = $request->boolean('billing_same');
+
+        $validated = $request->validate([
+            'email' => ['required', 'string', 'email', 'max:191'],
+            'phone' => ['nullable', 'string', 'max:40'],
+            ...AddressRules::rules('shipping.'),
+            'billing_same' => ['boolean'],
+            ...($billingSame ? [] : AddressRules::rules('billing.')),
+            'shipping_method' => ['required', 'string', 'max:64'],
+            'payment_method' => ['required', 'string', 'max:64'],
+            'customer_note' => ['nullable', 'string', 'max:1000'],
+            'checkout_token' => ['required', 'uuid'],
+            'expected_total' => ['nullable', 'string', 'regex:/^\d{1,13}(\.\d{1,4})?$/'],
+            'save_address' => ['boolean'],
+        ]);
+
+        $order = $placeOrder->handle($cart, new CheckoutData(
+            email: $user->email ?? $validated['email'],
+            phone: $validated['phone'] ?? null,
+            shippingAddress: $validated['shipping'],
+            billingAddress: $billingSame ? null : $validated['billing'],
+            shippingMethod: $validated['shipping_method'],
+            paymentMethod: $validated['payment_method'],
+            customerNote: $validated['customer_note'] ?? null,
+            idempotencyKey: $validated['checkout_token'],
+            expectedTotal: $validated['expected_total'] ?? null,
+            saveAddress: (bool) $validated['save_address'],
+        ), $user, $request->ip());
+
+        // Lets a guest view their own confirmation page in this session only.
+        $placed = (array) $request->session()->get(self::SESSION_ORDERS, []);
+        $request->session()->put(self::SESSION_ORDERS, array_values(array_unique([...$placed, $order->id])));
+
+        return redirect()->route('checkout.complete', $order);
+    }
+
+    public function complete(Request $request, Order $order, OrderPresenter $presenter): Response
+    {
+        $user = $this->user($request);
+        $ownsBySession = in_array($order->id, (array) $request->session()->get(self::SESSION_ORDERS, []), true);
+        $ownsByAccount = $user !== null && $order->user_id === $user->id;
+        abort_unless($ownsBySession || $ownsByAccount, 404);
+
+        $method = $this->paymentMethods->definition($order->payment_method_code);
+
+        return Inertia::render('storefront/order-complete', [
+            'order' => $presenter->forCustomer($order),
+            'paymentInstructions' => $method?->instructions(),
+        ]);
+    }
+
+    private function user(Request $request): ?User
+    {
+        $user = $request->user();
+
+        return $user instanceof User ? $user : null;
+    }
+}

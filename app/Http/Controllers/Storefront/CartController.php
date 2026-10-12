@@ -79,6 +79,38 @@ class CartController extends Controller
         return redirect()->route('cart.show');
     }
 
+    public function applyCoupon(Request $request): RedirectResponse
+    {
+        $data = $request->validate(['code' => ['required', 'string', 'max:64']]);
+        $cart = $this->carts->current($request->session(), $this->user($request));
+        abort_if($cart === null, 404);
+
+        $this->carts->setCoupon($cart, $data['code']);
+        $priced = $this->pricer->price($cart->fresh() ?? $cart);
+
+        if ($priced->couponError !== null) {
+            // Keep invalid codes off the cart so they never block checkout silently.
+            $this->carts->setCoupon($cart, null);
+
+            return back()->withErrors(['code' => $priced->couponError]);
+        }
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Coupon applied.')]);
+
+        return back();
+    }
+
+    public function removeCoupon(Request $request): RedirectResponse
+    {
+        $cart = $this->carts->current($request->session(), $this->user($request));
+
+        if ($cart !== null) {
+            $this->carts->setCoupon($cart, null);
+        }
+
+        return back();
+    }
+
     private function user(Request $request): ?User
     {
         $user = $request->user();

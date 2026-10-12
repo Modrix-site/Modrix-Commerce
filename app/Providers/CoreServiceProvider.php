@@ -67,10 +67,6 @@ class CoreServiceProvider extends ServiceProvider
     private function registerCoreNavigation(AdminNavigation $navigation): void
     {
         $navigation->add('dashboard', 'Dashboard', 'admin.dashboard', 'layout-grid', 'Overview', null, 0);
-        $navigation->add('products', 'Products', 'admin.products.index', 'package', 'Catalog', 'products.view', 100);
-        $navigation->add('categories', 'Categories', 'admin.categories.index', 'folder-tree', 'Catalog', 'products.update', 110);
-        $navigation->add('attributes', 'Options', 'admin.attributes.index', 'tags', 'Catalog', 'products.update', 120);
-        $navigation->add('inventory', 'Inventory', 'admin.inventory.index', 'warehouse', 'Catalog', 'inventory.view', 130);
         $navigation->add('users', 'Users', 'admin.users.index', 'users', 'Administration', 'users.view', 900);
         $navigation->add('roles', 'Roles & permissions', 'admin.roles.index', 'shield-check', 'Administration', 'roles.manage', 910);
         $navigation->add('settings', 'Store settings', 'admin.settings.store.edit', 'settings', 'Administration', 'settings.manage', 920);

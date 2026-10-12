@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\DashboardRedirectController;
 use App\Http\Controllers\Storefront\AccountController;
+use App\Http\Controllers\Storefront\AccountOrderController;
 use App\Http\Controllers\Storefront\CartController;
 use App\Http\Controllers\Storefront\CatalogController;
+use App\Http\Controllers\Storefront\CheckoutController;
 use App\Http\Controllers\Storefront\ProductController;
 use App\Http\Middleware\ShareStorefrontData;
 use Illuminate\Support\Facades\Route;
@@ -19,7 +21,13 @@ Route::middleware(['installed', ShareStorefrontData::class])->group(function () 
         Route::post('cart/items', [CartController::class, 'store'])->name('cart.items.store');
         Route::patch('cart/items/{item}', [CartController::class, 'update'])->name('cart.items.update');
         Route::delete('cart/items/{item}', [CartController::class, 'destroy'])->name('cart.items.destroy');
+        Route::post('cart/coupon', [CartController::class, 'applyCoupon'])->name('cart.coupon.apply');
+        Route::delete('cart/coupon', [CartController::class, 'removeCoupon'])->name('cart.coupon.remove');
     });
+
+    Route::get('checkout', [CheckoutController::class, 'show'])->name('checkout.show');
+    Route::post('checkout', [CheckoutController::class, 'store'])->middleware('throttle:checkout')->name('checkout.store');
+    Route::get('checkout/complete/{order}', [CheckoutController::class, 'complete'])->name('checkout.complete');
 
     Route::middleware('auth')->prefix('account')->name('account.')->group(function () {
         Route::get('/', [AccountController::class, 'show'])->name('show');
@@ -27,6 +35,8 @@ Route::middleware(['installed', ShareStorefrontData::class])->group(function () 
         Route::post('addresses', [AccountController::class, 'storeAddress'])->name('addresses.store');
         Route::put('addresses/{address}', [AccountController::class, 'updateAddress'])->name('addresses.update');
         Route::delete('addresses/{address}', [AccountController::class, 'destroyAddress'])->name('addresses.destroy');
+        Route::get('orders', [AccountOrderController::class, 'index'])->name('orders');
+        Route::get('orders/{order}', [AccountOrderController::class, 'show'])->name('orders.show');
     });
 });
 

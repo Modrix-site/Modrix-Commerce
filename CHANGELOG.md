@@ -4,6 +4,20 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added (Phase 2: commerce core)
+
+- Catalog: nested categories, products with variants and options, per-currency prices, SEO fields, re-encoded image uploads, admin search/filter/sort.
+- Inventory: per-variant stock, immutable movement ledger, row-locked all-or-nothing allocation, backorder policy, low-stock events and store alerts.
+- Customers and address book; profile on registration; guest orders linked after email verification.
+- Storefront: home, category, search, product pages; session/user carts with merge on login; price-change and availability notices.
+- Server-side pricing pipeline: coupons (percentage/fixed, dates, limits, minimum subtotal, product/category scope), flat-rate shipping with free-over threshold and country restrictions, rate-table tax (inclusive or exclusive, optional shipping tax).
+- Checkout with idempotency token and changed-total detection; order snapshots (items, money, addresses); human-readable order numbers.
+- Order workflow: record manual payment, ship with tracking, deliver, cancel with restock, partial/full refunds with restock; order history and notes.
+- Manual payment methods (bank transfer, cash on delivery), guest checkout toggle.
+- Queued, idempotent order emails and new-order notification to the store.
+- Reports (sales over time, orders by status, top products, AOV, refunds) and dashboard metrics in the store timezone.
+- Admin: orders, customers, discounts, shipping, taxes, payments, reports.
+
 ## [0.1.0] - 2026-10-12
 
 ### Added

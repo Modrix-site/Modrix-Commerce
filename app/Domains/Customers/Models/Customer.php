@@ -2,6 +2,7 @@
 
 namespace App\Domains\Customers\Models;
 
+use App\Domains\Orders\Models\Order;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
@@ -47,6 +48,14 @@ class Customer extends Model
     public function addresses(): HasMany
     {
         return $this->hasMany(CustomerAddress::class)->orderByDesc('is_default_shipping')->orderBy('id');
+    }
+
+    /**
+     * @return HasMany<Order, $this>
+     */
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
     }
 
     public function fullName(): string
