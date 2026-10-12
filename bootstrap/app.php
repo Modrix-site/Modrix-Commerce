@@ -21,6 +21,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         then: function () {
             Route::middleware('web')->group(base_path('routes/install.php'));
+            Route::middleware('installed')
+                ->prefix('webhooks')
+                ->name('webhooks.')
+                ->group(base_path('routes/webhooks.php'));
             Route::middleware(['web', 'installed', 'auth', 'verified', 'staff'])
                 ->prefix('admin')
                 ->name('admin.')

@@ -4,11 +4,13 @@ namespace App\Domains\Payments;
 
 use App\Core\Settings\SettingsRepository;
 use App\Domains\Checkout\Pricing\PricedCart;
+use App\Domains\Payments\Contracts\PaymentGateway;
 use App\Domains\Payments\Contracts\PaymentMethod;
 
 /**
  * Registry of payment methods: the merchant-configured manual methods plus
- * any registered by modules (Phase 3+).
+ * online gateways and methods registered by modules. A gateway is offered
+ * only once it is configured (enabled, with credentials).
  */
 final class PaymentMethods
 {
@@ -53,7 +55,9 @@ final class PaymentMethods
             }
         }
 
-        return $methods + $this->extra;
+        $extra = array_filter($this->extra, fn (PaymentMethod $m) => ! $m instanceof PaymentGateway || $m->isConfigured());
+
+        return $methods + $extra;
     }
 
     /**
@@ -81,6 +85,36 @@ final class PaymentMethods
         }
 
         return $this->extra[$code] ?? null;
+    }
+
+    /**
+     * The gateway behind a method code, if the method is an online gateway.
+     */
+    public function gateway(string $code): ?PaymentGateway
+    {
+        $method = $this->extra[$code] ?? null;
+
+        return $method instanceof PaymentGateway ? $method : null;
+    }
+
+    /**
+     * The gateway for a webhook/provider identifier, configured or not
+     * (webhooks for earlier payments must still be accepted after disabling).
+     */
+    public function gatewayForProvider(string $provider): ?PaymentGateway
+    {
+        foreach ($this->extra as $method) {
+            if ($method instanceof PaymentGateway && $method->provider() === $provider) {
+                return $method;
+            }
+        }
+
+        return null;
+    }
+
+    public function isGateway(string $code): bool
+    {
+        return $this->gateway($code) !== null;
     }
 
     /**

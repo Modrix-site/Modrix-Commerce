@@ -23,6 +23,10 @@ class LayerBoundariesTest extends TestCase
         return [
             'core is presentation-free' => ['app/Core', ['Inertia\\', 'App\\Http\\']],
             'domains are presentation-free' => ['app/Domains', ['Inertia\\', 'App\\Http\\']],
+            // Commerce depends on the PaymentGateway contract, never on a vendor adapter.
+            'checkout is payment-vendor neutral' => ['app/Domains/Checkout', ['App\\Domains\\Payments\\Gateways\\']],
+            'orders are payment-vendor neutral' => ['app/Domains/Orders', ['App\\Domains\\Payments\\Gateways\\']],
+            'payment core is payment-vendor neutral' => ['app/Domains/Payments/Contracts', ['App\\Domains\\Payments\\Gateways\\']],
         ];
     }
 

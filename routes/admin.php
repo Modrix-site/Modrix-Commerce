@@ -19,10 +19,12 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PaymentSettingsController;
+use App\Http\Controllers\Admin\PaymentWebhookEventController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\ShippingMethodController;
 use App\Http\Controllers\Admin\StoreSettingsController;
+use App\Http\Controllers\Admin\StripeSettingsController;
 use App\Http\Controllers\Admin\SystemStatusController;
 use App\Http\Controllers\Admin\TaxController;
 use App\Http\Controllers\Admin\UserController;
@@ -147,6 +149,14 @@ Route::middleware('can:settings.manage')->group(function () {
 Route::middleware('can:payments.manage')->group(function () {
     Route::get('payments', [PaymentSettingsController::class, 'edit'])->name('payments.settings');
     Route::put('payments', [PaymentSettingsController::class, 'update'])->name('payments.settings.update');
+    Route::get('payments/webhooks', [PaymentWebhookEventController::class, 'index'])->name('payments.webhooks.index');
+    Route::post('payments/webhooks/{event}/retry', [PaymentWebhookEventController::class, 'retry'])->middleware('throttle:20,1')->name('payments.webhooks.retry');
+});
+// Gateway credentials decide where customers' money goes.
+Route::middleware(['can:payments.manage', 'password.confirm'])->group(function () {
+    Route::get('payments/stripe', [StripeSettingsController::class, 'edit'])->name('payments.stripe.edit');
+    Route::put('payments/stripe', [StripeSettingsController::class, 'update'])->name('payments.stripe.update');
+    Route::post('payments/stripe/test', [StripeSettingsController::class, 'test'])->middleware('throttle:10,1')->name('payments.stripe.test');
 });
 
 // Reports

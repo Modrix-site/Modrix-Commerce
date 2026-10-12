@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Core\Audit\AuditLogger;
 use App\Core\Settings\SettingsRepository;
+use App\Domains\Payments\Gateways\Stripe\StripeSettings;
 use App\Domains\Payments\PaymentMethods;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
@@ -13,11 +14,11 @@ use Inertia\Response;
 
 /**
  * Configures the built-in manual payment methods and guest checkout.
- * Online gateways (Stripe) are added in Phase 3.
+ * Gateway credentials have their own password-confirmed page.
  */
 class PaymentSettingsController extends Controller
 {
-    public function edit(PaymentMethods $methods, SettingsRepository $settings): Response
+    public function edit(PaymentMethods $methods, SettingsRepository $settings, StripeSettings $stripe): Response
     {
         $manual = [];
 
@@ -28,6 +29,11 @@ class PaymentSettingsController extends Controller
         return Inertia::render('admin/payments/settings', [
             'methods' => $manual,
             'guestCheckout' => (bool) $settings->get('checkout.guest_enabled', true),
+            'stripe' => [
+                'enabled' => $stripe->enabled(),
+                'configured' => $stripe->enabled() && $stripe->hasCredentials(),
+                'mode' => $stripe->mode(),
+            ],
         ]);
     }
 

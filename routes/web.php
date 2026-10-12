@@ -28,6 +28,8 @@ Route::middleware(['installed', ShareStorefrontData::class])->group(function () 
     Route::get('checkout', [CheckoutController::class, 'show'])->name('checkout.show');
     Route::post('checkout', [CheckoutController::class, 'store'])->middleware('throttle:checkout')->name('checkout.store');
     Route::get('checkout/complete/{order}', [CheckoutController::class, 'complete'])->name('checkout.complete');
+    Route::post('checkout/orders/{order}/pay', [CheckoutController::class, 'pay'])->middleware('throttle:checkout')->name('checkout.pay');
+    Route::get('checkout/orders/{order}/payment/return', [CheckoutController::class, 'paymentReturn'])->middleware('throttle:30,1')->name('checkout.payment.return');
 
     Route::middleware('auth')->prefix('account')->name('account.')->group(function () {
         Route::get('/', [AccountController::class, 'show'])->name('show');

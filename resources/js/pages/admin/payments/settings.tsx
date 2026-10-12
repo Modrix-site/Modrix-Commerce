@@ -1,7 +1,8 @@
-import { Form, Head } from '@inertiajs/react';
+import { Form, Head, Link } from '@inertiajs/react';
 import PaymentSettingsController from '@/actions/App/Http/Controllers/Admin/PaymentSettingsController';
 import { FormField } from '@/components/admin/form-field';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -14,6 +15,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { settings as settingsRoute } from '@/routes/admin/payments';
+import { edit as stripeEdit } from '@/routes/admin/payments/stripe';
+import { index as webhooks } from '@/routes/admin/payments/webhooks';
 
 type Method = {
     code: string;
@@ -25,9 +28,11 @@ type Method = {
 export default function PaymentSettings({
     methods,
     guestCheckout,
+    stripe,
 }: {
     methods: Method[];
     guestCheckout: boolean;
+    stripe: { enabled: boolean; configured: boolean; mode: string | null };
 }) {
     return (
         <>
@@ -35,8 +40,40 @@ export default function PaymentSettings({
             <AdminPage>
                 <PageHeader
                     title="Payments and checkout"
-                    description="Manual methods are paid outside the store. Orders stay unpaid until you record the payment. Card payments (Stripe) arrive in a later release."
+                    description="Card payments are confirmed by Stripe. Manual methods are paid outside the store, and those orders stay unpaid until you record the payment."
+                    actions={
+                        <Button variant="outline" asChild>
+                            <Link href={webhooks()}>Payment events</Link>
+                        </Button>
+                    }
                 />
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            Stripe
+                            {stripe.configured ? (
+                                <Badge>
+                                    On
+                                    {stripe.mode === 'test'
+                                        ? ' (test mode)'
+                                        : ''}
+                                </Badge>
+                            ) : (
+                                <Badge variant="outline">Off</Badge>
+                            )}
+                        </CardTitle>
+                        <CardDescription>
+                            Accept cards and wallets on Stripe's hosted payment
+                            page. Requires a Stripe account and a webhook
+                            endpoint.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Button variant="outline" asChild>
+                            <Link href={stripeEdit()}>Configure Stripe</Link>
+                        </Button>
+                    </CardContent>
+                </Card>
                 <Form
                     {...PaymentSettingsController.update.form()}
                     options={{ preserveScroll: true }}

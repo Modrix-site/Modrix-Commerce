@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Core\Admin\AdminNavigation;
+use App\Core\Settings\SettingsRepository;
 use App\Domains\Cart\Listeners\MergeGuestCartOnLogin;
 use App\Domains\Checkout\Pricing\CartPricer;
 use App\Domains\Checkout\Pricing\Steps\DiscountStep;
@@ -13,6 +14,7 @@ use App\Domains\Customers\Listeners\LinkGuestOrdersOnVerification;
 use App\Domains\Inventory\Events\InventoryLow;
 use App\Domains\Inventory\Listeners\SendLowStockAlert;
 use App\Domains\Orders\Listeners\SendOrderEmails;
+use App\Domains\Payments\Gateways\Stripe\StripeGateway;
 use App\Domains\Payments\PaymentMethods;
 use App\Domains\Shipping\ShippingRates;
 use App\Domains\Shipping\TableShippingRateProvider;
@@ -42,7 +44,13 @@ class CommerceServiceProvider extends ServiceProvider
             return $rates;
         });
 
-        $this->app->singleton(PaymentMethods::class);
+        $this->app->singleton(PaymentMethods::class, function ($app) {
+            $methods = new PaymentMethods($app->make(SettingsRepository::class));
+            // Offered at checkout only once enabled with credentials (Admin → Payments → Stripe).
+            $methods->register($app->make(StripeGateway::class));
+
+            return $methods;
+        });
 
         // Modules may rebind this to a provider for their jurisdiction.
         $this->app->bind(TaxRateProvider::class, TableTaxRateProvider::class);
@@ -87,5 +95,8 @@ class CommerceServiceProvider extends ServiceProvider
             Limit::perMinute(10)->by('checkout:'.($request->user()?->getAuthIdentifier() ?? $request->session()->getId())),
             Limit::perMinute(30)->by('checkout-ip:'.$request->ip()),
         ]);
+
+        // Generous: providers send bursts and retry anything that is refused.
+        RateLimiter::for('webhooks', fn (Request $request) => Limit::perMinute(600)->by('webhook:'.$request->ip()));
     }
 }

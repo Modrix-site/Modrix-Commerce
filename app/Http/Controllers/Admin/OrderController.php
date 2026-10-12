@@ -7,6 +7,8 @@ use App\Domains\Orders\Enums\FulfillmentStatus;
 use App\Domains\Orders\Enums\OrderStatus;
 use App\Domains\Orders\Enums\PaymentStatus;
 use App\Domains\Orders\Models\Order;
+use App\Domains\Orders\Models\Refund;
+use App\Domains\Orders\OrderRefunds;
 use App\Domains\Orders\OrderWorkflow;
 use App\Domains\Pricing\Money;
 use App\Http\Controllers\Controller;
@@ -128,7 +130,7 @@ class OrderController extends Controller
         return $this->done($order, __('Order cancelled and stock returned.'));
     }
 
-    public function refund(Request $request, Order $order): RedirectResponse
+    public function refund(Request $request, Order $order, OrderRefunds $refunds): RedirectResponse
     {
         $data = $request->validate([
             'amount' => ['required', 'string', 'regex:/^\d{1,13}(\.\d{1,4})?$/'],
@@ -139,9 +141,11 @@ class OrderController extends Controller
 
         /** @var array<int, int> $restock */
         $restock = array_map('intval', $data['restock'] ?? []);
-        $this->workflow->refund($order, $this->actor($request), Money::of($data['amount'], $order->currency), $data['reason'], $restock);
+        $refund = $refunds->refund($order, $this->actor($request), Money::of($data['amount'], $order->currency), $data['reason'], $restock);
 
-        return $this->done($order, __('Refund recorded.'));
+        return $this->done($order, $refund->status === Refund::STATUS_PENDING
+            ? __('Refund issued. The payment provider is still processing it.')
+            : __('Refund recorded.'));
     }
 
     public function note(Request $request, Order $order): RedirectResponse

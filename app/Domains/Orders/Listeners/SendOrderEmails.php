@@ -34,12 +34,24 @@ final class SendOrderEmails implements ShouldQueue
 
     public function placed(OrderPlaced $event): void
     {
+        // Online payments are confirmed (and the order announced) once the provider confirms them.
+        if ($this->isOnline($event->orderId)) {
+            return;
+        }
+
         $this->send($event->orderId, 'placed', withInstructions: true);
         $this->sendToStaff($event->orderId);
     }
 
     public function paid(OrderPaid $event): void
     {
+        if ($this->isOnline($event->orderId)) {
+            $this->send($event->orderId, 'placed');
+            $this->sendToStaff($event->orderId);
+
+            return;
+        }
+
         $this->send($event->orderId, 'paid');
     }
 
@@ -50,6 +62,13 @@ final class SendOrderEmails implements ShouldQueue
 
     public function cancelled(OrderCancelled $event): void
     {
+        $order = Order::query()->find($event->orderId);
+
+        // An abandoned online checkout was never confirmed to the customer; do not announce its cancellation.
+        if ($order === null || ($this->isOnline($order->id) && ! $this->alreadySent($order, 'placed'))) {
+            return;
+        }
+
         $this->send($event->orderId, 'cancelled');
     }
 
@@ -124,6 +143,13 @@ final class SendOrderEmails implements ShouldQueue
             'message' => 'New-order notification sent to the store.',
             'metadata' => ['key' => 'staff_new_order'],
         ]);
+    }
+
+    private function isOnline(int $orderId): bool
+    {
+        $code = Order::query()->whereKey($orderId)->value('payment_method_code');
+
+        return is_string($code) && $this->paymentMethods->isGateway($code);
     }
 
     private function alreadySent(Order $order, string $key): bool

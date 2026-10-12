@@ -48,12 +48,17 @@ type AdminOrder = OrderDetail & {
         reference: string | null;
         amount: MoneyValue;
         status: string;
+        failure_reason: string | null;
         paid_at: string | null;
+        created_at: string | null;
     }[];
     refunds: {
         id: number;
         amount: MoneyValue;
         reason: string;
+        status: string;
+        reference: string | null;
+        failure_reason: string | null;
         created_at: string | null;
     }[];
 };
@@ -327,6 +332,11 @@ export default function OrderShow({ order, actions, canAddNotes }: Props) {
                                         {p.paid_at &&
                                             `on ${formatDate(p.paid_at)}`}
                                         {p.reference && ` · ref ${p.reference}`}
+                                        {p.failure_reason && (
+                                            <span className="block text-destructive">
+                                                {p.failure_reason}
+                                            </span>
+                                        )}
                                     </p>
                                 ))}
                                 {order.refunds.map((r) => (
@@ -334,7 +344,16 @@ export default function OrderShow({ order, actions, canAddNotes }: Props) {
                                         key={r.id}
                                         className="text-xs text-muted-foreground"
                                     >
-                                        Refund {r.amount.formatted}: {r.reason}
+                                        Refund {r.amount.formatted}
+                                        {r.status !== 'completed' &&
+                                            ` (${r.status})`}
+                                        : {r.reason}
+                                        {r.reference && ` · ref ${r.reference}`}
+                                        {r.failure_reason && (
+                                            <span className="block text-destructive">
+                                                {r.failure_reason}
+                                            </span>
+                                        )}
                                     </p>
                                 ))}
                             </CardContent>

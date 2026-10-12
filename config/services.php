@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    // Stripe credentials are entered in Admin → Payments and stored encrypted;
+    // only non-secret tuning lives here.
+    'stripe' => [
+        'base_url' => env('STRIPE_API_BASE', 'https://api.stripe.com'),
+        'session_ttl_minutes' => (int) env('STRIPE_SESSION_TTL_MINUTES', 30),
+    ],
+
 ];

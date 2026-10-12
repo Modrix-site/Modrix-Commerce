@@ -20,6 +20,8 @@ use App\Domains\Orders\Models\OrderItem;
 use App\Domains\Orders\Models\Refund;
 use App\Domains\Orders\Models\RefundItem;
 use App\Domains\Orders\Models\Shipment;
+use App\Domains\Payments\Gateway\PaymentUpdate;
+use App\Domains\Payments\Gateway\RefundUpdate;
 use App\Domains\Payments\Models\Payment;
 use App\Domains\Payments\PaymentMethods;
 use App\Domains\Pricing\Money;
@@ -50,7 +52,7 @@ final class OrderWorkflow
     {
         $actions = [];
 
-        if ($this->canRecordPayment($order)) {
+        if ($this->canRecordPayment($order) && isset(PaymentMethods::MANUAL[$order->payment_method_code])) {
             $actions[] = 'record_payment';
         }
 
@@ -115,6 +117,137 @@ final class OrderWorkflow
             $this->audit->record('order.payment_recorded', $order, ['number' => $order->number, 'amount' => $amount->toDecimal()], $actor);
 
             DB::afterCommit(fn () => OrderPaid::dispatch($order->id));
+
+            return $order;
+        });
+    }
+
+    /**
+     * Applies a provider-confirmed payment (verified webhook or server-side
+     * retrieval). Idempotent. The amount and currency must match the payment
+     * we asked for; otherwise nothing is marked paid and staff are alerted.
+     * A payment that arrives after cancellation, or a second payment for an
+     * already paid order, is recorded and flagged for refund.
+     */
+    public function confirmGatewayPayment(Payment $payment, PaymentUpdate $update): Order
+    {
+        return $this->transition($payment->order, function (Order $order) use ($payment, $update): Order {
+            $payment = $this->lockPayment($payment);
+
+            if (in_array($payment->status, [Payment::STATUS_PAID, Payment::STATUS_MISMATCH], true)) {
+                return $order;
+            }
+
+            $expected = $payment->money();
+
+            if ($update->amount === null || ! $update->amount->equals($expected)) {
+                $reported = $update->amount === null ? 'an unknown amount' : $update->amount->format();
+                $payment->forceFill([
+                    'status' => Payment::STATUS_MISMATCH,
+                    'provider_payment_id' => $update->paymentReference,
+                    'failure_reason' => "Provider reported {$reported}; expected {$expected->format()}.",
+                ])->save();
+
+                $this->log($order, 'payment', "The payment provider reported {$reported}, but {$expected->format()} was expected. The order was not marked as paid. Check the payment in the provider's dashboard.", false, null);
+                $this->audit->record('payment.amount_mismatch', $order, ['number' => $order->number, 'payment_id' => $payment->id, 'expected' => $expected->toDecimal(), 'reported' => $update->amount?->toDecimal()]);
+
+                return $order;
+            }
+
+            $payment->forceFill([
+                'status' => Payment::STATUS_PAID,
+                'provider_payment_id' => $update->paymentReference,
+                'failure_reason' => null,
+                'paid_at' => now(),
+            ])->save();
+
+            $first = $order->money('paid_total')->isZero();
+            $cancelled = $order->status === OrderStatus::Cancelled;
+            $order->forceFill([
+                'paid_total' => $order->money('paid_total')->plus($expected)->toDecimal(),
+                'paid_at' => $order->paid_at ?? now(),
+            ]);
+            $order->payment_status = $this->paymentStatusFor($order);
+
+            if ($first && ! $cancelled) {
+                $delivered = $order->fulfillment_status === FulfillmentStatus::Delivered;
+                $order->forceFill([
+                    'status' => $delivered ? OrderStatus::Completed : OrderStatus::Processing,
+                    'completed_at' => $delivered ? now() : null,
+                ]);
+            }
+            $order->save();
+
+            $this->log($order, 'payment', "Payment of {$expected->format()} received ({$order->payment_method_name}).", true, null, ['reference' => $update->paymentReference]);
+            $this->audit->record('order.payment_confirmed', $order, ['number' => $order->number, 'amount' => $expected->toDecimal(), 'provider' => $payment->provider, 'reference' => $update->paymentReference]);
+
+            if ($cancelled) {
+                $this->log($order, 'payment', 'This payment arrived after the order was cancelled. Refund it to the customer.', false, null);
+                $this->audit->record('order.paid_after_cancellation', $order, ['number' => $order->number, 'payment_id' => $payment->id]);
+            } elseif (! $first) {
+                $this->log($order, 'payment', 'A second payment was received for this order. Refund the extra payment to the customer.', false, null);
+                $this->audit->record('order.duplicate_payment', $order, ['number' => $order->number, 'payment_id' => $payment->id]);
+            } else {
+                DB::afterCommit(fn () => OrderPaid::dispatch($order->id));
+            }
+
+            return $order;
+        });
+    }
+
+    public function markGatewayPaymentProcessing(Payment $payment, PaymentUpdate $update): Order
+    {
+        return $this->transition($payment->order, function (Order $order) use ($payment, $update): Order {
+            $payment = $this->lockPayment($payment);
+
+            if ($payment->status === Payment::STATUS_PENDING) {
+                $payment->forceFill(['status' => Payment::STATUS_PROCESSING, 'provider_payment_id' => $update->paymentReference])->save();
+                $this->log($order, 'payment', 'The payment was submitted and is waiting for confirmation from the provider.', true, null);
+            }
+
+            return $order;
+        });
+    }
+
+    public function failGatewayPayment(Payment $payment, string $reason): Order
+    {
+        return $this->transition($payment->order, function (Order $order) use ($payment, $reason): Order {
+            $payment = $this->lockPayment($payment);
+
+            if ($payment->isOpen()) {
+                $payment->forceFill(['status' => Payment::STATUS_FAILED, 'failure_reason' => $reason])->save();
+                $this->log($order, 'payment', "Payment failed: {$reason}", false, null);
+                $this->audit->record('order.payment_failed', $order, ['number' => $order->number, 'payment_id' => $payment->id]);
+            }
+
+            return $order;
+        });
+    }
+
+    /**
+     * The hosted payment page expired unused. If the order has no other way
+     * to be paid, it is cancelled so its stock is released.
+     */
+    public function expireGatewayPayment(Payment $payment): Order
+    {
+        return $this->transition($payment->order, function (Order $order) use ($payment): Order {
+            $payment = $this->lockPayment($payment);
+
+            if (! $payment->isOpen()) {
+                return $order;
+            }
+
+            $payment->forceFill(['status' => Payment::STATUS_EXPIRED])->save();
+            $this->log($order, 'payment', 'The payment page expired without a completed payment.', false, null);
+
+            $otherActive = $order->payments()
+                ->whereKeyNot($payment->id)
+                ->whereIn('status', [...Payment::OPEN, Payment::STATUS_PAID, Payment::STATUS_MISMATCH])
+                ->exists();
+
+            if (! $otherActive && $order->payment_status === PaymentStatus::Unpaid && $this->canCancel($order)) {
+                return $this->cancel($order, null, 'The payment was not completed in time.');
+            }
 
             return $order;
         });
@@ -201,6 +334,16 @@ final class OrderWorkflow
                 'cancelled_at' => now(),
             ])->save();
 
+            // Close any payment page that is still open so it can no longer be paid.
+            $open = $order->payments()->whereIn('status', Payment::OPEN)->get();
+            foreach ($open as $payment) {
+                $payment->forceFill(['status' => Payment::STATUS_EXPIRED, 'failure_reason' => 'Order cancelled.'])->save();
+            }
+            $gateway = $this->paymentMethods->gateway($order->payment_method_code);
+            if ($gateway !== null && $open->isNotEmpty()) {
+                DB::afterCommit(fn () => $open->each(fn (Payment $p) => $gateway->expireSession($p)));
+            }
+
             $this->log($order, 'status', "Order cancelled: {$reason}", true, $actor);
             $this->audit->record('order.cancelled', $order, ['number' => $order->number, 'reason' => $reason], $actor);
 
@@ -213,28 +356,46 @@ final class OrderWorkflow
     /**
      * Record a refund. For manual methods the money is returned outside the
      * platform; this records it for reconciliation and optionally restocks items.
+     * For gateway payments the provider refund has already been issued (see
+     * OrderRefunds) and `$providerRefund` describes it.
      *
      * @param  array<int, int>  $restock  order item id => quantity to put back into stock
      */
-    public function refund(Order $order, User $actor, Money $amount, string $reason, array $restock = []): Refund
+    public function refund(Order $order, User $actor, Money $amount, string $reason, array $restock = [], ?Payment $payment = null, ?RefundUpdate $providerRefund = null): Refund
     {
-        return $this->transition($order, function (Order $order) use ($actor, $amount, $reason, $restock): Refund {
+        return $this->transition($order, function (Order $order) use ($actor, $amount, $reason, $restock, $payment, $providerRefund): Refund {
             if (! $amount->isPositive() || $amount->currency() !== $order->currency) {
                 throw ValidationException::withMessages(['amount' => 'Enter a positive amount in the order currency.']);
             }
 
-            if ($amount->greaterThan($order->refundable())) {
+            // The provider's webhook may already have recorded this refund (without actor or restock).
+            $existing = $providerRefund === null ? null : Refund::query()
+                ->where('order_id', $order->id)
+                ->where('provider_reference', $providerRefund->reference)
+                ->lockForUpdate()
+                ->first();
+
+            // A repeated submission with the same idempotency key returns the same provider refund.
+            if ($existing !== null && $existing->actor_id !== null) {
+                return $existing;
+            }
+
+            if ($existing === null && $amount->greaterThan($order->refundable())) {
                 throw ValidationException::withMessages(['amount' => "At most {$order->refundable()->format()} can be refunded."]);
             }
 
-            $refund = new Refund;
+            $refund = $existing ?? new Refund;
             $refund->forceFill([
                 'order_id' => $order->id,
-                'payment_id' => $order->payments()->latest('id')->value('id'),
+                'payment_id' => $payment->id ?? $order->payments()->where('status', Payment::STATUS_PAID)->latest('id')->value('id'),
                 'amount' => $amount->toDecimal(),
                 'currency' => $order->currency,
                 'reason' => $reason,
-                'status' => Refund::STATUS_COMPLETED,
+                'status' => match ($providerRefund?->status) {
+                    null, RefundUpdate::SUCCEEDED => Refund::STATUS_COMPLETED,
+                    default => $existing->status ?? Refund::STATUS_PENDING,
+                },
+                'provider_reference' => $providerRefund?->reference,
                 'actor_id' => $actor->id,
             ])->save();
 
@@ -266,26 +427,105 @@ final class OrderWorkflow
                 $this->inventory->release($toRelease, MovementReason::Restock, $order, $actor);
             }
 
-            $refunded = $order->money('refunded_total')->plus($amount);
-            $fullyRefunded = ! $refunded->lessThan($order->money('paid_total'));
+            if ($existing === null) {
+                $order->refunded_total = $order->money('refunded_total')->plus($amount)->toDecimal();
+                $order->payment_status = $this->paymentStatusFor($order);
+                $order->save();
 
-            $order->forceFill([
-                'refunded_total' => $refunded->toDecimal(),
-                'payment_status' => $fullyRefunded ? PaymentStatus::Refunded : PaymentStatus::PartiallyRefunded,
-            ])->save();
+                $this->log($order, 'refund', "Refund of {$amount->format()} recorded: {$reason}", true, $actor);
+                DB::afterCommit(fn () => OrderRefunded::dispatch($order->id));
+            }
 
-            $this->log($order, 'refund', "Refund of {$amount->format()} recorded: {$reason}", true, $actor);
-            $this->audit->record('order.refunded', $order, ['number' => $order->number, 'amount' => $amount->toDecimal(), 'restocked' => $restock], $actor);
-
-            DB::afterCommit(fn () => OrderRefunded::dispatch($order->id));
+            $this->audit->record('order.refunded', $order, ['number' => $order->number, 'amount' => $amount->toDecimal(), 'restocked' => $restock, 'reference' => $providerRefund?->reference], $actor);
 
             return $refund;
+        });
+    }
+
+    /**
+     * Applies a refund fact reported by the provider: confirms or fails a
+     * pending refund, or imports a refund made in the provider's dashboard.
+     */
+    public function applyProviderRefund(Payment $payment, RefundUpdate $update): Order
+    {
+        return $this->transition($payment->order, function (Order $order) use ($payment, $update): Order {
+            if ($update->amount->currency() !== $order->currency || $update->reference === '') {
+                return $order;
+            }
+
+            /** @var Refund|null $refund */
+            $refund = Refund::query()->where('order_id', $order->id)->where('provider_reference', $update->reference)->lockForUpdate()->first();
+
+            if ($refund === null) {
+                if ($update->status === RefundUpdate::FAILED) {
+                    return $order;
+                }
+
+                $refund = new Refund;
+                $refund->forceFill([
+                    'order_id' => $order->id,
+                    'payment_id' => $payment->id,
+                    'amount' => $update->amount->toDecimal(),
+                    'currency' => $order->currency,
+                    'reason' => 'Refunded in the payment provider dashboard.',
+                    'status' => $update->status === RefundUpdate::SUCCEEDED ? Refund::STATUS_COMPLETED : Refund::STATUS_PENDING,
+                    'provider_reference' => $update->reference,
+                ])->save();
+
+                $order->refunded_total = $order->money('refunded_total')->plus($update->amount)->toDecimal();
+                $order->payment_status = $this->paymentStatusFor($order);
+                $order->save();
+
+                $this->log($order, 'refund', "Refund of {$update->amount->format()} issued by the payment provider.", true, null, ['reference' => $update->reference]);
+                $this->audit->record('order.refund_imported', $order, ['number' => $order->number, 'amount' => $update->amount->toDecimal(), 'reference' => $update->reference]);
+                DB::afterCommit(fn () => OrderRefunded::dispatch($order->id));
+
+                return $order;
+            }
+
+            if ($update->status === RefundUpdate::SUCCEEDED && $refund->status === Refund::STATUS_PENDING) {
+                $refund->forceFill(['status' => Refund::STATUS_COMPLETED])->save();
+                $this->log($order, 'refund', "Refund of {$refund->money()->format()} confirmed by the payment provider.", false, null);
+            } elseif ($update->status === RefundUpdate::FAILED && $refund->status !== Refund::STATUS_FAILED) {
+                $refund->forceFill(['status' => Refund::STATUS_FAILED, 'failure_reason' => $update->failureReason])->save();
+
+                $order->refunded_total = $order->money('refunded_total')->minus($refund->money())->nonNegative()->toDecimal();
+                $order->payment_status = $this->paymentStatusFor($order);
+                $order->save();
+
+                $reason = $update->failureReason !== null ? " ({$update->failureReason})" : '';
+                $this->log($order, 'refund', "Refund of {$refund->money()->format()} failed at the payment provider{$reason}. Items restocked for it remain in stock.", false, null);
+                $this->audit->record('order.refund_failed', $order, ['number' => $order->number, 'reference' => $update->reference]);
+            }
+
+            return $order;
         });
     }
 
     public function addNote(Order $order, User $actor, string $message, bool $customerVisible): void
     {
         $this->log($order, 'note', $message, $customerVisible, $actor);
+    }
+
+    /**
+     * Payment status implied by the paid and refunded totals.
+     */
+    private function paymentStatusFor(Order $order): PaymentStatus
+    {
+        $paid = $order->money('paid_total');
+        $refunded = $order->money('refunded_total');
+
+        return match (true) {
+            $paid->isZero() => PaymentStatus::Unpaid,
+            $refunded->isZero() => PaymentStatus::Paid,
+            ! $refunded->lessThan($paid) => PaymentStatus::Refunded,
+            default => PaymentStatus::PartiallyRefunded,
+        };
+    }
+
+    private function lockPayment(Payment $payment): Payment
+    {
+        return Payment::query()->whereKey($payment->id)->lockForUpdate()->firstOrFail();
     }
 
     private function canRecordPayment(Order $order): bool
