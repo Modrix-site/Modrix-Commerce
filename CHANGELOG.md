@@ -16,6 +16,7 @@ All notable changes to this project are documented here. The format follows [Kee
 - Manual payment methods (bank transfer, cash on delivery), guest checkout toggle.
 - Queued, idempotent order emails and new-order notification to the store.
 - Reports (sales over time, orders by status, top products, AOV, refunds) and dashboard metrics in the store timezone.
+- Product CSV export and all-or-nothing import keyed by SKU, with a row-level error report and CSV-injection protection.
 - Admin: orders, customers, discounts, shipping, taxes, payments, reports.
 
 ## [0.1.0] - 2026-10-12

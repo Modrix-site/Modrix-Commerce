@@ -72,12 +72,72 @@ Composite primary keys. Both foreign keys cascade on delete. `role_user.created_
 
 Retention: audit logs are kept indefinitely by default. A configurable pruning command will arrive in Phase 7.
 
+## Phase 2 tables (implemented)
+
+All money columns are `DECIMAL(19,4)` and read through the `decimal:4` cast, never as floats (ADR-017).
+
+### Catalog
+
+| Table                      | Key columns                                                                                                                         | Notes                                                         |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `categories`               | `parent_id` (restrict), `slug` unique, `position`, `is_active`, SEO fields                                                          | adjacency list; a category with children cannot be deleted    |
+| `products`                 | `type` (simple/variable), `slug` unique, `status` (draft/published/archived), `published_at`, SEO fields, soft deletes              | indexed on `status, published_at`                             |
+| `product_variants`         | `product_id`, `sku` unique (64), `is_default`, `is_active`, `weight`, `barcode`, `track_inventory`, `allow_backorder`, soft deletes | every product has at least one variant; SKUs are never reused |
+| `product_prices`           | `variant_id`, `currency`, `amount`, `compare_at_amount`                                                                             | unique `variant_id, currency`                                 |
+| `product_attributes`       | `name`, `slug` unique, `position`                                                                                                   | option axes, e.g. Size                                        |
+| `product_attribute_values` | `attribute_id`, `value`, `slug`                                                                                                     | unique `attribute_id, slug`                                   |
+| `product_variant_options`  | `variant_id`, `attribute_value_id` (restrict)                                                                                       | composite PK                                                  |
+| `product_categories`       | `product_id`, `category_id`                                                                                                         | composite PK                                                  |
+| `product_images`           | `product_id`, `variant_id` null, `disk`, `path`, `alt`, `position`, `width`, `height`                                               | uploads are re-encoded server-side                            |
+
+### Inventory
+
+| Table                 | Key columns                                                                                        | Notes                                                                   |
+| --------------------- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `inventory_locations` | `code` unique, `is_default`                                                                        | one `default` location is seeded by the migration                       |
+| `inventory_stocks`    | `variant_id`, `location_id`, `on_hand`                                                             | unique `variant_id, location_id`; locked `FOR UPDATE` during allocation |
+| `inventory_movements` | `quantity_change`, `quantity_after`, `reason`, `reference` morph, `actor_id`, `note`, `created_at` | append-only ledger; the model refuses updates and deletes               |
+
+### Customers and carts
+
+| Table                | Key columns                                                                         | Notes                                                                       |
+| -------------------- | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `customers`          | `user_id` unique null (nullOnDelete), `email`, names, `phone`, `accepts_marketing`  | guests have no `user_id`                                                    |
+| `customer_addresses` | address fields, `country_code` (ISO 3166-1 alpha-2), default shipping/billing flags |                                                                             |
+| `carts`              | `token` uuid unique, `user_id` null, `currency`, `coupon_code`                      | guest carts are identified by the session token                             |
+| `cart_items`         | `cart_id`, `variant_id`, `quantity`, `seen_unit_price`                              | unique `cart_id, variant_id`; `seen_unit_price` drives price-change notices |
+
+### Discounts, shipping, tax
+
+| Table                                  | Key columns                                                                                                                                     | Notes                                 |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| `coupons`                              | `code` unique, `type` (percentage/fixed), `value`, `currency`, `min_subtotal`, `starts_at`, `ends_at`, usage limits, `times_used`, `applies_to` | soft deletes                          |
+| `coupon_products`, `coupon_categories` | composite PKs                                                                                                                                   | eligibility scope                     |
+| `coupon_redemptions`                   | `coupon_id` (restrict), `order_id`, `customer_id`, `email`, `amount`, `currency`                                                                | unique `coupon_id, order_id`          |
+| `shipping_methods`                     | `code` unique, `rate`, `currency`, `free_over`, `countries` json, `is_active`, `position`                                                       |                                       |
+| `tax_rates`                            | `country_code`, `region` null, `rate` (percent, `DECIMAL(8,4)`), `is_active`                                                                    | the most specific match (region) wins |
+
+### Orders
+
+| Table             | Key columns                                                                                                                                                                                                       | Notes                                                                       |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `orders`          | `number` unique (EM-000001), `customer_id`/`user_id` (nullOnDelete), `status`, `payment_status`, `fulfillment_status`, all totals, method code and name snapshots, `idempotency_key` unique, lifecycle timestamps | the three state fields change only through `OrderWorkflow`                  |
+| `order_items`     | `product_id`/`variant_id` (nullOnDelete), `sku`, name snapshots, `unit_price`, `subtotal`, `discount_total`, `tax_rate`, `tax_total`, `total`, `restocked_quantity`                                               | snapshots survive product deletion                                          |
+| `order_addresses` | `type` (shipping/billing) and an address snapshot                                                                                                                                                                 | unique `order_id, type`                                                     |
+| `order_events`    | `type`, `message`, `is_customer_visible`, `actor_id`, `metadata`, `created_at`                                                                                                                                    | order history, notes and sent-email records                                 |
+| `payments`        | `order_id` (restrict), `method_code`, `provider`, `provider_reference`, `amount`, `currency`, `status`, `recorded_by`, `paid_at`                                                                                  | unique `provider, provider_reference`; Phase 2 records manual payments only |
+| `refunds`         | `order_id` (restrict), `payment_id`, `amount`, `currency`, `reason`, `status`, `provider_reference`, `actor_id`                                                                                                   |                                                                             |
+| `refund_items`    | `refund_id`, `order_item_id` (restrict), `quantity`, `restocked`                                                                                                                                                  |                                                                             |
+| `shipments`       | `order_id` (restrict), `carrier`, `tracking_number`, `tracking_url`, `shipped_at`, `delivered_at`                                                                                                                 |                                                                             |
+
+Payments, refunds and shipments use `restrictOnDelete` on `order_id`, so an order with financial history cannot be hard-deleted.
+
 ## Planned tables
 
 The tables below follow §13 of the master specification and are designed when each phase starts:
 
-- **Phase 2:** `customers`, `customer_addresses`, `products`, `product_translations`, `product_variants`, `product_attributes`, `product_attribute_values`, `categories` (nested set or adjacency + path), `product_categories`, `product_images`, `product_prices`, `carts`, `cart_items`, `orders`, `order_items`, `order_addresses`, `shipments`, `inventory_locations`, `inventory_stocks`, `inventory_movements`, `coupons`, `coupon_redemptions`, `refunds`
-- **Phase 3:** `payments`, `payment_webhook_events` (unique `provider` + `event_id`)
+- **Phase 3:** `payment_webhook_events` (unique `provider` + `event_id`); `payments` already exists from Phase 2
+- **Deferred from Phase 2:** `product_translations` (storefront localisation is a Phase 8 item)
 - **Phase 4:** `extensions`, `extension_versions`, `extension_installations`, `extension_dependencies`, `extension_settings`, `extension_permissions`, `extension_events`
 - **Phase 5:** `themes`, `theme_settings`, `theme_assignments`
 - **Phase 6:** `marketplace_products`, `marketplace_releases`, `marketplace_orders`, `marketplace_order_items`, `licenses`, `license_activations`, `license_events`, `download_tokens`
