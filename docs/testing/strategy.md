@@ -81,3 +81,15 @@ DB_CONNECTION=mysql DB_DATABASE=ecomodular_test php artisan test   # MySQL run
 - Compatibility: Essence, Noir and Bloom each run home → category → search → product → cart → checkout (identical totals) → confirmation → account. Section images resolve. Demo import is additive, idempotent and requires confirmation.
 - `phpstan`, `pint`, `npm run types:check`, `npm run check`, `npm run build`: passed.
 - Browser check: Noir and Bloom were previewed on the dev store (banner, announcement, header variants, typography, sections, cards, column footer), and the preview was exited.
+
+## Phase 6 results (2026-10-17, local, PHP 8.4.25, SQLite)
+
+- `php artisan test`: 388 tests, 387 passed, 1 skipped (MySQL group), 0 failed.
+- Marketplace coverage (`tests/Feature/Marketplace`, 22 tests):
+    - **End to end:** buy → license → activate (verified signed token) → download → verify → install → enable → new release → update → roll back, against the real server code (the client's HTTP calls are routed into the application).
+    - **Integrity:** unsafe archives rejected at upload; wrong package and older or duplicate versions rejected; releases offered only after review; tampered metadata, unknown signing keys and corrupted downloads refused before any file changes.
+    - **Authorization:** activation limits and deactivation; download tokens are short-lived, single use and need an activated instance; entitlement ends at `updates_until`; customers see and download only their own licenses; server routes 404 on merchant stores; admin permissions.
+    - **Payments:** free products; paid licenses only after a verified webhook; wrong amounts issue nothing; refund and revocation block downloads, updates and activations while installed files stay.
+    - **Outage:** with the marketplace unreachable, license checks record the error, the admin page renders with a notice, and the storefront and checkout work; the grace warning appears after token validity plus 14 days.
+- `phpstan`, `pint`, `npm run types:check`, `npm run check`, `npm run build`: passed.
+- Browser check (server mode temporarily enabled on the dev store): product and release admin, storefront catalog and product page, free license claim → order page → portal with key, license admin with history, and the store-side Marketplace page with the outage and missing-key notices. Found and fixed: portal downloads needed a full browser visit (`Inertia::location`).

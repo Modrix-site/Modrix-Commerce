@@ -184,10 +184,34 @@ Module settings use the `settings` table under `extension.<vendor>.<package>.*`;
 
 Theme lifecycle events go to `extension_events` with `extension = "theme:<vendor>/<name>"`.
 
+## Phase 6 tables (implemented)
+
+Server role (used only with `ECOMODULAR_MARKETPLACE_SERVER=true`):
+
+| Table                     | Notes                                                                                                                                                                                             |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `marketplace_publishers`  | Seeded with the platform owner (`is_platform`); room for vendors later.                                                                                                                           |
+| `marketplace_products`    | Unique `slug` and `(type, extension_name)`; price in minor units, currency, status, `updates_months`, `activation_limit`; soft deletes.                                                           |
+| `marketplace_releases`    | Unique `(product_id, version)`; status `pending_review`, `published`, `rejected` or `withdrawn`; private `archive_path`, `sha256`, size, manifest, `signed_metadata`, `signature`, review fields. |
+| `marketplace_orders`      | Separate from merchant `orders`: number, buyer, status, total, Stripe session and payment intent.                                                                                                 |
+| `marketplace_order_items` | Product snapshot per order.                                                                                                                                                                       |
+| `licenses`                | `key_hash` (unique, SHA-256), `key_encrypted`, `key_hint`, status, `activation_limit`, `updates_until`, `expires_at`, `status_reason`.                                                            |
+| `license_activations`     | Per `instance_id`, with domain, platform version, `last_seen_at`, `deactivated_at`.                                                                                                               |
+| `license_events`          | Append-only license history.                                                                                                                                                                      |
+| `download_tokens`         | `token_hash` (unique), license, release, instance, `expires_at`, `used_at` (single use).                                                                                                          |
+
+Client role (every store):
+
+| Table                        | Notes                                                                                                                                                                     |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `marketplace_licenses`       | One per product (`product_slug` unique): encrypted key, status, `updates_until`, signed token, `token_valid_until`, `available_release`, `last_checked_at`, `last_error`. |
+| `marketplace_update_history` | Append-only install, update and rollback log: versions, success, message, `backup_path`, `sha256`, actor.                                                                 |
+
+The store's instance id is the setting `marketplace.instance_id`.
+
 ## Planned tables
 
 The tables below follow §13 of the master specification and are designed when each phase starts:
 
 - **Deferred from Phase 2:** `product_translations` (storefront localisation is a Phase 8 item)
-- **Phase 6:** `marketplace_products`, `marketplace_releases`, `marketplace_orders`, `marketplace_order_items`, `licenses`, `license_activations`, `license_events`, `download_tokens`
 - **Post-launch:** `vendors`, `vendor_payouts`, `marketplace_commissions`, `vendor_verifications`

@@ -6,11 +6,11 @@ Status legend: ✅ Complete · 🟡 In progress · ⬜ Not started · ⛔ Blocke
 | ----- | ------------------------------------------------------------------------------------------------------- | ------ |
 | 0     | Discovery and technical plan                                                                            | ✅     |
 | 1     | Application foundation (auth, owner install, RBAC, audit, settings, admin shell, CI)                    | ✅     |
-| 2     | Commerce core (catalog, customers, cart, checkout, orders, inventory, discounts, shipping/tax, reports) | ⬜     |
+| 2     | Commerce core (catalog, customers, cart, checkout, orders, inventory, discounts, shipping/tax, reports) | ✅     |
 | 3     | Payment integrations (gateway contract, Stripe test mode, webhooks, refunds)                            | 🟡     |
 | 4     | Module engine (manifest, lifecycle, dependencies, sample modules)                                       | ✅     |
 | 5     | Theme engine (manifests, contracts, default + 2 sample themes)                                          | ✅     |
-| 6     | Official marketplace & licensing                                                                        | ⬜     |
+| 6     | Official marketplace & licensing                                                                        | ✅     |
 | 7     | Production hardening                                                                                    | ⬜     |
 | 8     | Post-launch ecosystem (does not block 1.0)                                                              | ⬜     |
 
@@ -84,9 +84,19 @@ Known limitations: no package upload yet (packages arrive through deployment; up
 
 Known limitations: section types cover the home page only (listing and product pages use variants, not sections); no drag-and-drop builder (deliberately, per the spec); themes cannot add components, by design (ADR-031).
 
-### Phase 6 — Official marketplace and licensing (next)
+### Phase 6 — Official marketplace and licensing
 
-- Marketplace catalog, purchases with the platform's own Stripe account (separate from merchant orders), licenses and activations, signed package downloads and secure update channel feeding the existing module and theme lifecycles.
+- [x] Marketplace server role behind `ECOMODULAR_MARKETPLACE_SERVER` (404 on merchant stores); single publisher (ADR-033).
+- [x] Products, release upload with archive scan and manifest validation, review, Ed25519-signed metadata, withdrawal; `ecomodular:marketplace:keygen` (ADR-034).
+- [x] Marketplace checkout with separate Stripe credentials and webhook; idempotent fulfilment with amount check; free products; refunds.
+- [x] Licenses (hashed and encrypted keys, states, activation limits, update entitlement), signed tokens, license API, single-use download tokens, append-only license history (ADR-035).
+- [x] Store client: catalog, activate/check/deactivate, verified install and update with backup, rollback, update history, daily check with grace warning.
+- [x] Customer portal (keys, activations, downloads, orders) and marketplace admin (products, releases, orders and refunds, licenses).
+- [x] Exit criteria tested: unauthorized users cannot download paid packages; integrity verification is enforced; a licensing outage does not break store operations; refund and revocation are tested.
+
+Known limitations: no real Stripe test-mode purchase on the marketplace account (same blocker as Phase 3); rollback restores files, not database migrations; signing-key rotation is manual (documented); no third-party vendors (Phase 8).
+
+### Phase 7 — Production hardening (next)
 
 ## Progress log
 
@@ -118,6 +128,13 @@ Known limitations: section types cover the home page only (listing and product p
 
 - Slices 5.1–5.5 implemented (see CHANGELOG and `docs/plans/phase-5-themes.md`); ADRs 031–032; theme developer guide.
 - Design change from Phase 0: themes are data-only (no compiled React bundles) so marketplace themes cannot run code.
+- Phase 3 remains 🟡 until the Stripe test-mode purchase is run with real test keys.
+
+### 2026-10-17 — Phase 6
+
+- Slices 6.1–6.5 implemented (see CHANGELOG and `docs/plans/phase-6-marketplace.md`); ADRs 033–035; licensing guide rewritten.
+- Added `paragonie/sodium_compat` because the reference machine's PHP has no sodium extension.
+- Stripe REST access moved into a shared `StripeApi` used by the merchant gateway and the marketplace.
 - Phase 3 remains 🟡 until the Stripe test-mode purchase is run with real test keys.
 
 ## Continuation instructions

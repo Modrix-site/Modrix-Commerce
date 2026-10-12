@@ -4,6 +4,20 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added (Phase 6: official marketplace and licensing)
+
+- Marketplace server role (`ECOMODULAR_MARKETPLACE_SERVER`, off by default): product admin, release upload with archive scanning and manifest validation, review and Ed25519-signed release metadata, withdrawal; `ecomodular:marketplace:keygen`.
+- Marketplace checkout with separate Stripe credentials and webhook, idempotent fulfilment, free products, refunds.
+- Licenses with hashed and encrypted keys, states, activation limits and update entitlement; append-only license history; license admin (suspend, revoke, reinstate, extend).
+- License API v1 (catalog, activate, check, deactivate, updates, downloads) with signed tokens and single-use download links.
+- Customer portal: licenses, keys, activations, downloads and orders.
+- Store client (Admin → Extensions → Marketplace): catalog, license activation, verified install and update with backup, rollback, update history, daily `ecomodular:marketplace:check` with a grace-period warning; installed extensions are never disabled.
+- Licensing guide rewritten; ADRs 033–035.
+
+### Changed
+
+- Stripe REST calls and webhook verification moved into a shared `StripeApi`, used by the merchant gateway and the marketplace.
+
 ### Added (Phase 5: theme engine)
 
 - Data-only themes (`themes/<vendor>/<name>/theme.json` with images and WOFF2 fonts). The validator rejects code or markup files, path escapes, unsafe links and unknown values (JSON Schema in `docs/extensions/theme.schema.json`).

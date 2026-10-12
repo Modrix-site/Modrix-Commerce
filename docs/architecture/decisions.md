@@ -244,3 +244,34 @@ Each entry records a decision, its context, and its consequences. Entries are ap
     - **Preview:** session-scoped, and honoured only for users with `themes.manage`.
     - **Fallback:** if the active theme's files disappear, the bundled default theme is used, then a built-in design.
 - **Consequences:** Theme updates cannot silently overwrite merchant content or settings (tested). The spec's suggested `themes`, `theme_settings` and `theme_assignments` tables are covered by `extensions` and settings. A single storefront needs no assignment table; multi-storefront assignment is post-1.0.
+
+## ADR-033 — Marketplace server and client in one codebase
+
+- **Date:** 2026-10-17
+- **Status:** Accepted
+- **Context:** The official marketplace sells extensions with the platform owner's own payments, while every merchant store must be able to buy, verify and install them. A separate service would be a second stack to secure and maintain.
+- **Decision:** One codebase, two roles. The server role (catalog, release review and signing, marketplace checkout, licenses, license API, downloads) is enabled only by `ECOMODULAR_MARKETPLACE_SERVER=true`; its routes sit behind the `marketplace.server` middleware and return 404 everywhere else. The client role (Admin → Extensions → Marketplace) is part of every store. Marketplace orders, payments and Stripe credentials (`MARKETPLACE_STRIPE_*`, webhook `/webhooks/marketplace/stripe`) are separate from merchant orders and gateway settings; webhook deduplication reuses the payment event inbox with provider `marketplace-stripe`. Version 1 has one publisher (the owner); `marketplace_publishers` keeps room for vendors later.
+- **Consequences:** The marketplace is tested end to end in one suite (the client is routed into the server code in tests). Merchant stores carry dormant server code that is unreachable unless explicitly enabled. Third-party vendors need verification, review and payout processes first (Phase 8).
+
+## ADR-034 — Signed release metadata, verified before any file changes
+
+- **Date:** 2026-10-17
+- **Status:** Accepted
+- **Decision:**
+    - Releases are signed with **Ed25519** (libsodium, or `paragonie/sodium_compat` where the extension is missing) over canonical JSON metadata: product, package, type, version, platform constraint, SHA-256, size, publication date and key id. The key id (first 16 hex characters of the SHA-256 of the public key) selects the trusted key, so keys can be rotated with an overlap.
+    - Upload runs an archive scan (no traversal, absolute paths or symlinks; size and file-count limits; manual extraction) and the module or theme validator. A release is `pending_review` and is signed only when the owner approves it, after the archive is hashed again.
+    - The client verifies, in order: signature against a trusted key; product, package and type against the license; platform compatibility; downloaded size and SHA-256; archive scan and manifest validation; manifest name and version. Only then does it back up the current files, swap directories by rename and resync the registry. It never runs migrations or enables anything; the normal lifecycle does that with the merchant's confirmation.
+- **Consequences:** Tampered archives, tampered metadata, unknown keys and corrupted downloads are rejected before `modules/` or `themes/` change (tested). A signature proves origin, not safety: module code still needs review and the merchant's trust confirmation (ADR-029). Rollback restores files only; schema changes need a database backup.
+
+## ADR-035 — Licenses, signed tokens and outage behaviour
+
+- **Date:** 2026-10-17
+- **Status:** Accepted
+- **Decision:**
+    - **Keys** (`EMK-XXXXX-XXXXX-XXXXX-XXXXX`) are stored as a SHA-256 hash for lookup and encrypted for display in the customer portal.
+    - **States:** `active`, `expired`, `revoked`, `refunded`, `suspended`, with an optional activation limit and an `updates_until` entitlement date. Activations are per random instance id.
+    - **Tokens:** the license API answers with a signed token (license, product, status, instance id, `updates_until`, `valid_until`); the store verifies the signature and its own instance id.
+    - **Downloads:** need an active, entitled license activated on that instance, through a hashed, single-use token valid for 10 minutes.
+    - **Status changes:** refunds, revocations and suspensions take effect at once on the server, expire unused download tokens, and are logged in `license_events` (append-only) and the audit log.
+    - **Outages:** the storefront and checkout never call the marketplace, and the client never disables installed extensions. When token validity plus a 14-day grace period has passed without a successful check, the admin shows a warning only.
+- **Consequences:** A licensing outage cannot take a store down (tested with the server unreachable). The trade-off: a refunded or revoked extension keeps running where it is installed; enforcement covers updates, downloads and new activations, in line with the rule that extensions never disable core features.
