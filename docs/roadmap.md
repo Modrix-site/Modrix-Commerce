@@ -7,7 +7,7 @@ Status legend: ✅ Complete · 🟡 In progress · ⬜ Not started · ⛔ Blocke
 | 0     | Discovery and technical plan                                                                            | ✅     |
 | 1     | Application foundation (auth, owner install, RBAC, audit, settings, admin shell, CI)                    | ✅     |
 | 2     | Commerce core (catalog, customers, cart, checkout, orders, inventory, discounts, shipping/tax, reports) | ⬜     |
-| 3     | Payment integrations (gateway contract, Stripe test mode, webhooks, refunds)                            | ⬜     |
+| 3     | Payment integrations (gateway contract, Stripe test mode, webhooks, refunds)                            | 🟡     |
 | 4     | Module engine (manifest, lifecycle, dependencies, sample modules)                                       | ⬜     |
 | 5     | Theme engine (manifests, contracts, default + 2 sample themes)                                          | ⬜     |
 | 6     | Official marketplace & licensing                                                                        | ⬜     |
@@ -48,14 +48,19 @@ Exactly the "Definition of Done for Version 1.0" in the master specification (§
 
 Known limitations carried forward: weight-based shipping rates are not implemented (flat rate only); CSV import cannot add variants to an existing product; reports aggregate in PHP, which suits small and medium stores but should move to SQL aggregation in Phase 7; the MySQL locking test has not been run on this machine.
 
-### Phase 3 — Payment integrations (next)
+### Phase 3 — Payment integrations
 
-- `PaymentGateway` contract extending the Phase 2 `PaymentMethod` extension point: create intent, confirm, capture, refund, webhook verification.
-- Stripe in test mode as the reference gateway; secret keys stored encrypted in settings and never logged or sent to the browser (only the publishable key is).
-- `payment_webhook_events` with unique `provider + event_id` for idempotent processing; signature verification before any work; queued handling.
-- Payment status changes only through `OrderWorkflow`; amount and currency verified against the order on every webhook.
-- Gateway refunds wired into the existing refund flow.
-- Exit: test-mode purchase end to end with webhook confirmation; replayed and forged webhooks are rejected or ignored by tests.
+- [x] `PaymentGateway` contract extending the Phase 2 `PaymentMethod` extension point: create session, retrieve, refund, webhook verification and normalisation.
+- [x] Stripe in test mode as the reference gateway; secret keys stored encrypted and never logged or sent to the browser (no publishable key is needed with hosted Checkout).
+- [x] `payment_webhook_events` with unique `provider + event_id`; signature verification before anything is stored; queued, retrying processing; admin event log.
+- [x] Payment status changes only through `OrderWorkflow`; amount and currency verified on every confirmation.
+- [x] Gateway refunds wired into the refund flow; refund webhooks reconcile them.
+- [x] Replayed and forged webhooks are rejected or ignored by tests; a redirect alone cannot mark an order paid.
+- [ ] **Test-mode purchase end to end against a real Stripe account.** Blocked on the merchant's Stripe test keys; see `docs/payments/stripe.md` §5. Phase 3 stays 🟡 until this passes.
+
+### Phase 4 — Module engine (next)
+
+- Manifest schema and validation, module lifecycle (install, enable, disable, update, uninstall, recovery), dependency resolution, permissions and settings registered by modules, sample modules.
 
 ## Progress log
 
@@ -72,9 +77,14 @@ Known limitations carried forward: weight-based shipping rates are not implement
 - Fixed during the phase: SQLite returning DECIMAL as float (ADR-017), SQLite LIKE escaping, stale product form state after create, non-ISO ICU region codes in the country list.
 - Blockers/limitations: still no local MySQL or Docker, so the MySQL locking test runs in CI only. No GitHub remote, so commits are local.
 
+### 2026-10-14 — Phase 3
+
+- Slices 3.1–3.4 implemented (see CHANGELOG and `docs/plans/phase-3-payments.md`); ADRs 025–027; Stripe setup guide.
+- Blockers/limitations: no Stripe test account on this machine, so the real test-mode purchase is still to be run (all provider interaction is covered with faked HTTP and correctly signed webhook fixtures). Still no local MySQL or Docker.
+
 ## Continuation instructions
 
 1. Put PHP 8.4 first on PATH (`C:\php84` on the reference machine).
 2. `composer install && npm install`, `cp .env.example .env`, `php artisan key:generate`, `php artisan migrate`.
 3. Run quality gates: `composer test`, `npm run types:check`, `npm run check`, `npm run build`.
-4. Start Phase 3 from the acceptance criteria above; write `docs/plans/phase-3-payments.md` first, then build the gateway contract before Stripe.
+4. Close Phase 3 by running the Stripe test-mode purchase (`docs/payments/stripe.md` §5) with real test keys. Then start Phase 4: write `docs/plans/phase-4-modules.md` first.

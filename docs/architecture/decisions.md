@@ -168,3 +168,24 @@ Each entry records a decision, its context, and its consequences. Entries are ap
 - **Date:** 2026-10-12
 - **Status:** Accepted
 - **Decision:** Order emails are sent by a queued subscriber. Each sent email is recorded as an `order_events` row with a key (e.g. `placed`, `refunded:<total>`); a cache lock prevents concurrent duplicates and the record prevents repeats after retries or duplicate event delivery.
+
+## ADR-025 — Stripe Checkout over the REST API, without the SDK
+
+- **Date:** 2026-10-14
+- **Status:** Accepted
+- **Decision:** The reference gateway uses Stripe Checkout (hosted payment page), so card data never reaches the application (PCI SAQ-A scope). It calls the Stripe REST API with Laravel's HTTP client and a pinned `Stripe-Version` rather than `stripe/stripe-php`. Every creating request carries an idempotency key derived from our own record (`payment-<id>`, or the order state for refunds).
+- **Consequences:** Every provider call can be faked in tests with `Http::fake()`, and there is no extra dependency. The adapter implements the small part of the API it needs, plus webhook signature verification (HMAC-SHA256 over `timestamp.payload`, 5-minute tolerance). Upgrading the API version is a deliberate change to one constant, covered by tests. Checkout, orders and the gateway contract must not import the adapter (architecture test).
+
+## ADR-026 — Gateway credentials are encrypted, write-only settings
+
+- **Date:** 2026-10-14
+- **Status:** Accepted
+- **Decision:** Secret keys and webhook signing secrets are entered in the admin UI, encrypted with `APP_KEY` (`SecretSettings`), and never returned to the browser; only the last four characters are shown. Changing them requires `payments.manage` and a recent password confirmation, because whoever controls the key controls where customers' money goes. Changes are audited without the values.
+- **Consequences:** Merchants can configure payments without shell access. Rotating `APP_KEY` makes stored secrets unreadable; they then read as missing and must be re-entered (documented in `docs/payments/stripe.md`).
+
+## ADR-027 — One reconciliation path; a redirect never marks an order paid
+
+- **Date:** 2026-10-14
+- **Status:** Accepted
+- **Decision:** Provider facts reach orders only through `PaymentReconciler` → `OrderWorkflow`. The facts come from three sources: a verified webhook, a server-side retrieval of the session (on the customer's return and in the five-minute `ecomodular:payments:reconcile` job), or the response to our own refund request. Each transition locks the order and payment rows, is idempotent, and checks that the amount and currency match the payment we created. Webhooks are verified before anything is stored and are stored once per `(provider, event_id)`. Late, duplicate and out-of-order facts are recorded rather than dropped: a payment after cancellation, or a second payment, is flagged for refund. A session that expires unpaid cancels the order and releases its stock.
+- **Consequences:** The return URL carries no authority; forging it changes nothing. Card orders are announced by email only once paid, so abandoned checkouts do not produce confirmation or cancellation emails. Refunds against an order paid twice go against the latest payment; refunding beyond that payment is refused by the provider.

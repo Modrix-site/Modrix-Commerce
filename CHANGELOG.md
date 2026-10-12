@@ -4,6 +4,22 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added (Phase 3: payment integrations)
+
+- `PaymentGateway` contract with provider-neutral payment and refund facts; gateway registry.
+- Stripe Checkout (hosted page): idempotent session creation, signed webhook verification, server-side reconciliation, refunds, Stripe minor-unit handling.
+- Encrypted, write-only gateway credentials behind password confirmation; connection test.
+- Webhook inbox with per-event deduplication, queued retrying processing, and an admin payment event log with retry.
+- Customer flow: redirect to payment, "confirming"/"processing"/"complete your payment" states, retry with session reuse, cancellation of abandoned payments with stock release.
+- Gateway refunds from the order page; refund webhooks confirm, fail or import refunds.
+- `ecomodular:payments:reconcile` command, scheduled every five minutes.
+- Stripe setup guide (`docs/payments/stripe.md`), ADRs 025–027.
+
+### Changed
+
+- Card orders send the order confirmation and staff notification when payment is confirmed, not when the order is placed.
+- Manual payment recording is no longer offered for orders paid through a gateway.
+
 ### Added (Phase 2: commerce core)
 
 - Catalog: nested categories, products with variants and options, per-currency prices, SEO fields, re-encoded image uploads, admin search/filter/sort.

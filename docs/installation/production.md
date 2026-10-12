@@ -71,6 +71,8 @@ Use `docker/nginx/default.conf` as a template. It sets the document root to `pub
 
 ## 6. Queue worker and scheduler
 
+Both are required: order emails and payment webhooks are processed on the queue, and the scheduler runs payment reconciliation every five minutes (see `docs/payments/stripe.md`).
+
 systemd unit (`/etc/systemd/system/ecomodular-queue.service`):
 
 ```ini

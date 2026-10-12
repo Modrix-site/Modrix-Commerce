@@ -132,11 +132,25 @@ All money columns are `DECIMAL(19,4)` and read through the `decimal:4` cast, nev
 
 Payments, refunds and shipments use `restrictOnDelete` on `order_id`, so an order with financial history cannot be hard-deleted.
 
+## Phase 3 tables and columns (implemented)
+
+| Table / column                 | Notes                                                                                                                                                                                         |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `payments.provider_reference`  | for gateways, the hosted session id (unique with `provider`)                                                                                                                                  |
+| `payments.provider_payment_id` | the provider's charge/payment intent id, used to match refunds; indexed                                                                                                                       |
+| `payments.checkout_url`        | the hosted page, reused while the session is valid                                                                                                                                            |
+| `payments.expires_at`          | when the hosted session expires                                                                                                                                                               |
+| `payments.failure_reason`      | provider failure or mismatch explanation                                                                                                                                                      |
+| `payments.status`              | `pending`, `processing`, `paid`, `failed`, `expired`, `mismatch`; indexed with `created_at` for the reconcile job                                                                             |
+| `refunds.status`               | `pending`, `completed`, `failed`; `refunds.failure_reason`; `provider_reference` indexed                                                                                                      |
+| `payment_webhook_events`       | `provider`, `event_id` (unique together), `type`, `payload` json, `status` (received/processed/ignored/failed), `attempts`, `error`, `order_id` (nullOnDelete), `received_at`, `processed_at` |
+
+Webhook payloads contain no card data (Stripe never sends full card numbers). They may contain customer emails and are kept for audit; retention and pruning arrive with Phase 7.
+
 ## Planned tables
 
 The tables below follow §13 of the master specification and are designed when each phase starts:
 
-- **Phase 3:** `payment_webhook_events` (unique `provider` + `event_id`); `payments` already exists from Phase 2
 - **Deferred from Phase 2:** `product_translations` (storefront localisation is a Phase 8 item)
 - **Phase 4:** `extensions`, `extension_versions`, `extension_installations`, `extension_dependencies`, `extension_settings`, `extension_permissions`, `extension_events`
 - **Phase 5:** `themes`, `theme_settings`, `theme_assignments`

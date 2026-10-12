@@ -43,3 +43,11 @@ DB_CONNECTION=mysql DB_DATABASE=ecomodular_test php artisan test   # MySQL run
 - `npm run types:check`, `npm run check`, `npm run build`: passed.
 - Browser check: admin product creation, storefront purchase by bank transfer, admin payment recording, dashboard metrics, CSV export.
 - MySQL group: **not executed locally**; it runs in CI's MySQL job.
+
+## Phase 3 results (2026-10-14, local, PHP 8.4.25, SQLite)
+
+- `php artisan test`: 255 tests, 254 passed, 1 skipped (MySQL group), 0 failed.
+- Payments coverage (`tests/Feature/Payments`, `tests/Unit/StripeAmountTest.php`): hosted-session creation (amount in minor units, idempotency key, pinned API version); a forged or unpaid return redirect leaves the order unpaid; server-side confirmation; amount and currency mismatches; duplicate and re-sent webhooks; forged, stale, unsigned and wrong-secret webhooks rejected before storage; foreign sessions and irrelevant events ignored; expiry cancels and restocks without emails; payment after cancellation is flagged; expiry after payment is a no-op; async (processing → succeeded/failed) flows; retry reuses or replaces sessions and closes the old one; Stripe outage at checkout; ownership checks; the reconcile command; gateway refunds (issued first, rejected, double-submitted, failed later, imported from the dashboard, webhook racing the admin request); encrypted write-only credentials behind password confirmation; secrets absent from pages, storage and audit; the event log and retry; the route permission matrix; and an architecture rule that checkout and orders do not import the Stripe adapter.
+- Stripe is faked at the HTTP layer (`Http::fake`, `Http::preventStrayRequests`) and webhooks are signed exactly as Stripe signs them (`tests/Support/StripeFixtures.php`).
+- `vendor/bin/phpstan analyse`: 0 errors. `vendor/bin/pint --test`: passed. `npm run types:check`, `npm run check`, `npm run build`: passed.
+- **Not yet executed:** a test-mode purchase against a real Stripe account. It needs the merchant's Stripe test keys and webhook secret; follow `docs/payments/stripe.md` §5.
