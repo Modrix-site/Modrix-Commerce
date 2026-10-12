@@ -56,6 +56,8 @@ class AdminAccessTest extends TestCase
             'owner views system' => ['owner', 'admin.system.status', 200],
             'store manager cannot view system' => ['store-manager', 'admin.system.status', 403],
             'every staff role sees dashboard' => ['analyst', 'admin.dashboard', 200],
+            'administrator views extensions' => ['administrator', 'admin.extensions.index', 200],
+            'store manager cannot view extensions' => ['store-manager', 'admin.extensions.index', 403],
             'administrator configures stripe' => ['administrator', 'admin.payments.stripe.edit', 200],
             'store manager cannot configure stripe' => ['store-manager', 'admin.payments.stripe.edit', 403],
             'administrator views payment events' => ['administrator', 'admin.payments.webhooks.index', 200],

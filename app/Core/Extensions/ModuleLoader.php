@@ -180,6 +180,12 @@ final class ModuleLoader
                     ->name($manifest->storefrontRoutePrefix())
                     ->group($file);
             }
+
+            // Names are assigned after a route is added; the framework refreshes the
+            // lookups once at boot, which may already have happened.
+            $routes = $this->app->make('router')->getRoutes();
+            $routes->refreshNameLookups();
+            $routes->refreshActionLookups();
         } catch (Throwable $e) {
             $this->fail($name, $e);
         }

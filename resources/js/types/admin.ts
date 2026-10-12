@@ -90,3 +90,33 @@ export type CategoryOption = {
     name: string;
     depth: number;
 };
+
+export type ExtensionSummary = {
+    id: number;
+    name: string;
+    display_name: string;
+    description: string | null;
+    author: string | null;
+    state: string;
+    state_label: string;
+    version: string | null;
+    available_version: string | null;
+    update_available: boolean;
+    failure: string | null;
+    errors: string[];
+    requires: Record<string, string>;
+    capabilities: { key: string; label: string }[];
+};
+
+export type ExtensionSettingField = {
+    key: string;
+    type: 'boolean' | 'string' | 'text' | 'integer' | 'select' | 'email';
+    label: string;
+    help?: string;
+    default?: unknown;
+    required?: boolean;
+    min?: number;
+    max?: number;
+    max_length?: number;
+    options?: { value: string | number; label: string }[];
+};

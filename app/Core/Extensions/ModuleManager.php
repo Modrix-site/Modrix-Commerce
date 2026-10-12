@@ -4,6 +4,7 @@ namespace App\Core\Extensions;
 
 use App\Core\Audit\AuditLogger;
 use App\Core\Authorization\Models\Permission;
+use App\Core\Authorization\Models\Role;
 use App\Core\Authorization\PermissionRegistry;
 use App\Core\Authorization\PermissionSynchronizer;
 use App\Core\Extensions\Models\Extension;
@@ -398,6 +399,14 @@ final class ModuleManager
         }
 
         $this->synchronizer->sync();
+
+        // Administrators hold every permission (SystemRoles); extend that to new module permissions.
+        $administrator = Role::query()->where('name', 'administrator')->where('is_system', true)->first();
+        $ids = Permission::query()->whereIn('name', array_column($manifest->permissions, 'name'))->pluck('id')->all();
+
+        if ($administrator !== null && $ids !== []) {
+            $administrator->permissions()->syncWithoutDetaching($ids);
+        }
     }
 
     private function clearFrameworkCaches(): void

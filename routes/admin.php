@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\Catalog\ProductImageController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ExtensionController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PaymentSettingsController;
@@ -161,6 +162,20 @@ Route::middleware(['can:payments.manage', 'password.confirm'])->group(function (
 
 // Reports
 Route::get('reports', [ReportController::class, 'index'])->middleware('can:reports.view')->name('reports.index');
+
+// Extensions. Actions that run, change or remove code and data need a recent password confirmation.
+Route::middleware('can:extensions.view')->group(function () {
+    Route::get('extensions', [ExtensionController::class, 'index'])->name('extensions.index');
+    Route::get('extensions/{extension}', [ExtensionController::class, 'show'])->name('extensions.show');
+});
+Route::middleware('throttle:30,1')->group(function () {
+    Route::post('extensions/{extension}/install', [ExtensionController::class, 'install'])->middleware(['can:extensions.install', 'password.confirm'])->name('extensions.install');
+    Route::post('extensions/{extension}/enable', [ExtensionController::class, 'enable'])->middleware(['can:extensions.enable', 'password.confirm'])->name('extensions.enable');
+    Route::post('extensions/{extension}/disable', [ExtensionController::class, 'disable'])->middleware('can:extensions.disable')->name('extensions.disable');
+    Route::post('extensions/{extension}/update', [ExtensionController::class, 'update'])->middleware(['can:extensions.update', 'password.confirm'])->name('extensions.update');
+    Route::put('extensions/{extension}/settings', [ExtensionController::class, 'configure'])->middleware('can:extensions.configure')->name('extensions.settings');
+    Route::delete('extensions/{extension}', [ExtensionController::class, 'uninstall'])->middleware(['can:extensions.install', 'password.confirm'])->name('extensions.uninstall');
+});
 
 Route::get('audit-logs', AuditLogController::class)->middleware('can:audit.view')->name('audit-logs.index');
 Route::get('system', SystemStatusController::class)->middleware('can:system.view')->name('system.status');

@@ -70,6 +70,7 @@ class ModuleLifecycleTest extends TestCase
         $this->assertSame(ModuleState::Enabled, $this->extension()->state);
         $this->assertSame('Hello from a module', app('acme.hello.greeter')->greet());
         $this->assertTrue(app('acme.hello.booted'));
+        $this->assertSame(url('/admin/m/acme/hello'), route('admin.acme.hello.index'));
         $this->actingAs($owner)->get('/admin/m/acme/hello')->assertOk()->assertSee('hello admin');
         $this->get('/m/acme/hello/ping')->assertOk()->assertSee('pong');
 
