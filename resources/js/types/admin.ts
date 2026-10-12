@@ -1,0 +1,75 @@
+export type Paginated<T> = {
+    data: T[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    from: number | null;
+    to: number | null;
+    prev_page_url: string | null;
+    next_page_url: string | null;
+};
+
+/** Shape of a paginated Laravel API Resource collection. */
+export type ResourcePaginated<T> = {
+    data: T[];
+    links: {
+        first: string | null;
+        last: string | null;
+        prev: string | null;
+        next: string | null;
+    };
+    meta: {
+        current_page: number;
+        last_page: number;
+        per_page: number;
+        total: number;
+        from: number | null;
+        to: number | null;
+    };
+};
+
+export type RoleSummary = {
+    id: number;
+    name: string;
+    display_name: string;
+};
+
+export type StaffUser = {
+    id: number;
+    name: string;
+    email: string;
+    email_verified: boolean;
+    disabled: boolean;
+    two_factor_enabled: boolean;
+    roles: RoleSummary[];
+    created_at: string | null;
+};
+
+export type AssignableRole = RoleSummary & {
+    description: string | null;
+    grantable: boolean;
+};
+
+export type AuditLogEntry = {
+    id: number;
+    action: string;
+    actor: string | null;
+    subject_type: string | null;
+    subject_id: number | null;
+    ip_address: string | null;
+    metadata: Record<string, unknown> | null;
+    created_at: string;
+};
+
+export type RequirementCheck = {
+    key: string;
+    label: string;
+    passed: boolean;
+    detail: string;
+};
+
+export type CurrencyOption = {
+    code: string;
+    name: string;
+};
