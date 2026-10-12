@@ -172,11 +172,22 @@ Webhook payloads contain no card data (Stripe never sends full card numbers). Th
 
 Module settings use the `settings` table under `extension.<vendor>.<package>.*`; module permissions use `permissions.source = <vendor>/<package>`. Bundled sample modules add `product_reviews` and `order_alert_deliveries` when installed.
 
+## Phase 5 columns (implemented)
+
+| Table / column                     | Notes                                                                                    |
+| ---------------------------------- | ---------------------------------------------------------------------------------------- |
+| `extensions.type = theme`          | Themes reuse the extensions table; the unique key is now `(type, name)`.                 |
+| `extensions.applied_manifest`      | The theme version the merchant applied (rendered by the storefront); `applied_at`.       |
+| `settings: theme.<v>.<n>.design`   | Merchant design overrides (flat map of design settings).                                 |
+| `settings: theme.<v>.<n>.sections` | Merchant home sections (`{"home": [...]}`).                                              |
+| `settings: theme.uploads`          | Image library of merchant uploads (`media:themes/<random>.<ext>`), shared by all themes. |
+
+Theme lifecycle events go to `extension_events` with `extension = "theme:<vendor>/<name>"`.
+
 ## Planned tables
 
 The tables below follow §13 of the master specification and are designed when each phase starts:
 
 - **Deferred from Phase 2:** `product_translations` (storefront localisation is a Phase 8 item)
-- **Phase 5:** `themes`, `theme_settings`, `theme_assignments`
 - **Phase 6:** `marketplace_products`, `marketplace_releases`, `marketplace_orders`, `marketplace_order_items`, `licenses`, `license_activations`, `license_events`, `download_tokens`
 - **Post-launch:** `vendors`, `vendor_payouts`, `marketplace_commissions`, `vendor_verifications`

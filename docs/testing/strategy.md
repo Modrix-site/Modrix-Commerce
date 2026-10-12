@@ -66,3 +66,18 @@ DB_CONNECTION=mysql DB_DATABASE=ecomodular_test php artisan test   # MySQL run
 - `ModuleBootTest` boots separate PHP processes against a throwaway database. It found two fresh-boot defects that in-process tests could not see (now fixed; see ADR-029).
 - `vendor/bin/phpstan analyse` (now including `modules/`): 0 errors. `pint`, `npm run types:check`, `npm run check`, `npm run build`: passed.
 - Browser check: the reviews module was installed and enabled on the dev store. A review was submitted from the product page, moderated on the module's admin page, and then shown with its rating. The sales widget appears on the dashboard and the Reviews item in the admin navigation.
+
+## Phase 5 results (2026-10-16, local, PHP 8.4.25, SQLite)
+
+- `php artisan test`: 366 tests, 365 passed, 1 skipped (MySQL group), 0 failed.
+- Theme coverage (`tests/Feature/Themes`, `tests/Unit/ThemeSchemaTest.php`):
+    - **Rejected packages:** 13 invalid-package cases (path traversal, absolute paths, script and protocol-relative links, unknown sections, CSS injection in colors and fonts, unknown keys and capabilities, incompatible platform) plus code and markup files (PHP, SVG) inside a package.
+    - **Fallbacks:** the default and built-in fallbacks, and fallback and recovery when the active theme's files go missing.
+    - **Lifecycle:** activation with exactly one active theme.
+    - **Customizations:** they survive an update and switching themes back and forth; overrides a new version rejects are reported, not deleted; invalid customizations are refused; reset requires typing the theme's name.
+    - **Preview:** visible only to the previewing staff member; a forged preview session value is ignored.
+    - **Assets and uploads:** asset serving (types, headers, traversal); uploads re-encoded so an appended PHP payload does not survive.
+    - **Admin and schema:** admin permissions; JSON Schema kept in sync with the validator.
+- Compatibility: Essence, Noir and Bloom each run home → category → search → product → cart → checkout (identical totals) → confirmation → account. Section images resolve. Demo import is additive, idempotent and requires confirmation.
+- `phpstan`, `pint`, `npm run types:check`, `npm run check`, `npm run build`: passed.
+- Browser check: Noir and Bloom were previewed on the dev store (banner, announcement, header variants, typography, sections, cards, column footer), and the preview was exited.

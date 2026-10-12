@@ -219,3 +219,28 @@ Each entry records a decision, its context, and its consequences. Entries are ap
 - **Status:** Accepted
 - **Decision:** Module React pages and slot components live in the module package and are included in the application's Vite build through `import.meta.glob`. Pages are addressed as `module/<vendor>/<name>/<page>`; slot and widget components are referenced by the server and rendered inside an error boundary. Modules must not import generated route helpers; URLs come from server props.
 - **Consequences:** One build pipeline, one design system, type-checked and linted with the core. Adding or updating a module with UI requires `npm run build`. Runtime-loaded, separately built module bundles may come later for marketplace packages.
+
+## ADR-031 — Themes are data-only packages rendered by core components
+
+- **Date:** 2026-10-16
+- **Status:** Accepted (supersedes the Phase 0 sketch of compiled React theme bundles)
+- **Context:** The spec requires that themes never execute arbitrary code and that marketplace uploads be restricted, while still allowing premium themes. A theme bundle of React components would run in every shopper's browser, which carries the same trust problem as module PHP.
+- **Decision:** A theme is `theme.json` plus images and WOFF2 fonts; any other file type rejects the package. Themes choose values from a fixed, core-owned vocabulary:
+    - design settings (colors, fonts, radius, density, page width, logo, favicon, announcement, footer text);
+    - layout variants (header, footer, product card, grid, product page);
+    - typed home sections (hero, featured products, category grid, image with text, text, promo banner).
+
+    The core validates every value and generates the stylesheet only from validated tokens. Section content is plain text, and links are internal paths or `https://`. Assets are served by an allow-listing route with `nosniff` and a sandbox CSP. Cart, checkout, account and payment presentation are core components that only receive tokens.
+
+- **Consequences:** A theme from any source is safe to install, and theme switching cannot affect commerce (tested per bundled theme). Theme authors are limited to the vocabulary; richer designs come from new core variants and section types, or from modules through slots. The vocabulary follows the compatibility policy, so it is only extended within a major version. No drag-and-drop page builder until it is stable.
+
+## ADR-032 — Applied theme snapshot, separate merchant overrides
+
+- **Date:** 2026-10-16
+- **Status:** Accepted
+- **Decision:**
+    - **Storage:** themes reuse `extensions` (`type = theme`, unique per type), with `applied_manifest` holding the version the merchant applied. The storefront renders that snapshot, so new files on disk never change a live store until the merchant applies the update after seeing the changelog.
+    - **Overrides:** merchant changes live in settings (`theme.<vendor>.<name>.design` and `.sections`) and are re-validated on every read. Overrides the current version no longer accepts are ignored and reported, never deleted. Overrides survive updates and switching themes; only an explicit, typed reset removes them.
+    - **Preview:** session-scoped, and honoured only for users with `themes.manage`.
+    - **Fallback:** if the active theme's files disappear, the bundled default theme is used, then a built-in design.
+- **Consequences:** Theme updates cannot silently overwrite merchant content or settings (tested). The spec's suggested `themes`, `theme_settings` and `theme_assignments` tables are covered by `extensions` and settings. A single storefront needs no assignment table; multi-storefront assignment is post-1.0.

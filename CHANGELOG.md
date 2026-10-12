@@ -4,6 +4,20 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added (Phase 5: theme engine)
+
+- Data-only themes (`themes/<vendor>/<name>/theme.json` with images and WOFF2 fonts). The validator rejects code or markup files, path escapes, unsafe links and unknown values (JSON Schema in `docs/extensions/theme.schema.json`).
+- Design settings (colors, fonts, radius, spacing, width, logo, favicon, announcement, footer text), layout variants (header, footer, product card, grid, product page) and typed home sections, all rendered by core components.
+- Admin → Appearance: preview (staff session only), activate, customize (design, image library, home section editor), apply updates with changelog, reset, demo content import.
+- Merchant customizations stored apart from theme defaults; the storefront renders the applied theme version; fallbacks to the default and built-in designs.
+- Bundled themes: Essence (default, activated on install), Noir and Bloom (premium-ready samples with demo content).
+- Theme developer guide; ADRs 031–032.
+
+### Changed
+
+- The storefront home page is now built from theme sections.
+- Product images and theme uploads share one image sanitizer.
+
 ### Added (Phase 4: module engine)
 
 - Module packages under `modules/<vendor>/<name>/` with a validated, data-only `module.json` (JSON Schema in `docs/extensions/module.schema.json`).

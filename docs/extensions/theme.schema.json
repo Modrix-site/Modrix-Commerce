@@ -1,0 +1,211 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://github.com/eleydo/ecomodular/docs/extensions/theme.schema.json",
+    "title": "EcoModular theme manifest",
+    "description": "theme.json of an EcoModular theme. Themes are data only. The platform validator (App\\Core\\Themes\\ThemeManifestValidator) is authoritative and additionally checks files, paths and section settings.",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+        "name",
+        "display_name",
+        "version",
+        "type",
+        "theme_type",
+        "platform_version"
+    ],
+    "properties": {
+        "$schema": { "type": "string" },
+        "name": {
+            "type": "string",
+            "pattern": "^[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?/[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?$"
+        },
+        "display_name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "description": { "type": "string", "maxLength": 500 },
+        "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?$"
+        },
+        "type": { "const": "theme" },
+        "theme_type": { "const": "storefront" },
+        "platform_version": { "type": "string", "maxLength": 100 },
+        "author": { "type": "string", "maxLength": 120 },
+        "license": { "type": "string", "maxLength": 60 },
+        "requires": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+        },
+        "capabilities": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+                "enum": [
+                    "home.sections",
+                    "custom_fonts",
+                    "dark_mode",
+                    "demo_content"
+                ]
+            }
+        },
+        "assets": { "$ref": "#/$defs/relativePath" },
+        "screenshot": { "$ref": "#/$defs/relativePath" },
+        "design": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "color.background": { "$ref": "#/$defs/color" },
+                "color.foreground": { "$ref": "#/$defs/color" },
+                "color.primary": { "$ref": "#/$defs/color" },
+                "color.primary_foreground": { "$ref": "#/$defs/color" },
+                "color.muted": { "$ref": "#/$defs/color" },
+                "color.muted_foreground": { "$ref": "#/$defs/color" },
+                "color.accent": { "$ref": "#/$defs/color" },
+                "color.accent_foreground": { "$ref": "#/$defs/color" },
+                "color.border": { "$ref": "#/$defs/color" },
+                "font_body": { "$ref": "#/$defs/font" },
+                "font_heading": { "$ref": "#/$defs/font" },
+                "radius": {
+                    "enum": [
+                        "0",
+                        "0.25rem",
+                        "0.375rem",
+                        "0.5rem",
+                        "0.625rem",
+                        "0.75rem",
+                        "1rem",
+                        "1.5rem"
+                    ]
+                },
+                "density": { "enum": ["compact", "comfortable", "spacious"] },
+                "container": { "enum": ["narrow", "default", "wide"] },
+                "layout.header": { "enum": ["classic", "centered", "minimal"] },
+                "layout.footer": { "enum": ["simple", "columns"] },
+                "layout.product_card": {
+                    "enum": ["standard", "minimal", "framed"]
+                },
+                "layout.grid_columns": { "enum": ["3", "4"] },
+                "layout.product_page": { "enum": ["split", "stacked"] },
+                "logo": { "$ref": "#/$defs/image" },
+                "favicon": { "$ref": "#/$defs/image" },
+                "announcement": { "type": "string", "maxLength": 160 },
+                "footer_text": { "type": "string", "maxLength": 500 }
+            }
+        },
+        "dark_colors": {
+            "type": "object",
+            "propertyNames": {
+                "enum": [
+                    "background",
+                    "foreground",
+                    "primary",
+                    "primary_foreground",
+                    "muted",
+                    "muted_foreground",
+                    "accent",
+                    "accent_foreground",
+                    "border"
+                ]
+            },
+            "additionalProperties": { "$ref": "#/$defs/color" }
+        },
+        "fonts": {
+            "type": "array",
+            "maxItems": 6,
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["family", "file"],
+                "properties": {
+                    "family": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z][A-Za-z0-9 ]{0,39}$"
+                    },
+                    "file": { "$ref": "#/$defs/relativePath" },
+                    "weight": {
+                        "type": "string",
+                        "pattern": "^\\d{3}( \\d{3})?$"
+                    },
+                    "style": { "enum": ["normal", "italic"] }
+                }
+            }
+        },
+        "sections": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "home": {
+                    "type": "array",
+                    "maxItems": 12,
+                    "items": {
+                        "type": "object",
+                        "required": ["type"],
+                        "properties": {
+                            "type": {
+                                "enum": [
+                                    "hero",
+                                    "featured_products",
+                                    "category_grid",
+                                    "image_with_text",
+                                    "rich_text",
+                                    "promo_banner"
+                                ]
+                            },
+                            "settings": { "type": "object" }
+                        }
+                    }
+                }
+            }
+        },
+        "demo_content": { "$ref": "#/$defs/relativePath" },
+        "changelog": {
+            "type": "array",
+            "maxItems": 50,
+            "items": {
+                "type": "object",
+                "required": ["version", "date", "notes"],
+                "properties": {
+                    "version": { "type": "string" },
+                    "date": {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    },
+                    "notes": { "type": "string", "maxLength": 500 }
+                }
+            }
+        }
+    },
+    "$defs": {
+        "color": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+        "font": {
+            "anyOf": [
+                {
+                    "enum": [
+                        "sans",
+                        "system",
+                        "humanist",
+                        "geometric",
+                        "rounded",
+                        "serif",
+                        "didone",
+                        "mono"
+                    ]
+                },
+                {
+                    "type": "string",
+                    "pattern": "^custom:[A-Za-z][A-Za-z0-9 ]{0,39}$"
+                }
+            ]
+        },
+        "image": {
+            "type": "string",
+            "pattern": "^(|asset:.+\\.(png|jpe?g|webp))$"
+        },
+        "relativePath": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "not": {
+                "pattern": "(^[/\\\\])|(^[a-zA-Z]:)|(^|[/\\\\])\\.\\.([/\\\\]|$)"
+            }
+        }
+    }
+}

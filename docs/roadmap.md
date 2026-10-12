@@ -9,7 +9,7 @@ Status legend: ✅ Complete · 🟡 In progress · ⬜ Not started · ⛔ Blocke
 | 2     | Commerce core (catalog, customers, cart, checkout, orders, inventory, discounts, shipping/tax, reports) | ⬜     |
 | 3     | Payment integrations (gateway contract, Stripe test mode, webhooks, refunds)                            | 🟡     |
 | 4     | Module engine (manifest, lifecycle, dependencies, sample modules)                                       | ✅     |
-| 5     | Theme engine (manifests, contracts, default + 2 sample themes)                                          | ⬜     |
+| 5     | Theme engine (manifests, contracts, default + 2 sample themes)                                          | ✅     |
 | 6     | Official marketplace & licensing                                                                        | ⬜     |
 | 7     | Production hardening                                                                                    | ⬜     |
 | 8     | Post-launch ecosystem (does not block 1.0)                                                              | ⬜     |
@@ -72,9 +72,21 @@ Known limitations carried forward: weight-based shipping rates are not implement
 
 Known limitations: no package upload yet (packages arrive through deployment; upload and signed downloads come with the marketplace); module UI requires an asset rebuild; product type/attribute providers are not yet an extension point.
 
-### Phase 5 — Theme engine (next)
+### Phase 5 — Theme engine
 
-- Theme manifests and contracts, default theme plus two sample themes, theme settings and assignment, safe switching without checkout regressions.
+- [x] Theme manifests and compatibility checks (invalid paths and packages rejected).
+- [x] Layout and component contracts: design settings, layout variants and section types rendered by core components.
+- [x] Storefront templates and sections (home sections; header, footer, card, grid and product page variants).
+- [x] Theme configuration with merchant overrides kept separate from defaults and preserved across updates.
+- [x] Preview / activate workflow, update with changelog, reset, demo content import with confirmation.
+- [x] Default theme polish (Essence) and two premium-ready sample themes (Noir, Bloom).
+- [x] Theme manager, developer guide, compatibility tests: switching themes does not break commerce.
+
+Known limitations: section types cover the home page only (listing and product pages use variants, not sections); no drag-and-drop builder (deliberately, per the spec); themes cannot add components, by design (ADR-031).
+
+### Phase 6 — Official marketplace and licensing (next)
+
+- Marketplace catalog, purchases with the platform's own Stripe account (separate from merchant orders), licenses and activations, signed package downloads and secure update channel feeding the existing module and theme lifecycles.
 
 ## Progress log
 
@@ -102,10 +114,16 @@ Known limitations: no package upload yet (packages arrive through deployment; up
 - Found and fixed through a process-level test: enabled modules did not load on a fresh boot (deferred cache and the Eloquent resolver are not ready while providers register), and the module autoloader could attach to the wrong Composer loader.
 - Phase 3 remains 🟡 until the Stripe test-mode purchase is run with real test keys.
 
+### 2026-10-16 — Phase 5
+
+- Slices 5.1–5.5 implemented (see CHANGELOG and `docs/plans/phase-5-themes.md`); ADRs 031–032; theme developer guide.
+- Design change from Phase 0: themes are data-only (no compiled React bundles) so marketplace themes cannot run code.
+- Phase 3 remains 🟡 until the Stripe test-mode purchase is run with real test keys.
+
 ## Continuation instructions
 
 1. Put PHP 8.4 first on PATH (`C:\php84` on the reference machine).
 2. `composer install && npm install`, `cp .env.example .env`, `php artisan key:generate`, `php artisan migrate`.
 3. Run quality gates: `composer test`, `npm run types:check`, `npm run check`, `npm run build`.
 4. Close Phase 3 by running the Stripe test-mode purchase (`docs/payments/stripe.md` §5) with real test keys.
-5. Start Phase 5: write `docs/plans/phase-5-themes.md` first; reuse the `extensions` table (`type = theme`) and the lifecycle patterns from Phase 4.
+5. Start Phase 6: write `docs/plans/phase-6-marketplace.md` first; marketplace packages must feed the existing module and theme lifecycles, never auto-enable.
