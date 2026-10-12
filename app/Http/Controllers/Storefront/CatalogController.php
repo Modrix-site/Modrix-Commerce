@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Core\Extensions\StorefrontSlots;
 use App\Core\Settings\StoreSettings;
+use App\Core\Themes\ThemeResolver;
 use App\Domains\Catalog\Models\Category;
 use App\Domains\Catalog\StorefrontCatalog;
 use App\Http\Controllers\Controller;
+use App\Http\Presenters\HomeSectionsPresenter;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -14,12 +16,13 @@ use Inertia\Response;
 
 class CatalogController extends Controller
 {
-    public function home(StorefrontCatalog $catalog, StoreSettings $store, StorefrontSlots $slots): Response
+    /**
+     * The home page is the active theme's list of sections, followed by module slots.
+     */
+    public function home(Request $request, StoreSettings $store, StorefrontSlots $slots, ThemeResolver $themes, HomeSectionsPresenter $sections): Response
     {
         return Inertia::render('storefront/home', [
-            'products' => $catalog->latest($store->currency(), 8),
-            'categories' => Category::query()->active()->whereNull('parent_id')
-                ->orderBy('position')->orderBy('name')->get(['id', 'name', 'slug', 'description']),
+            'sections' => $sections->present($themes->forRequest($request), $store->currency()),
             'slots' => $slots->render('home.after_featured', []),
         ]);
     }

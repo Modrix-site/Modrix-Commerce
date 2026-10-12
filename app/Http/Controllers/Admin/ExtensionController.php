@@ -43,6 +43,7 @@ class ExtensionController extends Controller
 
     public function show(Extension $extension, ModuleSettingsSchema $settings): Response
     {
+        abort_unless($extension->type === 'module', 404);
         $manifest = $extension->manifest();
         $dependents = $this->repository->all()
             ->filter(fn (Extension $e) => array_key_exists($extension->name, (array) ($e->manifest['requires'] ?? [])))
@@ -122,6 +123,8 @@ class ExtensionController extends Controller
      */
     private function run(Extension $extension, Closure $operation, string $success): RedirectResponse
     {
+        abort_unless($extension->type === 'module', 404);
+
         try {
             $operation();
         } catch (ModuleException $e) {

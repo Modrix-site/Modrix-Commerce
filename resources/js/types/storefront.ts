@@ -5,6 +5,34 @@ export type StorefrontShared = {
     currency: string;
     categories: { id: number; name: string; slug: string }[];
     cartCount: number;
+    theme: StorefrontTheme;
+    themePreview: {
+        name: string;
+        displayName: string;
+        exitUrl: string;
+        manageUrl: string;
+    } | null;
+};
+
+export type StorefrontTheme = {
+    name: string;
+    displayName: string;
+    version: string;
+    source: 'active' | 'preview' | 'default' | 'builtin';
+    css: string;
+    layout: {
+        header: 'classic' | 'centered' | 'minimal';
+        footer: 'simple' | 'columns';
+        productCard: 'standard' | 'minimal' | 'framed';
+        gridColumns: 3 | 4;
+        productPage: 'split' | 'stacked';
+        density: 'compact' | 'comfortable' | 'spacious';
+        container: 'narrow' | 'default' | 'wide';
+    };
+    logo: string | null;
+    favicon: string | null;
+    announcement: string | null;
+    footerText: string | null;
 };
 
 export type ProductCard = {

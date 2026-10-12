@@ -34,4 +34,14 @@ return [
         'safe_mode' => (bool) env('ECOMODULAR_SAFE_MODE', false),
     ],
 
+    /*
+    | Themes (docs/extensions/theme-development.md): data-only packages in
+    | `path/<vendor>/<name>/theme.json`. The default theme is used until the
+    | merchant activates one, and whenever the active theme is unusable.
+    */
+    'themes' => [
+        'path' => env('ECOMODULAR_THEMES_PATH', base_path('themes')),
+        'default' => env('ECOMODULAR_DEFAULT_THEME', 'ecomodular/essence'),
+    ],
+
 ];

@@ -1,6 +1,7 @@
-import type { ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import InputError from '@/components/input-error';
 import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
 
 export function FormField({
     id,
@@ -28,26 +29,22 @@ export function FormField({
 }
 
 /** Native select styled to match the input component (accessible and keyboard friendly). */
+/**
+ * Styled native select. Works uncontrolled (name + defaultValue, for forms)
+ * or controlled (value + onChange).
+ */
 export function NativeSelect({
-    id,
-    name,
-    defaultValue,
+    className,
     children,
-    required,
-}: {
-    id: string;
-    name: string;
-    defaultValue?: string;
-    children: ReactNode;
-    required?: boolean;
-}) {
+    ...props
+}: ComponentProps<'select'>) {
     return (
         <select
-            id={id}
-            name={name}
-            defaultValue={defaultValue}
-            required={required}
-            className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
+            {...props}
+            className={cn(
+                'h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30',
+                className,
+            )}
         >
             {children}
         </select>

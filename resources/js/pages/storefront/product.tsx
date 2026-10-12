@@ -5,6 +5,8 @@ import CartController from '@/actions/App/Http/Controllers/Storefront/CartContro
 import { ExtensionSlot } from '@/components/extensions/extension-slot';
 import type { SlotItem } from '@/components/extensions/extension-slot';
 import InputError from '@/components/input-error';
+import { useStoreTheme } from '@/hooks/use-store-theme';
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -46,6 +48,7 @@ type Props = {
 };
 
 export default function ProductPage({ product, breadcrumbs, slots }: Props) {
+    const { productPage } = useStoreTheme();
     const [imageIndex, setImageIndex] = useState(0);
     const firstPurchasable =
         product.variants.find((v) => v.purchasable) ?? product.variants[0];
@@ -116,7 +119,14 @@ export default function ProductPage({ product, breadcrumbs, slots }: Props) {
                 </ol>
             </nav>
 
-            <div className="grid gap-10 md:grid-cols-2">
+            <div
+                className={cn(
+                    'grid gap-10',
+                    productPage === 'split'
+                        ? 'md:grid-cols-2'
+                        : 'mx-auto max-w-3xl',
+                )}
+            >
                 <div className="grid content-start gap-3">
                     <div className="aspect-square overflow-hidden rounded-lg border bg-muted">
                         {image ? (

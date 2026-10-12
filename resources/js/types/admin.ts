@@ -120,3 +120,52 @@ export type ExtensionSettingField = {
     max_length?: number;
     options?: { value: string | number; label: string }[];
 };
+
+export type ThemeSummary = {
+    id: number;
+    name: string;
+    display_name: string;
+    description: string | null;
+    author: string | null;
+    state: 'active' | 'available' | 'invalid' | 'failed';
+    version: string | null;
+    available_version: string | null;
+    update_available: boolean;
+    changelog: { version: string; date: string; notes: string }[];
+    errors: string[];
+    failure: string | null;
+    swatches: string[];
+    fonts: [string, string] | null;
+    screenshot: string | null;
+    capabilities: string[];
+    has_demo: boolean;
+    customized: boolean;
+};
+
+export type ThemeField = {
+    key: string;
+    type:
+        | 'color'
+        | 'select'
+        | 'boolean'
+        | 'integer'
+        | 'string'
+        | 'text'
+        | 'link'
+        | 'image'
+        | 'font';
+    label: string;
+    group?: string;
+    options?: string[];
+    min?: number;
+    max?: number;
+    required?: boolean;
+    default?: string | number | boolean;
+};
+
+export type ThemeSectionValue = {
+    type: string;
+    settings: Record<string, string | number | boolean | null>;
+};
+
+export type ThemeImageOption = { value: string; label: string; url: string };

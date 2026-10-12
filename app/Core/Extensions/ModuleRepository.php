@@ -54,7 +54,7 @@ final class ModuleRepository
 
     public function find(string $name): ?Extension
     {
-        return Extension::query()->where('name', $name)->first();
+        return Extension::query()->where('type', 'module')->where('name', $name)->first();
     }
 
     /**

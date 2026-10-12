@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ThemeAssetController;
 use App\Http\Middleware\BlockAfterInstallation;
 use App\Http\Middleware\EnsureUserIsStaff;
 use App\Http\Middleware\HandleAppearance;
@@ -21,6 +22,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         then: function () {
             Route::middleware('web')->group(base_path('routes/install.php'));
+            // Static theme files: no session or cookies needed.
+            Route::get('theme-assets/{vendor}/{theme}/{path}', ThemeAssetController::class)
+                ->where(['vendor' => '[a-z0-9-]+', 'theme' => '[a-z0-9-]+', 'path' => '[A-Za-z0-9_./-]+'])
+                ->name('theme.asset');
             Route::middleware('installed')
                 ->prefix('webhooks')
                 ->name('webhooks.')

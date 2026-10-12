@@ -28,6 +28,7 @@ use App\Http\Controllers\Admin\StoreSettingsController;
 use App\Http\Controllers\Admin\StripeSettingsController;
 use App\Http\Controllers\Admin\SystemStatusController;
 use App\Http\Controllers\Admin\TaxController;
+use App\Http\Controllers\Admin\ThemeController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -162,6 +163,21 @@ Route::middleware(['can:payments.manage', 'password.confirm'])->group(function (
 
 // Reports
 Route::get('reports', [ReportController::class, 'index'])->middleware('can:reports.view')->name('reports.index');
+
+// Appearance (themes). Themes are data-only, so no password confirmation is needed.
+Route::middleware('can:themes.manage')->group(function () {
+    Route::get('themes', [ThemeController::class, 'index'])->name('themes.index');
+    Route::post('themes/preview/exit', [ThemeController::class, 'exitPreview'])->name('themes.preview.exit');
+    Route::post('themes/uploads', [ThemeController::class, 'upload'])->middleware('throttle:30,1')->name('themes.uploads.store');
+    Route::get('themes/{theme}/customize', [ThemeController::class, 'customize'])->name('themes.customize');
+    Route::post('themes/{theme}/activate', [ThemeController::class, 'activate'])->name('themes.activate');
+    Route::post('themes/{theme}/preview', [ThemeController::class, 'preview'])->name('themes.preview');
+    Route::post('themes/{theme}/update', [ThemeController::class, 'update'])->name('themes.update');
+    Route::put('themes/{theme}/design', [ThemeController::class, 'design'])->name('themes.design');
+    Route::put('themes/{theme}/sections', [ThemeController::class, 'sections'])->name('themes.sections');
+    Route::post('themes/{theme}/reset', [ThemeController::class, 'reset'])->name('themes.reset');
+    Route::post('themes/{theme}/demo', [ThemeController::class, 'demo'])->middleware('throttle:5,1')->name('themes.demo');
+});
 
 // Extensions. Actions that run, change or remove code and data need a recent password confirmation.
 Route::middleware('can:extensions.view')->group(function () {

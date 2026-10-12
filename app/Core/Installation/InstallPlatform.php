@@ -7,11 +7,13 @@ use App\Core\Authorization\Models\Role;
 use App\Core\Authorization\PermissionSynchronizer;
 use App\Core\Authorization\SystemRoles;
 use App\Core\Settings\StoreSettings;
+use App\Core\Themes\ThemeManager;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use RuntimeException;
+use Throwable;
 
 /**
  * Performs first-time setup: syncs permissions and system roles, creates the
@@ -77,10 +79,24 @@ final class InstallPlatform
             });
 
             $this->token->delete();
+            $this->activateDefaultTheme($owner);
 
             return $owner;
         } finally {
             $lock->release();
+        }
+    }
+
+    /**
+     * The bundled default theme becomes the active theme. Optional: without
+     * it the storefront still renders with the default or built-in design.
+     */
+    private function activateDefaultTheme(User $owner): void
+    {
+        try {
+            app(ThemeManager::class)->activate((string) config('ecomodular.themes.default', 'ecomodular/essence'), $owner);
+        } catch (Throwable $e) {
+            report($e);
         }
     }
 }

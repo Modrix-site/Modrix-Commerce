@@ -20,6 +20,8 @@ use Illuminate\Support\Carbon;
  * @property string|null $available_version
  * @property string $path
  * @property array<string, mixed>|null $manifest
+ * @property array<string, mixed>|null $applied_manifest theme snapshot the merchant applied
+ * @property Carbon|null $applied_at
  * @property list<string>|null $errors
  * @property bool $enabled_before_update
  * @property string|null $failure
@@ -40,6 +42,8 @@ class Extension extends Model
         return [
             'state' => ModuleState::class,
             'manifest' => 'array',
+            'applied_manifest' => 'array',
+            'applied_at' => 'datetime',
             'errors' => 'array',
             'enabled_before_update' => 'boolean',
             'installed_at' => 'datetime',
