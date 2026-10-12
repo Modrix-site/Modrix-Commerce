@@ -187,7 +187,7 @@ class MarketplaceAdminController extends Controller
         $filters = $request->validate(['status' => ['nullable', Rule::in(License::STATUSES)], 'search' => ['nullable', 'string', 'max:100']]);
 
         return Inertia::render('admin/marketplace/licenses', [
-            'licenses' => License::query()->with(['product', 'user:id,email'])->withCount(['activations as active_activations' => fn ($q) => $q->whereNull('deactivated_at')])
+            'licenses' => License::query()->with(['product', 'user:id,email', 'events' => fn ($q) => $q->with('actor:id,email')->latest('id')->limit(20)])->withCount(['activations as active_activations' => fn ($q) => $q->whereNull('deactivated_at')])
                 ->when($filters['status'] ?? null, fn ($q, $s) => $q->where('status', $s))
                 ->when($filters['search'] ?? null, fn ($q, $s) => $q->whereHas('user', fn ($u) => Like::where($u, 'email', $s)))
                 ->latest('id')->paginate(25)->withQueryString()
@@ -201,7 +201,7 @@ class MarketplaceAdminController extends Controller
                     'updates_until' => $l->updates_until?->toDateString(),
                     'activations' => (int) $l->getAttribute('active_activations'),
                     'activation_limit' => $l->activation_limit,
-                    'events' => $l->events()->with('actor:id,email')->latest('id')->limit(20)->get()->map(fn (LicenseEvent $e) => [
+                    'events' => $l->events->map(fn (LicenseEvent $e) => [
                         'id' => $e->id,
                         'action' => $e->action,
                         'actor' => $e->actor?->email,

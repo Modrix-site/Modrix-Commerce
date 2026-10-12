@@ -54,7 +54,7 @@ final class CartPricer
     public function acknowledgePrices(PricedCart $priced): void
     {
         foreach ($priced->lines as $line) {
-            if ($line->unitPrice !== null) {
+            if ($line->unitPrice !== null && ! $line->priceSeen) {
                 CartItem::query()->whereKey($line->itemId)->update(['seen_unit_price' => $line->unitPrice->toDecimal()]);
             }
         }
@@ -76,8 +76,9 @@ final class CartPricer
 
         if ($unitPrice !== null && $item->seen_unit_price !== null) {
             $seen = Money::of($item->seen_unit_price, $currency);
+            $line->priceSeen = $seen->equals($unitPrice);
 
-            if (! $seen->equals($unitPrice)) {
+            if (! $line->priceSeen) {
                 $line->notices[] = sprintf(
                     'The price changed from %s to %s since you added this item.',
                     $seen->format(),

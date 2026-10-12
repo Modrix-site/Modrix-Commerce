@@ -21,6 +21,9 @@ final class PricedLine
 
     public string $taxRate = '0';
 
+    /** Whether the shopper has already seen the current unit price (nothing to record). */
+    public bool $priceSeen = false;
+
     public function __construct(
         public readonly int $itemId,
         public readonly ProductVariant $variant,

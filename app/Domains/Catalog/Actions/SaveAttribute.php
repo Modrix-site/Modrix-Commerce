@@ -46,7 +46,7 @@ final class SaveAttribute
 
                 $value = isset($row['id'])
                     ? $attribute->values()->whereKey($row['id'])->firstOrFail()
-                    : new ProductAttributeValue(['attribute_id' => $attribute->id]);
+                    : new ProductAttributeValue;
 
                 $value->attribute_id = $attribute->id;
                 $value->fill(['value' => $row['value'], 'slug' => $slug, 'position' => $position])->save();
