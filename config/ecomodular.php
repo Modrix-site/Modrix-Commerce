@@ -51,6 +51,13 @@ return [
     | marketplace Stripe credentials (separate from any store's own) and
     | licensing timings.
     */
+    'installer' => [
+        // false: install only with `php artisan ecomodular:install` (the /install pages return 404).
+        'web' => (bool) env('ECOMODULAR_WEB_INSTALLER', true),
+        // Hours a web installer setup token stays valid (0: no expiry).
+        'token_hours' => (int) env('ECOMODULAR_INSTALLER_TOKEN_HOURS', 24),
+    ],
+
     'health' => [
         // Bearer token that unlocks per-check details on /health (empty: overall status only).
         'token' => env('ECOMODULAR_HEALTH_TOKEN', ''),

@@ -41,7 +41,9 @@ class InstallController extends Controller
         InstallPlatform $install,
     ): RedirectResponse {
         if (! $token->verify($request->string('setup_token')->toString())) {
-            throw ValidationException::withMessages(['setup_token' => 'The setup token is invalid.']);
+            throw ValidationException::withMessages(['setup_token' => $token->expired()
+                ? 'The setup token has expired. Reload this page to create a new one, then read it from the server again.'
+                : 'The setup token is invalid.']);
         }
 
         if (! RequirementChecker::allPassed($requirements->check())) {

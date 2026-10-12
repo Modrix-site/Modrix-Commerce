@@ -24,11 +24,23 @@ final class InstallerToken
     {
         $existing = $this->read();
 
-        if ($existing !== null) {
+        if ($existing !== null && ! $this->expired()) {
             return $existing;
         }
 
         return $this->regenerate();
+    }
+
+    /**
+     * Tokens expire (ECOMODULAR_INSTALLER_TOKEN_HOURS, default 24) so one
+     * copied into deployment logs or tickets does not stay usable.
+     */
+    public function expired(): bool
+    {
+        $hours = (int) config('ecomodular.installer.token_hours', 24);
+        $modified = is_file($this->path()) ? filemtime($this->path()) : false;
+
+        return $hours > 0 && $modified !== false && $modified < time() - $hours * 3600;
     }
 
     public function regenerate(): string
@@ -50,7 +62,7 @@ final class InstallerToken
     {
         $token = $this->read();
 
-        return $token !== null && hash_equals($token, trim($candidate));
+        return $token !== null && ! $this->expired() && hash_equals($token, trim($candidate));
     }
 
     public function delete(): void

@@ -58,6 +58,30 @@ class WebInstallerTest extends TestCase
         $this->assertStringNotContainsString($this->token->ensure(), $response->getContent());
     }
 
+    public function test_an_expired_setup_token_is_refused_and_replaced()
+    {
+        $payload = $this->payload();
+        $old = $payload['setup_token'];
+        touch($this->token->path(), time() - 25 * 3600);
+
+        $this->post(route('install.store'), $payload)
+            ->assertSessionHasErrors(['setup_token' => 'The setup token has expired. Reload this page to create a new one, then read it from the server again.']);
+        $this->assertDatabaseCount('users', 0);
+
+        // Visiting the installer issues a new token; the old one stays invalid.
+        $this->get(route('install.show'))->assertOk();
+        $this->assertNotSame($old, $this->token->ensure());
+    }
+
+    public function test_the_web_installer_can_be_disabled()
+    {
+        config(['ecomodular.installer.web' => false]);
+
+        $this->get(route('install.show'))->assertNotFound();
+        $this->post(route('install.store'), $this->payload())->assertNotFound();
+        $this->assertDatabaseCount('users', 0);
+    }
+
     public function test_installation_requires_the_setup_token()
     {
         $this->post(route('install.store'), $this->payload(['setup_token' => 'wrong-token']))
