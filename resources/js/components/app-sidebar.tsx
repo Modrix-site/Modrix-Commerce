@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { dashboard } from '@/routes';
-import { edit as editProfile } from '@/routes/profile';
+import { show as accountShow } from '@/routes/account';
 import type { AdminNavGroup } from '@/types';
 
 export function AppSidebar() {
@@ -33,7 +33,7 @@ export function AppSidebar() {
                           {
                               key: 'profile',
                               title: 'My account',
-                              href: editProfile().url,
+                              href: accountShow().url,
                               icon: 'user-round',
                           },
                       ],

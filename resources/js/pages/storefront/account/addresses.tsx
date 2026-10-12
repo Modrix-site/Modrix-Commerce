@@ -1,0 +1,325 @@
+import { Form, Head } from '@inertiajs/react';
+import { useState } from 'react';
+import AccountController from '@/actions/App/Http/Controllers/Storefront/AccountController';
+import { FormField, NativeSelect } from '@/components/admin/form-field';
+import { AccountNav } from '@/components/storefront/account-nav';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import type { Address, Country } from '@/types';
+
+export default function Addresses({
+    addresses,
+    countries,
+}: {
+    addresses: Address[];
+    countries: Country[];
+}) {
+    const [editing, setEditing] = useState<number | 'new' | null>(
+        addresses.length === 0 ? 'new' : null,
+    );
+
+    return (
+        <>
+            <Head title="Addresses" />
+            <div className="grid gap-8 md:grid-cols-[12rem_1fr]">
+                <AccountNav />
+                <div className="grid content-start gap-6">
+                    <div className="flex items-center justify-between">
+                        <h1 className="text-2xl font-semibold tracking-tight">
+                            Addresses
+                        </h1>
+                        {editing === null && (
+                            <Button onClick={() => setEditing('new')}>
+                                Add address
+                            </Button>
+                        )}
+                    </div>
+
+                    {editing === 'new' && (
+                        <AddressForm
+                            countries={countries}
+                            onCancel={() => setEditing(null)}
+                        />
+                    )}
+
+                    <ul className="grid gap-4 sm:grid-cols-2">
+                        {addresses.map((address) =>
+                            editing === address.id ? (
+                                <li key={address.id} className="sm:col-span-2">
+                                    <AddressForm
+                                        address={address}
+                                        countries={countries}
+                                        onCancel={() => setEditing(null)}
+                                    />
+                                </li>
+                            ) : (
+                                <li
+                                    key={address.id}
+                                    className="grid gap-3 rounded-lg border p-4"
+                                >
+                                    <address className="text-sm not-italic">
+                                        <span className="font-medium">
+                                            {address.first_name}{' '}
+                                            {address.last_name}
+                                        </span>
+                                        <br />
+                                        {address.company && (
+                                            <>
+                                                {address.company}
+                                                <br />
+                                            </>
+                                        )}
+                                        {address.line1}
+                                        {address.line2 && `, ${address.line2}`}
+                                        <br />
+                                        {address.city}
+                                        {address.region &&
+                                            `, ${address.region}`}{' '}
+                                        {address.postal_code}
+                                        <br />
+                                        {address.country_name}
+                                    </address>
+                                    <p className="text-xs text-muted-foreground">
+                                        {[
+                                            address.is_default_shipping &&
+                                                'Default shipping',
+                                            address.is_default_billing &&
+                                                'Default billing',
+                                        ]
+                                            .filter(Boolean)
+                                            .join(' · ')}
+                                    </p>
+                                    <div className="flex gap-2">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() =>
+                                                setEditing(address.id)
+                                            }
+                                        >
+                                            Edit
+                                        </Button>
+                                        <Form
+                                            {...AccountController.destroyAddress.form(
+                                                address.id,
+                                            )}
+                                            onBefore={() =>
+                                                window.confirm(
+                                                    'Remove this address?',
+                                                )
+                                            }
+                                        >
+                                            <Button
+                                                type="submit"
+                                                variant="ghost"
+                                                size="sm"
+                                            >
+                                                Remove
+                                            </Button>
+                                        </Form>
+                                    </div>
+                                </li>
+                            ),
+                        )}
+                    </ul>
+                </div>
+            </div>
+        </>
+    );
+}
+
+function AddressForm({
+    address,
+    countries,
+    onCancel,
+}: {
+    address?: Address;
+    countries: Country[];
+    onCancel: () => void;
+}) {
+    const form = address
+        ? AccountController.updateAddress.form(address.id)
+        : AccountController.storeAddress.form();
+    const id = (field: string) => `${address?.id ?? 'new'}-${field}`;
+
+    return (
+        <Form
+            {...form}
+            options={{ preserveScroll: true }}
+            onSuccess={onCancel}
+            className="grid gap-4 rounded-lg border p-4"
+        >
+            {({ processing, errors }) => (
+                <>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                        <FormField
+                            id={id('first_name')}
+                            label="First name"
+                            error={errors.first_name}
+                        >
+                            <Input
+                                id={id('first_name')}
+                                name="first_name"
+                                defaultValue={address?.first_name}
+                                autoComplete="given-name"
+                                required
+                            />
+                        </FormField>
+                        <FormField
+                            id={id('last_name')}
+                            label="Last name"
+                            error={errors.last_name}
+                        >
+                            <Input
+                                id={id('last_name')}
+                                name="last_name"
+                                defaultValue={address?.last_name}
+                                autoComplete="family-name"
+                                required
+                            />
+                        </FormField>
+                        <FormField
+                            id={id('company')}
+                            label="Company (optional)"
+                            error={errors.company}
+                        >
+                            <Input
+                                id={id('company')}
+                                name="company"
+                                defaultValue={address?.company ?? ''}
+                                autoComplete="organization"
+                            />
+                        </FormField>
+                        <FormField
+                            id={id('phone')}
+                            label="Phone (optional)"
+                            error={errors.phone}
+                        >
+                            <Input
+                                id={id('phone')}
+                                name="phone"
+                                type="tel"
+                                defaultValue={address?.phone ?? ''}
+                                autoComplete="tel"
+                            />
+                        </FormField>
+                        <FormField
+                            id={id('line1')}
+                            label="Address"
+                            error={errors.line1}
+                        >
+                            <Input
+                                id={id('line1')}
+                                name="line1"
+                                defaultValue={address?.line1}
+                                autoComplete="address-line1"
+                                required
+                            />
+                        </FormField>
+                        <FormField
+                            id={id('line2')}
+                            label="Apartment, suite (optional)"
+                            error={errors.line2}
+                        >
+                            <Input
+                                id={id('line2')}
+                                name="line2"
+                                defaultValue={address?.line2 ?? ''}
+                                autoComplete="address-line2"
+                            />
+                        </FormField>
+                        <FormField
+                            id={id('city')}
+                            label="City"
+                            error={errors.city}
+                        >
+                            <Input
+                                id={id('city')}
+                                name="city"
+                                defaultValue={address?.city}
+                                autoComplete="address-level2"
+                                required
+                            />
+                        </FormField>
+                        <FormField
+                            id={id('region')}
+                            label="State / province (optional)"
+                            error={errors.region}
+                        >
+                            <Input
+                                id={id('region')}
+                                name="region"
+                                defaultValue={address?.region ?? ''}
+                                autoComplete="address-level1"
+                            />
+                        </FormField>
+                        <FormField
+                            id={id('postal_code')}
+                            label="Postal code"
+                            error={errors.postal_code}
+                        >
+                            <Input
+                                id={id('postal_code')}
+                                name="postal_code"
+                                defaultValue={address?.postal_code ?? ''}
+                                autoComplete="postal-code"
+                            />
+                        </FormField>
+                        <FormField
+                            id={id('country_code')}
+                            label="Country"
+                            error={errors.country_code}
+                        >
+                            <NativeSelect
+                                id={id('country_code')}
+                                name="country_code"
+                                defaultValue={address?.country_code ?? ''}
+                                required
+                            >
+                                <option value="" disabled>
+                                    Choose…
+                                </option>
+                                {countries.map((c) => (
+                                    <option key={c.code} value={c.code}>
+                                        {c.name}
+                                    </option>
+                                ))}
+                            </NativeSelect>
+                        </FormField>
+                    </div>
+                    <div className="flex flex-wrap gap-5 text-sm">
+                        <label className="flex items-center gap-2">
+                            <Checkbox
+                                name="is_default_shipping"
+                                value="1"
+                                defaultChecked={address?.is_default_shipping}
+                            />
+                            Default shipping address
+                        </label>
+                        <label className="flex items-center gap-2">
+                            <Checkbox
+                                name="is_default_billing"
+                                value="1"
+                                defaultChecked={address?.is_default_billing}
+                            />
+                            Default billing address
+                        </label>
+                    </div>
+                    <div className="flex gap-2">
+                        <Button type="submit" disabled={processing}>
+                            Save address
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={onCancel}
+                        >
+                            Cancel
+                        </Button>
+                    </div>
+                </>
+            )}
+        </Form>
+    );
+}

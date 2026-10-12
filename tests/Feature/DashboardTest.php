@@ -25,7 +25,7 @@ class DashboardTest extends TestCase
     {
         $this->actingAs(User::factory()->create())
             ->get(route('dashboard'))
-            ->assertRedirect(route('profile.edit'));
+            ->assertRedirect(route('account.show'));
     }
 
     public function test_staff_land_on_the_admin_dashboard()

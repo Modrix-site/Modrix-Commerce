@@ -10,6 +10,7 @@ use App\Domains\Inventory\Models\InventoryMovement;
 use App\Domains\Inventory\MovementReason;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\Like;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -40,8 +41,10 @@ class InventoryController extends Controller
             ->where('product_variants.track_inventory', true)
             ->with('product:id,name')
             ->when($filters['search'] ?? null, function ($query, string $search) {
-                $like = '%'.addcslashes($search, '%_\\').'%';
-                $query->where(fn ($q) => $q->where('product_variants.sku', 'like', $like)->orWhere('products.name', 'like', $like));
+                $query->where(function ($q) use ($search) {
+                    Like::where($q, 'product_variants.sku', $search);
+                    Like::orWhere($q, 'products.name', $search);
+                });
             })
             ->when(($filters['stock'] ?? null) === 'out', fn ($q) => $q->whereRaw('COALESCE(inventory_stocks.on_hand, 0) <= 0'))
             ->when(($filters['stock'] ?? null) === 'low', fn ($q) => $q->whereRaw(

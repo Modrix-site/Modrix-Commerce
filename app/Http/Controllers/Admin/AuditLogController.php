@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Core\Audit\AuditLog;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\AuditLogResource;
+use App\Support\Like;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -19,8 +20,9 @@ class AuditLogController extends Controller
         ]);
 
         $logs = AuditLog::query()
-            ->when($filters['action'] ?? null, fn ($q, string $action) => $q->where('action', 'like', addcslashes($action, '%_\\').'%'))
-            ->when($filters['actor'] ?? null, fn ($q, string $actor) => $q->where('actor_label', 'like', '%'.addcslashes($actor, '%_\\').'%'))
+            // The action filter is validated to [a-z0-9_.-], so only "_" needs neutralising.
+            ->when($filters['action'] ?? null, fn ($q, string $action) => $q->whereRaw("action LIKE ? ESCAPE '!'", [str_replace('_', '!_', $action).'%']))
+            ->when($filters['actor'] ?? null, fn ($q, string $actor) => Like::where($q, 'actor_label', $actor))
             ->latest('id')
             ->paginate(25)
             ->withQueryString();

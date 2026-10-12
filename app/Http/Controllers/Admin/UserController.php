@@ -8,6 +8,7 @@ use App\Core\Authorization\Actions\SyncUserRoles;
 use App\Core\Authorization\Models\Role;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\Like;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -27,9 +28,10 @@ class UserController extends Controller
             ->whereHas('roles')
             ->with('roles:id,name,display_name')
             ->when($filters['search'] ?? null, function ($query, string $search) {
-                $query->where(fn ($q) => $q
-                    ->where('name', 'like', '%'.addcslashes($search, '%_\\').'%')
-                    ->orWhere('email', 'like', '%'.addcslashes($search, '%_\\').'%'));
+                $query->where(function ($q) use ($search) {
+                    Like::where($q, 'name', $search);
+                    Like::orWhere($q, 'email', $search);
+                });
             })
             ->when(($filters['status'] ?? null) === 'active', fn ($q) => $q->whereNull('disabled_at'))
             ->when(($filters['status'] ?? null) === 'disabled', fn ($q) => $q->whereNotNull('disabled_at'))

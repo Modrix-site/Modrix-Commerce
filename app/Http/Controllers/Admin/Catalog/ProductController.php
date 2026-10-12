@@ -16,6 +16,7 @@ use App\Domains\Catalog\Models\ProductVariant;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\SaveProductRequest;
 use App\Models\User;
+use App\Support\Like;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -45,9 +46,10 @@ class ProductController extends Controller
             ->with(['variants.prices', 'variants.stocks', 'images' => fn ($q) => $q->limit(1)])
             ->withCount('variants')
             ->when($filters['search'] ?? null, function ($query, string $search) {
-                $like = '%'.addcslashes($search, '%_\\').'%';
-                $query->where(fn ($q) => $q->where('name', 'like', $like)
-                    ->orWhereHas('variants', fn ($v) => $v->where('sku', 'like', $like)));
+                $query->where(function ($q) use ($search) {
+                    Like::where($q, 'name', $search);
+                    $q->orWhereHas('variants', fn ($v) => Like::where($v, 'sku', $search));
+                });
             })
             ->when($filters['status'] ?? null, fn ($q, string $status) => $q->where('status', $status))
             ->when($filters['category'] ?? null, fn ($q, int $category) => $q->whereHas('categories', fn ($c) => $c->whereKey($category)))

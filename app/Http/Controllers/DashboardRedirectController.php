@@ -18,6 +18,6 @@ class DashboardRedirectController extends Controller
 
         return $user->isStaff()
             ? redirect()->route('admin.dashboard')
-            : redirect()->route('profile.edit');
+            : redirect()->route('account.show');
     }
 }
