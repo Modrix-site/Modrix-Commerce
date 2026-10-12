@@ -9,5 +9,5 @@ namespace App\Core;
  */
 final class Platform
 {
-    public const VERSION = '0.4.0';
+    public const VERSION = '1.0.0-rc.1';
 }

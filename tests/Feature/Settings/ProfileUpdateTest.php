@@ -4,6 +4,7 @@ namespace Tests\Feature\Settings;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class ProfileUpdateTest extends TestCase
@@ -77,6 +78,35 @@ class ProfileUpdateTest extends TestCase
 
         $this->assertGuest();
         $this->assertNull($user->fresh());
+    }
+
+    public function test_the_last_owner_cannot_delete_their_account()
+    {
+        $this->installPlatform();
+        $owner = $this->owner();
+
+        $this->actingAs($owner)->from(route('profile.edit'))
+            ->delete(route('profile.destroy'), ['password' => 'password'])
+            ->assertSessionHasErrors('password');
+        $this->assertNotNull($owner->fresh());
+
+        // With a second owner it is allowed.
+        $this->owner();
+        $this->actingAs($owner)->delete(route('profile.destroy'), ['password' => 'password'])->assertSessionHasNoErrors();
+        $this->assertNull($owner->fresh());
+    }
+
+    public function test_marketplace_license_holders_get_a_message_instead_of_an_error()
+    {
+        $user = User::factory()->create();
+        DB::table('marketplace_orders')->insert([
+            'number' => 'MP-000001', 'user_id' => $user->id, 'email' => $user->email, 'status' => 'paid',
+            'currency' => 'USD', 'total' => 0, 'created_at' => now(), 'updated_at' => now(),
+        ]);
+
+        $this->actingAs($user)->delete(route('profile.destroy'), ['password' => 'password'])
+            ->assertSessionHasErrors('password');
+        $this->assertNotNull($user->fresh());
     }
 
     public function test_correct_password_must_be_provided_to_delete_account()

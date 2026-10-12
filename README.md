@@ -4,18 +4,19 @@ A self-hosted, modular, open-source eCommerce platform built on **Laravel 13**, 
 
 The core is MIT-licensed and fully usable on its own. The platform is designed for free and premium themes, modules and integrations, distributed later through an official marketplace (see [docs/marketplace/licensing.md](docs/marketplace/licensing.md)). Premium extensions are never required to run a store.
 
-> **Status: early development (v0.1.0, Phase 1 of 8).** The platform foundation is in place: installer, authentication, role-based access control, audit log, settings and the admin shell. Catalog, cart, checkout and payments arrive in Phases 2 and 3. **Do not use it for a live store yet.** See [docs/roadmap.md](docs/roadmap.md).
+> **Status: release candidate 1.0.0-rc.1 (Phase 7 of 8).** Commerce core, Stripe payments, modules, themes, the official marketplace client and production hardening are implemented and tested. Before running a live store, complete the Stripe test-mode purchase in [docs/payments/stripe.md](docs/payments/stripe.md) and the [hardening checklist](docs/installation/production.md#post-install-hardening-checklist). See [docs/roadmap.md](docs/roadmap.md).
 
-## Features available today
+## Features
 
-- Secure installation: CLI (`php artisan ecomodular:install`) or a token-gated web installer that disables itself once installation completes.
-- Authentication via Laravel Fortify: email verification, password reset, two-factor authentication and passkeys.
-- Server-enforced RBAC: seven system roles, granular permissions, custom roles, and guards against privilege escalation.
-- Password re-confirmation before user and role management.
-- Append-only audit log with secret redaction, covering sign-ins, role changes, settings and installation.
-- Store settings: name, contact email, currency, timezone and units.
-- Responsive, accessible admin shell whose navigation is filtered by permission.
-- System status page with configuration warnings.
+- **Installation:** CLI (`php artisan ecomodular:install`) or a token-gated web installer with expiring tokens that disables itself after installation.
+- **Accounts and access:** Fortify authentication (email verification, password reset, two-factor, passkeys); server-enforced RBAC with seven system roles, custom roles and escalation guards; append-only audit log.
+- **Catalog:** products with variants and options, categories, images, prices per currency, CSV import and export, inventory ledger with locations and low-stock alerts.
+- **Storefront:** search, categories, cart, guest and account checkout with concurrency-safe stock reservation, discounts and coupons, shipping methods and tax rates, order emails, customer accounts.
+- **Orders and payments:** order workflow (payment, fulfilment, shipments, refunds), Stripe Checkout with verified and deduplicated webhooks, reconciliation, manual payment methods, reports.
+- **Modules:** validated manifests, a full lifecycle with dependencies, quarantine and safe mode; extension points (checkout validators, search, storefront slots, dashboard widgets); three sample modules.
+- **Themes:** data-only themes (they cannot run code) with design settings, layout variants and home sections, preview, customizations that survive updates; Essence, Noir and Bloom included.
+- **Official marketplace:** buy or claim licenses, activate them on a store, install and update packages after Ed25519 signature and checksum verification, roll back. The marketplace server role is in the same codebase.
+- **Operations:** health checks (`/health`, `ecomodular:health`, the status page), encrypted and checksummed backups with tested restore, security headers with a nonce-based CSP, rate limits, a deployment and recovery guide.
 
 ## Requirements
 
@@ -78,18 +79,21 @@ CI runs these on PHP 8.3 and 8.4, runs the full suite against MySQL 8.4, and run
 
 ## Documentation
 
-| Topic                     | Document                                                                       |
-| ------------------------- | ------------------------------------------------------------------------------ |
-| Architecture              | [docs/architecture/overview.md](docs/architecture/overview.md)                 |
-| Decisions (ADRs)          | [docs/architecture/decisions.md](docs/architecture/decisions.md)               |
-| Database schema           | [docs/database/schema.md](docs/database/schema.md)                             |
-| Production install        | [docs/installation/production.md](docs/installation/production.md)             |
-| Backup and restore        | [docs/operations/backup-and-restore.md](docs/operations/backup-and-restore.md) |
-| Module development        | [docs/extensions/module-development.md](docs/extensions/module-development.md) |
-| Theme development         | [docs/extensions/theme-development.md](docs/extensions/theme-development.md)   |
-| Licensing and marketplace | [docs/marketplace/licensing.md](docs/marketplace/licensing.md)                 |
-| Testing strategy          | [docs/testing/strategy.md](docs/testing/strategy.md)                           |
-| Roadmap and progress      | [docs/roadmap.md](docs/roadmap.md)                                             |
+| Topic                     | Document                                                                                       |
+| ------------------------- | ---------------------------------------------------------------------------------------------- |
+| Architecture              | [docs/architecture/overview.md](docs/architecture/overview.md)                                 |
+| Decisions (ADRs)          | [docs/architecture/decisions.md](docs/architecture/decisions.md)                               |
+| Database schema           | [docs/database/schema.md](docs/database/schema.md)                                             |
+| Production deployment     | [docs/installation/production.md](docs/installation/production.md)                             |
+| Backup and restore        | [docs/operations/backup-and-restore.md](docs/operations/backup-and-restore.md)                 |
+| Monitoring                | [docs/operations/monitoring.md](docs/operations/monitoring.md)                                 |
+| Troubleshooting           | [docs/operations/troubleshooting.md](docs/operations/troubleshooting.md)                       |
+| Security policy           | [SECURITY.md](SECURITY.md), [docs/security/phase-7-review.md](docs/security/phase-7-review.md) |
+| Module development        | [docs/extensions/module-development.md](docs/extensions/module-development.md)                 |
+| Theme development         | [docs/extensions/theme-development.md](docs/extensions/theme-development.md)                   |
+| Licensing and marketplace | [docs/marketplace/licensing.md](docs/marketplace/licensing.md)                                 |
+| Testing strategy          | [docs/testing/strategy.md](docs/testing/strategy.md)                                           |
+| Roadmap and progress      | [docs/roadmap.md](docs/roadmap.md)                                                             |
 
 ## License
 

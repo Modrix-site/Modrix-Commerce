@@ -2,13 +2,13 @@
 
 ## Suites
 
-| Suite        | Location             | Purpose                                                                                                                                                                  |
-| ------------ | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Unit         | `tests/Unit`         | Pure logic with no framework boot: permission registry, redaction, role defaults. Later: pricing, discounts, state machines, manifest validation, dependency resolution. |
-| Feature      | `tests/Feature`      | HTTP and console behaviour against a real database: auth, installer, RBAC matrix, escalation guards, audit, settings.                                                    |
-| Architecture | `tests/Architecture` | Layer boundaries: `app/Core` and `app/Domains` must not import `Inertia\*` or `App\Http\*`.                                                                              |
-| MySQL group  | `#[Group('mysql')]`  | Locking and concurrency tests (`SELECT … FOR UPDATE`, concurrent checkout) that are only meaningful on MySQL. Run in CI's MySQL job.                                     |
-| End-to-end   | planned (Phase 2/7)  | Browser flows: test-mode purchase, module lifecycle, theme switching, marketplace purchase.                                                                              |
+| Suite        | Location                                           | Purpose                                                                                                                                                                  |
+| ------------ | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Unit         | `tests/Unit`                                       | Pure logic with no framework boot: permission registry, redaction, role defaults. Later: pricing, discounts, state machines, manifest validation, dependency resolution. |
+| Feature      | `tests/Feature`                                    | HTTP and console behaviour against a real database: auth, installer, RBAC matrix, escalation guards, audit, settings.                                                    |
+| Architecture | `tests/Architecture`                               | Layer boundaries: `app/Core` and `app/Domains` must not import `Inertia\*` or `App\Http\*`.                                                                              |
+| MySQL group  | `#[Group('mysql')]`                                | Locking and concurrency tests (`SELECT … FOR UPDATE`, concurrent checkout) that are only meaningful on MySQL. Run in CI's MySQL job.                                     |
+| Process      | `tests/Feature/*/…BootTest`, `ProductionPathsTest` | Separate PHP processes against throwaway databases: fresh boot with modules, fresh install, upgrade path, backup and restore drill.                                      |
 
 ## Rules
 
@@ -93,3 +93,26 @@ DB_CONNECTION=mysql DB_DATABASE=ecomodular_test php artisan test   # MySQL run
     - **Outage:** with the marketplace unreachable, license checks record the error, the admin page renders with a notice, and the storefront and checkout work; the grace warning appears after token validity plus 14 days.
 - `phpstan`, `pint`, `npm run types:check`, `npm run check`, `npm run build`: passed.
 - Browser check (server mode temporarily enabled on the dev store): product and release admin, storefront catalog and product page, free license claim → order page → portal with key, license admin with history, and the store-side Marketplace page with the outage and missing-key notices. Found and fixed: portal downloads needed a full browser visit (`Inertia::location`).
+
+## Phase 7 results (2026-10-13, local, PHP 8.4.25, SQLite)
+
+- `php artisan test`: 415 tests, 414 passed, 1 skipped (MySQL group), 0 failed.
+- New coverage:
+    - `tests/Feature/Security`: headers, CSP nonce on every script tag, CDN image origins, report-only and off modes, HSTS, per-IP limits on password reset and registration.
+    - `tests/Feature/Performance/QueryBudgetTest`: home, category, search, cart, admin orders and products, and account orders issue the same number of queries for 2 or 16 rows.
+    - `tests/Feature/Operations/HealthAndBackupTest`:
+        - the health endpoint with and without the token, and 503 when a check fails;
+        - production configuration checks and the status page;
+        - backup round trip, encryption and wrong password, tampered archive refused with nothing changed, unsafe paths, retention, restore confirmation.
+    - `tests/Feature/Operations/ProductionPathsTest` (separate processes, throwaway database and file tree):
+        - fresh install from an empty database, including refusing a re-run;
+        - upgrade from the Phase 2 schema with data;
+        - encrypted backup → data and files damaged → verify → restore.
+    - Installer: an expired token is refused and replaced; the web installer can be disabled.
+    - Settings: the last owner cannot delete their account; license holders get a message instead of a 500.
+- `preventLazyLoading` and `preventSilentlyDiscardingAttributes` are on in tests: no lazy loads were found, and one discarded attribute was fixed.
+- `composer audit`: 0 advisories. `npm audit`: 0 vulnerabilities after the `tinypool` override.
+- Browser checks:
+    - CSP enforced on storefront, cart, checkout, admin, settings and Appearance with no violations.
+    - axe-core 4.10 (WCAG 2.0/2.1 A and AA) on home, product, cart, account, admin dashboard, products form, orders, Appearance, Marketplace and System status: 2 violation types found and fixed, 0 remaining.
+    - No horizontal overflow at 375 px.

@@ -145,7 +145,7 @@ trait ModuleFixtures
             'description' => 'Test module.',
             'version' => $version,
             'type' => 'module',
-            'platform_version' => '^0.4',
+            'platform_version' => '^0.4 || ^1.0',
             'autoload' => ['psr-4' => ['Acme\\Hello\\' => 'src/']],
             'provider' => 'Acme\\Hello\\HelloServiceProvider',
             'permissions' => [['name' => 'hello.manage', 'label' => 'Manage hello', 'group' => 'Hello']],
@@ -177,7 +177,7 @@ trait ModuleFixtures
             'display_name' => Str::headline(Str::after($name, '/')),
             'version' => '1.0.0',
             'type' => 'module',
-            'platform_version' => '^0.4',
+            'platform_version' => '^0.4 || ^1.0',
         ], $manifest));
     }
 

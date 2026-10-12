@@ -4,6 +4,43 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [1.0.0-rc.1] - 2026-10-13
+
+### Added (Phase 7: production hardening)
+
+- Health monitoring:
+    - `/health` readiness endpoint (overall status, details with `ECOMODULAR_HEALTH_TOKEN`, 503 on failure);
+    - `ecomodular:health` command;
+    - health card on System status, checking database, migrations, cache, storage, disk, queue, scheduler heartbeat, backup age, webhook failures and production configuration.
+- Backups:
+    - `ecomodular:backup` and `ecomodular:restore`: database dump (SQLite, MySQL/MariaDB, PostgreSQL), media, private files, modules and themes;
+    - SHA-256 manifest, optional AES-256 encryption, retention, daily schedule;
+    - verified, path-safe restores with file rollback on failure.
+- `SecurityHeaders` middleware: nonce-based Content-Security-Policy, frame denial, `nosniff`, referrer and permissions policies, COOP, HSTS on HTTPS (`ECOMODULAR_CSP`, `ECOMODULAR_CSP_IMG_SOURCES`, `ECOMODULAR_HSTS`).
+- Installer: setup tokens expire after 24 hours (`ECOMODULAR_INSTALLER_TOKEN_HOURS`); `ECOMODULAR_WEB_INSTALLER=false` for CLI-only installs.
+- Docs:
+    - production deployment, monitoring, troubleshooting and backup guides;
+    - `SECURITY.md` with the incident and extension takedown process;
+    - security review report; ADRs 036–037.
+- Tests: process-level fresh-install, upgrade-path and restore drills; query budgets; security headers. CI runs a MySQL backup and restore drill and audits build tooling.
+
+### Changed
+
+- Nginx sample: no duplicate application security headers; `/storage/` served with `nosniff` and a sandbox CSP; long-lived caching for `/build/`.
+- Lazy loading and silently discarded attributes now throw outside production.
+
+### Security
+
+- Per-IP rate limit on password reset, reset submission and registration.
+- The last active owner can no longer delete their own account.
+- `tinypool` pinned to 2.1.2 (GHSA-5gmw-xhrv-c9v3, GHSA-85c8-ppgw-ccpr; build tooling only).
+
+### Fixed
+
+- Account deletion for users with marketplace licenses or orders shows a message instead of failing.
+- Cart pages no longer write every line on each view.
+- Destructive alert text contrast (WCAG AA); wide tables are keyboard-scrollable; long values wrap in alerts on phones.
+
 ### Added (Phase 6: official marketplace and licensing)
 
 - Marketplace server role (`ECOMODULAR_MARKETPLACE_SERVER`, off by default): product admin, release upload with archive scanning and manifest validation, review and Ed25519-signed release metadata, withdrawal; `ecomodular:marketplace:keygen`.

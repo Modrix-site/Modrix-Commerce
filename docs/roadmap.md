@@ -11,7 +11,7 @@ Status legend: ✅ Complete · 🟡 In progress · ⬜ Not started · ⛔ Blocke
 | 4     | Module engine (manifest, lifecycle, dependencies, sample modules)                                       | ✅     |
 | 5     | Theme engine (manifests, contracts, default + 2 sample themes)                                          | ✅     |
 | 6     | Official marketplace & licensing                                                                        | ✅     |
-| 7     | Production hardening                                                                                    | ⬜     |
+| 7     | Production hardening                                                                                    | ✅     |
 | 8     | Post-launch ecosystem (does not block 1.0)                                                              | ⬜     |
 
 ## MVP (v1.0) scope
@@ -96,7 +96,36 @@ Known limitations: section types cover the home page only (listing and product p
 
 Known limitations: no real Stripe test-mode purchase on the marketplace account (same blocker as Phase 3); rollback restores files, not database migrations; signing-key rotation is manual (documented); no third-party vendors (Phase 8).
 
-### Phase 7 — Production hardening (next)
+### Phase 7 — Production hardening
+
+- [x] Security review and dependency audit: 12 findings, all critical and high fixed (`docs/security/phase-7-review.md`); `composer audit` and `npm audit` clean.
+- [x] Performance review and indexes: lazy-loading and discarded-attribute guards outside production; query-budget tests for list pages; cart write amplification removed; index coverage reviewed.
+- [x] Queue and scheduler documentation (systemd, Supervisor, cron, heartbeat).
+- [x] Backup and restore: `ecomodular:backup` and `ecomodular:restore`, drill demonstrated (process-level test), and run on MySQL in CI.
+- [x] Installer hardening: expiring setup tokens, CLI-only option.
+- [x] Error and health monitoring: `/health`, `ecomodular:health`, health card, log rotation and alert guidance.
+- [x] Accessibility and responsive QA: axe-core WCAG 2.1 AA audit of key pages with no violations left; phone-width checks.
+- [x] Production deployment guide, monitoring and troubleshooting guides, `SECURITY.md` with the takedown process.
+- [x] License and attribution audit (`THIRD_PARTY_NOTICES.md`).
+- [x] Release candidate `1.0.0-rc.1`.
+
+Exit criteria:
+
+- Critical tests pass (full suite).
+- The restore process is demonstrated.
+- No unresolved critical or high issue.
+- Fresh installation and upgrade paths are tested (`ProductionPathsTest`).
+
+Known limitations:
+
+- The Stripe test-mode purchase with real keys is still pending (Phase 3), so the release stays a candidate until it passes.
+- The MySQL backup drill and the MySQL test job run in CI only; there is no MySQL on the reference machine and no remote yet.
+- No independent penetration test.
+- No self-service personal-data export.
+- Marketplace security advisories are not pushed to stores (Phase 8).
+- Reports still aggregate in PHP (planned in Phase 2 for this phase): fine for small and medium stores; move to SQL aggregation before very large catalogs or order volumes.
+
+### Phase 8 — Post-launch ecosystem (next)
 
 ## Progress log
 
@@ -135,6 +164,20 @@ Known limitations: no real Stripe test-mode purchase on the marketplace account 
 - Slices 6.1–6.5 implemented (see CHANGELOG and `docs/plans/phase-6-marketplace.md`); ADRs 033–035; licensing guide rewritten.
 - Added `paragonie/sodium_compat` because the reference machine's PHP has no sodium extension.
 - Stripe REST access moved into a shared `StripeApi` used by the merchant gateway and the marketplace.
+- Phase 3 remains 🟡 until the Stripe test-mode purchase is run with real test keys.
+
+### 2026-10-13 — Phase 7
+
+- Slices 7.1–7.7 implemented (see CHANGELOG `1.0.0-rc.1`); ADRs 036–037; security report; deployment, monitoring, troubleshooting and backup guides.
+- Fixed during the phase:
+    - pages had no CSP or frame protection;
+    - the last owner could delete their own account;
+    - conflicting Nginx headers;
+    - no per-IP limit on password reset and registration;
+    - installer tokens never expired;
+    - a dev-tooling RCE advisory;
+    - cart write amplification;
+    - account deletion with marketplace licenses returned 500.
 - Phase 3 remains 🟡 until the Stripe test-mode purchase is run with real test keys.
 
 ## Continuation instructions

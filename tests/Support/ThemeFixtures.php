@@ -43,7 +43,7 @@ trait ThemeFixtures
             'version' => '1.0.0',
             'type' => 'theme',
             'theme_type' => 'storefront',
-            'platform_version' => '^0.4',
+            'platform_version' => '^0.4 || ^1.0',
             'capabilities' => ['home.sections'],
             'assets' => 'assets',
             'design' => [

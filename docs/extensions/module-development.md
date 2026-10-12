@@ -43,7 +43,7 @@ The authoritative schema is [`module.schema.json`](module.schema.json). Add `"$s
 | `description`       |           | Up to 500 characters.                                                                                                                                                                                                   |
 | `version`           | yes       | Semantic version (`1.2.0`). Downgrades are refused.                                                                                                                                                                     |
 | `type`              | yes       | `"module"`.                                                                                                                                                                                                             |
-| `platform_version`  | yes       | Composer-style constraint against the platform version (currently `0.4.0`), e.g. `"^0.4 \|\| ^1.0"`.                                                                                                                    |
+| `platform_version`  | yes       | Composer-style constraint against the platform version (currently `1.0.0-rc.1`), e.g. `"^1.0"`.                                                                                                                         |
 | `author`, `license` |           | Shown in the admin.                                                                                                                                                                                                     |
 | `autoload`          | with code | Exactly one `{"psr-4": {"Vendor\\Package\\": "src/"}}`. At least two namespace segments. `App\`, `Illuminate\`, `Database\` and other framework namespaces are reserved. Namespaces must not overlap between modules.   |
 | `provider`          |           | A `ServiceProvider` class inside the autoload namespace.                                                                                                                                                                |
@@ -192,7 +192,7 @@ Domain models (`Product`, `Order`, …) may be read by modules. Change commerce 
 
 - Stable extension points follow semantic versioning of the platform version. Within a major version (`1.x`), they are only extended: new optional parameters, new methods with default implementations, and new events.
 - A breaking change is announced in the changelog at least one minor version before removal, with the old API marked `@deprecated`.
-- Before 1.0 (`0.x`), minor versions may change extension points. Pin `platform_version` to the minor version you tested (`^0.4`).
+- From 1.0 the extension API follows Semantic Versioning: extension points are only added within a major version. Declare `"^1.0"` (release candidates such as `1.0.0-rc.1` satisfy it). Packages written for `0.x` must add `^1.0` after testing, because `^0.4` alone is refused by 1.x.
 - Internal classes not listed above may change at any time.
 
 ## Writing migrations

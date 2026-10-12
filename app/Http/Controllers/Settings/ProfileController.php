@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Settings;
 
+use App\Core\Authorization\EscalationGuard;
+use App\Domains\Marketplace\Models\License;
+use App\Domains\Marketplace\Models\MarketplaceOrder;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileDeleteRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
@@ -9,6 +12,9 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -46,13 +52,23 @@ class ProfileController extends Controller
     /**
      * Delete the user's profile.
      */
-    public function destroy(ProfileDeleteRequest $request): RedirectResponse
+    public function destroy(ProfileDeleteRequest $request, EscalationGuard $guard): RedirectResponse
     {
         $user = $request->user();
 
-        Auth::logout();
+        DB::transaction(function () use ($user, $guard) {
+            // A store must always keep an owner: transfer ownership first.
+            $guard->ensureNotLastOwner($user, 'password', 'You are the last owner of this store. Make another user an owner before deleting your account.');
 
-        $user->delete();
+            // Marketplace licenses and orders are kept for the buyer and for accounting.
+            if (Schema::hasTable('licenses') && (License::query()->where('user_id', $user->id)->exists() || MarketplaceOrder::query()->where('user_id', $user->id)->exists())) {
+                throw ValidationException::withMessages(['password' => 'This account holds marketplace licenses or orders. Contact the store to close it.']);
+            }
+
+            // Log out first: logging out saves the user (remember token), which would re-create a deleted row.
+            Auth::logout();
+            $user->delete();
+        });
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

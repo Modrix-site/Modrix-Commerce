@@ -149,5 +149,5 @@ Prefix slugs and SKUs with your theme name so they do not collide with real cata
 
 ## Compatibility and testing
 
-- Pin `platform_version` to what you tested (`^0.4` before 1.0). The design settings, variants and section types follow the platform's compatibility policy (see the module guide): within a major version they are only added to, never removed.
+- Declare `platform_version` as `"^1.0"` (themes written for `0.x` must add `^1.0` after testing). The design settings, variants and section types follow the platform's compatibility policy (see the module guide): within a major version they are only added to, never removed.
 - `tests/Feature/Themes/ThemeCompatibilityTest.php` runs every bundled theme through home, category, search, product, cart, checkout (asserting identical totals) and account pages. Add your theme to its data provider.

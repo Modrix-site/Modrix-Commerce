@@ -275,3 +275,40 @@ Each entry records a decision, its context, and its consequences. Entries are ap
     - **Status changes:** refunds, revocations and suspensions take effect at once on the server, expire unused download tokens, and are logged in `license_events` (append-only) and the audit log.
     - **Outages:** the storefront and checkout never call the marketplace, and the client never disables installed extensions. When token validity plus a 14-day grace period has passed without a successful check, the admin shows a warning only.
 - **Consequences:** A licensing outage cannot take a store down (tested with the server unreachable). The trade-off: a refunded or revoked extension keeps running where it is installed; enforcement covers updates, downloads and new activations, in line with the rule that extensions never disable core features.
+
+## ADR-036 — Security headers and a nonce-based CSP from the application
+
+- **Date:** 2026-10-13
+- **Status:** Accepted
+- **Context:** Headers configured only in the web server are lost on other hosts, and they conflict when both layers set them.
+- **Decision:** A global `SecurityHeaders` middleware sends `nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy`, COOP, and HSTS on HTTPS. It also sends a Content-Security-Policy with:
+    - `script-src 'self' 'nonce-…'`, where Vite tags and the inline appearance script carry the per-request nonce;
+    - `style-src 'self' 'unsafe-inline'`;
+    - `img-src` limited to the app, the media disk URL and `ECOMODULAR_CSP_IMG_SOURCES`;
+    - `connect-src 'self'`, `object-src 'none'` and `frame-ancestors 'none'`;
+    - `form-action 'self' https://checkout.stripe.com`.
+
+    Responses that set their own policy (theme assets) keep it. `ECOMODULAR_CSP` switches between `enforce`, `report-only` and `off`. The CSP is skipped while the Vite dev server runs. Nginx no longer sets these headers.
+
+- **Consequences:** Injected markup cannot run script. Inline styles stay allowed, because theme tokens and UI libraries need them, and theme values are validated (ADR-031). Integrations that load third-party scripts (analytics, chat) must be added to the policy deliberately. A module that needs that is a future extension point.
+
+## ADR-037 — Built-in backups: one checksummed, optionally encrypted archive
+
+- **Date:** 2026-10-13
+- **Status:** Accepted
+- **Decision:** `ecomodular:backup` writes one zip per run, containing:
+    - the database dump: `mysqldump --single-transaction` (credentials in a temporary file), `pg_dump`, or SQLite `VACUUM INTO`;
+    - `storage/app/public`;
+    - `storage/app/private`, without the backups themselves;
+    - `modules/` and `themes/`;
+    - a manifest with the platform version, the driver and the SHA-256 of every entry.
+
+    With `ECOMODULAR_BACKUP_PASSWORD`, every entry is AES-256 encrypted. Retention keeps the newest N archives, and the backup runs daily from the scheduler. `ecomodular:restore`:
+    - verifies every checksum and entry path before changing anything;
+    - runs under maintenance mode;
+    - swaps file directories aside, imports the database and puts the files back if the import fails;
+    - migrates forward and clears caches.
+
+    `.env` is not included: `APP_KEY` belongs in a secret manager.
+
+- **Consequences:** Small and medium stores get working, tested backups without extra tooling, and the health check warns when backups stop. Large stores should add database point-in-time recovery and object storage versioning. Cross-driver restores are refused.
