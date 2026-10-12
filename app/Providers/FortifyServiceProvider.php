@@ -105,6 +105,9 @@ class FortifyServiceProvider extends ServiceProvider
             return Limit::perMinute(5)->by($throttleKey);
         });
 
+        // Password reset, reset submission and registration: per IP, on top of the broker's per-email throttle.
+        RateLimiter::for('auth-sensitive', fn (Request $request) => Limit::perMinute(5)->by('auth-sensitive:'.$request->ip()));
+
         RateLimiter::for('passkeys', function (Request $request) {
             return Limit::perMinute(10)->by(
                 ($request->input('credential.id') ?: $request->session()->getId()).'|'.$request->ip(),

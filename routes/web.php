@@ -9,6 +9,9 @@ use App\Http\Controllers\Storefront\CheckoutController;
 use App\Http\Controllers\Storefront\ProductController;
 use App\Http\Middleware\ShareStorefrontData;
 use Illuminate\Support\Facades\Route;
+use Laravel\Fortify\Http\Controllers\NewPasswordController;
+use Laravel\Fortify\Http\Controllers\PasswordResetLinkController;
+use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 
 Route::middleware(['installed', ShareStorefrontData::class])->group(function () {
     Route::get('/', [CatalogController::class, 'home'])->name('home');
@@ -44,6 +47,13 @@ Route::middleware(['installed', ShareStorefrontData::class])->group(function () 
 
 Route::middleware(['installed', 'auth', 'verified'])->group(function () {
     Route::get('dashboard', DashboardRedirectController::class)->name('dashboard');
+});
+
+// Fortify registers these without an IP limit; redeclared here (same names) with one.
+Route::middleware(['web', 'guest:'.config('fortify.guard'), 'throttle:auth-sensitive'])->group(function () {
+    Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])->name('password.email');
+    Route::post('reset-password', [NewPasswordController::class, 'store'])->name('password.update');
+    Route::post('register', [RegisteredUserController::class, 'store'])->name('register.store');
 });
 
 require __DIR__.'/settings.php';

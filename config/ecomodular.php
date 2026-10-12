@@ -51,6 +51,15 @@ return [
     | marketplace Stripe credentials (separate from any store's own) and
     | licensing timings.
     */
+    'security' => [
+        // Content-Security-Policy: enforce, report-only or off.
+        'csp' => env('ECOMODULAR_CSP', 'enforce'),
+        // Strict-Transport-Security on HTTPS requests.
+        'hsts' => (bool) env('ECOMODULAR_HSTS', true),
+        // Extra image origins (comma-separated), e.g. a CDN not configured as the media disk URL.
+        'img_sources' => array_values(array_filter(array_map('trim', explode(',', (string) env('ECOMODULAR_CSP_IMG_SOURCES', ''))))),
+    ],
+
     'marketplace' => [
         'url' => rtrim((string) env('ECOMODULAR_MARKETPLACE_URL', 'https://marketplace.ecomodular.dev'), '/'),
         'trusted_keys' => array_values(array_filter(array_map('trim', explode(',', (string) env('ECOMODULAR_MARKETPLACE_TRUSTED_KEYS', ''))))),
