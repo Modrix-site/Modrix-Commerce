@@ -1,0 +1,31 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "ecomodular/sales-widget",
+    "display_name": "Sales Trend Widget",
+    "description": "Adds a daily sales chart for recent days to the admin dashboard.",
+    "version": "1.0.0",
+    "type": "module",
+    "platform_version": "^0.4 || ^1.0",
+    "author": "Eleydo",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\SalesWidget\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\SalesWidget\\SalesWidgetServiceProvider",
+    "capabilities": ["dashboard.widgets", "settings"],
+    "assets": {
+        "slots": "resources/js/slots"
+    },
+    "settings": [
+        {
+            "key": "days",
+            "type": "integer",
+            "label": "Number of days to show",
+            "default": 7,
+            "min": 7,
+            "max": 30
+        }
+    ]
+}

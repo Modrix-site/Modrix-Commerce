@@ -7,6 +7,7 @@ use App\Core\Authorization\PermissionRegistry;
 use Composer\Autoload\ClassLoader;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use RuntimeException;
 use Throwable;
@@ -20,6 +21,9 @@ use Throwable;
  */
 final class ModuleLoader
 {
+    /** Autoloader for module namespaces, shared by every loader instance in the process. */
+    private static ?ClassLoader $classLoader = null;
+
     /** @var array<string, true> */
     private array $loaded = [];
 
@@ -44,8 +48,13 @@ final class ModuleLoader
 
         try {
             $modules = $this->repository->enabledForBoot();
-        } catch (Throwable) {
-            return; // Not installed or not migrated yet.
+        } catch (Throwable $e) {
+            // Expected before installation/migration; anything else must be visible.
+            if ($this->tablesExist()) {
+                report($e);
+            }
+
+            return;
         }
 
         foreach ($modules as $module) {
@@ -87,6 +96,15 @@ final class ModuleLoader
         return ! isset($this->failures[$name]);
     }
 
+    private function tablesExist(): bool
+    {
+        try {
+            return Schema::hasTable('extensions');
+        } catch (Throwable) {
+            return false;
+        }
+    }
+
     public function isLoaded(string $name): bool
     {
         return isset($this->loaded[$name]) && ! isset($this->failures[$name]);
@@ -103,7 +121,14 @@ final class ModuleLoader
             return;
         }
 
-        $loader = array_values(ClassLoader::getRegisteredLoaders())[0] ?? throw new RuntimeException('Composer class loader not found.');
+        // A dedicated loader: borrowing "the first registered" Composer loader is unreliable
+        // (tools such as PsySH register their own loaders first).
+        if (self::$classLoader === null) {
+            self::$classLoader = new ClassLoader;
+            self::$classLoader->register();
+        }
+
+        $loader = self::$classLoader;
 
         foreach ($manifest->autoload as $namespace => $relative) {
             $path = ManifestValidator::resolvePath($dir, $relative, directory: true)

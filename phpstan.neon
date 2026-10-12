@@ -9,5 +9,7 @@ parameters:
         - config/
         - database/
         - routes/
+        # Bundled first-party modules are held to the same standard.
+        - modules/
 
     level: 7

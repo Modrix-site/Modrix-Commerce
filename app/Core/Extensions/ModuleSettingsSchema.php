@@ -16,6 +16,9 @@ use Illuminate\Validation\ValidationException;
  */
 final class ModuleSettingsSchema
 {
+    /** @var array<string, Manifest|null> */
+    private array $manifests = [];
+
     public function __construct(private readonly SettingsRepository $settings) {}
 
     /**
@@ -38,6 +41,17 @@ final class ModuleSettingsSchema
     public function get(Manifest $manifest, string $key, mixed $default = null): mixed
     {
         return array_key_exists($key, $values = $this->values($manifest)) ? ($values[$key] ?? $default) : $default;
+    }
+
+    /**
+     * For module code: a setting of an installed module by name, e.g.
+     * `app(ModuleSettingsSchema::class)->of('acme/reviews', 'auto_approve')`.
+     */
+    public function of(string $module, string $key, mixed $default = null): mixed
+    {
+        $manifest = $this->manifests[$module] ??= app(ModuleRepository::class)->find($module)?->manifest();
+
+        return $manifest === null ? $default : $this->get($manifest, $key, $default);
     }
 
     /**
