@@ -143,7 +143,7 @@ function Hero({ section }: { section: HomeSection }) {
                     <SectionLink
                         href={text(s.button_link)}
                         label={text(s.button_label)}
-                        variant={image ? 'secondary' : 'default'}
+                        variant="default"
                     />
                 </div>
             </div>

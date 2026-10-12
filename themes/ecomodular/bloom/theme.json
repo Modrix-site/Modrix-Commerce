@@ -1,0 +1,101 @@
+{
+    "$schema": "../../../docs/extensions/theme.schema.json",
+    "name": "ecomodular/bloom",
+    "display_name": "Bloom",
+    "description": "A warm, airy theme with soft cream tones, sage green and rounded cards, for home goods, plants, food and lifestyle brands.",
+    "version": "1.0.0",
+    "type": "theme",
+    "theme_type": "storefront",
+    "platform_version": "^0.4 || ^1.0",
+    "author": "Eleydo",
+    "license": "MIT",
+    "capabilities": ["home.sections", "dark_mode", "demo_content"],
+    "assets": "assets",
+    "screenshot": "assets/images/hero.webp",
+    "design": {
+        "color.background": "#fbf7f1",
+        "color.foreground": "#2d2a26",
+        "color.primary": "#3f6b4f",
+        "color.primary_foreground": "#fbf7f1",
+        "color.muted": "#f1eadf",
+        "color.muted_foreground": "#776d62",
+        "color.accent": "#e9d8c4",
+        "color.accent_foreground": "#2d2a26",
+        "color.border": "#e4d9ca",
+        "font_body": "humanist",
+        "font_heading": "serif",
+        "radius": "1rem",
+        "density": "comfortable",
+        "container": "default",
+        "layout.header": "classic",
+        "layout.footer": "columns",
+        "layout.product_card": "framed",
+        "layout.grid_columns": "4",
+        "layout.product_page": "split",
+        "announcement": "Free delivery on orders over $60",
+        "footer_text": "Slow-made goods for a calmer home."
+    },
+    "dark_colors": {
+        "background": "#1d1b18",
+        "foreground": "#f3ece2",
+        "primary": "#8fb89b",
+        "primary_foreground": "#1d1b18",
+        "muted": "#28251f",
+        "muted_foreground": "#b3a898",
+        "accent": "#3a332a",
+        "accent_foreground": "#f3ece2",
+        "border": "#3a3530"
+    },
+    "sections": {
+        "home": [
+            {
+                "type": "hero",
+                "settings": {
+                    "heading": "Bring the outside in",
+                    "subheading": "Ceramics, textiles and plants for a calmer home.",
+                    "button_label": "Shop new arrivals",
+                    "button_link": "/search",
+                    "image": "asset:assets/images/hero.webp",
+                    "alignment": "left",
+                    "height": "medium"
+                }
+            },
+            {
+                "type": "category_grid",
+                "settings": { "title": "Shop by room", "limit": 6 }
+            },
+            {
+                "type": "featured_products",
+                "settings": {
+                    "title": "Fresh this week",
+                    "source": "latest",
+                    "limit": 8
+                }
+            },
+            {
+                "type": "image_with_text",
+                "settings": {
+                    "heading": "Made slowly, by people we know",
+                    "body": "We work with small studios that fire, weave and pot by hand. Every piece is a little different, and that is the point.",
+                    "image": "asset:assets/images/studio.webp",
+                    "image_position": "left",
+                    "button_label": "Meet the makers",
+                    "button_link": "/search"
+                }
+            },
+            {
+                "type": "promo_banner",
+                "settings": {
+                    "text": "Join our list for 10% off your first order.",
+                    "button_label": "Create an account",
+                    "button_link": "/register",
+                    "tone": "muted"
+                }
+            }
+        ]
+    },
+    "demo_content": "demo.json",
+    "changelog": [
+        { "version": "1.0.0", "date": "2026-10-16", "notes": "First release." }
+    ]
+}
