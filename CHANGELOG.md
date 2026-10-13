@@ -4,6 +4,20 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added (payments panel and bulk order actions)
+
+- **Payments panel** on the order page:
+    - total, paid, refunded and **balance due**;
+    - every payment and refund with method, reference, who recorded it, and a receipt download.
+- **Record payment** now takes an amount (partial payments), a method (cash, bank transfer, card terminal, other) and the date received. It works on any order that still owes money, and closes any open online checkout for that order.
+- **Partly paid orders** show the new **Partially paid** status. They ship once fully paid, or straight away for cash on delivery.
+- **Order list:** select orders to:
+    - move them to a fulfilment step (orders that can't move are skipped and listed);
+    - print **packing slips** or **invoices** as one PDF;
+    - **export CSV**.
+- **Export CSV** button for everything matching the current filters.
+- ADR-045.
+
 ### Added (detailed order statuses)
 
 - Orders show one of 19 statuses:

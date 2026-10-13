@@ -285,6 +285,19 @@ Settings:
     - `orders.review_before_confirm`
     - `orders.notify.{confirmed,payment_failed,shipped,out_for_delivery,delivered,delivery_failed,returned}`
 
+## Payments and bulk orders (implemented)
+
+`orders.payment_status` adds `partially_paid`, and `orders.display_status` adds `partially_paid`.
+
+Manual payments use `payments.method_code`:
+
+- `cash`
+- `bank_transfer`
+- `card_terminal`
+- `other`
+
+They have `provider = manual`, and `paid_at` is the date received.
+
 ## Planned tables
 
 The tables below follow §13 of the master specification and are designed when each phase starts:
