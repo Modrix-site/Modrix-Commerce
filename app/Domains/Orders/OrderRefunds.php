@@ -50,8 +50,18 @@ final class OrderRefunds
             ->latest('id')
             ->first();
 
-        if ($payment === null) {
-            throw ValidationException::withMessages(['amount' => 'There is no confirmed online payment to refund.']);
+        // Money taken manually (cash, bank, card terminal) is returned manually.
+        $onlineLeft = $payment === null ? Money::of('0', $order->currency) : $payment->money()->minus(Money::of(
+            (string) $order->refunds()->where('payment_id', $payment->id)->whereNotNull('provider_reference')->where('status', '!=', Refund::STATUS_FAILED)->sum('amount'),
+            $order->currency,
+        ))->nonNegative();
+
+        if ($onlineLeft->isZero()) {
+            return $this->workflow->refund($order, $actor, $amount, $reason, $restock);
+        }
+
+        if ($amount->greaterThan($onlineLeft)) {
+            throw ValidationException::withMessages(['amount' => "At most {$onlineLeft->format()} can be refunded to the online payment. Refund that first, then record the rest as a separate refund."]);
         }
 
         // Same order state and amount → same key, so a double submission cannot refund twice.

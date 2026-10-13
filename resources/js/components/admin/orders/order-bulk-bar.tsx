@@ -42,6 +42,8 @@ export function OrderBulkBar({
 }) {
     const [moving, setMoving] = useState(false);
     const query = { numbers };
+    // Documents render while you wait, so PDFs are limited to 30 orders.
+    const tooManyForPdf = numbers.length > 30;
 
     return (
         <div
@@ -58,7 +60,17 @@ export function OrderBulkBar({
                     Move to step
                 </Button>
             )}
-            <Button size="sm" variant="outline" asChild>
+            <Button
+                size="sm"
+                variant="outline"
+                asChild={!tooManyForPdf}
+                disabled={tooManyForPdf}
+                title={
+                    tooManyForPdf
+                        ? 'Select 30 orders or fewer to print'
+                        : undefined
+                }
+            >
                 <a
                     href={documents.url({
                         query: { ...query, type: 'packing-slips' },
@@ -69,7 +81,17 @@ export function OrderBulkBar({
                     Packing slips
                 </a>
             </Button>
-            <Button size="sm" variant="outline" asChild>
+            <Button
+                size="sm"
+                variant="outline"
+                asChild={!tooManyForPdf}
+                disabled={tooManyForPdf}
+                title={
+                    tooManyForPdf
+                        ? 'Select 30 orders or fewer to print'
+                        : undefined
+                }
+            >
                 <a
                     href={documents.url({
                         query: { ...query, type: 'invoices' },

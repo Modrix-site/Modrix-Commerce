@@ -34,6 +34,9 @@ class OrderBulkController extends Controller
 {
     public const MAX = 100;
 
+    /** Documents are rendered while the browser waits, so bundles stay small. */
+    public const MAX_DOCUMENTS = 30;
+
     public function fulfillment(Request $request, OrderWorkflow $workflow): RedirectResponse
     {
         $data = $request->validate([
@@ -80,9 +83,10 @@ class OrderBulkController extends Controller
     public function documents(Request $request, OrderDocuments $documents): Response
     {
         $data = $request->validate([
-            ...$this->numberRules(),
+            ...$this->numberRules(self::MAX_DOCUMENTS),
             'type' => ['required', Rule::in(['packing-slips', 'invoices'])],
         ]);
+        set_time_limit(120);
 
         $orders = $this->orders($data['numbers']);
         // In the order staff selected them.
@@ -127,10 +131,10 @@ class OrderBulkController extends Controller
     /**
      * @return array<string, list<string>>
      */
-    private function numberRules(): array
+    private function numberRules(int $max = self::MAX): array
     {
         return [
-            'numbers' => ['required', 'array', 'min:1', 'max:'.self::MAX],
+            'numbers' => ['required', 'array', 'min:1', 'max:'.$max],
             'numbers.*' => ['required', 'string', 'max:40'],
         ];
     }

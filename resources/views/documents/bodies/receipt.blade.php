@@ -14,7 +14,7 @@
     <tbody>
         <tr><td>{{ __('Order') }}</td><td class="num">{{ $order->number }}</td></tr>
         @if ($invoiceNumber)<tr><td>{{ __('Invoice number') }}</td><td class="num">{{ $invoiceNumber }}</td></tr>@endif
-        <tr><td>{{ __('Payment method') }}</td><td class="num">{{ $order->payment_method_name }}</td></tr>
+        <tr><td>{{ __('Payment method') }}</td><td class="num">{{ $methodLabel }}</td></tr>
         @if ($payment->provider_reference || $payment->provider_payment_id)
             <tr><td>{{ __('Reference') }}</td><td class="num">{{ $payment->provider_reference ?? $payment->provider_payment_id }}</td></tr>
         @endif

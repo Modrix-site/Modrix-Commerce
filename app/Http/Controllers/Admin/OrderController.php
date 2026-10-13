@@ -81,17 +81,23 @@ class OrderController extends Controller
     public function recordPayment(Request $request, Order $order): RedirectResponse
     {
         $decimals = Currencies::ALL[$order->currency]['minor_units'] ?? 2;
+        $timezone = app(StoreSettings::class)->timezone();
+        $today = now($timezone)->toDateString();
         $data = $request->validate([
             'amount' => ['nullable', 'string', $decimals > 0 ? 'regex:/^\d{1,13}(\.\d{1,'.$decimals.'})?$/' : 'regex:/^\d{1,13}$/'],
             'method' => ['nullable', Rule::in(array_keys(OrderWorkflow::MANUAL_METHODS))],
-            'paid_at' => ['nullable', 'date_format:Y-m-d', 'before_or_equal:today'],
+            'paid_at' => ['nullable', 'date_format:Y-m-d', 'before_or_equal:'.$today],
             'reference' => ['nullable', 'string', 'max:191'],
             'note' => ['nullable', 'string', 'max:500'],
         ], [
             'amount.regex' => 'Enter an amount like 12.50 (at most '.$decimals.' decimals).',
         ]);
 
-        $paidAt = isset($data['paid_at']) ? Carbon::parse($data['paid_at'], app(StoreSettings::class)->timezone())->setTimeFrom(now()) : null;
+        // Today means "now"; an earlier day is recorded at noon store time.
+        $paidAt = match (true) {
+            ! isset($data['paid_at']), $data['paid_at'] === $today => null,
+            default => Carbon::parse($data['paid_at'].' 12:00', $timezone),
+        };
         $order = $this->workflow->recordManualPayment(
             $order,
             $this->actor($request),

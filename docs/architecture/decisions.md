@@ -493,9 +493,11 @@ Each entry records a decision, its context, and its consequences. Entries are ap
         - The invoice and the payment email follow full payment.
         - Every payment gets its own receipt showing the balance.
     - **Bulk actions** run every selected order (at most 100) through the same `OrderWorkflow` moves as single changes. Orders that cannot move are skipped and listed in the result, never forced.
-    - **Combined PDFs:** packing slips and invoices for many orders come as one PDF, one document per page. They are built from the same body templates as single documents.
+    - **Combined PDFs:** packing slips and invoices for up to 30 orders come as one PDF, one document per page. They are built from the same body templates as single documents.
     - **CSV export:** one row per order, for the selected orders or everything matching the list filters (`OrderFilters`, shared with the list). It is capped at 10 000 rows, streamed, and protected against formula injection.
 - **Consequences:**
     - **Refunds don't reopen the balance due:** balance due = total minus payments.
     - **Bulk shipping records no tracking numbers.**
-    - **Large bundles are slow:** a 100-order bundle renders synchronously, roughly a second per page, so it may take tens of seconds. A queued export is a follow-up.
+    - **Bundles stay small:** they render while the browser waits (about a second per page), so they are capped at 30 orders with a 120 s time limit. A queued export for larger batches is a follow-up.
+    - **Payments arriving after a manual part payment:** an online payment that completes after one still settles the order. Any excess is flagged with its exact amount.
+    - **Refunds follow the money:** a refund goes back to the online payment while some of it is unrefunded. Otherwise it is recorded as a manual refund (cash, bank, terminal).

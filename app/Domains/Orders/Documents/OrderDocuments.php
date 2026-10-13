@@ -11,6 +11,7 @@ use App\Domains\Orders\Models\Order;
 use App\Domains\Orders\Models\OrderAddress;
 use App\Domains\Orders\Models\OrderEvent;
 use App\Domains\Orders\Models\OrderItem;
+use App\Domains\Orders\OrderWorkflow;
 use App\Domains\Payments\Models\Payment;
 use App\Domains\Pricing\Money;
 use App\Models\User;
@@ -185,6 +186,7 @@ final class OrderDocuments
             'seller' => $this->currentSeller(),
             'order' => $order,
             'payment' => $payment,
+            'methodLabel' => OrderWorkflow::MANUAL_METHODS[$payment->method_code] ?? $order->payment_method_name,
             'amount' => $format($payment->money()),
             'grandTotal' => $format($grand),
             'paidToDate' => $format($paidToDate),

@@ -131,7 +131,7 @@ class PartialPaymentTest extends TestCase
 
         // If the customer still completes that session, the extra money is flagged for refund.
         app(OrderWorkflow::class)->confirmGatewayPayment($session->fresh(), new PaymentUpdate(PaymentUpdateKind::Succeeded, 'cs_1', 'pi_1', $session->money()));
-        $this->assertDatabaseHas('order_events', ['order_id' => $order->id, 'message' => 'A second payment was received for this order. Refund the extra payment to the customer.']);
+        $this->assertDatabaseHas('order_events', ['order_id' => $order->id, 'message' => 'This order was overpaid by '.Money::of('10', $order->currency)->format().'. Refund the extra to the customer.']);
     }
 
     public function test_pay_on_delivery_orders_can_ship_while_partly_paid()

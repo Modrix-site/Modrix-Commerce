@@ -144,7 +144,7 @@ final class OrderWorkflow
                 throw ValidationException::withMessages(['method' => 'Choose how the payment was received.']);
             }
 
-            if ($paidAt->isAfter(now()->endOfDay())) {
+            if ($paidAt->isAfter(now($this->storeTimezone())->endOfDay())) {
                 throw ValidationException::withMessages(['paid_at' => 'The payment date cannot be in the future.']);
             }
 
@@ -245,6 +245,7 @@ final class OrderWorkflow
                 'paid_at' => now(),
             ])->save();
 
+            $owing = $order->balanceDue()->isPositive();
             $first = $order->money('paid_total')->isZero();
             $cancelled = $order->status === OrderStatus::Cancelled;
             $order->forceFill([
@@ -252,8 +253,11 @@ final class OrderWorkflow
                 'paid_at' => $order->paid_at ?? now(),
             ]);
             $order->payment_status = $this->paymentStatusFor($order);
+            // The payment settles what was owed (possibly after a manual part payment).
+            $settles = $owing && ! $cancelled && $order->balanceDue()->isZero();
+            $overpaid = $order->money('paid_total')->minus($order->money('grand_total'));
 
-            if ($first && ! $cancelled) {
+            if ($settles) {
                 $this->setPaidStatus($order);
             }
             $order->save();
@@ -264,11 +268,18 @@ final class OrderWorkflow
             if ($cancelled) {
                 $this->log($order, 'payment', 'This payment arrived after the order was cancelled. Refund it to the customer.', false, null);
                 $this->audit->record('order.paid_after_cancellation', $order, ['number' => $order->number, 'payment_id' => $payment->id]);
-            } elseif (! $first) {
+            } elseif (! $owing) {
                 $this->log($order, 'payment', 'A second payment was received for this order. Refund the extra payment to the customer.', false, null);
                 $this->audit->record('order.duplicate_payment', $order, ['number' => $order->number, 'payment_id' => $payment->id]);
             } else {
-                DB::afterCommit(fn () => OrderPaid::dispatch($order->id));
+                if ($overpaid->isPositive()) {
+                    $this->log($order, 'payment', "This order was overpaid by {$overpaid->format()}. Refund the extra to the customer.", false, null);
+                    $this->audit->record('order.overpaid', $order, ['number' => $order->number, 'payment_id' => $payment->id, 'excess' => $overpaid->toDecimal()]);
+                }
+
+                if ($settles) {
+                    DB::afterCommit(fn () => OrderPaid::dispatch($order->id));
+                }
             }
 
             return $order;
@@ -379,7 +390,7 @@ final class OrderWorkflow
                 throw ValidationException::withMessages(['order' => 'Only shipped orders can be marked as delivered.']);
             }
 
-            $paid = ! $order->payment_status->isOutstanding();
+            $paid = ! $order->payment_status->isOutstanding() && $order->balanceDue()->isZero();
 
             $order->forceFill([
                 'fulfillment_status' => FulfillmentStatus::Delivered,
@@ -786,8 +797,7 @@ final class OrderWorkflow
 
     private function canRecordPayment(Order $order): bool
     {
-        return $order->status !== OrderStatus::Cancelled && $order->balanceDue()->isPositive()
-            && in_array($order->payment_status, [PaymentStatus::Unpaid, PaymentStatus::Failed, PaymentStatus::PartiallyPaid], true);
+        return $order->status !== OrderStatus::Cancelled && $order->balanceDue()->isPositive();
     }
 
     /**
@@ -829,6 +839,11 @@ final class OrderWorkflow
     {
         $id = $order->id;
         DB::afterCommit(fn () => OrderStatusChanged::dispatch($id, $kind, $notify, "{$kind}:{$event->id}", $note));
+    }
+
+    private function storeTimezone(): string
+    {
+        return (string) $this->settings->get('store.timezone', config('app.timezone'));
     }
 
     private function reviewsOrders(): bool
