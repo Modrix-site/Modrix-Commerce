@@ -4,6 +4,22 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added (product editor and product options)
+
+- Redesigned product editor:
+    - one page with a section menu (General, Media, Pricing or Variants, Shipping, Search listing);
+    - a sidebar for status, visibility and organisation;
+    - images on the same page;
+    - a compact variants table;
+    - a sticky save bar that warns about unsaved changes.
+- **Cost per item** with live margin and profit (only staff see it).
+- **Dimensions:** length, width and height per variant.
+- **Brands** (Admin → Catalog → Brands). The brand shows on the product page and links to a brand page listing its products.
+- **Tags** with autocomplete, for filtering products in the admin and for storefront search.
+- **Featured** flag, plus a "featured" source for the home page Featured products section.
+- **Product list filters** by brand, tag and featured, plus a brand column.
+- ADR-046.
+
 ### Added (payments panel and bulk order actions)
 
 - **Payments panel** on the order page:

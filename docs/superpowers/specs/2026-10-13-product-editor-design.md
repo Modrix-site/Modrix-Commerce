@@ -20,27 +20,27 @@ Compare-at price, weight, low-stock threshold and scheduled publishing already e
 
 - **Layout:** one page with a sticky section menu and a sticky save bar. The save bar shows unsaved changes and warns before leaving the page.
 - **Brands:** a managed list (Admin → Catalog → Brands: name, slug, description, logo).
-  - One brand per product.
-  - The product list filters by brand.
-  - The product page shows the brand, linking to a brand page `/b/{slug}` that lists the brand's products.
+    - One brand per product.
+    - The product list filters by brand.
+    - The product page shows the brand, linking to a brand page `/b/{slug}` that lists the brand's products.
 - **Tags:** free tags with autocomplete, used for the admin filter and storefront search. They are not displayed on the storefront.
 
 ## Data
 
 - **`brands` table:**
-  - `id`, `name` string(120), `slug` string(140) unique, `description` text nullable;
-  - `logo_media_id` FK media nullable, nullOnDelete;
-  - timestamps.
-  - Deleting a brand sets its products' `brand_id` to null.
+    - `id`, `name` string(120), `slug` string(140) unique, `description` text nullable;
+    - `logo_media_id` FK media nullable, nullOnDelete;
+    - timestamps.
+    - Deleting a brand sets its products' `brand_id` to null.
 - **`products` gains:**
-  - `brand_id` (nullable FK, nullOnDelete, indexed);
-  - `is_featured` (bool, default false, indexed).
+    - `brand_id` (nullable FK, nullOnDelete, indexed);
+    - `is_featured` (bool, default false, indexed).
 - **`product_tags` table:** `product_id` (FK cascade) and `tag` string(60), with primary key (`product_id`, `tag`) and an index on `tag`.
-  - Tags are trimmed, whitespace is collapsed, and they are stored lowercase.
-  - At most 20 per product.
+    - Tags are trimmed, whitespace is collapsed, and they are stored lowercase.
+    - At most 20 per product.
 - **`product_variants` gains:**
-  - `cost` decimal(19,4), nullable, in the store currency, admin-only;
-  - `length`, `width`, `height` decimal(10,2), nullable, in the store dimension unit.
+    - `cost` decimal(19,4), nullable, in the store currency, admin-only;
+    - `length`, `width`, `height` decimal(10,2), nullable, in the store dimension unit.
 
 ## Rules
 
@@ -53,17 +53,17 @@ Compare-at price, weight, low-stock threshold and scheduled publishing already e
 ## Admin
 
 - **Product editor** (`resources/js/pages/admin/products/form.tsx` rewritten, split into components under `components/admin/products/`).
-  - **Section menu:** General, Media, Pricing & inventory or Variants, Shipping, Search listing.
-  - **Sidebar:** Status & visibility (status, publish at, featured, type on create) and Organisation (categories, brand, tags).
-  - **Variants:** a compact table (options, SKU, price, stock, active) with an expandable details row (compare-at price, cost and margin, barcode, low-stock alert, inventory flags).
-  - **Shipping section:** weight and dimensions for each variant.
-  - **Media:** the existing `ProductImages` component, moved inside the page. On create the section says images can be added after saving.
-  - **Save bar:**
-    - fixed to the bottom of the content;
-    - shows "Unsaved changes" when the form is dirty;
-    - has Save and Discard;
-    - warns on `beforeunload` and on Inertia navigation while dirty.
-  - **Header:** View on store (published products), Translations and Delete.
+    - **Section menu:** General, Media, Pricing & inventory or Variants, Shipping, Search listing.
+    - **Sidebar:** Status & visibility (status, publish at, featured, type on create) and Organisation (categories, brand, tags).
+    - **Variants:** a compact table (options, SKU, price, stock, active) with an expandable details row (compare-at price, cost and margin, barcode, low-stock alert, inventory flags).
+    - **Shipping section:** weight and dimensions for each variant.
+    - **Media:** the existing `ProductImages` component, moved inside the page. On create the section says images can be added after saving.
+    - **Save bar:**
+        - fixed to the bottom of the content;
+        - shows "Unsaved changes" when the form is dirty;
+        - has Save and Discard;
+        - warns on `beforeunload` and on Inertia navigation while dirty.
+    - **Header:** View on store (published products), Translations and Delete.
 - **Product list:** brand, tag and featured filters, plus a brand column.
 - **Brands page** (`admin/brands`): a list with product counts; create and edit in a dialog (name, slug, description, logo from the media library); delete with confirmation.
 
@@ -77,14 +77,14 @@ Compare-at price, weight, low-stock threshold and scheduled publishing already e
 ## Testing
 
 - **Saving products:**
-  - brand, tags (normalised, deduplicated, limit), featured, cost, dimensions;
-  - validation errors;
-  - edit props include brand options, tag suggestions, cost and dimensions.
+    - brand, tags (normalised, deduplicated, limit), featured, cost, dimensions;
+    - validation errors;
+    - edit props include brand options, tag suggestions, cost and dimensions.
 - **Brands:** create, update and delete (products keep existing with no brand); slug unique; permission.
 - **Product list:** brand, tag and featured filters.
 - **Storefront:**
-  - the product page shows the brand;
-  - the brand page lists only visible products, and an unknown slug gives 404;
-  - search finds a product by tag;
-  - the home featured source.
+    - the product page shows the brand;
+    - the brand page lists only visible products, and an unknown slug gives 404;
+    - search finds a product by tag;
+    - the home featured source.
 - **Browser check:** edit a product (dirty warning, margin, save).

@@ -298,6 +298,17 @@ Manual payments use `payments.method_code`:
 
 They have `provider = manual`, and `paid_at` is the date received.
 
+## Brands, tags and product details (implemented)
+
+| Table / column                               | Notes                                                                                    |
+| -------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `brands`                                     | `name`, `slug` (unique), `description`, `logo_media_id` (media, null on delete).         |
+| `products.brand_id`                          | Nullable; set to null when the brand is deleted.                                         |
+| `products.is_featured`                       | Boolean, indexed.                                                                        |
+| `product_tags`                               | (`product_id`, `tag`) primary key; tags normalised to lowercase, at most 20 per product. |
+| `product_variants.cost`                      | decimal(19,4), store currency, admin-only.                                               |
+| `product_variants.length`, `width`, `height` | decimal(10,2), store dimension unit.                                                     |
+
 ## Planned tables
 
 The tables below follow §13 of the master specification and are designed when each phase starts:

@@ -501,3 +501,28 @@ Each entry records a decision, its context, and its consequences. Entries are ap
     - **Bundles stay small:** they render while the browser waits (about a second per page), so they are capped at 30 orders with a 120 s time limit. A queued export for larger batches is a follow-up.
     - **Payments arriving after a manual part payment:** an online payment that completes after one still settles the order. Any excess is flagged with its exact amount.
     - **Refunds follow the money:** a refund goes back to the online payment while some of it is unrefunded. Otherwise it is recorded as a manual refund (cash, bank, terminal).
+
+## ADR-046 — Brands, tags and the single-page product editor
+
+- **Date:** 2026-10-13
+- **Status:** Accepted
+- **Decision:**
+    - **Brands are a managed list** (`brands`: name, slug, description, logo from the media library) with one brand per product.
+        - Deleting a brand keeps its products, which are left without a brand.
+        - Each brand has a public page, `/b/{slug}`, that lists its visible products.
+    - **Tags are free text, stored normalised** (trimmed, single spaces, lowercase) in `product_tags`, at most 20 per product and 60 characters each.
+        - They drive the admin filter and storefront search, both by exact match, so `%` and `_` are literal.
+        - They are not shown to shoppers.
+    - **New variant fields:**
+        - **cost**, in the store currency and admin-only, never part of storefront props;
+        - **length, width and height**, in the store dimension unit.
+    - **Featured products:** `products.is_featured` feeds a new `featured` source for the home "Featured products" section and an admin filter.
+    - **One-page editor:** the product editor stays one page with a sticky section menu, a sidebar (status and visibility, organisation) and a sticky save bar.
+        - The save bar shows unsaved changes and warns before the browser leaves or Inertia navigates away while the form is dirty.
+        - Variable products use a compact variants table with expandable details.
+        - Margin is calculated live from price and cost.
+- **Consequences:**
+    - **Not covered yet:**
+        - the CSV import and export don't carry brand, tags, cost or dimensions;
+        - brand names and descriptions are not translatable;
+        - shipping rates don't use dimensions.
