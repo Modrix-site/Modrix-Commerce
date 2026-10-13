@@ -45,6 +45,7 @@ final class OrderDisplayStatus
             $fulfillment === FulfillmentStatus::DeliveryFailed => DisplayStatus::DeliveryFailed,
             $fulfillment === FulfillmentStatus::Delivered, $status === OrderStatus::Completed => DisplayStatus::Delivered,
             $fulfillment !== FulfillmentStatus::Unfulfilled => DisplayStatus::from($fulfillment->value),
+            $payment === PaymentStatus::PartiallyPaid => DisplayStatus::PartiallyPaid,
             $payment === PaymentStatus::Failed => DisplayStatus::PaymentFailed,
             $status === OrderStatus::PendingPayment => DisplayStatus::PendingPayment,
             $status === OrderStatus::Pending => DisplayStatus::Pending,

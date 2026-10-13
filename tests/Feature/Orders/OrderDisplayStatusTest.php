@@ -56,7 +56,7 @@ class OrderDisplayStatusTest extends TestCase
             $this->assertSame($expected, OrderDisplayStatus::for($order), $name);
         }
 
-        $this->assertCount(19, DisplayStatus::cases());
+        $this->assertCount(20, DisplayStatus::cases());
     }
 
     public function test_customer_never_sees_internal_states()

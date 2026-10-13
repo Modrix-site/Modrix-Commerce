@@ -29,6 +29,8 @@ use App\Domains\Payments\Models\Payment;
 use App\Domains\Payments\PaymentMethods;
 use App\Domains\Pricing\Money;
 use App\Models\User;
+use Carbon\CarbonInterface;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
@@ -58,7 +60,7 @@ final class OrderWorkflow
     {
         $actions = [];
 
-        if ($this->canRecordPayment($order) && isset(PaymentMethods::MANUAL[$order->payment_method_code])) {
+        if ($this->canRecordPayment($order)) {
             $actions[] = 'record_payment';
         }
 
@@ -109,26 +111,47 @@ final class OrderWorkflow
         return $actions;
     }
 
+    /** How staff can record money received outside the platform. */
+    public const MANUAL_METHODS = [
+        'cash' => 'Cash',
+        'bank_transfer' => 'Bank transfer',
+        'card_terminal' => 'Card terminal',
+        'other' => 'Other',
+    ];
+
     /**
-     * Record a payment received outside the platform (manual methods).
+     * Record money received outside the platform: the whole balance or part
+     * of it, by any manual method, on any order that still owes something.
+     * Open online payment sessions are closed so the customer cannot pay twice.
      */
-    public function recordManualPayment(Order $order, User $actor, ?string $reference = null, ?string $note = null): Order
+    public function recordManualPayment(Order $order, User $actor, ?string $reference = null, ?string $note = null, ?Money $amount = null, ?string $method = null, ?CarbonInterface $paidAt = null): Order
     {
-        return $this->transition($order, function (Order $order) use ($actor, $reference, $note): Order {
+        return $this->transition($order, function (Order $order) use ($actor, $reference, $note, $amount, $method, $paidAt): Order {
             if (! $this->canRecordPayment($order)) {
                 throw ValidationException::withMessages(['order' => 'A payment cannot be recorded for this order in its current state.']);
             }
 
-            if ($this->paymentMethods->definition($order->payment_method_code) === null || ! isset(PaymentMethods::MANUAL[$order->payment_method_code])) {
-                throw ValidationException::withMessages(['order' => 'Payments for this method are confirmed by the payment provider, not recorded manually.']);
+            $balance = $order->balanceDue();
+            $amount ??= $balance;
+            $method ??= isset(self::MANUAL_METHODS[$order->payment_method_code]) ? $order->payment_method_code : 'other';
+            $paidAt ??= now();
+
+            if (! $amount->isPositive() || $balance->lessThan($amount)) {
+                throw ValidationException::withMessages(['amount' => "Enter an amount between 0 and the balance due ({$balance->format()})."]);
             }
 
-            $amount = $order->money('grand_total');
+            if (! isset(self::MANUAL_METHODS[$method])) {
+                throw ValidationException::withMessages(['method' => 'Choose how the payment was received.']);
+            }
+
+            if ($paidAt->isAfter(now()->endOfDay())) {
+                throw ValidationException::withMessages(['paid_at' => 'The payment date cannot be in the future.']);
+            }
 
             $payment = new Payment;
             $payment->forceFill([
                 'order_id' => $order->id,
-                'method_code' => $order->payment_method_code,
+                'method_code' => $method,
                 'provider' => 'manual',
                 'provider_reference' => $reference,
                 'amount' => $amount->toDecimal(),
@@ -136,24 +159,51 @@ final class OrderWorkflow
                 'status' => Payment::STATUS_PAID,
                 'recorded_by' => $actor->id,
                 'note' => $note,
-                'paid_at' => now(),
+                'paid_at' => $paidAt,
             ])->save();
 
-            $order->forceFill([
-                'payment_status' => PaymentStatus::Paid,
-                'paid_total' => $amount->toDecimal(),
-                'paid_at' => now(),
-            ]);
-            $this->setPaidStatus($order);
+            $this->closeOpenSessions($order);
+
+            $order->paid_total = $order->money('paid_total')->plus($amount)->toDecimal();
+            $order->payment_status = $this->paymentStatusFor($order);
+            $fullyPaid = $order->balanceDue()->isZero();
+
+            if ($fullyPaid) {
+                $order->paid_at ??= Carbon::now();
+                $this->setPaidStatus($order);
+            }
             $order->save();
 
-            $this->log($order, 'payment', "Payment of {$amount->format()} recorded ({$order->payment_method_name}).", true, $actor, ['reference' => $reference]);
-            $this->audit->record('order.payment_recorded', $order, ['number' => $order->number, 'amount' => $amount->toDecimal()], $actor);
+            $label = self::MANUAL_METHODS[$method];
+            $this->log($order, 'payment', $fullyPaid
+                ? "Payment of {$amount->format()} recorded ({$label})."
+                : "Partial payment of {$amount->format()} recorded ({$label}). Balance due {$order->balanceDue()->format()}.", true, $actor, ['reference' => $reference, 'method' => $method]);
+            $this->audit->record('order.payment_recorded', $order, ['number' => $order->number, 'amount' => $amount->toDecimal(), 'method' => $method], $actor);
 
-            DB::afterCommit(fn () => OrderPaid::dispatch($order->id));
+            if ($fullyPaid) {
+                DB::afterCommit(fn () => OrderPaid::dispatch($order->id));
+            }
 
             return $order;
         });
+    }
+
+    /**
+     * Expire the order's open online payment sessions (the provider page can
+     * no longer be paid).
+     */
+    private function closeOpenSessions(Order $order): void
+    {
+        $open = $order->payments()->whereIn('status', Payment::OPEN)->get();
+
+        foreach ($open as $payment) {
+            $payment->forceFill(['status' => Payment::STATUS_EXPIRED, 'failure_reason' => 'Settled manually.'])->save();
+        }
+
+        $gateway = $this->paymentMethods->gateway($order->payment_method_code);
+        if ($gateway !== null && $open->isNotEmpty()) {
+            DB::afterCommit(fn () => $open->each(fn (Payment $p) => $gateway->expireSession($p)));
+        }
     }
 
     /**
@@ -721,10 +771,11 @@ final class OrderWorkflow
         $refunded = $order->money('refunded_total');
 
         return match (true) {
-            $paid->isZero() => PaymentStatus::Unpaid,
-            $refunded->isZero() => PaymentStatus::Paid,
-            ! $refunded->lessThan($paid) => PaymentStatus::Refunded,
-            default => PaymentStatus::PartiallyRefunded,
+            $paid->isZero() => $order->payment_status === PaymentStatus::Failed ? PaymentStatus::Failed : PaymentStatus::Unpaid,
+            ! $refunded->isZero() && ! $refunded->lessThan($paid) => PaymentStatus::Refunded,
+            ! $refunded->isZero() => PaymentStatus::PartiallyRefunded,
+            $paid->lessThan($order->money('grand_total')) => PaymentStatus::PartiallyPaid,
+            default => PaymentStatus::Paid,
         };
     }
 
@@ -735,7 +786,8 @@ final class OrderWorkflow
 
     private function canRecordPayment(Order $order): bool
     {
-        return $order->payment_status->isOutstanding() && $order->status !== OrderStatus::Cancelled;
+        return $order->status !== OrderStatus::Cancelled && $order->balanceDue()->isPositive()
+            && in_array($order->payment_status, [PaymentStatus::Unpaid, PaymentStatus::Failed, PaymentStatus::PartiallyPaid], true);
     }
 
     /**
@@ -858,7 +910,7 @@ final class OrderWorkflow
             return true;
         }
 
-        return $order->payment_status->isOutstanding()
+        return ($order->payment_status->isOutstanding() || $order->payment_status === PaymentStatus::PartiallyPaid)
             && ($this->paymentMethods->definition($order->payment_method_code)?->allowsFulfillmentBeforePayment() ?? false);
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Core\Settings\Currencies;
 use App\Core\Settings\StoreSettings;
 use App\Domains\Orders\Documents\OrderDocuments;
 use App\Domains\Orders\Enums\DisplayStatus;
@@ -103,13 +104,31 @@ class OrderController extends Controller
 
     public function recordPayment(Request $request, Order $order): RedirectResponse
     {
+        $decimals = Currencies::ALL[$order->currency]['minor_units'] ?? 2;
         $data = $request->validate([
+            'amount' => ['nullable', 'string', $decimals > 0 ? 'regex:/^\d{1,13}(\.\d{1,'.$decimals.'})?$/' : 'regex:/^\d{1,13}$/'],
+            'method' => ['nullable', Rule::in(array_keys(OrderWorkflow::MANUAL_METHODS))],
+            'paid_at' => ['nullable', 'date_format:Y-m-d', 'before_or_equal:today'],
             'reference' => ['nullable', 'string', 'max:191'],
             'note' => ['nullable', 'string', 'max:500'],
+        ], [
+            'amount.regex' => 'Enter an amount like 12.50 (at most '.$decimals.' decimals).',
         ]);
-        $this->workflow->recordManualPayment($order, $this->actor($request), $data['reference'] ?? null, $data['note'] ?? null);
 
-        return $this->done($order, __('Payment recorded.'));
+        $paidAt = isset($data['paid_at']) ? Carbon::parse($data['paid_at'], app(StoreSettings::class)->timezone())->setTimeFrom(now()) : null;
+        $order = $this->workflow->recordManualPayment(
+            $order,
+            $this->actor($request),
+            $data['reference'] ?? null,
+            $data['note'] ?? null,
+            isset($data['amount']) ? Money::of($data['amount'], $order->currency) : null,
+            $data['method'] ?? null,
+            $paidAt,
+        );
+
+        return $this->done($order, $order->balanceDue()->isZero()
+            ? __('Payment recorded.')
+            : __('Payment recorded. Balance due :amount.', ['amount' => $order->balanceDue()->format()]));
     }
 
     public function ship(Request $request, Order $order): RedirectResponse

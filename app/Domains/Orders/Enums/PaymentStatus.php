@@ -6,6 +6,7 @@ enum PaymentStatus: string
 {
     case Unpaid = 'unpaid';
     case Failed = 'failed'; // the latest attempt failed and nothing has been paid
+    case PartiallyPaid = 'partially_paid'; // some, not all, of the total received
     case Paid = 'paid';
     case PartiallyRefunded = 'partially_refunded';
     case Refunded = 'refunded';
@@ -15,6 +16,7 @@ enum PaymentStatus: string
         return match ($this) {
             self::Unpaid => 'Unpaid',
             self::Failed => 'Payment failed',
+            self::PartiallyPaid => 'Partially paid',
             self::Paid => 'Paid',
             self::PartiallyRefunded => 'Partially refunded',
             self::Refunded => 'Refunded',

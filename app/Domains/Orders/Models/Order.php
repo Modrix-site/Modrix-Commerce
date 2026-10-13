@@ -205,6 +205,12 @@ class Order extends Model
     /**
      * Amount that can still be refunded.
      */
+    /** What is still owed: total minus payments received (refunds do not reopen it). */
+    public function balanceDue(): Money
+    {
+        return $this->money('grand_total')->minus($this->money('paid_total'))->nonNegative();
+    }
+
     public function refundable(): Money
     {
         return $this->money('paid_total')->minus($this->money('refunded_total'))->nonNegative();

@@ -10,6 +10,7 @@ enum DisplayStatus: string
 {
     case PendingPayment = 'pending_payment';
     case PaymentFailed = 'payment_failed';
+    case PartiallyPaid = 'partially_paid';
     case Pending = 'pending';
     case Confirmed = 'confirmed';
     case OnHold = 'on_hold';
@@ -33,6 +34,7 @@ enum DisplayStatus: string
         return match ($this) {
             self::PendingPayment => 'Pending payment',
             self::PaymentFailed => 'Payment failed',
+            self::PartiallyPaid => 'Partially paid',
             self::Pending => 'Pending',
             self::Confirmed => 'Confirmed',
             self::OnHold => 'On hold',

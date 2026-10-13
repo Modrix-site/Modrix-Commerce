@@ -117,19 +117,21 @@ class PaymentAdminTest extends TestCase
         $this->assertSame('paid', $order->fresh()->payment_status->value);
     }
 
-    public function test_manual_payment_cannot_be_recorded_for_a_stripe_order()
+    public function test_a_stripe_order_can_be_settled_manually_and_its_checkout_page_closes()
     {
         $this->enableCheckout();
         $this->configureStripe();
         $this->fakeStripeApi();
-        [$order] = $this->placeStripeOrder();
+        [$order, $payment] = $this->placeStripeOrder();
 
         $this->actingAs($this->owner())
             ->get(route('admin.orders.show', $order))
-            ->assertInertia(fn (Assert $page) => $page->where('actions', fn ($actions) => ! collect($actions)->contains('record_payment')));
+            ->assertInertia(fn (Assert $page) => $page->where('actions', fn ($actions) => collect($actions)->contains('record_payment')));
 
         $this->actingAs($this->owner())
-            ->post(route('admin.orders.payments.store', $order), [])
-            ->assertSessionHasErrors('order');
+            ->post(route('admin.orders.payments.store', $order), ['method' => 'card_terminal'])
+            ->assertSessionHasNoErrors();
+        $this->assertSame('expired', $payment->fresh()->status);
+        $this->assertSame('paid', $order->fresh()->payment_status->value);
     }
 }
