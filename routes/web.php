@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardRedirectController;
 use App\Http\Controllers\Storefront\AccountController;
 use App\Http\Controllers\Storefront\AccountOrderController;
+use App\Http\Controllers\Storefront\AccountOrderDocumentController;
 use App\Http\Controllers\Storefront\CartController;
 use App\Http\Controllers\Storefront\CatalogController;
 use App\Http\Controllers\Storefront\CheckoutController;
@@ -43,6 +44,10 @@ Route::middleware(['installed', ShareStorefrontData::class])->group(function () 
         Route::delete('addresses/{address}', [AccountController::class, 'destroyAddress'])->name('addresses.destroy');
         Route::get('orders', [AccountOrderController::class, 'index'])->name('orders');
         Route::get('orders/{order}', [AccountOrderController::class, 'show'])->name('orders.show');
+        Route::middleware('throttle:30,1')->group(function () {
+            Route::get('orders/{order}/invoice.pdf', [AccountOrderDocumentController::class, 'invoice'])->name('orders.invoice');
+            Route::get('orders/{order}/payments/{payment}/receipt.pdf', [AccountOrderDocumentController::class, 'receipt'])->scopeBindings()->name('orders.receipt');
+        });
     });
 });
 

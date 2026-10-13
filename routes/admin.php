@@ -26,6 +26,7 @@ use App\Http\Controllers\Admin\MarketplaceClientController;
 use App\Http\Controllers\Admin\MarketplaceSellerController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\OrderDocumentController;
 use App\Http\Controllers\Admin\PaymentSettingsController;
 use App\Http\Controllers\Admin\PaymentWebhookEventController;
 use App\Http\Controllers\Admin\ReportController;
@@ -142,6 +143,9 @@ Route::post('inventory/{variant}/adjust', [InventoryController::class, 'adjust']
 Route::middleware('can:orders.view')->group(function () {
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::get('orders/{order}/invoice.pdf', [OrderDocumentController::class, 'invoice'])->name('orders.documents.invoice');
+    Route::get('orders/{order}/payments/{payment}/receipt.pdf', [OrderDocumentController::class, 'receipt'])->scopeBindings()->name('orders.documents.receipt');
+    Route::get('orders/{order}/packing-slip.pdf', [OrderDocumentController::class, 'packingSlip'])->name('orders.documents.packing-slip');
 });
 Route::middleware('can:orders.manage')->group(function () {
     Route::post('orders/{order}/payments', [OrderController::class, 'recordPayment'])->name('orders.payments.store');
