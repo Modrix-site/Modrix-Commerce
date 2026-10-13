@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -27,11 +28,14 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $published_at
  * @property string|null $meta_title
  * @property string|null $meta_description
+ * @property int|null $brand_id
+ * @property bool $is_featured
+ * @property-read Brand|null $brand
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  */
-#[Fillable(['type', 'name', 'slug', 'short_description', 'description', 'status', 'published_at', 'meta_title', 'meta_description'])]
+#[Fillable(['type', 'name', 'slug', 'short_description', 'description', 'status', 'published_at', 'meta_title', 'meta_description', 'brand_id', 'is_featured'])]
 #[UseFactory(ProductFactory::class)]
 class Product extends Model
 {
@@ -63,6 +67,7 @@ class Product extends Model
             'type' => ProductType::class,
             'status' => ProductStatus::class,
             'published_at' => 'datetime',
+            'is_featured' => 'boolean',
         ];
     }
 
@@ -80,6 +85,30 @@ class Product extends Model
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class, 'product_categories');
+    }
+
+    /**
+     * @return BelongsTo<Brand, $this>
+     */
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(Brand::class);
+    }
+
+    /**
+     * @return HasMany<ProductTag, $this>
+     */
+    public function tags(): HasMany
+    {
+        return $this->hasMany(ProductTag::class);
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function tagNames(): array
+    {
+        return array_values(array_map('strval', $this->tags()->orderBy('tag')->pluck('tag')->all()));
     }
 
     /**

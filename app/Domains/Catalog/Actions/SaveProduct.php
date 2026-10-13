@@ -8,6 +8,7 @@ use App\Domains\Catalog\Enums\ProductType;
 use App\Domains\Catalog\Events\ProductCreated;
 use App\Domains\Catalog\Models\Product;
 use App\Domains\Catalog\Models\ProductAttributeValue;
+use App\Domains\Catalog\Models\ProductTag;
 use App\Domains\Catalog\Models\ProductVariant;
 use App\Domains\Catalog\Slugger;
 use App\Domains\Inventory\InventoryService;
@@ -29,8 +30,8 @@ use Illuminate\Validation\ValidationException;
  *    selected option attribute, and option combinations are unique;
  *  - variants omitted from an update are soft-deleted (order history keeps them).
  *
- * @phpstan-type VariantInput array{id?: int|null, sku: string, name?: string|null, price: string, compare_at_price?: string|null, weight?: string|null, barcode?: string|null, track_inventory?: bool, allow_backorder?: bool, low_stock_threshold?: int|null, is_active?: bool, option_value_ids?: list<int>, initial_stock?: int|null}
- * @phpstan-type ProductInput array{type: string, name: string, slug?: string|null, status: string, published_at?: string|null, short_description?: string|null, description?: string|null, meta_title?: string|null, meta_description?: string|null, category_ids?: list<int>, option_attribute_ids?: list<int>, variants: list<VariantInput>}
+ * @phpstan-type VariantInput array{id?: int|null, sku: string, name?: string|null, price: string, compare_at_price?: string|null, weight?: string|null, cost?: string|null, length?: string|null, width?: string|null, height?: string|null, barcode?: string|null, track_inventory?: bool, allow_backorder?: bool, low_stock_threshold?: int|null, is_active?: bool, option_value_ids?: list<int>, initial_stock?: int|null}
+ * @phpstan-type ProductInput array{type: string, name: string, slug?: string|null, status: string, brand_id?: int|null, is_featured?: bool, tags?: list<string>, published_at?: string|null, short_description?: string|null, description?: string|null, meta_title?: string|null, meta_description?: string|null, category_ids?: list<int>, option_attribute_ids?: list<int>, variants: list<VariantInput>}
  */
 final class SaveProduct
 {
@@ -73,9 +74,15 @@ final class SaveProduct
                 'description' => $data['description'] ?? null,
                 'meta_title' => $data['meta_title'] ?? null,
                 'meta_description' => $data['meta_description'] ?? null,
+                'brand_id' => isset($data['brand_id']) ? (int) $data['brand_id'] : null,
+                'is_featured' => (bool) ($data['is_featured'] ?? false),
             ])->save();
 
             $product->categories()->sync(array_map('intval', $data['category_ids'] ?? []));
+
+            if (array_key_exists('tags', $data)) {
+                $this->syncTags($product, $data['tags']);
+            }
 
             $this->syncVariants($product, $data['variants'], $optionAttributeIds, $currency, $actor);
 
@@ -152,6 +159,22 @@ final class SaveProduct
     }
 
     /**
+     * @param  list<string>  $tags
+     */
+    private function syncTags(Product $product, array $tags): void
+    {
+        $normalised = array_values(array_unique(array_filter(array_map(ProductTag::normalise(...), $tags), fn (string $t) => $t !== '')));
+        sort($normalised);
+
+        if (count($normalised) > ProductTag::MAX_PER_PRODUCT) {
+            throw ValidationException::withMessages(['tags' => 'A product can have at most '.ProductTag::MAX_PER_PRODUCT.' tags.']);
+        }
+
+        $product->tags()->delete();
+        $product->tags()->insert(array_map(fn (string $tag) => ['product_id' => $product->id, 'tag' => $tag], $normalised));
+    }
+
+    /**
      * @param  ProductInput  $data
      */
     private function resolveSlug(Product $product, array $data): string
@@ -205,6 +228,10 @@ final class SaveProduct
                 'is_default' => $position === 0,
                 'is_active' => $row['is_active'] ?? true,
                 'weight' => $row['weight'] ?? null,
+                'cost' => filled($row['cost'] ?? null) ? Money::of((string) $row['cost'], $currency)->toDecimal() : null,
+                'length' => $row['length'] ?? null,
+                'width' => $row['width'] ?? null,
+                'height' => $row['height'] ?? null,
                 'barcode' => $row['barcode'] ?? null,
                 'track_inventory' => $row['track_inventory'] ?? true,
                 'allow_backorder' => $row['allow_backorder'] ?? false,

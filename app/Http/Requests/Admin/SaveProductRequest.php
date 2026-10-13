@@ -6,6 +6,7 @@ use App\Domains\Catalog\Actions\SaveProduct;
 use App\Domains\Catalog\Enums\ProductStatus;
 use App\Domains\Catalog\Enums\ProductType;
 use App\Domains\Catalog\Models\Product;
+use App\Domains\Catalog\Models\ProductTag;
 use App\Domains\Catalog\Models\ProductVariant;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -42,6 +43,10 @@ class SaveProductRequest extends FormRequest
         }, (array) $this->input('variants', []));
 
         $this->merge(['variants' => $variants]);
+
+        if ($this->has('is_featured')) {
+            $this->merge(['is_featured' => filter_var($this->input('is_featured'), FILTER_VALIDATE_BOOLEAN)]);
+        }
     }
 
     /**
@@ -63,6 +68,10 @@ class SaveProductRequest extends FormRequest
             'description' => ['nullable', 'string', 'max:20000'],
             'meta_title' => ['nullable', 'string', 'max:191'],
             'meta_description' => ['nullable', 'string', 'max:500'],
+            'brand_id' => ['nullable', 'integer', Rule::exists('brands', 'id')],
+            'is_featured' => ['boolean'],
+            'tags' => ['nullable', 'array', 'max:'.ProductTag::MAX_PER_PRODUCT],
+            'tags.*' => ['string', 'max:'.ProductTag::MAX_LENGTH],
             'category_ids' => ['nullable', 'array'],
             'category_ids.*' => ['integer', 'distinct', Rule::exists('categories', 'id')],
             'option_attribute_ids' => ['nullable', 'array', 'max:3'],
@@ -74,6 +83,10 @@ class SaveProductRequest extends FormRequest
             'variants.*.price' => ['required', 'string', 'regex:'.self::MONEY_PATTERN],
             'variants.*.compare_at_price' => ['nullable', 'string', 'regex:'.self::MONEY_PATTERN],
             'variants.*.weight' => ['nullable', 'numeric', 'min:0', 'max:9999999'],
+            'variants.*.cost' => ['nullable', 'string', 'regex:'.self::MONEY_PATTERN],
+            'variants.*.length' => ['nullable', 'numeric', 'min:0', 'max:100000'],
+            'variants.*.width' => ['nullable', 'numeric', 'min:0', 'max:100000'],
+            'variants.*.height' => ['nullable', 'numeric', 'min:0', 'max:100000'],
             'variants.*.barcode' => ['nullable', 'string', 'max:64'],
             'variants.*.track_inventory' => ['boolean'],
             'variants.*.allow_backorder' => ['boolean'],

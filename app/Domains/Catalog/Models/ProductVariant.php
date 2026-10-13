@@ -24,6 +24,10 @@ use Illuminate\Support\Carbon;
  * @property bool $is_default
  * @property bool $is_active
  * @property string|null $weight
+ * @property string|null $cost
+ * @property string|null $length
+ * @property string|null $width
+ * @property string|null $height
  * @property string|null $barcode
  * @property bool $track_inventory
  * @property bool $allow_backorder
@@ -33,7 +37,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $deleted_at
  * @property-read Product $product
  */
-#[Fillable(['sku', 'name', 'position', 'is_default', 'is_active', 'weight', 'barcode', 'track_inventory', 'allow_backorder', 'low_stock_threshold'])]
+#[Fillable(['sku', 'name', 'position', 'is_default', 'is_active', 'weight', 'cost', 'length', 'width', 'height', 'barcode', 'track_inventory', 'allow_backorder', 'low_stock_threshold'])]
 #[UseFactory(ProductVariantFactory::class)]
 class ProductVariant extends Model
 {
@@ -46,6 +50,10 @@ class ProductVariant extends Model
     protected function casts(): array
     {
         return [
+            'cost' => 'decimal:4',
+            'length' => 'decimal:2',
+            'width' => 'decimal:2',
+            'height' => 'decimal:2',
             'is_default' => 'boolean',
             'is_active' => 'boolean',
             'track_inventory' => 'boolean',

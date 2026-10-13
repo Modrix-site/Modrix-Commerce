@@ -8,11 +8,14 @@ use App\Domains\Catalog\Actions\SaveProduct;
 use App\Domains\Catalog\CategoryTree;
 use App\Domains\Catalog\Enums\ProductStatus;
 use App\Domains\Catalog\Enums\ProductType;
+use App\Domains\Catalog\Models\Brand;
 use App\Domains\Catalog\Models\Product;
 use App\Domains\Catalog\Models\ProductAttribute;
 use App\Domains\Catalog\Models\ProductAttributeValue;
 use App\Domains\Catalog\Models\ProductImage;
+use App\Domains\Catalog\Models\ProductTag;
 use App\Domains\Catalog\Models\ProductVariant;
+use App\Domains\Pricing\Money;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\SaveProductRequest;
 use App\Models\User;
@@ -31,6 +34,9 @@ class ProductController extends Controller
             'search' => ['nullable', 'string', 'max:120'],
             'status' => ['nullable', Rule::enum(ProductStatus::class)],
             'category' => ['nullable', 'integer'],
+            'brand' => ['nullable', 'integer'],
+            'tag' => ['nullable', 'string', 'max:60'],
+            'featured' => ['nullable', 'boolean'],
             'sort' => ['nullable', Rule::in(['name', '-name', 'created', '-created', 'updated', '-updated'])],
         ]);
 
@@ -43,7 +49,7 @@ class ProductController extends Controller
         $currency = $store->currency();
 
         $products = Product::query()
-            ->with(['variants.prices', 'variants.stocks', 'images' => fn ($q) => $q->limit(1)])
+            ->with(['variants.prices', 'variants.stocks', 'brand:id,name', 'images' => fn ($q) => $q->limit(1)])
             ->withCount('variants')
             ->when($filters['search'] ?? null, function ($query, string $search) {
                 $query->where(function ($q) use ($search) {
@@ -53,6 +59,10 @@ class ProductController extends Controller
             })
             ->when($filters['status'] ?? null, fn ($q, string $status) => $q->where('status', $status))
             ->when($filters['category'] ?? null, fn ($q, int $category) => $q->whereHas('categories', fn ($c) => $c->whereKey($category)))
+            ->when($filters['brand'] ?? null, fn ($q, int $brand) => $q->where('brand_id', $brand))
+            // Exact (normalised) match: % and _ in a tag are literal.
+            ->when($filters['tag'] ?? null, fn ($q, string $tag) => $q->whereHas('tags', fn ($t) => $t->where('tag', ProductTag::normalise($tag))))
+            ->when($filters['featured'] ?? false, fn ($q) => $q->where('is_featured', true))
             ->orderBy($column, str_starts_with($sort, '-') ? 'desc' : 'asc')
             ->orderBy('id', 'desc')
             ->paginate(25)
@@ -67,6 +77,8 @@ class ProductController extends Controller
                     'name' => $product->name,
                     'status' => $product->status->value,
                     'type' => $product->type->value,
+                    'brand' => $product->brand?->name,
+                    'is_featured' => $product->is_featured,
                     'variants_count' => $product->variants_count,
                     'sku' => $product->variants->first()?->sku,
                     'price_from' => $prices->sortBy(fn ($m) => (string) $m->amount())->first(),
@@ -82,8 +94,12 @@ class ProductController extends Controller
                 'search' => $filters['search'] ?? '',
                 'status' => $filters['status'] ?? '',
                 'category' => isset($filters['category']) ? (string) $filters['category'] : '',
+                'brand' => isset($filters['brand']) ? (string) $filters['brand'] : '',
+                'tag' => $filters['tag'] ?? '',
+                'featured' => ($filters['featured'] ?? false) ? '1' : '',
                 'sort' => $sort,
             ],
+            'brands' => Brand::query()->orderBy('name')->get(['id', 'name'])->map(fn (Brand $b) => ['id' => $b->id, 'name' => $b->name])->all(),
             'categories' => $this->categoryOptions(),
             'statuses' => $this->statusOptions(),
             'importErrors' => session(ProductCsvController::SESSION_ERRORS, []),
@@ -112,7 +128,7 @@ class ProductController extends Controller
     public function edit(Product $product, StoreSettings $store): Response
     {
         $currency = $store->currency();
-        $product->load(['variants.prices', 'variants.options', 'variants.stocks', 'categories:id', 'images']);
+        $product->load(['variants.prices', 'variants.options', 'variants.stocks', 'categories:id', 'images', 'tags']);
 
         return Inertia::render('admin/products/form', [
             'product' => [
@@ -127,6 +143,10 @@ class ProductController extends Controller
                 'meta_title' => $product->meta_title,
                 'meta_description' => $product->meta_description,
                 'category_ids' => $product->categories->pluck('id')->all(),
+                'brand_id' => $product->brand_id,
+                'is_featured' => $product->is_featured,
+                'tags' => $product->tags->sortBy('tag')->pluck('tag')->values()->all(),
+                'view_url' => $product->isVisible() ? route('storefront.product', $product->slug) : null,
                 'option_attribute_ids' => $product->variants
                     ->flatMap(fn (ProductVariant $v) => $v->options->pluck('attribute_id'))
                     ->unique()->values()->all(),
@@ -137,6 +157,10 @@ class ProductController extends Controller
                     'price' => $v->priceIn($currency)?->toDisplayDecimal() ?? '',
                     'compare_at_price' => $v->compareAtPriceIn($currency)?->toDisplayDecimal() ?? '',
                     'weight' => $v->weight,
+                    'cost' => $v->cost === null ? '' : Money::of($v->cost, $currency)->toDisplayDecimal(),
+                    'length' => $v->length,
+                    'width' => $v->width,
+                    'height' => $v->height,
                     'barcode' => $v->barcode,
                     'track_inventory' => $v->track_inventory,
                     'allow_backorder' => $v->allow_backorder,
@@ -182,6 +206,10 @@ class ProductController extends Controller
     {
         return [
             'currency' => $store->currency(),
+            'weightUnit' => $store->toArray()['weight_unit'],
+            'dimensionUnit' => $store->toArray()['dimension_unit'],
+            'brands' => Brand::query()->orderBy('name')->get(['id', 'name'])->map(fn (Brand $b) => ['id' => $b->id, 'name' => $b->name])->all(),
+            'tagSuggestions' => ProductTag::query()->selectRaw('tag, count(*) as uses')->groupBy('tag')->orderByDesc('uses')->orderBy('tag')->limit(200)->pluck('tag')->all(),
             'categories' => $this->categoryOptions(),
             'statuses' => $this->statusOptions(),
             'types' => collect(ProductType::cases())->map(fn (ProductType $t) => ['value' => $t->value, 'label' => $t->label()])->all(),
