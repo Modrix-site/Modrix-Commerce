@@ -1,11 +1,15 @@
 import { Form, Head, Link } from '@inertiajs/react';
+import { Download } from 'lucide-react';
+import { useState } from 'react';
 import { EmptyState } from '@/components/admin/empty-state';
 import { NativeSelect } from '@/components/admin/form-field';
+import { OrderBulkBar } from '@/components/admin/orders/order-bulk-bar';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Pagination } from '@/components/admin/pagination';
 import { StatusBadge } from '@/components/admin/status-badge';
 import { formatDate } from '@/components/storefront/order-view';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -16,7 +20,8 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { index, show } from '@/routes/admin/orders';
+import { useCan } from '@/hooks/use-can';
+import { exportMethod, index, show } from '@/routes/admin/orders';
 import type { Option, OrderSummary, Paginated } from '@/types';
 
 type Filters = {
@@ -47,6 +52,27 @@ export default function OrdersIndex({
     fulfillmentStatuses,
 }: Props) {
     const filtered = Object.values(filters).some((v) => v !== '');
+    const can = useCan();
+    const [selected, setSelected] = useState<string[]>([]);
+    const pageNumbers = orders.data.map((o) => o.number);
+    const allSelected =
+        pageNumbers.length > 0 &&
+        pageNumbers.every((n) => selected.includes(n));
+    const toggle = (number: string, on: boolean) =>
+        setSelected((current) =>
+            on
+                ? [...new Set([...current, number])]
+                : current.filter((n) => n !== number),
+        );
+    const toggleAll = (on: boolean) =>
+        setSelected((current) =>
+            on
+                ? [...new Set([...current, ...pageNumbers])].slice(0, 100)
+                : current.filter((n) => !pageNumbers.includes(n)),
+        );
+    const activeFilters = Object.fromEntries(
+        Object.entries(filters).filter(([, v]) => v !== ''),
+    );
 
     const select = (name: keyof Filters, label: string, options: Option[]) => (
         <div className="grid gap-2">
@@ -68,7 +94,20 @@ export default function OrdersIndex({
             <AdminPage>
                 <PageHeader
                     title="Orders"
-                    description="Dates use the store timezone."
+                    description="Dates use the store timezone. Select orders to move them, print documents or export them."
+                    actions={
+                        <Button variant="outline" asChild>
+                            <a
+                                href={exportMethod.url({
+                                    query: activeFilters,
+                                })}
+                                download
+                            >
+                                <Download className="size-4" aria-hidden />
+                                Export CSV
+                            </a>
+                        </Button>
+                    }
                 />
 
                 <Form
@@ -156,6 +195,15 @@ export default function OrdersIndex({
                     <Table>
                         <TableHeader>
                             <TableRow>
+                                <TableHead className="w-8">
+                                    <Checkbox
+                                        aria-label="Select all orders on this page"
+                                        checked={allSelected}
+                                        onCheckedChange={(v) =>
+                                            toggleAll(v === true)
+                                        }
+                                    />
+                                </TableHead>
                                 <TableHead>Order</TableHead>
                                 <TableHead>Placed</TableHead>
                                 <TableHead>Customer</TableHead>
@@ -168,7 +216,25 @@ export default function OrdersIndex({
                         </TableHeader>
                         <TableBody>
                             {orders.data.map((order) => (
-                                <TableRow key={order.number}>
+                                <TableRow
+                                    key={order.number}
+                                    data-state={
+                                        selected.includes(order.number)
+                                            ? 'selected'
+                                            : undefined
+                                    }
+                                >
+                                    <TableCell>
+                                        <Checkbox
+                                            aria-label={`Select order ${order.number}`}
+                                            checked={selected.includes(
+                                                order.number,
+                                            )}
+                                            onCheckedChange={(v) =>
+                                                toggle(order.number, v === true)
+                                            }
+                                        />
+                                    </TableCell>
                                     <TableCell>
                                         <Link
                                             href={show(order.number)}
@@ -198,6 +264,14 @@ export default function OrdersIndex({
                             ))}
                         </TableBody>
                     </Table>
+                )}
+
+                {selected.length > 0 && (
+                    <OrderBulkBar
+                        numbers={selected}
+                        canManage={can('orders.manage')}
+                        onClear={() => setSelected([])}
+                    />
                 )}
 
                 <Pagination
