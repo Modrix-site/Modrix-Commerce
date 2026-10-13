@@ -96,6 +96,7 @@ class MarketplaceAdminController extends Controller
                 'created_at' => $r->created_at?->toIso8601String(),
                 'published_at' => $r->published_at?->toIso8601String(),
                 'capabilities' => (array) ($r->manifest['capabilities'] ?? []),
+                'scan' => $r->scan,
             ]),
         ]);
     }

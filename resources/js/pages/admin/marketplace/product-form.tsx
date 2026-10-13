@@ -48,7 +48,89 @@ type Release = {
     created_at: string | null;
     published_at: string | null;
     capabilities: string[];
+    scan: {
+        summary: Record<ScanSeverity, number>;
+        findings: ScanFinding[];
+    } | null;
 };
+
+type ScanSeverity = 'critical' | 'high' | 'medium' | 'info';
+
+type ScanFinding = {
+    severity: ScanSeverity;
+    rule: string;
+    file: string;
+    line: number;
+    message: string;
+};
+
+function ScanSummary({ scan }: { scan: Release['scan'] }) {
+    if (scan === null) {
+        return null;
+    }
+
+    const { critical, high, medium } = scan.summary;
+
+    return (
+        <p className="text-xs">
+            Code scan:{' '}
+            <span
+                className={critical > 0 ? 'font-semibold text-destructive' : ''}
+            >
+                {critical} critical
+            </span>
+            , {high} high, {medium} medium
+        </p>
+    );
+}
+
+function ScanFindings({ scan }: { scan: Release['scan'] }) {
+    const relevant = (scan?.findings ?? []).filter(
+        (f) => f.severity !== 'info',
+    );
+
+    if (relevant.length === 0) {
+        return (
+            <p className="text-sm text-muted-foreground">
+                The code scan found nothing that needs attention. A clean scan
+                does not prove the code is safe.
+            </p>
+        );
+    }
+
+    return (
+        <div className="grid gap-1">
+            <p className="text-sm font-medium">Code scan findings</p>
+            <ul
+                className="max-h-48 overflow-y-auto rounded-md border text-xs"
+                tabIndex={0}
+            >
+                {relevant.map((f, i) => (
+                    <li
+                        key={i}
+                        className="flex gap-2 border-b px-2 py-1 last:border-b-0"
+                    >
+                        <span
+                            className={
+                                f.severity === 'critical' ||
+                                f.severity === 'high'
+                                    ? 'font-semibold text-destructive'
+                                    : 'text-muted-foreground'
+                            }
+                        >
+                            {f.severity}
+                        </span>
+                        <span className="font-mono">
+                            {f.file}
+                            {f.line > 0 && `:${f.line}`}
+                        </span>
+                        <span>{f.message}</span>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+}
 
 type Props = {
     product: Product | null;
@@ -366,6 +448,7 @@ function ReleaseRow({ release: r }: { release: Release }) {
                     Capabilities: {r.capabilities.join(', ')}
                 </p>
             )}
+            <ScanSummary scan={r.scan} />
             {r.changelog && (
                 <p className="text-sm whitespace-pre-line text-muted-foreground">
                     {r.changelog}
@@ -409,6 +492,7 @@ function ReviewDialog({ release }: { release: Release }) {
                                     </strong>
                                 </p>
                             )}
+                            <ScanFindings scan={release.scan} />
                             <FormField
                                 id="notes"
                                 label="Notes"

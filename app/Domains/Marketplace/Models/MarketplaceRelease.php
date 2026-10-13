@@ -21,6 +21,7 @@ use Illuminate\Support\Carbon;
  * @property string $sha256
  * @property int $size
  * @property array<string, mixed> $manifest
+ * @property array{summary: array<string, int>, findings: list<array{severity: string, rule: string, file: string, line: int, message: string}>}|null $scan
  * @property array<string, mixed>|null $signed_metadata
  * @property string|null $signature
  * @property string|null $review_notes
@@ -51,6 +52,7 @@ class MarketplaceRelease extends Model
         return [
             'size' => 'integer',
             'manifest' => 'array',
+            'scan' => 'array',
             'signed_metadata' => 'array',
             'reviewed_at' => 'datetime',
             'published_at' => 'datetime',

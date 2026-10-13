@@ -5,6 +5,7 @@ namespace App\Domains\Marketplace;
 use App\Core\Audit\AuditLogger;
 use App\Core\Marketplace\PackageArchive;
 use App\Core\Marketplace\PackageException;
+use App\Core\Marketplace\PackageScanner;
 use App\Domains\Marketplace\Models\MarketplaceProduct;
 use App\Domains\Marketplace\Models\MarketplaceRelease;
 use App\Models\User;
@@ -28,6 +29,7 @@ final class ReleasePublisher
     public function __construct(
         private readonly MarketplaceSigner $signer,
         private readonly AuditLogger $audit,
+        private readonly PackageScanner $scanner,
     ) {}
 
     /**
@@ -49,7 +51,12 @@ final class ReleasePublisher
             throw ValidationException::withMessages(['package' => $e->getMessage()]);
         }
 
-        File::deleteDirectory($dir);
+        try {
+            // Findings inform the reviewer; they do not block the upload.
+            $findings = $this->scanner->scan($dir);
+        } finally {
+            File::deleteDirectory($dir);
+        }
 
         if ($product->releases()->where('version', $manifest->version)->exists()) {
             throw ValidationException::withMessages(['package' => "Version {$manifest->version} already exists."]);
@@ -76,6 +83,7 @@ final class ReleasePublisher
             'sha256' => hash_file('sha256', $path),
             'size' => (int) filesize($path),
             'manifest' => $manifest->toArray(),
+            'scan' => ['summary' => PackageScanner::summary($findings), 'findings' => array_slice($findings, 0, 200)],
         ])->save();
 
         $this->audit->record('marketplace.release_uploaded', null, ['product' => $product->slug, 'version' => $release->version, 'sha256' => $release->sha256], $actor);
