@@ -11,6 +11,9 @@ type Props = {
     product: MarketplaceCard & {
         description: string | null;
         documentation_url: string | null;
+        publisher: string;
+        support_email: string | null;
+        support_url: string | null;
         activation_limit: number | null;
         updates_months: number;
         releases: {
@@ -94,10 +97,33 @@ export default function MarketplaceProduct({ product, owned }: Props) {
                                 ? `Use on up to ${product.activation_limit} stores`
                                 : 'Use on any number of stores'}
                         </li>
+                        <li>By {product.publisher}</li>
                         <li className="flex items-center gap-1">
                             <ShieldCheck className="size-4" aria-hidden />{' '}
-                            Signed by the publisher
+                            Reviewed and signed by the marketplace
                         </li>
+                        {product.support_url && (
+                            <li>
+                                <a
+                                    href={product.support_url}
+                                    className="underline"
+                                    rel="noopener noreferrer"
+                                >
+                                    Support
+                                </a>
+                            </li>
+                        )}
+                        {product.support_email && (
+                            <li>
+                                Help:{' '}
+                                <a
+                                    href={`mailto:${product.support_email}`}
+                                    className="underline"
+                                >
+                                    {product.support_email}
+                                </a>
+                            </li>
+                        )}
                     </ul>
                     {owned ? (
                         <Button variant="outline" asChild>

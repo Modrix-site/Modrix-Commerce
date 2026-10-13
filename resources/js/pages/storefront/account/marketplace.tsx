@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { index } from '@/routes/marketplace';
+import vendor from '@/routes/vendor';
 import orders from '@/routes/marketplace/orders';
 import type { MoneyValue } from '@/types';
 
@@ -45,9 +46,14 @@ export default function MarketplacePortal({ licenses, orders: list }: Props) {
                     <h1 className="text-2xl font-semibold tracking-tight">
                         My licenses
                     </h1>
-                    <Button variant="outline" asChild>
-                        <Link href={index()}>Browse the marketplace</Link>
-                    </Button>
+                    <div className="flex gap-2">
+                        <Button variant="ghost" asChild>
+                            <Link href={vendor.index()}>Sell extensions</Link>
+                        </Button>
+                        <Button variant="outline" asChild>
+                            <Link href={index()}>Browse the marketplace</Link>
+                        </Button>
+                    </div>
                 </div>
 
                 {licenses.length === 0 && (

@@ -3,6 +3,7 @@
 namespace App\Domains\Marketplace\Models;
 
 use App\Domains\Pricing\Money;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,6 +22,8 @@ use Illuminate\Support\Carbon;
  * @property string|null $summary
  * @property string|null $description
  * @property string|null $documentation_url
+ * @property string|null $support_email
+ * @property string|null $support_url
  * @property string $price
  * @property string $currency
  * @property string $status
@@ -83,6 +86,23 @@ class MarketplaceProduct extends Model
     public function advisories(): HasMany
     {
         return $this->hasMany(MarketplaceAdvisory::class, 'product_id');
+    }
+
+    /**
+     * Products shown and sold: published, from an active publisher.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeListed(Builder $query): Builder
+    {
+        return $query->where('status', self::PUBLISHED)
+            ->whereHas('publisher', fn (Builder $q) => $q->where('status', Publisher::ACTIVE));
+    }
+
+    public function isListed(): bool
+    {
+        return $this->status === self::PUBLISHED && $this->publisher->isActive();
     }
 
     public function latestPublishedRelease(): ?MarketplaceRelease

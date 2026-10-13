@@ -29,6 +29,7 @@ final class MarketplaceCheckout
     public function __construct(
         private readonly LicenseManager $licenses,
         private readonly AuditLogger $audit,
+        private readonly SellerLedger $ledger,
     ) {}
 
     /**
@@ -39,7 +40,7 @@ final class MarketplaceCheckout
      */
     public function start(User $buyer, MarketplaceProduct $product, callable $urls): array
     {
-        if ($product->status !== MarketplaceProduct::PUBLISHED || $product->latestPublishedRelease() === null) {
+        if (! $product->isListed() || $product->latestPublishedRelease() === null) {
             throw ValidationException::withMessages(['product' => 'This product is not available for purchase.']);
         }
 
@@ -162,6 +163,11 @@ final class MarketplaceCheckout
                 if ($item->license_id === null) {
                     $this->licenses->issue($item->product, $locked->user, $item);
                 }
+
+                // Third-party sellers: sale, platform commission and net owed.
+                if ((float) $item->unit_price > 0) {
+                    $this->ledger->recordSale($item);
+                }
             }
 
             $this->audit->record('marketplace.order_paid', null, ['order' => $locked->number, 'total' => $locked->total]);
@@ -222,6 +228,8 @@ final class MarketplaceCheckout
                 if ($license !== null && $license->status !== License::REFUNDED) {
                     $this->licenses->changeStatus($license, License::REFUNDED, $reason, $actor);
                 }
+
+                $this->ledger->recordRefund($item);
             }
 
             $this->audit->record('marketplace.order_refunded', null, ['order' => $locked->number, 'reason' => $reason], $actor);

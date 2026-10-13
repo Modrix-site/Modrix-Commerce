@@ -34,7 +34,7 @@ class MarketplaceAdminController extends Controller
     public function products(MarketplaceSigner $signer, MarketplaceCheckout $checkout): Response
     {
         return Inertia::render('admin/marketplace/products', [
-            'products' => MarketplaceProduct::query()->withCount(['releases as pending_count' => fn ($q) => $q->where('status', MarketplaceRelease::PENDING_REVIEW)])
+            'products' => MarketplaceProduct::query()->with('publisher')->withCount(['releases as pending_count' => fn ($q) => $q->where('status', MarketplaceRelease::PENDING_REVIEW)])
                 ->orderBy('name')->get()->map(fn (MarketplaceProduct $p) => [
                     'slug' => $p->slug,
                     'name' => $p->name,
@@ -43,6 +43,7 @@ class MarketplaceAdminController extends Controller
                     'price' => $p->money(),
                     'latest_version' => $p->latestPublishedRelease()?->version,
                     'pending_count' => (int) $p->getAttribute('pending_count'),
+                    'publisher' => $p->publisher->is_platform ? null : $p->publisher->name,
                 ]),
             'setup' => [
                 'signing' => $signer->configured(),

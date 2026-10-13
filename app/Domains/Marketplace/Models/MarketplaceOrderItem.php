@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $unit_price
  * @property int|null $license_id
  * @property-read MarketplaceProduct $product
+ * @property-read MarketplaceOrder $order
  * @property-read License|null $license
  */
 class MarketplaceOrderItem extends Model
@@ -36,6 +37,14 @@ class MarketplaceOrderItem extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(MarketplaceProduct::class, 'product_id')->withTrashed();
+    }
+
+    /**
+     * @return BelongsTo<MarketplaceOrder, $this>
+     */
+    public function order(): BelongsTo
+    {
+        return $this->belongsTo(MarketplaceOrder::class, 'order_id');
     }
 
     /**

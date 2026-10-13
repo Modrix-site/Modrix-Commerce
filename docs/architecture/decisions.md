@@ -312,3 +312,20 @@ Each entry records a decision, its context, and its consequences. Entries are ap
     `.env` is not included: `APP_KEY` belongs in a secret manager.
 
 - **Consequences:** Small and medium stores get working, tested backups without extra tooling, and the health check warns when backups stop. Large stores should add database point-in-time recovery and object storage versioning. Cross-driver restores are refused.
+
+## ADR-038 — Third-party sellers: verified publishers, owner review and an append-only ledger
+
+- **Date:** 2026-10-13
+- **Status:** Accepted
+- **Context:** Spec §12.5 opens the marketplace to vendors only after seller verification, package review, signing and incident response exist. Phases 6–8.3 delivered review, signing, scanning and advisories.
+- **Decision:**
+    - **Publishers:** the `marketplace_publishers` table gains seller status, commission, legal and payout details. An account belongs to at most one publisher.
+    - **Verification:** sellers apply, and the owner verifies and approves them, choosing the commission.
+    - **Package names:** a seller's packages must start with its vendor slug, and reserved slugs cannot be claimed, so no seller can ship under another vendor's or the platform's name.
+    - **Review:** sellers upload through the same pipeline (archive checks, validation, scan). Only the owner approves, signs and lists, and the single marketplace signing key is kept.
+    - **Accounting:** an append-only `marketplace_ledger_entries` table records sales at fulfilment and refunds (reversals). Both are idempotent per order item. Payouts are recorded with a reference and cannot exceed the balance.
+    - **Payouts:** made outside the application.
+- **Consequences:**
+    - The owner stays the merchant of record and pays sellers. Automated payouts (Stripe Connect), tax handling per seller country, and per-seller signing keys are future work.
+    - Suspension cuts off sales without breaking the licenses buyers already hold.
+    - Commission changes apply to new sales only, because ledger entries are immutable.

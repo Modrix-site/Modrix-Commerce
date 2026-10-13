@@ -29,14 +29,14 @@ class MarketplaceController extends Controller
     public function index(): Response
     {
         return Inertia::render('storefront/marketplace/index', [
-            'products' => MarketplaceProduct::query()->where('status', MarketplaceProduct::PUBLISHED)->orderBy('name')->get()
+            'products' => MarketplaceProduct::query()->listed()->orderBy('name')->get()
                 ->map(fn (MarketplaceProduct $p) => $this->card($p))->filter()->values(),
         ]);
     }
 
     public function show(Request $request, MarketplaceProduct $product): Response
     {
-        abort_unless($product->status === MarketplaceProduct::PUBLISHED, 404);
+        abort_unless($product->isListed(), 404);
         $user = $request->user();
 
         return Inertia::render('storefront/marketplace/product', [
@@ -44,6 +44,9 @@ class MarketplaceController extends Controller
                 ...(array) $this->card($product),
                 'description' => $product->description,
                 'documentation_url' => $product->documentation_url,
+                'publisher' => $product->publisher->name,
+                'support_email' => $product->support_email ?? $product->publisher->support_email,
+                'support_url' => $product->support_url,
                 'activation_limit' => $product->activation_limit,
                 'updates_months' => $product->updates_months,
                 'releases' => $product->releases()->where('status', MarketplaceRelease::PUBLISHED)->orderByDesc('published_at')->limit(10)->get()

@@ -14,7 +14,7 @@ Premium themes, modules and integrations sold through the official marketplace m
 - may limit the number of activations (stores) and the period of update entitlement;
 - never allow an extension to disable core storefront or checkout features.
 
-For version 1, the platform owner (Eleydo) is the **only publisher**. The data model keeps a publisher concept so third-party vendors can be added later, after seller verification, package review, signing and incident-response processes exist (Phase 8).
+The platform owner (Eleydo) publishes official extensions. Since Phase 8, verified third-party sellers can publish too (see [Third-party sellers](#third-party-sellers)). Every release, from anyone, is reviewed and signed by the marketplace before it is offered.
 
 ## Two roles (ADR-033)
 
@@ -71,6 +71,36 @@ The daily `ecomodular:marketplace:check` command refreshes every license. If the
     Only then are the current files backed up and the new ones swapped in.
 
 A checksum detects corruption; only a verified signature establishes who published the package. **Neither proves that the code is safe.** That is why releases are reviewed before signing, and why modules still require the merchant's explicit trust confirmation before they are enabled (ADR-029).
+
+## Third-party sellers
+
+Sellers apply from `/vendor` (marketplace server). The application asks for:
+
+- the seller name and the **vendor name** for packages;
+- the legal name, country and website;
+- the payout and support emails;
+- a description of what they will sell;
+- acceptance of the seller terms.
+
+The owner reviews each application under Admin → Marketplace → Sellers and sets the platform commission when approving it.
+
+Once approved, a seller works in the seller portal:
+
+- **Products:** creates products whose package names must start with its vendor name (`acme/…`). Reserved names such as `ecomodular` cannot be claimed.
+- **Releases:** uploads packages, which are validated, scanned (Phase 8.2) and wait for the owner's review. The owner reviews and signs them like official releases, and decides when a product is listed. Sellers can move their products back to draft or retire them.
+- **Statement:** sees sales, commission, balance and payouts.
+
+Accounting uses an append-only ledger, one entry per sale, refund and payout:
+
+| Entry  | Gross  | Commission         | Net (owed to the seller) |
+| ------ | ------ | ------------------ | ------------------------ |
+| Sale   | price  | price × commission | gross − commission       |
+| Refund | − sale | − sale commission  | reverses the sale        |
+| Payout | 0      | 0                  | − amount paid            |
+
+The balance is the sum of the net amounts per currency. Payouts are made outside the application (bank transfer, PayPal…) and recorded by the owner with a reference; a payout cannot exceed the balance. Platform products have no ledger entries.
+
+Suspending a seller hides its products, refuses new purchases and pauses its uploads. Licenses already sold keep working, and the balance stays owed. Sellers can never see each other's products, releases, sales or payouts.
 
 ## Security advisories
 

@@ -25,6 +25,7 @@ type Props = {
         price: MoneyValue;
         latest_version: string | null;
         pending_count: number;
+        publisher: string | null;
     }[];
     setup: {
         signing: boolean;
@@ -110,6 +111,11 @@ export default function MarketplaceProducts({ products, setup }: Props) {
                                         >
                                             {p.name}
                                         </Link>
+                                        {p.publisher && (
+                                            <span className="ml-2 text-xs text-muted-foreground">
+                                                by {p.publisher}
+                                            </span>
+                                        )}
                                         {p.pending_count > 0 && (
                                             <Badge className="ml-2">
                                                 {p.pending_count} to review

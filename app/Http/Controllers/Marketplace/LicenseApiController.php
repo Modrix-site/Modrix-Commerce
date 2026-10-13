@@ -24,7 +24,7 @@ class LicenseApiController extends Controller
     public function catalog(): JsonResponse
     {
         $products = MarketplaceProduct::query()
-            ->where('status', MarketplaceProduct::PUBLISHED)
+            ->listed()
             ->orderBy('name')
             ->get()
             ->map(function (MarketplaceProduct $p) {

@@ -77,6 +77,7 @@ class CoreServiceProvider extends ServiceProvider
         // Server-side marketplace administration exists only on the platform owner's marketplace instance.
         if ((bool) config('ecomodular.marketplace.server.enabled')) {
             $navigation->add('marketplace-products', 'Products', 'admin.marketplace.products.index', 'package', 'Marketplace', 'marketplace.manage', 950);
+            $navigation->add('marketplace-sellers', 'Sellers', 'admin.marketplace.sellers.index', 'users', 'Marketplace', 'marketplace.manage', 950);
             $navigation->add('marketplace-orders', 'Orders', 'admin.marketplace.orders.index', 'receipt', 'Marketplace', 'marketplace.manage', 951);
             $navigation->add('marketplace-licenses', 'Licenses', 'admin.marketplace.licenses.index', 'key-round', 'Marketplace', 'licenses.manage', 952);
         }
