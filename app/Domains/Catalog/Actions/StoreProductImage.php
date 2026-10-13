@@ -4,6 +4,8 @@ namespace App\Domains\Catalog\Actions;
 
 use App\Core\Audit\AuditLogger;
 use App\Core\Media\ImageSanitizer;
+use App\Core\Media\Media;
+use App\Core\Media\MediaLibrary;
 use App\Domains\Catalog\Models\Product;
 use App\Domains\Catalog\Models\ProductImage;
 use Illuminate\Http\UploadedFile;
@@ -19,6 +21,7 @@ final class StoreProductImage
     public function __construct(
         private readonly AuditLogger $audit,
         private readonly ImageSanitizer $sanitizer,
+        private readonly MediaLibrary $library,
     ) {}
 
     public function handle(Product $product, UploadedFile $file, ?string $alt = null): ProductImage
@@ -37,6 +40,9 @@ final class StoreProductImage
             'width' => $clean['width'],
             'height' => $clean['height'],
         ]);
+
+        // Listed in the media library so it can be reused.
+        $this->library->register($disk, $path, Media::PRODUCTS, $file->getClientOriginalName(), $clean['width'], $clean['height'], strlen($clean['bytes']), $image->alt);
 
         $this->audit->record('product.image_added', $product, ['image_id' => $image->id]);
 

@@ -70,6 +70,7 @@ class CoreServiceProvider extends ServiceProvider
         $navigation->add('users', 'Users', 'admin.users.index', 'users', 'Administration', 'users.view', 900);
         $navigation->add('roles', 'Roles & permissions', 'admin.roles.index', 'shield-check', 'Administration', 'roles.manage', 910);
         $navigation->add('settings', 'Store settings', 'admin.settings.store.edit', 'settings', 'Administration', 'settings.manage', 920);
+        $navigation->add('languages', 'Languages', 'admin.settings.languages.edit', 'languages', 'Administration', 'settings.manage', 921);
         $navigation->add('appearance', 'Appearance', 'admin.themes.index', 'palette', 'Configuration', 'themes.manage', 790);
         $navigation->add('extensions', 'Extensions', 'admin.extensions.index', 'puzzle', 'Administration', 'extensions.view', 925);
         $navigation->add('marketplace-client', 'Marketplace', 'admin.marketplace-client.index', 'store', 'Administration', 'extensions.view', 926);

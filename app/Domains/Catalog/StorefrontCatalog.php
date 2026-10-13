@@ -78,6 +78,8 @@ final class StorefrontCatalog
                 'variants.options.attribute',
                 'images',
                 'categories' => fn ($q) => $q->where('is_active', true),
+                'categories.translations' => fn ($q) => $q->where('locale', app()->getLocale()),
+                'translations' => fn ($q) => $q->where('locale', app()->getLocale()),
             ])
             ->first();
 
@@ -103,9 +105,9 @@ final class StorefrontCatalog
 
         return [
             'id' => $product->id,
-            'name' => $product->name,
+            'name' => $product->localized('name'),
             'slug' => $product->slug,
-            'short_description' => $product->short_description,
+            'short_description' => $product->localized('short_description'),
             'image' => $image instanceof ProductImage ? ['url' => $image->url(), 'alt' => $image->alt] : null,
             'price' => $from,
             'compare_at_price' => $variants->count() === 1 ? $compareAt : null,
@@ -141,6 +143,7 @@ final class StorefrontCatalog
                 'variants.prices',
                 'variants.stocks',
                 'images' => fn ($q) => $q->limit(1),
+                'translations' => fn ($q) => $q->where('locale', app()->getLocale()),
             ]);
     }
 }

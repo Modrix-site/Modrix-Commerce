@@ -13,14 +13,17 @@ use App\Http\Controllers\Admin\Catalog\CategoryController;
 use App\Http\Controllers\Admin\Catalog\ProductController;
 use App\Http\Controllers\Admin\Catalog\ProductCsvController;
 use App\Http\Controllers\Admin\Catalog\ProductImageController;
+use App\Http\Controllers\Admin\Catalog\TranslationController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ExtensionController;
 use App\Http\Controllers\Admin\InventoryController;
+use App\Http\Controllers\Admin\LanguageSettingsController;
 use App\Http\Controllers\Admin\MarketplaceAdminController;
 use App\Http\Controllers\Admin\MarketplaceClientController;
 use App\Http\Controllers\Admin\MarketplaceSellerController;
+use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PaymentSettingsController;
 use App\Http\Controllers\Admin\PaymentWebhookEventController;
@@ -65,7 +68,22 @@ Route::middleware(['can:roles.manage', 'password.confirm'])->group(function () {
 Route::middleware('can:settings.manage')->group(function () {
     Route::get('settings/store', [StoreSettingsController::class, 'edit'])->name('settings.store.edit');
     Route::put('settings/store', [StoreSettingsController::class, 'update'])->name('settings.store.update');
+    Route::get('settings/languages', [LanguageSettingsController::class, 'edit'])->name('settings.languages.edit');
+    Route::put('settings/languages', [LanguageSettingsController::class, 'update'])->name('settings.languages.update');
 });
+
+// Media library (Admin → Catalog → Media library).
+Route::middleware('can:media.manage')->group(function () {
+    Route::get('media', [MediaController::class, 'index'])->name('media.index');
+    Route::get('media/picker', [MediaController::class, 'picker'])->name('media.picker');
+    Route::post('media', [MediaController::class, 'store'])->middleware('throttle:30,1')->name('media.store');
+    Route::get('media/{media}', [MediaController::class, 'show'])->whereNumber('media')->name('media.show');
+    Route::put('media/{media}', [MediaController::class, 'update'])->whereNumber('media')->name('media.update');
+    Route::delete('media/{media}', [MediaController::class, 'destroy'])->whereNumber('media')->name('media.destroy');
+});
+Route::post('products/{product}/images/from-library', [MediaController::class, 'attach'])
+    ->middleware(['can:products.update', 'can:media.manage'])
+    ->name('products.images.from-library');
 
 // Catalog
 Route::middleware('can:products.view')->group(function () {
@@ -86,6 +104,13 @@ Route::middleware('can:products.update')->group(function () {
     Route::put('products/{product}/images/order', [ProductImageController::class, 'reorder'])->name('products.images.reorder');
     Route::put('products/{product}/images/{image}', [ProductImageController::class, 'update'])->name('products.images.update')->scopeBindings();
     Route::delete('products/{product}/images/{image}', [ProductImageController::class, 'destroy'])->name('products.images.destroy')->scopeBindings();
+
+    // Storefront translations.
+    Route::get('translations', [TranslationController::class, 'index'])->name('translations.index');
+    Route::get('products/{product}/translations', [TranslationController::class, 'editProduct'])->name('products.translations.edit');
+    Route::put('products/{product}/translations/{locale}', [TranslationController::class, 'updateProduct'])->where('locale', '[a-z]{2}')->name('products.translations.update');
+    Route::get('categories/{category}/translations', [TranslationController::class, 'editCategory'])->name('categories.translations.edit');
+    Route::put('categories/{category}/translations/{locale}', [TranslationController::class, 'updateCategory'])->where('locale', '[a-z]{2}')->name('categories.translations.update');
 
     Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
     Route::get('categories/create', [CategoryController::class, 'create'])->name('categories.create');

@@ -30,6 +30,7 @@ final class CartPricer
             'items.variant.prices',
             'items.variant.stocks',
             'items.variant.product.categories:id',
+            'items.variant.product.translations' => fn ($q) => $q->where('locale', app()->getLocale()),
         ]);
 
         $lines = [];

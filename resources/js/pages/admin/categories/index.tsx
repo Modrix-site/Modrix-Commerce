@@ -13,6 +13,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { create, edit, index } from '@/routes/admin/categories';
+import { edit as translationsEdit } from '@/routes/admin/categories/translations';
 
 type CategoryRow = {
     id: number;
@@ -93,7 +94,20 @@ export default function CategoriesIndex({
                                     <TableCell className="tabular-nums">
                                         {category.products_count}
                                     </TableCell>
-                                    <TableCell className="text-right">
+                                    <TableCell className="space-x-2 text-right whitespace-nowrap">
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            asChild
+                                        >
+                                            <Link
+                                                href={translationsEdit(
+                                                    category.id,
+                                                )}
+                                            >
+                                                Translate
+                                            </Link>
+                                        </Button>
                                         <Button
                                             variant="outline"
                                             size="sm"

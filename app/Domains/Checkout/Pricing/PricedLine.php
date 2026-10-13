@@ -61,7 +61,7 @@ final class PricedLine
         return [
             'id' => $this->itemId,
             'variant_id' => $this->variant->id,
-            'product_name' => $this->variant->product->name,
+            'product_name' => $this->variant->product->localized('name'),
             'product_slug' => $this->variant->product->slug,
             'variant_name' => $this->variant->name,
             'sku' => $this->variant->sku,

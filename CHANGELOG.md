@@ -4,6 +4,23 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added (media library and translations)
+
+- Media library (Catalog → Media library):
+    - multi-image upload, re-encoded like every other upload;
+    - search and filters (source, unused);
+    - alt text editing, copy URL, "used by" (products and theme settings);
+    - deletion blocked while an image is in use.
+
+    Product images can be chosen from the library, and library images can be used in theme image settings. Existing product and theme images are registered automatically. New `media.manage` permission (store and catalog managers).
+
+- Storefront translations:
+    - Admin → Languages: default language plus additional languages.
+    - Product and category translation editors that show the default text next to each field, reached from the product page, the category list and Catalog → Translations (progress and missing items per language).
+    - A storefront language switcher; the language is detected from the link, a cookie or the browser.
+    - Translated names and descriptions on product, listing, category, home and cart pages, and in search, with fallback to the default language.
+- ADRs 040–041.
+
 ### Added (Phase 8: post-launch ecosystem)
 
 - Developer SDK:

@@ -27,9 +27,11 @@ final class HomeSectionsPresenter
             $data = match ($section['type']) {
                 'hero', 'image_with_text' => ['image' => $theme->imageUrl($settings['image'] ?? null)],
                 'featured_products' => ['products' => $this->products($settings, $currency)],
-                'category_grid' => ['categories' => Category::query()->active()->whereNull('parent_id')
+                'category_grid' => ['categories' => Category::query()->active()->withCurrentTranslation()->whereNull('parent_id')
                     ->orderBy('position')->orderBy('name')->limit((int) ($settings['limit'] ?? 6))
-                    ->get(['id', 'name', 'slug', 'description'])->all()],
+                    ->get(['id', 'name', 'slug', 'description'])
+                    ->map(fn (Category $c) => ['id' => $c->id, 'name' => $c->localized('name'), 'slug' => $c->slug, 'description' => $c->localized('description')])
+                    ->all()],
                 default => [],
             };
 

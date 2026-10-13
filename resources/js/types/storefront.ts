@@ -3,6 +3,8 @@ import type { MoneyValue } from './admin';
 export type StorefrontShared = {
     storeName: string;
     currency: string;
+    locale: string;
+    locales: { code: string; name: string }[];
     categories: { id: number; name: string; slug: string }[];
     cartCount: number;
     theme: StorefrontTheme;

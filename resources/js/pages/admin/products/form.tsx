@@ -1,9 +1,10 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { Plus, Trash2 } from 'lucide-react';
+import { Languages, Plus, Trash2 } from 'lucide-react';
 import type { FormEvent } from 'react';
 import ProductController from '@/actions/App/Http/Controllers/Admin/Catalog/ProductController';
 import { FormField } from '@/components/admin/form-field';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
+import { edit as translationsEdit } from '@/routes/admin/products/translations';
 import { ProductImages } from '@/components/admin/product-images';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
@@ -297,9 +298,17 @@ function ProductForm({
                     title={product ? product.name : 'Add product'}
                     description={`Prices are in ${currency}.`}
                     actions={
-                        product &&
-                        can('products.delete') && (
-                            <DeleteProductDialog product={product} />
+                        product && (
+                            <>
+                                <Button variant="outline" asChild>
+                                    <Link href={translationsEdit(product.id)}>
+                                        <Languages /> Translations
+                                    </Link>
+                                </Button>
+                                {can('products.delete') && (
+                                    <DeleteProductDialog product={product} />
+                                )}
+                            </>
                         )
                     }
                 />

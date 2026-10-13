@@ -16,7 +16,7 @@ namespace App\Core\Themes;
  *  - integer: within `min`/`max`
  *  - string / text: plain text up to `max` characters (never rendered as HTML)
  *  - link: "" | internal path "/…" | "https://…"
- *  - image: "" | "asset:<path in the theme's assets>" | "media:themes/<file>" (merchant upload)
+ *  - image: "" | "asset:<path in the theme's assets>" | "media:themes/<file>" or "media:library/<file>" (merchant upload)
  *  - font: a font stack key or "custom:<Family>" declared by the theme
  */
 final class ThemeSchema
@@ -250,7 +250,7 @@ final class ThemeSchema
                     return [null, 'is not a valid image'];
                 }
                 if (str_starts_with($value, 'media:')) {
-                    return preg_match('#^media:themes/[A-Za-z0-9]{40}\.(png|jpg|webp)$#', $value) ? [$value, null] : [null, 'is not a valid uploaded image'];
+                    return preg_match('#^media:(themes|library)/[A-Za-z0-9]{40}\.(png|jpg|webp)$#', $value) ? [$value, null] : [null, 'is not a valid uploaded image'];
                 }
                 if (str_starts_with($value, 'asset:')) {
                     $path = substr($value, 6);

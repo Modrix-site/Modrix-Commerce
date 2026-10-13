@@ -344,3 +344,37 @@ Each entry records a decision, its context, and its consequences. Entries are ap
     Migrations will default existing rows to store 1, so single-store installations upgrade without changes.
 
 - **Consequences:** Operators who need several storefronts run several installations. They can share a marketplace account, and licenses count one activation per installation.
+
+## ADR-040 — Content translations in side tables with fallback
+
+- **Date:** 2026-10-13
+- **Status:** Accepted
+- **Decision:**
+    - **Storage:** product and category texts stay in their tables, written in the store's default language (Admin → Languages). Translations live in `product_translations` and `category_translations`, one row per locale. They cover name, descriptions and SEO fields; slugs are not translated.
+    - **Storefront locale:** resolved per request, in order:
+        1. a `?lang=` parameter, remembered in a cookie;
+        2. that cookie;
+        3. the browser's Accept-Language header;
+        4. the default.
+
+        Only enabled languages are accepted.
+
+    - **Reading texts:** storefront code eager-loads only the current locale (`withCurrentTranslation()`) and reads fields through `localized()`. An empty translated field falls back to the default text, and no translation queries run in the default language.
+    - **Search** also matches translated names in the shopper's language.
+- **Consequences:**
+    - The admin keeps editing one canonical text, and missing translations never produce empty pages.
+    - Order snapshots keep the default-language product name, so staff see one language.
+    - Not yet covered: variant and option names, interface strings ("Add to cart"), localized URLs and `hreflang` tags. Interface strings need a front-end translation catalogue (planned).
+
+## ADR-041 — One media library over the existing image storage
+
+- **Date:** 2026-10-13
+- **Status:** Accepted
+- **Decision:**
+    - **Registry:** a `media` table registers every stored image: library uploads, product uploads (registered when uploaded) and theme uploads. Existing images are backfilled by the migration.
+    - **Sharing:** product images chosen from the library point to the same file; nothing is copied.
+    - **Deletion:** an image cannot be deleted while a product or a theme setting uses it.
+    - **Cleanup:** removing a product image deletes the file only when it was a product upload that nothing else uses. Library images stay.
+    - **Themes:** library images are offered in theme image settings (`media:library/...`).
+    - **Uploads:** all of them go through the ImageSanitizer.
+- **Consequences:** Staff manage images in one place without breaking pages that use them. Unused product uploads can be found with the "Not used by products" filter. Files are stored once per upload, so moving to S3 later stays a disk setting.

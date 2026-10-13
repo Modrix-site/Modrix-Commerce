@@ -37,7 +37,7 @@ final class SystemRoles
                 'display_name' => 'Store manager',
                 'description' => 'Runs day-to-day commerce operations.',
                 'permissions' => [
-                    'products.view', 'products.create', 'products.update', 'products.delete',
+                    'products.view', 'products.create', 'products.update', 'products.delete', 'media.manage',
                     'orders.view', 'orders.manage', 'orders.refund',
                     'customers.view', 'customers.manage',
                     'inventory.view', 'inventory.manage',
@@ -49,7 +49,7 @@ final class SystemRoles
                 'display_name' => 'Catalog manager',
                 'description' => 'Maintains products, categories and stock levels.',
                 'permissions' => [
-                    'products.view', 'products.create', 'products.update', 'products.delete',
+                    'products.view', 'products.create', 'products.update', 'products.delete', 'media.manage',
                     'inventory.view', 'inventory.manage',
                 ],
             ],

@@ -4,6 +4,8 @@ namespace App\Core\Themes;
 
 use App\Core\Extensions\ManifestValidator;
 use App\Core\Media\ImageSanitizer;
+use App\Core\Media\Media;
+use App\Core\Media\MediaLibrary;
 use App\Core\Settings\SettingsRepository;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -181,6 +183,7 @@ final class ThemeCustomizations
         Storage::disk($this->disk())->put($path, $clean['bytes'], ['visibility' => 'public']);
 
         $entry = ['value' => "media:{$path}", 'name' => Str::limit($file->getClientOriginalName(), 80, '')];
+        app(MediaLibrary::class)->register($this->disk(), $path, Media::THEMES, $file->getClientOriginalName(), $clean['width'], $clean['height'], strlen($clean['bytes']));
         $uploads = $this->uploads();
         $uploads[] = $entry;
         $this->settings->set(self::UPLOADS_KEY, $uploads);
@@ -193,8 +196,14 @@ final class ThemeCustomizations
      */
     public function uploads(): array
     {
-        /** @var list<array{value: string, name: string}> */
-        return array_values(array_filter((array) ($this->settings->get(self::UPLOADS_KEY) ?? []), 'is_array'));
+        /** @var list<array{value: string, name: string}> $uploads */
+        $uploads = array_values(array_filter((array) ($this->settings->get(self::UPLOADS_KEY) ?? []), 'is_array'));
+
+        // Images uploaded to the media library can be used in themes too.
+        $library = Media::query()->where('collection', Media::LIBRARY)->where('disk', $this->disk())->orderBy('id')->get()
+            ->map(fn (Media $m) => ['value' => $m->themeValue(), 'name' => $m->filename])->all();
+
+        return [...$uploads, ...$library];
     }
 
     public function mediaUrl(string $value): string

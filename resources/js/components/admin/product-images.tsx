@@ -1,6 +1,7 @@
 import { Form, router } from '@inertiajs/react';
 import { ArrowDown, ArrowUp, Trash2 } from 'lucide-react';
 import ProductImageController from '@/actions/App/Http/Controllers/Admin/Catalog/ProductImageController';
+import { MediaPicker } from '@/components/admin/media-picker';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,6 +12,8 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { useCan } from '@/hooks/use-can';
+import { fromLibrary } from '@/routes/admin/products/images';
 
 type Image = { id: number; url: string; alt: string | null };
 
@@ -25,6 +28,7 @@ export function ProductImages({
     productId: number;
     images: Image[];
 }) {
+    const can = useCan();
     const move = (index: number, direction: -1 | 1) => {
         const order = images.map((i) => i.id);
         const target = index + direction;
@@ -54,7 +58,8 @@ export function ProductImages({
                 <CardDescription>
                     JPEG, PNG or WebP, up to 8 MB each. Images are re-encoded on
                     upload, which removes embedded metadata such as GPS
-                    location. The first image is the main image.
+                    location. The first image is the main image. Images can also
+                    be chosen from the media library.
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
@@ -148,6 +153,11 @@ export function ProductImages({
                             <Button type="submit" disabled={processing}>
                                 Upload
                             </Button>
+                            {can('media.manage') && (
+                                <MediaPicker
+                                    action={fromLibrary.url(productId)}
+                                />
+                            )}
                             <InputError
                                 message={
                                     errors.images ??

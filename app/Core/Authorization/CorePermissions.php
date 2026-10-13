@@ -18,6 +18,7 @@ final class CorePermissions
                 'products.create' => 'Create products',
                 'products.update' => 'Update products',
                 'products.delete' => 'Delete products',
+                'media.manage' => 'Manage the media library',
             ],
             'Orders' => [
                 'orders.view' => 'View orders',

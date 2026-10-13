@@ -7,7 +7,8 @@ use App\Support\Like;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * Default search: escaped LIKE matching on name, short description and SKU.
+ * Default search: escaped LIKE matching on name, short description, SKU and
+ * the translated name in the shopper's language.
  */
 final class DatabaseSearchProvider implements SearchProvider
 {
@@ -17,6 +18,8 @@ final class DatabaseSearchProvider implements SearchProvider
             Like::where($q, 'products.name', $term);
             Like::orWhere($q, 'products.short_description', $term);
             $q->orWhereHas('variants', fn ($v) => Like::where($v, 'sku', $term));
+            // Names in the shopper's language.
+            $q->orWhereHas('translations', fn ($t) => Like::where($t->where('locale', app()->getLocale()), 'name', $term));
         });
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Domains\Catalog\Models;
 
+use App\Domains\Catalog\Concerns\HasTranslations;
 use Database\Factories\CategoryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -32,6 +33,22 @@ class Category extends Model
 {
     /** @use HasFactory<CategoryFactory> */
     use HasFactory;
+
+    /** @use HasTranslations<CategoryTranslation> */
+    use HasTranslations;
+
+    protected static function translationModel(): string
+    {
+        return CategoryTranslation::class;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public static function translatableFields(): array
+    {
+        return ['name', 'description', 'meta_title', 'meta_description'];
+    }
 
     public const MAX_DEPTH = 5;
 

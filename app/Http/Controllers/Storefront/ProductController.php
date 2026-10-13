@@ -43,12 +43,12 @@ class ProductController extends Controller
         return Inertia::render('storefront/product', [
             'product' => [
                 'id' => $product->id,
-                'name' => $product->name,
+                'name' => $product->localized('name'),
                 'slug' => $product->slug,
-                'short_description' => $product->short_description,
-                'description' => $product->description,
-                'meta_title' => $product->meta_title ?: $product->name,
-                'meta_description' => $product->meta_description ?: $product->short_description,
+                'short_description' => $product->localized('short_description'),
+                'description' => $product->localized('description'),
+                'meta_title' => $product->localized('meta_title') ?: $product->localized('name'),
+                'meta_description' => $product->localized('meta_description') ?: $product->localized('short_description'),
                 'images' => $product->images->map(fn (ProductImage $i) => ['id' => $i->id, 'url' => $i->url(), 'alt' => $i->alt])->values(),
                 'options' => $options,
                 'variants' => $product->variants->map(function (ProductVariant $v) use ($currency) {
@@ -69,7 +69,7 @@ class ProductController extends Controller
             ],
             'breadcrumbs' => $category instanceof Category
                 ? collect($category->ancestors())->push($category)
-                    ->map(fn (Category $c) => ['name' => $c->name, 'slug' => $c->slug])->values()
+                    ->map(fn (Category $c) => ['name' => $c->localized('name'), 'slug' => $c->slug])->values()
                 : [],
             'slots' => $slots->render('product.after_details', ['product' => $product]),
         ]);

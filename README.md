@@ -10,7 +10,7 @@ The core is MIT-licensed and fully usable on its own. The platform is designed f
 
 - **Installation:** CLI (`php artisan ecomodular:install`) or a token-gated web installer with expiring tokens that disables itself after installation.
 - **Accounts and access:** Fortify authentication (email verification, password reset, two-factor, passkeys); server-enforced RBAC with seven system roles, custom roles and escalation guards; append-only audit log.
-- **Catalog:** products with variants and options, categories, images, prices per currency, CSV import and export, inventory ledger with locations and low-stock alerts.
+- **Catalog:** products with variants and options, categories, a media library shared by products and themes, translations of products and categories for a multilingual storefront, prices per currency, CSV import and export, inventory ledger with locations and low-stock alerts.
 - **Storefront:** search, categories, cart, guest and account checkout with concurrency-safe stock reservation, discounts and coupons, shipping methods and tax rates, order emails, customer accounts.
 - **Orders and payments:** order workflow (payment, fulfilment, shipments, refunds), Stripe Checkout with verified and deduplicated webhooks, reconciliation, manual payment methods, reports.
 - **Modules:** validated manifests, a full lifecycle with dependencies, quarantine and safe mode; extension points (checkout validators, search, storefront slots, dashboard widgets, personal data export); sample modules for reviews, a sales widget, order alerts and a newsletter sign-up with consent.

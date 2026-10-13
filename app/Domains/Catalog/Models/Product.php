@@ -2,6 +2,7 @@
 
 namespace App\Domains\Catalog\Models;
 
+use App\Domains\Catalog\Concerns\HasTranslations;
 use App\Domains\Catalog\Enums\ProductStatus;
 use App\Domains\Catalog\Enums\ProductType;
 use Database\Factories\ProductFactory;
@@ -36,6 +37,22 @@ class Product extends Model
 {
     /** @use HasFactory<ProductFactory> */
     use HasFactory, SoftDeletes;
+
+    /** @use HasTranslations<ProductTranslation> */
+    use HasTranslations;
+
+    protected static function translationModel(): string
+    {
+        return ProductTranslation::class;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public static function translatableFields(): array
+    {
+        return ['name', 'short_description', 'description', 'meta_title', 'meta_description'];
+    }
 
     /**
      * @return array<string, string>

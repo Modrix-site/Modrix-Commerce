@@ -1,5 +1,5 @@
-import { Form, Head, Link, usePage } from '@inertiajs/react';
-import { Eye, Search, ShoppingBag, User } from 'lucide-react';
+import { Form, Head, Link, router, usePage } from '@inertiajs/react';
+import { Eye, Globe, Search, ShoppingBag, User } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -115,12 +115,48 @@ function SearchForm({ className }: { className?: string }) {
     );
 }
 
+/** Shown when the store offers more than one language. */
+function LanguageSwitcher() {
+    const { storefront } = usePage().props;
+
+    if (!storefront || storefront.locales.length < 2) {
+        return null;
+    }
+
+    const change = (code: string) => {
+        const params = new URLSearchParams(window.location.search);
+        params.set('lang', code);
+        router.visit(`${window.location.pathname}?${params.toString()}`, {
+            preserveScroll: true,
+        });
+    };
+
+    return (
+        <label className="flex items-center gap-1 text-sm">
+            <Globe className="size-4" aria-hidden />
+            <span className="sr-only">Language</span>
+            <select
+                value={storefront.locale}
+                onChange={(e) => change(e.target.value)}
+                className="h-8 rounded-md border bg-transparent px-1 text-sm"
+            >
+                {storefront.locales.map((l) => (
+                    <option key={l.code} value={l.code} lang={l.code}>
+                        {l.name}
+                    </option>
+                ))}
+            </select>
+        </label>
+    );
+}
+
 function AccountLinks() {
     const { storefront, auth } = usePage().props;
     const cartCount = storefront?.cartCount ?? 0;
 
     return (
         <nav className="flex items-center gap-1" aria-label="Account">
+            <LanguageSwitcher />
             <Button variant="ghost" size="sm" asChild>
                 <Link href={auth.user ? dashboard() : login()}>
                     <User />

@@ -227,9 +227,18 @@ Marketplace server:
 
 Module `ecomodular/newsletter`: `newsletter_subscribers` (email, consent text and time, source, unsubscribe token, `unsubscribed_at`).
 
+## Media and translations (implemented)
+
+| Table                   | Notes                                                                                                                                                                                                           |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `media`                 | Every stored image: `disk`, `path` (unique together), `collection` (library, products or themes), file name, MIME type, size, dimensions, alt text, uploader. Backfilled from product images and theme uploads. |
+| `product_translations`  | Per product and locale: name, short description, description, SEO title and description. Unique `(product_id, locale)`.                                                                                         |
+| `category_translations` | Per category and locale: name, description, SEO title and description. Unique `(category_id, locale)`.                                                                                                          |
+
+Settings: `store.default_locale` and `store.locales` (additional storefront languages).
+
 ## Planned tables
 
 The tables below follow §13 of the master specification and are designed when each phase starts:
 
-- **Deferred from Phase 2:** `product_translations` (storefront localisation is a Phase 8 item)
 - **Multi-store (ADR-039):** `stores`, `theme_assignments`, `store_id` on channel-specific tables

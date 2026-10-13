@@ -3,15 +3,18 @@
 namespace App\Domains\Catalog\Actions;
 
 use App\Core\Audit\AuditLogger;
+use App\Core\Media\MediaLibrary;
 use App\Domains\Catalog\Models\Product;
 use App\Domains\Catalog\Models\ProductImage;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 final class ManageProductImages
 {
-    public function __construct(private readonly AuditLogger $audit) {}
+    public function __construct(
+        private readonly AuditLogger $audit,
+        private readonly MediaLibrary $library,
+    ) {}
 
     /**
      * @param  list<int>  $orderedIds  every image id of the product, in the desired order
@@ -44,7 +47,8 @@ final class ManageProductImages
             $this->audit->record('product.image_removed', $image->product, ['image_id' => $image->id]);
         });
 
-        // Remove the file only after the row is gone; a missing file is harmless, a dangling row is not.
-        Storage::disk($image->disk)->delete($image->path);
+        // Remove the file only after the row is gone, and only if nothing else uses it
+        // (library images and files shared with other products stay).
+        $this->library->releaseProductFile($image);
     }
 }

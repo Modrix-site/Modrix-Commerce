@@ -29,21 +29,22 @@ class CatalogController extends Controller
 
     public function category(Request $request, string $slug, StorefrontCatalog $catalog, StoreSettings $store): Response
     {
-        $category = Category::query()->active()->where('slug', $slug)->firstOrFail();
+        $category = Category::query()->active()->withCurrentTranslation()->where('slug', $slug)->firstOrFail();
         $sort = $this->sort($request);
 
         return Inertia::render('storefront/listing', [
-            'title' => $category->name,
-            'description' => $category->description,
+            'title' => $category->localized('name'),
+            'description' => $category->localized('description'),
             'meta' => [
-                'title' => $category->meta_title ?: $category->name,
-                'description' => $category->meta_description,
+                'title' => $category->localized('meta_title') ?: $category->localized('name'),
+                'description' => $category->localized('meta_description'),
             ],
             'breadcrumbs' => collect($category->ancestors())
-                ->map(fn (Category $c) => ['name' => $c->name, 'slug' => $c->slug])
-                ->push(['name' => $category->name, 'slug' => $category->slug])
+                ->map(fn (Category $c) => ['name' => $c->localized('name'), 'slug' => $c->slug])
+                ->push(['name' => $category->localized('name'), 'slug' => $category->slug])
                 ->values(),
-            'subcategories' => $category->children()->active()->get(['id', 'name', 'slug']),
+            'subcategories' => $category->children()->active()->withCurrentTranslation()->get(['id', 'name', 'slug'])
+                ->map(fn (Category $c) => ['id' => $c->id, 'name' => $c->localized('name'), 'slug' => $c->slug]),
             'products' => $catalog->listing($store->currency(), $category, null, $sort),
             'sort' => $sort,
             'query' => null,
