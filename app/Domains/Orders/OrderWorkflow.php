@@ -14,6 +14,7 @@ use App\Domains\Orders\Events\OrderDelivered;
 use App\Domains\Orders\Events\OrderPaid;
 use App\Domains\Orders\Events\OrderRefunded;
 use App\Domains\Orders\Events\OrderShipped;
+use App\Domains\Orders\Mail\OrderMail;
 use App\Domains\Orders\Models\Order;
 use App\Domains\Orders\Models\OrderEvent;
 use App\Domains\Orders\Models\OrderItem;
@@ -27,6 +28,7 @@ use App\Domains\Payments\PaymentMethods;
 use App\Domains\Pricing\Money;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -58,6 +60,18 @@ final class OrderWorkflow
 
         if ($this->canShip($order)) {
             $actions[] = 'ship';
+
+            if ($order->fulfillment_status === FulfillmentStatus::Unfulfilled) {
+                $actions[] = 'mark_packed';
+            }
+        }
+
+        if ($this->canHold($order)) {
+            $actions[] = 'hold';
+        }
+
+        if ($order->status === OrderStatus::OnHold) {
+            $actions[] = 'release';
         }
 
         if ($order->fulfillment_status === FulfillmentStatus::Shipped && $order->status !== OrderStatus::Cancelled) {
@@ -109,9 +123,9 @@ final class OrderWorkflow
                 'payment_status' => PaymentStatus::Paid,
                 'paid_total' => $amount->toDecimal(),
                 'paid_at' => now(),
-                'status' => $order->fulfillment_status === FulfillmentStatus::Delivered ? OrderStatus::Completed : OrderStatus::Processing,
-                'completed_at' => $order->fulfillment_status === FulfillmentStatus::Delivered ? now() : null,
-            ])->save();
+            ]);
+            $this->setPaidStatus($order);
+            $order->save();
 
             $this->log($order, 'payment', "Payment of {$amount->format()} recorded ({$order->payment_method_name}).", true, $actor, ['reference' => $reference]);
             $this->audit->record('order.payment_recorded', $order, ['number' => $order->number, 'amount' => $amount->toDecimal()], $actor);
@@ -170,11 +184,7 @@ final class OrderWorkflow
             $order->payment_status = $this->paymentStatusFor($order);
 
             if ($first && ! $cancelled) {
-                $delivered = $order->fulfillment_status === FulfillmentStatus::Delivered;
-                $order->forceFill([
-                    'status' => $delivered ? OrderStatus::Completed : OrderStatus::Processing,
-                    'completed_at' => $delivered ? now() : null,
-                ]);
+                $this->setPaidStatus($order);
             }
             $order->save();
 
@@ -253,9 +263,9 @@ final class OrderWorkflow
         });
     }
 
-    public function ship(Order $order, User $actor, ?string $carrier, ?string $trackingNumber, ?string $trackingUrl): Order
+    public function ship(Order $order, User $actor, ?string $carrier, ?string $trackingNumber, ?string $trackingUrl, bool $notify = true): Order
     {
-        return $this->transition($order, function (Order $order) use ($actor, $carrier, $trackingNumber, $trackingUrl): Order {
+        return $this->transition($order, function (Order $order) use ($actor, $carrier, $trackingNumber, $trackingUrl, $notify): Order {
             if (! $this->canShip($order)) {
                 throw ValidationException::withMessages(['order' => 'This order cannot be shipped in its current state (it may need to be paid first).']);
             }
@@ -280,7 +290,7 @@ final class OrderWorkflow
             $this->log($order, 'fulfillment', "Order shipped.{$tracking}", true, $actor);
             $this->audit->record('order.shipped', $order, ['number' => $order->number, 'carrier' => $carrier, 'tracking' => $trackingNumber], $actor);
 
-            DB::afterCommit(fn () => OrderShipped::dispatch($order->id));
+            DB::afterCommit(fn () => OrderShipped::dispatch($order->id, $notify));
 
             return $order;
         });
@@ -331,6 +341,7 @@ final class OrderWorkflow
 
             $order->forceFill([
                 'status' => OrderStatus::Cancelled,
+                'hold_previous_status' => null,
                 'cancelled_at' => now(),
             ])->save();
 
@@ -502,6 +513,77 @@ final class OrderWorkflow
         });
     }
 
+    /**
+     * Pause an unshipped order (address check, fraud review, stock query).
+     * It cannot be packed or shipped until released; payments, cancellation
+     * and refunds still work. Customers keep seeing "processing".
+     */
+    public function hold(Order $order, User $actor, ?string $reason = null, bool $notify = false): Order
+    {
+        return $this->transition($order, function (Order $order) use ($actor, $reason, $notify): Order {
+            if (! $this->canHold($order)) {
+                throw ValidationException::withMessages(['order' => 'Only pending or processing orders that have not shipped can be put on hold.']);
+            }
+
+            $order->forceFill([
+                'hold_previous_status' => $order->status->value,
+                'status' => OrderStatus::OnHold,
+            ])->save();
+
+            $this->log($order, 'held', 'Order put on hold'.($reason ? ": {$reason}" : '.'), false, $actor, ['reason' => $reason]);
+            $this->audit->record('order.held', $order, ['number' => $order->number, 'reason' => $reason], $actor);
+
+            if ($notify) {
+                $this->notifyCustomer($order, $actor, $reason ?: 'Your order is being reviewed.');
+            }
+
+            return $order;
+        });
+    }
+
+    public function release(Order $order, User $actor, bool $notify = false): Order
+    {
+        return $this->transition($order, function (Order $order) use ($actor, $notify): Order {
+            if ($order->status !== OrderStatus::OnHold) {
+                throw ValidationException::withMessages(['order' => 'This order is not on hold.']);
+            }
+
+            $order->forceFill([
+                'status' => OrderStatus::tryFrom((string) $order->hold_previous_status) ?? OrderStatus::Pending,
+                'hold_previous_status' => null,
+            ])->save();
+
+            $this->log($order, 'released', 'Hold released.', false, $actor);
+            $this->audit->record('order.released', $order, ['number' => $order->number], $actor);
+
+            if ($notify) {
+                $this->notifyCustomer($order, $actor, 'Your order is being processed again.');
+            }
+
+            return $order;
+        });
+    }
+
+    public function markPacked(Order $order, User $actor, bool $notify = false): Order
+    {
+        return $this->transition($order, function (Order $order) use ($actor, $notify): Order {
+            if (! $this->canShip($order) || $order->fulfillment_status !== FulfillmentStatus::Unfulfilled) {
+                throw ValidationException::withMessages(['order' => 'This order cannot be packed in its current state.']);
+            }
+
+            $order->forceFill(['fulfillment_status' => FulfillmentStatus::Packed])->save();
+
+            $this->log($order, 'packed', 'Order packed and ready to ship.', false, $actor);
+            $this->audit->record('order.packed', $order, ['number' => $order->number], $actor);
+
+            if ($notify) {
+                $this->notifyCustomer($order, $actor, 'Your order is packed and will ship soon.');
+            }
+
+            return $order;
+        });
+    }
+
     public function addNote(Order $order, User $actor, string $message, bool $customerVisible): void
     {
         $this->log($order, 'note', $message, $customerVisible, $actor);
@@ -533,9 +615,42 @@ final class OrderWorkflow
         return $order->payment_status === PaymentStatus::Unpaid && $order->status !== OrderStatus::Cancelled;
     }
 
+    /**
+     * A newly paid order moves on to processing (or completed, if it was
+     * already delivered). An order on hold stays on hold and resumes as
+     * processing when released.
+     */
+    private function setPaidStatus(Order $order): void
+    {
+        if ($order->status === OrderStatus::OnHold) {
+            $order->hold_previous_status = OrderStatus::Processing->value;
+
+            return;
+        }
+
+        $delivered = $order->fulfillment_status === FulfillmentStatus::Delivered;
+        $order->forceFill([
+            'status' => $delivered ? OrderStatus::Completed : OrderStatus::Processing,
+            'completed_at' => $delivered ? now() : null,
+        ]);
+    }
+
+    private function notifyCustomer(Order $order, User $actor, string $message): void
+    {
+        $this->log($order, 'note', $message, true, $actor);
+        DB::afterCommit(fn () => Mail::to($order->email)->send(new OrderMail($order, 'updated', note: $message)));
+    }
+
+    private function canHold(Order $order): bool
+    {
+        return in_array($order->status, [OrderStatus::Pending, OrderStatus::Processing], true)
+            && in_array($order->fulfillment_status, [FulfillmentStatus::Unfulfilled, FulfillmentStatus::Packed], true);
+    }
+
     private function canShip(Order $order): bool
     {
-        if ($order->fulfillment_status !== FulfillmentStatus::Unfulfilled || $order->status === OrderStatus::Cancelled) {
+        if (! in_array($order->fulfillment_status, [FulfillmentStatus::Unfulfilled, FulfillmentStatus::Packed], true)
+            || in_array($order->status, [OrderStatus::Cancelled, OrderStatus::OnHold], true)) {
             return false;
         }
 
@@ -551,7 +666,7 @@ final class OrderWorkflow
     {
         return $order->status !== OrderStatus::Cancelled
             && $order->status !== OrderStatus::Completed
-            && $order->fulfillment_status === FulfillmentStatus::Unfulfilled
+            && in_array($order->fulfillment_status, [FulfillmentStatus::Unfulfilled, FulfillmentStatus::Packed], true)
             && in_array($order->payment_status, [PaymentStatus::Unpaid, PaymentStatus::Refunded], true);
     }
 

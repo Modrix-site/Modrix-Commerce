@@ -9,6 +9,11 @@ We have received your order **{{ $order->number }}**.
 **How to pay:** {{ $paymentInstructions }}
 @endif
 @break
+@case('updated')
+There is an update on your order **{{ $order->number }}**:
+
+{{ $note }}
+@break
 @case('paid')
 We have received your payment for order **{{ $order->number }}**. We will let you know when it ships.
 @break

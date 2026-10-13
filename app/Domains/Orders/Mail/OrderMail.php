@@ -25,6 +25,7 @@ class OrderMail extends Mailable
         'shipped' => 'Your order is on its way',
         'cancelled' => 'Your order was cancelled',
         'refunded' => 'Refund issued',
+        'updated' => 'Update on your order',
         'staff_new_order' => 'New order received',
     ];
 
@@ -32,6 +33,7 @@ class OrderMail extends Mailable
         public readonly Order $order,
         public readonly string $kind,
         public readonly ?string $paymentInstructions = null,
+        public readonly ?string $note = null,
     ) {}
 
     public function envelope(): Envelope
@@ -55,6 +57,7 @@ class OrderMail extends Mailable
             'heading' => self::KINDS[$this->kind],
             'storeName' => app(StoreSettings::class)->name(),
             'paymentInstructions' => $this->paymentInstructions,
+            'note' => $this->note,
             'shipment' => $this->order->shipments->last(),
         ]);
     }

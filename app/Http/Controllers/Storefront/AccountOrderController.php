@@ -17,7 +17,7 @@ class AccountOrderController extends Controller
             ->where('user_id', $request->user()?->getAuthIdentifier())
             ->latest('placed_at')
             ->paginate(15)
-            ->through(fn (Order $o) => $presenter->summary($o));
+            ->through(fn (Order $o) => $presenter->customerSummary($o));
 
         return Inertia::render('storefront/account/orders', ['orders' => $orders]);
     }

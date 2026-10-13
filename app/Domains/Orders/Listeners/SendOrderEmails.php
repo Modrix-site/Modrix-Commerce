@@ -57,6 +57,10 @@ final class SendOrderEmails implements ShouldQueue
 
     public function shipped(OrderShipped $event): void
     {
+        if (! $event->notify) {
+            return;
+        }
+
         $this->send($event->orderId, 'shipped');
     }
 

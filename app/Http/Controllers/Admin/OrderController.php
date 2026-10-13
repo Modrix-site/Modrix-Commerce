@@ -109,10 +109,38 @@ class OrderController extends Controller
             'carrier' => ['nullable', 'string', 'max:120'],
             'tracking_number' => ['nullable', 'string', 'max:120'],
             'tracking_url' => ['nullable', 'url:https,http', 'max:500'],
+            'notify' => ['boolean'],
         ]);
-        $this->workflow->ship($order, $this->actor($request), $data['carrier'] ?? null, $data['tracking_number'] ?? null, $data['tracking_url'] ?? null);
+        $this->workflow->ship($order, $this->actor($request), $data['carrier'] ?? null, $data['tracking_number'] ?? null, $data['tracking_url'] ?? null, (bool) ($data['notify'] ?? true));
 
         return $this->done($order, __('Order marked as shipped.'));
+    }
+
+    public function hold(Request $request, Order $order): RedirectResponse
+    {
+        $data = $request->validate([
+            'reason' => ['nullable', 'string', 'max:500'],
+            'notify' => ['boolean'],
+        ]);
+        $this->workflow->hold($order, $this->actor($request), $data['reason'] ?? null, (bool) ($data['notify'] ?? false));
+
+        return $this->done($order, __('Order put on hold.'));
+    }
+
+    public function release(Request $request, Order $order): RedirectResponse
+    {
+        $data = $request->validate(['notify' => ['boolean']]);
+        $this->workflow->release($order, $this->actor($request), (bool) ($data['notify'] ?? false));
+
+        return $this->done($order, __('Hold released.'));
+    }
+
+    public function pack(Request $request, Order $order): RedirectResponse
+    {
+        $data = $request->validate(['notify' => ['boolean']]);
+        $this->workflow->markPacked($order, $this->actor($request), (bool) ($data['notify'] ?? false));
+
+        return $this->done($order, __('Order marked as packed.'));
     }
 
     public function deliver(Request $request, Order $order): RedirectResponse

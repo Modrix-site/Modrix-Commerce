@@ -24,6 +24,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $phone
  * @property string $currency
  * @property OrderStatus $status
+ * @property string|null $hold_previous_status
  * @property PaymentStatus $payment_status
  * @property FulfillmentStatus $fulfillment_status
  * @property string $subtotal

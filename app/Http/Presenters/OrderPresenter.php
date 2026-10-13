@@ -2,6 +2,8 @@
 
 namespace App\Http\Presenters;
 
+use App\Domains\Orders\Enums\FulfillmentStatus;
+use App\Domains\Orders\Enums\OrderStatus;
 use App\Domains\Orders\Models\Order;
 use App\Domains\Orders\Models\OrderAddress;
 use App\Domains\Orders\Models\OrderEvent;
@@ -35,6 +37,27 @@ final class OrderPresenter
     }
 
     /**
+     * The summary customers see. A hold is internal: the customer keeps
+     * seeing the status the order had before it (pending or processing),
+     * and a packed order is still "unfulfilled" until it ships.
+     *
+     * @return array<string, mixed>
+     */
+    public function customerSummary(Order $order): array
+    {
+        $status = $order->status === OrderStatus::OnHold
+            ? (OrderStatus::tryFrom((string) $order->hold_previous_status) ?? OrderStatus::Processing)
+            : $order->status;
+
+        return [
+            ...$this->summary($order),
+            'status' => $status->value,
+            'status_label' => $status->label(),
+            'fulfillment_status' => $order->fulfillment_status === FulfillmentStatus::Packed ? FulfillmentStatus::Unfulfilled->value : $order->fulfillment_status->value,
+        ];
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function forCustomer(Order $order): array
@@ -42,7 +65,7 @@ final class OrderPresenter
         $order->loadMissing('items', 'addresses', 'shipments');
 
         return [
-            ...$this->summary($order),
+            ...$this->customerSummary($order),
             ...$this->money($order),
             'payment_method' => $order->payment_method_name,
             'shipping_method' => $order->shipping_method_name,

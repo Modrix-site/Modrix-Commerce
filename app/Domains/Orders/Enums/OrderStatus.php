@@ -10,6 +10,7 @@ enum OrderStatus: string
 {
     case Pending = 'pending';       // placed, awaiting payment
     case Processing = 'processing'; // paid (or pay-on-delivery shipped), being fulfilled
+    case OnHold = 'on_hold';        // paused by staff; shown to customers as processing
     case Completed = 'completed';   // paid and delivered
     case Cancelled = 'cancelled';
 
@@ -18,6 +19,7 @@ enum OrderStatus: string
         return match ($this) {
             self::Pending => 'Pending payment',
             self::Processing => 'Processing',
+            self::OnHold => 'On hold',
             self::Completed => 'Completed',
             self::Cancelled => 'Cancelled',
         };

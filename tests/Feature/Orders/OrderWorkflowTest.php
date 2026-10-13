@@ -197,7 +197,7 @@ class OrderWorkflowTest extends TestCase
             ->get(route('admin.orders.show', $order))
             ->assertInertia(fn ($page) => $page
                 ->component('admin/orders/show')
-                ->where('actions', ['record_payment', 'cancel'])
+                ->where('actions', ['record_payment', 'hold', 'cancel'])
                 ->where('order.number', $order->number));
 
         $this->actingAs($this->owner())
