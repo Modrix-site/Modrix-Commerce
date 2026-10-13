@@ -239,6 +239,24 @@ Settings: `store.default_locale` and `store.locales` (additional storefront lang
 
 `interface_translations`: the merchant's own storefront wording per locale (`locale`, `key` = English text, `value`), overriding `lang/storefront/{locale}.json`.
 
+## Order documents (implemented)
+
+| Table               | Notes                                                                                                                                                                                                           |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `invoices`          | One per order (unique `order_id`). `number` (unique) and `sequence`, `issued_at`, `currency`, and JSON snapshots `seller`, `buyer`, `lines`, `totals`; `notes` (footer); `issued_by`. Never updated or deleted. |
+| `document_counters` | `name` (primary, `invoice`) and `next`. Locked and advanced in the same transaction as the invoice, so numbers have no gaps.                                                                                    |
+
+`orders.hold_previous_status`: the status an `on_hold` order returns to when released. `orders.status` gains `on_hold` and `fulfillment_status` gains `packed`.
+
+Settings:
+
+- `documents.invoice_prefix`
+- `documents.invoice_padding`
+- `documents.tax_id`
+- `documents.seller_address`
+- `documents.footer`
+- `documents.logo_media_id`
+
 ## Planned tables
 
 The tables below follow §13 of the master specification and are designed when each phase starts:

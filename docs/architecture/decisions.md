@@ -396,3 +396,31 @@ Each entry records a decision, its context, and its consequences. Entries are ap
     - the admin is English;
     - theme texts are merchant content;
     - modules need their own catalogues (planned).
+
+## ADR-043 — Order documents and guarded hold/packed statuses
+
+- **Date:** 2026-10-13
+- **Status:** Accepted
+- **Decision:**
+    - **PDFs:** invoices, payment receipts and packing slips are Blade templates rendered with dompdf (LGPL-2.1, used as a library). Rendering is locked down:
+        - remote loading, PHP and JavaScript are off;
+        - local reads are confined to `storage/framework/dompdf`;
+        - the logo is embedded as a data URI;
+        - all merchant text is escaped.
+    - **Invoices are stored snapshots** (`invoices`): seller, buyer, lines and totals are frozen when issued, and the model refuses updates and deletes. Every paid order gets one automatically (`OrderPaid` listener); staff can issue one early.
+    - **Numbering:** numbers come from a `document_counters` row locked inside the issuing transaction, so the sequence has no gaps or duplicates. The prefix (`{year}` placeholder), number of digits and starting number are set by the merchant; the next number can only go up.
+    - **Receipts and packing slips are not stored:** they are rendered from payments, refunds and order items, which never change.
+    - **Holds and packing are workflow moves:** `on_hold` order status and `packed` fulfilment status are entered only through `OrderWorkflow` (`hold`, `release`, `markPacked`) with the same locking, audit and rules as the other moves. There is no free-form status dropdown.
+        - A held order cannot be packed or shipped.
+        - Payment, cancellation and refunds still work while an order is held.
+        - Release restores the previous status (processing if it was paid meanwhile).
+    - **Customers never see "on hold" or "packed":** they see the status from before the hold, and "unfulfilled" until the order ships. Staff can tick "Email the customer" on hold, release, pack and ship.
+- **Consequences:**
+    - **Downloads:**
+        - staff can download every document (`orders.view`);
+        - signed-in customers can download their own invoice and receipts only (other orders return 404);
+        - the invoice is attached to the payment email.
+    - **Not covered yet:**
+        - credit notes for refunds;
+        - document wording follows the store's default language but no translations ship yet;
+        - a webp logo is not supported.

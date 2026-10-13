@@ -4,6 +4,23 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added (order documents and statuses)
+
+- PDF invoices with gap-free sequential numbers (for example `INV-2026-00042`), issued automatically when an order is paid and frozen once issued.
+- PDF payment receipts (with balance due) and packing slips (no prices).
+- Staff download all three from the order page; customers download their invoice and receipts from their account.
+- The invoice is attached to the payment email.
+- Admin → Invoices & documents: number prefix and digits, next number (can only go up), business address, tax ID, footer and logo.
+- Orders can be put **on hold**: a held order cannot be packed or shipped until released, and customers do not see the hold.
+- Orders can be marked **packed** before shipping.
+- "Email the customer" option on hold, release, pack and ship.
+- Redesigned admin order page:
+    - progress steps (placed, paid, packed, shipped, delivered);
+    - one action bar;
+    - Documents card;
+    - activity timeline.
+- ADR-043.
+
 ### Added (storefront interface translations)
 
 - The storefront's wording (header, product, cart, checkout, order, account and sign-in pages, server messages) is translatable.
