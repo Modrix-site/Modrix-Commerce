@@ -6,6 +6,7 @@ use App\Domains\Customers\Models\Customer;
 use App\Domains\Orders\Enums\FulfillmentStatus;
 use App\Domains\Orders\Enums\OrderStatus;
 use App\Domains\Orders\Enums\PaymentStatus;
+use App\Domains\Orders\OrderDisplayStatus;
 use App\Domains\Payments\Models\Payment;
 use App\Domains\Pricing\Money;
 use App\Models\User;
@@ -25,6 +26,7 @@ use Illuminate\Support\Carbon;
  * @property string $currency
  * @property OrderStatus $status
  * @property string|null $hold_previous_status
+ * @property string|null $display_status
  * @property PaymentStatus $payment_status
  * @property FulfillmentStatus $fulfillment_status
  * @property string $subtotal
@@ -57,6 +59,14 @@ class Order extends Model
 {
     // Orders are created and changed only by PlaceOrder and OrderWorkflow.
     protected $guarded = ['*'];
+
+    protected static function booted(): void
+    {
+        // The headline status is stored for filtering and kept in step with every write.
+        static::saving(function (Order $order) {
+            $order->display_status = OrderDisplayStatus::for($order)->value;
+        });
+    }
 
     /**
      * @return array<string, string>

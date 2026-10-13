@@ -550,7 +550,7 @@ final class OrderWorkflow
             }
 
             $order->forceFill([
-                'status' => OrderStatus::tryFrom((string) $order->hold_previous_status) ?? OrderStatus::Pending,
+                'status' => OrderStatus::tryFrom((string) $order->hold_previous_status) ?? OrderStatus::PendingPayment,
                 'hold_previous_status' => null,
             ])->save();
 
@@ -623,15 +623,21 @@ final class OrderWorkflow
      */
     private function setPaidStatus(Order $order): void
     {
+        $delivered = $order->fulfillment_status === FulfillmentStatus::Delivered;
+        $next = match (true) {
+            $delivered => OrderStatus::Completed,
+            $order->fulfillment_status === FulfillmentStatus::Unfulfilled => OrderStatus::Confirmed,
+            default => OrderStatus::Processing, // pay-on-delivery orders already on their way
+        };
+
         if ($order->status === OrderStatus::OnHold) {
-            $order->hold_previous_status = OrderStatus::Processing->value;
+            $order->hold_previous_status = $next->value;
 
             return;
         }
 
-        $delivered = $order->fulfillment_status === FulfillmentStatus::Delivered;
         $order->forceFill([
-            'status' => $delivered ? OrderStatus::Completed : OrderStatus::Processing,
+            'status' => $next,
             'completed_at' => $delivered ? now() : null,
         ]);
     }
@@ -651,7 +657,7 @@ final class OrderWorkflow
 
     private function canHold(Order $order): bool
     {
-        return in_array($order->status, [OrderStatus::Pending, OrderStatus::Processing], true)
+        return in_array($order->status, [OrderStatus::PendingPayment, OrderStatus::Pending, OrderStatus::Confirmed, OrderStatus::Processing], true)
             && in_array($order->fulfillment_status, [FulfillmentStatus::Unfulfilled, FulfillmentStatus::Packed], true);
     }
 

@@ -52,7 +52,7 @@ class CheckoutTest extends TestCase
         $this->assertSame('5.0000', $order->shipping_total);
         $this->assertSame('4.5000', $order->tax_total);
         $this->assertSame('54.5000', $order->grand_total);
-        $this->assertSame(OrderStatus::Pending, $order->status);
+        $this->assertSame(OrderStatus::PendingPayment, $order->status);
         $this->assertSame(PaymentStatus::Unpaid, $order->payment_status);
         $this->assertSame(FulfillmentStatus::Unfulfilled, $order->fulfillment_status);
         $this->assertMatchesRegularExpression('/^EM-\d{6}$/', (string) $order->number);

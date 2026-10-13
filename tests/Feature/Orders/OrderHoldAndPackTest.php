@@ -70,7 +70,7 @@ class OrderHoldAndPackTest extends TestCase
 
         $this->post(route('admin.orders.release', $order))->assertSessionHasNoErrors();
         $order->refresh();
-        $this->assertSame(OrderStatus::Processing, $order->status);
+        $this->assertSame(OrderStatus::Confirmed, $order->status);
         $this->assertNull($order->hold_previous_status);
         $this->assertContains('ship', app(OrderWorkflow::class)->allowedActions($order));
     }
@@ -89,7 +89,7 @@ class OrderHoldAndPackTest extends TestCase
         $this->assertSame(PaymentStatus::Paid, $order->payment_status);
 
         $this->post(route('admin.orders.release', $order))->assertSessionHasNoErrors();
-        $this->assertSame(OrderStatus::Processing, $order->fresh()?->status);
+        $this->assertSame(OrderStatus::Confirmed, $order->fresh()?->status);
     }
 
     public function test_pack_then_ship()
@@ -156,17 +156,17 @@ class OrderHoldAndPackTest extends TestCase
 
         $this->actingAs($customer)->get(route('account.orders.show', $order))
             ->assertInertia(fn (Assert $page) => $page
-                ->where('order.status', 'pending')
+                ->where('order.status', 'pending_payment')
                 ->where('order.history', fn ($history) => collect($history)->doesntContain(fn ($e) => str_contains($e['message'], 'fraud'))));
 
         $this->get(route('account.orders'))
-            ->assertInertia(fn (Assert $page) => $page->where('orders.data.0.status', 'pending'));
+            ->assertInertia(fn (Assert $page) => $page->where('orders.data.0.status', 'pending_payment'));
 
-        // Once paid, the held order shows as processing.
+        // Once paid, the held order shows as confirmed.
         $this->actingAs($this->userWithRole('order-manager'))->post(route('admin.orders.payments.store', $order))->assertSessionHasNoErrors();
         $this->assertSame(OrderStatus::OnHold, $order->fresh()?->status);
         $this->actingAs($customer)->get(route('account.orders.show', $order))
-            ->assertInertia(fn (Assert $page) => $page->where('order.status', 'processing'));
+            ->assertInertia(fn (Assert $page) => $page->where('order.status', 'confirmed'));
     }
 
     public function test_packed_orders_still_count_as_ready_to_fulfil()

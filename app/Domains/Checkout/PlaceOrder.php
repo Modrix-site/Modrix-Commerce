@@ -177,7 +177,7 @@ final class PlaceOrder
             'email' => Str::lower($data->email),
             'phone' => $data->phone,
             'currency' => $priced->currency,
-            'status' => OrderStatus::Pending,
+            'status' => OrderStatus::PendingPayment,
             'payment_status' => PaymentStatus::Unpaid,
             'fulfillment_status' => FulfillmentStatus::Unfulfilled,
             'subtotal' => $priced->subtotal()->toDecimal(),

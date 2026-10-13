@@ -59,7 +59,7 @@ class OrderWorkflowTest extends TestCase
         $this->actingAs($manager)->post(route('admin.orders.payments.store', $order), ['reference' => 'TX-1'])->assertSessionHasNoErrors();
         $order->refresh();
         $this->assertSame(PaymentStatus::Paid, $order->payment_status);
-        $this->assertSame(OrderStatus::Processing, $order->status);
+        $this->assertSame(OrderStatus::Confirmed, $order->status);
         $this->assertSame($order->grand_total, $order->paid_total);
         $this->assertDatabaseHas('payments', ['order_id' => $order->id, 'provider' => 'manual', 'provider_reference' => 'TX-1', 'recorded_by' => $manager->id]);
 

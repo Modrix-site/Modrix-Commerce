@@ -120,7 +120,7 @@ class StripeCheckoutTest extends TestCase
 
         $order->refresh();
         $this->assertSame(PaymentStatus::Paid, $order->payment_status);
-        $this->assertSame(OrderStatus::Processing, $order->status);
+        $this->assertSame(OrderStatus::Confirmed, $order->status);
         $this->assertSame(Payment::STATUS_PAID, $payment->fresh()->status);
         $this->assertSame('pi_test_'.$payment->id, $payment->fresh()->provider_payment_id);
         Mail::assertSent(OrderMail::class, fn (OrderMail $m) => $m->kind === 'placed');
@@ -244,7 +244,7 @@ class StripeCheckoutTest extends TestCase
 
         $order->refresh();
         $this->assertSame(PaymentStatus::Paid, $order->payment_status);
-        $this->assertSame(OrderStatus::Processing, $order->status);
+        $this->assertSame(OrderStatus::Confirmed, $order->status);
         $this->assertSame(Payment::STATUS_PAID, $payment->fresh()->status);
     }
 
