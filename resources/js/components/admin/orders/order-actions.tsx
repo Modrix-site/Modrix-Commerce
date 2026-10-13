@@ -57,14 +57,18 @@ type Dialogs =
  * The next step as the main button, plus a menu of everything else staff
  * may do now. Only actions the server allows are passed in.
  */
+export type MethodOption = { value: string; label: string };
+
 export function OrderActions({
     order,
     actions,
     emailDefaults,
+    manualMethods,
 }: {
     order: AdminOrder;
     actions: string[];
     emailDefaults: Record<string, boolean>;
+    manualMethods: MethodOption[];
 }) {
     const [open, setOpen] = useState<Dialogs | null>(null);
     const can = (a: string) => actions.includes(a);
@@ -214,6 +218,7 @@ export function OrderActions({
                 order={order}
                 open={open?.kind === 'move' ? null : (open?.kind ?? null)}
                 emailDefaults={emailDefaults}
+                manualMethods={manualMethods}
                 onClose={() => setOpen(null)}
             />
         </div>
@@ -300,13 +305,22 @@ function OtherDialogs({
     order,
     open,
     emailDefaults,
+    manualMethods,
     onClose,
 }: {
     order: AdminOrder;
     open: Exclude<Dialogs, { kind: 'move' }>['kind'] | null;
     emailDefaults: Record<string, boolean>;
+    manualMethods: MethodOption[];
     onClose: () => void;
 }) {
+    const today = new Date().toLocaleDateString('en-CA');
+    const defaultMethod = manualMethods.some(
+        (m) => m.value === order.payment_method_code,
+    )
+        ? order.payment_method_code
+        : 'cash';
+
     const props = (kind: typeof open) => ({
         open: open === kind,
         onOpenChange: (value: boolean) => !value && onClose(),
@@ -318,10 +332,46 @@ function OtherDialogs({
             <ActionDialog
                 {...props('record_payment')}
                 title="Record payment"
-                description={`Confirm that ${order.grand_total.formatted} was received via ${order.payment_method}. Only record payments you have verified in your bank account or cash register.`}
+                description={`Balance due: ${order.balance_due.formatted}. Record the whole balance or part of it. Only record money you have verified in your bank account or cash register.`}
                 form={OrderController.recordPayment.form(order.number)}
                 submit="Record payment"
             >
+                <div className="grid gap-4 sm:grid-cols-2">
+                    <FormField
+                        id="pay-amount"
+                        label={`Amount (${order.currency})`}
+                    >
+                        <Input
+                            id="pay-amount"
+                            name="amount"
+                            inputMode="decimal"
+                            defaultValue={order.balance_due.amount}
+                            required
+                        />
+                    </FormField>
+                    <FormField id="pay-method" label="Method">
+                        <NativeSelect
+                            id="pay-method"
+                            name="method"
+                            defaultValue={defaultMethod}
+                        >
+                            {manualMethods.map((m) => (
+                                <option key={m.value} value={m.value}>
+                                    {m.label}
+                                </option>
+                            ))}
+                        </NativeSelect>
+                    </FormField>
+                </div>
+                <FormField id="pay-date" label="Date received">
+                    <Input
+                        id="pay-date"
+                        name="paid_at"
+                        type="date"
+                        max={today}
+                        defaultValue={today}
+                    />
+                </FormField>
                 <FormField id="reference" label="Reference (optional)">
                     <Input
                         id="reference"
@@ -549,6 +599,8 @@ function ActionDialog({
                                     errors.order ??
                                     errors.status ??
                                     errors.amount ??
+                                    errors.method ??
+                                    errors.paid_at ??
                                     errors.restock ??
                                     errors.reason
                                 }

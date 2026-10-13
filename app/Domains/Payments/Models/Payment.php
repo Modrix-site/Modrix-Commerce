@@ -4,6 +4,7 @@ namespace App\Domains\Payments\Models;
 
 use App\Domains\Orders\Models\Order;
 use App\Domains\Pricing\Money;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
@@ -67,6 +68,14 @@ class Payment extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function recorder(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'recorded_by');
     }
 
     public function money(): Money

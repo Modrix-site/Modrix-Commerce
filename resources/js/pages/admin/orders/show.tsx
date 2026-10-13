@@ -1,9 +1,10 @@
 import { Form, Head, Link } from '@inertiajs/react';
 import { CircleAlert, PauseCircle, Truck, Undo2 } from 'lucide-react';
-import type { ReactNode } from 'react';
 import OrderController from '@/actions/App/Http/Controllers/Admin/OrderController';
 import { OrderActions } from '@/components/admin/orders/order-actions';
+import type { MethodOption } from '@/components/admin/orders/order-actions';
 import { OrderDocuments } from '@/components/admin/orders/order-documents';
+import { OrderPayments } from '@/components/admin/orders/order-payments';
 import { OrderStepper } from '@/components/admin/orders/order-stepper';
 import { OrderTimeline } from '@/components/admin/orders/order-timeline';
 import type { AdminOrder } from '@/components/admin/orders/types';
@@ -34,6 +35,7 @@ type Props = {
     canAddNotes: boolean;
     canIssueInvoice: boolean;
     emailDefaults: Record<string, boolean>;
+    manualMethods: MethodOption[];
 };
 
 export default function OrderShow({
@@ -42,6 +44,7 @@ export default function OrderShow({
     canAddNotes,
     canIssueInvoice,
     emailDefaults,
+    manualMethods,
 }: Props) {
     const heldReason = order.timeline.find((e) => e.kind === 'held')?.message;
     const failedReason = order.timeline.find((e) =>
@@ -63,6 +66,7 @@ export default function OrderShow({
                             order={order}
                             actions={actions}
                             emailDefaults={emailDefaults}
+                            manualMethods={manualMethods}
                         />
                     }
                 />
@@ -193,6 +197,8 @@ export default function OrderShow({
                             </CardContent>
                         </Card>
 
+                        <OrderPayments order={order} />
+
                         <Card>
                             <CardHeader>
                                 <CardTitle>Timeline</CardTitle>
@@ -265,62 +271,6 @@ export default function OrderShow({
                             </CardContent>
                         </Card>
 
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Payment</CardTitle>
-                            </CardHeader>
-                            <CardContent className="grid gap-2 text-sm">
-                                <span>{order.payment_method}</span>
-                                <Row
-                                    label="Total"
-                                    value={order.grand_total.formatted}
-                                />
-                                <Row
-                                    label="Paid"
-                                    value={order.paid_total.formatted}
-                                />
-                                {Number(order.refunded_total.amount) > 0 && (
-                                    <Row
-                                        label="Refunded"
-                                        value={order.refunded_total.formatted}
-                                    />
-                                )}
-                                {order.payments.map((p) => (
-                                    <p
-                                        key={p.id}
-                                        className="text-xs text-muted-foreground"
-                                    >
-                                        {p.amount.formatted} {p.status}{' '}
-                                        {p.paid_at &&
-                                            `on ${formatDate(p.paid_at)}`}
-                                        {p.reference && ` · ref ${p.reference}`}
-                                        {p.failure_reason && (
-                                            <span className="block text-destructive">
-                                                {p.failure_reason}
-                                            </span>
-                                        )}
-                                    </p>
-                                ))}
-                                {order.refunds.map((r) => (
-                                    <p
-                                        key={r.id}
-                                        className="text-xs text-muted-foreground"
-                                    >
-                                        Refund {r.amount.formatted}
-                                        {r.status !== 'completed' &&
-                                            ` (${r.status})`}
-                                        : {r.reason}
-                                        {r.reference && ` · ref ${r.reference}`}
-                                        {r.failure_reason && (
-                                            <span className="block text-destructive">
-                                                {r.failure_reason}
-                                            </span>
-                                        )}
-                                    </p>
-                                ))}
-                            </CardContent>
-                        </Card>
-
                         <OrderDocuments
                             order={order}
                             canIssueInvoice={canIssueInvoice}
@@ -367,15 +317,6 @@ function NoteForm({ order }: { order: AdminOrder }) {
                 </>
             )}
         </Form>
-    );
-}
-
-function Row({ label, value }: { label: string; value: ReactNode }) {
-    return (
-        <div className="flex justify-between">
-            <span className="text-muted-foreground">{label}</span>
-            <span className="tabular-nums">{value}</span>
-        </div>
     );
 }
 

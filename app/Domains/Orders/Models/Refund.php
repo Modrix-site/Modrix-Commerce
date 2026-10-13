@@ -3,7 +3,9 @@
 namespace App\Domains\Orders\Models;
 
 use App\Domains\Pricing\Money;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
@@ -41,6 +43,14 @@ class Refund extends Model
     protected function casts(): array
     {
         return ['amount' => 'decimal:4'];
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function actor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'actor_id');
     }
 
     public function money(): Money

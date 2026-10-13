@@ -44,14 +44,14 @@ The export covers the **selected orders**, or **all orders matching the current 
 
 - **`Order::balanceDue(): Money`** is `grand_total - paid_total`, never negative. Refunds don't reopen the balance.
 - **`paymentStatusFor`:**
-  - paid zero → Unpaid (or keep Failed);
-  - paid < grand and no refunds → PartiallyPaid;
-  - otherwise the existing refund rules, then Paid.
+    - paid zero → Unpaid (or keep Failed);
+    - paid < grand and no refunds → PartiallyPaid;
+    - otherwise the existing refund rules, then Paid.
 - **`recordManualPayment(Order, User, Money $amount, string $method, ?CarbonInterface $paidAt, ?string $reference, ?string $note)`:**
-  - Validation errors on `amount`, `method` and `paid_at`.
-  - Fully paid now: `setPaidStatus`, `paid_at`, then `OrderPaid` (invoice and email, as today).
-  - Partial: status unchanged. The log reads "Partial payment of X recorded (Cash). Balance due Y." and is customer-visible.
-  - `canRecordPayment` is true when not cancelled and the balance is positive.
+    - Validation errors on `amount`, `method` and `paid_at`.
+    - Fully paid now: `setPaidStatus`, `paid_at`, then `OrderPaid` (invoice and email, as today).
+    - Partial: status unchanged. The log reads "Partial payment of X recorded (Cash). Balance due Y." and is customer-visible.
+    - `canRecordPayment` is true when not cancelled and the balance is positive.
 - **`canShip`:** Paid, or pay-on-delivery with Unpaid, Failed or PartiallyPaid.
 - **`canCancel`:** unchanged (outstanding or refunded only). A partly paid order must be refunded first.
 - **Online payment start:** only while outstanding (unchanged), so a partly paid order is settled manually.
@@ -62,25 +62,25 @@ The export covers the **selected orders**, or **all orders matching the current 
 
 - **Summary:** Total, Paid, Refunded and **Balance due**, highlighted when positive.
 - **Table:** one row per payment and refund, newest first:
-  - date, type (payment or refund), method label, amount, status, reference, who recorded it;
-  - a receipt download for paid payments;
-  - failure reasons shown in red.
+    - date, type (payment or refund), method label, amount, status, reference, who recorded it;
+    - a receipt download for paid payments;
+    - failure reasons shown in red.
 - **"Record payment"** opens the dialog with amount (prefilled with the balance), method, date (today), reference and note.
 
 ## Bulk actions (order list)
 
 - **Selection:** a checkbox per row and a "select page" checkbox, up to 100 at once.
 - **Action bar:** shows the number selected.
-  - **Move to step:** a select of fulfilment steps, plus an "Email customers" tick. Calls `POST admin/orders/bulk/fulfillment` (`numbers[]`, `status`, `notify`; `orders.manage`).
-    - Each order goes through `advanceFulfillment`.
-    - Refusals are collected, never forced.
-    - The flash reads "Moved 7 orders. Skipped 2: EM-000012 (not paid), …".
-    - Shipping in bulk records no tracking.
-  - **Print packing slips** and **Print invoices**: `GET admin/orders/bulk/documents?type=packing-slips|invoices&numbers[]=` (`orders.view`) returns one PDF.
-    - Each document starts on a new page and has its own header.
-    - Orders without an invoice are skipped.
-    - Limit 100.
-  - **Export selected:** `GET admin/orders/export?numbers[]=`.
+    - **Move to step:** a select of fulfilment steps, plus an "Email customers" tick. Calls `POST admin/orders/bulk/fulfillment` (`numbers[]`, `status`, `notify`; `orders.manage`).
+        - Each order goes through `advanceFulfillment`.
+        - Refusals are collected, never forced.
+        - The flash reads "Moved 7 orders. Skipped 2: EM-000012 (not paid), …".
+        - Shipping in bulk records no tracking.
+    - **Print packing slips** and **Print invoices**: `GET admin/orders/bulk/documents?type=packing-slips|invoices&numbers[]=` (`orders.view`) returns one PDF.
+        - Each document starts on a new page and has its own header.
+        - Orders without an invoice are skipped.
+        - Limit 100.
+    - **Export selected:** `GET admin/orders/export?numbers[]=`.
 - **"Export CSV"** in the page header exports everything matching the current filters (`orders.view`).
 
 ## Documents refactor
@@ -94,15 +94,15 @@ The document bodies move to `resources/views/documents/bodies/{invoice,receipt,p
 ## Testing
 
 - **Partial payments:**
-  - partial, then partial, then fully paid;
-  - headline and status change at each step;
-  - the invoice and email only on full payment;
-  - over-balance refused;
-  - a future date refused;
-  - an unknown method refused;
-  - allowed on an online-method order, which expires the open session;
-  - not shippable while partly paid unless pay on delivery;
-  - cancel refused while partly paid.
+    - partial, then partial, then fully paid;
+    - headline and status change at each step;
+    - the invoice and email only on full payment;
+    - over-balance refused;
+    - a future date refused;
+    - an unknown method refused;
+    - allowed on an online-method order, which expires the open session;
+    - not shippable while partly paid unless pay on delivery;
+    - cancel refused while partly paid.
 - **Panel props:** balance, method labels, receipt URLs.
 - **Bulk move:** mixed eligible and ineligible orders, the summary, permission, the 100 limit.
 - **Bulk documents:** a PDF containing each order number; orders without an invoice skipped; permission.

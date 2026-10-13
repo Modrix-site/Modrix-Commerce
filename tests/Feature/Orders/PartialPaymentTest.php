@@ -143,6 +143,22 @@ class PartialPaymentTest extends TestCase
         $this->assertSame(DisplayStatus::PartiallyPaid, OrderDisplayStatus::forCustomer($order->fresh()));
     }
 
+    public function test_the_order_page_shows_the_payments_panel()
+    {
+        $order = $this->order();
+        $this->pay($order, '10', ['reference' => 'TILL-7', 'note' => 'Paid at the counter'])->assertSessionHasNoErrors();
+        $payment = Payment::query()->where('order_id', $order->id)->firstOrFail();
+
+        $this->get(route('admin.orders.show', $order))->assertInertia(fn ($page) => $page
+            ->where('order.balance_due.amount', $order->fresh()->balanceDue()->toDisplayDecimal())
+            ->where('order.payments.0.method_label', 'Cash')
+            ->where('order.payments.0.recorded_by', $this->manager->name)
+            ->where('order.payments.0.reference', 'TILL-7')
+            ->where('order.payments.0.note', 'Paid at the counter')
+            ->where('order.payments.0.receipt_url', route('admin.orders.documents.receipt', [$order, $payment]))
+            ->where('manualMethods', fn ($m) => collect($m)->pluck('value')->all() === ['cash', 'bank_transfer', 'card_terminal', 'other']));
+    }
+
     public function test_recording_payments_needs_orders_manage()
     {
         $order = $this->order();

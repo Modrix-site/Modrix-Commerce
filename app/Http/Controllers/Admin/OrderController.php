@@ -98,6 +98,7 @@ class OrderController extends Controller
             'actions' => $permitted,
             'canAddNotes' => $user->can('orders.manage'),
             'emailDefaults' => $emails->all(),
+            'manualMethods' => collect(OrderWorkflow::MANUAL_METHODS)->map(fn (string $label, string $value) => ['value' => $value, 'label' => $label])->values(),
             'canIssueInvoice' => $user->can('orders.manage') && $order->invoice === null && $order->status !== OrderStatus::Cancelled,
         ]);
     }

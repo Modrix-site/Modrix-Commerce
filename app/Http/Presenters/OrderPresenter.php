@@ -11,6 +11,7 @@ use App\Domains\Orders\Models\OrderItem;
 use App\Domains\Orders\Models\Refund;
 use App\Domains\Orders\Models\Shipment;
 use App\Domains\Orders\OrderDisplayStatus;
+use App\Domains\Orders\OrderWorkflow;
 use App\Domains\Payments\Models\Payment;
 use App\Domains\Pricing\Money;
 use Illuminate\Support\Collection;
@@ -100,7 +101,7 @@ final class OrderPresenter
      */
     public function forAdmin(Order $order): array
     {
-        $order->loadMissing('items', 'addresses', 'shipments', 'payments', 'refunds', 'customer', 'invoice');
+        $order->loadMissing('items', 'addresses', 'shipments', 'payments.recorder:id,name', 'refunds.actor:id,name', 'customer', 'invoice');
         $events = $order->events()->with('actor:id,email')->get();
 
         return [
@@ -118,9 +119,15 @@ final class OrderPresenter
             'paid_total' => $order->money('paid_total'),
             'refunded_total' => $order->money('refunded_total'),
             'refundable' => $order->refundable(),
-            'payments' => $order->payments->map(fn (Payment $p) => [
+            'balance_due' => $order->balanceDue(),
+            'payment_method_code' => $order->payment_method_code,
+            'payments' => $order->payments->sortByDesc(fn (Payment $p) => [$p->paid_at ?? $p->created_at, $p->id])->map(fn (Payment $p) => [
                 'id' => $p->id,
                 'method' => $p->method_code,
+                'method_label' => OrderWorkflow::MANUAL_METHODS[$p->method_code] ?? ($p->method_code === $order->payment_method_code ? $order->payment_method_name : ucfirst(str_replace('_', ' ', $p->method_code))),
+                'recorded_by' => $p->recorder?->name,
+                'note' => $p->note,
+                'receipt_url' => $p->status === Payment::STATUS_PAID ? route('admin.orders.documents.receipt', [$order, $p]) : null,
                 'provider' => $p->provider,
                 'reference' => $p->provider_payment_id ?? $p->provider_reference,
                 'amount' => Money::of($p->amount, $order->currency),
@@ -131,6 +138,7 @@ final class OrderPresenter
             ])->values(),
             'refunds' => $order->refunds->map(fn (Refund $r) => [
                 'id' => $r->id,
+                'recorded_by' => $r->actor?->name,
                 'amount' => Money::of($r->amount, $order->currency),
                 'reason' => $r->reason,
                 'status' => $r->status,

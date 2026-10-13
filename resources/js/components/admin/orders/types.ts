@@ -33,9 +33,15 @@ export type AdminOrder = Omit<OrderDetail, 'documents'> & {
     paid_total: MoneyValue;
     refunded_total: MoneyValue;
     refundable: MoneyValue;
+    balance_due: MoneyValue;
+    payment_method_code: string;
     payments: {
         id: number;
         method: string;
+        method_label: string;
+        recorded_by: string | null;
+        note: string | null;
+        receipt_url: string | null;
         provider: string;
         reference: string | null;
         amount: MoneyValue;
@@ -46,6 +52,7 @@ export type AdminOrder = Omit<OrderDetail, 'documents'> & {
     }[];
     refunds: {
         id: number;
+        recorded_by: string | null;
         amount: MoneyValue;
         reason: string;
         status: string;
