@@ -12,7 +12,7 @@ Status legend: ✅ Complete · 🟡 In progress · ⬜ Not started · ⛔ Blocke
 | 5     | Theme engine (manifests, contracts, default + 2 sample themes)                                          | ✅     |
 | 6     | Official marketplace & licensing                                                                        | ✅     |
 | 7     | Production hardening                                                                                    | ✅     |
-| 8     | Post-launch ecosystem (does not block 1.0)                                                              | ⬜     |
+| 8     | Post-launch ecosystem (does not block 1.0)                                                              | 🟡     |
 
 ## MVP (v1.0) scope
 
@@ -125,7 +125,25 @@ Known limitations:
 - Marketplace security advisories are not pushed to stores (Phase 8).
 - Reports still aggregate in PHP (planned in Phase 2 for this phase): fine for small and medium stores; move to SQL aggregation before very large catalogs or order volumes.
 
-### Phase 8 — Post-launch ecosystem (next)
+### Phase 8 — Post-launch ecosystem
+
+Done (see `docs/plans/phase-8-ecosystem.md`):
+
+- [x] Developer SDK: `ecomodular:make:module`, `ecomodular:make:theme`, `ecomodular:package`, getting-started guide (public extension documentation).
+- [x] Package security scanning: static scan on every marketplace upload, shown to reviewers; CLI with `--strict`.
+- [x] Signed security advisories delivered to stores (admin and health warnings).
+- [x] Third-party seller accounts and review workflow: applications, verification, vendor names, seller portal, owner review and signing (ADR-038).
+- [x] Vendor commission and payout accounting: append-only ledger, refunds reversed, payouts capped at the balance.
+- [x] Extension reviews and support: moderated reviews by license holders, support contacts on product pages.
+- [x] Industry theme (Harvest) and a marketing module (newsletter with consent).
+- [x] Customer personal-data export with a module contribution point.
+- [x] Multi-store: deferred, with the design recorded (ADR-039).
+
+Not done (future work):
+
+- More payment gateways (for example PayPal or Adyen) and shipping-carrier integrations (live rates, labels). The extension points exist, but each needs provider accounts to build and verify against.
+- Automated seller payouts (Stripe Connect), tax handling per seller country, and per-seller signing keys.
+- Storefront localisation (`product_translations`) and more marketing modules.
 
 ## Progress log
 
@@ -179,6 +197,12 @@ Known limitations:
     - cart write amplification;
     - account deletion with marketplace licenses returned 500.
 - Phase 3 remains 🟡 until the Stripe test-mode purchase is run with real test keys.
+
+### 2026-10-13 — Phase 8
+
+- Slices 8.1–8.7 implemented on `feature/phase-8-ecosystem` (see CHANGELOG `[Unreleased]`); ADRs 038–039.
+- Closed the Phase 7 open items F12 (advisories) and R3 (data export).
+- Phase 3 remains 🟡 until the Stripe test-mode purchase is run with real test keys. 1.0.0 final is cut after that.
 
 ## Continuation instructions
 

@@ -329,3 +329,18 @@ Each entry records a decision, its context, and its consequences. Entries are ap
     - The owner stays the merchant of record and pays sellers. Automated payouts (Stripe Connect), tax handling per seller country, and per-seller signing keys are future work.
     - Suspension cuts off sales without breaking the licenses buyers already hold.
     - Commission changes apply to new sales only, because ledger entries are immutable.
+
+## ADR-039 — Multi-store and multi-channel: deferred, with a planned design
+
+- **Date:** 2026-10-13
+- **Status:** Accepted (deferral)
+- **Context:** Spec Phase 8 lists an optional multi-store or multi-channel architecture. Every table today belongs to a single store, and settings, themes, payments and taxes are global.
+- **Decision:** Multi-store is not built now. Adding it would touch every query, cache key, setting and permission. That risk outweighs its value for the self-hosted single-store users targeted by 1.0, and running one installation per store gives full isolation today. When it is built:
+    - **Data:** a `stores` table and a nullable `store_id` on channel-specific tables (orders, carts, prices, settings, theme assignments, shipping and tax zones), with catalog and customers shared by default.
+    - **Scoping:** a `CurrentStore` resolved from the host name, applied by a global scope on store-owned models, with tests that fail on any unscoped query.
+    - **Theming:** theme assignment per store (the `theme_assignments` table from spec §13).
+    - **Access:** roles granted per store.
+
+    Migrations will default existing rows to store 1, so single-store installations upgrade without changes.
+
+- **Consequences:** Operators who need several storefronts run several installations. They can share a marketplace account, and licenses count one activation per installation.

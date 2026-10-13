@@ -209,9 +209,27 @@ Client role (every store):
 
 The store's instance id is the setting `marketplace.instance_id`.
 
+## Phase 8 tables (implemented)
+
+Marketplace server:
+
+| Table / column                         | Notes                                                                                                                                               |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `marketplace_releases.scan`            | Static scan summary and findings shown to the reviewer.                                                                                             |
+| `marketplace_advisories`               | Security advisories: severity, title, body, `affected_versions` (Composer constraint), `fixed_version`, `published_at`. Signed into license tokens. |
+| `marketplace_publishers` (new columns) | `status`, `commission_percent`, `legal_name`, `country`, `website`, `payout_email`, `support_email`, `verified_at`.                                 |
+| `marketplace_products` (new columns)   | `support_email`, `support_url`.                                                                                                                     |
+| `marketplace_publisher_members`        | Account ↔ publisher (`user_id` unique), role.                                                                                                       |
+| `marketplace_seller_applications`      | Applications with vendor slug, legal and payout details, review status and notes.                                                                   |
+| `marketplace_payouts`                  | Payouts recorded by the owner: amount, currency, reference.                                                                                         |
+| `marketplace_ledger_entries`           | Append-only: sale, refund and payout entries (gross, commission, net, signed). Unique `(order_item_id, type)`.                                      |
+| `marketplace_reviews`                  | Reviews by license holders: rating, title, body, moderation status. Unique `(product_id, user_id)`.                                                 |
+
+Module `ecomodular/newsletter`: `newsletter_subscribers` (email, consent text and time, source, unsubscribe token, `unsubscribed_at`).
+
 ## Planned tables
 
 The tables below follow §13 of the master specification and are designed when each phase starts:
 
 - **Deferred from Phase 2:** `product_translations` (storefront localisation is a Phase 8 item)
-- **Post-launch:** `vendors`, `vendor_payouts`, `marketplace_commissions`, `vendor_verifications`
+- **Multi-store (ADR-039):** `stores`, `theme_assignments`, `store_id` on channel-specific tables

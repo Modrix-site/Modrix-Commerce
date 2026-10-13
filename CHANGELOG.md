@@ -4,6 +4,25 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added (Phase 8: post-launch ecosystem)
+
+- Developer SDK:
+    - `ecomodular:make:module` and `ecomodular:make:theme` scaffolders;
+    - `ecomodular:package`, which validates, scans and builds the marketplace archive;
+    - getting-started guide for extension developers.
+- Package security scanner (code execution, shell, obfuscation, dynamic includes, raw SQL, network, environment, forbidden files) on every marketplace upload and in the CLI.
+- Signed security advisories for marketplace products, shown to affected stores in the admin and the health check.
+- Third-party sellers:
+    - applications and verification by the owner;
+    - vendor-name enforcement and a seller portal (products, releases, statement);
+    - owner review and signing;
+    - commission and payout ledger;
+    - suspension.
+- Marketplace product reviews by license holders, with moderation, and support contacts on product pages.
+- Harvest theme (food and grocery) and the newsletter sign-up module (consent, unsubscribe, export, erasure).
+- Personal data export for customers (My account → Download my data), with `PersonalDataExport::contribute()` for modules.
+- ADRs 038 (sellers) and 039 (multi-store deferred).
+
 ## [1.0.0-rc.1] - 2026-10-13
 
 ### Added (Phase 7: production hardening)

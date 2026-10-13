@@ -116,3 +116,17 @@ DB_CONNECTION=mysql DB_DATABASE=ecomodular_test php artisan test   # MySQL run
     - CSP enforced on storefront, cart, checkout, admin, settings and Appearance with no violations.
     - axe-core 4.10 (WCAG 2.0/2.1 A and AA) on home, product, cart, account, admin dashboard, products form, orders, Appearance, Marketplace and System status: 2 violation types found and fixed, 0 remaining.
     - No horizontal overflow at 375 px.
+
+## Phase 8 results (2026-10-13, local, PHP 8.4.25, SQLite)
+
+- `php artisan test`: 435 tests, 434 passed, 1 skipped (MySQL group), 0 failed.
+- New coverage:
+    - `DeveloperToolsTest`: a scaffolded module validates, installs, enables, serves its admin page with its permission and enforces its setting; a scaffolded theme activates; `ecomodular:package` builds module and theme archives, and refuses invalid or (with `--strict`) dangerous packages; the scanner reports each pattern with file and line, without false positives on methods or classes that share function names.
+    - `MarketplaceClientTest`: advisories reach affected stores and disappear after the update; a forged advisory fails verification.
+    - `SellerMarketplaceTest`: onboarding, vendor-name enforcement, owner-only listing, sale/commission/refund/payout accounting (including idempotency and the balance cap), isolation between sellers, suspension.
+    - `MarketplaceReviewTest`: only active license holders review, once; moderation.
+    - `SampleModulesTest`: newsletter consent, no address enumeration, export with unsubscribe links, unsubscribe and erasure.
+    - `ThemeCompatibilityTest`: Harvest runs the full shopping flow.
+    - `PersonalDataExportTest`: own data only, no secrets, module contributions (a failing contributor does not break the export).
+- `phpstan`, `pint`, `npm run types:check`, `npm run check`, `npm run build`: passed.
+- Browser check (server mode temporarily on): seller application page and owner Sellers page.
