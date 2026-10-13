@@ -4,7 +4,6 @@ namespace App\Domains\Orders\Mail;
 
 use App\Core\Settings\StoreSettings;
 use App\Domains\Orders\Documents\OrderDocuments;
-use App\Domains\Orders\Enums\PaymentStatus;
 use App\Domains\Orders\Models\Order;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -59,7 +58,7 @@ class OrderMail extends Mailable
      */
     public function attachments(): array
     {
-        $paid = $this->kind === 'paid' || ($this->kind === 'placed' && $this->order->payment_status !== PaymentStatus::Unpaid);
+        $paid = $this->kind === 'paid' || ($this->kind === 'placed' && ! $this->order->payment_status->isOutstanding());
 
         if (! $paid) {
             return [];

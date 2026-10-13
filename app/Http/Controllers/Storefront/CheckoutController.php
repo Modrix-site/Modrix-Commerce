@@ -13,7 +13,6 @@ use App\Domains\Customers\AddressRules;
 use App\Domains\Customers\CustomerProfiles;
 use App\Domains\Customers\Models\CustomerAddress;
 use App\Domains\Orders\Enums\OrderStatus;
-use App\Domains\Orders\Enums\PaymentStatus;
 use App\Domains\Orders\Models\Order;
 use App\Domains\Payments\Contracts\PaymentMethod;
 use App\Domains\Payments\Gateway\GatewayException;
@@ -132,7 +131,7 @@ class CheckoutController extends Controller
         $placed = (array) $request->session()->get(self::SESSION_ORDERS, []);
         $request->session()->put(self::SESSION_ORDERS, array_values(array_unique([...$placed, $order->id])));
 
-        if ($this->paymentMethods->isGateway($order->payment_method_code) && $order->payment_status === PaymentStatus::Unpaid) {
+        if ($this->paymentMethods->isGateway($order->payment_method_code) && $order->payment_status->isOutstanding()) {
             return $this->redirectToPayment($order, $starter);
         }
 
@@ -187,7 +186,7 @@ class CheckoutController extends Controller
             'paymentInstructions' => $online ? null : $method?->instructions(),
             'onlinePayment' => $online ? [
                 'state' => match (true) {
-                    $order->payment_status !== PaymentStatus::Unpaid => 'paid',
+                    ! $order->payment_status->isOutstanding() => 'paid',
                     $order->status === OrderStatus::Cancelled => 'cancelled',
                     $latest?->status === Payment::STATUS_PROCESSING => 'processing',
                     $latest?->status === Payment::STATUS_PENDING && $request->query('payment') !== 'cancelled' => 'confirming',

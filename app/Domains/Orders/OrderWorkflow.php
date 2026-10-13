@@ -227,6 +227,10 @@ final class OrderWorkflow
 
             if ($payment->isOpen()) {
                 $payment->forceFill(['status' => Payment::STATUS_FAILED, 'failure_reason' => $reason])->save();
+
+                if ($order->money('paid_total')->isZero() && $order->status !== OrderStatus::Cancelled) {
+                    $order->forceFill(['payment_status' => PaymentStatus::Failed])->save();
+                }
                 $this->log($order, 'payment', "Payment failed: {$reason}", false, null);
                 $this->audit->record('order.payment_failed', $order, ['number' => $order->number, 'payment_id' => $payment->id]);
             }
@@ -256,7 +260,7 @@ final class OrderWorkflow
                 ->whereIn('status', [...Payment::OPEN, Payment::STATUS_PAID, Payment::STATUS_MISMATCH])
                 ->exists();
 
-            if (! $otherActive && $order->payment_status === PaymentStatus::Unpaid && $this->canCancel($order)) {
+            if (! $otherActive && $order->payment_status->isOutstanding() && $this->canCancel($order)) {
                 return $this->cancel($order, null, 'The payment was not completed in time.');
             }
 
@@ -304,7 +308,7 @@ final class OrderWorkflow
                 throw ValidationException::withMessages(['order' => 'Only shipped orders can be marked as delivered.']);
             }
 
-            $paid = $order->payment_status !== PaymentStatus::Unpaid;
+            $paid = ! $order->payment_status->isOutstanding();
 
             $order->forceFill([
                 'fulfillment_status' => FulfillmentStatus::Delivered,
@@ -613,7 +617,7 @@ final class OrderWorkflow
 
     private function canRecordPayment(Order $order): bool
     {
-        return $order->payment_status === PaymentStatus::Unpaid && $order->status !== OrderStatus::Cancelled;
+        return $order->payment_status->isOutstanding() && $order->status !== OrderStatus::Cancelled;
     }
 
     /**
@@ -672,7 +676,7 @@ final class OrderWorkflow
             return true;
         }
 
-        return $order->payment_status === PaymentStatus::Unpaid
+        return $order->payment_status->isOutstanding()
             && ($this->paymentMethods->definition($order->payment_method_code)?->allowsFulfillmentBeforePayment() ?? false);
     }
 
@@ -681,7 +685,7 @@ final class OrderWorkflow
         return $order->status !== OrderStatus::Cancelled
             && $order->status !== OrderStatus::Completed
             && in_array($order->fulfillment_status, [FulfillmentStatus::Unfulfilled, FulfillmentStatus::Packed], true)
-            && in_array($order->payment_status, [PaymentStatus::Unpaid, PaymentStatus::Refunded], true);
+            && ($order->payment_status->isOutstanding() || $order->payment_status === PaymentStatus::Refunded);
     }
 
     private function restockRemaining(Order $order, MovementReason $reason, ?User $actor): void

@@ -265,7 +265,7 @@ class StripeCheckoutTest extends TestCase
         [$order2, $payment2] = $this->placeStripeOrder();
         $this->postStripeWebhook($this->stripeEvent('checkout.session.async_payment_failed', $this->completedSession($payment2, paymentStatus: 'unpaid')))->assertOk();
         $this->assertSame(Payment::STATUS_FAILED, $payment2->fresh()->status);
-        $this->assertSame(PaymentStatus::Unpaid, $order2->fresh()->payment_status);
+        $this->assertSame(PaymentStatus::Failed, $order2->fresh()->payment_status);
         $this->get(route('checkout.complete', $order2))->assertInertia(fn (Assert $page) => $page->where('onlinePayment.state', 'awaiting'));
     }
 

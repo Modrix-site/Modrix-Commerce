@@ -82,12 +82,15 @@ export default function OrderComplete({
                     </p>
                 </div>
             )}
-            {order.payment_status === 'unpaid' && paymentInstructions && (
-                <Alert className="mb-8">
-                    <AlertTitle>{t('How to pay')}</AlertTitle>
-                    <AlertDescription>{paymentInstructions}</AlertDescription>
-                </Alert>
-            )}
+            {['unpaid', 'failed'].includes(order.payment_status) &&
+                paymentInstructions && (
+                    <Alert className="mb-8">
+                        <AlertTitle>{t('How to pay')}</AlertTitle>
+                        <AlertDescription>
+                            {paymentInstructions}
+                        </AlertDescription>
+                    </Alert>
+                )}
             <OrderView order={order} />
             <ExtensionSlot items={slots} className="mt-8 grid gap-6" />
             <div className="mt-8 flex gap-2">

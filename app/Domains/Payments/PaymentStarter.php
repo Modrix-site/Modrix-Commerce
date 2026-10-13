@@ -3,7 +3,6 @@
 namespace App\Domains\Payments;
 
 use App\Domains\Orders\Enums\OrderStatus;
-use App\Domains\Orders\Enums\PaymentStatus;
 use App\Domains\Orders\Models\Order;
 use App\Domains\Orders\Models\OrderEvent;
 use App\Domains\Payments\Gateway\GatewayException;
@@ -37,7 +36,7 @@ final class PaymentStarter
             /** @var Order $order */
             $order = Order::query()->whereKey($order->id)->lockForUpdate()->firstOrFail();
 
-            if ($order->payment_status !== PaymentStatus::Unpaid || $order->status === OrderStatus::Cancelled) {
+            if (! $order->payment_status->isOutstanding() || $order->status === OrderStatus::Cancelled) {
                 throw ValidationException::withMessages(['payment' => 'This order cannot be paid now.']);
             }
 

@@ -8,18 +8,18 @@
 
 Merchants track every order through the 19 statuses they asked for:
 
-| # | Status | # | Status |
-|---|---|---|---|
-| 1 | Pending Payment | 11 | Shipped |
-| 2 | Payment Failed | 12 | In Transit |
-| 3 | Pending | 13 | Out for Delivery |
-| 4 | Confirmed | 14 | Delivered |
-| 5 | On Hold | 15 | Delivery Failed |
-| 6 | Processing | 16 | Cancelled |
-| 7 | Picking | 17 | Returned |
-| 8 | Packing | 18 | Refunded |
-| 9 | Packed | 19 | Partially Refunded |
-| 10 | Ready for Dispatch | | |
+| #   | Status             | #   | Status             |
+| --- | ------------------ | --- | ------------------ |
+| 1   | Pending Payment    | 11  | Shipped            |
+| 2   | Payment Failed     | 12  | In Transit         |
+| 3   | Pending            | 13  | Out for Delivery   |
+| 4   | Confirmed          | 14  | Delivered          |
+| 5   | On Hold            | 15  | Delivery Failed    |
+| 6   | Processing         | 16  | Cancelled          |
+| 7   | Picking            | 17  | Returned           |
+| 8   | Packing            | 18  | Refunded           |
+| 9   | Packed             | 19  | Partially Refunded |
+| 10  | Ready for Dispatch |     |                    |
 
 Payment, stock and refund rules must keep holding. Success means:
 
@@ -35,23 +35,23 @@ Payment, stock and refund rules must keep holding. Success means:
 - **Confirmation is automatic.** An order becomes Confirmed when it is paid, or at placement when its payment method allows fulfilment before payment (cash on delivery).
 - **Optional review step:** the setting `orders.review_before_confirm` (default off) sends those orders to Pending instead, until staff click Confirm.
 - **Emails:** confirmed, shipped, out_for_delivery, delivered, delivery_failed, payment_failed, returned.
-  - Each is switchable in the setting `orders.notify.{event}`, all on by default.
-  - The per-action "Email the customer" checkbox overrides the setting for that one change.
-  - "Something else" from the answers is interpreted as this switchable setting.
+    - Each is switchable in the setting `orders.notify.{event}`, all on by default.
+    - The per-action "Email the customer" checkbox overrides the setting for that one change.
+    - "Something else" from the answers is interpreted as this switchable setting.
 
 ## Tracks
 
 ### `OrderStatus`
 
-| value | meaning | entered by |
-|---|---|---|
-| `pending_payment` | awaiting payment (was `pending`) | placement, online and manual methods |
-| `pending` | received, awaiting review | placement or payment, only when review is on |
-| `confirmed` | accepted by the store | payment, COD placement, staff Confirm |
-| `on_hold` | paused | hold (unchanged) |
-| `processing` | being fulfilled | first fulfilment step after confirmed |
-| `completed` | paid and delivered | delivered and paid (unchanged) |
-| `cancelled` | cancelled | cancel (unchanged) |
+| value             | meaning                          | entered by                                   |
+| ----------------- | -------------------------------- | -------------------------------------------- |
+| `pending_payment` | awaiting payment (was `pending`) | placement, online and manual methods         |
+| `pending`         | received, awaiting review        | placement or payment, only when review is on |
+| `confirmed`       | accepted by the store            | payment, COD placement, staff Confirm        |
+| `on_hold`         | paused                           | hold (unchanged)                             |
+| `processing`      | being fulfilled                  | first fulfilment step after confirmed        |
+| `completed`       | paid and delivered               | delivered and paid (unchanged)               |
+| `cancelled`       | cancelled                        | cancel (unchanged)                           |
 
 ### `PaymentStatus`
 
@@ -82,18 +82,19 @@ All moves are locked, audited, logged as `OrderEvent`s, and refuse anything not 
 
 - **`confirm(order, actor, notify)`:** status pending → confirmed. The payment must not be outstanding, unless the method allows fulfilment before payment.
 - **`advanceFulfillment(order, actor, FulfillmentStatus target, notify, ?carrier, ?tracking, ?trackingUrl)`.** Allowed when:
-  - the target is a pre-ship step (picking, packing, packed, ready for dispatch) with rank above the current one, and `canShip()` holds (paid or COD; not on hold or cancelled; currently before shipped);
-  - the target is `shipped`, and `canShip()` holds (this is the existing ship logic, with the shipment record);
-  - the target is in transit or out for delivery, with rank above the current one and current between shipped and out for delivery, or current is delivery failed;
-  - the target is `delivered`, and the current status is shipped, in transit, out for delivery or delivery failed (this is the existing `markDelivered` logic).
+    - the target is a pre-ship step (picking, packing, packed, ready for dispatch) with rank above the current one, and `canShip()` holds (paid or COD; not on hold or cancelled; currently before shipped);
+    - the target is `shipped`, and `canShip()` holds (this is the existing ship logic, with the shipment record);
+    - the target is in transit or out for delivery, with rank above the current one and current between shipped and out for delivery, or current is delivery failed;
+    - the target is `delivered`, and the current status is shipped, in transit, out for delivery or delivery failed (this is the existing `markDelivered` logic).
 
-  Effects:
-  - The first pre-ship step on a confirmed order also sets the order status to processing.
-  - `ship()`, `markPacked()` and `markDelivered()` remain as thin wrappers, so existing callers and tests keep working.
+    Effects:
+    - The first pre-ship step on a confirmed order also sets the order status to processing.
+    - `ship()`, `markPacked()` and `markDelivered()` remain as thin wrappers, so existing callers and tests keep working.
+
 - **`markDeliveryFailed(order, actor, reason, notify)`:** from shipped, in transit or out for delivery.
 - **`markReturned(order, actor, reason, restock: bool, notify)`:** from shipped or later (including delivery failed).
-  - When `restock` is set, it restocks the remaining quantities (`MovementReason::Return` if it exists, otherwise `Cancellation`).
-  - The order status stays as is, so a refund remains a separate action.
+    - When `restock` is set, it restocks the remaining quantities (`MovementReason::Return` if it exists, otherwise `Cancellation`).
+    - The order status stays as is, so a refund remains a separate action.
 - **`cancel`:** allowed while fulfilment is unfulfilled, picking, packing, packed or ready for dispatch (still before shipped).
 - **`hold`:** allowed while the status is pending payment, pending, confirmed or processing, and fulfilment is before shipped.
 - **`release`:** restores the previous status (unchanged).
@@ -128,8 +129,8 @@ Storage and display:
 
 - **Stored:** `orders.display_status` (string(24), indexed) is recomputed by a model `saving` hook, so every write path stays in sync.
 - **Customers** see `customerStatus()`:
-  - `on_hold` is replaced by the headline the order would have had before the hold;
-  - picking, packing, packed and ready for dispatch show as processing.
+    - `on_hold` is replaced by the headline the order would have had before the hold;
+    - picking, packing, packed and ready for dispatch show as processing.
 
 ## Data migration
 
@@ -164,12 +165,12 @@ Sending:
 **Order page:**
 
 - **Stepper:** Placed, Paid, Confirmed, Picking, Packing, Packed, Ready for dispatch, Shipped, In transit, Out for delivery, Delivered.
-  - Skipped steps show as skipped (greyed out with no date).
-  - Side states (on hold, delivery failed, returned, cancelled) show as a banner.
+    - Skipped steps show as skipped (greyed out with no date).
+    - Side states (on hold, delivery failed, returned, cancelled) show as a banner.
 - **Action bar:**
-  - The primary button is the next logical step.
-  - "More actions" lists the "Move to…" targets (skip-ahead), Confirm, Delivery failed, Returned, Hold or Release, Refund and Cancel.
-  - Each status dialog has a notify checkbox, defaulting to the setting for that event.
+    - The primary button is the next logical step.
+    - "More actions" lists the "Move to…" targets (skip-ahead), Confirm, Delivery failed, Returned, Hold or Release, Refund and Cancel.
+    - Each status dialog has a notify checkbox, defaulting to the setting for that event.
 
 **Order list:**
 
