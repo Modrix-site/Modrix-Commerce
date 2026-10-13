@@ -123,10 +123,18 @@ final class OrderDocuments
      */
     public function invoicePdf(Invoice $invoice): string
     {
+        return $this->render('documents.invoice', fn () => $this->invoiceData($invoice));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function invoiceData(Invoice $invoice): array
+    {
         $invoice->loadMissing('order');
         $currency = $invoice->currency;
 
-        return $this->render('documents.invoice', [
+        return [
             'title' => __('Invoice'),
             'reference' => $invoice->number,
             'date' => $this->date($invoice->issued_at),
@@ -135,13 +143,21 @@ final class OrderDocuments
             'orderNumber' => $invoice->order->number,
             'money' => fn (string $amount) => Money::of($amount, $currency)->format($this->numberLocale()),
             'footer' => $invoice->notes,
-        ]);
+        ];
     }
 
     /**
      * A receipt for one successful payment, with the order's balance after it.
      */
     public function receiptPdf(Payment $payment): string
+    {
+        return $this->render('documents.receipt', fn () => $this->receiptData($payment));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function receiptData(Payment $payment): array
     {
         if ($payment->status !== Payment::STATUS_PAID) {
             throw new InvalidArgumentException('Receipts are only available for successful payments.');
@@ -162,7 +178,7 @@ final class OrderDocuments
         $grand = $order->money('grand_total');
         $format = fn (Money $m) => $m->format($this->numberLocale());
 
-        return $this->render('documents.receipt', [
+        return [
             'title' => __('Payment receipt'),
             'reference' => $order->number.'-'.$payment->id,
             'date' => $this->date($payment->paid_at ?? $payment->created_at ?? now()),
@@ -176,7 +192,7 @@ final class OrderDocuments
             'balance' => $format($grand->minus($paidToDate)->nonNegative()),
             'invoiceNumber' => $order->invoice?->number,
             'footer' => $this->settings->toArray()['footer'],
-        ]);
+        ];
     }
 
     /**
@@ -184,9 +200,17 @@ final class OrderDocuments
      */
     public function packingSlipPdf(Order $order): string
     {
+        return $this->render('documents.packing-slip', fn () => $this->packingSlipData($order));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function packingSlipData(Order $order): array
+    {
         $order->loadMissing('items', 'addresses');
 
-        return $this->render('documents.packing-slip', [
+        return [
             'title' => __('Packing slip'),
             'reference' => $order->number,
             'date' => $this->date($order->placed_at),
@@ -194,22 +218,82 @@ final class OrderDocuments
             'order' => $order,
             'shipping' => $order->addresses->firstWhere('type', 'shipping')?->toPresentable(),
             'footer' => null,
-        ]);
+        ];
+    }
+
+    /**
+     * Packing slips for several orders in one PDF (one per page).
+     *
+     * @param  iterable<Order>  $orders
+     */
+    public function packingSlipsPdf(iterable $orders): string
+    {
+        $docs = [];
+        foreach ($orders as $order) {
+            $docs[] = ['body' => 'documents.bodies.packing-slip', 'data' => fn () => $this->packingSlipData($order)];
+        }
+
+        return $this->renderBundle(fn () => __('Packing slips'), $docs, null);
+    }
+
+    /**
+     * Several issued invoices in one PDF (one per page).
+     *
+     * @param  iterable<Invoice>  $invoices
+     */
+    public function invoicesPdf(iterable $invoices): string
+    {
+        $docs = [];
+        foreach ($invoices as $invoice) {
+            $docs[] = ['body' => 'documents.bodies.invoice', 'data' => fn () => $this->invoiceData($invoice)];
+        }
+
+        return $this->renderBundle(fn () => __('Invoices'), $docs, $this->settings->toArray()['footer']);
     }
 
     /**
      * Documents use the store's default language.
      *
      * @param  view-string  $view
-     * @param  array<string, mixed>  $data
+     * @param  callable(): array<string, mixed>  $data
      */
-    private function render(string $view, array $data): string
+    private function render(string $view, callable $data): string
+    {
+        return $this->inDocumentLocale(fn () => $this->pdf->render($view, [...$data(), 'logo' => $this->logo()]));
+    }
+
+    /**
+     * @param  callable(): string  $title
+     * @param  list<array{body: string, data: callable(): array<string, mixed>}>  $docs
+     */
+    private function renderBundle(callable $title, array $docs, ?string $footer): string
+    {
+        return $this->inDocumentLocale(function () use ($title, $docs, $footer) {
+            $logo = $this->logo();
+
+            return $this->pdf->render('documents.bundle', [
+                'title' => $title(),
+                'seller' => $this->currentSeller(),
+                'footer' => $footer,
+                'logo' => $logo,
+                'docs' => array_map(fn (array $doc) => ['body' => $doc['body'], 'data' => [...($doc['data'])(), 'logo' => $logo]], $docs),
+            ]);
+        });
+    }
+
+    /**
+     * @template T
+     *
+     * @param  callable(): T  $callback
+     * @return T
+     */
+    private function inDocumentLocale(callable $callback): mixed
     {
         $previous = app()->getLocale();
         app()->setLocale($this->locales->default());
 
         try {
-            return $this->pdf->render($view, [...$data, 'logo' => $this->logo()]);
+            return $callback();
         } finally {
             app()->setLocale($previous);
         }

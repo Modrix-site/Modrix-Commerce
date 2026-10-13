@@ -12,13 +12,13 @@ use App\Domains\Orders\Enums\PaymentStatus;
 use App\Domains\Orders\Models\Order;
 use App\Domains\Orders\Models\Refund;
 use App\Domains\Orders\OrderEmailSettings;
+use App\Domains\Orders\OrderFilters;
 use App\Domains\Orders\OrderRefunds;
 use App\Domains\Orders\OrderWorkflow;
 use App\Domains\Pricing\Money;
 use App\Http\Controllers\Controller;
 use App\Http\Presenters\OrderPresenter;
 use App\Models\User;
-use App\Support\Like;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -32,34 +32,9 @@ class OrderController extends Controller
 
     public function index(Request $request, OrderPresenter $presenter, StoreSettings $store): Response
     {
-        $filters = $request->validate([
-            'search' => ['nullable', 'string', 'max:120'],
-            'display_status' => ['nullable', Rule::enum(DisplayStatus::class)],
-            'ready' => ['nullable', 'boolean'],
-            'payment_status' => ['nullable', Rule::enum(PaymentStatus::class)],
-            'fulfillment_status' => ['nullable', Rule::enum(FulfillmentStatus::class)],
-            'from' => ['nullable', 'date_format:Y-m-d'],
-            'to' => ['nullable', 'date_format:Y-m-d'],
-        ]);
+        $filters = $request->validate(OrderFilters::rules());
 
-        $timezone = $store->timezone();
-
-        $orders = Order::query()
-            ->when($filters['search'] ?? null, function ($query, string $search) {
-                $query->where(function ($q) use ($search) {
-                    Like::where($q, 'number', $search);
-                    Like::orWhere($q, 'email', $search);
-                });
-            })
-            ->when($filters['display_status'] ?? null, fn ($q, string $v) => $q->where('display_status', $v))
-            ->when($filters['ready'] ?? false, fn ($q) => $q->readyToFulfil())
-            ->when($filters['payment_status'] ?? null, fn ($q, string $v) => $q->where('payment_status', $v))
-            ->when($filters['fulfillment_status'] ?? null, fn ($q, string $v) => $q->where('fulfillment_status', $v))
-            // Date filters are interpreted in the store timezone.
-            ->when($filters['from'] ?? null, fn ($q, string $v) => $q->where('placed_at', '>=', Carbon::parse($v, $timezone)->startOfDay()->utc()))
-            ->when($filters['to'] ?? null, fn ($q, string $v) => $q->where('placed_at', '<=', Carbon::parse($v, $timezone)->endOfDay()->utc()))
-            ->latest('placed_at')
-            ->latest('id')
+        $orders = OrderFilters::query($filters, $store->timezone())
             ->paginate(25)
             ->withQueryString()
             ->through(fn (Order $o) => $presenter->summary($o));

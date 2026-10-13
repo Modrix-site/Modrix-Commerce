@@ -2,12 +2,13 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
 <meta charset="utf-8">
-<title>{{ $title }} {{ $reference }}</title>
+<title>{{ $title }}{{ isset($reference) ? ' '.$reference : '' }}</title>
 <style>
-    @page { margin: 28mm 18mm 24mm 18mm; }
+    @page { margin: 16mm 18mm 24mm 18mm; }
     * { font-family: 'DejaVu Sans', sans-serif; }
     body { font-size: 9.5pt; color: #1f2328; line-height: 1.45; }
-    header { position: fixed; top: -20mm; left: 0; right: 0; height: 16mm; }
+    .doc-header { margin-bottom: 6mm; }
+    .page-break { page-break-after: always; }
     footer { position: fixed; bottom: -16mm; left: 0; right: 0; font-size: 8pt; color: #6b7280; border-top: 0.5pt solid #d1d5db; padding-top: 2mm; }
     .logo { max-height: 14mm; max-width: 60mm; }
     .store { font-size: 13pt; font-weight: bold; }
@@ -28,21 +29,6 @@
 </style>
 </head>
 <body>
-<header>
-    <table class="grid"><tr>
-        <td>
-            @if ($logo)
-                <img class="logo" src="{{ $logo }}" alt="">
-            @else
-                <span class="store">{{ $seller['name'] }}</span>
-            @endif
-        </td>
-        <td style="text-align: right;">
-            <h1>{{ $title }}</h1>
-            <div class="muted">{{ $reference }} · {{ $date }}</div>
-        </td>
-    </tr></table>
-</header>
 
 <footer>
     @if ($footer)<div class="pre">{{ $footer }}</div>@endif

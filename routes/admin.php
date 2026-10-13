@@ -26,6 +26,7 @@ use App\Http\Controllers\Admin\MarketplaceAdminController;
 use App\Http\Controllers\Admin\MarketplaceClientController;
 use App\Http\Controllers\Admin\MarketplaceSellerController;
 use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\OrderBulkController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\OrderDocumentController;
 use App\Http\Controllers\Admin\PaymentSettingsController;
@@ -145,6 +146,8 @@ Route::post('inventory/{variant}/adjust', [InventoryController::class, 'adjust']
 // Orders
 Route::middleware('can:orders.view')->group(function () {
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('orders/export', [OrderBulkController::class, 'export'])->middleware('throttle:10,1')->name('orders.export');
+    Route::get('orders/bulk/documents', [OrderBulkController::class, 'documents'])->middleware('throttle:10,1')->name('orders.bulk.documents');
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::get('orders/{order}/invoice.pdf', [OrderDocumentController::class, 'invoice'])->name('orders.documents.invoice');
     Route::get('orders/{order}/payments/{payment}/receipt.pdf', [OrderDocumentController::class, 'receipt'])->scopeBindings()->name('orders.documents.receipt');
@@ -155,6 +158,7 @@ Route::middleware('can:orders.manage')->group(function () {
     Route::post('orders/{order}/ship', [OrderController::class, 'ship'])->name('orders.ship');
     Route::post('orders/{order}/deliver', [OrderController::class, 'deliver'])->name('orders.deliver');
     Route::post('orders/{order}/invoice', [OrderController::class, 'issueInvoice'])->name('orders.invoice.store');
+    Route::post('orders/bulk/fulfillment', [OrderBulkController::class, 'fulfillment'])->name('orders.bulk.fulfillment');
     Route::post('orders/{order}/confirm', [OrderController::class, 'confirm'])->name('orders.confirm');
     Route::post('orders/{order}/fulfillment', [OrderController::class, 'advance'])->name('orders.fulfillment');
     Route::post('orders/{order}/delivery-failed', [OrderController::class, 'deliveryFailed'])->name('orders.delivery-failed');
