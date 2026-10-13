@@ -1,8 +1,11 @@
 import { Form, Head, Link, usePage } from '@inertiajs/react';
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, Star } from 'lucide-react';
 import MarketplaceController from '@/actions/App/Http/Controllers/Marketplace/MarketplaceController';
+import MarketplaceReviewController from '@/actions/App/Http/Controllers/Marketplace/MarketplaceReviewController';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { login } from '@/routes';
 import { portal } from '@/routes/marketplace';
 import type { MarketplaceCard } from './index';
@@ -25,9 +28,126 @@ type Props = {
         }[];
     };
     owned: boolean;
+    reviews: Reviews;
 };
 
-export default function MarketplaceProduct({ product, owned }: Props) {
+type Reviews = {
+    average: number | null;
+    count: number;
+    items: {
+        id: number;
+        author: string;
+        rating: number;
+        title: string | null;
+        body: string;
+        created_at: string | null;
+    }[];
+    mine: 'pending' | 'approved' | 'rejected' | null;
+    canReview: boolean;
+};
+
+function Stars({ rating }: { rating: number }) {
+    return (
+        <span className="inline-flex" aria-label={`${rating} out of 5`}>
+            {[1, 2, 3, 4, 5].map((n) => (
+                <Star
+                    key={n}
+                    aria-hidden
+                    className={`size-4 ${n <= rating ? 'fill-current text-amber-500' : 'text-muted-foreground'}`}
+                />
+            ))}
+        </span>
+    );
+}
+
+function ReviewsSection({ slug, reviews }: { slug: string; reviews: Reviews }) {
+    return (
+        <section className="grid gap-3 border-t pt-6">
+            <h2 className="flex flex-wrap items-center gap-2 text-lg font-semibold">
+                Reviews
+                {reviews.average !== null && (
+                    <span className="flex items-center gap-1 text-sm font-normal text-muted-foreground">
+                        <Stars rating={Math.round(reviews.average)} />{' '}
+                        {reviews.average} ({reviews.count})
+                    </span>
+                )}
+            </h2>
+            {reviews.items.length === 0 && (
+                <p className="text-sm text-muted-foreground">No reviews yet.</p>
+            )}
+            <ul className="grid gap-4">
+                {reviews.items.map((r) => (
+                    <li key={r.id} className="grid gap-1">
+                        <span className="flex flex-wrap items-center gap-2 text-sm">
+                            <Stars rating={r.rating} />
+                            <span className="font-medium">{r.title}</span>
+                            <span className="text-muted-foreground">
+                                {r.author} · {r.created_at}
+                            </span>
+                        </span>
+                        <p className="text-sm whitespace-pre-line">{r.body}</p>
+                    </li>
+                ))}
+            </ul>
+            {reviews.mine === 'pending' && (
+                <p className="text-sm text-muted-foreground">
+                    Your review is waiting for moderation.
+                </p>
+            )}
+            {reviews.canReview && (
+                <Form
+                    {...MarketplaceReviewController.store.form(slug)}
+                    options={{ preserveScroll: true }}
+                    resetOnSuccess
+                    className="grid gap-3 rounded-[var(--radius)] border bg-card p-4"
+                >
+                    {({ processing, errors }) => (
+                        <>
+                            <p className="font-medium">Review this product</p>
+                            <label className="grid gap-1 text-sm">
+                                Rating
+                                <select
+                                    name="rating"
+                                    defaultValue="5"
+                                    className="h-9 rounded-md border bg-transparent px-2"
+                                >
+                                    {[5, 4, 3, 2, 1].map((n) => (
+                                        <option key={n} value={n}>
+                                            {n} / 5
+                                        </option>
+                                    ))}
+                                </select>
+                            </label>
+                            <label className="grid gap-1 text-sm">
+                                Title
+                                <Input name="title" maxLength={120} />
+                            </label>
+                            <label className="grid gap-1 text-sm">
+                                Your experience
+                                <Textarea
+                                    name="body"
+                                    rows={4}
+                                    required
+                                    minLength={20}
+                                />
+                            </label>
+                            <InputError
+                                message={errors.body ?? errors.rating}
+                            />
+                            <div>
+                                <Button type="submit" disabled={processing}>
+                                    Send review
+                                </Button>
+                            </div>
+                        </>
+                    )}
+                </Form>
+            )}
+        </section>
+    );
+}
+
+export default function MarketplaceProduct({ product, owned, reviews }: Props) {
     const { auth } = usePage().props;
 
     return (
@@ -81,6 +201,7 @@ export default function MarketplaceProduct({ product, owned }: Props) {
                             ))}
                         </ul>
                     </section>
+                    <ReviewsSection slug={product.slug} reviews={reviews} />
                 </div>
                 <aside className="grid content-start gap-4 rounded-[var(--radius)] border bg-card p-5">
                     <span className="text-2xl font-semibold">

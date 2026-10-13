@@ -102,6 +102,10 @@ The balance is the sum of the net amounts per currency. Payouts are made outside
 
 Suspending a seller hides its products, refuses new purchases and pauses its uploads. Licenses already sold keep working, and the balance stays owed. Sellers can never see each other's products, releases, sales or payouts.
 
+## Reviews and support
+
+Customers with an **active** license can review a product once (rating from 1 to 5 and a text). Reviews appear on the product page after the owner approves them under Admin → Marketplace → Reviews. Product pages also show the publisher and its support contacts (the product's support URL and email, or the seller's support email).
+
 ## Security advisories
 
 When a released version has a security problem, the owner publishes an advisory on the product. It gives a severity, a title, details, the affected versions (a Composer constraint such as `<1.2.3`) and the fixed version. Advisories travel inside the **signed** license token, so stores receive them on their next license check, whatever the license status: even refunded or expired licenses keep receiving security information. A store running an affected version sees:

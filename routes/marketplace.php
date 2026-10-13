@@ -8,6 +8,7 @@
 
 use App\Http\Controllers\Marketplace\LicenseApiController;
 use App\Http\Controllers\Marketplace\MarketplaceController;
+use App\Http\Controllers\Marketplace\MarketplaceReviewController;
 use App\Http\Controllers\Marketplace\MarketplaceWebhookController;
 use App\Http\Controllers\Marketplace\VendorController;
 use App\Http\Middleware\ShareStorefrontData;
@@ -24,6 +25,8 @@ Route::middleware(['web', 'installed', 'marketplace.server', ShareStorefrontData
         Route::get('account/marketplace', [MarketplaceController::class, 'portal'])->name('marketplace.portal');
         Route::post('account/marketplace/licenses/{license}/download', [MarketplaceController::class, 'download'])->middleware('throttle:20,1')->name('marketplace.portal.download');
         Route::delete('account/marketplace/licenses/{license}/activations/{activation}', [MarketplaceController::class, 'deactivate'])->name('marketplace.portal.deactivate');
+
+        Route::post('marketplace/products/{product}/reviews', [MarketplaceReviewController::class, 'store'])->middleware('throttle:5,1')->name('marketplace.reviews.store');
 
         // Seller portal (Phase 8.4).
         Route::get('vendor', [VendorController::class, 'index'])->name('vendor.index');

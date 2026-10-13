@@ -33,6 +33,7 @@ use App\Http\Controllers\Admin\SystemStatusController;
 use App\Http\Controllers\Admin\TaxController;
 use App\Http\Controllers\Admin\ThemeController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Marketplace\MarketplaceReviewController;
 use Illuminate\Support\Facades\Route;
 
 // Numeric ids only, so named paths such as extensions/marketplace are never captured.
@@ -210,6 +211,8 @@ Route::middleware(['marketplace.server', 'can:marketplace.manage'])->prefix('mar
     Route::post('releases/{release}/review', [MarketplaceAdminController::class, 'review'])->middleware('password.confirm')->name('releases.review');
     Route::post('products/{product}/advisories', [MarketplaceAdminController::class, 'advisory'])->name('advisories.store');
     Route::post('releases/{release}/withdraw', [MarketplaceAdminController::class, 'withdraw'])->name('releases.withdraw');
+    Route::get('reviews', [MarketplaceReviewController::class, 'index'])->name('reviews.index');
+    Route::post('reviews/{review}', [MarketplaceReviewController::class, 'moderate'])->name('reviews.moderate');
     Route::get('sellers', [MarketplaceSellerController::class, 'index'])->name('sellers.index');
     Route::post('sellers/applications/{application}/approve', [MarketplaceSellerController::class, 'approve'])->name('sellers.approve');
     Route::post('sellers/applications/{application}/reject', [MarketplaceSellerController::class, 'reject'])->name('sellers.reject');

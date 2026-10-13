@@ -59,6 +59,7 @@ class MarketplaceController extends Controller
                     ]),
             ],
             'owned' => $user instanceof User && License::query()->where('user_id', $user->id)->where('product_id', $product->id)->where('status', License::ACTIVE)->exists(),
+            'reviews' => MarketplaceReviewController::forProduct($product, $user instanceof User ? $user : null),
         ]);
     }
 
