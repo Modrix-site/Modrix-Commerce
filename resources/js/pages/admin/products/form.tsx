@@ -1,6 +1,6 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { ExternalLink, Languages } from 'lucide-react';
-import type { FormEvent, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import ProductController from '@/actions/App/Http/Controllers/Admin/Catalog/ProductController';
 import { FormField, NativeSelect } from '@/components/admin/form-field';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
@@ -157,8 +157,7 @@ function ProductForm({
         ]);
     };
 
-    const submit = (event: FormEvent) => {
-        event.preventDefault();
+    const submit = () => {
         form.transform((d) => ({
             ...d,
             brand_id: d.brand_id === '' ? null : Number(d.brand_id),
@@ -252,7 +251,9 @@ function ProductForm({
                     }
                 />
 
-                <form onSubmit={submit} className="grid gap-6">
+                {/* A plain container, not a <form>: the image manager inside
+                    has its own forms, and nested forms would submit this one. */}
+                <div className="grid gap-6">
                     <SectionNav sections={sections} />
 
                     <div className="grid gap-6 lg:grid-cols-3">
@@ -315,7 +316,7 @@ function ProductForm({
                                 title="Media"
                                 description={
                                     product
-                                        ? 'Drag to reorder. The first image is the main one.'
+                                        ? 'Use the arrows to reorder. The first image is the main one.'
                                         : undefined
                                 }
                             >
@@ -732,12 +733,13 @@ function ProductForm({
                         processing={processing}
                         isNew={!product}
                         errorCount={errorKeys.length}
+                        onSave={submit}
                         onDiscard={() => {
                             form.reset();
                             form.clearErrors();
                         }}
                     />
-                </form>
+                </div>
             </AdminPage>
         </>
     );

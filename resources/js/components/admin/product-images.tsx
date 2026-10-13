@@ -36,6 +36,8 @@ export function ProductImages({
         router.visit(ProductImageController.reorder(productId), {
             data: { order },
             preserveScroll: true,
+            // Keep unsaved edits in the surrounding product form.
+            preserveState: true,
         });
     };
 
@@ -46,7 +48,7 @@ export function ProductImages({
                     product: productId,
                     image: image.id,
                 }),
-                { preserveScroll: true },
+                { preserveScroll: true, preserveState: true },
             );
         }
     };

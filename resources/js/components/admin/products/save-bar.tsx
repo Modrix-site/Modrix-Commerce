@@ -24,7 +24,12 @@ export function useUnsavedChangesGuard(dirty: boolean): void {
         const removeRouterGuard = router.on('before', (event) => {
             const visit = event.detail.visit;
 
-            if (visit.method === 'get' && !window.confirm(LEAVE_MESSAGE)) {
+            // Hover prefetches are not navigation; only real GET visits leave the page.
+            if (visit.prefetch || visit.method !== 'get') {
+                return;
+            }
+
+            if (!window.confirm(LEAVE_MESSAGE)) {
                 event.preventDefault();
             }
         });
@@ -44,12 +49,14 @@ export function SaveBar({
     processing,
     isNew,
     onDiscard,
+    onSave,
     errorCount,
 }: {
     dirty: boolean;
     processing: boolean;
     isNew: boolean;
     onDiscard: () => void;
+    onSave: () => void;
     errorCount: number;
 }) {
     return (
@@ -84,7 +91,7 @@ export function SaveBar({
                         Discard
                     </Button>
                 )}
-                <Button type="submit" disabled={processing}>
+                <Button type="button" onClick={onSave} disabled={processing}>
                     {processing
                         ? 'Saving…'
                         : isNew

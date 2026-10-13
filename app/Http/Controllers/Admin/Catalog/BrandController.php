@@ -19,8 +19,12 @@ use Inertia\Response;
  */
 class BrandController extends Controller
 {
+    private const SLUG_LENGTH = 130;
+
     public function index(): Response
     {
+        $current = Brand::query()->whereNotNull('logo_media_id')->pluck('logo_media_id')->all();
+
         return Inertia::render('admin/brands/index', [
             'brands' => Brand::query()->with('logo')->withCount('products')->orderBy('name')->get()->map(fn (Brand $b) => [
                 'id' => $b->id,
@@ -32,7 +36,10 @@ class BrandController extends Controller
                 'products_count' => $b->products_count,
                 'url' => route('storefront.brand', $b->slug),
             ])->all(),
-            'logos' => Media::query()->where('mime', 'like', 'image/%')->latest('id')->limit(100)->get()
+            // The newest images, plus every logo already in use so editing never drops it.
+            'logos' => Media::query()->where('mime', 'like', 'image/%')
+                ->where(fn ($q) => $q->whereIn('id', Media::query()->where('mime', 'like', 'image/%')->latest('id')->limit(100)->pluck('id'))->orWhereIn('id', $current))
+                ->latest('id')->get()
                 ->map(fn (Media $m) => ['id' => $m->id, 'filename' => $m->filename])->values(),
         ]);
     }
@@ -40,7 +47,7 @@ class BrandController extends Controller
     public function store(Request $request, AuditLogger $audit): RedirectResponse
     {
         $data = $this->validated($request, null);
-        $brand = Brand::query()->create([...$data, 'slug' => $data['slug'] ?? Slugger::unique(Brand::class, $data['name'])]);
+        $brand = Brand::query()->create([...$data, 'slug' => filled($data['slug'] ?? null) ? $data['slug'] : $this->slugFor($data['name'])]);
         $audit->record('brand.created', $brand, ['name' => $brand->name]);
 
         return $this->done(__('Brand created.'));
@@ -49,7 +56,7 @@ class BrandController extends Controller
     public function update(Request $request, Brand $brand, AuditLogger $audit): RedirectResponse
     {
         $data = $this->validated($request, $brand);
-        $brand->update([...$data, 'slug' => $data['slug'] ?? $brand->slug]);
+        $brand->update([...$data, 'slug' => filled($data['slug'] ?? null) ? $data['slug'] : $brand->slug]);
         $audit->record('brand.updated', $brand, ['name' => $brand->name]);
 
         return $this->done(__('Brand saved.'));
@@ -77,8 +84,16 @@ class BrandController extends Controller
             'name' => ['required', 'string', 'max:120'],
             'slug' => ['nullable', 'string', 'max:140', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', Rule::unique('brands', 'slug')->ignore($brand?->id)],
             'description' => ['nullable', 'string', 'max:2000'],
-            'logo_media_id' => ['nullable', 'integer', Rule::exists('media', 'id')],
+            'logo_media_id' => ['nullable', 'integer', Rule::exists('media', 'id')->where(fn ($q) => $q->where('mime', 'like', 'image/%'))],
         ]);
+    }
+
+    /** A unique slug that fits the column, even for long non-Latin names. */
+    private function slugFor(string $name): string
+    {
+        $slug = Slugger::unique(Brand::class, $name);
+
+        return strlen($slug) <= self::SLUG_LENGTH ? $slug : Slugger::unique(Brand::class, Str::limit(Str::slug($name), self::SLUG_LENGTH - 10, '') ?: 'brand');
     }
 
     private function done(string $message): RedirectResponse
