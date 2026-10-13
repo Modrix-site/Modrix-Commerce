@@ -425,3 +425,54 @@ Each entry records a decision, its context, and its consequences. Entries are ap
         - document wording follows the store's default language but no translations ship yet;
         - a webp logo is not supported.
         - the bundled DejaVu font covers Latin, Greek, Cyrillic and basic Arabic; Chinese, Japanese and Korean characters print as blanks, and Arabic and Hebrew are not shaped or right-to-left. A CJK-capable fallback font is a follow-up.
+
+## ADR-044 — Detailed order statuses as three tracks plus a stored headline
+
+- **Date:** 2026-10-13
+- **Status:** Accepted
+- **Decision:**
+    - **Three tracks, extended:** merchants track orders through 19 statuses, from Pending Payment to Partially Refunded. Order, payment and fulfilment remain separate state machines, because one order can be delivered and partly refunded at once:
+        - **order:** `pending_payment`, `pending` (awaiting review), `confirmed`, `on_hold`, `processing`, `completed`, `cancelled`;
+        - **payment:** adds `failed`;
+        - **fulfilment:** `picking`, `packing`, `packed`, `ready_for_dispatch`, `shipped`, `in_transit`, `out_for_delivery`, `delivered`, plus the side states `delivery_failed` and `returned`.
+    - **One headline status:** `OrderDisplayStatus` derives it with a fixed priority:
+        1. cancelled;
+        2. refunded;
+        3. returned;
+        4. partially refunded;
+        5. on hold;
+        6. delivery failed;
+        7. delivered;
+        8. the current carrier or warehouse step;
+        9. payment failed;
+        10. pending payment;
+        11. pending;
+        12. confirmed;
+        13. processing.
+
+        It is stored in `orders.display_status` by a model `saving` hook, so every write keeps it current and lists can filter and count by it.
+
+    - **Moves are guarded workflow transitions:**
+        - Fulfilment moves forward only, and optional steps can be skipped.
+        - Warehouse steps need an accepted, paid (or pay-on-delivery) order that is not on hold.
+        - Carrier steps need a shipped order.
+        - A failed delivery can be retried or delivered.
+        - Returns can restock once, using `restocked_quantity`.
+        - Cancellation is refused once shipped.
+    - **Confirmation:**
+        - Paid orders and pay-on-delivery orders are confirmed automatically.
+        - The setting `orders.review_before_confirm` sends them to Pending until staff confirm.
+    - **Customers see the headline,** except:
+        - holds show the status from before the hold;
+        - warehouse steps show as Processing.
+    - **Status emails:** confirmed (after review only), payment failed, shipped, out for delivery, delivered, delivery failed and returned.
+        - They go through `OrderStatusChanged` and the existing idempotent order-mail listener.
+        - Each can be switched off (`orders.notify.*`, all on by default).
+        - Staff can override the choice for a single change.
+    - **Existing orders** are migrated:
+        - `pending` becomes `pending_payment`;
+        - paid but not yet fulfilled becomes `confirmed`.
+- **Consequences:**
+    - Every status change has to stay inside `OrderWorkflow`. There is no free status dropdown, by design.
+    - Status emails are English for now.
+    - Carrier tracking updates (in transit, out for delivery) are entered by staff until carrier integrations exist.

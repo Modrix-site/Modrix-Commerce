@@ -257,6 +257,34 @@ Settings:
 - `documents.footer`
 - `documents.logo_media_id`
 
+## Detailed order statuses (implemented)
+
+- `orders.status`:
+    - `pending_payment`
+    - `pending` (awaiting review)
+    - `confirmed`
+    - `on_hold`
+    - `processing`
+    - `completed`
+    - `cancelled`
+- `orders.payment_status` adds `failed`.
+- `orders.fulfillment_status`:
+    - `unfulfilled`
+    - `picking`
+    - `packing`
+    - `packed`
+    - `ready_for_dispatch`
+    - `shipped`
+    - `in_transit`
+    - `out_for_delivery`
+    - `delivered`
+    - `delivery_failed`
+    - `returned`
+- `orders.display_status` (indexed): the headline status derived from the three tracks (ADR-044) and kept current on every save.
+- Settings:
+    - `orders.review_before_confirm`
+    - `orders.notify.{confirmed,payment_failed,shipped,out_for_delivery,delivered,delivery_failed,returned}`
+
 ## Planned tables
 
 The tables below follow §13 of the master specification and are designed when each phase starts:

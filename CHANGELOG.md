@@ -4,6 +4,40 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added (detailed order statuses)
+
+- Orders show one of 19 statuses:
+    1. Pending Payment
+    2. Payment Failed
+    3. Pending
+    4. Confirmed
+    5. On Hold
+    6. Processing
+    7. Picking
+    8. Packing
+    9. Packed
+    10. Ready for Dispatch
+    11. Shipped
+    12. In Transit
+    13. Out for Delivery
+    14. Delivered
+    15. Delivery Failed
+    16. Cancelled
+    17. Returned
+    18. Refunded
+    19. Partially Refunded
+- **Fulfilment steps:** they move forward only, and optional steps can be skipped. Shipping keeps carrier and tracking.
+- **Failed deliveries** can be retried. **Returns** can put items back in stock.
+- **Confirmation:** paid and cash-on-delivery orders are confirmed automatically. An optional "review new orders" setting keeps orders in Pending until staff confirm them.
+- **Customer emails:**
+    - for confirmed, payment failed, shipped, out for delivery, delivered, delivery failed and returned;
+    - each can be switched off under Admin → Orders & documents;
+    - each action has an "Email the customer" box for one-off choices.
+- **Order list:** a status filter with counts. The dashboard's "Ready to fulfil" link now lists exactly the orders it counts.
+- **What customers see:** never holds or warehouse steps (those show as Processing).
+- **Existing orders** are migrated automatically.
+- ADR-044.
+
 ### Added (order documents and statuses)
 
 - PDF invoices with gap-free sequential numbers (for example `INV-2026-00042`), issued automatically when an order is paid and frozen once issued.
