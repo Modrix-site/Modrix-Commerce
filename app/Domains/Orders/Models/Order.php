@@ -51,6 +51,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $cancelled_at
  * @property Carbon|null $created_at
  * @property-read Customer|null $customer
+ * @property-read Invoice|null $invoice
  */
 class Order extends Model
 {
@@ -114,6 +115,14 @@ class Order extends Model
     public function billingAddress(): HasOne
     {
         return $this->hasOne(OrderAddress::class)->where('type', OrderAddress::BILLING);
+    }
+
+    /**
+     * @return HasOne<Invoice, $this>
+     */
+    public function invoice(): HasOne
+    {
+        return $this->hasOne(Invoice::class);
     }
 
     /**

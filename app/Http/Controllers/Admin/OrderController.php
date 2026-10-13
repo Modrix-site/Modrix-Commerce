@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Core\Settings\StoreSettings;
+use App\Domains\Orders\Documents\OrderDocuments;
 use App\Domains\Orders\Enums\FulfillmentStatus;
 use App\Domains\Orders\Enums\OrderStatus;
 use App\Domains\Orders\Enums\PaymentStatus;
@@ -114,6 +115,13 @@ class OrderController extends Controller
         $this->workflow->ship($order, $this->actor($request), $data['carrier'] ?? null, $data['tracking_number'] ?? null, $data['tracking_url'] ?? null, (bool) ($data['notify'] ?? true));
 
         return $this->done($order, __('Order marked as shipped.'));
+    }
+
+    public function issueInvoice(Request $request, Order $order, OrderDocuments $documents): RedirectResponse
+    {
+        $invoice = $documents->issueInvoice($order, $this->actor($request));
+
+        return $this->done($order, __('Invoice :number issued.', ['number' => $invoice->number]));
     }
 
     public function hold(Request $request, Order $order): RedirectResponse

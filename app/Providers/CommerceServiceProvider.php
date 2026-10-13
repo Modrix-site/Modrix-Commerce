@@ -14,6 +14,8 @@ use App\Domains\Customers\Listeners\LinkGuestOrdersOnVerification;
 use App\Domains\Customers\PersonalDataExport;
 use App\Domains\Inventory\Events\InventoryLow;
 use App\Domains\Inventory\Listeners\SendLowStockAlert;
+use App\Domains\Orders\Events\OrderPaid;
+use App\Domains\Orders\Listeners\IssueInvoiceOnPayment;
 use App\Domains\Orders\Listeners\SendOrderEmails;
 use App\Domains\Payments\Gateways\Stripe\StripeGateway;
 use App\Domains\Payments\PaymentMethods;
@@ -95,6 +97,7 @@ class CommerceServiceProvider extends ServiceProvider
         Event::listen(Verified::class, LinkGuestOrdersOnVerification::class);
         Event::listen(Login::class, MergeGuestCartOnLogin::class);
         Event::listen(InventoryLow::class, SendLowStockAlert::class);
+        Event::listen(OrderPaid::class, IssueInvoiceOnPayment::class);
         Event::subscribe(SendOrderEmails::class);
 
         RateLimiter::for('checkout', fn (Request $request) => [
