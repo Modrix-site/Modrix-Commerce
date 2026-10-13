@@ -29,6 +29,12 @@ class OrderMail extends Mailable
         'cancelled' => 'Your order was cancelled',
         'refunded' => 'Refund issued',
         'updated' => 'Update on your order',
+        'confirmed' => 'Your order is confirmed',
+        'payment_failed' => 'Your payment did not go through',
+        'out_for_delivery' => 'Your order is out for delivery',
+        'delivered' => 'Your order was delivered',
+        'delivery_failed' => 'We could not deliver your order',
+        'returned' => 'We received your return',
         'staff_new_order' => 'New order received',
     ];
 

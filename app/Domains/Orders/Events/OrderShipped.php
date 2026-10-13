@@ -12,5 +12,5 @@ final class OrderShipped
 {
     use Dispatchable;
 
-    public function __construct(public readonly int $orderId, public readonly bool $notify = true) {}
+    public function __construct(public readonly int $orderId, public readonly ?bool $notify = null) {}
 }

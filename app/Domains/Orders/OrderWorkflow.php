@@ -15,6 +15,7 @@ use App\Domains\Orders\Events\OrderDelivered;
 use App\Domains\Orders\Events\OrderPaid;
 use App\Domains\Orders\Events\OrderRefunded;
 use App\Domains\Orders\Events\OrderShipped;
+use App\Domains\Orders\Events\OrderStatusChanged;
 use App\Domains\Orders\Mail\OrderMail;
 use App\Domains\Orders\Models\Order;
 use App\Domains\Orders\Models\OrderEvent;
@@ -246,10 +247,12 @@ final class OrderWorkflow
             if ($payment->isOpen()) {
                 $payment->forceFill(['status' => Payment::STATUS_FAILED, 'failure_reason' => $reason])->save();
 
+                $event = $this->log($order, 'payment', "Payment failed: {$reason}", false, null);
+
                 if ($order->money('paid_total')->isZero() && $order->status !== OrderStatus::Cancelled) {
                     $order->forceFill(['payment_status' => PaymentStatus::Failed])->save();
+                    $this->statusEmail($order, 'payment_failed', null, $event);
                 }
-                $this->log($order, 'payment', "Payment failed: {$reason}", false, null);
                 $this->audit->record('order.payment_failed', $order, ['number' => $order->number, 'payment_id' => $payment->id]);
             }
 
@@ -286,7 +289,7 @@ final class OrderWorkflow
         });
     }
 
-    public function ship(Order $order, User $actor, ?string $carrier, ?string $trackingNumber, ?string $trackingUrl, bool $notify = true): Order
+    public function ship(Order $order, User $actor, ?string $carrier, ?string $trackingNumber, ?string $trackingUrl, ?bool $notify = null): Order
     {
         return $this->transition($order, function (Order $order) use ($actor, $carrier, $trackingNumber, $trackingUrl, $notify): Order {
             if (! $this->canShip($order)) {
@@ -319,9 +322,9 @@ final class OrderWorkflow
         });
     }
 
-    public function markDelivered(Order $order, User $actor): Order
+    public function markDelivered(Order $order, User $actor, ?bool $notify = null): Order
     {
-        return $this->transition($order, function (Order $order) use ($actor): Order {
+        return $this->transition($order, function (Order $order) use ($actor, $notify): Order {
             if (! $this->canDeliver($order)) {
                 throw ValidationException::withMessages(['order' => 'Only shipped orders can be marked as delivered.']);
             }
@@ -336,8 +339,9 @@ final class OrderWorkflow
             ])->save();
             Shipment::query()->where('order_id', $order->id)->whereNull('delivered_at')->update(['delivered_at' => now()]);
 
-            $this->log($order, 'fulfillment', 'Order delivered.', true, $actor);
+            $event = $this->log($order, 'fulfillment', 'Order delivered.', true, $actor);
             $this->audit->record('order.delivered', $order, ['number' => $order->number], $actor);
+            $this->statusEmail($order, 'delivered', $notify, $event);
 
             DB::afterCommit(fn () => OrderDelivered::dispatch($order->id));
 
@@ -540,7 +544,7 @@ final class OrderWorkflow
      * Accept an order that was waiting for review (only when the store
      * reviews orders before confirming them).
      */
-    public function confirm(Order $order, User $actor, bool $notify = false): Order
+    public function confirm(Order $order, User $actor, ?bool $notify = null): Order
     {
         return $this->transition($order, function (Order $order) use ($actor, $notify): Order {
             if ($order->status !== OrderStatus::Pending) {
@@ -549,12 +553,9 @@ final class OrderWorkflow
 
             $order->forceFill(['status' => OrderStatus::Confirmed])->save();
 
-            $this->log($order, 'confirmed', 'Order confirmed.', true, $actor);
+            $event = $this->log($order, 'confirmed', 'Order confirmed.', true, $actor);
             $this->audit->record('order.confirmed', $order, ['number' => $order->number], $actor);
-
-            if ($notify) {
-                $this->notifyCustomer($order, $actor, 'Your order has been confirmed.');
-            }
+            $this->statusEmail($order, 'confirmed', $notify, $event);
 
             return $order;
         });
@@ -624,11 +625,11 @@ final class OrderWorkflow
     public function advanceFulfillment(Order $order, User $actor, FulfillmentStatus $target, ?bool $notify = null, ?string $carrier = null, ?string $trackingNumber = null, ?string $trackingUrl = null): Order
     {
         if ($target === FulfillmentStatus::Shipped) {
-            return $this->ship($order, $actor, $carrier, $trackingNumber, $trackingUrl, $notify ?? true);
+            return $this->ship($order, $actor, $carrier, $trackingNumber, $trackingUrl, $notify);
         }
 
         if ($target === FulfillmentStatus::Delivered) {
-            return $this->markDelivered($order, $actor);
+            return $this->markDelivered($order, $actor, $notify);
         }
 
         return $this->transition($order, function (Order $order) use ($actor, $target, $notify): Order {
@@ -643,13 +644,14 @@ final class OrderWorkflow
             }
             $order->save();
 
-            $this->log($order, $target === FulfillmentStatus::Packed ? 'packed' : 'fulfillment', "Order moved to {$target->label()}.", ! $warehouse, $actor);
+            $event = $this->log($order, $target === FulfillmentStatus::Packed ? 'packed' : 'fulfillment', "Order moved to {$target->label()}.", ! $warehouse, $actor);
             $this->audit->record('order.fulfillment_advanced', $order, ['number' => $order->number, 'status' => $target->value], $actor);
 
-            if ($notify === true) {
+            if ($target === FulfillmentStatus::OutForDelivery) {
+                $this->statusEmail($order, 'out_for_delivery', $notify, $event);
+            } elseif ($notify === true) {
                 $this->notifyCustomer($order, $actor, match ($target) {
                     FulfillmentStatus::InTransit => 'Your order is on its way.',
-                    FulfillmentStatus::OutForDelivery => 'Your order is out for delivery today.',
                     default => 'Your order is being prepared.',
                 });
             }
@@ -662,7 +664,7 @@ final class OrderWorkflow
      * A delivery attempt failed. The carrier can try again (in transit or
      * out for delivery) or the order can be delivered or returned.
      */
-    public function markDeliveryFailed(Order $order, User $actor, string $reason, bool $notify = false): Order
+    public function markDeliveryFailed(Order $order, User $actor, string $reason, ?bool $notify = null): Order
     {
         return $this->transition($order, function (Order $order) use ($actor, $reason, $notify): Order {
             if (! $this->isWithCarrier($order) || $order->fulfillment_status === FulfillmentStatus::DeliveryFailed) {
@@ -672,12 +674,9 @@ final class OrderWorkflow
             $order->forceFill(['fulfillment_status' => FulfillmentStatus::DeliveryFailed])->save();
 
             $message = 'Delivery attempt failed: '.rtrim($reason, '.').'.';
-            $this->log($order, 'fulfillment', $message, true, $actor);
+            $event = $this->log($order, 'fulfillment', $message, true, $actor);
             $this->audit->record('order.delivery_failed', $order, ['number' => $order->number, 'reason' => $reason], $actor);
-
-            if ($notify) {
-                $this->notifyCustomer($order, $actor, $message);
-            }
+            $this->statusEmail($order, 'delivery_failed', $notify, $event, $message);
 
             return $order;
         });
@@ -687,7 +686,7 @@ final class OrderWorkflow
      * The goods came back. Items can be put back into stock; refunds remain
      * a separate step.
      */
-    public function markReturned(Order $order, User $actor, string $reason, bool $restock, bool $notify = false): Order
+    public function markReturned(Order $order, User $actor, string $reason, bool $restock, ?bool $notify = null): Order
     {
         return $this->transition($order, function (Order $order) use ($actor, $reason, $restock, $notify): Order {
             if (! $this->canReturn($order)) {
@@ -700,12 +699,9 @@ final class OrderWorkflow
 
             $order->forceFill(['fulfillment_status' => FulfillmentStatus::Returned])->save();
 
-            $this->log($order, 'returned', 'Order returned: '.rtrim($reason, '.').'.'.($restock ? ' Items put back in stock.' : ''), false, $actor, ['restock' => $restock]);
+            $event = $this->log($order, 'returned', 'Order returned: '.rtrim($reason, '.').'.'.($restock ? ' Items put back in stock.' : ''), false, $actor, ['restock' => $restock]);
             $this->audit->record('order.returned', $order, ['number' => $order->number, 'reason' => $reason, 'restock' => $restock], $actor);
-
-            if ($notify) {
-                $this->notifyCustomer($order, $actor, 'We have received your return.');
-            }
+            $this->statusEmail($order, 'returned', $notify, $event);
 
             return $order;
         });
@@ -766,6 +762,16 @@ final class OrderWorkflow
             'status' => $next,
             'completed_at' => $delivered ? now() : null,
         ]);
+    }
+
+    /**
+     * Queue the customer email for a status change; SendOrderEmails applies
+     * the store setting when staff did not choose.
+     */
+    private function statusEmail(Order $order, string $kind, ?bool $notify, OrderEvent $event, ?string $note = null): void
+    {
+        $id = $order->id;
+        DB::afterCommit(fn () => OrderStatusChanged::dispatch($id, $kind, $notify, "{$kind}:{$event->id}", $note));
     }
 
     private function reviewsOrders(): bool
@@ -898,9 +904,9 @@ final class OrderWorkflow
     /**
      * @param  array<string, mixed>  $metadata
      */
-    private function log(Order $order, string $type, string $message, bool $customerVisible, ?User $actor, array $metadata = []): void
+    private function log(Order $order, string $type, string $message, bool $customerVisible, ?User $actor, array $metadata = []): OrderEvent
     {
-        OrderEvent::query()->forceCreate([
+        return OrderEvent::query()->forceCreate([
             'order_id' => $order->id,
             'type' => $type,
             'message' => $message,

@@ -14,6 +14,24 @@ There is an update on your order **{{ $order->number }}**:
 
 {{ $note }}
 @break
+@case('confirmed')
+Your order **{{ $order->number }}** has been confirmed. We will let you know when it ships.
+@break
+@case('payment_failed')
+The payment for order **{{ $order->number }}** did not go through. You can try again from your order page, or reply to this email for help.
+@break
+@case('out_for_delivery')
+Order **{{ $order->number }}** is out for delivery and should arrive today.
+@break
+@case('delivered')
+Order **{{ $order->number }}** has been delivered. We hope you enjoy it.
+@break
+@case('delivery_failed')
+We could not deliver order **{{ $order->number }}**.@if ($note) {{ $note }}@endif The carrier will try again, or we will contact you.
+@break
+@case('returned')
+We have received the return for order **{{ $order->number }}**. We will let you know about any refund.
+@break
 @case('paid')
 We have received your payment for order **{{ $order->number }}**. We will let you know when it ships.
 @break

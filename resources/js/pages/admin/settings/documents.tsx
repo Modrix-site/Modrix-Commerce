@@ -4,6 +4,7 @@ import DocumentSettingsController from '@/actions/App/Http/Controllers/Admin/Doc
 import { FormField, NativeSelect } from '@/components/admin/form-field';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
     Card,
     CardContent,
@@ -27,6 +28,8 @@ type Props = {
     };
     preview: string;
     logos: { id: number; filename: string; url: string }[];
+    emails: Record<string, boolean>;
+    emailKinds: { kind: string; label: string }[];
 };
 
 function formatNumber(prefix: string, padding: number, next: number): string {
@@ -41,7 +44,13 @@ function formatNumber(prefix: string, padding: number, next: number): string {
     );
 }
 
-export default function DocumentSettings({ settings, preview, logos }: Props) {
+export default function DocumentSettings({
+    settings,
+    preview,
+    logos,
+    emails,
+    emailKinds,
+}: Props) {
     const [prefix, setPrefix] = useState(settings.invoice_prefix);
     const [padding, setPadding] = useState(settings.invoice_padding);
     const [next, setNext] = useState(settings.next_invoice_number);
@@ -56,11 +65,11 @@ export default function DocumentSettings({ settings, preview, logos }: Props) {
 
     return (
         <>
-            <Head title="Invoices & documents" />
+            <Head title="Orders & documents" />
             <AdminPage>
                 <PageHeader
-                    title="Invoices & documents"
-                    description="Numbering and the business details printed on invoices, payment receipts and packing slips. Issued invoices never change: new settings apply to the next invoice."
+                    title="Orders & documents"
+                    description="Customer emails for order status changes, invoice numbering, and the business details printed on invoices, receipts and packing slips. Issued invoices never change: new settings apply to the next invoice."
                 />
 
                 <Form
@@ -70,6 +79,38 @@ export default function DocumentSettings({ settings, preview, logos }: Props) {
                 >
                     {({ processing, errors }) => (
                         <>
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Customer emails</CardTitle>
+                                    <CardDescription>
+                                        Which status changes email the customer.
+                                        Staff can still choose for a single
+                                        change with the "Email the customer"
+                                        box.
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="grid gap-3 sm:grid-cols-2">
+                                    {emailKinds.map(({ kind, label }) => (
+                                        <label
+                                            key={kind}
+                                            className="flex items-center gap-2 text-sm"
+                                        >
+                                            <input
+                                                type="hidden"
+                                                name={`emails[${kind}]`}
+                                                value="0"
+                                            />
+                                            <Checkbox
+                                                name={`emails[${kind}]`}
+                                                value="1"
+                                                defaultChecked={emails[kind]}
+                                            />
+                                            {label}
+                                        </label>
+                                    ))}
+                                </CardContent>
+                            </Card>
+
                             <Card>
                                 <CardHeader>
                                     <CardTitle>Invoice numbering</CardTitle>
@@ -269,5 +310,5 @@ export default function DocumentSettings({ settings, preview, logos }: Props) {
 }
 
 DocumentSettings.layout = {
-    breadcrumbs: [{ title: 'Invoices & documents', href: edit() }],
+    breadcrumbs: [{ title: 'Orders & documents', href: edit() }],
 };

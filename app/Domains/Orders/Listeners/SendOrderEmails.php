@@ -8,9 +8,11 @@ use App\Domains\Orders\Events\OrderPaid;
 use App\Domains\Orders\Events\OrderPlaced;
 use App\Domains\Orders\Events\OrderRefunded;
 use App\Domains\Orders\Events\OrderShipped;
+use App\Domains\Orders\Events\OrderStatusChanged;
 use App\Domains\Orders\Mail\OrderMail;
 use App\Domains\Orders\Models\Order;
 use App\Domains\Orders\Models\OrderEvent;
+use App\Domains\Orders\OrderEmailSettings;
 use App\Domains\Payments\PaymentMethods;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Events\Dispatcher;
@@ -30,6 +32,7 @@ final class SendOrderEmails implements ShouldQueue
     public function __construct(
         private readonly PaymentMethods $paymentMethods,
         private readonly StoreSettings $store,
+        private readonly OrderEmailSettings $emails,
     ) {}
 
     public function placed(OrderPlaced $event): void
@@ -57,7 +60,7 @@ final class SendOrderEmails implements ShouldQueue
 
     public function shipped(OrderShipped $event): void
     {
-        if (! $event->notify) {
+        if (! $this->emails->shouldSend('shipped', $event->notify)) {
             return;
         }
 
@@ -74,6 +77,13 @@ final class SendOrderEmails implements ShouldQueue
         }
 
         $this->send($event->orderId, 'cancelled');
+    }
+
+    public function statusChanged(OrderStatusChanged $event): void
+    {
+        if ($this->emails->shouldSend($event->kind, $event->notify)) {
+            $this->send($event->orderId, $event->kind, key: $event->key, note: $event->note);
+        }
     }
 
     public function refunded(OrderRefunded $event): void
@@ -96,10 +106,11 @@ final class SendOrderEmails implements ShouldQueue
             OrderShipped::class => 'shipped',
             OrderCancelled::class => 'cancelled',
             OrderRefunded::class => 'refunded',
+            OrderStatusChanged::class => 'statusChanged',
         ];
     }
 
-    private function send(int $orderId, string $kind, bool $withInstructions = false, ?string $key = null): void
+    private function send(int $orderId, string $kind, bool $withInstructions = false, ?string $key = null, ?string $note = null): void
     {
         $key ??= $kind;
         $lock = Cache::lock("order-mail:{$orderId}:{$key}", 30);
@@ -116,7 +127,7 @@ final class SendOrderEmails implements ShouldQueue
             }
 
             $instructions = $withInstructions ? $this->paymentMethods->definition($order->payment_method_code)?->instructions() : null;
-            Mail::to($order->email)->send(new OrderMail($order, $kind, $instructions));
+            Mail::to($order->email)->send(new OrderMail($order, $kind, $instructions, $note));
 
             OrderEvent::query()->forceCreate([
                 'order_id' => $order->id,

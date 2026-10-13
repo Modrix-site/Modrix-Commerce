@@ -6,6 +6,7 @@ use App\Core\Audit\AuditLogger;
 use App\Core\Media\Media;
 use App\Domains\Orders\Documents\DocumentSettings;
 use App\Domains\Orders\Documents\InvoiceNumbers;
+use App\Domains\Orders\OrderEmailSettings;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -21,13 +22,15 @@ class DocumentSettingsController extends Controller
 {
     private const LOGO_TYPES = ['image/png', 'image/jpeg', 'image/gif'];
 
-    public function edit(DocumentSettings $settings, InvoiceNumbers $numbers): Response
+    public function edit(DocumentSettings $settings, InvoiceNumbers $numbers, OrderEmailSettings $emails): Response
     {
         $values = $settings->toArray();
 
         return Inertia::render('admin/settings/documents', [
             'settings' => $values,
             'preview' => $numbers->format($values['next_invoice_number']),
+            'emails' => $emails->all(),
+            'emailKinds' => collect(OrderEmailSettings::KINDS)->map(fn (string $label, string $kind) => ['kind' => $kind, 'label' => $label])->values(),
             'logos' => Media::query()
                 ->whereIn('mime', self::LOGO_TYPES)
                 ->latest('id')
@@ -38,7 +41,7 @@ class DocumentSettingsController extends Controller
         ]);
     }
 
-    public function update(Request $request, DocumentSettings $settings, AuditLogger $audit): RedirectResponse
+    public function update(Request $request, DocumentSettings $settings, OrderEmailSettings $emails, AuditLogger $audit): RedirectResponse
     {
         $data = $request->validate([
             'invoice_prefix' => ['required', 'string', 'max:20', 'regex:/^[A-Za-z0-9\-\/_{}]*$/'],
@@ -49,6 +52,8 @@ class DocumentSettingsController extends Controller
             'seller_address' => ['nullable', 'string', 'max:500'],
             'footer' => ['nullable', 'string', 'max:1000'],
             'logo_media_id' => ['nullable', 'integer', Rule::exists('media', 'id')->whereIn('mime', self::LOGO_TYPES)],
+            'emails' => ['sometimes', 'array'],
+            'emails.*' => ['boolean'],
         ], [
             'invoice_prefix.regex' => 'Use letters, numbers, - / _ and {year} only.',
         ]);
@@ -60,13 +65,24 @@ class DocumentSettingsController extends Controller
         }
         unset($data['loaded_next_invoice_number']);
 
+        /** @var array<string, mixed> $emailChoices */
+        $emailChoices = $data['emails'] ?? [];
+        unset($data['emails']);
+        $emailsBefore = $emails->all();
+        $emails->update($emailChoices);
+
         $before = $settings->toArray();
         $settings->update($data);
         $after = $settings->toArray();
 
-        $changes = array_filter($after, fn ($value, $key) => $before[$key] !== $value, ARRAY_FILTER_USE_BOTH);
+        $changes = array_keys(array_filter($after, fn ($value, $key) => $before[$key] !== $value, ARRAY_FILTER_USE_BOTH));
+        foreach ($emails->all() as $kind => $on) {
+            if ($emailsBefore[$kind] !== $on) {
+                $changes[] = "email.{$kind}";
+            }
+        }
         if ($changes !== []) {
-            $audit->record('settings.documents_updated', null, ['changed' => array_keys($changes)]);
+            $audit->record('settings.documents_updated', null, ['changed' => $changes]);
         }
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Document settings saved.')]);

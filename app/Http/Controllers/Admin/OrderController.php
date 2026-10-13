@@ -113,7 +113,7 @@ class OrderController extends Controller
             'tracking_url' => ['nullable', 'url:https,http', 'max:500'],
             'notify' => ['boolean'],
         ]);
-        $this->workflow->ship($order, $this->actor($request), $data['carrier'] ?? null, $data['tracking_number'] ?? null, $data['tracking_url'] ?? null, (bool) ($data['notify'] ?? true));
+        $this->workflow->ship($order, $this->actor($request), $data['carrier'] ?? null, $data['tracking_number'] ?? null, $data['tracking_url'] ?? null, $this->notify($data));
 
         return $this->done($order, __('Order marked as shipped.'));
     }
@@ -135,9 +135,7 @@ class OrderController extends Controller
             'tracking_url' => ['nullable', 'url:https,http', 'max:500'],
         ]);
         $target = FulfillmentStatus::from($data['status']);
-        $notify = array_key_exists('notify', $data) && $data['notify'] !== null ? (bool) $data['notify'] : null;
-
-        $this->workflow->advanceFulfillment($order, $this->actor($request), $target, $notify, $data['carrier'] ?? null, $data['tracking_number'] ?? null, $data['tracking_url'] ?? null);
+        $this->workflow->advanceFulfillment($order, $this->actor($request), $target, $this->notify($data), $data['carrier'] ?? null, $data['tracking_number'] ?? null, $data['tracking_url'] ?? null);
 
         return $this->done($order, __('Order moved to :status.', ['status' => $target->label()]));
     }
@@ -148,7 +146,7 @@ class OrderController extends Controller
             'reason' => ['required', 'string', 'max:500'],
             'notify' => ['boolean'],
         ]);
-        $this->workflow->markDeliveryFailed($order, $this->actor($request), $data['reason'], (bool) ($data['notify'] ?? false));
+        $this->workflow->markDeliveryFailed($order, $this->actor($request), $data['reason'], $this->notify($data));
 
         return $this->done($order, __('Failed delivery recorded.'));
     }
@@ -160,7 +158,7 @@ class OrderController extends Controller
             'restock' => ['boolean'],
             'notify' => ['boolean'],
         ]);
-        $this->workflow->markReturned($order, $this->actor($request), $data['reason'], (bool) ($data['restock'] ?? false), (bool) ($data['notify'] ?? false));
+        $this->workflow->markReturned($order, $this->actor($request), $data['reason'], (bool) ($data['restock'] ?? false), $this->notify($data));
 
         return $this->done($order, __('Return recorded.'));
     }
@@ -168,7 +166,7 @@ class OrderController extends Controller
     public function confirm(Request $request, Order $order): RedirectResponse
     {
         $data = $request->validate(['notify' => ['boolean']]);
-        $this->workflow->confirm($order, $this->actor($request), (bool) ($data['notify'] ?? false));
+        $this->workflow->confirm($order, $this->actor($request), $this->notify($data));
 
         return $this->done($order, __('Order confirmed.'));
     }
@@ -249,6 +247,17 @@ class OrderController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => $message]);
 
         return redirect()->route('admin.orders.show', $order);
+    }
+
+    /**
+     * The "Email the customer" choice for this change; null when not sent,
+     * so the store's email setting applies.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    private function notify(array $data): ?bool
+    {
+        return isset($data['notify']) ? (bool) $data['notify'] : null;
     }
 
     private function actor(Request $request): User
