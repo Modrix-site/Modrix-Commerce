@@ -79,6 +79,11 @@ export default function DocumentSettings({ settings, preview, logos }: Props) {
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent className="grid gap-4 sm:grid-cols-3">
+                                    <input
+                                        type="hidden"
+                                        name="loaded_next_invoice_number"
+                                        value={settings.next_invoice_number}
+                                    />
                                     <FormField
                                         id="invoice_prefix"
                                         label="Prefix"

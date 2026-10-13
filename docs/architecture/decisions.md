@@ -424,3 +424,4 @@ Each entry records a decision, its context, and its consequences. Entries are ap
         - credit notes for refunds;
         - document wording follows the store's default language but no translations ship yet;
         - a webp logo is not supported.
+        - the bundled DejaVu font covers Latin, Greek, Cyrillic and basic Arabic; Chinese, Japanese and Korean characters print as blanks, and Arabic and Hebrew are not shaped or right-to-left. A CJK-capable fallback font is a follow-up.

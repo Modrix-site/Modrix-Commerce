@@ -157,7 +157,7 @@ final class SalesReport
             'pending_payment' => Order::query()->where('status', OrderStatus::Pending)->count(),
             'awaiting_fulfillment' => Order::query()
                 ->whereIn('status', [OrderStatus::Pending, OrderStatus::Processing])
-                ->where('fulfillment_status', FulfillmentStatus::Unfulfilled)
+                ->whereIn('fulfillment_status', [FulfillmentStatus::Unfulfilled, FulfillmentStatus::Packed])
                 ->where(fn ($q) => $q->where('payment_status', PaymentStatus::Paid)->orWhere('payment_method_code', 'cash_on_delivery'))
                 ->count(),
             'low_stock' => $lowStock,

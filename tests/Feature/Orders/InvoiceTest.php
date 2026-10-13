@@ -5,12 +5,14 @@ namespace Tests\Feature\Orders;
 use App\Domains\Orders\Documents\DocumentSettings;
 use App\Domains\Orders\Documents\InvoiceNumbers;
 use App\Domains\Orders\Documents\OrderDocuments;
+use App\Domains\Orders\Mail\OrderMail;
 use App\Domains\Orders\Models\Invoice;
 use App\Domains\Orders\Models\Order;
 use App\Domains\Orders\Models\OrderAddress;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 use LogicException;
 use Tests\Support\CommerceFixtures;
@@ -164,6 +166,40 @@ class InvoiceTest extends TestCase
 
         $this->actingAs($this->userWithRole('catalog-manager'))->get(route('admin.settings.documents.edit'))->assertForbidden();
         $this->put(route('admin.settings.documents.update'), $valid)->assertForbidden();
+    }
+
+    public function test_payment_and_its_email_survive_an_invoice_failure()
+    {
+        $order = $this->placeOrder();
+        // Break invoice numbering: issuing now throws.
+        Schema::drop('document_counters');
+
+        $this->actingAs($this->userWithRole('order-manager'))
+            ->post(route('admin.orders.payments.store', $order))
+            ->assertRedirect(route('admin.orders.show', $order));
+
+        $this->assertSame('paid', $order->fresh()?->payment_status->value);
+        $this->assertNull($order->fresh()?->invoice);
+        Mail::assertSent(OrderMail::class, fn ($m) => $m->kind === 'paid');
+    }
+
+    public function test_saving_other_settings_from_a_stale_page_keeps_the_counter()
+    {
+        $settings = app(DocumentSettings::class);
+        $loaded = $settings->toArray(); // next = 1 when the page was opened
+
+        // Invoices are issued while the page is open.
+        $this->pay($this->placeOrder());
+        $this->pay($this->placeOrder());
+
+        $this->actingAs($this->owner())->put(route('admin.settings.documents.update'), [
+            ...$loaded,
+            'loaded_next_invoice_number' => $loaded['next_invoice_number'],
+            'footer' => 'Thanks!',
+        ])->assertSessionHasNoErrors();
+
+        $this->assertSame('Thanks!', $settings->toArray()['footer']);
+        $this->assertSame(3, app(InvoiceNumbers::class)->next());
     }
 
     public function test_staff_can_issue_invoice_for_unpaid_order()

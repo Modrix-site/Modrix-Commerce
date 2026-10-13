@@ -30,6 +30,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 /**
  * The only code that changes an order's state after placement.
@@ -638,7 +639,14 @@ final class OrderWorkflow
     private function notifyCustomer(Order $order, User $actor, string $message): void
     {
         $this->log($order, 'note', $message, true, $actor);
-        DB::afterCommit(fn () => Mail::to($order->email)->send(new OrderMail($order, 'updated', note: $message)));
+        DB::afterCommit(function () use ($order, $message) {
+            // The status change is already saved: a mail failure must not turn it into an error.
+            try {
+                Mail::to($order->email)->send(new OrderMail($order, 'updated', note: $message));
+            } catch (Throwable $e) {
+                report($e);
+            }
+        });
     }
 
     private function canHold(Order $order): bool

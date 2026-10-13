@@ -13,6 +13,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Testing\AssertableInertia as Assert;
+use RuntimeException;
 use Tests\Support\CommerceFixtures;
 use Tests\TestCase;
 
@@ -166,6 +167,31 @@ class OrderHoldAndPackTest extends TestCase
         $this->assertSame(OrderStatus::OnHold, $order->fresh()?->status);
         $this->actingAs($customer)->get(route('account.orders.show', $order))
             ->assertInertia(fn (Assert $page) => $page->where('order.status', 'processing'));
+    }
+
+    public function test_packed_orders_still_count_as_ready_to_fulfil()
+    {
+        $order = $this->paidOrder();
+        $owner = $this->owner();
+        $this->actingAs($owner)->get(route('admin.dashboard'))->assertInertia(fn (Assert $page) => $page->where('operations.awaiting_fulfillment', 1));
+
+        $this->post(route('admin.orders.pack', $order))->assertSessionHasNoErrors();
+        $this->get(route('admin.dashboard'))->assertInertia(fn (Assert $page) => $page->where('operations.awaiting_fulfillment', 1));
+
+        // A held order cannot be shipped, so it is not ready to fulfil.
+        $this->post(route('admin.orders.hold', $order))->assertSessionHasNoErrors();
+        $this->get(route('admin.dashboard'))->assertInertia(fn (Assert $page) => $page->where('operations.awaiting_fulfillment', 0));
+    }
+
+    public function test_a_failing_customer_email_does_not_break_the_status_change()
+    {
+        $order = $this->paidOrder();
+        Mail::shouldReceive('to')->andThrow(new RuntimeException('SMTP down'));
+
+        $this->post(route('admin.orders.hold', $order), ['reason' => 'Check', 'notify' => true])
+            ->assertRedirect(route('admin.orders.show', $order))
+            ->assertSessionHasNoErrors();
+        $this->assertSame(OrderStatus::OnHold, $order->fresh()?->status);
     }
 
     public function test_hold_requires_orders_manage()

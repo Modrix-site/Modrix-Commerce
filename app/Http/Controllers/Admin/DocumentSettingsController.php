@@ -44,6 +44,7 @@ class DocumentSettingsController extends Controller
             'invoice_prefix' => ['required', 'string', 'max:20', 'regex:/^[A-Za-z0-9\-\/_{}]*$/'],
             'invoice_padding' => ['required', 'integer', 'between:3,8'],
             'next_invoice_number' => ['required', 'integer', 'min:1', 'max:999999999'],
+            'loaded_next_invoice_number' => ['nullable', 'integer'],
             'tax_id' => ['nullable', 'string', 'max:60'],
             'seller_address' => ['nullable', 'string', 'max:500'],
             'footer' => ['nullable', 'string', 'max:1000'],
@@ -51,6 +52,13 @@ class DocumentSettingsController extends Controller
         ], [
             'invoice_prefix.regex' => 'Use letters, numbers, - / _ and {year} only.',
         ]);
+
+        // Invoices may have been issued since the page was opened: an unchanged
+        // number field means "keep the counter", not "move it back".
+        if (isset($data['loaded_next_invoice_number']) && (int) $data['loaded_next_invoice_number'] === (int) $data['next_invoice_number']) {
+            unset($data['next_invoice_number']);
+        }
+        unset($data['loaded_next_invoice_number']);
 
         $before = $settings->toArray();
         $settings->update($data);
