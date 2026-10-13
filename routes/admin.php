@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\Catalog\TranslationController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DocumentSettingsController;
 use App\Http\Controllers\Admin\ExtensionController;
 use App\Http\Controllers\Admin\InterfaceTextController;
 use App\Http\Controllers\Admin\InventoryController;
@@ -70,6 +71,8 @@ Route::middleware(['can:roles.manage', 'password.confirm'])->group(function () {
 Route::middleware('can:settings.manage')->group(function () {
     Route::get('settings/store', [StoreSettingsController::class, 'edit'])->name('settings.store.edit');
     Route::put('settings/store', [StoreSettingsController::class, 'update'])->name('settings.store.update');
+    Route::get('settings/documents', [DocumentSettingsController::class, 'edit'])->name('settings.documents.edit');
+    Route::put('settings/documents', [DocumentSettingsController::class, 'update'])->name('settings.documents.update');
     Route::get('settings/languages', [LanguageSettingsController::class, 'edit'])->name('settings.languages.edit');
     Route::put('settings/languages', [LanguageSettingsController::class, 'update'])->name('settings.languages.update');
     Route::get('settings/languages/texts', [InterfaceTextController::class, 'index'])->name('settings.interface-text.index');

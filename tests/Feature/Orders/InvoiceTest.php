@@ -130,6 +130,42 @@ class InvoiceTest extends TestCase
         $this->assertSame('FAC-001', app(OrderDocuments::class)->issueInvoice($this->placeOrder())->number);
     }
 
+    public function test_documents_settings_page_saves_and_validates()
+    {
+        $owner = $this->owner();
+
+        $this->actingAs($owner)->get(route('admin.settings.documents.edit'))
+            ->assertInertia(fn ($page) => $page
+                ->component('admin/settings/documents')
+                ->where('settings.invoice_prefix', 'INV-{year}-')
+                ->where('settings.next_invoice_number', 1)
+                ->where('preview', 'INV-2026-00001'));
+
+        $valid = [
+            'invoice_prefix' => 'FAC/{year}/',
+            'invoice_padding' => 4,
+            'next_invoice_number' => 42,
+            'tax_id' => 'ES-B12345678',
+            'seller_address' => "1 Market St\nMadrid",
+            'footer' => 'Payment within 30 days.',
+            'logo_media_id' => null,
+        ];
+
+        $this->put(route('admin.settings.documents.update'), $valid)->assertSessionHasNoErrors()->assertRedirect();
+        $this->assertSame('FAC/2026/0042', app(InvoiceNumbers::class)->format(app(InvoiceNumbers::class)->next()));
+        $this->assertSame('ES-B12345678', app(DocumentSettings::class)->toArray()['tax_id']);
+        $this->assertDatabaseHas('audit_logs', ['action' => 'settings.documents_updated']);
+
+        $this->put(route('admin.settings.documents.update'), [...$valid, 'next_invoice_number' => 10])->assertSessionHasErrors('next_invoice_number');
+        $this->put(route('admin.settings.documents.update'), [...$valid, 'invoice_prefix' => '<script>'])->assertSessionHasErrors('invoice_prefix');
+        $this->put(route('admin.settings.documents.update'), [...$valid, 'invoice_padding' => 12])->assertSessionHasErrors('invoice_padding');
+        $this->put(route('admin.settings.documents.update'), [...$valid, 'logo_media_id' => 999])->assertSessionHasErrors('logo_media_id');
+        $this->assertSame(42, app(InvoiceNumbers::class)->next());
+
+        $this->actingAs($this->userWithRole('catalog-manager'))->get(route('admin.settings.documents.edit'))->assertForbidden();
+        $this->put(route('admin.settings.documents.update'), $valid)->assertForbidden();
+    }
+
     public function test_staff_can_issue_invoice_for_unpaid_order()
     {
         $order = $this->placeOrder();

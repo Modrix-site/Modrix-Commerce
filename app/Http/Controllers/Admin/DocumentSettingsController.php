@@ -1,0 +1,68 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Core\Audit\AuditLogger;
+use App\Core\Media\Media;
+use App\Domains\Orders\Documents\DocumentSettings;
+use App\Domains\Orders\Documents\InvoiceNumbers;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
+
+/**
+ * Admin → Settings → Documents: invoice numbering and the seller details
+ * printed on invoices, receipts and packing slips.
+ */
+class DocumentSettingsController extends Controller
+{
+    private const LOGO_TYPES = ['image/png', 'image/jpeg', 'image/gif'];
+
+    public function edit(DocumentSettings $settings, InvoiceNumbers $numbers): Response
+    {
+        $values = $settings->toArray();
+
+        return Inertia::render('admin/settings/documents', [
+            'settings' => $values,
+            'preview' => $numbers->format($values['next_invoice_number']),
+            'logos' => Media::query()
+                ->whereIn('mime', self::LOGO_TYPES)
+                ->latest('id')
+                ->limit(100)
+                ->get()
+                ->map(fn (Media $m) => ['id' => $m->id, 'filename' => $m->filename, 'url' => $m->url()])
+                ->values(),
+        ]);
+    }
+
+    public function update(Request $request, DocumentSettings $settings, AuditLogger $audit): RedirectResponse
+    {
+        $data = $request->validate([
+            'invoice_prefix' => ['required', 'string', 'max:20', 'regex:/^[A-Za-z0-9\-\/_{}]*$/'],
+            'invoice_padding' => ['required', 'integer', 'between:3,8'],
+            'next_invoice_number' => ['required', 'integer', 'min:1', 'max:999999999'],
+            'tax_id' => ['nullable', 'string', 'max:60'],
+            'seller_address' => ['nullable', 'string', 'max:500'],
+            'footer' => ['nullable', 'string', 'max:1000'],
+            'logo_media_id' => ['nullable', 'integer', Rule::exists('media', 'id')->whereIn('mime', self::LOGO_TYPES)],
+        ], [
+            'invoice_prefix.regex' => 'Use letters, numbers, - / _ and {year} only.',
+        ]);
+
+        $before = $settings->toArray();
+        $settings->update($data);
+        $after = $settings->toArray();
+
+        $changes = array_filter($after, fn ($value, $key) => $before[$key] !== $value, ARRAY_FILTER_USE_BOTH);
+        if ($changes !== []) {
+            $audit->record('settings.documents_updated', null, ['changed' => array_keys($changes)]);
+        }
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Document settings saved.')]);
+
+        return redirect()->route('admin.settings.documents.edit');
+    }
+}
