@@ -69,6 +69,25 @@ class OrderConfirmationTest extends TestCase
         $this->assertSame(OrderStatus::Pending, $bank->fresh()?->status);
     }
 
+    public function test_paying_a_confirmed_order_keeps_it_confirmed()
+    {
+        app(SettingsRepository::class)->set('orders.review_before_confirm', true);
+        $cod = $this->place('cash_on_delivery');
+        $manager = $this->userWithRole('order-manager');
+        $this->actingAs($manager)->post(route('admin.orders.confirm', $cod))->assertSessionHasNoErrors();
+
+        $this->post(route('admin.orders.payments.store', $cod))->assertSessionHasNoErrors();
+        $this->assertSame(OrderStatus::Confirmed, $cod->fresh()?->status);
+
+        // Same when the order was held while confirmed.
+        $held = $this->place('cash_on_delivery');
+        $this->post(route('admin.orders.confirm', $held))->assertSessionHasNoErrors();
+        $this->post(route('admin.orders.hold', $held))->assertSessionHasNoErrors();
+        $this->post(route('admin.orders.payments.store', $held))->assertSessionHasNoErrors();
+        $this->post(route('admin.orders.release', $held))->assertSessionHasNoErrors();
+        $this->assertSame(OrderStatus::Confirmed, $held->fresh()?->status);
+    }
+
     public function test_confirm_is_refused_unless_pending_review()
     {
         $order = $this->place('bank_transfer');

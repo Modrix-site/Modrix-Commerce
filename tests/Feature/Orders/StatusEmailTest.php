@@ -101,6 +101,11 @@ class StatusEmailTest extends TestCase
         app(OrderWorkflow::class)->failGatewayPayment($payment, 'Card declined');
 
         $this->assertSame(1, $this->sent('payment_failed'));
+
+        // The customer is not sent to a page that has no way to pay.
+        $mail = Mail::sent(OrderMail::class, fn (OrderMail $m) => $m->kind === 'payment_failed')->first();
+        $this->assertStringNotContainsString('order page', $mail->render());
+        $this->assertStringContainsString('reply to this email', $mail->render());
     }
 
     public function test_email_settings_are_saved_on_the_settings_page()

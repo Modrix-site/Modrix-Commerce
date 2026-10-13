@@ -18,7 +18,7 @@ There is an update on your order **{{ $order->number }}**:
 Your order **{{ $order->number }}** has been confirmed. We will let you know when it ships.
 @break
 @case('payment_failed')
-The payment for order **{{ $order->number }}** did not go through. You can try again from your order page, or reply to this email for help.
+The payment for order **{{ $order->number }}** did not go through, and you have not been charged. To complete your order, reply to this email and we will help you pay.
 @break
 @case('out_for_delivery')
 Order **{{ $order->number }}** is out for delivery and should arrive today.

@@ -86,6 +86,33 @@ class OrderDisplayStatusTest extends TestCase
         $this->assertSame('confirmed', DB::table('orders')->where('id', $order->id)->value('display_status'));
     }
 
+    public function test_migration_rollback_leaves_only_values_the_previous_release_knows()
+    {
+        $this->installPlatform();
+        $this->enableCheckout();
+        Mail::fake();
+        $ids = [];
+        foreach (['picking', 'ready_for_dispatch', 'in_transit', 'out_for_delivery', 'delivery_failed', 'returned'] as $f) {
+            $this->addToCart($this->sellable());
+            $this->post(route('checkout.store'), $this->checkoutPayload(['payment_method' => 'bank_transfer']))->assertSessionHasNoErrors();
+            $id = Order::query()->latest('id')->value('id');
+            DB::table('orders')->where('id', $id)->update(['fulfillment_status' => $f, 'status' => 'processing', 'payment_status' => $f === 'picking' ? 'failed' : 'paid']);
+            $ids[$f] = $id;
+        }
+        DB::table('orders')->where('id', $ids['picking'])->update(['status' => 'on_hold', 'hold_previous_status' => 'pending']);
+
+        $migration = require database_path('migrations/2026_10_21_000001_detailed_order_statuses.php');
+        $migration->down();
+
+        $row = fn (string $f) => DB::table('orders')->where('id', $ids[$f])->first();
+        $this->assertSame(['packed', 'unpaid', 'processing'], [$row('picking')->fulfillment_status, $row('picking')->payment_status, $row('picking')->hold_previous_status]);
+        $this->assertSame('packed', $row('ready_for_dispatch')->fulfillment_status);
+        $this->assertSame('shipped', $row('in_transit')->fulfillment_status);
+        $this->assertSame('shipped', $row('out_for_delivery')->fulfillment_status);
+        $this->assertSame('shipped', $row('delivery_failed')->fulfillment_status);
+        $this->assertSame('delivered', $row('returned')->fulfillment_status);
+    }
+
     public function test_migration_maps_existing_orders()
     {
         $this->installPlatform();

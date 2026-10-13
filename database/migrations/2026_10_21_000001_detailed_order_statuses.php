@@ -38,6 +38,12 @@ return new class extends Migration
 
     public function down(): void
     {
+        // Values the previous release does not know are folded into the nearest one it does.
+        DB::table('orders')->whereIn('fulfillment_status', ['picking', 'packing', 'ready_for_dispatch'])->update(['fulfillment_status' => 'packed']);
+        DB::table('orders')->whereIn('fulfillment_status', ['in_transit', 'out_for_delivery', 'delivery_failed'])->update(['fulfillment_status' => 'shipped']);
+        DB::table('orders')->where('fulfillment_status', 'returned')->update(['fulfillment_status' => 'delivered']);
+        DB::table('orders')->where('payment_status', 'failed')->update(['payment_status' => 'unpaid']);
+        DB::table('orders')->where('hold_previous_status', 'pending')->update(['hold_previous_status' => 'processing']);
         DB::table('orders')->whereIn('status', ['confirmed'])->update(['status' => 'processing']);
         DB::table('orders')->where('status', 'pending')->update(['status' => 'processing']);
         DB::table('orders')->where('status', 'pending_payment')->update(['status' => 'pending']);

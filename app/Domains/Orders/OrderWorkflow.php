@@ -745,14 +745,19 @@ final class OrderWorkflow
      */
     private function setPaidStatus(Order $order): void
     {
-        $delivered = $order->fulfillment_status === FulfillmentStatus::Delivered;
+        $held = $order->status === OrderStatus::OnHold;
+        $current = $held ? (OrderStatus::tryFrom((string) $order->hold_previous_status) ?? OrderStatus::PendingPayment) : $order->status;
+
+        // Payment only accepts orders that were waiting for it; an order staff
+        // already confirmed (or that is being fulfilled) keeps its status.
         $next = match (true) {
-            $delivered => OrderStatus::Completed,
+            $order->fulfillment_status === FulfillmentStatus::Delivered => OrderStatus::Completed,
+            $current !== OrderStatus::PendingPayment => $current,
             $order->fulfillment_status === FulfillmentStatus::Unfulfilled => $this->reviewsOrders() ? OrderStatus::Pending : OrderStatus::Confirmed,
             default => OrderStatus::Processing, // pay-on-delivery orders already on their way
         };
 
-        if ($order->status === OrderStatus::OnHold) {
+        if ($held) {
             $order->hold_previous_status = $next->value;
 
             return;
@@ -760,7 +765,7 @@ final class OrderWorkflow
 
         $order->forceFill([
             'status' => $next,
-            'completed_at' => $delivered ? now() : null,
+            'completed_at' => $next === OrderStatus::Completed ? now() : $order->completed_at,
         ]);
     }
 
