@@ -1,5 +1,5 @@
 import { Form, Head, Link } from '@inertiajs/react';
-import { Download, ImageOff, Plus, Upload } from 'lucide-react';
+import { Download, ImageOff, Star, Plus, Upload } from 'lucide-react';
 import ProductCsvController from '@/actions/App/Http/Controllers/Admin/Catalog/ProductCsvController';
 import { EmptyState } from '@/components/admin/empty-state';
 import { NativeSelect } from '@/components/admin/form-field';
@@ -8,7 +8,9 @@ import { Pagination } from '@/components/admin/pagination';
 import InputError from '@/components/input-error';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { StatusBadge } from '@/components/admin/status-badge';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
     Dialog,
     DialogClose,
@@ -38,6 +40,8 @@ type ProductRow = {
     status: string;
     type: string;
     variants_count: number;
+    brand: string | null;
+    is_featured: boolean;
     sku: string | null;
     price_from: MoneyValue | null;
     stock: number | null;
@@ -46,8 +50,17 @@ type ProductRow = {
 
 type Props = {
     products: Paginated<ProductRow>;
-    filters: { search: string; status: string; category: string; sort: string };
+    filters: {
+        search: string;
+        status: string;
+        category: string;
+        brand: string;
+        tag: string;
+        featured: string;
+        sort: string;
+    };
     categories: CategoryOption[];
+    brands: { id: number; name: string }[];
     statuses: Option[];
     importErrors: string[];
 };
@@ -56,6 +69,7 @@ export default function ProductsIndex({
     products,
     filters,
     categories,
+    brands,
     statuses,
     importErrors,
 }: Props) {
@@ -63,7 +77,10 @@ export default function ProductsIndex({
     const filtered =
         filters.search !== '' ||
         filters.status !== '' ||
-        filters.category !== '';
+        filters.category !== '' ||
+        filters.brand !== '' ||
+        filters.tag !== '' ||
+        filters.featured !== '';
 
     return (
         <>
@@ -154,6 +171,39 @@ export default function ProductsIndex({
                         </NativeSelect>
                     </div>
                     <div className="grid gap-2">
+                        <Label htmlFor="brand">Brand</Label>
+                        <NativeSelect
+                            id="brand"
+                            name="brand"
+                            defaultValue={filters.brand}
+                        >
+                            <option value="">Any brand</option>
+                            {brands.map((b) => (
+                                <option key={b.id} value={b.id}>
+                                    {b.name}
+                                </option>
+                            ))}
+                        </NativeSelect>
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="tag">Tag</Label>
+                        <Input
+                            id="tag"
+                            name="tag"
+                            defaultValue={filters.tag}
+                            placeholder="Exact tag"
+                        />
+                    </div>
+                    <label className="flex items-center gap-2 self-end pb-2 text-sm">
+                        <input type="hidden" name="featured" value="" />
+                        <Checkbox
+                            name="featured"
+                            value="1"
+                            defaultChecked={filters.featured === '1'}
+                        />
+                        Featured only
+                    </label>
+                    <div className="grid gap-2">
                         <Label htmlFor="sort">Sort by</Label>
                         <NativeSelect
                             id="sort"
@@ -199,6 +249,7 @@ export default function ProductsIndex({
                                     <span className="sr-only">Image</span>
                                 </TableHead>
                                 <TableHead>Product</TableHead>
+                                <TableHead>Brand</TableHead>
                                 <TableHead>Status</TableHead>
                                 <TableHead>Price</TableHead>
                                 <TableHead>Stock</TableHead>
@@ -239,8 +290,21 @@ export default function ProductsIndex({
                                                 : product.sku}
                                         </div>
                                     </TableCell>
+                                    <TableCell className="text-muted-foreground">
+                                        {product.brand ?? '—'}
+                                    </TableCell>
                                     <TableCell>
-                                        <StatusBadge status={product.status} />
+                                        <div className="flex flex-wrap gap-1">
+                                            <StatusBadge
+                                                status={product.status}
+                                            />
+                                            {product.is_featured && (
+                                                <Badge variant="outline">
+                                                    <Star className="size-3" />
+                                                    Featured
+                                                </Badge>
+                                            )}
+                                        </div>
                                     </TableCell>
                                     <TableCell className="tabular-nums">
                                         {product.price_from

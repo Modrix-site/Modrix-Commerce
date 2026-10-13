@@ -1,11 +1,28 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { Languages, Plus, Trash2 } from 'lucide-react';
-import type { FormEvent } from 'react';
+import { ExternalLink, Languages } from 'lucide-react';
+import type { FormEvent, ReactNode } from 'react';
 import ProductController from '@/actions/App/Http/Controllers/Admin/Catalog/ProductController';
-import { FormField } from '@/components/admin/form-field';
+import { FormField, NativeSelect } from '@/components/admin/form-field';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
-import { edit as translationsEdit } from '@/routes/admin/products/translations';
 import { ProductImages } from '@/components/admin/product-images';
+import {
+    SaveBar,
+    useUnsavedChangesGuard,
+} from '@/components/admin/products/save-bar';
+import { SectionNav } from '@/components/admin/products/section-nav';
+import { TagsInput } from '@/components/admin/products/tags-input';
+import { emptyVariant, toRow } from '@/components/admin/products/types';
+import type {
+    Errors,
+    ProductFormData,
+    ProductFormProps,
+    VariantRow,
+} from '@/components/admin/products/types';
+import {
+    ShippingFields,
+    VariantFields,
+} from '@/components/admin/products/variant-fields';
+import { VariantsTable } from '@/components/admin/products/variants-table';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import {
@@ -26,135 +43,17 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useCan } from '@/hooks/use-can';
 import { index } from '@/routes/admin/products';
-import type { CategoryOption, Option } from '@/types';
-
-type AttributeOption = {
-    id: number;
-    name: string;
-    values: { id: number; value: string }[];
-};
-
-type VariantData = {
-    id?: number;
-    sku: string;
-    name: string | null;
-    price: string;
-    compare_at_price: string;
-    weight: string | null;
-    barcode: string | null;
-    track_inventory: boolean;
-    allow_backorder: boolean;
-    is_active: boolean;
-    low_stock_threshold: number | null;
-    option_value_ids: number[];
-    on_hand?: number | null;
-};
-
-type ProductData = {
-    id: number;
-    type: string;
-    name: string;
-    slug: string;
-    status: string;
-    published_at: string | null;
-    short_description: string | null;
-    description: string | null;
-    meta_title: string | null;
-    meta_description: string | null;
-    category_ids: number[];
-    option_attribute_ids: number[];
-    variants: VariantData[];
-    images: { id: number; url: string; alt: string | null }[];
-};
-
-type Props = {
-    product: ProductData | null;
-    currency: string;
-    categories: CategoryOption[];
-    statuses: Option[];
-    types: Option[];
-    attributes: AttributeOption[];
-};
-
-type VariantRow = {
-    id: number | null;
-    sku: string;
-    name: string;
-    price: string;
-    compare_at_price: string;
-    weight: string;
-    barcode: string;
-    track_inventory: boolean;
-    allow_backorder: boolean;
-    is_active: boolean;
-    low_stock_threshold: string;
-    option_value_ids: number[];
-    initial_stock: string;
-    on_hand: number | null;
-};
-
-type FormData = {
-    type: string;
-    name: string;
-    slug: string;
-    status: string;
-    published_at: string;
-    short_description: string;
-    description: string;
-    meta_title: string;
-    meta_description: string;
-    category_ids: number[];
-    option_attribute_ids: number[];
-    variants: VariantRow[];
-};
-
-const emptyVariant = (): VariantRow => ({
-    id: null,
-    sku: '',
-    name: '',
-    price: '',
-    compare_at_price: '',
-    weight: '',
-    barcode: '',
-    track_inventory: true,
-    allow_backorder: false,
-    is_active: true,
-    low_stock_threshold: '',
-    option_value_ids: [],
-    initial_stock: '0',
-    on_hand: null,
-});
-
-function toRow(v: VariantData): VariantRow {
-    return {
-        id: v.id ?? null,
-        sku: v.sku,
-        name: v.name ?? '',
-        price: v.price,
-        compare_at_price: v.compare_at_price ?? '',
-        weight: v.weight ?? '',
-        barcode: v.barcode ?? '',
-        track_inventory: v.track_inventory,
-        allow_backorder: v.allow_backorder,
-        is_active: v.is_active,
-        low_stock_threshold:
-            v.low_stock_threshold === null ? '' : String(v.low_stock_threshold),
-        option_value_ids: v.option_value_ids,
-        initial_stock: '0',
-        on_hand: v.on_hand ?? null,
-    };
-}
+import { edit as translationsEdit } from '@/routes/admin/products/translations';
 
 /**
  * Inertia reuses this component when redirecting from create to edit, which
  * would keep stale useForm state (e.g. new variants without their ids).
  * Keying by product and variant ids forces a fresh form after each save.
  */
-export default function ProductFormPage(props: Props) {
+export default function ProductFormPage(props: ProductFormProps) {
     const key = props.product
         ? `${props.product.id}:${props.product.variants.map((v) => v.id).join(',')}`
         : 'new';
@@ -162,16 +61,29 @@ export default function ProductFormPage(props: Props) {
     return <ProductForm key={key} {...props} />;
 }
 
+const SECTION_FIELDS: Record<string, (key: string) => boolean> = {
+    general: (k) => ['name', 'short_description', 'description'].includes(k),
+    pricing: (k) =>
+        k.startsWith('variants') && !/\.(weight|length|width|height)$/.test(k),
+    options: (k) => k === 'option_attribute_ids',
+    shipping: (k) => /^variants\.\d+\.(weight|length|width|height)$/.test(k),
+    seo: (k) => ['slug', 'meta_title', 'meta_description'].includes(k),
+};
+
 function ProductForm({
     product,
     currency,
+    weightUnit,
+    dimensionUnit,
     categories,
+    brands,
+    tagSuggestions,
     statuses,
     types,
     attributes,
-}: Props) {
+}: ProductFormProps) {
     const can = useCan();
-    const form = useForm<FormData>({
+    const form = useForm<ProductFormData>({
         type: product?.type ?? 'simple',
         name: product?.name ?? '',
         slug: product?.slug ?? '',
@@ -182,44 +94,36 @@ function ProductForm({
         meta_title: product?.meta_title ?? '',
         meta_description: product?.meta_description ?? '',
         category_ids: product?.category_ids ?? [],
+        brand_id: product?.brand_id ? String(product.brand_id) : '',
+        is_featured: product?.is_featured ?? false,
+        tags: product?.tags ?? [],
         option_attribute_ids: product?.option_attribute_ids ?? [],
         variants: product ? product.variants.map(toRow) : [emptyVariant()],
     });
-    const { data, setData, processing } = form;
-    const errors = form.errors as Record<string, string | undefined>;
+    const { data, setData, processing, isDirty } = form;
+    const errors = form.errors as Errors;
+    const errorKeys = Object.keys(errors).filter((k) => errors[k]);
     const isVariable = data.type === 'variable';
     const selectedAttributes = attributes.filter((a) =>
         data.option_attribute_ids.includes(a.id),
     );
+    const rows = isVariable ? data.variants : data.variants.slice(0, 1);
 
-    const updateVariant = (index: number, patch: Partial<VariantRow>) => {
+    useUnsavedChangesGuard(isDirty && !processing);
+
+    const updateVariant = (i: number, patch: Partial<VariantRow>) =>
         setData(
             'variants',
-            data.variants.map((v, i) => (i === index ? { ...v, ...patch } : v)),
+            data.variants.map((v, j) => (j === i ? { ...v, ...patch } : v)),
         );
-    };
 
-    const setOptionValue = (
-        index: number,
-        attributeId: number,
-        valueId: number,
-    ) => {
-        const attribute = attributes.find((a) => a.id === attributeId);
-        const otherValueIds = new Set(attribute?.values.map((v) => v.id) ?? []);
-        const current = data.variants[index].option_value_ids.filter(
-            (id) => !otherValueIds.has(id),
+    const toggleAttribute = (attributeId: number, checked: boolean) =>
+        setData(
+            'option_attribute_ids',
+            checked
+                ? [...data.option_attribute_ids, attributeId].slice(0, 3)
+                : data.option_attribute_ids.filter((id) => id !== attributeId),
         );
-        updateVariant(index, {
-            option_value_ids: valueId ? [...current, valueId] : current,
-        });
-    };
-
-    const toggleAttribute = (attributeId: number, checked: boolean) => {
-        const ids = checked
-            ? [...data.option_attribute_ids, attributeId].slice(0, 3)
-            : data.option_attribute_ids.filter((id) => id !== attributeId);
-        setData('option_attribute_ids', ids);
-    };
 
     const generateCombinations = () => {
         const lists = selectedAttributes.map((a) => a.values.map((v) => v.id));
@@ -232,31 +136,32 @@ function ProductForm({
             (acc, values) => acc.flatMap((c) => values.map((v) => [...c, v])),
             [[]],
         );
+        const key = (ids: number[]) => [...ids].sort((a, b) => a - b).join('-');
         const existing = new Set(
-            data.variants.map((v) =>
-                [...v.option_value_ids].sort((a, b) => a - b).join('-'),
-            ),
+            data.variants.map((v) => key(v.option_value_ids)),
         );
         const base = data.variants[0];
         const additions = combos
-            .filter(
-                (c) => !existing.has([...c].sort((a, b) => a - b).join('-')),
-            )
+            .filter((c) => !existing.has(key(c)))
             .map((c) => ({
                 ...emptyVariant(),
                 price: base?.price ?? '',
+                cost: base?.cost ?? '',
                 option_value_ids: c,
             }));
-        const kept = data.variants.filter(
-            (v) => v.option_value_ids.length > 0 || v.id !== null,
-        );
-        setData('variants', [...kept, ...additions]);
+        setData('variants', [
+            ...data.variants.filter(
+                (v) => v.option_value_ids.length > 0 || v.id !== null,
+            ),
+            ...additions,
+        ]);
     };
 
     const submit = (event: FormEvent) => {
         event.preventDefault();
         form.transform((d) => ({
             ...d,
+            brand_id: d.brand_id === '' ? null : Number(d.brand_id),
             option_attribute_ids: isVariable ? d.option_attribute_ids : [],
             variants: (isVariable ? d.variants : d.variants.slice(0, 1)).map(
                 (v) => ({
@@ -265,7 +170,11 @@ function ProductForm({
                     name: v.name || null,
                     price: v.price,
                     compare_at_price: v.compare_at_price || null,
+                    cost: v.cost || null,
                     weight: v.weight || null,
+                    length: v.length || null,
+                    width: v.width || null,
+                    height: v.height || null,
                     barcode: v.barcode || null,
                     track_inventory: v.track_inventory,
                     allow_backorder: v.allow_backorder,
@@ -284,42 +193,71 @@ function ProductForm({
             product
                 ? ProductController.update(product.id)
                 : ProductController.store(),
-            { preserveScroll: true },
+            {
+                preserveScroll: true,
+                // The saved values are the new baseline for "unsaved changes".
+                onSuccess: () => form.setDefaults(),
+            },
         );
     };
 
-    const variantRows = isVariable ? data.variants : data.variants.slice(0, 1);
+    const sectionHasError = (id: string) =>
+        errorKeys.some((k) => SECTION_FIELDS[id]?.(k));
+    const sections = [
+        { id: 'general', label: 'General' },
+        { id: 'media', label: 'Media' },
+        ...(isVariable ? [{ id: 'options', label: 'Options' }] : []),
+        {
+            id: 'pricing',
+            label: isVariable ? 'Variants' : 'Pricing & inventory',
+        },
+        { id: 'shipping', label: 'Shipping' },
+        { id: 'seo', label: 'Search listing' },
+    ].map((s) => ({ ...s, hasError: sectionHasError(s.id) }));
 
     return (
         <>
             <Head title={product ? `Edit ${product.name}` : 'Add product'} />
             <AdminPage>
                 <PageHeader
-                    title={product ? product.name : 'Add product'}
+                    title={product ? product.name || 'Untitled' : 'Add product'}
                     description={`Prices are in ${currency}.`}
                     actions={
                         product && (
                             <>
+                                {product.view_url && (
+                                    <Button variant="outline" asChild>
+                                        <a
+                                            href={product.view_url}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                        >
+                                            <ExternalLink /> View on store
+                                        </a>
+                                    </Button>
+                                )}
                                 <Button variant="outline" asChild>
                                     <Link href={translationsEdit(product.id)}>
                                         <Languages /> Translations
                                     </Link>
                                 </Button>
                                 {can('products.delete') && (
-                                    <DeleteProductDialog product={product} />
+                                    <DeleteProductDialog
+                                        id={product.id}
+                                        name={product.name}
+                                    />
                                 )}
                             </>
                         )
                     }
                 />
 
-                <form onSubmit={submit} className="grid gap-6 lg:grid-cols-3">
-                    <div className="grid gap-6 lg:col-span-2">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>General</CardTitle>
-                            </CardHeader>
-                            <CardContent className="grid gap-4">
+                <form onSubmit={submit} className="grid gap-6">
+                    <SectionNav sections={sections} />
+
+                    <div className="grid gap-6 lg:grid-cols-3">
+                        <div className="grid min-w-0 content-start gap-6 lg:col-span-2">
+                            <Section id="general" title="General">
                                 <FormField
                                     id="name"
                                     label="Name"
@@ -338,6 +276,7 @@ function ProductForm({
                                     id="short_description"
                                     label="Short description"
                                     error={errors.short_description}
+                                    hint="Shown under the name and on product cards."
                                 >
                                     <Input
                                         id="short_description"
@@ -359,7 +298,7 @@ function ProductForm({
                                 >
                                     <Textarea
                                         id="description"
-                                        rows={6}
+                                        rows={8}
                                         value={data.description}
                                         onChange={(e) =>
                                             setData(
@@ -369,24 +308,40 @@ function ProductForm({
                                         }
                                     />
                                 </FormField>
-                            </CardContent>
-                        </Card>
+                            </Section>
 
-                        {isVariable && (
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Options</CardTitle>
-                                    <CardDescription>
-                                        Choose up to three options. Each variant
-                                        needs one value per option.
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent className="grid gap-3">
+                            <Section
+                                id="media"
+                                title="Media"
+                                description={
+                                    product
+                                        ? 'Drag to reorder. The first image is the main one.'
+                                        : undefined
+                                }
+                            >
+                                {product ? (
+                                    <ProductImages
+                                        productId={product.id}
+                                        images={product.images}
+                                    />
+                                ) : (
+                                    <p className="text-sm text-muted-foreground">
+                                        Save the product first, then add images
+                                        here.
+                                    </p>
+                                )}
+                            </Section>
+
+                            {isVariable && (
+                                <Section
+                                    id="options"
+                                    title="Options"
+                                    description="Choose up to three options, such as Size and Color. Each variant needs one value per option."
+                                >
                                     {attributes.length === 0 ? (
                                         <p className="text-sm text-muted-foreground">
                                             No options defined yet. Create
-                                            options such as Size or Color under
-                                            Catalog → Options.
+                                            options under Catalog → Options.
                                         </p>
                                     ) : (
                                         <div className="flex flex-wrap gap-4">
@@ -399,13 +354,10 @@ function ProductForm({
                                                         checked={data.option_attribute_ids.includes(
                                                             attribute.id,
                                                         )}
-                                                        onCheckedChange={(
-                                                            checked,
-                                                        ) =>
+                                                        onCheckedChange={(c) =>
                                                             toggleAttribute(
                                                                 attribute.id,
-                                                                checked ===
-                                                                    true,
+                                                                c === true,
                                                             )
                                                         }
                                                     />
@@ -429,384 +381,91 @@ function ProductForm({
                                             </Button>
                                         </div>
                                     )}
-                                </CardContent>
-                            </Card>
-                        )}
+                                </Section>
+                            )}
 
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>
-                                    {isVariable
-                                        ? 'Variants'
-                                        : 'Pricing and inventory'}
-                                </CardTitle>
-                                <CardDescription>
-                                    Stock for existing variants is changed from
-                                    the Inventory page so every change is
-                                    recorded.
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="grid gap-4">
+                            <Section
+                                id="pricing"
+                                title={
+                                    isVariable
+                                        ? `Variants (${data.variants.length})`
+                                        : 'Pricing & inventory'
+                                }
+                            >
                                 <InputError message={errors.variants} />
-                                {variantRows.map((variant, i) => (
-                                    <fieldset
-                                        key={variant.id ?? `new-${i}`}
-                                        className="grid gap-3 rounded-lg border p-4"
-                                    >
-                                        <legend className="sr-only">
-                                            Variant {i + 1}
-                                        </legend>
-                                        {isVariable && (
-                                            <div className="flex flex-wrap items-end gap-3">
-                                                {selectedAttributes.map(
-                                                    (attribute) => {
-                                                        const selected =
-                                                            attribute.values.find(
-                                                                (v) =>
-                                                                    variant.option_value_ids.includes(
-                                                                        v.id,
-                                                                    ),
-                                                            );
-
-                                                        return (
-                                                            <div
-                                                                key={
-                                                                    attribute.id
-                                                                }
-                                                                className="grid gap-1"
-                                                            >
-                                                                <Label
-                                                                    htmlFor={`v${i}-a${attribute.id}`}
-                                                                >
-                                                                    {
-                                                                        attribute.name
-                                                                    }
-                                                                </Label>
-                                                                <select
-                                                                    id={`v${i}-a${attribute.id}`}
-                                                                    value={
-                                                                        selected?.id ??
-                                                                        ''
-                                                                    }
-                                                                    onChange={(
-                                                                        e,
-                                                                    ) =>
-                                                                        setOptionValue(
-                                                                            i,
-                                                                            attribute.id,
-                                                                            Number(
-                                                                                e
-                                                                                    .target
-                                                                                    .value,
-                                                                            ),
-                                                                        )
-                                                                    }
-                                                                    className="h-9 rounded-md border border-input bg-transparent px-2 text-sm dark:bg-input/30"
-                                                                >
-                                                                    <option value="">
-                                                                        Choose…
-                                                                    </option>
-                                                                    {attribute.values.map(
-                                                                        (v) => (
-                                                                            <option
-                                                                                key={
-                                                                                    v.id
-                                                                                }
-                                                                                value={
-                                                                                    v.id
-                                                                                }
-                                                                            >
-                                                                                {
-                                                                                    v.value
-                                                                                }
-                                                                            </option>
-                                                                        ),
-                                                                    )}
-                                                                </select>
-                                                            </div>
-                                                        );
-                                                    },
-                                                )}
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="ml-auto"
-                                                    disabled={
-                                                        data.variants.length ===
-                                                        1
-                                                    }
-                                                    onClick={() =>
-                                                        setData(
-                                                            'variants',
-                                                            data.variants.filter(
-                                                                (_, j) =>
-                                                                    j !== i,
-                                                            ),
-                                                        )
-                                                    }
-                                                    aria-label={`Remove variant ${i + 1}`}
-                                                >
-                                                    <Trash2 />
-                                                </Button>
-                                                <InputError
-                                                    className="w-full"
-                                                    message={
-                                                        errors[
-                                                            `variants.${i}.option_value_ids`
-                                                        ]
-                                                    }
-                                                />
-                                            </div>
-                                        )}
-                                        <div className="grid gap-3 sm:grid-cols-4">
-                                            <FormField
-                                                id={`v${i}-sku`}
-                                                label="SKU"
-                                                error={
-                                                    errors[`variants.${i}.sku`]
-                                                }
-                                            >
-                                                <Input
-                                                    id={`v${i}-sku`}
-                                                    value={variant.sku}
-                                                    onChange={(e) =>
-                                                        updateVariant(i, {
-                                                            sku: e.target.value,
-                                                        })
-                                                    }
-                                                    required
-                                                />
-                                            </FormField>
-                                            <FormField
-                                                id={`v${i}-price`}
-                                                label={`Price (${currency})`}
-                                                error={
-                                                    errors[
-                                                        `variants.${i}.price`
-                                                    ]
-                                                }
-                                            >
-                                                <Input
-                                                    id={`v${i}-price`}
-                                                    inputMode="decimal"
-                                                    value={variant.price}
-                                                    onChange={(e) =>
-                                                        updateVariant(i, {
-                                                            price: e.target
-                                                                .value,
-                                                        })
-                                                    }
-                                                    placeholder="0.00"
-                                                    required
-                                                />
-                                            </FormField>
-                                            <FormField
-                                                id={`v${i}-compare`}
-                                                label="Compare-at price"
-                                                error={
-                                                    errors[
-                                                        `variants.${i}.compare_at_price`
-                                                    ]
-                                                }
-                                            >
-                                                <Input
-                                                    id={`v${i}-compare`}
-                                                    inputMode="decimal"
-                                                    value={
-                                                        variant.compare_at_price
-                                                    }
-                                                    onChange={(e) =>
-                                                        updateVariant(i, {
-                                                            compare_at_price:
-                                                                e.target.value,
-                                                        })
-                                                    }
-                                                    placeholder="Optional"
-                                                />
-                                            </FormField>
-                                            {variant.id === null ? (
-                                                <FormField
-                                                    id={`v${i}-stock`}
-                                                    label="Initial stock"
-                                                    error={
-                                                        errors[
-                                                            `variants.${i}.initial_stock`
-                                                        ]
-                                                    }
-                                                >
-                                                    <Input
-                                                        id={`v${i}-stock`}
-                                                        type="number"
-                                                        min={0}
-                                                        value={
-                                                            variant.initial_stock
-                                                        }
-                                                        disabled={
-                                                            !variant.track_inventory
-                                                        }
-                                                        onChange={(e) =>
-                                                            updateVariant(i, {
-                                                                initial_stock:
-                                                                    e.target
-                                                                        .value,
-                                                            })
-                                                        }
-                                                    />
-                                                </FormField>
-                                            ) : (
-                                                <div className="grid gap-2">
-                                                    <span className="text-sm font-medium">
-                                                        On hand
-                                                    </span>
-                                                    <span className="py-2 text-sm tabular-nums">
-                                                        {variant.on_hand ??
-                                                            'Not tracked'}
-                                                    </span>
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div className="grid gap-3 sm:grid-cols-4">
-                                            <FormField
-                                                id={`v${i}-weight`}
-                                                label="Weight"
-                                                error={
-                                                    errors[
-                                                        `variants.${i}.weight`
-                                                    ]
-                                                }
-                                            >
-                                                <Input
-                                                    id={`v${i}-weight`}
-                                                    inputMode="decimal"
-                                                    value={variant.weight}
-                                                    onChange={(e) =>
-                                                        updateVariant(i, {
-                                                            weight: e.target
-                                                                .value,
-                                                        })
-                                                    }
-                                                />
-                                            </FormField>
-                                            <FormField
-                                                id={`v${i}-barcode`}
-                                                label="Barcode"
-                                                error={
-                                                    errors[
-                                                        `variants.${i}.barcode`
-                                                    ]
-                                                }
-                                            >
-                                                <Input
-                                                    id={`v${i}-barcode`}
-                                                    value={variant.barcode}
-                                                    onChange={(e) =>
-                                                        updateVariant(i, {
-                                                            barcode:
-                                                                e.target.value,
-                                                        })
-                                                    }
-                                                />
-                                            </FormField>
-                                            <FormField
-                                                id={`v${i}-low`}
-                                                label="Low-stock alert at"
-                                                error={
-                                                    errors[
-                                                        `variants.${i}.low_stock_threshold`
-                                                    ]
-                                                }
-                                            >
-                                                <Input
-                                                    id={`v${i}-low`}
-                                                    type="number"
-                                                    min={0}
-                                                    value={
-                                                        variant.low_stock_threshold
-                                                    }
-                                                    placeholder="Store default"
-                                                    onChange={(e) =>
-                                                        updateVariant(i, {
-                                                            low_stock_threshold:
-                                                                e.target.value,
-                                                        })
-                                                    }
-                                                />
-                                            </FormField>
-                                        </div>
-                                        <div className="flex flex-wrap gap-5 text-sm">
-                                            <label className="flex items-center gap-2">
-                                                <Checkbox
-                                                    checked={
-                                                        variant.track_inventory
-                                                    }
-                                                    onCheckedChange={(c) =>
-                                                        updateVariant(i, {
-                                                            track_inventory:
-                                                                c === true,
-                                                        })
-                                                    }
-                                                />
-                                                Track inventory
-                                            </label>
-                                            <label className="flex items-center gap-2">
-                                                <Checkbox
-                                                    checked={
-                                                        variant.allow_backorder
-                                                    }
-                                                    disabled={
-                                                        !variant.track_inventory
-                                                    }
-                                                    onCheckedChange={(c) =>
-                                                        updateVariant(i, {
-                                                            allow_backorder:
-                                                                c === true,
-                                                        })
-                                                    }
-                                                />
-                                                Allow backorders (sell when out
-                                                of stock)
-                                            </label>
-                                            <label className="flex items-center gap-2">
-                                                <Checkbox
-                                                    checked={variant.is_active}
-                                                    onCheckedChange={(c) =>
-                                                        updateVariant(i, {
-                                                            is_active:
-                                                                c === true,
-                                                        })
-                                                    }
-                                                />
-                                                Available for sale
-                                            </label>
-                                        </div>
-                                    </fieldset>
-                                ))}
-                                {isVariable && (
-                                    <div>
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() =>
-                                                setData('variants', [
-                                                    ...data.variants,
-                                                    emptyVariant(),
-                                                ])
-                                            }
-                                        >
-                                            <Plus /> Add variant
-                                        </Button>
-                                    </div>
+                                {isVariable ? (
+                                    <VariantsTable
+                                        variants={data.variants}
+                                        attributes={selectedAttributes}
+                                        currency={currency}
+                                        errors={errors}
+                                        onChange={updateVariant}
+                                        onRemove={(i) =>
+                                            setData(
+                                                'variants',
+                                                data.variants.filter(
+                                                    (_, j) => j !== i,
+                                                ),
+                                            )
+                                        }
+                                        onAdd={() =>
+                                            setData('variants', [
+                                                ...data.variants,
+                                                {
+                                                    ...emptyVariant(),
+                                                    price:
+                                                        data.variants[0]
+                                                            ?.price ?? '',
+                                                },
+                                            ])
+                                        }
+                                    />
+                                ) : (
+                                    <VariantFields
+                                        index={0}
+                                        variant={data.variants[0]}
+                                        currency={currency}
+                                        errors={errors}
+                                        withBasics
+                                        onChange={(patch) =>
+                                            updateVariant(0, patch)
+                                        }
+                                    />
                                 )}
-                            </CardContent>
-                        </Card>
+                            </Section>
 
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Search engine listing</CardTitle>
-                            </CardHeader>
-                            <CardContent className="grid gap-4">
+                            <Section
+                                id="shipping"
+                                title="Shipping"
+                                description="Weight and package size, used by shipping rates and packing."
+                            >
+                                {rows.map((variant, i) => (
+                                    <div key={variant.id ?? `new-${i}`}>
+                                        {isVariable && (
+                                            <p className="mb-2 text-sm font-medium">
+                                                {variant.sku ||
+                                                    `Variant ${i + 1}`}
+                                            </p>
+                                        )}
+                                        <ShippingFields
+                                            index={i}
+                                            variant={variant}
+                                            errors={errors}
+                                            weightUnit={weightUnit}
+                                            dimensionUnit={dimensionUnit}
+                                            onChange={(patch) =>
+                                                updateVariant(i, patch)
+                                            }
+                                        />
+                                    </div>
+                                ))}
+                            </Section>
+
+                            <Section
+                                id="seo"
+                                title="Search engine listing"
+                                description="How the product appears in search results and shared links."
+                            >
                                 <FormField
                                     id="slug"
                                     label="URL slug"
@@ -825,10 +484,12 @@ function ProductForm({
                                     id="meta_title"
                                     label="Meta title"
                                     error={errors.meta_title}
+                                    hint={`${data.meta_title.length}/191 · the product name is used when empty.`}
                                 >
                                     <Input
                                         id="meta_title"
                                         value={data.meta_title}
+                                        maxLength={191}
                                         onChange={(e) =>
                                             setData(
                                                 'meta_title',
@@ -841,10 +502,12 @@ function ProductForm({
                                     id="meta_description"
                                     label="Meta description"
                                     error={errors.meta_description}
+                                    hint={`${data.meta_description.length}/500`}
                                 >
                                     <Textarea
                                         id="meta_description"
                                         rows={2}
+                                        maxLength={500}
                                         value={data.meta_description}
                                         onChange={(e) =>
                                             setData(
@@ -854,162 +517,257 @@ function ProductForm({
                                         }
                                     />
                                 </FormField>
-                            </CardContent>
-                        </Card>
-                    </div>
+                            </Section>
+                        </div>
 
-                    <div className="grid content-start gap-6">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Status</CardTitle>
-                            </CardHeader>
-                            <CardContent className="grid gap-4">
-                                {!product && (
-                                    <FormField
-                                        id="type"
-                                        label="Product type"
-                                        error={errors.type}
-                                    >
-                                        <select
+                        <aside className="grid content-start gap-6">
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>
+                                        Status &amp; visibility
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="grid gap-4">
+                                    {!product && (
+                                        <FormField
                                             id="type"
-                                            value={data.type}
-                                            onChange={(e) =>
-                                                setData('type', e.target.value)
-                                            }
-                                            className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm dark:bg-input/30"
+                                            label="Product type"
+                                            error={errors.type}
+                                            hint="Variable products have options such as size or color."
                                         >
-                                            {types.map((t) => (
+                                            <NativeSelect
+                                                id="type"
+                                                value={data.type}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        'type',
+                                                        e.target.value,
+                                                    )
+                                                }
+                                            >
+                                                {types.map((t) => (
+                                                    <option
+                                                        key={t.value}
+                                                        value={t.value}
+                                                    >
+                                                        {t.label}
+                                                    </option>
+                                                ))}
+                                            </NativeSelect>
+                                        </FormField>
+                                    )}
+                                    <FormField
+                                        id="status"
+                                        label="Status"
+                                        error={errors.status}
+                                    >
+                                        <NativeSelect
+                                            id="status"
+                                            value={data.status}
+                                            onChange={(e) =>
+                                                setData(
+                                                    'status',
+                                                    e.target.value,
+                                                )
+                                            }
+                                        >
+                                            {statuses.map((s) => (
                                                 <option
-                                                    key={t.value}
-                                                    value={t.value}
+                                                    key={s.value}
+                                                    value={s.value}
                                                 >
-                                                    {t.label}
+                                                    {s.label}
                                                 </option>
                                             ))}
-                                        </select>
+                                        </NativeSelect>
                                     </FormField>
-                                )}
-                                <FormField
-                                    id="status"
-                                    label="Status"
-                                    error={errors.status}
-                                >
-                                    <select
-                                        id="status"
-                                        value={data.status}
-                                        onChange={(e) =>
-                                            setData('status', e.target.value)
-                                        }
-                                        className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm dark:bg-input/30"
-                                    >
-                                        {statuses.map((s) => (
-                                            <option
-                                                key={s.value}
-                                                value={s.value}
-                                            >
-                                                {s.label}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </FormField>
-                                <FormField
-                                    id="published_at"
-                                    label="Publish at"
-                                    error={errors.published_at}
-                                    hint="Optional. Leave empty to publish immediately."
-                                >
-                                    <Input
+                                    <FormField
                                         id="published_at"
-                                        type="datetime-local"
-                                        value={data.published_at}
-                                        onChange={(e) =>
-                                            setData(
-                                                'published_at',
-                                                e.target.value,
-                                            )
+                                        label="Publish at"
+                                        error={errors.published_at}
+                                        hint="Optional. Schedule a future date, or leave empty to publish now."
+                                    >
+                                        <Input
+                                            id="published_at"
+                                            type="datetime-local"
+                                            value={data.published_at}
+                                            onChange={(e) =>
+                                                setData(
+                                                    'published_at',
+                                                    e.target.value,
+                                                )
+                                            }
+                                        />
+                                    </FormField>
+                                    <label className="flex items-start gap-2 text-sm">
+                                        <Checkbox
+                                            checked={data.is_featured}
+                                            onCheckedChange={(c) =>
+                                                setData(
+                                                    'is_featured',
+                                                    c === true,
+                                                )
+                                            }
+                                            className="mt-0.5"
+                                        />
+                                        <span>
+                                            Featured
+                                            <span className="block text-xs text-muted-foreground">
+                                                Can be shown in the home page
+                                                “Featured products” section.
+                                            </span>
+                                        </span>
+                                    </label>
+                                </CardContent>
+                            </Card>
+
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Organisation</CardTitle>
+                                </CardHeader>
+                                <CardContent className="grid gap-4">
+                                    <FormField
+                                        id="brand_id"
+                                        label="Brand"
+                                        error={errors.brand_id}
+                                    >
+                                        <NativeSelect
+                                            id="brand_id"
+                                            value={data.brand_id}
+                                            onChange={(e) =>
+                                                setData(
+                                                    'brand_id',
+                                                    e.target.value,
+                                                )
+                                            }
+                                        >
+                                            <option value="">No brand</option>
+                                            {brands.map((b) => (
+                                                <option key={b.id} value={b.id}>
+                                                    {b.name}
+                                                </option>
+                                            ))}
+                                        </NativeSelect>
+                                    </FormField>
+                                    <FormField
+                                        id="tags"
+                                        label="Tags"
+                                        error={
+                                            errors.tags ??
+                                            errorKeys
+                                                .filter((k) =>
+                                                    k.startsWith('tags.'),
+                                                )
+                                                .map((k) => errors[k])[0]
                                         }
-                                    />
-                                </FormField>
-                            </CardContent>
-                        </Card>
-
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Categories</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                {categories.length === 0 ? (
-                                    <p className="text-sm text-muted-foreground">
-                                        No categories yet.
-                                    </p>
-                                ) : (
-                                    <div className="grid max-h-72 gap-2 overflow-y-auto">
-                                        {categories.map((category) => (
-                                            <label
-                                                key={category.id}
-                                                className="flex items-center gap-2 text-sm"
-                                                style={{
-                                                    paddingLeft: `${category.depth * 1.25}rem`,
-                                                }}
-                                            >
-                                                <Checkbox
-                                                    checked={data.category_ids.includes(
-                                                        category.id,
-                                                    )}
-                                                    onCheckedChange={(
-                                                        checked,
-                                                    ) =>
-                                                        setData(
-                                                            'category_ids',
-                                                            checked === true
-                                                                ? [
-                                                                      ...data.category_ids,
-                                                                      category.id,
-                                                                  ]
-                                                                : data.category_ids.filter(
-                                                                      (id) =>
-                                                                          id !==
-                                                                          category.id,
-                                                                  ),
-                                                        )
-                                                    }
-                                                />
-                                                {category.name}
-                                            </label>
-                                        ))}
+                                        hint="Used for filtering and search. Not shown to shoppers."
+                                    >
+                                        <TagsInput
+                                            id="tags"
+                                            value={data.tags}
+                                            onChange={(tags) =>
+                                                setData('tags', tags)
+                                            }
+                                            suggestions={tagSuggestions}
+                                        />
+                                    </FormField>
+                                    <div className="grid gap-2">
+                                        <span className="text-sm font-medium">
+                                            Categories
+                                        </span>
+                                        {categories.length === 0 ? (
+                                            <p className="text-sm text-muted-foreground">
+                                                No categories yet.
+                                            </p>
+                                        ) : (
+                                            <div className="grid max-h-64 gap-2 overflow-y-auto rounded-md border p-3">
+                                                {categories.map((category) => (
+                                                    <label
+                                                        key={category.id}
+                                                        className="flex items-center gap-2 text-sm"
+                                                        style={{
+                                                            paddingLeft: `${category.depth * 1.25}rem`,
+                                                        }}
+                                                    >
+                                                        <Checkbox
+                                                            checked={data.category_ids.includes(
+                                                                category.id,
+                                                            )}
+                                                            onCheckedChange={(
+                                                                c,
+                                                            ) =>
+                                                                setData(
+                                                                    'category_ids',
+                                                                    c === true
+                                                                        ? [
+                                                                              ...data.category_ids,
+                                                                              category.id,
+                                                                          ]
+                                                                        : data.category_ids.filter(
+                                                                              (
+                                                                                  id,
+                                                                              ) =>
+                                                                                  id !==
+                                                                                  category.id,
+                                                                          ),
+                                                                )
+                                                            }
+                                                        />
+                                                        {category.name}
+                                                    </label>
+                                                ))}
+                                            </div>
+                                        )}
+                                        <InputError
+                                            message={errors.category_ids}
+                                        />
                                     </div>
-                                )}
-                                <InputError message={errors.category_ids} />
-                            </CardContent>
-                        </Card>
-
-                        <div className="flex gap-2">
-                            <Button type="submit" disabled={processing}>
-                                {product ? 'Save product' : 'Create product'}
-                            </Button>
-                            <Button variant="ghost" asChild>
-                                <Link href={index()}>Cancel</Link>
-                            </Button>
-                        </div>
+                                </CardContent>
+                            </Card>
+                        </aside>
                     </div>
-                </form>
 
-                {product ? (
-                    <ProductImages
-                        productId={product.id}
-                        images={product.images}
+                    <SaveBar
+                        dirty={isDirty}
+                        processing={processing}
+                        isNew={!product}
+                        errorCount={errorKeys.length}
+                        onDiscard={() => {
+                            form.reset();
+                            form.clearErrors();
+                        }}
                     />
-                ) : (
-                    <p className="text-sm text-muted-foreground">
-                        You can add images after creating the product.
-                    </p>
-                )}
+                </form>
             </AdminPage>
         </>
     );
 }
 
-function DeleteProductDialog({ product }: { product: ProductData }) {
+function Section({
+    id,
+    title,
+    description,
+    children,
+}: {
+    id: string;
+    title: string;
+    description?: string;
+    children: ReactNode;
+}) {
+    return (
+        <Card id={id} className="scroll-mt-16">
+            <CardHeader>
+                <CardTitle>{title}</CardTitle>
+                {description && (
+                    <CardDescription>{description}</CardDescription>
+                )}
+            </CardHeader>
+            <CardContent className="grid gap-4">{children}</CardContent>
+        </Card>
+    );
+}
+
+function DeleteProductDialog({ id, name }: { id: number; name: string }) {
     const form = useForm({});
 
     return (
@@ -1018,7 +776,7 @@ function DeleteProductDialog({ product }: { product: ProductData }) {
                 <Button variant="destructive">Delete</Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogTitle>Delete “{product.name}”?</DialogTitle>
+                <DialogTitle>Delete “{name}”?</DialogTitle>
                 <DialogDescription>
                     The product is removed from the catalog and storefront.
                     Existing orders keep their own copy of the product details.
@@ -1031,7 +789,7 @@ function DeleteProductDialog({ product }: { product: ProductData }) {
                         variant="destructive"
                         disabled={form.processing}
                         onClick={() =>
-                            form.submit(ProductController.destroy(product.id))
+                            form.submit(ProductController.destroy(id))
                         }
                     >
                         Delete product
