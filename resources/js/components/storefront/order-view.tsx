@@ -48,8 +48,7 @@ export function OrderView({ order }: { order: OrderDetail }) {
         <div className="grid gap-8 lg:grid-cols-3">
             <div className="grid content-start gap-6 lg:col-span-2">
                 <div className="flex flex-wrap gap-2">
-                    <StatusBadge status={order.payment_status} />
-                    <StatusBadge status={order.fulfillment_status} />
+                    <StatusBadge status={order.display_status} />
                 </div>
                 <ul className="grid divide-y rounded-lg border">
                     {order.items.map((item) => (

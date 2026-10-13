@@ -21,7 +21,8 @@ import type { Option, OrderSummary, Paginated } from '@/types';
 
 type Filters = {
     search: string;
-    status: string;
+    display_status: string;
+    ready: string;
     payment_status: string;
     fulfillment_status: string;
     from: string;
@@ -31,7 +32,8 @@ type Filters = {
 type Props = {
     orders: Paginated<OrderSummary>;
     filters: Filters;
-    statuses: Option[];
+    displayStatuses: Option[];
+    statusCounts: Record<string, number>;
     paymentStatuses: Option[];
     fulfillmentStatuses: Option[];
 };
@@ -39,7 +41,8 @@ type Props = {
 export default function OrdersIndex({
     orders,
     filters,
-    statuses,
+    displayStatuses,
+    statusCounts,
     paymentStatuses,
     fulfillmentStatuses,
 }: Props) {
@@ -82,7 +85,24 @@ export default function OrdersIndex({
                             placeholder="Order number or email"
                         />
                     </div>
-                    {select('status', 'Status', statuses)}
+                    <div className="grid gap-2">
+                        <Label htmlFor="display_status">Status</Label>
+                        <NativeSelect
+                            id="display_status"
+                            name="display_status"
+                            defaultValue={filters.display_status}
+                        >
+                            <option value="">Any</option>
+                            {displayStatuses.map((o) => (
+                                <option key={o.value} value={o.value}>
+                                    {o.label} ({statusCounts[o.value] ?? 0})
+                                </option>
+                            ))}
+                        </NativeSelect>
+                    </div>
+                    {filters.ready && (
+                        <input type="hidden" name="ready" value="1" />
+                    )}
                     {select('payment_status', 'Payment', paymentStatuses)}
                     {select(
                         'fulfillment_status',
@@ -141,7 +161,6 @@ export default function OrdersIndex({
                                 <TableHead>Customer</TableHead>
                                 <TableHead>Status</TableHead>
                                 <TableHead>Payment</TableHead>
-                                <TableHead>Fulfilment</TableHead>
                                 <TableHead className="text-right">
                                     Total
                                 </TableHead>
@@ -163,16 +182,13 @@ export default function OrdersIndex({
                                     </TableCell>
                                     <TableCell>{order.email}</TableCell>
                                     <TableCell>
-                                        <StatusBadge status={order.status} />
-                                    </TableCell>
-                                    <TableCell>
                                         <StatusBadge
-                                            status={order.payment_status}
+                                            status={order.display_status}
                                         />
                                     </TableCell>
                                     <TableCell>
                                         <StatusBadge
-                                            status={order.fulfillment_status}
+                                            status={order.payment_status}
                                         />
                                     </TableCell>
                                     <TableCell className="text-right tabular-nums">

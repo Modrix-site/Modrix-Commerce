@@ -1,5 +1,5 @@
 import { Form, Head, Link } from '@inertiajs/react';
-import { CircleAlert, PauseCircle } from 'lucide-react';
+import { CircleAlert, PauseCircle, Truck, Undo2 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import OrderController from '@/actions/App/Http/Controllers/Admin/OrderController';
 import { OrderActions } from '@/components/admin/orders/order-actions';
@@ -33,6 +33,7 @@ type Props = {
     actions: string[];
     canAddNotes: boolean;
     canIssueInvoice: boolean;
+    emailDefaults: Record<string, boolean>;
 };
 
 export default function OrderShow({
@@ -40,8 +41,15 @@ export default function OrderShow({
     actions,
     canAddNotes,
     canIssueInvoice,
+    emailDefaults,
 }: Props) {
     const heldReason = order.timeline.find((e) => e.kind === 'held')?.message;
+    const failedReason = order.timeline.find((e) =>
+        e.message.startsWith('Delivery attempt failed'),
+    )?.message;
+    const returnReason = order.timeline.find(
+        (e) => e.kind === 'returned',
+    )?.message;
 
     return (
         <>
@@ -50,12 +58,20 @@ export default function OrderShow({
                 <PageHeader
                     title={`Order ${order.number}`}
                     description={`Placed ${formatDate(order.placed_at)} · ${order.email} · ${order.grand_total.formatted}`}
-                    actions={<OrderActions order={order} actions={actions} />}
+                    actions={
+                        <OrderActions
+                            order={order}
+                            actions={actions}
+                            emailDefaults={emailDefaults}
+                        />
+                    }
                 />
 
-                <div className="flex flex-wrap items-center gap-2">
-                    <StatusBadge status={order.status} />
+                <div className="flex flex-wrap items-center gap-2 text-sm">
+                    <StatusBadge status={order.display_status} />
+                    <span className="text-muted-foreground">Payment</span>
                     <StatusBadge status={order.payment_status} />
+                    <span className="text-muted-foreground">Fulfilment</span>
                     <StatusBadge status={order.fulfillment_status} />
                 </div>
 
@@ -65,12 +81,28 @@ export default function OrderShow({
                         <AlertTitle>This order is on hold</AlertTitle>
                         <AlertDescription>
                             {heldReason ?? 'Order put on hold.'} It cannot be
-                            packed or shipped until the hold is released. The
-                            customer still sees it as{' '}
-                            {order.payment_status === 'unpaid'
-                                ? 'pending'
-                                : 'processing'}
-                            .
+                            picked, packed or shipped until the hold is
+                            released. Customers never see the hold.
+                        </AlertDescription>
+                    </Alert>
+                )}
+                {order.fulfillment_status === 'delivery_failed' && (
+                    <Alert variant="destructive">
+                        <Truck aria-hidden />
+                        <AlertTitle>Delivery failed</AlertTitle>
+                        <AlertDescription>
+                            {failedReason} Retry the delivery, or mark the order
+                            delivered or returned.
+                        </AlertDescription>
+                    </Alert>
+                )}
+                {order.fulfillment_status === 'returned' && (
+                    <Alert>
+                        <Undo2 aria-hidden />
+                        <AlertTitle>Returned</AlertTitle>
+                        <AlertDescription>
+                            {returnReason} Refund the customer from More actions
+                            if needed.
                         </AlertDescription>
                     </Alert>
                 )}

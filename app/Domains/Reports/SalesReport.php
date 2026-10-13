@@ -4,9 +4,7 @@ namespace App\Domains\Reports;
 
 use App\Core\Settings\SettingsRepository;
 use App\Domains\Inventory\InventoryService;
-use App\Domains\Orders\Enums\FulfillmentStatus;
 use App\Domains\Orders\Enums\OrderStatus;
-use App\Domains\Orders\Enums\PaymentStatus;
 use App\Domains\Orders\Models\Order;
 use App\Domains\Orders\Models\Refund;
 use App\Domains\Pricing\Money;
@@ -155,11 +153,7 @@ final class SalesReport
 
         return [
             'pending_payment' => Order::query()->where('status', OrderStatus::PendingPayment)->count(),
-            'awaiting_fulfillment' => Order::query()
-                ->whereIn('status', [OrderStatus::PendingPayment, OrderStatus::Pending, OrderStatus::Confirmed, OrderStatus::Processing])
-                ->whereIn('fulfillment_status', [FulfillmentStatus::Unfulfilled, FulfillmentStatus::Packed])
-                ->where(fn ($q) => $q->where('payment_status', PaymentStatus::Paid)->orWhere('payment_method_code', 'cash_on_delivery'))
-                ->count(),
+            'awaiting_fulfillment' => Order::query()->readyToFulfil()->count(),
             'low_stock' => $lowStock,
         ];
     }

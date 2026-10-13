@@ -644,7 +644,7 @@ final class OrderWorkflow
             }
             $order->save();
 
-            $event = $this->log($order, $target === FulfillmentStatus::Packed ? 'packed' : 'fulfillment', "Order moved to {$target->label()}.", ! $warehouse, $actor);
+            $event = $this->log($order, $target === FulfillmentStatus::Packed ? 'packed' : 'fulfillment', "Order moved to {$target->label()}.", ! $warehouse, $actor, ['status' => $target->value]);
             $this->audit->record('order.fulfillment_advanced', $order, ['number' => $order->number, 'status' => $target->value], $actor);
 
             if ($target === FulfillmentStatus::OutForDelivery) {

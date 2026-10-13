@@ -10,6 +10,7 @@ use App\Domains\Orders\Models\OrderEvent;
 use App\Domains\Orders\Models\OrderItem;
 use App\Domains\Orders\Models\Refund;
 use App\Domains\Orders\Models\Shipment;
+use App\Domains\Orders\OrderDisplayStatus;
 use App\Domains\Payments\Models\Payment;
 use App\Domains\Pricing\Money;
 use Illuminate\Support\Collection;
@@ -32,6 +33,8 @@ final class OrderPresenter
             'status_label' => $order->status->label(),
             'payment_status' => $order->payment_status->value,
             'fulfillment_status' => $order->fulfillment_status->value,
+            'display_status' => ($display = OrderDisplayStatus::for($order))->value,
+            'display_label' => $display->label(),
             'grand_total' => $order->money('grand_total'),
             'placed_at' => $order->placed_at->toIso8601String(),
         ];
@@ -46,15 +49,16 @@ final class OrderPresenter
      */
     public function customerSummary(Order $order): array
     {
-        $status = $order->status === OrderStatus::OnHold
-            ? (OrderStatus::tryFrom((string) $order->hold_previous_status) ?? OrderStatus::Processing)
-            : $order->status;
+        $display = OrderDisplayStatus::forCustomer($order);
 
         return [
             ...$this->summary($order),
-            'status' => $status->value,
-            'status_label' => $status->label(),
-            'fulfillment_status' => $order->fulfillment_status === FulfillmentStatus::Packed ? FulfillmentStatus::Unfulfilled->value : $order->fulfillment_status->value,
+            'status' => $display->value,
+            'status_label' => $display->label(),
+            'display_status' => $display->value,
+            'display_label' => $display->label(),
+            // Warehouse steps are internal: still "unfulfilled" until it ships.
+            'fulfillment_status' => $order->fulfillment_status->isBeforeShipping() ? FulfillmentStatus::Unfulfilled->value : $order->fulfillment_status->value,
         ];
     }
 
@@ -196,17 +200,45 @@ final class OrderPresenter
      */
     private function steps(Order $order, Collection $events): array
     {
-        $fulfillment = $order->fulfillment_status;
-        $packedAt = $events->where('type', 'packed')->last()?->created_at;
-        $packed = $fulfillment !== FulfillmentStatus::Unfulfilled;
+        // When each fulfilment step was reached, from the order's history.
+        $reachedAt = [];
+        foreach ($events as $event) {
+            $status = $event->metadata['status'] ?? ($event->type === 'packed' ? FulfillmentStatus::Packed->value : null);
+            if (is_string($status)) {
+                $reachedAt[$status] = $event->created_at;
+            }
+        }
+        if ($order->shipped_at) {
+            $reachedAt[FulfillmentStatus::Shipped->value] = $order->shipped_at;
+        }
+        if ($order->delivered_at) {
+            $reachedAt[FulfillmentStatus::Delivered->value] = $order->delivered_at;
+        }
 
-        return [
-            ['key' => 'placed', 'label' => 'Placed', 'done' => true, 'at' => $order->placed_at->toIso8601String()],
-            ['key' => 'paid', 'label' => 'Paid', 'done' => $order->paid_at !== null, 'at' => $order->paid_at?->toIso8601String()],
-            ['key' => 'packed', 'label' => 'Packed', 'done' => $packed, 'at' => $packed ? $packedAt?->toIso8601String() : null],
-            ['key' => 'shipped', 'label' => 'Shipped', 'done' => $order->shipped_at !== null, 'at' => $order->shipped_at?->toIso8601String()],
-            ['key' => 'delivered', 'label' => 'Delivered', 'done' => $order->delivered_at !== null, 'at' => $order->delivered_at?->toIso8601String()],
+        // The furthest point on the main path (side states count by evidence only).
+        $current = $order->fulfillment_status;
+        $reached = in_array($current, [FulfillmentStatus::DeliveryFailed, FulfillmentStatus::Returned], true) ? 0 : $current->rank();
+        foreach (array_keys($reachedAt) as $value) {
+            $reached = max($reached, FulfillmentStatus::from($value)->rank());
+        }
+
+        $effective = $order->status === OrderStatus::OnHold ? OrderStatus::tryFrom((string) $order->hold_previous_status) : $order->status;
+        $confirmed = ! in_array($effective, [OrderStatus::PendingPayment, OrderStatus::Pending, null], true);
+        $confirmedAt = $events->firstWhere('type', 'confirmed')->created_at ?? $order->paid_at ?? $order->placed_at;
+
+        $steps = [
+            ['key' => 'placed', 'label' => 'Placed', 'done' => true, 'skipped' => false, 'at' => $order->placed_at->toIso8601String()],
+            ['key' => 'paid', 'label' => 'Paid', 'done' => $order->paid_at !== null, 'skipped' => false, 'at' => $order->paid_at?->toIso8601String()],
+            ['key' => 'confirmed', 'label' => 'Confirmed', 'done' => $confirmed, 'skipped' => false, 'at' => $confirmed ? $confirmedAt->toIso8601String() : null],
         ];
+
+        foreach ([...FulfillmentStatus::preShipSteps(), FulfillmentStatus::Shipped, FulfillmentStatus::InTransit, FulfillmentStatus::OutForDelivery, FulfillmentStatus::Delivered] as $step) {
+            $done = $step->rank() <= $reached;
+            $at = $reachedAt[$step->value] ?? null;
+            $steps[] = ['key' => $step->value, 'label' => $step->label(), 'done' => $done, 'skipped' => $done && $at === null, 'at' => $at?->toIso8601String()];
+        }
+
+        return $steps;
     }
 
     /**

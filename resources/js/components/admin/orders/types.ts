@@ -1,9 +1,10 @@
 import type { MoneyValue, OrderDetail } from '@/types';
 
 export type OrderStep = {
-    key: 'placed' | 'paid' | 'packed' | 'shipped' | 'delivered';
+    key: string;
     label: string;
     done: boolean;
+    skipped: boolean;
     at: string | null;
 };
 

@@ -110,6 +110,8 @@ export type OrderSummary = {
     status_label: string;
     payment_status: string;
     fulfillment_status: string;
+    display_status: string;
+    display_label: string;
     grand_total: MoneyValue;
     placed_at: string;
 };

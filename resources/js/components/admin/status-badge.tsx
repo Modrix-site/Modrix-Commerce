@@ -8,8 +8,20 @@ const variants: Record<string, Variant> = {
     draft: 'outline',
     archived: 'secondary',
     pending: 'outline',
-    processing: 'default',
+    pending_payment: 'outline',
+    payment_failed: 'destructive',
+    failed: 'destructive',
+    confirmed: 'default',
     on_hold: 'secondary',
+    processing: 'default',
+    picking: 'secondary',
+    packing: 'secondary',
+    packed: 'secondary',
+    ready_for_dispatch: 'secondary',
+    in_transit: 'default',
+    out_for_delivery: 'default',
+    delivery_failed: 'destructive',
+    returned: 'secondary',
     completed: 'secondary',
     cancelled: 'destructive',
     unpaid: 'outline',
@@ -17,7 +29,6 @@ const variants: Record<string, Variant> = {
     partially_refunded: 'secondary',
     refunded: 'secondary',
     unfulfilled: 'outline',
-    packed: 'secondary',
     shipped: 'default',
     delivered: 'secondary',
     active: 'default',
@@ -29,10 +40,25 @@ const variants: Record<string, Variant> = {
  */
 export function StatusBadge({ status }: { status: string }) {
     const t = useT();
-    // Customer-facing states are translatable on storefront pages.
+    // Order states are translatable on storefront pages.
     const labels: Record<string, string> = {
+        pending_payment: t('Pending payment'),
+        payment_failed: t('Payment failed'),
+        failed: t('Payment failed'),
         pending: t('Pending'),
+        confirmed: t('Confirmed'),
+        on_hold: t('On hold'),
         processing: t('Processing'),
+        picking: t('Picking'),
+        packing: t('Packing'),
+        packed: t('Packed'),
+        ready_for_dispatch: t('Ready for dispatch'),
+        shipped: t('Shipped'),
+        in_transit: t('In transit'),
+        out_for_delivery: t('Out for delivery'),
+        delivered: t('Delivered'),
+        delivery_failed: t('Delivery failed'),
+        returned: t('Returned'),
         completed: t('Completed'),
         cancelled: t('Cancelled'),
         unpaid: t('Unpaid'),
@@ -40,11 +66,6 @@ export function StatusBadge({ status }: { status: string }) {
         partially_refunded: t('Partially refunded'),
         refunded: t('Refunded'),
         unfulfilled: t('Unfulfilled'),
-        shipped: t('Shipped'),
-        delivered: t('Delivered'),
-        // Staff-only states (customers never see them).
-        on_hold: 'On hold',
-        packed: 'Packed',
     };
     const label =
         labels[status] ??

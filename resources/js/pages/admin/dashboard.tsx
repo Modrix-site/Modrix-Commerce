@@ -110,10 +110,7 @@ export default function AdminDashboard({
                                 <Button variant="outline" size="sm" asChild>
                                     <Link
                                         href={ordersIndex({
-                                            query: {
-                                                fulfillment_status:
-                                                    'unfulfilled',
-                                            },
+                                            query: { ready: 1 },
                                         })}
                                     >
                                         View orders

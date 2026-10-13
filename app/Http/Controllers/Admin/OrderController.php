@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Core\Settings\StoreSettings;
 use App\Domains\Orders\Documents\OrderDocuments;
+use App\Domains\Orders\Enums\DisplayStatus;
 use App\Domains\Orders\Enums\FulfillmentStatus;
 use App\Domains\Orders\Enums\OrderStatus;
 use App\Domains\Orders\Enums\PaymentStatus;
 use App\Domains\Orders\Models\Order;
 use App\Domains\Orders\Models\Refund;
+use App\Domains\Orders\OrderEmailSettings;
 use App\Domains\Orders\OrderRefunds;
 use App\Domains\Orders\OrderWorkflow;
 use App\Domains\Pricing\Money;
@@ -31,7 +33,8 @@ class OrderController extends Controller
     {
         $filters = $request->validate([
             'search' => ['nullable', 'string', 'max:120'],
-            'status' => ['nullable', Rule::enum(OrderStatus::class)],
+            'display_status' => ['nullable', Rule::enum(DisplayStatus::class)],
+            'ready' => ['nullable', 'boolean'],
             'payment_status' => ['nullable', Rule::enum(PaymentStatus::class)],
             'fulfillment_status' => ['nullable', Rule::enum(FulfillmentStatus::class)],
             'from' => ['nullable', 'date_format:Y-m-d'],
@@ -47,7 +50,8 @@ class OrderController extends Controller
                     Like::orWhere($q, 'email', $search);
                 });
             })
-            ->when($filters['status'] ?? null, fn ($q, string $v) => $q->where('status', $v))
+            ->when($filters['display_status'] ?? null, fn ($q, string $v) => $q->where('display_status', $v))
+            ->when($filters['ready'] ?? false, fn ($q) => $q->readyToFulfil())
             ->when($filters['payment_status'] ?? null, fn ($q, string $v) => $q->where('payment_status', $v))
             ->when($filters['fulfillment_status'] ?? null, fn ($q, string $v) => $q->where('fulfillment_status', $v))
             // Date filters are interpreted in the store timezone.
@@ -63,19 +67,21 @@ class OrderController extends Controller
             'orders' => $orders,
             'filters' => [
                 'search' => $filters['search'] ?? '',
-                'status' => $filters['status'] ?? '',
+                'display_status' => $filters['display_status'] ?? '',
+                'ready' => ($filters['ready'] ?? false) ? '1' : '',
                 'payment_status' => $filters['payment_status'] ?? '',
                 'fulfillment_status' => $filters['fulfillment_status'] ?? '',
                 'from' => $filters['from'] ?? '',
                 'to' => $filters['to'] ?? '',
             ],
-            'statuses' => $this->options(OrderStatus::cases()),
+            'displayStatuses' => $this->options(DisplayStatus::cases()),
+            'statusCounts' => (object) Order::query()->toBase()->selectRaw('display_status, count(*) as total')->groupBy('display_status')->pluck('total', 'display_status')->map(fn ($n) => (int) $n)->all(),
             'paymentStatuses' => $this->options(PaymentStatus::cases()),
             'fulfillmentStatuses' => $this->options(FulfillmentStatus::cases()),
         ]);
     }
 
-    public function show(Request $request, Order $order, OrderPresenter $presenter): Response
+    public function show(Request $request, Order $order, OrderPresenter $presenter, OrderEmailSettings $emails): Response
     {
         /** @var User $user */
         $user = $request->user();
@@ -90,6 +96,7 @@ class OrderController extends Controller
             'order' => $presenter->forAdmin($order),
             'actions' => $permitted,
             'canAddNotes' => $user->can('orders.manage'),
+            'emailDefaults' => $emails->all(),
             'canIssueInvoice' => $user->can('orders.manage') && $order->invoice === null && $order->status !== OrderStatus::Cancelled,
         ]);
     }
@@ -267,7 +274,7 @@ class OrderController extends Controller
     }
 
     /**
-     * @param  list<OrderStatus|PaymentStatus|FulfillmentStatus>  $cases
+     * @param  list<DisplayStatus|PaymentStatus|FulfillmentStatus>  $cases
      * @return list<array{value: string, label: string}>
      */
     private function options(array $cases): array

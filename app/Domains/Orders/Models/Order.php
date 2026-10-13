@@ -10,6 +10,7 @@ use App\Domains\Orders\OrderDisplayStatus;
 use App\Domains\Payments\Models\Payment;
 use App\Domains\Pricing\Money;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -125,6 +126,19 @@ class Order extends Model
     public function billingAddress(): HasOne
     {
         return $this->hasOne(OrderAddress::class)->where('type', OrderAddress::BILLING);
+    }
+
+    /**
+     * Orders that can be worked on now: accepted, paid (or pay on delivery),
+     * not on hold and not yet with the carrier.
+     *
+     * @param  Builder<Order>  $query
+     */
+    public function scopeReadyToFulfil(Builder $query): void
+    {
+        $query->whereIn('status', [OrderStatus::PendingPayment, OrderStatus::Confirmed, OrderStatus::Processing])
+            ->whereIn('fulfillment_status', [FulfillmentStatus::Unfulfilled, ...FulfillmentStatus::preShipSteps()])
+            ->where(fn ($q) => $q->where('payment_status', PaymentStatus::Paid)->orWhere('payment_method_code', 'cash_on_delivery'));
     }
 
     /**
