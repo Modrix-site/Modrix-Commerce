@@ -50,6 +50,7 @@ class ProductController extends Controller
                 'meta_title' => $product->localized('meta_title') ?: $product->localized('name'),
                 'meta_description' => $product->localized('meta_description') ?: $product->localized('short_description'),
                 'images' => $product->images->map(fn (ProductImage $i) => ['id' => $i->id, 'url' => $i->url(), 'alt' => $i->alt])->values(),
+                'brand' => $product->brand ? ['name' => $product->brand->name, 'slug' => $product->brand->slug] : null,
                 'options' => $options,
                 'variants' => $product->variants->map(function (ProductVariant $v) use ($currency) {
                     $availability = VariantAvailability::of($v, $currency);

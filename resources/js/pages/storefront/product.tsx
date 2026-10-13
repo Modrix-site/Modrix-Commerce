@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { home } from '@/routes';
-import { category } from '@/routes/storefront';
+import { brand, category } from '@/routes/storefront';
 import type { MoneyValue } from '@/types';
 
 type Variant = {
@@ -37,6 +37,7 @@ type Props = {
         meta_title: string;
         meta_description: string | null;
         images: { id: number; url: string; alt: string | null }[];
+        brand: { name: string; slug: string } | null;
         options: {
             id: number;
             name: string;
@@ -176,6 +177,14 @@ export default function ProductPage({ product, breadcrumbs, slots }: Props) {
 
                 <div className="grid content-start gap-5">
                     <div className="grid gap-2">
+                        {product.brand && (
+                            <Link
+                                href={brand(product.brand.slug)}
+                                className="text-sm font-medium tracking-wide text-muted-foreground uppercase hover:text-foreground"
+                            >
+                                {product.brand.name}
+                            </Link>
+                        )}
                         <h1 className="text-2xl font-semibold tracking-tight">
                             {product.name}
                         </h1>

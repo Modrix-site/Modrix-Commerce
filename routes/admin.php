@@ -9,6 +9,7 @@
 
 use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\Catalog\AttributeController;
+use App\Http\Controllers\Admin\Catalog\BrandController;
 use App\Http\Controllers\Admin\Catalog\CategoryController;
 use App\Http\Controllers\Admin\Catalog\ProductController;
 use App\Http\Controllers\Admin\Catalog\ProductCsvController;
@@ -119,6 +120,11 @@ Route::middleware('can:products.update')->group(function () {
     Route::put('products/{product}/translations/{locale}', [TranslationController::class, 'updateProduct'])->where('locale', '[a-z]{2}')->name('products.translations.update');
     Route::get('categories/{category}/translations', [TranslationController::class, 'editCategory'])->name('categories.translations.edit');
     Route::put('categories/{category}/translations/{locale}', [TranslationController::class, 'updateCategory'])->where('locale', '[a-z]{2}')->name('categories.translations.update');
+
+    Route::get('brands', [BrandController::class, 'index'])->name('brands.index');
+    Route::post('brands', [BrandController::class, 'store'])->name('brands.store');
+    Route::put('brands/{brand}', [BrandController::class, 'update'])->name('brands.update');
+    Route::delete('brands/{brand}', [BrandController::class, 'destroy'])->name('brands.destroy');
 
     Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
     Route::get('categories/create', [CategoryController::class, 'create'])->name('categories.create');

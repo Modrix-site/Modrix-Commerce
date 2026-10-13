@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Storefront;
 use App\Core\Extensions\StorefrontSlots;
 use App\Core\Settings\StoreSettings;
 use App\Core\Themes\ThemeResolver;
+use App\Domains\Catalog\Models\Brand;
 use App\Domains\Catalog\Models\Category;
 use App\Domains\Catalog\StorefrontCatalog;
 use App\Http\Controllers\Controller;
@@ -46,6 +47,24 @@ class CatalogController extends Controller
             'subcategories' => $category->children()->active()->withCurrentTranslation()->get(['id', 'name', 'slug'])
                 ->map(fn (Category $c) => ['id' => $c->id, 'name' => $c->localized('name'), 'slug' => $c->slug]),
             'products' => $catalog->listing($store->currency(), $category, null, $sort),
+            'sort' => $sort,
+            'query' => null,
+        ]);
+    }
+
+    public function brand(Request $request, string $slug, StorefrontCatalog $catalog, StoreSettings $store): Response
+    {
+        $brand = Brand::query()->with('logo')->where('slug', $slug)->firstOrFail();
+        $sort = $this->sort($request);
+
+        return Inertia::render('storefront/listing', [
+            'title' => $brand->name,
+            'description' => $brand->description,
+            'image' => $brand->logo?->url(),
+            'meta' => ['title' => $brand->name, 'description' => $brand->description],
+            'breadcrumbs' => [],
+            'subcategories' => [],
+            'products' => $catalog->listing($store->currency(), null, null, $sort, brand: $brand),
             'sort' => $sort,
             'query' => null,
         ]);

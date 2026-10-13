@@ -150,7 +150,7 @@ final class ThemeSchema
             ]],
             'featured_products' => ['label' => 'Featured products', 'fields' => [
                 'title' => ['type' => 'string', 'label' => 'Title', 'max' => 80, 'default' => 'New arrivals'],
-                'source' => ['type' => 'select', 'label' => 'Products', 'options' => ['latest', 'category'], 'default' => 'latest'],
+                'source' => ['type' => 'select', 'label' => 'Products', 'options' => ['latest', 'featured', 'category'], 'default' => 'latest'],
                 'category' => ['type' => 'string', 'label' => 'Category slug (when "category")', 'max' => 191],
                 'limit' => ['type' => 'integer', 'label' => 'Number of products', 'min' => 2, 'max' => 12, 'default' => 8],
             ]],

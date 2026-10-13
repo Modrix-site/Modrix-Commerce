@@ -79,6 +79,7 @@ class CommerceServiceProvider extends ServiceProvider
             $navigation->add('reports', 'Reports', 'admin.reports.index', 'chart-column', 'Sales', 'reports.view', 80);
             $navigation->add('products', 'Products', 'admin.products.index', 'package', 'Catalog', 'products.view', 100);
             $navigation->add('categories', 'Categories', 'admin.categories.index', 'folder-tree', 'Catalog', 'products.update', 110);
+            $navigation->add('brands', 'Brands', 'admin.brands.index', 'tags', 'Catalog', 'products.update', 115);
             $navigation->add('translations', 'Translations', 'admin.translations.index', 'languages', 'Catalog', 'products.update', 115);
             $navigation->add('media', 'Media library', 'admin.media.index', 'image', 'Catalog', 'media.manage', 116);
             $navigation->add('attributes', 'Options', 'admin.attributes.index', 'tags', 'Catalog', 'products.update', 120);

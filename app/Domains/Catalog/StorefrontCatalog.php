@@ -3,6 +3,7 @@
 namespace App\Domains\Catalog;
 
 use App\Domains\Catalog\Contracts\SearchProvider;
+use App\Domains\Catalog\Models\Brand;
 use App\Domains\Catalog\Models\Category;
 use App\Domains\Catalog\Models\Product;
 use App\Domains\Catalog\Models\ProductImage;
@@ -27,9 +28,13 @@ final class StorefrontCatalog
     /**
      * @return LengthAwarePaginator<int, array<string, mixed>>
      */
-    public function listing(string $currency, ?Category $category = null, ?string $search = null, string $sort = 'newest', int $perPage = 24): LengthAwarePaginator
+    public function listing(string $currency, ?Category $category = null, ?string $search = null, string $sort = 'newest', int $perPage = 24, ?Brand $brand = null): LengthAwarePaginator
     {
         $query = $this->visibleWithPrice($currency);
+
+        if ($brand !== null) {
+            $query->where('products.brand_id', $brand->id);
+        }
 
         if ($category !== null) {
             $ids = $category->descendantIdsAndSelf();
@@ -66,6 +71,23 @@ final class StorefrontCatalog
         return array_values(array_map(fn (Product $p) => $this->card($p, $currency), $products->all()));
     }
 
+    /**
+     * Products the merchant marked as featured, newest first.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function featured(string $currency, int $limit = 8): array
+    {
+        $products = $this->visibleWithPrice($currency)
+            ->where('products.is_featured', true)
+            ->orderByDesc('products.published_at')
+            ->orderByDesc('products.id')
+            ->limit($limit)
+            ->get();
+
+        return array_values(array_map(fn (Product $p) => $this->card($p, $currency), $products->all()));
+    }
+
     public function findVisible(string $slug): ?Product
     {
         $product = Product::query()
@@ -77,6 +99,7 @@ final class StorefrontCatalog
                 'variants.stocks',
                 'variants.options.attribute',
                 'images',
+                'brand:id,name,slug',
                 'categories' => fn ($q) => $q->where('is_active', true),
                 'categories.translations' => fn ($q) => $q->where('locale', app()->getLocale()),
                 'translations' => fn ($q) => $q->where('locale', app()->getLocale()),

@@ -18,6 +18,7 @@ Route::middleware(['installed', ShareStorefrontData::class])->group(function () 
     Route::get('/', [CatalogController::class, 'home'])->name('home');
     Route::get('search', [CatalogController::class, 'search'])->name('storefront.search');
     Route::get('c/{slug}', [CatalogController::class, 'category'])->name('storefront.category');
+    Route::get('b/{slug}', [CatalogController::class, 'brand'])->name('storefront.brand');
     Route::get('p/{slug}', [ProductController::class, 'show'])->name('storefront.product');
 
     Route::get('cart', [CartController::class, 'show'])->name('cart.show');

@@ -50,6 +50,10 @@ final class HomeSectionsPresenter
     {
         $limit = (int) ($settings['limit'] ?? 8);
 
+        if (($settings['source'] ?? 'latest') === 'featured') {
+            return $this->catalog->featured($currency, $limit);
+        }
+
         if (($settings['source'] ?? 'latest') === 'category' && ($settings['category'] ?? '') !== '') {
             $category = Category::query()->active()->where('slug', $settings['category'])->first();
 
