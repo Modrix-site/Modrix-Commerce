@@ -156,6 +156,9 @@ Route::middleware('can:orders.manage')->group(function () {
     Route::post('orders/{order}/deliver', [OrderController::class, 'deliver'])->name('orders.deliver');
     Route::post('orders/{order}/invoice', [OrderController::class, 'issueInvoice'])->name('orders.invoice.store');
     Route::post('orders/{order}/confirm', [OrderController::class, 'confirm'])->name('orders.confirm');
+    Route::post('orders/{order}/fulfillment', [OrderController::class, 'advance'])->name('orders.fulfillment');
+    Route::post('orders/{order}/delivery-failed', [OrderController::class, 'deliveryFailed'])->name('orders.delivery-failed');
+    Route::post('orders/{order}/returned', [OrderController::class, 'returned'])->name('orders.returned');
     Route::post('orders/{order}/hold', [OrderController::class, 'hold'])->name('orders.hold');
     Route::post('orders/{order}/release', [OrderController::class, 'release'])->name('orders.release');
     Route::post('orders/{order}/pack', [OrderController::class, 'pack'])->name('orders.pack');

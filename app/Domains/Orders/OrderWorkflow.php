@@ -69,6 +69,10 @@ final class OrderWorkflow
             }
         }
 
+        foreach ($this->reachableSteps($order) as $step) {
+            $actions[] = 'advance:'.$step->value;
+        }
+
         if ($order->status === OrderStatus::Pending) {
             $actions[] = 'confirm';
         }
@@ -81,8 +85,16 @@ final class OrderWorkflow
             $actions[] = 'release';
         }
 
-        if ($order->fulfillment_status === FulfillmentStatus::Shipped && $order->status !== OrderStatus::Cancelled) {
+        if ($this->canDeliver($order)) {
             $actions[] = 'mark_delivered';
+        }
+
+        if ($this->isWithCarrier($order) && $order->fulfillment_status !== FulfillmentStatus::DeliveryFailed) {
+            $actions[] = 'delivery_failed';
+        }
+
+        if ($this->canReturn($order)) {
+            $actions[] = 'returned';
         }
 
         if ($this->canCancel($order)) {
@@ -310,7 +322,7 @@ final class OrderWorkflow
     public function markDelivered(Order $order, User $actor): Order
     {
         return $this->transition($order, function (Order $order) use ($actor): Order {
-            if ($order->fulfillment_status !== FulfillmentStatus::Shipped || $order->status === OrderStatus::Cancelled) {
+            if (! $this->canDeliver($order)) {
                 throw ValidationException::withMessages(['order' => 'Only shipped orders can be marked as delivered.']);
             }
 
@@ -601,18 +613,98 @@ final class OrderWorkflow
 
     public function markPacked(Order $order, User $actor, bool $notify = false): Order
     {
-        return $this->transition($order, function (Order $order) use ($actor, $notify): Order {
-            if (! $this->canShip($order) || $order->fulfillment_status !== FulfillmentStatus::Unfulfilled) {
-                throw ValidationException::withMessages(['order' => 'This order cannot be packed in its current state.']);
+        return $this->advanceFulfillment($order, $actor, FulfillmentStatus::Packed, $notify);
+    }
+
+    /**
+     * Move the order forward to `$target` on the fulfilment path. Optional
+     * steps may be skipped; steps never go back. Shipping records a shipment
+     * and delivering completes paid orders.
+     */
+    public function advanceFulfillment(Order $order, User $actor, FulfillmentStatus $target, ?bool $notify = null, ?string $carrier = null, ?string $trackingNumber = null, ?string $trackingUrl = null): Order
+    {
+        if ($target === FulfillmentStatus::Shipped) {
+            return $this->ship($order, $actor, $carrier, $trackingNumber, $trackingUrl, $notify ?? true);
+        }
+
+        if ($target === FulfillmentStatus::Delivered) {
+            return $this->markDelivered($order, $actor);
+        }
+
+        return $this->transition($order, function (Order $order) use ($actor, $target, $notify): Order {
+            if (! in_array($target, $this->reachableSteps($order), true)) {
+                throw ValidationException::withMessages(['order' => "This order cannot move to \"{$target->label()}\" from its current state."]);
             }
 
-            $order->forceFill(['fulfillment_status' => FulfillmentStatus::Packed])->save();
+            $warehouse = $target->isBeforeShipping();
+            $order->fulfillment_status = $target;
+            if ($warehouse && $order->status === OrderStatus::Confirmed) {
+                $order->status = OrderStatus::Processing;
+            }
+            $order->save();
 
-            $this->log($order, 'packed', 'Order packed and ready to ship.', false, $actor);
-            $this->audit->record('order.packed', $order, ['number' => $order->number], $actor);
+            $this->log($order, $target === FulfillmentStatus::Packed ? 'packed' : 'fulfillment', "Order moved to {$target->label()}.", ! $warehouse, $actor);
+            $this->audit->record('order.fulfillment_advanced', $order, ['number' => $order->number, 'status' => $target->value], $actor);
+
+            if ($notify === true) {
+                $this->notifyCustomer($order, $actor, match ($target) {
+                    FulfillmentStatus::InTransit => 'Your order is on its way.',
+                    FulfillmentStatus::OutForDelivery => 'Your order is out for delivery today.',
+                    default => 'Your order is being prepared.',
+                });
+            }
+
+            return $order;
+        });
+    }
+
+    /**
+     * A delivery attempt failed. The carrier can try again (in transit or
+     * out for delivery) or the order can be delivered or returned.
+     */
+    public function markDeliveryFailed(Order $order, User $actor, string $reason, bool $notify = false): Order
+    {
+        return $this->transition($order, function (Order $order) use ($actor, $reason, $notify): Order {
+            if (! $this->isWithCarrier($order) || $order->fulfillment_status === FulfillmentStatus::DeliveryFailed) {
+                throw ValidationException::withMessages(['order' => 'Only orders with the carrier can have a failed delivery.']);
+            }
+
+            $order->forceFill(['fulfillment_status' => FulfillmentStatus::DeliveryFailed])->save();
+
+            $message = 'Delivery attempt failed: '.rtrim($reason, '.').'.';
+            $this->log($order, 'fulfillment', $message, true, $actor);
+            $this->audit->record('order.delivery_failed', $order, ['number' => $order->number, 'reason' => $reason], $actor);
 
             if ($notify) {
-                $this->notifyCustomer($order, $actor, 'Your order is packed and will ship soon.');
+                $this->notifyCustomer($order, $actor, $message);
+            }
+
+            return $order;
+        });
+    }
+
+    /**
+     * The goods came back. Items can be put back into stock; refunds remain
+     * a separate step.
+     */
+    public function markReturned(Order $order, User $actor, string $reason, bool $restock, bool $notify = false): Order
+    {
+        return $this->transition($order, function (Order $order) use ($actor, $reason, $restock, $notify): Order {
+            if (! $this->canReturn($order)) {
+                throw ValidationException::withMessages(['order' => 'Only shipped or delivered orders can be returned.']);
+            }
+
+            if ($restock) {
+                $this->restockRemaining($order, MovementReason::Restock, $actor);
+            }
+
+            $order->forceFill(['fulfillment_status' => FulfillmentStatus::Returned])->save();
+
+            $this->log($order, 'returned', 'Order returned: '.rtrim($reason, '.').'.'.($restock ? ' Items put back in stock.' : ''), false, $actor, ['restock' => $restock]);
+            $this->audit->record('order.returned', $order, ['number' => $order->number, 'reason' => $reason, 'restock' => $restock], $actor);
+
+            if ($notify) {
+                $this->notifyCustomer($order, $actor, 'We have received your return.');
             }
 
             return $order;
@@ -697,12 +789,56 @@ final class OrderWorkflow
     private function canHold(Order $order): bool
     {
         return in_array($order->status, [OrderStatus::PendingPayment, OrderStatus::Pending, OrderStatus::Confirmed, OrderStatus::Processing], true)
-            && in_array($order->fulfillment_status, [FulfillmentStatus::Unfulfilled, FulfillmentStatus::Packed], true);
+            && $order->fulfillment_status->isBeforeShipping();
+    }
+
+    /**
+     * Fulfilment steps the order can move to now (skipping allowed, never back).
+     *
+     * @return list<FulfillmentStatus>
+     */
+    private function reachableSteps(Order $order): array
+    {
+        $current = $order->fulfillment_status;
+
+        if ($this->canShip($order)) {
+            return array_values(array_filter(
+                [...FulfillmentStatus::preShipSteps(), FulfillmentStatus::Shipped],
+                fn (FulfillmentStatus $s) => $s->rank() > $current->rank(),
+            ));
+        }
+
+        if (! $this->isWithCarrier($order)) {
+            return [];
+        }
+
+        $steps = array_filter(
+            [FulfillmentStatus::InTransit, FulfillmentStatus::OutForDelivery],
+            fn (FulfillmentStatus $s) => $current === FulfillmentStatus::DeliveryFailed || $s->rank() > $current->rank(),
+        );
+
+        return [...array_values($steps), FulfillmentStatus::Delivered];
+    }
+
+    private function isWithCarrier(Order $order): bool
+    {
+        return $order->status !== OrderStatus::Cancelled && $order->fulfillment_status->isWithCarrier();
+    }
+
+    private function canDeliver(Order $order): bool
+    {
+        return $this->isWithCarrier($order);
+    }
+
+    private function canReturn(Order $order): bool
+    {
+        return $order->status !== OrderStatus::Cancelled
+            && ($order->fulfillment_status->isWithCarrier() || $order->fulfillment_status === FulfillmentStatus::Delivered);
     }
 
     private function canShip(Order $order): bool
     {
-        if (! in_array($order->fulfillment_status, [FulfillmentStatus::Unfulfilled, FulfillmentStatus::Packed], true)
+        if (! $order->fulfillment_status->isBeforeShipping()
             || in_array($order->status, [OrderStatus::Cancelled, OrderStatus::OnHold, OrderStatus::Pending], true)) {
             return false;
         }
@@ -719,7 +855,7 @@ final class OrderWorkflow
     {
         return $order->status !== OrderStatus::Cancelled
             && $order->status !== OrderStatus::Completed
-            && in_array($order->fulfillment_status, [FulfillmentStatus::Unfulfilled, FulfillmentStatus::Packed], true)
+            && $order->fulfillment_status->isBeforeShipping()
             && ($order->payment_status->isOutstanding() || $order->payment_status === PaymentStatus::Refunded);
     }
 

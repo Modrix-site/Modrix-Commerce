@@ -125,6 +125,46 @@ class OrderController extends Controller
         return $this->done($order, __('Invoice :number issued.', ['number' => $invoice->number]));
     }
 
+    public function advance(Request $request, Order $order): RedirectResponse
+    {
+        $data = $request->validate([
+            'status' => ['required', Rule::enum(FulfillmentStatus::class)->except([FulfillmentStatus::Unfulfilled, FulfillmentStatus::DeliveryFailed, FulfillmentStatus::Returned])],
+            'notify' => ['nullable', 'boolean'],
+            'carrier' => ['nullable', 'string', 'max:120'],
+            'tracking_number' => ['nullable', 'string', 'max:120'],
+            'tracking_url' => ['nullable', 'url:https,http', 'max:500'],
+        ]);
+        $target = FulfillmentStatus::from($data['status']);
+        $notify = array_key_exists('notify', $data) && $data['notify'] !== null ? (bool) $data['notify'] : null;
+
+        $this->workflow->advanceFulfillment($order, $this->actor($request), $target, $notify, $data['carrier'] ?? null, $data['tracking_number'] ?? null, $data['tracking_url'] ?? null);
+
+        return $this->done($order, __('Order moved to :status.', ['status' => $target->label()]));
+    }
+
+    public function deliveryFailed(Request $request, Order $order): RedirectResponse
+    {
+        $data = $request->validate([
+            'reason' => ['required', 'string', 'max:500'],
+            'notify' => ['boolean'],
+        ]);
+        $this->workflow->markDeliveryFailed($order, $this->actor($request), $data['reason'], (bool) ($data['notify'] ?? false));
+
+        return $this->done($order, __('Failed delivery recorded.'));
+    }
+
+    public function returned(Request $request, Order $order): RedirectResponse
+    {
+        $data = $request->validate([
+            'reason' => ['required', 'string', 'max:500'],
+            'restock' => ['boolean'],
+            'notify' => ['boolean'],
+        ]);
+        $this->workflow->markReturned($order, $this->actor($request), $data['reason'], (bool) ($data['restock'] ?? false), (bool) ($data['notify'] ?? false));
+
+        return $this->done($order, __('Return recorded.'));
+    }
+
     public function confirm(Request $request, Order $order): RedirectResponse
     {
         $data = $request->validate(['notify' => ['boolean']]);
