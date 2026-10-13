@@ -125,6 +125,14 @@ class OrderController extends Controller
         return $this->done($order, __('Invoice :number issued.', ['number' => $invoice->number]));
     }
 
+    public function confirm(Request $request, Order $order): RedirectResponse
+    {
+        $data = $request->validate(['notify' => ['boolean']]);
+        $this->workflow->confirm($order, $this->actor($request), (bool) ($data['notify'] ?? false));
+
+        return $this->done($order, __('Order confirmed.'));
+    }
+
     public function hold(Request $request, Order $order): RedirectResponse
     {
         $data = $request->validate([

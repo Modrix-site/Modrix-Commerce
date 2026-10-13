@@ -170,6 +170,15 @@ final class PlaceOrder
 
     private function createOrder(PricedCart $priced, CheckoutData $data, Customer $customer, ?User $user, string $paymentCode, string $paymentLabel, ?string $ipAddress): Order
     {
+        // Pay-on-delivery orders are accepted straight away (or wait for review);
+        // everything else waits for its payment.
+        $payOnDelivery = $this->paymentMethods->definition($paymentCode)?->allowsFulfillmentBeforePayment() ?? false;
+        $status = match (true) {
+            ! $payOnDelivery => OrderStatus::PendingPayment,
+            (bool) $this->settings->get('orders.review_before_confirm', false) => OrderStatus::Pending,
+            default => OrderStatus::Confirmed,
+        };
+
         $order = new Order;
         $order->forceFill([
             'customer_id' => $customer->id,
@@ -177,7 +186,7 @@ final class PlaceOrder
             'email' => Str::lower($data->email),
             'phone' => $data->phone,
             'currency' => $priced->currency,
-            'status' => OrderStatus::PendingPayment,
+            'status' => $status,
             'payment_status' => PaymentStatus::Unpaid,
             'fulfillment_status' => FulfillmentStatus::Unfulfilled,
             'subtotal' => $priced->subtotal()->toDecimal(),

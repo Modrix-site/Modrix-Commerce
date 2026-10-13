@@ -3,6 +3,7 @@
 namespace App\Domains\Orders;
 
 use App\Core\Audit\AuditLogger;
+use App\Core\Settings\SettingsRepository;
 use App\Domains\Discounts\Models\Coupon;
 use App\Domains\Inventory\InventoryService;
 use App\Domains\Inventory\MovementReason;
@@ -46,6 +47,7 @@ final class OrderWorkflow
         private readonly InventoryService $inventory,
         private readonly PaymentMethods $paymentMethods,
         private readonly AuditLogger $audit,
+        private readonly SettingsRepository $settings,
     ) {}
 
     /**
@@ -65,6 +67,10 @@ final class OrderWorkflow
             if ($order->fulfillment_status === FulfillmentStatus::Unfulfilled) {
                 $actions[] = 'mark_packed';
             }
+        }
+
+        if ($order->status === OrderStatus::Pending) {
+            $actions[] = 'confirm';
         }
 
         if ($this->canHold($order)) {
@@ -519,6 +525,30 @@ final class OrderWorkflow
     }
 
     /**
+     * Accept an order that was waiting for review (only when the store
+     * reviews orders before confirming them).
+     */
+    public function confirm(Order $order, User $actor, bool $notify = false): Order
+    {
+        return $this->transition($order, function (Order $order) use ($actor, $notify): Order {
+            if ($order->status !== OrderStatus::Pending) {
+                throw ValidationException::withMessages(['order' => 'Only orders waiting for review can be confirmed.']);
+            }
+
+            $order->forceFill(['status' => OrderStatus::Confirmed])->save();
+
+            $this->log($order, 'confirmed', 'Order confirmed.', true, $actor);
+            $this->audit->record('order.confirmed', $order, ['number' => $order->number], $actor);
+
+            if ($notify) {
+                $this->notifyCustomer($order, $actor, 'Your order has been confirmed.');
+            }
+
+            return $order;
+        });
+    }
+
+    /**
      * Pause an unshipped order (address check, fraud review, stock query).
      * It cannot be packed or shipped until released; payments, cancellation
      * and refunds still work. Customers keep seeing "processing".
@@ -630,7 +660,7 @@ final class OrderWorkflow
         $delivered = $order->fulfillment_status === FulfillmentStatus::Delivered;
         $next = match (true) {
             $delivered => OrderStatus::Completed,
-            $order->fulfillment_status === FulfillmentStatus::Unfulfilled => OrderStatus::Confirmed,
+            $order->fulfillment_status === FulfillmentStatus::Unfulfilled => $this->reviewsOrders() ? OrderStatus::Pending : OrderStatus::Confirmed,
             default => OrderStatus::Processing, // pay-on-delivery orders already on their way
         };
 
@@ -644,6 +674,11 @@ final class OrderWorkflow
             'status' => $next,
             'completed_at' => $delivered ? now() : null,
         ]);
+    }
+
+    private function reviewsOrders(): bool
+    {
+        return (bool) $this->settings->get('orders.review_before_confirm', false);
     }
 
     private function notifyCustomer(Order $order, User $actor, string $message): void
@@ -668,7 +703,7 @@ final class OrderWorkflow
     private function canShip(Order $order): bool
     {
         if (! in_array($order->fulfillment_status, [FulfillmentStatus::Unfulfilled, FulfillmentStatus::Packed], true)
-            || in_array($order->status, [OrderStatus::Cancelled, OrderStatus::OnHold], true)) {
+            || in_array($order->status, [OrderStatus::Cancelled, OrderStatus::OnHold, OrderStatus::Pending], true)) {
             return false;
         }
 
