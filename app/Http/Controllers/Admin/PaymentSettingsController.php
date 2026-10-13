@@ -40,14 +40,17 @@ class PaymentSettingsController extends Controller
     public function update(Request $request, SettingsRepository $settings, AuditLogger $audit): RedirectResponse
     {
         $rules = ['guest_checkout' => ['boolean']];
+        $attributes = [];
 
         foreach (array_keys(PaymentMethods::MANUAL) as $code) {
             $rules["methods.{$code}.enabled"] = ['boolean'];
             $rules["methods.{$code}.label"] = ['required', 'string', 'max:120'];
             $rules["methods.{$code}.instructions"] = ['required', 'string', 'max:2000'];
+            $attributes["methods.{$code}.label"] = 'name shown to customers';
+            $attributes["methods.{$code}.instructions"] = 'instructions';
         }
 
-        $data = $request->validate($rules);
+        $data = $request->validate($rules, [], $attributes);
         $values = ['checkout.guest_enabled' => (bool) ($data['guest_checkout'] ?? false)];
 
         foreach (array_keys(PaymentMethods::MANUAL) as $code) {

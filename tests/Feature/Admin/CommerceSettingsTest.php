@@ -104,6 +104,11 @@ class CommerceSettingsTest extends TestCase
         $this->assertSame(['bank_transfer'], array_keys($enabled));
         $this->assertSame('Bank deposit', $enabled['bank_transfer']->label());
 
+        // Errors name the field in plain words (shown inside the method's tab).
+        $payload['methods']['cash_on_delivery']['label'] = '';
+        $this->put(route('admin.payments.settings.update'), $payload)
+            ->assertSessionHasErrors(['methods.cash_on_delivery.label' => 'The name shown to customers field is required.']);
+
         $this->actingAs($this->userWithRole('store-manager'))->get(route('admin.payments.settings'))->assertForbidden();
     }
 
