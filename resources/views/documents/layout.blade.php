@@ -19,7 +19,7 @@
     table.lines { width: 100%; border-collapse: collapse; margin-top: 2mm; }
     table.lines th { text-align: left; font-size: 7.5pt; text-transform: uppercase; letter-spacing: 0.5pt; color: #6b7280; border-bottom: 1pt solid #1f2328; padding: 1.5mm 1.5mm; }
     table.lines td { border-bottom: 0.5pt solid #e5e7eb; padding: 2mm 1.5mm; vertical-align: top; }
-    .num { text-align: right; white-space: nowrap; }
+    .num, table.lines th.num, table.lines td.num { text-align: right; white-space: nowrap; }
     table.totals { width: 45%; margin-left: 55%; border-collapse: collapse; margin-top: 4mm; }
     table.totals td { padding: 1.2mm 1.5mm; }
     table.totals tr.grand td { border-top: 1pt solid #1f2328; font-weight: bold; font-size: 11pt; padding-top: 2mm; }

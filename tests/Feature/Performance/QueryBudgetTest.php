@@ -3,6 +3,7 @@
 namespace Tests\Feature\Performance;
 
 use App\Domains\Catalog\Models\Category;
+use App\Domains\Orders\Models\Order;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -69,6 +70,26 @@ class QueryBudgetTest extends TestCase
         }
 
         $this->assertFlat($small, $this->queries('/cart'), 'cart');
+    }
+
+    public function test_order_page_does_not_query_per_event_or_payment()
+    {
+        $this->enableCheckout();
+        $this->addToCart($this->sellable());
+        $this->post(route('checkout.store'), $this->checkoutPayload(['payment_method' => 'bank_transfer']))->assertRedirect();
+        $order = Order::query()->latest('id')->firstOrFail();
+        $owner = $this->owner();
+        $this->actingAs($owner)->post(route('admin.orders.payments.store', $order))->assertSessionHasNoErrors();
+
+        $small = $this->queries(route('admin.orders.show', $order));
+
+        for ($i = 0; $i < 6; $i++) {
+            $this->post(route('admin.orders.notes.store', $order), ['message' => "Note {$i}"]);
+        }
+        $this->post(route('admin.orders.pack', $order))->assertSessionHasNoErrors();
+        $this->post(route('admin.orders.ship', $order), ['notify' => false])->assertSessionHasNoErrors();
+
+        $this->assertFlat($small, $this->queries(route('admin.orders.show', $order)), 'admin order');
     }
 
     public function test_order_lists_do_not_query_per_order()

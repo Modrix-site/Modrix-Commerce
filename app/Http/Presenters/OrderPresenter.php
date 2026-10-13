@@ -12,6 +12,7 @@ use App\Domains\Orders\Models\Refund;
 use App\Domains\Orders\Models\Shipment;
 use App\Domains\Payments\Models\Payment;
 use App\Domains\Pricing\Money;
+use Illuminate\Support\Collection;
 
 /**
  * Shapes order snapshots for the storefront and the admin. The customer view
@@ -62,7 +63,7 @@ final class OrderPresenter
      */
     public function forCustomer(Order $order): array
     {
-        $order->loadMissing('items', 'addresses', 'shipments');
+        $order->loadMissing('items', 'addresses', 'shipments', 'payments', 'invoice');
 
         return [
             ...$this->customerSummary($order),
@@ -83,6 +84,10 @@ final class OrderPresenter
             'history' => $order->events()->where('is_customer_visible', true)->get()
                 ->map(fn (OrderEvent $e) => ['message' => $e->message, 'created_at' => $e->created_at->toIso8601String()])
                 ->values(),
+            'documents' => [
+                'invoice' => $order->invoice ? ['number' => $order->invoice->number, 'url' => route('account.orders.invoice', $order)] : null,
+                'receipts' => $this->receipts($order, fn (Payment $p) => route('account.orders.receipt', [$order, $p])),
+            ],
         ];
     }
 
@@ -91,10 +96,13 @@ final class OrderPresenter
      */
     public function forAdmin(Order $order): array
     {
-        $order->loadMissing('items', 'addresses', 'shipments', 'payments', 'refunds', 'customer');
+        $order->loadMissing('items', 'addresses', 'shipments', 'payments', 'refunds', 'customer', 'invoice');
+        $events = $order->events()->with('actor:id,email')->get();
 
         return [
             ...$this->forCustomer($order),
+            // Staff see the real statuses (customers never see holds or packing).
+            ...$this->summary($order),
             'id' => $order->id,
             'phone' => $order->phone,
             'ip_address' => $order->ip_address,
@@ -126,7 +134,7 @@ final class OrderPresenter
                 'failure_reason' => $r->failure_reason,
                 'created_at' => $r->created_at?->toIso8601String(),
             ])->values(),
-            'history' => $order->events()->with('actor:id,email')->get()->map(fn (OrderEvent $e) => [
+            'history' => $events->map(fn (OrderEvent $e) => [
                 'id' => $e->id,
                 'type' => $e->type,
                 'message' => $e->message,
@@ -134,6 +142,70 @@ final class OrderPresenter
                 'actor' => $e->actor?->email,
                 'created_at' => $e->created_at->toIso8601String(),
             ])->values(),
+            'timeline' => $events->sortByDesc(fn (OrderEvent $e) => [$e->created_at->getTimestamp(), $e->id])->map(fn (OrderEvent $e) => [
+                'id' => $e->id,
+                'kind' => $e->type,
+                'message' => $e->message,
+                'customer_visible' => $e->is_customer_visible,
+                'actor' => $e->actor?->email,
+                'at' => $e->created_at->toIso8601String(),
+            ])->values(),
+            'steps' => $this->steps($order, $events),
+            'documents' => [
+                'invoice' => $order->invoice ? [
+                    'number' => $order->invoice->number,
+                    'issued_at' => $order->invoice->issued_at->toIso8601String(),
+                    'url' => route('admin.orders.documents.invoice', $order),
+                ] : null,
+                'receipts' => $this->receipts($order, fn (Payment $p) => route('admin.orders.documents.receipt', [$order, $p])),
+                'packing_slip_url' => route('admin.orders.documents.packing-slip', $order),
+            ],
+        ];
+    }
+
+    /**
+     * One receipt per successful payment.
+     *
+     * @param  callable(Payment): string  $url
+     * @return list<array{id: int, label: string, amount: Money, paid_at: string|null, url: string}>
+     */
+    private function receipts(Order $order, callable $url): array
+    {
+        $receipts = [];
+
+        foreach ($order->payments as $p) {
+            if ($p->status === Payment::STATUS_PAID) {
+                $receipts[] = [
+                    'id' => $p->id,
+                    'label' => 'Receipt',
+                    'amount' => Money::of($p->amount, $order->currency),
+                    'paid_at' => $p->paid_at?->toIso8601String(),
+                    'url' => $url($p),
+                ];
+            }
+        }
+
+        return $receipts;
+    }
+
+    /**
+     * Progress through placed → paid → packed → shipped → delivered.
+     *
+     * @param  Collection<int, OrderEvent>  $events
+     * @return list<array{key: string, label: string, done: bool, at: string|null}>
+     */
+    private function steps(Order $order, Collection $events): array
+    {
+        $fulfillment = $order->fulfillment_status;
+        $packedAt = $events->where('type', 'packed')->last()?->created_at;
+        $packed = $fulfillment !== FulfillmentStatus::Unfulfilled;
+
+        return [
+            ['key' => 'placed', 'label' => 'Placed', 'done' => true, 'at' => $order->placed_at->toIso8601String()],
+            ['key' => 'paid', 'label' => 'Paid', 'done' => $order->paid_at !== null, 'at' => $order->paid_at?->toIso8601String()],
+            ['key' => 'packed', 'label' => 'Packed', 'done' => $packed, 'at' => $packed ? $packedAt?->toIso8601String() : null],
+            ['key' => 'shipped', 'label' => 'Shipped', 'done' => $order->shipped_at !== null, 'at' => $order->shipped_at?->toIso8601String()],
+            ['key' => 'delivered', 'label' => 'Delivered', 'done' => $order->delivered_at !== null, 'at' => $order->delivered_at?->toIso8601String()],
         ];
     }
 

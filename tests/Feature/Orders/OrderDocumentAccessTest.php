@@ -144,6 +144,64 @@ class OrderDocumentAccessTest extends TestCase
         $this->assertFalse(Route::has('account.orders.packing-slip'));
     }
 
+    public function test_admin_order_page_shows_documents_steps_and_timeline()
+    {
+        $order = $this->placeOrder();
+        $payment = $this->pay($order);
+        $manager = $this->userWithRole('order-manager');
+        $this->actingAs($manager)->post(route('admin.orders.hold', $order), ['reason' => 'Check address'])->assertSessionHasNoErrors();
+
+        $this->get(route('admin.orders.show', $order))->assertInertia(fn ($page) => $page
+            ->component('admin/orders/show')
+            // Staff see the real status, unlike customers.
+            ->where('order.status', 'on_hold')
+            ->where('order.documents.invoice.number', 'INV-2026-00001')
+            ->where('order.documents.invoice.url', route('admin.orders.documents.invoice', $order))
+            ->where('order.documents.receipts.0.url', route('admin.orders.documents.receipt', [$order, $payment]))
+            ->where('order.documents.packing_slip_url', route('admin.orders.documents.packing-slip', $order))
+            ->where('order.steps.0.key', 'placed')
+            ->where('order.steps.1.done', true)
+            ->where('order.steps.2.key', 'packed')
+            ->where('order.steps.2.done', false)
+            ->where('order.timeline.0.kind', 'held')
+            ->where('order.timeline', fn ($timeline) => collect($timeline)->contains('kind', 'payment'))
+            ->where('canIssueInvoice', false)
+            ->where('actions', fn ($actions) => collect($actions)->contains('release')));
+    }
+
+    public function test_issue_invoice_offered_only_before_issue_to_managers()
+    {
+        $order = $this->placeOrder();
+
+        $this->actingAs($this->userWithRole('order-manager'))->get(route('admin.orders.show', $order))
+            ->assertInertia(fn ($page) => $page->where('canIssueInvoice', true)->where('order.documents.invoice', null));
+        $this->actingAs($this->userWithRole('support-agent'))->get(route('admin.orders.show', $order))
+            ->assertInertia(fn ($page) => $page->where('canIssueInvoice', false));
+    }
+
+    public function test_customer_order_page_lists_invoice_and_receipts()
+    {
+        $customer = User::factory()->create();
+        $order = $this->placeOrder($customer);
+        $payment = $this->pay($order);
+
+        $this->actingAs($customer)->get(route('account.orders.show', $order))->assertInertia(fn ($page) => $page
+            ->where('order.documents.invoice.number', 'INV-2026-00001')
+            ->where('order.documents.invoice.url', route('account.orders.invoice', $order))
+            ->where('order.documents.receipts.0.url', route('account.orders.receipt', [$order, $payment]))
+            ->missing('order.documents.packing_slip_url'));
+    }
+
+    public function test_customer_order_page_has_no_documents_for_unpaid_order()
+    {
+        $customer = User::factory()->create();
+        $order = $this->placeOrder($customer);
+
+        $this->actingAs($customer)->get(route('account.orders.show', $order))->assertInertia(fn ($page) => $page
+            ->where('order.documents.invoice', null)
+            ->where('order.documents.receipts', []));
+    }
+
     public function test_payment_email_has_invoice_attachment()
     {
         $order = $this->placeOrder();

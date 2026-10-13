@@ -530,7 +530,7 @@ final class OrderWorkflow
                 'status' => OrderStatus::OnHold,
             ])->save();
 
-            $this->log($order, 'held', 'Order put on hold'.($reason ? ": {$reason}" : '.'), false, $actor, ['reason' => $reason]);
+            $this->log($order, 'held', 'Order put on hold'.($reason ? ': '.rtrim($reason, '.').'.' : '.'), false, $actor, ['reason' => $reason]);
             $this->audit->record('order.held', $order, ['number' => $order->number, 'reason' => $reason], $actor);
 
             if ($notify) {

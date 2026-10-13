@@ -9,6 +9,7 @@ const variants: Record<string, Variant> = {
     archived: 'secondary',
     pending: 'outline',
     processing: 'default',
+    on_hold: 'secondary',
     completed: 'secondary',
     cancelled: 'destructive',
     unpaid: 'outline',
@@ -16,6 +17,7 @@ const variants: Record<string, Variant> = {
     partially_refunded: 'secondary',
     refunded: 'secondary',
     unfulfilled: 'outline',
+    packed: 'secondary',
     shipped: 'default',
     delivered: 'secondary',
     active: 'default',
@@ -40,6 +42,9 @@ export function StatusBadge({ status }: { status: string }) {
         unfulfilled: t('Unfulfilled'),
         shipped: t('Shipped'),
         delivered: t('Delivered'),
+        // Staff-only states (customers never see them).
+        on_hold: 'On hold',
+        packed: 'Packed',
     };
     const label =
         labels[status] ??

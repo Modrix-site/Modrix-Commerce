@@ -90,6 +90,7 @@ class OrderController extends Controller
             'order' => $presenter->forAdmin($order),
             'actions' => $permitted,
             'canAddNotes' => $user->can('orders.manage'),
+            'canIssueInvoice' => $user->can('orders.manage') && $order->invoice === null && $order->status !== OrderStatus::Cancelled,
         ]);
     }
 

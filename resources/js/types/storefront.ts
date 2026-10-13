@@ -163,4 +163,14 @@ export type OrderDetail = OrderSummary & {
         actor?: string | null;
         created_at: string;
     }[];
+    documents?: {
+        invoice: { number: string; url: string } | null;
+        receipts: {
+            id: number;
+            label: string;
+            amount: MoneyValue;
+            paid_at: string | null;
+            url: string;
+        }[];
+    };
 };

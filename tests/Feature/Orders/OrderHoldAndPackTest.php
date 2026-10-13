@@ -63,7 +63,7 @@ class OrderHoldAndPackTest extends TestCase
         $this->assertNotContains('mark_packed', $actions);
         $this->assertContains('release', $actions);
         $this->assertNotContains('hold', $actions);
-        $this->assertDatabaseHas('order_events', ['order_id' => $order->id, 'type' => 'held', 'is_customer_visible' => false]);
+        $this->assertDatabaseHas('order_events', ['order_id' => $order->id, 'type' => 'held', 'message' => 'Order put on hold: Address check.', 'is_customer_visible' => false]);
 
         $this->post(route('admin.orders.ship', $order))->assertSessionHasErrors('order');
 
