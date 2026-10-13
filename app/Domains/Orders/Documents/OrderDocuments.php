@@ -3,14 +3,22 @@
 namespace App\Domains\Orders\Documents;
 
 use App\Core\Audit\AuditLogger;
+use App\Core\Localization\Locales;
+use App\Core\Media\Media;
 use App\Core\Settings\StoreSettings;
 use App\Domains\Orders\Models\Invoice;
 use App\Domains\Orders\Models\Order;
 use App\Domains\Orders\Models\OrderAddress;
 use App\Domains\Orders\Models\OrderEvent;
 use App\Domains\Orders\Models\OrderItem;
+use App\Domains\Payments\Models\Payment;
+use App\Domains\Pricing\Money;
 use App\Models\User;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use InvalidArgumentException;
+use Throwable;
 
 /**
  * Invoices, payment receipts and packing slips. Invoices are stored
@@ -24,6 +32,8 @@ final class OrderDocuments
         private readonly DocumentSettings $settings,
         private readonly StoreSettings $store,
         private readonly AuditLogger $audit,
+        private readonly PdfRenderer $pdf,
+        private readonly Locales $locales,
     ) {}
 
     /**
@@ -106,5 +116,144 @@ final class OrderDocuments
 
             return $invoice;
         });
+    }
+
+    /**
+     * The issued invoice, rendered from its snapshot only.
+     */
+    public function invoicePdf(Invoice $invoice): string
+    {
+        $invoice->loadMissing('order');
+        $currency = $invoice->currency;
+
+        return $this->render('documents.invoice', [
+            'title' => __('Invoice'),
+            'reference' => $invoice->number,
+            'date' => $this->date($invoice->issued_at),
+            'seller' => $invoice->seller,
+            'invoice' => $invoice,
+            'orderNumber' => $invoice->order->number,
+            'money' => fn (string $amount) => Money::of($amount, $currency)->format($this->numberLocale()),
+            'footer' => $invoice->notes,
+        ]);
+    }
+
+    /**
+     * A receipt for one successful payment, with the order's balance after it.
+     */
+    public function receiptPdf(Payment $payment): string
+    {
+        if ($payment->status !== Payment::STATUS_PAID) {
+            throw new InvalidArgumentException('Receipts are only available for successful payments.');
+        }
+
+        $order = $payment->order;
+        $paidToDate = Money::of('0', $order->currency);
+
+        $paid = $order->payments()->where('status', Payment::STATUS_PAID)->orderBy('paid_at')->orderBy('id')->get();
+        foreach ($paid as $p) {
+            $paidToDate = $paidToDate->plus($p->money());
+
+            if ($p->id === $payment->id) {
+                break;
+            }
+        }
+
+        $grand = $order->money('grand_total');
+        $format = fn (Money $m) => $m->format($this->numberLocale());
+
+        return $this->render('documents.receipt', [
+            'title' => __('Payment receipt'),
+            'reference' => $order->number.'-'.$payment->id,
+            'date' => $this->date($payment->paid_at ?? $payment->created_at ?? now()),
+            'seller' => $this->currentSeller(),
+            'order' => $order,
+            'payment' => $payment,
+            'amount' => $format($payment->money()),
+            'grandTotal' => $format($grand),
+            'paidToDate' => $format($paidToDate),
+            'refunded' => $order->money('refunded_total')->isZero() ? null : $format($order->money('refunded_total')),
+            'balance' => $format($grand->minus($paidToDate)->nonNegative()),
+            'invoiceNumber' => $order->invoice?->number,
+            'footer' => $this->settings->toArray()['footer'],
+        ]);
+    }
+
+    /**
+     * What to pack and where to send it. No prices.
+     */
+    public function packingSlipPdf(Order $order): string
+    {
+        $order->loadMissing('items', 'addresses');
+
+        return $this->render('documents.packing-slip', [
+            'title' => __('Packing slip'),
+            'reference' => $order->number,
+            'date' => $this->date($order->placed_at),
+            'seller' => $this->currentSeller(),
+            'order' => $order,
+            'shipping' => $order->addresses->firstWhere('type', 'shipping')?->toPresentable(),
+            'footer' => null,
+        ]);
+    }
+
+    /**
+     * Documents use the store's default language.
+     *
+     * @param  view-string  $view
+     * @param  array<string, mixed>  $data
+     */
+    private function render(string $view, array $data): string
+    {
+        $previous = app()->getLocale();
+        app()->setLocale($this->locales->default());
+
+        try {
+            return $this->pdf->render($view, [...$data, 'logo' => $this->logo()]);
+        } finally {
+            app()->setLocale($previous);
+        }
+    }
+
+    /**
+     * @return array{name: string, email: string|null, address: string|null, tax_id: string|null}
+     */
+    private function currentSeller(): array
+    {
+        $store = $this->store->toArray();
+        $settings = $this->settings->toArray();
+
+        return ['name' => $store['store_name'], 'email' => $store['store_email'], 'address' => $settings['seller_address'], 'tax_id' => $settings['tax_id']];
+    }
+
+    /**
+     * The store logo as a data URI: documents never load URLs.
+     */
+    private function logo(): ?string
+    {
+        $id = $this->settings->toArray()['logo_media_id'];
+        $media = $id === null ? null : Media::query()->find($id);
+
+        if ($media === null || ! in_array($media->mime, ['image/png', 'image/jpeg', 'image/gif'], true)) {
+            return null;
+        }
+
+        try {
+            $bytes = Storage::disk($media->disk)->get($media->path);
+        } catch (Throwable) {
+            return null;
+        }
+
+        return $bytes === null ? null : 'data:'.$media->mime.';base64,'.base64_encode($bytes);
+    }
+
+    private function date(CarbonInterface $date): string
+    {
+        return $date->copy()->setTimezone($this->store->timezone())->locale(app()->getLocale())->translatedFormat('j M Y');
+    }
+
+    private function numberLocale(): string
+    {
+        return str_replace('-', '_', app()->getLocale());
     }
 }
