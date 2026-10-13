@@ -207,6 +207,7 @@ Route::middleware(['marketplace.server', 'can:marketplace.manage'])->prefix('mar
     Route::put('products/{product}', [MarketplaceAdminController::class, 'update'])->name('products.update');
     Route::post('products/{product}/releases', [MarketplaceAdminController::class, 'upload'])->middleware('throttle:10,1')->name('releases.store');
     Route::post('releases/{release}/review', [MarketplaceAdminController::class, 'review'])->middleware('password.confirm')->name('releases.review');
+    Route::post('products/{product}/advisories', [MarketplaceAdminController::class, 'advisory'])->name('advisories.store');
     Route::post('releases/{release}/withdraw', [MarketplaceAdminController::class, 'withdraw'])->name('releases.withdraw');
     Route::get('orders', [MarketplaceAdminController::class, 'orders'])->name('orders.index');
     Route::post('orders/{order}/refund', [MarketplaceAdminController::class, 'refund'])->middleware('password.confirm')->name('orders.refund');

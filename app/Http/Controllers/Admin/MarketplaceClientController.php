@@ -64,6 +64,8 @@ class MarketplaceClientController extends Controller
                 'last_checked_at' => $l->last_checked_at?->toIso8601String(),
                 'last_error' => $l->last_error,
                 'needs_verification' => $l->needsVerification(),
+                // Only installed packages can be affected.
+                'advisories' => $this->licenses->installedVersion($l) === null ? [] : $l->advisoriesFor($this->licenses->installedVersion($l)),
             ]),
             'history' => UpdateHistory::query()->with('actor:id,email')->latest('id')->limit(30)->get()->map(fn (UpdateHistory $h) => [
                 'id' => $h->id,

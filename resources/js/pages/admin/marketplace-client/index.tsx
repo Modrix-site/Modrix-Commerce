@@ -36,7 +36,7 @@ import {
 } from '@/components/ui/table';
 import { useCan } from '@/hooks/use-can';
 import { index } from '@/routes/admin/marketplace-client';
-import type { MoneyValue } from '@/types';
+import type { Advisory, MoneyValue } from '@/types';
 
 type CatalogItem = {
     slug: string;
@@ -65,6 +65,7 @@ type StoreLicense = {
     last_checked_at: string | null;
     last_error: string | null;
     needs_verification: boolean;
+    advisories: Advisory[];
 };
 
 type HistoryEntry = {
@@ -365,6 +366,24 @@ function LicenseCard({
                     </p>
                 )}
 
+                {l.advisories.map((a) => (
+                    <Alert key={a.id} variant="destructive">
+                        <ShieldAlert />
+                        <AlertTitle>
+                            Security advisory ({a.severity}): {a.title}
+                        </AlertTitle>
+                        <AlertDescription>
+                            <p className="whitespace-pre-line">{a.body}</p>
+                            <p>
+                                Your version v{l.installed_version} is affected
+                                ({a.affected_versions}).
+                                {a.fixed_version
+                                    ? ` Update to v${a.fixed_version} or later.`
+                                    : ' No fix is available yet: consider disabling the extension under Extensions.'}
+                            </p>
+                        </AlertDescription>
+                    </Alert>
+                ))}
                 {l.needs_verification && (
                     <p className="flex items-center gap-1 text-sm text-amber-700 dark:text-amber-400">
                         <ShieldAlert className="size-4" aria-hidden /> This

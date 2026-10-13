@@ -3,6 +3,8 @@
 namespace App\Core\Operations;
 
 use App\Core\Installation\RequirementChecker;
+use App\Core\Marketplace\Client\StoreLicense;
+use App\Core\Marketplace\Client\StoreLicenses;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -27,6 +29,7 @@ final class HealthCheck
     public function __construct(
         private readonly RequirementChecker $requirements,
         private readonly Backups $backups,
+        private readonly StoreLicenses $licenses,
     ) {}
 
     /**
@@ -46,6 +49,7 @@ final class HealthCheck
             'scheduler' => fn () => $this->scheduler(),
             'backups' => fn () => $this->backupAge(),
             'webhooks' => fn () => $this->webhooks(),
+            'advisories' => fn () => $this->advisories(),
             'configuration' => fn () => $this->configuration(),
         ] as $key => $check) {
             try {
@@ -216,6 +220,26 @@ final class HealthCheck
         $failed = DB::table('payment_webhook_events')->where('status', 'failed')->where('received_at', '>=', now()->subDay())->count();
 
         return ['Payment webhooks', $failed > 0 ? self::WARNING : self::OK, $failed > 0 ? "{$failed} failed in the last 24 hours (Admin → Payments → Events)" : 'No failures in the last 24 hours'];
+    }
+
+    /** @return array{string, string, string} */
+    private function advisories(): array
+    {
+        if (! Schema::hasTable('marketplace_licenses')) {
+            return ['Extension advisories', self::OK, 'None'];
+        }
+
+        $affected = [];
+        foreach (StoreLicense::query()->get() as $license) {
+            $installed = $this->licenses->installedVersion($license);
+            if ($installed !== null && $license->advisoriesFor($installed) !== []) {
+                $affected[] = $license->extension_name.' '.$installed;
+            }
+        }
+
+        return $affected === []
+            ? ['Extension advisories', self::OK, 'No installed marketplace package is affected']
+            : ['Extension advisories', self::WARNING, 'Security advisory for '.implode(', ', $affected).': update under Admin → Extensions → Marketplace'];
     }
 
     /** @return array{string, string, string} */

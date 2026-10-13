@@ -5,6 +5,7 @@ namespace App\Domains\Marketplace;
 use App\Domains\Marketplace\Models\DownloadToken;
 use App\Domains\Marketplace\Models\License;
 use App\Domains\Marketplace\Models\LicenseActivation;
+use App\Domains\Marketplace\Models\MarketplaceAdvisory;
 use App\Domains\Marketplace\Models\MarketplaceProduct;
 use App\Domains\Marketplace\Models\MarketplaceRelease;
 use Composer\Semver\Comparator;
@@ -241,6 +242,9 @@ final class LicenseApi
             'updates_until' => $license->updates_until?->toIso8601String(),
             'issued_at' => now()->toIso8601String(),
             'valid_until' => now()->addDays(max(1, (int) config('ecomodular.marketplace.server.token_days', 30)))->toIso8601String(),
+            // Security advisories travel inside the signed token, for every license status.
+            'advisories' => $product->advisories()->where('published_at', '<=', now())->orderByDesc('published_at')->limit(20)->get()
+                ->map(fn (MarketplaceAdvisory $a) => $a->payload())->all(),
         ]);
 
         return ['token' => $signed['metadata'], 'signature' => $signed['signature']];

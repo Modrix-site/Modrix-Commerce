@@ -20,6 +20,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { index } from '@/routes/admin/marketplace/products';
+import type { Advisory } from '@/types';
 
 type Product = {
     slug: string;
@@ -136,12 +137,14 @@ type Props = {
     product: Product | null;
     currency: string;
     releases: Release[];
+    advisories: Advisory[];
 };
 
 export default function MarketplaceProductForm({
     product,
     currency,
     releases,
+    advisories,
 }: Props) {
     const form = product
         ? MarketplaceAdminController.update.form(product.slug)
@@ -408,8 +411,153 @@ export default function MarketplaceProductForm({
                         </CardContent>
                     </Card>
                 )}
+
+                {product && (
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between gap-2">
+                            <CardTitle>Security advisories</CardTitle>
+                            <AdvisoryDialog slug={product.slug} />
+                        </CardHeader>
+                        <CardContent>
+                            {advisories.length === 0 ? (
+                                <p className="text-sm text-muted-foreground">
+                                    None published. Stores receive advisories
+                                    inside their signed license token and warn
+                                    merchants running an affected version.
+                                </p>
+                            ) : (
+                                <ul className="grid gap-3">
+                                    {advisories.map((a) => (
+                                        <li key={a.id} className="grid gap-1">
+                                            <span className="flex flex-wrap items-center gap-2 font-medium">
+                                                <Badge variant="destructive">
+                                                    {a.severity}
+                                                </Badge>
+                                                {a.title}
+                                            </span>
+                                            <span className="text-xs text-muted-foreground">
+                                                Affects {a.affected_versions}
+                                                {a.fixed_version &&
+                                                    ` · fixed in ${a.fixed_version}`}
+                                                {' · '}
+                                                {new Date(
+                                                    a.published_at,
+                                                ).toLocaleDateString()}
+                                            </span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </CardContent>
+                    </Card>
+                )}
             </AdminPage>
         </>
+    );
+}
+
+function AdvisoryDialog({ slug }: { slug: string }) {
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button size="sm" variant="outline">
+                    Publish advisory
+                </Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogTitle>Publish a security advisory</DialogTitle>
+                <DialogDescription>
+                    Every store with this product receives it on its next
+                    license check, and stores running an affected version are
+                    warned. Advisories cannot be edited after publishing.
+                </DialogDescription>
+                <Form
+                    {...MarketplaceAdminController.advisory.form(slug)}
+                    options={{ preserveScroll: true }}
+                    resetOnSuccess
+                    className="grid gap-3"
+                >
+                    {({ processing, errors }) => (
+                        <>
+                            <FormField
+                                id="severity"
+                                label="Severity"
+                                error={errors.severity}
+                            >
+                                <NativeSelect
+                                    id="severity"
+                                    name="severity"
+                                    defaultValue="high"
+                                >
+                                    <option value="low">Low</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="high">High</option>
+                                    <option value="critical">Critical</option>
+                                </NativeSelect>
+                            </FormField>
+                            <FormField
+                                id="adv-title"
+                                label="Title"
+                                error={errors.title}
+                            >
+                                <Input id="adv-title" name="title" required />
+                            </FormField>
+                            <FormField
+                                id="adv-body"
+                                label="Details and required action"
+                                error={errors.body}
+                            >
+                                <Textarea
+                                    id="adv-body"
+                                    name="body"
+                                    rows={4}
+                                    required
+                                />
+                            </FormField>
+                            <FormField
+                                id="affected_versions"
+                                label="Affected versions"
+                                error={errors.affected_versions}
+                                hint='A constraint such as "<1.2.3".'
+                            >
+                                <Input
+                                    id="affected_versions"
+                                    name="affected_versions"
+                                    className="font-mono"
+                                    required
+                                />
+                            </FormField>
+                            <FormField
+                                id="fixed_version"
+                                label="Fixed in"
+                                error={errors.fixed_version}
+                            >
+                                <Input
+                                    id="fixed_version"
+                                    name="fixed_version"
+                                    className="font-mono"
+                                    placeholder="1.2.3"
+                                />
+                            </FormField>
+                            <DialogFooter className="gap-2">
+                                <DialogClose asChild>
+                                    <Button variant="secondary" type="button">
+                                        Cancel
+                                    </Button>
+                                </DialogClose>
+                                <Button
+                                    type="submit"
+                                    variant="destructive"
+                                    disabled={processing}
+                                >
+                                    Publish
+                                </Button>
+                            </DialogFooter>
+                        </>
+                    )}
+                </Form>
+            </DialogContent>
+        </Dialog>
     );
 }
 

@@ -72,6 +72,15 @@ The daily `ecomodular:marketplace:check` command refreshes every license. If the
 
 A checksum detects corruption; only a verified signature establishes who published the package. **Neither proves that the code is safe.** That is why releases are reviewed before signing, and why modules still require the merchant's explicit trust confirmation before they are enabled (ADR-029).
 
+## Security advisories
+
+When a released version has a security problem, the owner publishes an advisory on the product. It gives a severity, a title, details, the affected versions (a Composer constraint such as `<1.2.3`) and the fixed version. Advisories travel inside the **signed** license token, so stores receive them on their next license check, whatever the license status: even refunded or expired licenses keep receiving security information. A store running an affected version sees:
+
+- the advisory on Admin → Extensions → Marketplace;
+- a warning from the health check (`Extension advisories`).
+
+Nothing is disabled automatically. The merchant updates, or disables the extension. A tampered advisory fails signature verification and is ignored.
+
 ## Configuration
 
 Store (client):

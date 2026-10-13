@@ -9,6 +9,7 @@ use App\Domains\Marketplace\MarketplaceCheckout;
 use App\Domains\Marketplace\MarketplaceSigner;
 use App\Domains\Marketplace\Models\License;
 use App\Domains\Marketplace\Models\LicenseEvent;
+use App\Domains\Marketplace\Models\MarketplaceAdvisory;
 use App\Domains\Marketplace\Models\MarketplaceOrder;
 use App\Domains\Marketplace\Models\MarketplaceProduct;
 use App\Domains\Marketplace\Models\MarketplaceRelease;
@@ -17,6 +18,7 @@ use App\Domains\Marketplace\ReleasePublisher;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Support\Like;
+use Composer\Semver\VersionParser;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -52,7 +54,7 @@ class MarketplaceAdminController extends Controller
 
     public function create(StoreSettings $store): Response
     {
-        return Inertia::render('admin/marketplace/product-form', ['product' => null, 'currency' => $store->currency(), 'releases' => []]);
+        return Inertia::render('admin/marketplace/product-form', ['product' => null, 'currency' => $store->currency(), 'releases' => [], 'advisories' => []]);
     }
 
     public function store(Request $request, StoreSettings $store, AuditLogger $audit): RedirectResponse
@@ -83,6 +85,7 @@ class MarketplaceAdminController extends Controller
                 'activation_limit' => $product->activation_limit,
             ],
             'currency' => $product->currency,
+            'advisories' => $product->advisories()->latest('published_at')->get()->map(fn (MarketplaceAdvisory $a) => $a->payload()),
             'releases' => $product->releases()->with('reviewer:id,email')->orderByDesc('id')->get()->map(fn (MarketplaceRelease $r) => [
                 'id' => $r->id,
                 'version' => $r->version,
@@ -141,6 +144,30 @@ class MarketplaceAdminController extends Controller
 
         $publisher->review($release, $data['decision'] === 'approve', $data['notes'] ?? null, $this->actor($request));
         Inertia::flash('toast', ['type' => 'success', 'message' => $data['decision'] === 'approve' ? "Version {$release->version} is published and signed." : "Version {$release->version} was rejected."]);
+
+        return back();
+    }
+
+    public function advisory(Request $request, MarketplaceProduct $product, AuditLogger $audit): RedirectResponse
+    {
+        $data = $request->validate([
+            'severity' => ['required', Rule::in(MarketplaceAdvisory::SEVERITIES)],
+            'title' => ['required', 'string', 'max:160'],
+            'body' => ['required', 'string', 'max:5000'],
+            'affected_versions' => ['required', 'string', 'max:120', function (string $attribute, mixed $value, \Closure $fail) {
+                try {
+                    (new VersionParser)->parseConstraints((string) $value);
+                } catch (\UnexpectedValueException) {
+                    $fail('Use a version constraint such as "<1.2.3" or ">=1.0 <1.2.3".');
+                }
+            }],
+            'fixed_version' => ['nullable', 'string', 'max:40', 'regex:/^\d+\.\d+\.\d+$/'],
+        ]);
+
+        $advisory = new MarketplaceAdvisory;
+        $advisory->forceFill([...$data, 'product_id' => $product->id, 'created_by' => $this->actor($request)->id, 'published_at' => now()])->save();
+        $audit->record('marketplace.advisory_published', null, ['product' => $product->slug, 'advisory' => $advisory->id, 'severity' => $advisory->severity]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Advisory published. Stores receive it on their next license check.']);
 
         return back();
     }

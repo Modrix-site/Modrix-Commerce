@@ -77,6 +77,14 @@ class MarketplaceProduct extends Model
         return $this->hasMany(MarketplaceRelease::class, 'product_id');
     }
 
+    /**
+     * @return HasMany<MarketplaceAdvisory, $this>
+     */
+    public function advisories(): HasMany
+    {
+        return $this->hasMany(MarketplaceAdvisory::class, 'product_id');
+    }
+
     public function latestPublishedRelease(): ?MarketplaceRelease
     {
         return $this->releases()->where('status', MarketplaceRelease::PUBLISHED)->orderByDesc('published_at')->orderByDesc('id')->first();

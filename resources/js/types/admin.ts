@@ -169,3 +169,14 @@ export type ThemeSectionValue = {
 };
 
 export type ThemeImageOption = { value: string; label: string; url: string };
+
+/** A marketplace security advisory (signed into license tokens). */
+export type Advisory = {
+    id: number;
+    severity: 'low' | 'medium' | 'high' | 'critical';
+    title: string;
+    body: string;
+    affected_versions: string;
+    fixed_version: string | null;
+    published_at: string;
+};

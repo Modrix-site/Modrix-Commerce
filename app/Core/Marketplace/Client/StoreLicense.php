@@ -2,9 +2,11 @@
 
 namespace App\Core\Marketplace\Client;
 
+use Composer\Semver\Semver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Crypt;
+use UnexpectedValueException;
 
 /**
  * A marketplace license activated on this store (client side).
@@ -44,6 +46,37 @@ class StoreLicense extends Model
             'available_release' => 'array',
             'last_checked_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Security advisories from the last verified token that affect the
+     * given installed version (all of them when nothing is installed yet).
+     *
+     * @return list<array{id: int, severity: string, title: string, body: string, affected_versions: string, fixed_version: string|null, published_at: string}>
+     */
+    public function advisoriesFor(?string $installedVersion): array
+    {
+        $advisories = $this->token['token']['advisories'] ?? [];
+        $affecting = [];
+
+        foreach (is_array($advisories) ? $advisories : [] as $advisory) {
+            if (! is_array($advisory) || ! is_string($advisory['affected_versions'] ?? null)) {
+                continue;
+            }
+
+            try {
+                $affected = $installedVersion === null || Semver::satisfies($installedVersion, $advisory['affected_versions']);
+            } catch (UnexpectedValueException) {
+                $affected = true;
+            }
+
+            if ($affected) {
+                /** @var array{id: int, severity: string, title: string, body: string, affected_versions: string, fixed_version: string|null, published_at: string} $advisory */
+                $affecting[] = $advisory;
+            }
+        }
+
+        return $affecting;
     }
 
     public function key(): string

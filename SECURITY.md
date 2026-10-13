@@ -40,10 +40,10 @@ When a marketplace release is found to be malicious or dangerously vulnerable:
 1. **Stop distribution:** the owner withdraws the release (Admin → Marketplace products → Withdraw). Stores are no longer offered it, and download tokens for it cannot be issued.
 2. **Ship a fix:** publish a fixed version through the normal upload → review → sign flow. Stores see it as an update.
 3. **Revoke if needed:** licenses of abusive accounts are revoked (Admin → Licenses), which stops activations and downloads.
-4. **Notify:** email affected license holders and publish an advisory naming the affected versions, with the instruction to update, or to disable the extension under Admin → Extensions.
+4. **Notify:** publish a security advisory on the product (Admin → Marketplace products → Publish advisory) naming the affected versions and the fixed version. Stores receive it inside their signed license token on the next check (daily, or "Check now"), and stores running an affected version see it on the Marketplace page and in the health check. Also email affected license holders.
 5. **Compromised signing key:** generate a new key (`php artisan ecomodular:marketplace:keygen`), re-sign the current releases, and ship a core release that removes the old public key from the trusted keys. Stores on that release then refuse anything signed with the old key.
 
-Stores never disable extensions automatically, so merchants keep control of their storefront. The advisory and the admin update notice are the channels for action. Pushing security advisories directly into store admins is planned (see `docs/roadmap.md`, Phase 8).
+Stores never disable extensions automatically, so merchants keep control of their storefront: the advisory, the health warning and the update notice are the channels for action. Advisories are signed, so a forged one is refused.
 
 ## Security model (summary)
 

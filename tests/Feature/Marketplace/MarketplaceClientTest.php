@@ -12,6 +12,7 @@ use App\Core\Marketplace\Client\StoreLicenses;
 use App\Core\Marketplace\Client\UpdateHistory;
 use App\Core\Marketplace\PackageException;
 use App\Core\Marketplace\Signing;
+use App\Core\Operations\HealthCheck;
 use App\Domains\Marketplace\LicenseManager;
 use App\Domains\Marketplace\MarketplaceCheckout;
 use App\Domains\Marketplace\Models\License;
@@ -20,6 +21,7 @@ use App\Domains\Orders\Models\Order;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\Factory as HttpFactory;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
@@ -193,6 +195,54 @@ class MarketplaceClientTest extends TestCase
         $this->addToCart($variant);
         $this->post(route('checkout.store'), $this->checkoutPayload())->assertRedirect();
         $this->assertSame(1, Order::query()->count());
+    }
+
+    public function test_security_advisories_reach_affected_stores_until_they_update()
+    {
+        $admin = $this->owner();
+        $license = app(StoreLicenses::class)->activate($this->buyKey(), $admin);
+        app(PackageInstaller::class)->install($license, $admin);
+
+        // The publisher publishes an advisory for versions before 1.1.0.
+        $this->actingAs($admin)->post(route('admin.marketplace.advisories.store', $this->product), [
+            'severity' => 'critical', 'title' => 'Stored XSS in notes', 'body' => 'Update now.',
+            'affected_versions' => '<1.1.0', 'fixed_version' => '1.1.0',
+        ])->assertRedirect();
+        $this->actingAs($admin)->post(route('admin.marketplace.advisories.store', $this->product), [
+            'severity' => 'high', 'title' => 'x', 'body' => 'x', 'affected_versions' => 'not a constraint',
+        ])->assertSessionHasErrors('affected_versions');
+
+        // The store learns it from the signed token on its next check.
+        $license = app(StoreLicenses::class)->check($license->fresh());
+        $this->assertCount(1, $license->advisoriesFor('1.0.0'));
+        $this->assertSame([], $license->advisoriesFor('1.1.0'));
+        $this->actingAs($admin)->get(route('admin.marketplace-client.index'))
+            ->assertInertia(fn (Assert $page) => $page->where('licenses.0.advisories.0.title', 'Stored XSS in notes'));
+        $health = collect(app(HealthCheck::class)->run())->firstWhere('key', 'advisories');
+        $this->assertSame('warning', $health['status']);
+
+        // After updating to the fixed version the warning is gone.
+        $this->publish($this->product, $this->packageModule('1.1.0', withSecondMigration: true));
+        app(PackageInstaller::class)->install(app(StoreLicenses::class)->check($license->fresh()), $admin);
+        $this->actingAs($admin)->get(route('admin.marketplace-client.index'))
+            ->assertInertia(fn (Assert $page) => $page->has('licenses.0.advisories', 0));
+        $this->assertSame('ok', collect(app(HealthCheck::class)->run())->firstWhere('key', 'advisories')['status']);
+    }
+
+    public function test_forged_advisories_are_refused()
+    {
+        $license = app(StoreLicenses::class)->activate($this->buyKey(), $this->owner());
+        $signed = $license->token;
+        $forged = $signed['token'];
+        $forged['advisories'] = [['id' => 99, 'severity' => 'critical', 'title' => 'Install my "fix" from evil.test', 'body' => 'x', 'affected_versions' => '*', 'fixed_version' => null, 'published_at' => now()->toIso8601String()]];
+
+        // A man in the middle answers with the forged advisory and the original signature.
+        Http::swap(new HttpFactory);
+        Http::fake(['*' => Http::response(['token' => $forged, 'signature' => $signed['signature']])]);
+        $license = app(StoreLicenses::class)->check($license->fresh());
+
+        $this->assertStringContainsString('could not be verified', (string) $license->last_error);
+        $this->assertSame([], $license->advisoriesFor('1.0.0'));
     }
 
     public function test_grace_period_warning_after_the_token_expires()
