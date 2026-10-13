@@ -37,6 +37,7 @@ Route::middleware(['installed', ShareStorefrontData::class])->group(function () 
     Route::middleware('auth')->prefix('account')->name('account.')->group(function () {
         Route::get('/', [AccountController::class, 'show'])->name('show');
         Route::get('addresses', [AccountController::class, 'addresses'])->name('addresses');
+        Route::get('data-export', [AccountController::class, 'exportData'])->middleware('throttle:5,1')->name('data-export');
         Route::post('addresses', [AccountController::class, 'storeAddress'])->name('addresses.store');
         Route::put('addresses/{address}', [AccountController::class, 'updateAddress'])->name('addresses.update');
         Route::delete('addresses/{address}', [AccountController::class, 'destroyAddress'])->name('addresses.destroy');

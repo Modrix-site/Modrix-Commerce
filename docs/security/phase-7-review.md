@@ -67,6 +67,6 @@ There are no unresolved critical or high findings.
 
 - **R1:** commission an independent penetration test before taking card-present or high-volume traffic.
 - **R2:** modules run trusted code inside the application process (ADR-029). Only enable reviewed modules. Third-party modules need isolation first (Phase 8).
-- **R3:** add a self-service personal-data export to match GDPR access requests (Phase 8). Until then, operators answer requests from the admin's customer and order views.
+- **R3:** ~~add a self-service personal-data export~~ Done in Phase 8.6: customers download their data from My account (with module contributions such as newsletter consent).
 - **R4:** the MySQL backup and restore path is exercised in CI only. Run one restore into staging on MySQL before going live.
 - **R5:** if TLS terminates at a proxy, configure trusted proxies so HTTPS detection, HSTS and secure cookies behave correctly.

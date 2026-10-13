@@ -289,7 +289,7 @@ class ThemeEngineTest extends TestCase
         $this->actingAs($this->userWithRole('store-manager'))->get(route('admin.themes.index'))->assertForbidden();
         $this->actingAs($this->userWithRole('store-manager'))->post(route('admin.themes.activate', $this->theme()))->assertForbidden();
         $this->actingAs($this->userWithRole('administrator'))->get(route('admin.themes.index'))
-            ->assertInertia(fn (Assert $page) => $page->component('admin/themes/index')->has('themes', 4)); // three bundled + the fixture
+            ->assertInertia(fn (Assert $page) => $page->component('admin/themes/index')->has('themes', 5)); // four bundled + the fixture
         $this->actingAs($this->userWithRole('administrator'))->get(route('admin.themes.customize', $this->theme()))
             ->assertInertia(fn (Assert $page) => $page->component('admin/themes/customize')->has('sections.home', 2));
     }

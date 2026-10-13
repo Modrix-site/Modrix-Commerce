@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Storefront;
 
+use App\Core\Audit\AuditLogger;
 use App\Core\Settings\Countries;
 use App\Domains\Customers\AddressRules;
 use App\Domains\Customers\CustomerProfiles;
 use App\Domains\Customers\Models\CustomerAddress;
+use App\Domains\Customers\PersonalDataExport;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -32,6 +35,20 @@ class AccountController extends Controller
             ],
             'defaultAddress' => $customer->addresses()->where('is_default_shipping', true)->first()?->toPresentable(),
         ]);
+    }
+
+    /**
+     * Download everything the store holds about this customer (JSON).
+     */
+    public function exportData(Request $request, PersonalDataExport $export, AuditLogger $audit): JsonResponse
+    {
+        $user = $this->user($request);
+        $audit->record('account.data_exported', $user, [], $user);
+
+        return response()->json($export->for($user), 200, [
+            'Content-Disposition' => 'attachment; filename="my-data-'.now()->format('Y-m-d').'.json"',
+            'Cache-Control' => 'no-store',
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
     public function addresses(Request $request): Response

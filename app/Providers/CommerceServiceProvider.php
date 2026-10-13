@@ -11,6 +11,7 @@ use App\Domains\Checkout\Pricing\Steps\ShippingStep;
 use App\Domains\Checkout\Pricing\Steps\TaxStep;
 use App\Domains\Customers\Listeners\CreateCustomerProfile;
 use App\Domains\Customers\Listeners\LinkGuestOrdersOnVerification;
+use App\Domains\Customers\PersonalDataExport;
 use App\Domains\Inventory\Events\InventoryLow;
 use App\Domains\Inventory\Listeners\SendLowStockAlert;
 use App\Domains\Orders\Listeners\SendOrderEmails;
@@ -37,6 +38,9 @@ class CommerceServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        // Modules add their own personal data to customer exports.
+        $this->app->singleton(PersonalDataExport::class);
+
         $this->app->singleton(ShippingRates::class, function () {
             $rates = new ShippingRates;
             $rates->register(new TableShippingRateProvider);

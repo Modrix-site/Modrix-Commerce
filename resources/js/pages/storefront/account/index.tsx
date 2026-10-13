@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import { AccountNav } from '@/components/storefront/account-nav';
 import { Button } from '@/components/ui/button';
-import { addresses } from '@/routes/account';
+import { addresses, dataExport } from '@/routes/account';
 import type { Address } from '@/types';
 
 type Props = {
@@ -50,6 +50,20 @@ export default function AccountIndex({ customer, defaultAddress }: Props) {
                         <div>
                             <Button variant="outline" size="sm" asChild>
                                 <Link href={addresses()}>Manage addresses</Link>
+                            </Button>
+                        </div>
+                    </section>
+                    <section className="grid gap-2 rounded-lg border p-5">
+                        <h2 className="font-semibold">Your data</h2>
+                        <p className="text-sm text-muted-foreground">
+                            Download your account details, addresses, orders and
+                            subscriptions as a JSON file.
+                        </p>
+                        <div>
+                            <Button variant="outline" size="sm" asChild>
+                                <a href={dataExport().url} download>
+                                    Download my data
+                                </a>
                             </Button>
                         </div>
                     </section>

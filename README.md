@@ -13,8 +13,8 @@ The core is MIT-licensed and fully usable on its own. The platform is designed f
 - **Catalog:** products with variants and options, categories, images, prices per currency, CSV import and export, inventory ledger with locations and low-stock alerts.
 - **Storefront:** search, categories, cart, guest and account checkout with concurrency-safe stock reservation, discounts and coupons, shipping methods and tax rates, order emails, customer accounts.
 - **Orders and payments:** order workflow (payment, fulfilment, shipments, refunds), Stripe Checkout with verified and deduplicated webhooks, reconciliation, manual payment methods, reports.
-- **Modules:** validated manifests, a full lifecycle with dependencies, quarantine and safe mode; extension points (checkout validators, search, storefront slots, dashboard widgets); three sample modules.
-- **Themes:** data-only themes (they cannot run code) with design settings, layout variants and home sections, preview, customizations that survive updates; Essence, Noir and Bloom included.
+- **Modules:** validated manifests, a full lifecycle with dependencies, quarantine and safe mode; extension points (checkout validators, search, storefront slots, dashboard widgets, personal data export); sample modules for reviews, a sales widget, order alerts and a newsletter sign-up with consent.
+- **Themes:** data-only themes (they cannot run code) with design settings, layout variants and home sections, preview, customizations that survive updates; Essence, Noir, Bloom and Harvest (food and grocery) included.
 - **Official marketplace:** buy or claim licenses, activate them on a store, install and update packages after Ed25519 signature and checksum verification, roll back. The marketplace server role is in the same codebase.
 - **Operations:** health checks (`/health`, `ecomodular:health`, the status page), encrypted and checksummed backups with tested restore, security headers with a nonce-based CSP, rate limits, a deployment and recovery guide.
 

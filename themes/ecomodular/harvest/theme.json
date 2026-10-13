@@ -1,0 +1,100 @@
+{
+    "$schema": "../../../docs/extensions/theme.schema.json",
+    "name": "ecomodular/harvest",
+    "display_name": "Harvest",
+    "description": "A warm, appetising theme for grocers, farm shops, bakeries and food delivery: large product cards, a friendly rounded look and a delivery-first home page.",
+    "version": "1.0.0",
+    "type": "theme",
+    "theme_type": "storefront",
+    "platform_version": "^1.0",
+    "author": "Eleydo",
+    "license": "MIT",
+    "capabilities": ["home.sections", "dark_mode"],
+    "assets": "assets",
+    "screenshot": "assets/images/hero.webp",
+    "design": {
+        "color.background": "#fffdf7",
+        "color.foreground": "#2a2418",
+        "color.primary": "#2f6b2a",
+        "color.primary_foreground": "#fffdf7",
+        "color.muted": "#f4ecd8",
+        "color.muted_foreground": "#6f6550",
+        "color.accent": "#fbe3c2",
+        "color.accent_foreground": "#2a2418",
+        "color.border": "#eadfc6",
+        "font_body": "humanist",
+        "font_heading": "geometric",
+        "radius": "1rem",
+        "density": "comfortable",
+        "container": "wide",
+        "layout.header": "classic",
+        "layout.footer": "columns",
+        "layout.product_card": "framed",
+        "layout.grid_columns": "4",
+        "layout.product_page": "split",
+        "announcement": "Order by 2 pm for same-day local delivery",
+        "footer_text": "Fresh from local growers and makers."
+    },
+    "dark_colors": {
+        "background": "#15130e",
+        "foreground": "#f6f0e2",
+        "primary": "#8cc47e",
+        "primary_foreground": "#15130e",
+        "muted": "#221f17",
+        "muted_foreground": "#b8ad93",
+        "accent": "#2e2a1f",
+        "accent_foreground": "#f6f0e2",
+        "border": "#353024"
+    },
+    "sections": {
+        "home": [
+            {
+                "type": "hero",
+                "settings": {
+                    "heading": "Fresh food, delivered today",
+                    "subheading": "Seasonal produce, bread and pantry staples from growers near you.",
+                    "button_label": "Start shopping",
+                    "button_link": "/search",
+                    "image": "asset:assets/images/hero.webp",
+                    "alignment": "left",
+                    "height": "medium"
+                }
+            },
+            {
+                "type": "category_grid",
+                "settings": { "title": "Shop the aisles", "limit": 8 }
+            },
+            {
+                "type": "featured_products",
+                "settings": {
+                    "title": "In season now",
+                    "source": "latest",
+                    "limit": 8
+                }
+            },
+            {
+                "type": "image_with_text",
+                "settings": {
+                    "heading": "From the field to your door",
+                    "body": "We buy directly from local farms and bakeries every morning, so what you order today was picked or baked today.",
+                    "image": "asset:assets/images/market.webp",
+                    "image_position": "right",
+                    "button_label": "Meet our growers",
+                    "button_link": "/search"
+                }
+            },
+            {
+                "type": "promo_banner",
+                "settings": {
+                    "text": "Free delivery on your first order over $40.",
+                    "button_label": "Create an account",
+                    "button_link": "/register",
+                    "tone": "accent"
+                }
+            }
+        ]
+    },
+    "changelog": [
+        { "version": "1.0.0", "date": "2026-10-13", "notes": "First release." }
+    ]
+}

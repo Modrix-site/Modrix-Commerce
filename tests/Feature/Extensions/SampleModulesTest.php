@@ -65,10 +65,45 @@ class SampleModulesTest extends TestCase
     {
         app(ModuleRepository::class)->sync();
 
-        foreach (['ecomodular/product-reviews', 'ecomodular/sales-widget', 'ecomodular/order-alerts'] as $name) {
+        foreach (['ecomodular/product-reviews', 'ecomodular/sales-widget', 'ecomodular/order-alerts', 'ecomodular/newsletter'] as $name) {
             $extension = Extension::query()->where('name', $name)->firstOrFail();
             $this->assertSame(ModuleState::Discovered, $extension->state, implode(' ', (array) $extension->errors));
         }
+    }
+
+    public function test_newsletter_module_records_consent_unsubscribes_exports_and_erases()
+    {
+        $owner = $this->owner();
+        $this->modules->install('ecomodular/newsletter', $owner);
+        $this->modules->enable('ecomodular/newsletter', true, $owner);
+
+        // The sign-up form is offered in the home page slot.
+        $this->get('/')->assertInertia(fn (Assert $page) => $page->where('slots.0.component', 'ecomodular/newsletter/SignupForm')->where('slots.0.props.source', 'home'));
+
+        $subscribe = route('ecomodular.newsletter.subscribe');
+        $this->post($subscribe, ['email' => 'ana@example.com'])->assertSessionHasErrors('consent');
+        $this->post($subscribe, ['email' => 'Ana@Example.com', 'consent' => '1', 'source' => 'home'])->assertSessionHasNoErrors();
+        // Signing up again does not reveal or duplicate anything.
+        $this->post($subscribe, ['email' => 'ana@example.com', 'consent' => '1'])->assertSessionHasNoErrors();
+        $this->assertSame(1, DB::table('newsletter_subscribers')->count());
+        $row = DB::table('newsletter_subscribers')->first();
+        $this->assertSame('ana@example.com', $row->email);
+        $this->assertStringContainsString('unsubscribe', $row->consent_text);
+
+        // Export: active subscribers with consent and an unsubscribe link; staff only.
+        $this->actingAs($this->userWithRole('analyst'))->get(route('admin.ecomodular.newsletter.export'))->assertForbidden();
+        $csv = $this->actingAs($owner)->get(route('admin.ecomodular.newsletter.export'))->assertOk()->streamedContent();
+        $this->assertStringContainsString('ana@example.com', $csv);
+        $this->assertStringContainsString('/m/ecomodular/newsletter/unsubscribe/'.$row->unsubscribe_token, $csv);
+
+        // One-click unsubscribe; the export then excludes the address.
+        $this->get(route('ecomodular.newsletter.unsubscribe', $row->unsubscribe_token))->assertRedirect('/');
+        $this->assertNotNull(DB::table('newsletter_subscribers')->value('unsubscribed_at'));
+        $this->assertStringNotContainsString('ana@example.com', $this->actingAs($owner)->get(route('admin.ecomodular.newsletter.export'))->streamedContent());
+
+        // Erasure deletes the record.
+        $this->actingAs($owner)->delete(route('admin.ecomodular.newsletter.destroy', $row->id))->assertRedirect();
+        $this->assertSame(0, DB::table('newsletter_subscribers')->count());
     }
 
     public function test_reviews_module_install_enable_configure_disable_update_lifecycle()

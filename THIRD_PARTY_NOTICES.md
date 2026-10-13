@@ -31,7 +31,7 @@ The compiled JavaScript and CSS shipped to browsers contain code from the MIT, I
 ## Fonts and assets
 
 - **Instrument Sans** (SIL Open Font License 1.1) is downloaded from Bunny Fonts at build time by the `laravel-vite-plugin` font integration and served from the application's own build directory.
-- Bundled themes (Essence, Noir, Bloom) use system font stacks and ship only their own images, created for this project (MIT).
+- Bundled themes (Essence, Noir, Bloom, Harvest) use system font stacks and ship only their own images, created for this project (MIT).
 
 ## Notes
 

@@ -48,6 +48,7 @@ class ThemeCompatibilityTest extends TestCase
             'Essence' => ['ecomodular/essence'],
             'Noir' => ['ecomodular/noir'],
             'Bloom' => ['ecomodular/bloom'],
+            'Harvest' => ['ecomodular/harvest'],
         ];
     }
 
