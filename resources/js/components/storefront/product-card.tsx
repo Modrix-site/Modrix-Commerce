@@ -1,6 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { ImageOff } from 'lucide-react';
 import { useStoreTheme } from '@/hooks/use-store-theme';
+import { useT } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { product as productRoute } from '@/routes/storefront';
 import type { ProductCard as ProductCardData } from '@/types';
@@ -12,6 +13,7 @@ import type { ProductCard as ProductCardData } from '@/types';
  */
 export function ProductCard({ product }: { product: ProductCardData }) {
     const { productCard } = useStoreTheme();
+    const t = useT();
     const framed = productCard === 'framed';
 
     return (
@@ -40,7 +42,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
                 ) : (
                     <div className="flex size-full items-center justify-center text-muted-foreground">
                         <ImageOff className="size-6" aria-hidden />
-                        <span className="sr-only">No image</span>
+                        <span className="sr-only">{t('No image')}</span>
                     </div>
                 )}
             </div>
@@ -61,7 +63,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
                 <Price product={product} />
                 {!product.in_stock && (
                     <span className="text-xs text-muted-foreground">
-                        Out of stock
+                        {t('Out of stock')}
                     </span>
                 )}
             </div>
@@ -70,17 +72,19 @@ export function ProductCard({ product }: { product: ProductCardData }) {
 }
 
 function Price({ product }: { product: ProductCardData }) {
+    const t = useT();
+
     if (!product.price) {
         return null;
     }
 
     return (
         <span className="text-sm tabular-nums">
-            {product.has_variants && 'From '}
+            {product.has_variants && `${t('From')} `}
             {product.price.formatted}
             {product.compare_at_price && (
                 <s className="ml-2 text-muted-foreground">
-                    <span className="sr-only">Was </span>
+                    <span className="sr-only">{t('Was')} </span>
                     {product.compare_at_price.formatted}
                 </s>
             )}

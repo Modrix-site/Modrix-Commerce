@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useFlashToast } from '@/hooks/use-flash-toast';
 import { useStoreTheme } from '@/hooks/use-store-theme';
+import { useT } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { dashboard, home, login } from '@/routes';
 import { show as cartShow } from '@/routes/cart';
@@ -23,6 +24,7 @@ export default function StorefrontLayout({
 }) {
     const { storefront } = usePage().props;
     const { header, footer, theme } = useStoreTheme();
+    const t = useT();
     useFlashToast();
 
     return (
@@ -42,7 +44,7 @@ export default function StorefrontLayout({
                 href="#main"
                 className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded focus:bg-background focus:px-3 focus:py-2"
             >
-                Skip to content
+                {t('Skip to content')}
             </a>
             {storefront?.themePreview && (
                 <PreviewBanner preview={storefront.themePreview} />
@@ -91,6 +93,8 @@ function Brand({ className }: { className?: string }) {
 }
 
 function SearchForm({ className }: { className?: string }) {
+    const t = useT();
+
     return (
         <Form
             {...search.form()}
@@ -100,14 +104,14 @@ function SearchForm({ className }: { className?: string }) {
             <Input
                 type="search"
                 name="q"
-                placeholder="Search products"
-                aria-label="Search products"
+                placeholder={t('Search products')}
+                aria-label={t('Search products')}
             />
             <Button
                 type="submit"
                 variant="outline"
                 size="icon"
-                aria-label="Search"
+                aria-label={t('Search')}
             >
                 <Search />
             </Button>
@@ -118,6 +122,7 @@ function SearchForm({ className }: { className?: string }) {
 /** Shown when the store offers more than one language. */
 function LanguageSwitcher() {
     const { storefront } = usePage().props;
+    const t = useT();
 
     if (!storefront || storefront.locales.length < 2) {
         return null;
@@ -134,7 +139,7 @@ function LanguageSwitcher() {
     return (
         <label className="flex items-center gap-1 text-sm">
             <Globe className="size-4" aria-hidden />
-            <span className="sr-only">Language</span>
+            <span className="sr-only">{t('Language')}</span>
             <select
                 value={storefront.locale}
                 onChange={(e) => change(e.target.value)}
@@ -153,6 +158,7 @@ function LanguageSwitcher() {
 function AccountLinks() {
     const { storefront, auth } = usePage().props;
     const cartCount = storefront?.cartCount ?? 0;
+    const t = useT();
 
     return (
         <nav className="flex items-center gap-1" aria-label="Account">
@@ -163,14 +169,17 @@ function AccountLinks() {
                     <span className="hidden sm:inline">
                         {auth.user
                             ? auth.isStaff
-                                ? 'Admin'
-                                : 'Account'
-                            : 'Log in'}
+                                ? t('Admin')
+                                : t('Account')
+                            : t('Log in')}
                     </span>
                 </Link>
             </Button>
             <Button variant="outline" size="sm" asChild>
-                <Link href={cartShow()} aria-label={`Cart, ${cartCount} items`}>
+                <Link
+                    href={cartShow()}
+                    aria-label={t('Cart, :count items', { count: cartCount })}
+                >
                     <ShoppingBag />
                     <span className="tabular-nums">{cartCount}</span>
                 </Link>
@@ -181,13 +190,14 @@ function AccountLinks() {
 
 function CategoryNav({ centered = false }: { centered?: boolean }) {
     const { storefront } = usePage().props;
+    const t = useT();
 
     if (!storefront || storefront.categories.length === 0) {
         return null;
     }
 
     return (
-        <nav aria-label="Categories" className="border-t">
+        <nav aria-label={t('Categories')} className="border-t">
             <ul
                 className={cn(
                     'mx-auto flex max-w-[var(--store-container,72rem)] gap-5 overflow-x-auto px-4 py-2 text-sm',
@@ -199,7 +209,7 @@ function CategoryNav({ centered = false }: { centered?: boolean }) {
                         href={search()}
                         className="whitespace-nowrap text-muted-foreground hover:text-foreground"
                     >
-                        All products
+                        {t('All products')}
                     </Link>
                 </li>
                 {storefront.categories.map((c) => (
@@ -247,13 +257,14 @@ function CenteredHeader() {
 
 function MinimalHeader() {
     const { storefront } = usePage().props;
+    const t = useT();
 
     return (
         <header className="border-b">
             <div className="mx-auto flex max-w-[var(--store-container,72rem)] items-center gap-6 px-4 py-3">
                 <Brand />
                 <nav
-                    aria-label="Categories"
+                    aria-label={t('Categories')}
                     className="mr-auto hidden gap-5 text-sm md:flex"
                 >
                     {storefront?.categories.slice(0, 5).map((c) => (
@@ -272,7 +283,7 @@ function MinimalHeader() {
                     className="ml-auto md:ml-0"
                     asChild
                 >
-                    <Link href={search()} aria-label="Search products">
+                    <Link href={search()} aria-label={t('Search products')}>
                         <Search />
                     </Link>
                 </Button>
@@ -284,6 +295,7 @@ function MinimalHeader() {
 
 function SimpleFooter() {
     const { storefront } = usePage().props;
+    const t = useT();
 
     return (
         <footer className="grid gap-1 border-t px-4 py-6 text-center text-xs text-muted-foreground">
@@ -293,8 +305,8 @@ function SimpleFooter() {
                 </p>
             )}
             <p>
-                © {new Date().getFullYear()} {storefront?.storeName}. Powered by
-                EcoModular, open-source commerce (MIT).
+                © {new Date().getFullYear()} {storefront?.storeName}.{' '}
+                {t('Powered by EcoModular, open-source commerce (MIT).')}
             </p>
         </footer>
     );
@@ -302,6 +314,7 @@ function SimpleFooter() {
 
 function ColumnsFooter() {
     const { storefront } = usePage().props;
+    const t = useT();
 
     return (
         <footer className="border-t bg-muted/40">
@@ -316,13 +329,16 @@ function ColumnsFooter() {
                         </p>
                     )}
                 </div>
-                <nav aria-label="Shop" className="grid content-start gap-2">
-                    <span className="font-semibold">Shop</span>
+                <nav
+                    aria-label={t('Shop')}
+                    className="grid content-start gap-2"
+                >
+                    <span className="font-semibold">{t('Shop')}</span>
                     <Link
                         href={search()}
                         className="text-muted-foreground hover:text-foreground"
                     >
-                        All products
+                        {t('All products')}
                     </Link>
                     {storefront?.categories.slice(0, 6).map((c) => (
                         <Link
@@ -334,25 +350,28 @@ function ColumnsFooter() {
                         </Link>
                     ))}
                 </nav>
-                <nav aria-label="Help" className="grid content-start gap-2">
-                    <span className="font-semibold">Your account</span>
+                <nav
+                    aria-label={t('Help')}
+                    className="grid content-start gap-2"
+                >
+                    <span className="font-semibold">{t('Your account')}</span>
                     <Link
                         href={login()}
                         className="text-muted-foreground hover:text-foreground"
                     >
-                        Sign in
+                        {t('Sign in')}
                     </Link>
                     <Link
                         href={cartShow()}
                         className="text-muted-foreground hover:text-foreground"
                     >
-                        Cart
+                        {t('Cart')}
                     </Link>
                 </nav>
             </div>
             <p className="border-t px-4 py-4 text-center text-xs text-muted-foreground">
-                © {new Date().getFullYear()} {storefront?.storeName}. Powered by
-                EcoModular, open-source commerce (MIT).
+                © {new Date().getFullYear()} {storefront?.storeName}.{' '}
+                {t('Powered by EcoModular, open-source commerce (MIT).')}
             </p>
         </footer>
     );

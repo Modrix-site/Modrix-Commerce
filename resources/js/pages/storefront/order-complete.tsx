@@ -8,6 +8,7 @@ import { OrderView } from '@/components/storefront/order-view';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
+import { useT } from '@/lib/i18n';
 import { home } from '@/routes';
 import { orders } from '@/routes/account';
 import type { OrderDetail } from '@/types';
@@ -32,6 +33,7 @@ export default function OrderComplete({
     slots: SlotItem[];
 }) {
     const { auth } = usePage().props;
+    const t = useT();
     const [polls, setPolls] = useState(0);
     const confirming = onlinePayment?.state === 'confirming';
 
@@ -56,7 +58,7 @@ export default function OrderComplete({
 
     return (
         <>
-            <Head title={`Order ${order.number}`} />
+            <Head title={t('Order :number', { number: order.number })} />
             {unpaidOnline ? (
                 <OnlinePaymentStatus
                     order={order}
@@ -70,21 +72,19 @@ export default function OrderComplete({
                         aria-hidden
                     />
                     <h1 className="text-2xl font-semibold tracking-tight">
-                        Thank you for your order
+                        {t('Thank you for your order')}
                     </h1>
                     <p className="text-muted-foreground">
-                        Order{' '}
-                        <strong className="text-foreground">
-                            {order.number}
-                        </strong>{' '}
-                        has been placed. A confirmation was sent to{' '}
-                        {order.email}.
+                        {t(
+                            'Order :number has been placed. A confirmation was sent to :email.',
+                            { number: order.number, email: order.email },
+                        )}
                     </p>
                 </div>
             )}
             {order.payment_status === 'unpaid' && paymentInstructions && (
                 <Alert className="mb-8">
-                    <AlertTitle>How to pay</AlertTitle>
+                    <AlertTitle>{t('How to pay')}</AlertTitle>
                     <AlertDescription>{paymentInstructions}</AlertDescription>
                 </Alert>
             )}
@@ -92,11 +92,11 @@ export default function OrderComplete({
             <ExtensionSlot items={slots} className="mt-8 grid gap-6" />
             <div className="mt-8 flex gap-2">
                 <Button asChild>
-                    <Link href={home()}>Continue shopping</Link>
+                    <Link href={home()}>{t('Continue shopping')}</Link>
                 </Button>
                 {auth.user && (
                     <Button variant="outline" asChild>
-                        <Link href={orders()}>View my orders</Link>
+                        <Link href={orders()}>{t('View my orders')}</Link>
                     </Button>
                 )}
             </div>
@@ -113,16 +113,20 @@ function OnlinePaymentStatus({
     payment: OnlinePayment;
     gaveUp: boolean;
 }) {
+    const t = useT();
+
     if (payment.state === 'confirming' && !gaveUp) {
         return (
             <div className="mb-8 grid gap-2" role="status">
                 <Spinner className="size-8" />
                 <h1 className="text-2xl font-semibold tracking-tight">
-                    Confirming your payment…
+                    {t('Confirming your payment…')}
                 </h1>
                 <p className="text-muted-foreground">
-                    We are waiting for {payment.method} to confirm the payment
-                    for order {order.number}. This usually takes a few seconds.
+                    {t(
+                        'We are waiting for :method to confirm the payment for order :number. This usually takes a few seconds.',
+                        { method: payment.method, number: order.number },
+                    )}
                 </p>
             </div>
         );
@@ -133,11 +137,13 @@ function OnlinePaymentStatus({
             <div className="mb-8 grid gap-2" role="status">
                 <Clock className="size-8 text-muted-foreground" aria-hidden />
                 <h1 className="text-2xl font-semibold tracking-tight">
-                    Your payment is being processed
+                    {t('Your payment is being processed')}
                 </h1>
                 <p className="text-muted-foreground">
-                    We will email {order.email} as soon as the payment for order{' '}
-                    {order.number} is confirmed. You do not need to pay again.
+                    {t(
+                        'We will email :email as soon as the payment for order :number is confirmed. You do not need to pay again.',
+                        { email: order.email, number: order.number },
+                    )}
                 </p>
             </div>
         );
@@ -151,11 +157,13 @@ function OnlinePaymentStatus({
                     aria-hidden
                 />
                 <h1 className="text-2xl font-semibold tracking-tight">
-                    This order was cancelled
+                    {t('This order was cancelled')}
                 </h1>
                 <p className="text-muted-foreground">
-                    Order {order.number} was cancelled because the payment was
-                    not completed. You have not been charged.
+                    {t(
+                        'Order :number was cancelled because the payment was not completed. You have not been charged.',
+                        { number: order.number },
+                    )}
                 </p>
             </div>
         );
@@ -165,17 +173,22 @@ function OnlinePaymentStatus({
         <div className="mb-8 grid gap-3">
             <CircleAlert className="size-8 text-amber-600" aria-hidden />
             <h1 className="text-2xl font-semibold tracking-tight">
-                Complete your payment
+                {t('Complete your payment')}
             </h1>
             <p className="text-muted-foreground">
-                Order {order.number} is reserved, but the payment has not been
-                completed yet. Your items are held for a limited time.
+                {t(
+                    'Order :number is reserved, but the payment has not been completed yet. Your items are held for a limited time.',
+                    { number: order.number },
+                )}
             </p>
             <Form {...CheckoutController.pay.form(order.number)}>
                 {({ processing }) => (
                     <Button type="submit" disabled={processing}>
                         {processing && <Spinner />}
-                        Pay {order.grand_total.formatted} with {payment.method}
+                        {t('Pay :amount with :method', {
+                            amount: order.grand_total.formatted,
+                            method: payment.method,
+                        })}
                     </Button>
                 )}
             </Form>

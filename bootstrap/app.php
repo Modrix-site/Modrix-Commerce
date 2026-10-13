@@ -10,6 +10,7 @@ use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\LogoutDisabledUsers;
 use App\Http\Middleware\RequireInstallation;
 use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\SetStorefrontLocale;
 use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -48,6 +49,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
         $middleware->web(append: [
+            SetStorefrontLocale::class,
             LogoutDisabledUsers::class,
             HandleAppearance::class,
             HandleInertiaRequests::class,

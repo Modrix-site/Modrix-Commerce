@@ -65,7 +65,7 @@ class AccountController extends Controller
     {
         $customer = $this->profiles->forUser($this->user($request));
         $this->profiles->saveAddress($customer, $this->validated($request));
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Address saved.')]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => st('Address saved.')]);
 
         return redirect()->route('account.addresses');
     }
@@ -76,7 +76,7 @@ class AccountController extends Controller
         abort_unless($address->customer_id === $customer->id, 404);
 
         $this->profiles->saveAddress($customer, $this->validated($request), $address);
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Address updated.')]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => st('Address updated.')]);
 
         return redirect()->route('account.addresses');
     }
@@ -87,7 +87,7 @@ class AccountController extends Controller
         abort_unless($address->customer_id === $customer->id, 404);
 
         $this->profiles->deleteAddress($address);
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Address removed.')]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => st('Address removed.')]);
 
         return redirect()->route('account.addresses');
     }

@@ -237,6 +237,8 @@ Module `ecomodular/newsletter`: `newsletter_subscribers` (email, consent text an
 
 Settings: `store.default_locale` and `store.locales` (additional storefront languages).
 
+`interface_translations`: the merchant's own storefront wording per locale (`locale`, `key` = English text, `value`), overriding `lang/storefront/{locale}.json`.
+
 ## Planned tables
 
 The tables below follow §13 of the master specification and are designed when each phase starts:

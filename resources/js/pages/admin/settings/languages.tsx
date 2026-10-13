@@ -1,4 +1,4 @@
-import { Form, Head } from '@inertiajs/react';
+import { Form, Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import LanguageSettingsController from '@/actions/App/Http/Controllers/Admin/LanguageSettingsController';
 import { FormField, NativeSelect } from '@/components/admin/form-field';
@@ -7,6 +7,7 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
+import { index as interfaceText } from '@/routes/admin/settings/interface-text';
 import { edit } from '@/routes/admin/settings/languages';
 
 type Props = {
@@ -35,6 +36,11 @@ export default function LanguageSettings({
                 <PageHeader
                     title="Languages"
                     description="Products and categories are written in the default language. Shoppers can switch to any additional language; untranslated texts fall back to the default."
+                    actions={
+                        <Button variant="outline" asChild>
+                            <Link href={interfaceText()}>Storefront text</Link>
+                        </Button>
+                    }
                 />
                 <Card>
                     <CardContent>

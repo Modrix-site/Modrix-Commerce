@@ -1,14 +1,19 @@
 import { StatusBadge } from '@/components/admin/status-badge';
 import { OrderTotals } from '@/components/storefront/order-totals';
+import { useT } from '@/lib/i18n';
 import type { OrderAddressData, OrderDetail } from '@/types';
 
-const dateFormat = new Intl.DateTimeFormat(undefined, {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-});
-
+/** Dates follow the page language (`<html lang>`), else the browser's. */
 export function formatDate(iso: string): string {
-    return dateFormat.format(new Date(iso));
+    const locale =
+        typeof document !== 'undefined'
+            ? document.documentElement.lang || undefined
+            : undefined;
+
+    return new Intl.DateTimeFormat(locale, {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+    }).format(new Date(iso));
 }
 
 export function AddressBlock({ address }: { address: OrderAddressData }) {
@@ -37,6 +42,8 @@ export function AddressBlock({ address }: { address: OrderAddressData }) {
  * Customer-facing order details (confirmation page and account order page).
  */
 export function OrderView({ order }: { order: OrderDetail }) {
+    const t = useT();
+
     return (
         <div className="grid gap-8 lg:grid-cols-3">
             <div className="grid content-start gap-6 lg:col-span-2">
@@ -73,18 +80,23 @@ export function OrderView({ order }: { order: OrderDetail }) {
                 </ul>
                 {order.shipments.length > 0 && (
                     <section className="grid gap-2">
-                        <h2 className="font-semibold">Shipping updates</h2>
+                        <h2 className="font-semibold">
+                            {t('Shipping updates')}
+                        </h2>
                         {order.shipments.map((s, i) => (
                             <p
                                 key={i}
                                 className="text-sm text-muted-foreground"
                             >
-                                Shipped {formatDate(s.shipped_at)}
-                                {s.carrier && ` via ${s.carrier}`}
+                                {t('Shipped :date', {
+                                    date: formatDate(s.shipped_at),
+                                })}
+                                {s.carrier &&
+                                    ` ${t('via :carrier', { carrier: s.carrier })}`}
                                 {s.tracking_number && (
                                     <>
                                         {' '}
-                                        · Tracking{' '}
+                                        · {t('Tracking')}{' '}
                                         {s.tracking_url ? (
                                             <a
                                                 href={s.tracking_url}
@@ -100,14 +112,14 @@ export function OrderView({ order }: { order: OrderDetail }) {
                                     </>
                                 )}
                                 {s.delivered_at &&
-                                    ` · Delivered ${formatDate(s.delivered_at)}`}
+                                    ` · ${t('Delivered :date', { date: formatDate(s.delivered_at) })}`}
                             </p>
                         ))}
                     </section>
                 )}
                 {order.history.length > 0 && (
                     <section className="grid gap-2">
-                        <h2 className="font-semibold">History</h2>
+                        <h2 className="font-semibold">{t('History')}</h2>
                         <ol className="grid gap-1 text-sm">
                             {order.history.map((event, i) => (
                                 <li key={i} className="flex gap-3">
@@ -127,14 +139,16 @@ export function OrderView({ order }: { order: OrderDetail }) {
             <aside className="grid content-start gap-5 rounded-lg border p-5">
                 <OrderTotals totals={order} />
                 <div className="grid gap-1 text-sm">
-                    <span className="font-medium">Payment</span>
+                    <span className="font-medium">{t('Payment')}</span>
                     <span className="text-muted-foreground">
                         {order.payment_method}
                     </span>
                 </div>
                 {order.shipping_method && (
                     <div className="grid gap-1 text-sm">
-                        <span className="font-medium">Shipping method</span>
+                        <span className="font-medium">
+                            {t('Shipping method')}
+                        </span>
                         <span className="text-muted-foreground">
                             {order.shipping_method}
                         </span>
@@ -143,7 +157,7 @@ export function OrderView({ order }: { order: OrderDetail }) {
                 {order.addresses.shipping && (
                     <div className="grid gap-1">
                         <span className="text-sm font-medium">
-                            Shipping address
+                            {t('Shipping address')}
                         </span>
                         <AddressBlock address={order.addresses.shipping} />
                     </div>

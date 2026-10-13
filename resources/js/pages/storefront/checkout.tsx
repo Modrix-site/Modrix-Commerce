@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useT } from '@/lib/i18n';
 import { show as cartShow } from '@/routes/cart';
 import type { Address, Country, PricedCart } from '@/types';
 
@@ -76,6 +77,7 @@ export default function Checkout({
     countries,
     checkoutToken,
 }: Props) {
+    const t = useT();
     const defaultAddress =
         addresses.find((a) => a.is_default_shipping) ?? addresses[0];
     const form = useForm({
@@ -155,9 +157,9 @@ export default function Checkout({
 
     return (
         <>
-            <Head title="Checkout" />
+            <Head title={t('Checkout')} />
             <h1 className="mb-6 text-2xl font-semibold tracking-tight">
-                Checkout
+                {t('Checkout')}
             </h1>
 
             {generalError && (
@@ -167,7 +169,7 @@ export default function Checkout({
                         {generalError}{' '}
                         {errors.cart && (
                             <Link href={cartShow()} className="underline">
-                                Go to cart
+                                {t('Go to cart')}
                             </Link>
                         )}
                     </AlertDescription>
@@ -184,12 +186,12 @@ export default function Checkout({
                             id="contact-heading"
                             className="text-lg font-semibold"
                         >
-                            Contact
+                            {t('Contact')}
                         </h2>
                         <div className="grid gap-4 sm:grid-cols-2">
                             <FormField
                                 id="email"
-                                label="Email"
+                                label={t('Email')}
                                 error={errors.email}
                             >
                                 <Input
@@ -206,7 +208,7 @@ export default function Checkout({
                             </FormField>
                             <FormField
                                 id="phone"
-                                label="Phone (optional)"
+                                label={t('Phone (optional)')}
                                 error={errors.phone}
                             >
                                 <Input
@@ -230,11 +232,11 @@ export default function Checkout({
                             id="shipping-heading"
                             className="text-lg font-semibold"
                         >
-                            Shipping address
+                            {t('Shipping address')}
                         </h2>
                         {addresses.length > 0 && (
                             <label className="grid gap-2 text-sm">
-                                Use a saved address
+                                {t('Use a saved address')}
                                 <select
                                     className="h-9 rounded-md border border-input bg-transparent px-2 dark:bg-input/30"
                                     defaultValue={defaultAddress?.id}
@@ -258,7 +260,7 @@ export default function Checkout({
                                         </option>
                                     ))}
                                     <option value="">
-                                        Enter a new address
+                                        {t('Enter a new address')}
                                     </option>
                                 </select>
                             </label>
@@ -277,7 +279,7 @@ export default function Checkout({
                                     setData('billing_same', c === true)
                                 }
                             />
-                            Billing address is the same as shipping
+                            {t('Billing address is the same as shipping')}
                         </label>
                     </section>
 
@@ -290,7 +292,7 @@ export default function Checkout({
                                 id="billing-heading"
                                 className="text-lg font-semibold"
                             >
-                                Billing address
+                                {t('Billing address')}
                             </h2>
                             <AddressInputs
                                 prefix="billing"
@@ -310,20 +312,22 @@ export default function Checkout({
                             id="method-heading"
                             className="text-lg font-semibold"
                         >
-                            Shipping method
+                            {t('Shipping method')}
                         </h2>
                         {!data.shipping.country_code ? (
                             <p className="text-sm text-muted-foreground">
-                                Enter your country to see shipping options.
+                                {t(
+                                    'Enter your country to see shipping options.',
+                                )}
                             </p>
                         ) : summary.shipping_options.length === 0 ? (
                             <p className="text-sm text-destructive">
-                                We do not ship to the selected country.
+                                {t('We do not ship to the selected country.')}
                             </p>
                         ) : (
                             <fieldset className="grid gap-2">
                                 <legend className="sr-only">
-                                    Shipping method
+                                    {t('Shipping method')}
                                 </legend>
                                 {summary.shipping_options.map((option) => (
                                     <label
@@ -350,7 +354,7 @@ export default function Checkout({
                                         </span>
                                         <span className="tabular-nums">
                                             {Number(option.amount.amount) === 0
-                                                ? 'Free'
+                                                ? t('Free')
                                                 : option.amount.formatted}
                                         </span>
                                     </label>
@@ -368,17 +372,18 @@ export default function Checkout({
                             id="payment-heading"
                             className="text-lg font-semibold"
                         >
-                            Payment
+                            {t('Payment')}
                         </h2>
                         {paymentMethods.length === 0 ? (
                             <p className="text-sm text-destructive">
-                                No payment method is available. The store has
-                                not enabled checkout yet.
+                                {t(
+                                    'No payment method is available. The store has not enabled checkout yet.',
+                                )}
                             </p>
                         ) : (
                             <fieldset className="grid gap-2">
                                 <legend className="sr-only">
-                                    Payment method
+                                    {t('Payment method')}
                                 </legend>
                                 {paymentMethods.map((method) => (
                                     <label
@@ -417,7 +422,7 @@ export default function Checkout({
 
                     <FormField
                         id="customer_note"
-                        label="Order note (optional)"
+                        label={t('Order note (optional)')}
                         error={errors.customer_note}
                     >
                         <Textarea
@@ -433,9 +438,9 @@ export default function Checkout({
 
                 <aside
                     className="grid content-start gap-4 rounded-lg border p-5"
-                    aria-label="Order summary"
+                    aria-label={t('Order summary')}
                 >
-                    <h2 className="font-semibold">Order summary</h2>
+                    <h2 className="font-semibold">{t('Order summary')}</h2>
                     <ul className="grid gap-2 text-sm">
                         {summary.lines.map((line) => (
                             <li
@@ -483,11 +488,12 @@ export default function Checkout({
                             paymentMethods.length === 0
                         }
                     >
-                        Place order
+                        {t('Place order')}
                     </Button>
                     <p className="text-xs text-muted-foreground">
-                        Your order is not paid until the store confirms your
-                        payment.
+                        {t(
+                            'Your order is not paid until the store confirms your payment.',
+                        )}
                     </p>
                 </aside>
             </form>
@@ -508,6 +514,7 @@ function AddressInputs({
     countries: Country[];
     errors: Record<string, string | undefined>;
 }) {
+    const t = useT();
     const field = (
         name: keyof AddressFields,
         label: string,
@@ -531,18 +538,22 @@ function AddressInputs({
 
     return (
         <div className="grid gap-4 sm:grid-cols-2">
-            {field('first_name', 'First name', 'given-name', true)}
-            {field('last_name', 'Last name', 'family-name', true)}
-            {field('company', 'Company (optional)', 'organization')}
-            {field('phone', 'Phone (optional)', 'tel')}
-            {field('line1', 'Address', 'address-line1', true)}
-            {field('line2', 'Apartment, suite (optional)', 'address-line2')}
-            {field('city', 'City', 'address-level2', true)}
-            {field('region', 'State / province (optional)', 'address-level1')}
-            {field('postal_code', 'Postal code', 'postal-code')}
+            {field('first_name', t('First name'), 'given-name', true)}
+            {field('last_name', t('Last name'), 'family-name', true)}
+            {field('company', t('Company (optional)'), 'organization')}
+            {field('phone', t('Phone (optional)'), 'tel')}
+            {field('line1', t('Address'), 'address-line1', true)}
+            {field('line2', t('Apartment, suite (optional)'), 'address-line2')}
+            {field('city', t('City'), 'address-level2', true)}
+            {field(
+                'region',
+                t('State / province (optional)'),
+                'address-level1',
+            )}
+            {field('postal_code', t('Postal code'), 'postal-code')}
             <FormField
                 id={`${prefix}-country_code`}
-                label="Country"
+                label={t('Country')}
                 error={errors[`${prefix}.country_code`]}
             >
                 <select
@@ -554,7 +565,7 @@ function AddressInputs({
                     className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm dark:bg-input/30"
                 >
                     <option value="" disabled>
-                        Choose…
+                        {t('Choose…')}
                     </option>
                     {countries.map((c) => (
                         <option key={c.code} value={c.code}>

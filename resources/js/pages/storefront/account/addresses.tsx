@@ -6,6 +6,7 @@ import { AccountNav } from '@/components/storefront/account-nav';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
+import { useT } from '@/lib/i18n';
 import type { Address, Country } from '@/types';
 
 export default function Addresses({
@@ -15,23 +16,24 @@ export default function Addresses({
     addresses: Address[];
     countries: Country[];
 }) {
+    const t = useT();
     const [editing, setEditing] = useState<number | 'new' | null>(
         addresses.length === 0 ? 'new' : null,
     );
 
     return (
         <>
-            <Head title="Addresses" />
+            <Head title={t('Addresses')} />
             <div className="grid gap-8 md:grid-cols-[12rem_1fr]">
                 <AccountNav />
                 <div className="grid content-start gap-6">
                     <div className="flex items-center justify-between">
                         <h1 className="text-2xl font-semibold tracking-tight">
-                            Addresses
+                            {t('Addresses')}
                         </h1>
                         {editing === null && (
                             <Button onClick={() => setEditing('new')}>
-                                Add address
+                                {t('Add address')}
                             </Button>
                         )}
                     </div>
@@ -83,9 +85,9 @@ export default function Addresses({
                                     <p className="text-xs text-muted-foreground">
                                         {[
                                             address.is_default_shipping &&
-                                                'Default shipping',
+                                                t('Default shipping'),
                                             address.is_default_billing &&
-                                                'Default billing',
+                                                t('Default billing'),
                                         ]
                                             .filter(Boolean)
                                             .join(' · ')}
@@ -98,7 +100,7 @@ export default function Addresses({
                                                 setEditing(address.id)
                                             }
                                         >
-                                            Edit
+                                            {t('Edit')}
                                         </Button>
                                         <Form
                                             {...AccountController.destroyAddress.form(
@@ -106,7 +108,7 @@ export default function Addresses({
                                             )}
                                             onBefore={() =>
                                                 window.confirm(
-                                                    'Remove this address?',
+                                                    t('Remove this address?'),
                                                 )
                                             }
                                         >
@@ -115,7 +117,7 @@ export default function Addresses({
                                                 variant="ghost"
                                                 size="sm"
                                             >
-                                                Remove
+                                                {t('Remove')}
                                             </Button>
                                         </Form>
                                     </div>
@@ -142,6 +144,7 @@ function AddressForm({
         ? AccountController.updateAddress.form(address.id)
         : AccountController.storeAddress.form();
     const id = (field: string) => `${address?.id ?? 'new'}-${field}`;
+    const t = useT();
 
     return (
         <Form
@@ -155,7 +158,7 @@ function AddressForm({
                     <div className="grid gap-4 sm:grid-cols-2">
                         <FormField
                             id={id('first_name')}
-                            label="First name"
+                            label={t('First name')}
                             error={errors.first_name}
                         >
                             <Input
@@ -168,7 +171,7 @@ function AddressForm({
                         </FormField>
                         <FormField
                             id={id('last_name')}
-                            label="Last name"
+                            label={t('Last name')}
                             error={errors.last_name}
                         >
                             <Input
@@ -181,7 +184,7 @@ function AddressForm({
                         </FormField>
                         <FormField
                             id={id('company')}
-                            label="Company (optional)"
+                            label={t('Company (optional)')}
                             error={errors.company}
                         >
                             <Input
@@ -193,7 +196,7 @@ function AddressForm({
                         </FormField>
                         <FormField
                             id={id('phone')}
-                            label="Phone (optional)"
+                            label={t('Phone (optional)')}
                             error={errors.phone}
                         >
                             <Input
@@ -206,7 +209,7 @@ function AddressForm({
                         </FormField>
                         <FormField
                             id={id('line1')}
-                            label="Address"
+                            label={t('Address')}
                             error={errors.line1}
                         >
                             <Input
@@ -219,7 +222,7 @@ function AddressForm({
                         </FormField>
                         <FormField
                             id={id('line2')}
-                            label="Apartment, suite (optional)"
+                            label={t('Apartment, suite (optional)')}
                             error={errors.line2}
                         >
                             <Input
@@ -231,7 +234,7 @@ function AddressForm({
                         </FormField>
                         <FormField
                             id={id('city')}
-                            label="City"
+                            label={t('City')}
                             error={errors.city}
                         >
                             <Input
@@ -244,7 +247,7 @@ function AddressForm({
                         </FormField>
                         <FormField
                             id={id('region')}
-                            label="State / province (optional)"
+                            label={t('State / province (optional)')}
                             error={errors.region}
                         >
                             <Input
@@ -256,7 +259,7 @@ function AddressForm({
                         </FormField>
                         <FormField
                             id={id('postal_code')}
-                            label="Postal code"
+                            label={t('Postal code')}
                             error={errors.postal_code}
                         >
                             <Input
@@ -268,7 +271,7 @@ function AddressForm({
                         </FormField>
                         <FormField
                             id={id('country_code')}
-                            label="Country"
+                            label={t('Country')}
                             error={errors.country_code}
                         >
                             <NativeSelect
@@ -278,7 +281,7 @@ function AddressForm({
                                 required
                             >
                                 <option value="" disabled>
-                                    Choose…
+                                    {t('Choose…')}
                                 </option>
                                 {countries.map((c) => (
                                     <option key={c.code} value={c.code}>
@@ -295,7 +298,7 @@ function AddressForm({
                                 value="1"
                                 defaultChecked={address?.is_default_shipping}
                             />
-                            Default shipping address
+                            {t('Default shipping address')}
                         </label>
                         <label className="flex items-center gap-2">
                             <Checkbox
@@ -303,19 +306,19 @@ function AddressForm({
                                 value="1"
                                 defaultChecked={address?.is_default_billing}
                             />
-                            Default billing address
+                            {t('Default billing address')}
                         </label>
                     </div>
                     <div className="flex gap-2">
                         <Button type="submit" disabled={processing}>
-                            Save address
+                            {t('Save address')}
                         </Button>
                         <Button
                             type="button"
                             variant="ghost"
                             onClick={onCancel}
                         >
-                            Cancel
+                            {t('Cancel')}
                         </Button>
                     </div>
                 </>

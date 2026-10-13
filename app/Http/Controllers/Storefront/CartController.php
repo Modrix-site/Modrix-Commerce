@@ -52,7 +52,7 @@ class CartController extends Controller
         abort_if($cart === null, 500);
         $this->carts->add($cart, $variant, (int) $data['quantity']);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Added to your cart.')]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => st('Added to your cart.')]);
 
         return back();
     }
@@ -74,7 +74,7 @@ class CartController extends Controller
         abort_if($cart === null, 404);
 
         $this->carts->remove($cart, $item);
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Item removed.')]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => st('Item removed.')]);
 
         return redirect()->route('cart.show');
     }
@@ -95,7 +95,7 @@ class CartController extends Controller
             return back()->withErrors(['code' => $priced->couponError]);
         }
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Coupon applied.')]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => st('Coupon applied.')]);
 
         return back();
     }

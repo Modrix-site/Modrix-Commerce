@@ -17,6 +17,8 @@ declare module '@inertiajs/core' {
             /** Present on storefront pages only. */
             storefront?: StorefrontShared;
             sidebarOpen: boolean;
+            /** Storefront wording for the shopper's language (empty on admin pages). */
+            i18n: { locale: string; messages: Record<string, string> };
             [key: string]: unknown;
         };
     }

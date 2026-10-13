@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Core\Admin\AdminNavigation;
+use App\Core\Localization\InterfaceTranslations;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -61,6 +62,13 @@ class HandleInertiaRequests extends Middleware
             'adminNavigation' => fn () => $user instanceof User && $user->isStaff()
                 ? app(AdminNavigation::class)->forUser($user)
                 : [],
+            // Storefront wording in the shopper's language (customer-facing pages only).
+            'i18n' => fn () => [
+                'locale' => app()->getLocale(),
+                'messages' => $request->is('admin', 'admin/*', 'install', 'install/*')
+                    ? (object) []
+                    : (object) app(InterfaceTranslations::class)->messages(app()->getLocale()),
+            ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }

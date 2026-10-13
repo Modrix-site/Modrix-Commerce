@@ -29,7 +29,7 @@ final class DiscountStep implements PricingStep
         $coupon = $this->coupons->find($priced->couponCode);
 
         if ($coupon === null) {
-            $priced->couponError = 'This coupon code is not valid.';
+            $priced->couponError = st('This coupon code is not valid.');
 
             return;
         }

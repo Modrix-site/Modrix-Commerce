@@ -1,3 +1,4 @@
+import { useT } from '@/lib/i18n';
 import type { MoneyValue } from '@/types';
 
 type Totals = {
@@ -16,17 +17,18 @@ type Totals = {
  */
 export function OrderTotals({ totals }: { totals: Totals }) {
     const discount = Number(totals.discount_total.amount) > 0;
+    const t = useT();
 
     return (
         <dl className="grid gap-2 text-sm">
             <div className="flex justify-between">
-                <dt>Subtotal</dt>
+                <dt>{t('Subtotal')}</dt>
                 <dd className="tabular-nums">{totals.subtotal.formatted}</dd>
             </div>
             {discount && (
                 <div className="flex justify-between">
                     <dt>
-                        Discount
+                        {t('Discount')}
                         {totals.coupon_code ? ` (${totals.coupon_code})` : ''}
                     </dt>
                     <dd className="tabular-nums">
@@ -35,23 +37,25 @@ export function OrderTotals({ totals }: { totals: Totals }) {
                 </div>
             )}
             <div className="flex justify-between">
-                <dt>Shipping</dt>
+                <dt>{t('Shipping')}</dt>
                 <dd className="tabular-nums">
                     {totals.shipping_total ? (
                         totals.shipping_total.formatted
                     ) : (
                         <span className="text-muted-foreground">
-                            Choose a method
+                            {t('Choose a method')}
                         </span>
                     )}
                 </dd>
             </div>
             <div className="flex justify-between">
-                <dt>Tax{totals.prices_include_tax ? ' (included)' : ''}</dt>
+                <dt>
+                    {totals.prices_include_tax ? t('Tax (included)') : t('Tax')}
+                </dt>
                 <dd className="tabular-nums">{totals.tax_total.formatted}</dd>
             </div>
             <div className="flex justify-between border-t pt-2 text-base font-semibold">
-                <dt>Total</dt>
+                <dt>{t('Total')}</dt>
                 <dd className="tabular-nums">{totals.grand_total.formatted}</dd>
             </div>
         </dl>

@@ -1,6 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
 import { ProductGrid } from '@/components/storefront/product-card';
 import { Button } from '@/components/ui/button';
+import { useT } from '@/lib/i18n';
 import { home } from '@/routes';
 import { category } from '@/routes/storefront';
 import type { Paginated, ProductCard } from '@/types';
@@ -16,13 +17,6 @@ type Props = {
     query: string | null;
 };
 
-const sorts = [
-    { value: 'newest', label: 'Newest' },
-    { value: 'price_asc', label: 'Price: low to high' },
-    { value: 'price_desc', label: 'Price: high to low' },
-    { value: 'name', label: 'Name' },
-];
-
 export default function Listing({
     title,
     description,
@@ -32,6 +26,14 @@ export default function Listing({
     products,
     sort,
 }: Props) {
+    const t = useT();
+    const sorts = [
+        { value: 'newest', label: t('Newest') },
+        { value: 'price_asc', label: t('Price: low to high') },
+        { value: 'price_desc', label: t('Price: high to low') },
+        { value: 'name', label: t('Name') },
+    ];
+
     const changeSort = (value: string) => {
         const url = new URL(window.location.href);
         url.searchParams.set('sort', value);
@@ -49,7 +51,7 @@ export default function Listing({
 
             {breadcrumbs.length > 0 && (
                 <nav
-                    aria-label="Breadcrumb"
+                    aria-label={t('Breadcrumb')}
                     className="mb-4 text-sm text-muted-foreground"
                 >
                     <ol className="flex flex-wrap gap-1">
@@ -58,7 +60,7 @@ export default function Listing({
                                 href={home()}
                                 className="hover:text-foreground"
                             >
-                                Home
+                                {t('Home')}
                             </Link>
                         </li>
                         {breadcrumbs.map((b) => (
@@ -89,12 +91,13 @@ export default function Listing({
                         </p>
                     )}
                     <p className="text-sm text-muted-foreground">
-                        {products.total}{' '}
-                        {products.total === 1 ? 'product' : 'products'}
+                        {products.total === 1
+                            ? t('1 product')
+                            : t(':count products', { count: products.total })}
                     </p>
                 </div>
                 <label className="flex items-center gap-2 text-sm">
-                    Sort by
+                    {t('Sort by')}
                     <select
                         value={sort}
                         onChange={(e) => changeSort(e.target.value)}
@@ -125,13 +128,13 @@ export default function Listing({
                 <ProductGrid products={products.data} />
             ) : (
                 <p className="py-12 text-center text-muted-foreground">
-                    No products found.
+                    {t('No products found.')}
                 </p>
             )}
 
             {products.last_page > 1 && (
                 <nav
-                    aria-label="Pagination"
+                    aria-label={t('Pagination')}
                     className="mt-10 flex items-center justify-center gap-3 text-sm"
                 >
                     <Button
@@ -141,13 +144,18 @@ export default function Listing({
                         disabled={!products.prev_page_url}
                     >
                         {products.prev_page_url ? (
-                            <Link href={products.prev_page_url}>Previous</Link>
+                            <Link href={products.prev_page_url}>
+                                {t('Previous')}
+                            </Link>
                         ) : (
-                            <span>Previous</span>
+                            <span>{t('Previous')}</span>
                         )}
                     </Button>
                     <span>
-                        Page {products.current_page} of {products.last_page}
+                        {t('Page :page of :pages', {
+                            page: products.current_page,
+                            pages: products.last_page,
+                        })}
                     </span>
                     <Button
                         variant="outline"
@@ -156,9 +164,11 @@ export default function Listing({
                         disabled={!products.next_page_url}
                     >
                         {products.next_page_url ? (
-                            <Link href={products.next_page_url}>Next</Link>
+                            <Link href={products.next_page_url}>
+                                {t('Next')}
+                            </Link>
                         ) : (
-                            <span>Next</span>
+                            <span>{t('Next')}</span>
                         )}
                     </Button>
                 </nav>

@@ -378,3 +378,21 @@ Each entry records a decision, its context, and its consequences. Entries are ap
     - **Themes:** library images are offered in theme image settings (`media:library/...`).
     - **Uploads:** all of them go through the ImageSanitizer.
 - **Consequences:** Staff manage images in one place without breaking pages that use them. Unused product uploads can be found with the "Not used by products" filter. Files are stored once per upload, so moving to S3 later stays a disk setting.
+
+## ADR-042 — Storefront interface translations keyed by the English text
+
+- **Date:** 2026-10-13
+- **Status:** Accepted
+- **Decision:**
+    - **Keys:** the storefront's own wording is wrapped in `t('…')` (React) and `st('…')` (PHP). The key is the English text, with `:name` placeholders; static layout titles use `msg('…')` and are translated by the layout.
+    - **Source catalogue:** `php artisan ecomodular:storefront-strings` extracts every key into `lang/storefront/en.json`. A test fails when the code and the catalogue disagree.
+    - **Shipped translations:** `lang/storefront/{es,fr,de}.json`, checked by tests for completeness and matching placeholders.
+    - **Merchant wording:** merchants override or complete any language under Admin → Languages → Storefront text, stored in `interface_translations`.
+    - **Delivery:** the shopper's messages are shared as `i18n.messages`, which stays empty for English and on admin pages. The cache key carries the catalogue files' modification times, so deploys need no cache clearing.
+    - **Locale detection:** it moved into `SetStorefrontLocale`, so sign-in and registration pages follow the shopper's language too.
+    - **Laravel messages:** Laravel's validation, sign-in and password-reset messages ship for es, fr and de in `lang/{locale}/*.php`, with localized field names; anything missing falls back to English.
+    - **Country names:** they come from ICU in the current locale.
+- **Consequences:** Adding storefront text means wrapping it and re-running the command; the test enforces it. The admin, order history entries, emails, theme section content and module wording are not covered:
+    - the admin is English;
+    - theme texts are merchant content;
+    - modules need their own catalogues (planned).

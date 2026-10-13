@@ -56,7 +56,7 @@ final class CartManager
             $newQuantity = ($item->quantity ?? 0) + $quantity;
 
             if ($item === null && $cart->items()->count() >= self::MAX_LINES) {
-                throw ValidationException::withMessages(['quantity' => 'Your cart is full. Remove an item before adding another.']);
+                throw ValidationException::withMessages(['quantity' => st('Your cart is full. Remove an item before adding another.')]);
             }
 
             $this->assertQuantityAllowed($cart, $variant, $newQuantity);
@@ -178,18 +178,18 @@ final class CartManager
     private function assertQuantityAllowed(Cart $cart, ProductVariant $variant, int $quantity): void
     {
         if ($quantity > self::MAX_LINE_QUANTITY) {
-            throw ValidationException::withMessages(['quantity' => 'You can order at most '.self::MAX_LINE_QUANTITY.' of an item.']);
+            throw ValidationException::withMessages(['quantity' => st('You can order at most :max of an item.', ['max' => self::MAX_LINE_QUANTITY])]);
         }
 
         $variant->loadMissing('product', 'prices', 'stocks');
         $availability = VariantAvailability::of($variant, $cart->currency);
 
         if (! $availability->purchasable) {
-            throw ValidationException::withMessages(['quantity' => $availability->message() ?? 'This item is unavailable.']);
+            throw ValidationException::withMessages(['quantity' => $availability->message() ?? st('This item is unavailable.')]);
         }
 
         if (! $availability->allows($quantity)) {
-            throw ValidationException::withMessages(['quantity' => "Only {$availability->available} available."]);
+            throw ValidationException::withMessages(['quantity' => st('Only :count available.', ['count' => (int) $availability->available])]);
         }
     }
 

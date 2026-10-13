@@ -58,9 +58,9 @@ class CatalogController extends Controller
         $sort = $this->sort($request);
 
         return Inertia::render('storefront/listing', [
-            'title' => $query === '' ? 'All products' : "Search results for “{$query}”",
+            'title' => $query === '' ? st('All products') : st('Search results for “:query”', ['query' => $query]),
             'description' => null,
-            'meta' => ['title' => $query === '' ? 'All products' : "Search: {$query}", 'description' => null],
+            'meta' => ['title' => $query === '' ? st('All products') : st('Search: :query', ['query' => $query]), 'description' => null],
             'breadcrumbs' => [],
             'subcategories' => [],
             'products' => $catalog->listing($store->currency(), null, $query, $sort),

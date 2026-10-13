@@ -6,6 +6,7 @@ import { ExtensionSlot } from '@/components/extensions/extension-slot';
 import type { SlotItem } from '@/components/extensions/extension-slot';
 import InputError from '@/components/input-error';
 import { useStoreTheme } from '@/hooks/use-store-theme';
+import { useT } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -49,6 +50,7 @@ type Props = {
 
 export default function ProductPage({ product, breadcrumbs, slots }: Props) {
     const { productPage } = useStoreTheme();
+    const t = useT();
     const [imageIndex, setImageIndex] = useState(0);
     const firstPurchasable =
         product.variants.find((v) => v.purchasable) ?? product.variants[0];
@@ -94,13 +96,13 @@ export default function ProductPage({ product, breadcrumbs, slots }: Props) {
             </Head>
 
             <nav
-                aria-label="Breadcrumb"
+                aria-label={t('Breadcrumb')}
                 className="mb-6 text-sm text-muted-foreground"
             >
                 <ol className="flex flex-wrap gap-1">
                     <li>
                         <Link href={home()} className="hover:text-foreground">
-                            Home
+                            {t('Home')}
                         </Link>
                     </li>
                     {breadcrumbs.map((b) => (
@@ -139,7 +141,7 @@ export default function ProductPage({ product, breadcrumbs, slots }: Props) {
                             <div className="flex size-full items-center justify-center text-muted-foreground">
                                 <ImageOff className="size-8" aria-hidden />
                                 <span className="sr-only">
-                                    No image available
+                                    {t('No image available')}
                                 </span>
                             </div>
                         )}
@@ -147,14 +149,16 @@ export default function ProductPage({ product, breadcrumbs, slots }: Props) {
                     {product.images.length > 1 && (
                         <ul
                             className="flex gap-2 overflow-x-auto"
-                            aria-label="Product images"
+                            aria-label={t('Product images')}
                         >
                             {product.images.map((img, i) => (
                                 <li key={img.id}>
                                     <button
                                         type="button"
                                         onClick={() => setImageIndex(i)}
-                                        aria-label={`Show image ${i + 1}`}
+                                        aria-label={t('Show image :number', {
+                                            number: i + 1,
+                                        })}
                                         aria-current={i === imageIndex}
                                         className={`size-16 overflow-hidden rounded border ${i === imageIndex ? 'ring-2 ring-ring' : ''}`}
                                     >
@@ -180,14 +184,16 @@ export default function ProductPage({ product, breadcrumbs, slots }: Props) {
                                 {variant.price.formatted}
                                 {variant.compare_at_price && (
                                     <s className="ml-3 text-base text-muted-foreground">
-                                        <span className="sr-only">Was </span>
+                                        <span className="sr-only">
+                                            {t('Was')}{' '}
+                                        </span>
                                         {variant.compare_at_price.formatted}
                                     </s>
                                 )}
                             </p>
                         ) : (
                             <p className="text-muted-foreground">
-                                Choose options to see the price.
+                                {t('Choose options to see the price.')}
                             </p>
                         )}
                         {product.short_description && (
@@ -247,7 +253,7 @@ export default function ProductPage({ product, breadcrumbs, slots }: Props) {
                                     <div className="flex items-end gap-3">
                                         <div className="grid w-24 gap-2">
                                             <Label htmlFor="quantity">
-                                                Quantity
+                                                {t('Quantity')}
                                             </Label>
                                             <Input
                                                 id="quantity"
@@ -267,8 +273,8 @@ export default function ProductPage({ product, breadcrumbs, slots }: Props) {
                                             }
                                         >
                                             {variant.purchasable
-                                                ? 'Add to cart'
-                                                : 'Unavailable'}
+                                                ? t('Add to cart')
+                                                : t('Unavailable')}
                                         </Button>
                                     </div>
                                     <InputError
@@ -285,24 +291,28 @@ export default function ProductPage({ product, breadcrumbs, slots }: Props) {
                                         variant.available !== null &&
                                         variant.available <= 5 && (
                                             <p className="text-sm text-muted-foreground">
-                                                Only {variant.available} left.
+                                                {t('Only :count left.', {
+                                                    count: variant.available,
+                                                })}
                                             </p>
                                         )}
                                     <p className="text-xs text-muted-foreground">
-                                        SKU {variant.sku}
+                                        {t('SKU :sku', { sku: variant.sku })}
                                     </p>
                                 </>
                             )}
                         </Form>
                     ) : (
                         <p className="text-sm text-muted-foreground">
-                            This combination is not available.
+                            {t('This combination is not available.')}
                         </p>
                     )}
 
                     {product.description && (
                         <section className="grid gap-2 border-t pt-5">
-                            <h2 className="font-semibold">Description</h2>
+                            <h2 className="font-semibold">
+                                {t('Description')}
+                            </h2>
                             <p className="whitespace-pre-line text-muted-foreground">
                                 {product.description}
                             </p>

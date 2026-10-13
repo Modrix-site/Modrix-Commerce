@@ -2,12 +2,15 @@
 
 namespace App\Core\Settings;
 
+use Illuminate\Container\Container;
+use Illuminate\Foundation\Application;
 use Locale;
 use ResourceBundle;
 
 /**
- * ISO 3166-1 alpha-2 countries with English display names, sourced from the
- * ICU data shipped with the intl extension (a platform requirement).
+ * ISO 3166-1 alpha-2 countries, sourced from the ICU data shipped with the
+ * intl extension (a platform requirement). Display names follow the current
+ * locale; `all()` stays English.
  */
 final class Countries
 {
@@ -46,6 +49,14 @@ final class Countries
         return self::$cache = $countries;
     }
 
+    /** The current locale, or English outside a full application (unit tests, early boot). */
+    private static function locale(): string
+    {
+        $app = Container::getInstance();
+
+        return $app instanceof Application ? $app->getLocale() : 'en';
+    }
+
     /**
      * @return list<string>
      */
@@ -54,9 +65,23 @@ final class Countries
         return array_keys(self::all());
     }
 
+    /**
+     * The country's name in the current language (English when the locale
+     * is English or ICU has no name for it).
+     */
     public static function name(string $code): string
     {
-        return self::all()[strtoupper($code)] ?? (Locale::getDisplayRegion('-'.$code, 'en') ?: $code);
+        $code = strtoupper($code);
+        $english = self::all()[$code] ?? (Locale::getDisplayRegion('-'.$code, 'en') ?: $code);
+        $locale = self::locale();
+
+        if ($locale === 'en') {
+            return $english;
+        }
+
+        $localized = Locale::getDisplayRegion('-'.$code, $locale);
+
+        return is_string($localized) && $localized !== '' && $localized !== $code ? $localized : $english;
     }
 
     /**
@@ -66,9 +91,13 @@ final class Countries
     {
         $options = [];
 
-        foreach (self::all() as $code => $name) {
-            $options[] = ['code' => $code, 'name' => $name];
+        foreach (array_keys(self::all()) as $code) {
+            $options[] = ['code' => $code, 'name' => self::name($code)];
         }
+
+        // Sorted by the name shoppers read.
+        $collator = class_exists(\Collator::class) ? new \Collator(self::locale()) : null;
+        usort($options, fn (array $a, array $b) => $collator ? (int) $collator->compare($a['name'], $b['name']) : strcmp($a['name'], $b['name']));
 
         return $options;
     }

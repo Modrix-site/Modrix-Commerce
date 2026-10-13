@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { useCurrentUrl } from '@/hooks/use-current-url';
+import { useT } from '@/lib/i18n';
 import { logout } from '@/routes';
 import { addresses, orders, show } from '@/routes/account';
 import { edit as profileEdit } from '@/routes/profile';
@@ -7,16 +8,20 @@ import { edit as securityEdit } from '@/routes/security';
 
 export function AccountNav() {
     const { isCurrentUrl } = useCurrentUrl();
+    const t = useT();
     const items = [
-        { title: 'Overview', href: show() },
-        { title: 'Orders', href: orders() },
-        { title: 'Addresses', href: addresses() },
-        { title: 'Profile', href: profileEdit() },
-        { title: 'Password & security', href: securityEdit() },
+        { title: t('Overview'), href: show() },
+        { title: t('Orders'), href: orders() },
+        { title: t('Addresses'), href: addresses() },
+        { title: t('Profile'), href: profileEdit() },
+        { title: t('Password & security'), href: securityEdit() },
     ];
 
     return (
-        <nav aria-label="Account" className="grid content-start gap-1 text-sm">
+        <nav
+            aria-label={t('Account')}
+            className="grid content-start gap-1 text-sm"
+        >
             {items.map((item) => (
                 <Link
                     key={item.title}
@@ -32,7 +37,7 @@ export function AccountNav() {
                 as="button"
                 className="rounded px-2 py-1.5 text-left text-muted-foreground hover:bg-muted"
             >
-                Log out
+                {t('Log out')}
             </Link>
         </nav>
     );

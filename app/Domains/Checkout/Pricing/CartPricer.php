@@ -70,9 +70,9 @@ final class CartPricer
         $line = new PricedLine($item->id, $variant, $item->quantity, $unitPrice, $availability, $currency);
 
         if (! $availability->purchasable) {
-            $line->notices[] = $availability->message() ?? 'This item is unavailable.';
+            $line->notices[] = $availability->message() ?? st('This item is unavailable.');
         } elseif (! $availability->allows($item->quantity)) {
-            $line->notices[] = "Only {$availability->available} available. Reduce the quantity to continue.";
+            $line->notices[] = st('Only :count available. Reduce the quantity to continue.', ['count' => (int) $availability->available]);
         }
 
         if ($unitPrice !== null && $item->seen_unit_price !== null) {
@@ -80,11 +80,10 @@ final class CartPricer
             $line->priceSeen = $seen->equals($unitPrice);
 
             if (! $line->priceSeen) {
-                $line->notices[] = sprintf(
-                    'The price changed from %s to %s since you added this item.',
-                    $seen->format(),
-                    $unitPrice->format(),
-                );
+                $line->notices[] = st('The price changed from :from to :to since you added this item.', [
+                    'from' => $seen->format(),
+                    'to' => $unitPrice->format(),
+                ]);
             }
         }
 

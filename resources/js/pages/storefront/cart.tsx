@@ -5,22 +5,25 @@ import InputError from '@/components/input-error';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useT } from '@/lib/i18n';
 import { home } from '@/routes';
 import { show as checkout } from '@/routes/checkout';
 import { product as productRoute } from '@/routes/storefront';
 import type { CartLine, PricedCart } from '@/types';
 
 export default function CartPage({ cart }: { cart: PricedCart | null }) {
+    const t = useT();
+
     if (!cart || cart.lines.length === 0) {
         return (
             <>
-                <Head title="Cart" />
+                <Head title={t('Cart')} />
                 <div className="grid justify-items-center gap-4 py-16 text-center">
                     <h1 className="text-2xl font-semibold">
-                        Your cart is empty
+                        {t('Your cart is empty')}
                     </h1>
                     <Button asChild>
-                        <Link href={home()}>Continue shopping</Link>
+                        <Link href={home()}>{t('Continue shopping')}</Link>
                     </Button>
                 </div>
             </>
@@ -29,8 +32,10 @@ export default function CartPage({ cart }: { cart: PricedCart | null }) {
 
     return (
         <>
-            <Head title="Cart" />
-            <h1 className="mb-6 text-2xl font-semibold tracking-tight">Cart</h1>
+            <Head title={t('Cart')} />
+            <h1 className="mb-6 text-2xl font-semibold tracking-tight">
+                {t('Cart')}
+            </h1>
             <div className="grid gap-8 lg:grid-cols-3">
                 <ul className="grid content-start gap-4 lg:col-span-2">
                     {cart.lines.map((line) => (
@@ -40,27 +45,29 @@ export default function CartPage({ cart }: { cart: PricedCart | null }) {
 
                 <aside
                     className="grid content-start gap-4 rounded-lg border p-5"
-                    aria-label="Order summary"
+                    aria-label={t('Order summary')}
                 >
-                    <h2 className="font-semibold">Summary</h2>
+                    <h2 className="font-semibold">{t('Summary')}</h2>
                     <dl className="grid gap-2 text-sm">
                         <div className="flex justify-between">
-                            <dt>Subtotal</dt>
+                            <dt>{t('Subtotal')}</dt>
                             <dd className="tabular-nums">
                                 {cart.subtotal.formatted}
                             </dd>
                         </div>
                         {Number(cart.discount_total.amount) > 0 && (
                             <div className="flex justify-between">
-                                <dt>Discount ({cart.coupon_code})</dt>
+                                <dt>
+                                    {t('Discount')} ({cart.coupon_code})
+                                </dt>
                                 <dd className="tabular-nums">
                                     −{cart.discount_total.formatted}
                                 </dd>
                             </div>
                         )}
                         <div className="flex justify-between text-muted-foreground">
-                            <dt>Shipping and taxes</dt>
-                            <dd>Calculated at checkout</dd>
+                            <dt>{t('Shipping and taxes')}</dt>
+                            <dd>{t('Calculated at checkout')}</dd>
                         </div>
                     </dl>
 
@@ -74,11 +81,13 @@ export default function CartPage({ cart }: { cart: PricedCart | null }) {
                     ))}
                     {cart.can_checkout ? (
                         <Button asChild>
-                            <Link href={checkout()}>Checkout</Link>
+                            <Link href={checkout()}>{t('Checkout')}</Link>
                         </Button>
                     ) : (
                         <p className="text-sm text-muted-foreground">
-                            Resolve the highlighted items before checking out.
+                            {t(
+                                'Resolve the highlighted items before checking out.',
+                            )}
                         </p>
                     )}
                 </aside>
@@ -88,11 +97,13 @@ export default function CartPage({ cart }: { cart: PricedCart | null }) {
 }
 
 function CouponForm({ cart }: { cart: PricedCart }) {
+    const t = useT();
+
     if (cart.coupon_code) {
         return (
             <div className="flex items-center justify-between gap-2 text-sm">
                 <span>
-                    Coupon <strong>{cart.coupon_code}</strong>
+                    {t('Coupon')} <strong>{cart.coupon_code}</strong>
                     {cart.coupon_error && (
                         <span className="block text-destructive">
                             {cart.coupon_error}
@@ -104,7 +115,7 @@ function CouponForm({ cart }: { cart: PricedCart }) {
                     options={{ preserveScroll: true }}
                 >
                     <Button type="submit" variant="ghost" size="sm">
-                        Remove
+                        {t('Remove')}
                     </Button>
                 </Form>
             </div>
@@ -122,8 +133,8 @@ function CouponForm({ cart }: { cart: PricedCart }) {
                     <div className="flex gap-2">
                         <Input
                             name="code"
-                            placeholder="Coupon code"
-                            aria-label="Coupon code"
+                            placeholder={t('Coupon code')}
+                            aria-label={t('Coupon code')}
                             autoComplete="off"
                         />
                         <Button
@@ -131,7 +142,7 @@ function CouponForm({ cart }: { cart: PricedCart }) {
                             variant="outline"
                             disabled={processing}
                         >
-                            Apply
+                            {t('Apply')}
                         </Button>
                     </div>
                     <InputError message={errors.code} />
@@ -142,6 +153,8 @@ function CouponForm({ cart }: { cart: PricedCart }) {
 }
 
 function CartRow({ line }: { line: CartLine }) {
+    const t = useT();
+
     return (
         <li className="grid grid-cols-[4rem_1fr] gap-4 rounded-lg border p-4 sm:grid-cols-[5rem_1fr_auto]">
             <div className="size-16 overflow-hidden rounded border bg-muted sm:size-20">
@@ -170,7 +183,11 @@ function CartRow({ line }: { line: CartLine }) {
                     </span>
                 )}
                 <span className="text-sm tabular-nums">
-                    {line.unit_price ? line.unit_price.formatted : '—'} each
+                    {t(':price each', {
+                        price: line.unit_price
+                            ? line.unit_price.formatted
+                            : '—',
+                    })}
                 </span>
                 {line.notices.map((notice) => (
                     <p key={notice} className="text-sm text-destructive">
@@ -192,7 +209,9 @@ function CartRow({ line }: { line: CartLine }) {
                                 min={0}
                                 max={line.available ?? 999}
                                 defaultValue={line.quantity}
-                                aria-label={`Quantity of ${line.product_name}`}
+                                aria-label={t('Quantity of :product', {
+                                    product: line.product_name,
+                                })}
                                 className="w-20"
                             />
                             <Button
@@ -201,7 +220,7 @@ function CartRow({ line }: { line: CartLine }) {
                                 size="sm"
                                 disabled={processing}
                             >
-                                Update
+                                {t('Update')}
                             </Button>
                             <InputError message={errors.quantity} />
                         </>
@@ -212,7 +231,7 @@ function CartRow({ line }: { line: CartLine }) {
                     options={{ preserveScroll: true }}
                 >
                     <Button type="submit" variant="ghost" size="sm">
-                        Remove
+                        {t('Remove')}
                     </Button>
                 </Form>
                 <span className="ml-auto font-medium tabular-nums sm:ml-0">

@@ -67,7 +67,7 @@ final class PlaceOrder
         }
 
         if ($user === null && ! $this->guestCheckoutEnabled()) {
-            throw ValidationException::withMessages(['email' => 'Please sign in or create an account to check out.']);
+            throw ValidationException::withMessages(['email' => st('Please sign in or create an account to check out.')]);
         }
 
         return DB::transaction(function () use ($cart, $data, $user, $ipAddress) {
@@ -97,7 +97,7 @@ final class PlaceOrder
             $this->assertCheckoutable($priced, $data);
             $this->validators->assertValid($priced, $data);
             $paymentMethod = $this->paymentMethods->availableFor($priced)[$data->paymentMethod]
-                ?? throw ValidationException::withMessages(['payment_method' => 'Choose an available payment method.']);
+                ?? throw ValidationException::withMessages(['payment_method' => st('Choose an available payment method.')]);
 
             $order = $this->createOrder($priced, $data, $customer, $user, $paymentMethod->code(), $paymentMethod->label(), $ipAddress);
 
@@ -109,7 +109,7 @@ final class PlaceOrder
                 $this->inventory->allocate($quantities, $order, $user);
             } catch (InsufficientStock $e) {
                 $skus = implode(', ', array_column($e->shortages, 'sku'));
-                throw ValidationException::withMessages(['cart' => "Some items just sold out ({$skus}). Please review your cart."]);
+                throw ValidationException::withMessages(['cart' => st('Some items just sold out (:skus). Please review your cart.', ['skus' => $skus])]);
             }
 
             $this->redeemCoupon($priced, $order, $customer, $data->email);
@@ -142,11 +142,11 @@ final class PlaceOrder
     private function assertCheckoutable(PricedCart $priced, CheckoutData $data): void
     {
         if ($priced->isEmpty()) {
-            throw ValidationException::withMessages(['cart' => 'Your cart is empty.']);
+            throw ValidationException::withMessages(['cart' => st('Your cart is empty.')]);
         }
 
         if (! $priced->canCheckout()) {
-            throw ValidationException::withMessages(['cart' => $priced->issues[0] ?? 'Some items in your cart are no longer available. Please review your cart.']);
+            throw ValidationException::withMessages(['cart' => $priced->issues[0] ?? st('Some items in your cart are no longer available. Please review your cart.')]);
         }
 
         if ($priced->couponCode !== null && $priced->couponError !== null) {
@@ -154,7 +154,7 @@ final class PlaceOrder
         }
 
         if ($priced->shipping === null) {
-            throw ValidationException::withMessages(['shipping_method' => 'Choose a shipping method available for your address.']);
+            throw ValidationException::withMessages(['shipping_method' => st('Choose a shipping method available for your address.')]);
         }
 
         if ($data->expectedTotal !== null) {
@@ -162,7 +162,7 @@ final class PlaceOrder
 
             if (! $expected->equals($priced->grandTotal())) {
                 throw ValidationException::withMessages([
-                    'total' => "The total changed to {$priced->grandTotal()->format()}. Please review your order and submit again.",
+                    'total' => st('The total changed to :total. Please review your order and submit again.', ['total' => $priced->grandTotal()->format()]),
                 ]);
             }
         }
@@ -264,7 +264,7 @@ final class PlaceOrder
 
         // Re-checked under the lock so concurrent checkouts cannot exceed the limit.
         if ($coupon->usage_limit !== null && $coupon->times_used >= $coupon->usage_limit) {
-            throw ValidationException::withMessages(['coupon' => 'This coupon has just reached its usage limit.']);
+            throw ValidationException::withMessages(['coupon' => st('This coupon has just reached its usage limit.')]);
         }
 
         $coupon->increment('times_used');
@@ -288,7 +288,7 @@ final class PlaceOrder
         $sameOwner = $user !== null ? $order->user_id === $user->id : ($order->user_id === null && $order->email === Str::lower($data->email));
 
         if (! $sameOwner) {
-            throw ValidationException::withMessages(['cart' => 'This checkout session has expired. Please reload the page.']);
+            throw ValidationException::withMessages(['cart' => st('This checkout session has expired. Please reload the page.')]);
         }
 
         return $order;

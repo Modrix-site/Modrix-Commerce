@@ -4,6 +4,16 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added (storefront interface translations)
+
+- The storefront's wording (header, product, cart, checkout, order, account and sign-in pages, server messages) is translatable.
+- Spanish, French and German are shipped, including Laravel validation, sign-in and password-reset messages.
+- Admin → Languages → Storefront text: change any text or translate other languages (search, "not translated" and "changed" filters).
+- `php artisan ecomodular:storefront-strings` rebuilds the source catalogue. A test keeps code and catalogue in sync and checks placeholders.
+- Country names follow the shopper's language; dates on order pages follow the page language.
+- Sign-in and registration pages follow the shopper's language.
+- ADR-042.
+
 ### Added (media library and translations)
 
 - Media library (Catalog → Media library):

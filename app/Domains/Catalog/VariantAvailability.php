@@ -58,9 +58,9 @@ final class VariantAvailability
     public function message(): ?string
     {
         return match ($this->reason) {
-            self::INACTIVE => 'This item is no longer available.',
-            self::UNPRICED => 'This item cannot be purchased in the store currency.',
-            self::OUT_OF_STOCK => 'This item is out of stock.',
+            self::INACTIVE => st('This item is no longer available.'),
+            self::UNPRICED => st('This item cannot be purchased in the store currency.'),
+            self::OUT_OF_STOCK => st('This item is out of stock.'),
             default => null,
         };
     }

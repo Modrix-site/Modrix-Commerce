@@ -1,6 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import { AccountNav } from '@/components/storefront/account-nav';
 import { Button } from '@/components/ui/button';
+import { useT } from '@/lib/i18n';
 import { addresses, dataExport } from '@/routes/account';
 import type { Address } from '@/types';
 
@@ -10,15 +11,17 @@ type Props = {
 };
 
 export default function AccountIndex({ customer, defaultAddress }: Props) {
+    const t = useT();
+
     return (
         <>
-            <Head title="My account" />
+            <Head title={t('My account')} />
             <div className="grid gap-8 md:grid-cols-[12rem_1fr]">
                 <AccountNav />
                 <div className="grid content-start gap-6">
                     <div>
                         <h1 className="text-2xl font-semibold tracking-tight">
-                            Hello, {customer.name}
+                            {t('Hello, :name', { name: customer.name })}
                         </h1>
                         <p className="text-muted-foreground">
                             {customer.email}
@@ -26,7 +29,7 @@ export default function AccountIndex({ customer, defaultAddress }: Props) {
                     </div>
                     <section className="grid gap-2 rounded-lg border p-5">
                         <h2 className="font-semibold">
-                            Default shipping address
+                            {t('Default shipping address')}
                         </h2>
                         {defaultAddress ? (
                             <address className="text-sm text-muted-foreground not-italic">
@@ -44,25 +47,28 @@ export default function AccountIndex({ customer, defaultAddress }: Props) {
                             </address>
                         ) : (
                             <p className="text-sm text-muted-foreground">
-                                No address saved yet.
+                                {t('No address saved yet.')}
                             </p>
                         )}
                         <div>
                             <Button variant="outline" size="sm" asChild>
-                                <Link href={addresses()}>Manage addresses</Link>
+                                <Link href={addresses()}>
+                                    {t('Manage addresses')}
+                                </Link>
                             </Button>
                         </div>
                     </section>
                     <section className="grid gap-2 rounded-lg border p-5">
-                        <h2 className="font-semibold">Your data</h2>
+                        <h2 className="font-semibold">{t('Your data')}</h2>
                         <p className="text-sm text-muted-foreground">
-                            Download your account details, addresses, orders and
-                            subscriptions as a JSON file.
+                            {t(
+                                'Download your account details, addresses, orders and subscriptions as a JSON file.',
+                            )}
                         </p>
                         <div>
                             <Button variant="outline" size="sm" asChild>
                                 <a href={dataExport().url} download>
-                                    Download my data
+                                    {t('Download my data')}
                                 </a>
                             </Button>
                         </div>

@@ -30,39 +30,39 @@ final class CouponValidator
         $now ??= now();
 
         if (! $coupon->is_active) {
-            return ['This coupon is not valid.', []];
+            return [st('This coupon is not valid.'), []];
         }
 
         if ($coupon->starts_at !== null && $coupon->starts_at->isAfter($now)) {
-            return ['This coupon is not active yet.', []];
+            return [st('This coupon is not active yet.'), []];
         }
 
         if ($coupon->ends_at !== null && $coupon->ends_at->isBefore($now)) {
-            return ['This coupon has expired.', []];
+            return [st('This coupon has expired.'), []];
         }
 
         if ($coupon->usage_limit !== null && $coupon->times_used >= $coupon->usage_limit) {
-            return ['This coupon has reached its usage limit.', []];
+            return [st('This coupon has reached its usage limit.'), []];
         }
 
         if ($coupon->type === Coupon::TYPE_FIXED && $coupon->currency !== $cart->currency) {
-            return ['This coupon cannot be used in this currency.', []];
+            return [st('This coupon cannot be used in this currency.'), []];
         }
 
         if ($coupon->usage_limit_per_customer !== null && $this->usesByCustomer($coupon, $context) >= $coupon->usage_limit_per_customer) {
-            return ['You have already used this coupon the maximum number of times.', []];
+            return [st('You have already used this coupon the maximum number of times.'), []];
         }
 
         $minimum = $coupon->minSubtotal($cart->currency);
 
         if ($minimum !== null && $cart->subtotal()->lessThan($minimum)) {
-            return ["Spend at least {$minimum->format()} to use this coupon.", []];
+            return [st('Spend at least :amount to use this coupon.', ['amount' => $minimum->format()]), []];
         }
 
         $eligible = $this->eligibleLines($coupon, $cart);
 
         if ($eligible === []) {
-            return ['This coupon does not apply to the items in your cart.', []];
+            return [st('This coupon does not apply to the items in your cart.'), []];
         }
 
         return [null, $eligible];

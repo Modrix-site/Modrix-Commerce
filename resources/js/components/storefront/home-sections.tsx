@@ -1,6 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { ProductGrid } from '@/components/storefront/product-card';
 import { Button } from '@/components/ui/button';
+import { useT } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { category } from '@/routes/storefront';
 import type { ProductCard } from '@/types';
@@ -153,6 +154,7 @@ function Hero({ section }: { section: HomeSection }) {
 
 function FeaturedProducts({ section }: { section: HomeSection }) {
     const products = section.data.products ?? [];
+    const t = useT();
 
     return (
         <section
@@ -168,7 +170,9 @@ function FeaturedProducts({ section }: { section: HomeSection }) {
                 <ProductGrid products={products} />
             ) : (
                 <p className="text-muted-foreground">
-                    No products are available yet. Please check back soon.
+                    {t(
+                        'No products are available yet. Please check back soon.',
+                    )}
                 </p>
             )}
         </section>
