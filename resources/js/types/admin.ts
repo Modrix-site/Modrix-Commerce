@@ -156,6 +156,8 @@ export type ThemeField = {
         | 'font';
     label: string;
     group?: string;
+    /** Customizer tab (general, header, home, catalog, product, cart, footer). */
+    tab?: string;
     options?: string[];
     min?: number;
     max?: number;

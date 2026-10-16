@@ -13,6 +13,12 @@ import type { FormEvent } from 'react';
 import ThemeController from '@/actions/App/Http/Controllers/Admin/ThemeController';
 import { NativeSelect } from '@/components/admin/form-field';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
+import {
+    CustomizerTabs,
+    groupsForTab,
+    useCustomizerTab,
+} from '@/components/admin/themes/customizer-tabs';
+import type { CustomizerTab } from '@/components/admin/themes/customizer-tabs';
 import InputError from '@/components/input-error';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -92,6 +98,8 @@ export default function ThemeCustomize({
     sections,
     images,
 }: Props) {
+    const [tab, setTab] = useCustomizerTab();
+
     return (
         <>
             <Head title={`Customize ${theme.display_name}`} />
@@ -131,18 +139,32 @@ export default function ThemeCustomize({
                     </Alert>
                 )}
 
+                <CustomizerTabs
+                    fields={design.fields}
+                    overridden={design.overridden}
+                    value={tab}
+                    onChange={setTab}
+                />
+                {tab === 'home' && (
+                    <SectionsCard
+                        themeId={theme.id}
+                        sections={sections}
+                        images={images}
+                    />
+                )}
+                {/* Always mounted, so unsaved edits survive switching tabs. */}
                 <DesignCard
                     themeId={theme.id}
                     design={design}
                     images={images}
+                    tab={tab}
                 />
-                <ImageLibrary images={images} />
-                <SectionsCard
-                    themeId={theme.id}
-                    sections={sections}
-                    images={images}
-                />
-                <ResetCard theme={theme} />
+                {tab === 'general' && (
+                    <>
+                        <ImageLibrary images={images} />
+                        <ResetCard theme={theme} />
+                    </>
+                )}
             </AdminPage>
         </>
     );
@@ -152,10 +174,13 @@ function DesignCard({
     themeId,
     design,
     images,
+    tab,
 }: {
     themeId: number;
     design: Props['design'];
     images: ThemeImageOption[];
+    /** Only this tab's settings are shown; the form still holds all of them. */
+    tab: CustomizerTab;
 }) {
     // Only overridden keys are sent as values; everything else stays on the theme default.
     const initial: Record<string, Value> = {};
@@ -168,7 +193,7 @@ function DesignCard({
     const form = useForm<{ design: Record<string, Value> }>({
         design: initial,
     });
-    const groups = [...new Set(design.fields.map((f) => f.group ?? 'Other'))];
+    const groups = groupsForTab(design.fields, tab);
 
     const submit = (event: FormEvent) => {
         event.preventDefault();
