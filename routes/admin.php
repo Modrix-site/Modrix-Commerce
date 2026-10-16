@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\Catalog\BrandController;
 use App\Http\Controllers\Admin\Catalog\CategoryController;
 use App\Http\Controllers\Admin\Catalog\ProductController;
 use App\Http\Controllers\Admin\Catalog\ProductCsvController;
+use App\Http\Controllers\Admin\Catalog\ProductFileController;
 use App\Http\Controllers\Admin\Catalog\ProductImageController;
 use App\Http\Controllers\Admin\Catalog\TranslationController;
 use App\Http\Controllers\Admin\CouponController;
@@ -114,6 +115,9 @@ Route::middleware('can:products.update')->group(function () {
     Route::put('products/{product}/images/order', [ProductImageController::class, 'reorder'])->name('products.images.reorder');
     Route::put('products/{product}/images/{image}', [ProductImageController::class, 'update'])->name('products.images.update')->scopeBindings();
     Route::delete('products/{product}/images/{image}', [ProductImageController::class, 'destroy'])->name('products.images.destroy')->scopeBindings();
+    Route::post('products/{product}/files', [ProductFileController::class, 'store'])->name('products.files.store');
+    Route::put('products/{product}/files/{file}', [ProductFileController::class, 'update'])->name('products.files.update')->scopeBindings();
+    Route::delete('products/{product}/files/{file}', [ProductFileController::class, 'destroy'])->name('products.files.destroy')->scopeBindings();
 
     // Storefront translations.
     Route::get('translations', [TranslationController::class, 'index'])->name('translations.index');

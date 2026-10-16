@@ -10,6 +10,7 @@ import {
     SaveBar,
     useUnsavedChangesGuard,
 } from '@/components/admin/products/save-bar';
+import { DigitalFiles } from '@/components/admin/products/digital-files';
 import { ProductPicker } from '@/components/admin/products/product-picker';
 import type { PickerItem } from '@/components/admin/products/product-picker';
 import { SectionNav } from '@/components/admin/products/section-nav';
@@ -104,6 +105,7 @@ function ProductForm({
         category_ids: product?.category_ids ?? [],
         brand_id: product?.brand_id ? String(product.brand_id) : '',
         is_featured: product?.is_featured ?? false,
+        is_digital: product?.is_digital ?? false,
         tags: product?.tags ?? [],
         related_ids: (product?.related ?? []).map((p) => p.id),
         upsell_ids: (product?.upsells ?? []).map((p) => p.id),
@@ -227,7 +229,9 @@ function ProductForm({
             id: 'pricing',
             label: isVariable ? 'Variants' : 'Pricing & inventory',
         },
-        { id: 'shipping', label: 'Shipping' },
+        data.is_digital
+            ? { id: 'files', label: 'Digital files' }
+            : { id: 'shipping', label: 'Shipping' },
         { id: 'related', label: 'Related products' },
         { id: 'seo', label: 'Search listing' },
     ].map((s) => ({ ...s, hasError: sectionHasError(s.id) }));
@@ -453,32 +457,52 @@ function ProductForm({
                                 )}
                             </Section>
 
-                            <Section
-                                id="shipping"
-                                title="Shipping"
-                                description="Weight and package size, used by shipping rates and packing."
-                            >
-                                {rows.map((variant, i) => (
-                                    <div key={variant.id ?? `new-${i}`}>
-                                        {isVariable && (
-                                            <p className="mb-2 text-sm font-medium">
-                                                {variant.sku ||
-                                                    `Variant ${i + 1}`}
-                                            </p>
-                                        )}
-                                        <ShippingFields
-                                            index={i}
-                                            variant={variant}
-                                            errors={errors}
-                                            weightUnit={weightUnit}
-                                            dimensionUnit={dimensionUnit}
-                                            onChange={(patch) =>
-                                                updateVariant(i, patch)
-                                            }
+                            {data.is_digital ? (
+                                <Section
+                                    id="files"
+                                    title="Digital files"
+                                    description="What customers download after paying. Digital products are not shipped."
+                                >
+                                    {product ? (
+                                        <DigitalFiles
+                                            productId={product.id}
+                                            files={product.files ?? []}
                                         />
-                                    </div>
-                                ))}
-                            </Section>
+                                    ) : (
+                                        <p className="text-sm text-muted-foreground">
+                                            Save the product first, then upload
+                                            its files here.
+                                        </p>
+                                    )}
+                                </Section>
+                            ) : (
+                                <Section
+                                    id="shipping"
+                                    title="Shipping"
+                                    description="Weight and package size, used by shipping rates and packing."
+                                >
+                                    {rows.map((variant, i) => (
+                                        <div key={variant.id ?? `new-${i}`}>
+                                            {isVariable && (
+                                                <p className="mb-2 text-sm font-medium">
+                                                    {variant.sku ||
+                                                        `Variant ${i + 1}`}
+                                                </p>
+                                            )}
+                                            <ShippingFields
+                                                index={i}
+                                                variant={variant}
+                                                errors={errors}
+                                                weightUnit={weightUnit}
+                                                dimensionUnit={dimensionUnit}
+                                                onChange={(patch) =>
+                                                    updateVariant(i, patch)
+                                                }
+                                            />
+                                        </div>
+                                    ))}
+                                </Section>
+                            )}
 
                             <Section
                                 id="related"
@@ -677,6 +701,25 @@ function ProductForm({
                                             <span className="block text-xs text-muted-foreground">
                                                 Can be shown in the home page
                                                 “Featured products” section.
+                                            </span>
+                                        </span>
+                                    </label>
+                                    <label className="flex items-start gap-2 text-sm">
+                                        <Checkbox
+                                            checked={data.is_digital}
+                                            onCheckedChange={(c) =>
+                                                setData(
+                                                    'is_digital',
+                                                    c === true,
+                                                )
+                                            }
+                                            className="mt-0.5"
+                                        />
+                                        <span>
+                                            Digital product (no shipping)
+                                            <span className="block text-xs text-muted-foreground">
+                                                Customers download its files
+                                                after paying.
                                             </span>
                                         </span>
                                     </label>

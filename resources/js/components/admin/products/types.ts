@@ -1,3 +1,4 @@
+import type { DigitalFile } from '@/components/admin/products/digital-files';
 import type { PickerItem } from '@/components/admin/products/product-picker';
 import type { CategoryOption, Option } from '@/types';
 
@@ -41,6 +42,8 @@ export type ProductData = {
     category_ids: number[];
     brand_id: number | null;
     is_featured: boolean;
+    is_digital: boolean;
+    files?: DigitalFile[];
     tags: string[];
     related?: PickerItem[];
     upsells?: PickerItem[];
@@ -97,6 +100,7 @@ export type ProductFormData = {
     category_ids: number[];
     brand_id: string;
     is_featured: boolean;
+    is_digital: boolean;
     tags: string[];
     related_ids: number[];
     upsell_ids: number[];

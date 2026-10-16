@@ -32,7 +32,7 @@ use Illuminate\Validation\ValidationException;
  *  - variants omitted from an update are soft-deleted (order history keeps them).
  *
  * @phpstan-type VariantInput array{id?: int|null, sku: string, name?: string|null, price: string, compare_at_price?: string|null, weight?: string|null, cost?: string|null, length?: string|null, width?: string|null, height?: string|null, barcode?: string|null, track_inventory?: bool, allow_backorder?: bool, low_stock_threshold?: int|null, is_active?: bool, option_value_ids?: list<int>, initial_stock?: int|null}
- * @phpstan-type ProductInput array{type: string, name: string, slug?: string|null, status: string, brand_id?: int|null, is_featured?: bool, tags?: list<string>, related_ids?: list<int>, upsell_ids?: list<int>, published_at?: string|null, short_description?: string|null, description?: string|null, meta_title?: string|null, meta_description?: string|null, category_ids?: list<int>, option_attribute_ids?: list<int>, variants: list<VariantInput>}
+ * @phpstan-type ProductInput array{type: string, name: string, slug?: string|null, status: string, brand_id?: int|null, is_featured?: bool, is_digital?: bool, tags?: list<string>, related_ids?: list<int>, upsell_ids?: list<int>, published_at?: string|null, short_description?: string|null, description?: string|null, meta_title?: string|null, meta_description?: string|null, category_ids?: list<int>, option_attribute_ids?: list<int>, variants: list<VariantInput>}
  */
 final class SaveProduct
 {
@@ -78,6 +78,7 @@ final class SaveProduct
                 'meta_description' => $data['meta_description'] ?? null,
                 'brand_id' => isset($data['brand_id']) ? (int) $data['brand_id'] : null,
                 'is_featured' => (bool) ($data['is_featured'] ?? false),
+                'is_digital' => (bool) ($data['is_digital'] ?? false),
             ])->save();
 
             $product->categories()->sync(array_map('intval', $data['category_ids'] ?? []));
@@ -239,7 +240,8 @@ final class SaveProduct
                 'width' => $row['width'] ?? null,
                 'height' => $row['height'] ?? null,
                 'barcode' => $row['barcode'] ?? null,
-                'track_inventory' => $row['track_inventory'] ?? true,
+                // Digital products do not track stock unless asked to.
+                'track_inventory' => $row['track_inventory'] ?? ! $product->is_digital,
                 'allow_backorder' => $row['allow_backorder'] ?? false,
                 'low_stock_threshold' => $row['low_stock_threshold'] ?? null,
             ])->save();

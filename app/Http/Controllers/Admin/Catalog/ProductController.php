@@ -13,6 +13,7 @@ use App\Domains\Catalog\Models\Brand;
 use App\Domains\Catalog\Models\Product;
 use App\Domains\Catalog\Models\ProductAttribute;
 use App\Domains\Catalog\Models\ProductAttributeValue;
+use App\Domains\Catalog\Models\ProductFile;
 use App\Domains\Catalog\Models\ProductImage;
 use App\Domains\Catalog\Models\ProductTag;
 use App\Domains\Catalog\Models\ProductVariant;
@@ -174,6 +175,13 @@ class ProductController extends Controller
                     'low_stock_threshold' => $v->low_stock_threshold,
                     'option_value_ids' => $v->options->pluck('id')->all(),
                     'on_hand' => $v->onHand(),
+                ])->values()->all(),
+                'is_digital' => $product->is_digital,
+                'files' => $product->files->map(fn (ProductFile $file) => [
+                    'id' => $file->id,
+                    'name' => $file->name,
+                    'size' => $file->size,
+                    'mime' => $file->mime,
                 ])->values()->all(),
                 'images' => $product->images->map(fn (ProductImage $image) => [
                     'id' => $image->id,

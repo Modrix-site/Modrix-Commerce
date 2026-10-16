@@ -31,12 +31,13 @@ use Illuminate\Support\Carbon;
  * @property string|null $meta_description
  * @property int|null $brand_id
  * @property bool $is_featured
+ * @property bool $is_digital
  * @property-read Brand|null $brand
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  */
-#[Fillable(['type', 'name', 'slug', 'short_description', 'description', 'status', 'published_at', 'meta_title', 'meta_description', 'brand_id', 'is_featured'])]
+#[Fillable(['type', 'name', 'slug', 'short_description', 'description', 'status', 'published_at', 'meta_title', 'meta_description', 'brand_id', 'is_featured', 'is_digital'])]
 #[UseFactory(ProductFactory::class)]
 class Product extends Model
 {
@@ -69,6 +70,7 @@ class Product extends Model
             'status' => ProductStatus::class,
             'published_at' => 'datetime',
             'is_featured' => 'boolean',
+            'is_digital' => 'boolean',
         ];
     }
 
@@ -140,6 +142,16 @@ class Product extends Model
         return $this->belongsToMany(Product::class, 'product_relations', 'product_id', 'related_product_id')
             ->wherePivot('type', $type)
             ->orderByPivot('position');
+    }
+
+    /**
+     * Files a digital product delivers, in order.
+     *
+     * @return HasMany<ProductFile, $this>
+     */
+    public function files(): HasMany
+    {
+        return $this->hasMany(ProductFile::class)->orderBy('position')->orderBy('id');
     }
 
     /**

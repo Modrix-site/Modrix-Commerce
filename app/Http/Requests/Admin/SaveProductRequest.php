@@ -48,6 +48,10 @@ class SaveProductRequest extends FormRequest
         if ($this->has('is_featured')) {
             $this->merge(['is_featured' => filter_var($this->input('is_featured'), FILTER_VALIDATE_BOOLEAN)]);
         }
+
+        if ($this->has('is_digital')) {
+            $this->merge(['is_digital' => filter_var($this->input('is_digital'), FILTER_VALIDATE_BOOLEAN)]);
+        }
     }
 
     /**
@@ -71,6 +75,7 @@ class SaveProductRequest extends FormRequest
             'meta_description' => ['nullable', 'string', 'max:500'],
             'brand_id' => ['nullable', 'integer', Rule::exists('brands', 'id')],
             'is_featured' => ['boolean'],
+            'is_digital' => ['boolean'],
             'tags' => ['nullable', 'array', 'max:'.ProductTag::MAX_PER_PRODUCT],
             'tags.*' => ['string', 'max:'.ProductTag::MAX_LENGTH],
             'related_ids' => ['nullable', 'array', 'max:'.ProductRelations::MAX],
