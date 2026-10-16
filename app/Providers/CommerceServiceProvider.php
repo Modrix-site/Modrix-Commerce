@@ -16,6 +16,8 @@ use App\Domains\Downloads\Listeners\GrantDownloads;
 use App\Domains\Downloads\Listeners\RevokeDownloads;
 use App\Domains\Inventory\Events\InventoryLow;
 use App\Domains\Inventory\Listeners\SendLowStockAlert;
+use App\Domains\Notifications\Listeners\NotifyCustomer;
+use App\Domains\Notifications\Listeners\NotifyStaff;
 use App\Domains\Orders\Events\OrderCancelled;
 use App\Domains\Orders\Events\OrderPaid;
 use App\Domains\Orders\Events\OrderRefunded;
@@ -107,6 +109,9 @@ class CommerceServiceProvider extends ServiceProvider
         Event::listen(OrderPaid::class, GrantDownloads::class);
         Event::listen(OrderCancelled::class, RevokeDownloads::class);
         Event::listen(OrderRefunded::class, RevokeDownloads::class);
+        // Staff and customer notification bells (after download links are issued).
+        Event::subscribe(NotifyStaff::class);
+        Event::subscribe(NotifyCustomer::class);
         Event::subscribe(SendOrderEmails::class);
 
         RateLimiter::for('checkout', fn (Request $request) => [
