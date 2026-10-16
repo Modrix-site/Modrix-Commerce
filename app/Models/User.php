@@ -26,6 +26,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property Carbon|null $two_factor_confirmed_at
  * @property string|null $remember_token
  * @property Carbon|null $disabled_at
+ * @property array<string, array{bell?: bool, email?: bool}>|null $notification_preferences
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
@@ -48,6 +49,18 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
             'disabled_at' => 'datetime',
+            'notification_preferences' => 'array',
         ];
+    }
+
+    /**
+     * Whether this person wants a kind of notification in the bell or by
+     * email. Default: in the bell, not by email.
+     */
+    public function wantsNotification(string $kind, string $channel): bool
+    {
+        $preference = $this->notification_preferences[$kind][$channel] ?? null;
+
+        return is_bool($preference) ? $preference : $channel === 'bell';
     }
 }

@@ -22,3 +22,6 @@ if ((string) config('ecomodular.backup.schedule') !== '') {
 
 // Marketplace license status and update availability (never disables anything).
 Schedule::command('ecomodular:marketplace:check')->daily()->withoutOverlapping();
+
+// Old read notifications (staff and customer bells).
+Schedule::command('notifications:prune')->daily()->withoutOverlapping();
