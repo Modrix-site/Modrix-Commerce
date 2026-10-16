@@ -46,6 +46,8 @@ final class ThemeCss
         $css .= ':root{'.self::declarations($light + $shared).'}';
         $css .= '.dark{'.self::declarations($dark).'}';
         $css .= '.storefront h1,.storefront h2,.storefront h3{font-family:var(--font-heading)}';
+        // Fonts, prices and buttons the merchant set in the customizer (nothing when unset).
+        $css .= ThemeStyleFields::css($design);
 
         return $css;
     }

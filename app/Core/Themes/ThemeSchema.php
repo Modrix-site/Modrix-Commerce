@@ -92,7 +92,7 @@ final class ThemeSchema
             'favicon' => ['type' => 'image', 'label' => 'Favicon', 'group' => 'Branding'],
             'announcement' => ['type' => 'string', 'label' => 'Announcement bar', 'group' => 'Branding', 'max' => 160],
             'footer_text' => ['type' => 'text', 'label' => 'Footer text', 'group' => 'Branding', 'max' => 500],
-        ];
+        ] + ThemeStyleFields::fields();
     }
 
     /**
