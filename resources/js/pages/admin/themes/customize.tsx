@@ -14,6 +14,7 @@ import ThemeController from '@/actions/App/Http/Controllers/Admin/ThemeControlle
 import { NativeSelect } from '@/components/admin/form-field';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import {
+    CUSTOMIZER_PANEL_ID,
     CustomizerTabs,
     groupsForTab,
     useCustomizerTab,
@@ -145,28 +146,35 @@ export default function ThemeCustomize({
                     value={tab}
                     onChange={setTab}
                 />
-                {/* Cards with forms stay mounted (only hidden), so unsaved
-                    edits survive switching tabs. */}
-                <div hidden={tab !== 'home'}>
-                    <SectionsCard
-                        themeId={theme.id}
-                        sections={sections}
-                        images={images}
-                    />
+                <div
+                    role="tabpanel"
+                    id={CUSTOMIZER_PANEL_ID}
+                    aria-labelledby={`customizer-tab-${tab}`}
+                    className="grid gap-5"
+                >
+                    {/* Cards with forms stay mounted (only hidden), so unsaved
+                        edits survive switching tabs. */}
+                    <div hidden={tab !== 'home'}>
+                        <SectionsCard
+                            themeId={theme.id}
+                            sections={sections}
+                            images={images}
+                        />
+                    </div>
+                    <div hidden={groupsForTab(design.fields, tab).length === 0}>
+                        <DesignCard
+                            themeId={theme.id}
+                            design={design}
+                            images={images}
+                            tab={tab}
+                        />
+                    </div>
+                    {/* Uploads are used by settings (General) and sections (Homepage). */}
+                    {(tab === 'general' || tab === 'home') && (
+                        <ImageLibrary images={images} />
+                    )}
+                    {tab === 'general' && <ResetCard theme={theme} />}
                 </div>
-                <div hidden={groupsForTab(design.fields, tab).length === 0}>
-                    <DesignCard
-                        themeId={theme.id}
-                        design={design}
-                        images={images}
-                        tab={tab}
-                    />
-                </div>
-                {/* Uploads are used by settings (General) and sections (Homepage). */}
-                {(tab === 'general' || tab === 'home') && (
-                    <ImageLibrary images={images} />
-                )}
-                {tab === 'general' && <ResetCard theme={theme} />}
             </AdminPage>
         </>
     );

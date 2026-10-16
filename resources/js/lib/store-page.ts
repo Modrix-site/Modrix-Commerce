@@ -10,6 +10,7 @@ const PAGES: Record<string, StorePage> = {
     'storefront/product': 'product',
     'storefront/cart': 'cart',
     'storefront/checkout': 'cart',
+    'storefront/order-complete': 'cart',
 };
 
 export function storePageFor(component: string): StorePage | undefined {

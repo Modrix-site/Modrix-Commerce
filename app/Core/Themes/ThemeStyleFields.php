@@ -105,9 +105,10 @@ final class ThemeStyleFields
                 'color' => $value('heading_color'),
             ]);
             $css .= self::rule($scope, ['h1', 'h2', 'h3'], $heading);
-            $css .= self::rule($scope, ['h1'], self::declarations(['font-size' => $size === null ? null : "{$size}px"]));
-            $css .= self::rule($scope, ['h2'], self::declarations(['font-size' => $size === null ? null : "calc({$size}px * 0.75)"]));
-            $css .= self::rule($scope, ['h3'], self::declarations(['font-size' => $size === null ? null : "calc({$size}px * 0.6)"]));
+            // The chosen size is the desktop size; titles shrink on small screens.
+            $css .= self::rule($scope, ['h1'], self::declarations(['font-size' => $size === null ? null : self::fluid("{$size}px")]));
+            $css .= self::rule($scope, ['h2'], self::declarations(['font-size' => $size === null ? null : self::fluid("{$size}px * 0.75")]));
+            $css .= self::rule($scope, ['h3'], self::declarations(['font-size' => $size === null ? null : self::fluid("{$size}px * 0.6")]));
 
             $bodySize = $value('body_size');
             $css .= self::rule($scope, [''], self::declarations([
@@ -123,6 +124,18 @@ final class ThemeStyleFields
                 'font-family' => self::font($value('button_font')),
                 'font-size' => $buttonSize === null ? null : "{$buttonSize}px",
                 'border-radius' => $value('button_radius'),
+            ]));
+            // Outline buttons (e.g. Buy now) keep their outline in the button colour.
+            $css .= self::rule($scope, ['.store-button-outline'], self::declarations([
+                'border-color' => $value('button_bg'),
+                'color' => $value('button_bg'),
+                'font-family' => self::font($value('button_font')),
+                'font-size' => $buttonSize === null ? null : "{$buttonSize}px",
+                'border-radius' => $value('button_radius'),
+            ]));
+            $css .= self::rule($scope, ['.store-button-outline:hover'], self::declarations([
+                'background' => $value('button_bg'),
+                'color' => $value('button_bg') === null ? null : ($value('button_text') ?? '#ffffff'),
             ]));
             $hover = $value('button_hover_bg');
             $css .= self::rule($scope, array_map(fn (string $s) => "{$s}:hover", self::BUTTONS), self::declarations([
@@ -193,6 +206,14 @@ final class ThemeStyleFields
         }
 
         return implode(';', $out);
+    }
+
+    /** A size that is $max on wide screens and shrinks to 60% on small ones. */
+    private static function fluid(string $max): string
+    {
+        $full = str_contains($max, '*') ? "calc({$max})" : $max;
+
+        return "clamp(calc({$max} * 0.6), calc({$max} * 0.45 + 2vw), {$full})";
     }
 
     private static function font(?string $value): ?string

@@ -110,14 +110,21 @@ final class ThemeManager
     {
         return $this->operation($name, function (Extension $theme) use ($input, $actor) {
             $manifest = $this->renderedManifest($theme);
+            $before = $this->customizations->designOverrides($manifest);
             $errors = $this->customizations->saveDesign($manifest, $input);
 
             if ($errors !== []) {
                 throw ValidationException::withMessages($errors);
             }
 
-            $this->repository->record($theme, 'customized', $theme->state, true, 'Design settings changed: '.implode(', ', array_keys($input)), $actor);
-            $this->audit->record('theme.customized', null, ['name' => $theme->name, 'keys' => array_keys($input)], $actor);
+            // The form sends every setting; log only those whose saved value changed.
+            $after = $this->customizations->designOverrides($manifest);
+            $changed = array_values(array_filter(
+                array_unique([...array_keys($before), ...array_keys($after)]),
+                fn ($key) => ($before[$key] ?? null) !== ($after[$key] ?? null),
+            ));
+            $this->repository->record($theme, 'customized', $theme->state, true, 'Design settings changed: '.($changed === [] ? 'none' : implode(', ', $changed)), $actor);
+            $this->audit->record('theme.customized', null, ['name' => $theme->name, 'keys' => $changed], $actor);
 
             return $theme;
         });

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Themes;
 
+use App\Core\Audit\AuditLog;
 use App\Core\Extensions\Models\Extension;
 use App\Core\Themes\ResolvedTheme;
 use App\Core\Themes\ThemeCustomizations;
@@ -59,8 +60,9 @@ class ThemeStyleFieldsTest extends TestCase
         $this->assertStringContainsString('.storefront .store-button', $css);
         $this->assertStringContainsString('.storefront .hearth-primary', $css);
         $this->assertStringContainsString('background:#112233!important', $css);
-        $this->assertStringContainsString('font-size:40px!important', $css);
-        $this->assertStringContainsString('font-size:calc(40px * 0.75)!important', $css);
+        // Sizes are the desktop size and shrink on small screens.
+        $this->assertStringContainsString('.storefront h1{font-size:clamp(calc(40px * 0.6), calc(40px * 0.45 + 2vw), 40px)!important}', $css);
+        $this->assertStringContainsString('font-size:clamp(calc(40px * 0.75 * 0.6), calc(40px * 0.75 * 0.45 + 2vw), calc(40px * 0.75))!important', $css);
         $this->assertStringContainsString(ThemeSchema::FONT_STACKS['serif'], $css);
     }
 
@@ -115,12 +117,40 @@ class ThemeStyleFieldsTest extends TestCase
         $this->assertStringContainsString('filter:brightness(0.92)!important', $css);
     }
 
+    public function test_outline_buttons_take_the_button_colour_as_outline()
+    {
+        $css = $this->css(['style.product.button_bg' => '#123456', 'style.product.button_radius' => '1rem']);
+
+        $this->assertStringContainsString('.storefront[data-page="product"] .store-button-outline{border-color:#123456!important;color:#123456!important;border-radius:1rem!important}', $css);
+        // On hover it fills with the button colour, text stays readable.
+        $this->assertStringContainsString('.storefront[data-page="product"] .store-button-outline:hover{background:#123456!important;color:#ffffff!important}', $css);
+    }
+
     public function test_card_prices_of_the_bundled_themes_follow_price_settings()
     {
         $css = $this->css(['style.catalog.price_color' => '#000000']);
 
         $this->assertStringContainsString('.storefront[data-page="catalog"] .hearth-card-info strong', $css);
         $this->assertStringContainsString('.storefront[data-page="catalog"] .vellaro-card-info strong', $css);
+    }
+
+    public function test_a_save_logs_only_the_settings_that_changed()
+    {
+        $this->makeTheme();
+        app(ThemeRepository::class)->sync();
+        $theme = Extension::query()->where('type', 'theme')->where('name', 'acme/sunny')->firstOrFail();
+        $this->actingAs($this->userWithRole('administrator'));
+        $this->put(route('admin.themes.design', $theme), ['design' => ['style.catalog.button_bg' => '#111111']])->assertSessionHasNoErrors();
+
+        // The form sends every field; only one value differs from what is saved.
+        $this->put(route('admin.themes.design', $theme), ['design' => [
+            'style.catalog.button_bg' => '#111111',
+            'style.cart.button_bg' => '#222222',
+            'style.home.button_bg' => '',
+        ]])->assertSessionHasNoErrors();
+
+        $entry = AuditLog::query()->where('action', 'theme.customized')->latest('id')->firstOrFail();
+        $this->assertSame(['style.cart.button_bg'], $entry->metadata['keys']);
     }
 
     public function test_invalid_style_values_are_rejected()

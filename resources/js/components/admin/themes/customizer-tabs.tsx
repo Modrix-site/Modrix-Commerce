@@ -1,5 +1,6 @@
 import { usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
+import type { KeyboardEvent } from 'react';
 import { cn } from '@/lib/utils';
 import type { ThemeField } from '@/types';
 
@@ -17,6 +18,9 @@ export const CUSTOMIZER_TABS = [
 export type CustomizerTab = (typeof CUSTOMIZER_TABS)[number]['key'];
 
 const STYLE_GROUP = 'Fonts and buttons';
+
+/** id of the element holding the active tab's content. */
+export const CUSTOMIZER_PANEL_ID = 'customizer-panel';
 
 function isTab(value: string | null): value is CustomizerTab {
     return CUSTOMIZER_TABS.some((t) => t.key === value);
@@ -112,9 +116,34 @@ export function CustomizerTabs({
         };
     }).filter((t) => t.visible);
 
+    // Arrow keys, Home and End move between tabs (WAI-ARIA tabs pattern).
+    const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        const index = tabs.findIndex((t) => t.key === value);
+        const last = tabs.length - 1;
+        const next =
+            event.key === 'ArrowRight'
+                ? (index + 1) % tabs.length
+                : event.key === 'ArrowLeft'
+                  ? (index - 1 + tabs.length) % tabs.length
+                  : event.key === 'Home'
+                    ? 0
+                    : event.key === 'End'
+                      ? last
+                      : null;
+
+        if (next === null) {
+            return;
+        }
+
+        event.preventDefault();
+        onChange(tabs[next].key);
+        document.getElementById(`customizer-tab-${tabs[next].key}`)?.focus();
+    };
+
     return (
         <div
             role="tablist"
+            onKeyDown={onKeyDown}
             aria-label="Customizer sections"
             className="sticky top-0 z-10 -mx-1 flex gap-1 overflow-x-auto border-b bg-background px-1"
         >
@@ -123,7 +152,10 @@ export function CustomizerTabs({
                     key={t.key}
                     type="button"
                     role="tab"
+                    id={`customizer-tab-${t.key}`}
                     aria-selected={value === t.key}
+                    aria-controls={CUSTOMIZER_PANEL_ID}
+                    tabIndex={value === t.key ? 0 : -1}
                     onClick={() => onChange(t.key)}
                     className={cn(
                         '-mb-px flex items-center gap-1.5 border-b-2 px-3 py-2 text-sm font-medium whitespace-nowrap',

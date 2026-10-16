@@ -45,7 +45,7 @@ export function BuyNowButton({
                 type="button"
                 disabled={disabled}
                 className={cn(
-                    'inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border border-foreground bg-background px-4 text-sm font-semibold tracking-wide text-foreground transition hover:bg-foreground hover:text-background disabled:pointer-events-none disabled:opacity-50',
+                    'store-button-outline inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border border-foreground bg-background px-4 text-sm font-semibold tracking-wide text-foreground transition hover:bg-foreground hover:text-background disabled:pointer-events-none disabled:opacity-50',
                     className,
                 )}
                 onClick={(e) => {
