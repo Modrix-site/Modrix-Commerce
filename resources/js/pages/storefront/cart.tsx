@@ -80,7 +80,7 @@ export default function CartPage({ cart }: { cart: PricedCart | null }) {
                         </Alert>
                     ))}
                     {cart.can_checkout ? (
-                        <Button asChild>
+                        <Button className="store-button" asChild>
                             <Link href={checkout()}>{t('Checkout')}</Link>
                         </Button>
                     ) : (

@@ -489,6 +489,7 @@ export default function Checkout({
                     ))}
                     <Button
                         type="submit"
+                        className="store-button"
                         disabled={
                             form.processing ||
                             !summary.can_checkout ||

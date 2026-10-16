@@ -205,7 +205,13 @@ export default function ProductPage({
                             {product.name}
                         </h1>
                         {variant?.price ? (
-                            <p className="text-xl tabular-nums">
+                            <p
+                                className={cn(
+                                    'store-price text-xl tabular-nums',
+                                    variant.compare_at_price &&
+                                        'store-price-sale',
+                                )}
+                            >
                                 {variant.price.formatted}
                                 {variant.compare_at_price && (
                                     <s className="ml-3 text-base text-muted-foreground">
@@ -302,6 +308,7 @@ export default function ProductPage({
                                         </div>
                                         <Button
                                             type="submit"
+                                            className="store-button"
                                             disabled={
                                                 processing ||
                                                 !variant.purchasable

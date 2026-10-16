@@ -121,7 +121,7 @@ export function StickyAddToCart({
                 <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium">{name}</p>
                     {variant.price && (
-                        <p className="text-sm tabular-nums">
+                        <p className="store-price text-sm tabular-nums">
                             {variant.price.formatted}
                             {variant.compare_at_price && (
                                 <s className="ml-1.5 text-xs text-muted-foreground">
@@ -139,7 +139,7 @@ export function StickyAddToCart({
                                     type="submit"
                                     disabled={processing}
                                     tabIndex={visible ? 0 : -1}
-                                    className="inline-flex h-10 items-center gap-1.5 rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground disabled:opacity-60"
+                                    className="store-button inline-flex h-10 items-center gap-1.5 rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground disabled:opacity-60"
                                 >
                                     <ShoppingBag
                                         className="size-4"

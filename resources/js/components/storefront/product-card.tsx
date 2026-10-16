@@ -80,7 +80,12 @@ function Price({ product }: { product: ProductCardData }) {
     }
 
     return (
-        <span className="text-sm tabular-nums">
+        <span
+            className={cn(
+                'store-price text-sm tabular-nums',
+                product.compare_at_price && 'store-price-sale',
+            )}
+        >
             {product.has_variants && `${t('From')} `}
             {product.price.formatted}
             {product.compare_at_price && (
