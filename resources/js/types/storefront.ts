@@ -94,6 +94,8 @@ export type PricedCart = {
     coupon_code: string | null;
     coupon_error: string | null;
     shipping: { code: string; label: string; amount: MoneyValue } | null;
+    /** False when every item is digital (nothing to ship). */
+    requires_shipping?: boolean;
     shipping_options: { code: string; label: string; amount: MoneyValue }[];
     issues: string[];
     can_checkout: boolean;

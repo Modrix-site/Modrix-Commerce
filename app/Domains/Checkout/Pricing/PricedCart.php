@@ -75,6 +75,21 @@ final class PricedCart
         return array_values(array_filter($this->lines, fn (PricedLine $l) => $l->isPurchasable()));
     }
 
+    /**
+     * Whether anything needs shipping: false when every item is a digital
+     * product (delivered as downloads).
+     */
+    public function requiresShipping(): bool
+    {
+        foreach ($this->purchasableLines() as $line) {
+            if (! $line->variant->product->is_digital) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function itemCount(): int
     {
         return array_sum(array_map(fn (PricedLine $l) => $l->quantity, $this->lines));
@@ -114,6 +129,7 @@ final class PricedCart
             'coupon_error' => $this->couponError,
             'shipping' => $this->shipping,
             'shipping_options' => $this->shippingOptions,
+            'requires_shipping' => $this->requiresShipping(),
             'issues' => $this->issues,
             'can_checkout' => $this->canCheckout(),
         ];

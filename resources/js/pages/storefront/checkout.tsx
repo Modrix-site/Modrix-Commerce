@@ -232,7 +232,9 @@ export default function Checkout({
                             id="shipping-heading"
                             className="text-lg font-semibold"
                         >
-                            {t('Shipping address')}
+                            {summary.requires_shipping === false
+                                ? t('Billing address')
+                                : t('Shipping address')}
                         </h2>
                         {addresses.length > 0 && (
                             <label className="grid gap-2 text-sm">
@@ -314,7 +316,13 @@ export default function Checkout({
                         >
                             {t('Shipping method')}
                         </h2>
-                        {!data.shipping.country_code ? (
+                        {summary.requires_shipping === false ? (
+                            <p className="text-sm text-muted-foreground">
+                                {t(
+                                    'No shipping needed — your downloads are available after payment.',
+                                )}
+                            </p>
+                        ) : !data.shipping.country_code ? (
                             <p className="text-sm text-muted-foreground">
                                 {t(
                                     'Enter your country to see shipping options.',

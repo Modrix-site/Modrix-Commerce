@@ -9,6 +9,7 @@ use App\Domains\Checkout\CheckoutData;
 use App\Domains\Checkout\PlaceOrder;
 use App\Domains\Checkout\Pricing\CartPricer;
 use App\Domains\Checkout\Pricing\PricingContext;
+use App\Domains\Checkout\Pricing\Steps\ShippingStep;
 use App\Domains\Customers\AddressRules;
 use App\Domains\Customers\CustomerProfiles;
 use App\Domains\Customers\Models\CustomerAddress;
@@ -99,6 +100,11 @@ class CheckoutController extends Controller
 
         $request->merge(['billing_same' => $request->boolean('billing_same', true), 'save_address' => $request->boolean('save_address')]);
         $billingSame = $request->boolean('billing_same');
+
+        // A cart of digital products only has nothing to ship.
+        if (! $request->filled('shipping_method') && ! $this->pricer->price($cart)->requiresShipping()) {
+            $request->merge(['shipping_method' => ShippingStep::DIGITAL]);
+        }
 
         $validated = $request->validate([
             'email' => ['required', 'string', 'email', 'max:191'],

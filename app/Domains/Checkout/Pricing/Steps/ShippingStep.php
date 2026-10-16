@@ -6,6 +6,7 @@ use App\Domains\Cart\Models\Cart;
 use App\Domains\Checkout\Pricing\PricedCart;
 use App\Domains\Checkout\Pricing\PricingContext;
 use App\Domains\Checkout\Pricing\PricingStep;
+use App\Domains\Pricing\Money;
 use App\Domains\Shipping\ShippingRate;
 use App\Domains\Shipping\ShippingRates;
 use App\Domains\Shipping\ShippingRequest;
@@ -17,11 +18,28 @@ use Brick\Math\BigDecimal;
  */
 final class ShippingStep implements PricingStep
 {
+    /** Shipping code of orders with only digital products. */
+    public const DIGITAL = 'digital';
+
     public function __construct(private readonly ShippingRates $rates) {}
 
     public function apply(PricedCart $priced, Cart $cart, PricingContext $context): void
     {
-        if ($context->countryCode === null || $priced->purchasableLines() === []) {
+        if ($priced->purchasableLines() === []) {
+            return;
+        }
+
+        // Digital products only: nothing to ship, whatever the destination.
+        if (! $priced->requiresShipping()) {
+            $none = new ShippingRate(self::DIGITAL, 'No shipping needed', Money::zero($priced->currency));
+            $priced->shippingOptions = [$none->toArray()];
+            $priced->shipping = $none->toArray();
+            $priced->shippingTotal = $none->amount;
+
+            return;
+        }
+
+        if ($context->countryCode === null) {
             return;
         }
 
