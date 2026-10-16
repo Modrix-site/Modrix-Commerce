@@ -570,3 +570,21 @@ Each entry records a decision, its context, and its consequences. Entries are ap
     - **No license keys, file versions or bundles yet.**
     - **Fixed amounts are not converted:** a fixed bulk price change uses the same number in every currency.
     - **Downloads are not protected beyond the token:** anyone with a link can use it until it runs out or is revoked.
+
+## ADR-049 — Customizer tabs and per-page styles
+
+- **Date:** 2026-10-16
+- **Status:** Accepted
+- **Decision:**
+    - **Tabs:** every design setting has a customizer tab, decided server-side by `CustomizerTabs::for`.
+        - An explicit `tab` on the field wins, then the `style.{area}.` key, then keywords in the group name.
+        - The page shows one tab at a time over a single form.
+    - **Style fields:** per-area fields `style.{general|home|catalog|product|cart}.{prop}` (headings, text, buttons, prices) are core design fields for every theme, validated by the existing `ThemeSchema` rules.
+    - **CSS:** `ThemeStyleFields::css` writes rules only for values that are set.
+        - General rules are scoped to `.storefront`, and page rules to `.storefront[data-page="…"]`, which the storefront layout sets from the page.
+        - Rules use `!important` and target core classes (`store-button`, `store-price`, `store-price-sale`) plus the bundled themes' own button and price classes.
+        - So no theme stylesheet has to change, and an unconfigured store is unchanged.
+- **Consequences:**
+    - **New themes:** a theme with new button or price classes needs adding to `ThemeStyleFields` (or must use the core classes) to follow these settings.
+    - **`!important`:** merchant styles override theme styles, including theme hover states that are not covered.
+    - **Text size:** "Text size" sets the inherited size; elements a theme sizes explicitly keep their size.

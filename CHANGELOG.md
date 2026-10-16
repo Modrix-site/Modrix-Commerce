@@ -4,6 +4,18 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added (storefront and theme customizer)
+
+- **Theme customizer tabs:** General, Header, Homepage, Catalog, Product, Cart and Footer. Every theme's settings are sorted into them, and switching tabs keeps unsaved edits.
+- **Fonts and buttons per page:** headings (font, size, colour, weight), text (font, size, colour), buttons (background, text, hover, font, size, corners) and prices (size, colour, sale colour).
+    - They can be set store-wide and overridden per page (Homepage, Catalog, Product, Cart).
+    - Nothing changes until a value is set.
+- **Phone header:** ☰ menu, logo, search, account and cart, in every theme.
+    - **Full-width menu:** shows "Shop by category" with expandable subcategories, every desktop menu link, language, currency and account.
+    - **Shrinking:** the header shrinks and stays at the top while scrolling.
+- **Sticky add-to-cart bar on phones** (theme setting, on by default) and a **Buy now** button on product pages that goes straight to checkout.
+- ADR-049.
+
 ### Added (product tools and digital products)
 
 - **Duplicate product:** from the editor or the product list. The copy is a hidden draft ("Copy of …") with new slug and SKUs, the same details, variants, prices, images, categories, tags, translations, related products and files, and no stock.
