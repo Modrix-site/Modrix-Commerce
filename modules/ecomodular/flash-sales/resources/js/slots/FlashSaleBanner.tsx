@@ -1,8 +1,8 @@
 import { Zap } from 'lucide-react';
 import { ProductCard } from '@/components/storefront/product-card';
+import { remaining, useNow } from '@/components/storefront/sale-notice';
 import { useT } from '@/lib/i18n';
 import type { ProductCard as ProductCardData } from '@/types';
-import { remaining, useNow } from './FlashSaleCountdown';
 
 /**
  * Home page: the live sale with a countdown and its products.

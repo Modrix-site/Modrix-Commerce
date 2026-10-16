@@ -195,7 +195,7 @@ final class StorefrontCatalog
      * The sale shown on a card ("−20%" badge and end time), if any variant is on sale.
      *
      * @param  iterable<ProductVariant>  $variants
-     * @return array{badge: string, name: string, ends_at: string|null}|null
+     * @return array{badge: string, name: string, label: string, ends_at: string|null, countdown: bool}|null
      */
     private function saleBadge(Product $product, iterable $variants, string $currency): ?array
     {
@@ -205,11 +205,7 @@ final class StorefrontCatalog
             $sale = $sales->forVariant($variant, $currency);
 
             if ($sale !== null) {
-                return [
-                    'badge' => $sale['offer']->badge(),
-                    'name' => $sale['offer']->name,
-                    'ends_at' => $sale['offer']->endsAt?->toIso8601String(),
-                ];
+                return $sale['offer']->toProps();
             }
         }
 

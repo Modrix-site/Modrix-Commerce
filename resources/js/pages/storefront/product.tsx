@@ -5,6 +5,7 @@ import CartController from '@/actions/App/Http/Controllers/Storefront/CartContro
 import { ExtensionSlot } from '@/components/extensions/extension-slot';
 import type { SlotItem } from '@/components/extensions/extension-slot';
 import InputError from '@/components/input-error';
+import { SaleNotice } from '@/components/storefront/sale-notice';
 import { useStoreTheme } from '@/hooks/use-store-theme';
 import { useT } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
@@ -13,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { home } from '@/routes';
 import { brand, category } from '@/routes/storefront';
-import type { MoneyValue } from '@/types';
+import type { MoneyValue, SaleInfo } from '@/types';
 
 type Variant = {
     id: number;
@@ -44,6 +45,8 @@ type Props = {
             values: { id: number; value: string }[];
         }[];
         variants: Variant[];
+        /** A sale (e.g. a flash sale) on this product. */
+        sale?: SaleInfo | null;
     };
     breadcrumbs: { name: string; slug: string }[];
     slots: SlotItem[];
@@ -205,6 +208,7 @@ export default function ProductPage({ product, breadcrumbs, slots }: Props) {
                                 {t('Choose options to see the price.')}
                             </p>
                         )}
+                        <SaleNotice sale={product.sale} />
                         {product.short_description && (
                             <p className="text-muted-foreground">
                                 {product.short_description}

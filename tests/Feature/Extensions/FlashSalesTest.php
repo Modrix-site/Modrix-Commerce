@@ -3,6 +3,8 @@
 namespace Tests\Feature\Extensions;
 
 use App\Core\Extensions\ModuleManager;
+use App\Core\Extensions\ModuleRepository;
+use App\Core\Extensions\ModuleSettingsSchema;
 use App\Core\Extensions\StorefrontSlots;
 use App\Core\Settings\StoreSettings;
 use App\Domains\Cart\Models\CartItem;
@@ -200,7 +202,21 @@ class FlashSalesTest extends TestCase
 
         $this->get(route('storefront.product', $product->slug))->assertInertia(fn (Assert $page) => $page
             ->where('product.variants.0.price.amount', '70.00')
-            ->where('slots', fn ($slots) => collect($slots)->firstWhere('component', 'ecomodular/flash-sales/FlashSaleCountdown')['props']['name'] === 'Best deal'));
+            ->where('product.sale.name', 'Best deal')
+            ->where('product.sale.ends_at', $best->ends_at->toIso8601String()));
+    }
+
+    public function test_the_countdown_can_be_switched_off()
+    {
+        $product = $this->product('50.00');
+        FlashSaleProduct::query()->create(['flash_sale_id' => $this->sale()->id, 'product_id' => $product->id]);
+        $manifest = app(ModuleRepository::class)->find('ecomodular/flash-sales')->manifest();
+        $schema = app(ModuleSettingsSchema::class);
+        $schema->save($manifest, [...$schema->values($manifest), 'show_countdown' => false]);
+
+        $this->get(route('storefront.product', $product->slug))->assertInertia(fn (Assert $page) => $page
+            ->where('product.sale.badge', '−20%')
+            ->where('product.sale.countdown', false));
     }
 
     public function test_shoppers_see_the_sale_and_pay_the_sale_price()
@@ -214,7 +230,13 @@ class FlashSalesTest extends TestCase
             ->where('product.variants.0.price.amount', '40.00')
             ->where('product.variants.0.compare_at_price.amount', '50.00')
             ->where('product.sale.badge', '−20%')
-            ->where('slots', fn ($slots) => collect($slots)->contains('component', 'ecomodular/flash-sales/FlashSaleCountdown')));
+            ->where('product.sale.label', 'Flash sale')
+            ->where('product.sale.countdown', true)
+            // The notice under the price replaces a separate countdown block.
+            ->where('slots', fn ($slots) => ! collect($slots)->contains('component', 'ecomodular/flash-sales/FlashSaleCountdown')));
+
+        $this->get(route('storefront.search'))->assertInertia(fn (Assert $page) => $page
+            ->where('products.data.0.sale.label', 'Flash sale'));
 
         $this->get('/')->assertInertia(fn (Assert $page) => $page->where('slots', fn ($slots) => collect($slots)->contains(
             fn ($s) => $s['component'] === 'ecomodular/flash-sales/FlashSaleBanner' && $s['props']['products'][0]['price']['amount'] === '40.00'

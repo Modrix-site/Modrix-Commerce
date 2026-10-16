@@ -23,6 +23,10 @@ final class SaleOffer
         public readonly string $name,
         public readonly ?CarbonInterface $endsAt = null,
         public readonly ?string $currency = null,
+        // Shown on the tag, e.g. "Flash sale".
+        public readonly string $label = 'Sale',
+        // Whether shoppers see a countdown to endsAt.
+        public readonly bool $countdown = true,
     ) {
         if (! in_array($type, [self::PERCENT, self::FIXED], true)) {
             throw new InvalidArgumentException("Unknown sale offer type [{$type}].");
@@ -58,5 +62,22 @@ final class SaleOffer
         }
 
         return '−'.Money::of($this->value, (string) $this->currency)->format();
+    }
+
+    /**
+     * What the storefront shows: the tag on cards and the notice under the
+     * product price.
+     *
+     * @return array{badge: string, name: string, label: string, ends_at: string|null, countdown: bool}
+     */
+    public function toProps(): array
+    {
+        return [
+            'badge' => $this->badge(),
+            'name' => $this->name,
+            'label' => $this->label,
+            'ends_at' => $this->endsAt?->toIso8601String(),
+            'countdown' => $this->countdown && $this->endsAt !== null,
+        ];
     }
 }

@@ -44,7 +44,7 @@
         {
             "key": "show_countdown",
             "type": "boolean",
-            "label": "Show a countdown on sale product pages",
+            "label": "Show a countdown with the sale price",
             "default": true
         },
         {

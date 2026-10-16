@@ -44,7 +44,8 @@ Merchants run time-limited sales:
     - products: search and add, per-product override, remove.
 - **Product editor panel:** "Flash sale" with a toggle and a sale select (upcoming or live sales) plus an optional override. It saves through the module's own route (`products.update` + `flash_sales.manage`).
 - **Storefront:**
-    - **Product page:** "Sale ends in 02:14:09" via `product.after_details`, shown only while live.
+    - **Product page:** under the price, a notice: "⚡ −20% · Weekend Flash Sale · Ends in 02:14:09" (core `SaleNotice`, every theme). The countdown can be switched off with the module setting `show_countdown`.
+    - **Cards:** a "⚡ Flash sale −20%" tag next to the price (core `SaleTag`, every theme card).
     - **Home banner:** via `home.after_featured`, for live sales with `show_banner`: the sale name, a countdown and up to 8 product cards.
 - **Validation:**
     - percentage: 1–90;

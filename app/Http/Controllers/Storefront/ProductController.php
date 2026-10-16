@@ -41,7 +41,7 @@ class ProductController extends Controller
     }
 
     /**
-     * @return array{badge: string, name: string, ends_at: string|null}|null
+     * @return array{badge: string, name: string, label: string, ends_at: string|null, countdown: bool}|null
      */
     private static function sale(Product $product, string $currency): ?array
     {
@@ -49,7 +49,7 @@ class ProductController extends Controller
             $sale = app(SalePrices::class)->forVariant($variant, $currency);
 
             if ($sale !== null) {
-                return ['badge' => $sale['offer']->badge(), 'name' => $sale['offer']->name, 'ends_at' => $sale['offer']->endsAt?->toIso8601String()];
+                return $sale['offer']->toProps();
             }
         }
 

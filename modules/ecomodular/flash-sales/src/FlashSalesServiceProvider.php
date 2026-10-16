@@ -17,7 +17,8 @@ use Illuminate\Support\ServiceProvider;
  * Wires flash sales into the platform:
  *  - catalog sale prices (shown price = cart price = order price);
  *  - the "Flash sale" panel in the admin product editor;
- *  - the countdown on product pages and the home page sale banner.
+ *  - the home page sale banner (the sale tag, notice and countdown next to
+ *    prices come from the core sale props: SaleOffer::toProps()).
  */
 class FlashSalesServiceProvider extends ServiceProvider
 {
@@ -40,28 +41,6 @@ class FlashSalesServiceProvider extends ServiceProvider
 
             return $this->panelProps($product);
         });
-
-        $slots->register('product.after_details', self::MODULE, 'FlashSaleCountdown', function (array $context) use ($settings) {
-            $product = $context['product'] ?? null;
-
-            if (! $product instanceof Product || ! (bool) $settings->of(self::MODULE, 'show_countdown', true)) {
-                return null;
-            }
-
-            // Count down to the end of the sale that sets the price shown (the best offer).
-            $currency = $this->app->make(StoreSettings::class)->currency();
-            $prices = $this->app->make(SalePrices::class);
-
-            foreach ($product->variants as $variant) {
-                $offer = $prices->forVariant($variant, $currency)['offer'] ?? null;
-
-                if ($offer !== null && $offer->endsAt !== null) {
-                    return ['name' => $offer->name, 'endsAt' => $offer->endsAt->toIso8601String()];
-                }
-            }
-
-            return null;
-        }, 10);
 
         $slots->register('home.after_featured', self::MODULE, 'FlashSaleBanner', function () use ($settings) {
             $sale = FlashSale::query()->live()->where('show_banner', true)->orderBy('ends_at')->first();

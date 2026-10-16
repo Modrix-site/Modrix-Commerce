@@ -48,7 +48,20 @@ export type ProductCard = {
     has_variants: boolean;
     in_stock: boolean;
     /** A module sale (e.g. a flash sale) on this product. */
-    sale?: { badge: string; name: string; ends_at: string | null } | null;
+    sale?: SaleInfo | null;
+};
+
+/** A sale on a product (e.g. a flash sale), for the tag and notice. */
+export type SaleInfo = {
+    /** "−20%" or "−$5.00". */
+    badge: string;
+    /** The sale's name, e.g. "Weekend Flash Sale". */
+    name: string;
+    /** Tag text, e.g. "Flash sale". */
+    label: string;
+    ends_at: string | null;
+    /** Whether to show a countdown to ends_at. */
+    countdown: boolean;
 };
 
 export type CartLine = {

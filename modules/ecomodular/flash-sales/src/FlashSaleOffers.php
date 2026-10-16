@@ -2,6 +2,7 @@
 
 namespace EcoModular\FlashSales;
 
+use App\Core\Extensions\ModuleSettingsSchema;
 use App\Core\Settings\StoreSettings;
 use App\Domains\Catalog\Pricing\SaleOffer;
 use App\Domains\Catalog\Pricing\SalePriceProvider;
@@ -15,7 +16,7 @@ use EcoModular\FlashSales\Models\FlashSaleProduct;
  */
 final class FlashSaleOffers implements SalePriceProvider
 {
-    public function __construct(private readonly StoreSettings $store) {}
+    public function __construct(private readonly StoreSettings $store, private readonly ModuleSettingsSchema $settings) {}
 
     public function offers(array $productIds, CarbonInterface $now): array
     {
@@ -30,6 +31,7 @@ final class FlashSaleOffers implements SalePriceProvider
             ->get();
 
         $currency = $this->store->currency();
+        $countdown = (bool) $this->settings->of(FlashSalesServiceProvider::MODULE, 'show_countdown', true);
         $offers = [];
 
         // A product can be in several live sales; the core keeps the lowest price.
@@ -41,6 +43,8 @@ final class FlashSaleOffers implements SalePriceProvider
                 $item->sale->name,
                 $item->sale->ends_at,
                 $fixed ? $currency : null,
+                label: __('Flash sale'),
+                countdown: $countdown,
             );
         }
 
