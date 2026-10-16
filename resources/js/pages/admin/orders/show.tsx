@@ -4,6 +4,7 @@ import OrderController from '@/actions/App/Http/Controllers/Admin/OrderControlle
 import { OrderActions } from '@/components/admin/orders/order-actions';
 import type { MethodOption } from '@/components/admin/orders/order-actions';
 import { OrderDocuments } from '@/components/admin/orders/order-documents';
+import { OrderDownloads } from '@/components/admin/orders/order-downloads';
 import { OrderPayments } from '@/components/admin/orders/order-payments';
 import { OrderStepper } from '@/components/admin/orders/order-stepper';
 import { OrderTimeline } from '@/components/admin/orders/order-timeline';
@@ -198,6 +199,10 @@ export default function OrderShow({
                         </Card>
 
                         <OrderPayments order={order} />
+                        <OrderDownloads
+                            orderNumber={order.number}
+                            downloads={order.downloads}
+                        />
 
                         <Card>
                             <CardHeader>

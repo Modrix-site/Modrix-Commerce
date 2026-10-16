@@ -2,6 +2,7 @@
 
 namespace App\Http\Presenters;
 
+use App\Domains\Downloads\DownloadGrants;
 use App\Domains\Orders\Enums\FulfillmentStatus;
 use App\Domains\Orders\Enums\OrderStatus;
 use App\Domains\Orders\Models\Order;
@@ -93,6 +94,8 @@ final class OrderPresenter
                 'invoice' => $order->invoice ? ['number' => $order->invoice->number, 'url' => route('account.orders.invoice', $order)] : null,
                 'receipts' => $this->receipts($order, fn (Payment $p) => route('account.orders.receipt', [$order, $p])),
             ],
+            // Digital products: one link per file, once paid.
+            'downloads' => app(DownloadGrants::class)->linksFor($order),
         ];
     }
 

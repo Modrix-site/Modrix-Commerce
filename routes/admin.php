@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DocumentSettingsController;
+use App\Http\Controllers\Admin\DownloadGrantController;
 use App\Http\Controllers\Admin\DownloadSettingsController;
 use App\Http\Controllers\Admin\ExtensionController;
 use App\Http\Controllers\Admin\InterfaceTextController;
@@ -181,6 +182,9 @@ Route::middleware('can:orders.manage')->group(function () {
     Route::post('orders/{order}/pack', [OrderController::class, 'pack'])->name('orders.pack');
     Route::post('orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
     Route::post('orders/{order}/notes', [OrderController::class, 'note'])->name('orders.notes.store');
+    Route::post('orders/{order}/downloads/{grant}/reset', [DownloadGrantController::class, 'reset'])->name('orders.downloads.reset');
+    Route::post('orders/{order}/downloads/{grant}/extend', [DownloadGrantController::class, 'extend'])->name('orders.downloads.extend');
+    Route::post('orders/{order}/downloads/{grant}/revoke', [DownloadGrantController::class, 'revoke'])->name('orders.downloads.revoke');
 });
 Route::post('orders/{order}/refunds', [OrderController::class, 'refund'])->middleware('can:orders.refund')->name('orders.refunds.store');
 

@@ -7,6 +7,7 @@ use App\Domains\Downloads\Models\DownloadGrant;
 use App\Domains\Orders\Enums\PaymentStatus;
 use App\Domains\Orders\Models\Order;
 use App\Domains\Orders\Models\OrderItem;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -50,6 +51,37 @@ final class DownloadGrants
         }
 
         return $created;
+    }
+
+    /**
+     * An order's download links for pages and emails. A link that no longer
+     * works has no url.
+     *
+     * @return list<array{id: int, file: string, product: string, url: string|null, downloads: int, max_downloads: int|null, expires_at: string|null, usable: bool, last_downloaded_at: string|null}>
+     */
+    public function linksFor(Order $order): array
+    {
+        $now = now();
+        $paid = in_array($order->payment_status, self::PAID, true);
+
+        return array_values(DownloadGrant::query()->where('order_id', $order->id)
+            ->with(['file', 'item'])->withMax('logs', 'created_at')->orderBy('id')->get()
+            ->map(function (DownloadGrant $grant) use ($now, $paid) {
+                $usable = $paid && $grant->file !== null && $grant->isUsable($now);
+                $last = $grant->getAttribute('logs_max_created_at');
+
+                return [
+                    'id' => $grant->id,
+                    'file' => $grant->file->name ?? 'File no longer available',
+                    'product' => $grant->item->product_name,
+                    'url' => $usable ? route('storefront.downloads.show', $grant->token) : null,
+                    'downloads' => $grant->downloads,
+                    'max_downloads' => $grant->max_downloads,
+                    'expires_at' => $grant->expires_at?->toIso8601String(),
+                    'usable' => $usable,
+                    'last_downloaded_at' => $last === null ? null : Carbon::parse($last)->toIso8601String(),
+                ];
+            })->all());
     }
 
     /** Whether every item of the order is a digital product. */

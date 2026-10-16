@@ -154,6 +154,19 @@ export type OrderAddressData = Omit<
     type: string;
 };
 
+/** A customer's link to a purchased file; url is null once it no longer works. */
+export type DownloadLink = {
+    id: number;
+    file: string;
+    product: string;
+    url: string | null;
+    downloads: number;
+    max_downloads: number | null;
+    expires_at: string | null;
+    usable: boolean;
+    last_downloaded_at: string | null;
+};
+
 export type OrderDetail = OrderSummary & {
     currency: string;
     subtotal: MoneyValue;
@@ -182,6 +195,8 @@ export type OrderDetail = OrderSummary & {
         actor?: string | null;
         created_at: string;
     }[];
+    /** Digital products: one link per purchased file. */
+    downloads?: DownloadLink[];
     documents?: {
         invoice: { number: string; url: string } | null;
         receipts: {

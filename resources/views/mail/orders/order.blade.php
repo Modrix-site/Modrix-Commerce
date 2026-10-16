@@ -53,6 +53,25 @@ A new order **{{ $order->number }}** was placed by {{ $order->email }} using {{ 
 @break
 @endswitch
 
+@php
+    // Digital products: links are issued here too, so the payment email has
+    // them whichever OrderPaid listener runs first.
+    $downloads = [];
+    if (in_array($kind, ['paid', 'placed'], true)) {
+        $grants = app(\App\Domains\Downloads\DownloadGrants::class);
+        $grants->issueFor($order);
+        $downloads = array_values(array_filter($grants->linksFor($order), fn (array $d) => $d['url'] !== null));
+    }
+@endphp
+@if ($downloads !== [])
+**Your downloads**
+
+@foreach ($downloads as $download)
+- [{{ $download['file'] }}]({{ $download['url'] }}) ({{ $download['product'] }})@if ($download['max_downloads']) · {{ $download['max_downloads'] }} downloads @endif @if ($download['expires_at']) · until {{ \Illuminate\Support\Carbon::parse($download['expires_at'])->toFormattedDateString() }}@endif
+
+@endforeach
+
+@endif
 <x-mail::table>
 | Item | Qty | Total |
 |:-----|:---:|------:|

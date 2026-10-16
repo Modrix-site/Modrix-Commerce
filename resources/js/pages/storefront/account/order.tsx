@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import { Download, FileText, Receipt } from 'lucide-react';
+import { DownloadList } from '@/components/storefront/download-list';
 import { formatDate, OrderView } from '@/components/storefront/order-view';
 import { useT } from '@/lib/i18n';
 import { orders } from '@/routes/account';
@@ -25,6 +26,7 @@ export default function AccountOrder({ order }: { order: OrderDetail }) {
                     {t('Placed :date', { date: formatDate(order.placed_at) })}
                 </p>
             </div>
+            <DownloadList downloads={order.downloads} />
             <OrderView order={order} />
             {order.documents &&
                 (order.documents.invoice ||

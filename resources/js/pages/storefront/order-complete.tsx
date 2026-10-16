@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import CheckoutController from '@/actions/App/Http/Controllers/Storefront/CheckoutController';
 import { ExtensionSlot } from '@/components/extensions/extension-slot';
 import type { SlotItem } from '@/components/extensions/extension-slot';
+import { DownloadList } from '@/components/storefront/download-list';
 import { OrderView } from '@/components/storefront/order-view';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -91,6 +92,7 @@ export default function OrderComplete({
                         </AlertDescription>
                     </Alert>
                 )}
+            <DownloadList downloads={order.downloads} />
             <OrderView order={order} />
             <ExtensionSlot items={slots} className="mt-8 grid gap-6" />
             <div className="mt-8 flex gap-2">
