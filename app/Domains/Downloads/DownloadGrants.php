@@ -37,7 +37,8 @@ final class DownloadGrants
 
         foreach ($this->digitalItems($order) as [$item, $product]) {
             foreach ($product->files as $file) {
-                $grant = DownloadGrant::query()->firstOrCreate(
+                // createOrFirst: safe when the listener and the payment email issue links at the same time.
+                $grant = DownloadGrant::query()->createOrFirst(
                     ['order_item_id' => $item->id, 'product_file_id' => $file->id],
                     [
                         'order_id' => $order->id,
@@ -81,7 +82,18 @@ final class DownloadGrants
                     'usable' => $usable,
                     'last_downloaded_at' => $last === null ? null : Carbon::parse($last)->toIso8601String(),
                 ];
-            })->all());
+            })->values()->all());
+    }
+
+    /**
+     * Counts one download if the link is still under its limit. The check and
+     * the count are one statement, so parallel requests cannot exceed it.
+     */
+    public function consume(DownloadGrant $grant): bool
+    {
+        return DownloadGrant::query()->whereKey($grant->id)
+            ->where(fn ($q) => $q->whereNull('max_downloads')->orWhereColumn('downloads', '<', 'max_downloads'))
+            ->increment('downloads') > 0;
     }
 
     /** Whether every item of the order is a digital product. */

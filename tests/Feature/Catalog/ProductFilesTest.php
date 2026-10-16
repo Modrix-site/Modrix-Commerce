@@ -72,6 +72,10 @@ class ProductFilesTest extends TestCase
         $this->put(route('admin.products.files.update', [$this->product, $b]), ['name' => 'Manual (EN).pdf', 'position' => 0])->assertSessionHasNoErrors();
         $this->assertSame(['Manual (EN).pdf', 'a.pdf'], $this->product->files()->pluck('name')->all());
 
+        // A slash or backslash would break the download's file name.
+        $this->put(route('admin.products.files.update', [$this->product, $b]), ['name' => 'Part 1/2.pdf'])->assertSessionHasErrors('name');
+        $this->put(route('admin.products.files.update', [$this->product, $b]), ['name' => 'AC\\DC.zip'])->assertSessionHasErrors('name');
+
         $this->delete(route('admin.products.files.destroy', [$this->product, $a]))->assertSessionHasNoErrors();
         Storage::disk('local')->assertMissing($a->path);
         $this->assertSame(1, ProductFile::query()->count());

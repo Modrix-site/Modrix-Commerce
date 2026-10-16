@@ -37,6 +37,12 @@ export function DigitalFiles({
     const input = useRef<HTMLInputElement>(null);
     const [progress, setProgress] = useState<number | null>(null);
     const [error, setError] = useState<string | undefined>();
+    // A rejected rename: show why and put the saved name back.
+    const [renameError, setRenameError] = useState<{
+        id: number;
+        message: string;
+    } | null>(null);
+    const [resets, setResets] = useState(0);
     const options = { preserveScroll: true, preserveState: true } as const;
 
     const upload = (file: File) => {
@@ -67,7 +73,20 @@ export function DigitalFiles({
         router.put(
             ProductFileController.update.url([productId, file.id]),
             data,
-            options,
+            {
+                ...options,
+                onSuccess: () => setRenameError(null),
+                onError: (errors) => {
+                    setRenameError({
+                        id: file.id,
+                        message:
+                            errors.name ??
+                            errors.position ??
+                            'The file could not be updated.',
+                    });
+                    setResets((n) => n + 1);
+                },
+            },
         );
 
     return (
@@ -86,6 +105,7 @@ export function DigitalFiles({
                         >
                             <FileDown className="size-4 shrink-0 text-muted-foreground" />
                             <Input
+                                key={`${file.name}:${resets}`}
                                 aria-label={`File name for ${file.name}`}
                                 defaultValue={file.name}
                                 className="h-8 min-w-40 flex-1"
@@ -157,6 +177,12 @@ export function DigitalFiles({
                             >
                                 <Trash2 className="size-4" />
                             </Button>
+                            {renameError?.id === file.id && (
+                                <InputError
+                                    message={renameError.message}
+                                    className="w-full"
+                                />
+                            )}
                         </li>
                     ))}
                 </ul>

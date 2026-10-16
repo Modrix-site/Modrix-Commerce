@@ -6,7 +6,6 @@ use App\Domains\Downloads\DownloadGrants;
 use App\Domains\Downloads\Models\DownloadGrant;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,6 +15,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class DownloadController extends Controller
 {
+    public function __construct(private readonly DownloadGrants $grants) {}
+
     public function show(Request $request, string $token): Response
     {
         $grant = DownloadGrant::query()->with(['file', 'order'])->where('token', $token)->first();
@@ -30,14 +31,20 @@ class DownloadController extends Controller
             return response()->view('downloads.unavailable', [], 410);
         }
 
-        DB::transaction(function () use ($grant, $request) {
-            DownloadGrant::query()->whereKey($grant->id)->increment('downloads');
-            $grant->logs()->create([
-                'ip' => (string) $request->ip(),
-                'user_agent' => mb_substr((string) $request->userAgent(), 0, 255) ?: null,
-            ]);
-        });
+        // Build the response first: if it fails, no download is used up.
+        // Slashes are not allowed in a download's file name.
+        $response = Storage::disk($file->disk)->download($file->path, str_replace(['/', '\\'], '-', $file->name));
 
-        return Storage::disk($file->disk)->download($file->path, $file->name);
+        // Counted only while under the limit (parallel requests cannot exceed it).
+        if (! $this->grants->consume($grant)) {
+            return response()->view('downloads.unavailable', [], 410);
+        }
+
+        $grant->logs()->create([
+            'ip' => (string) $request->ip(),
+            'user_agent' => mb_substr((string) $request->userAgent(), 0, 255) ?: null,
+        ]);
+
+        return $response;
     }
 }

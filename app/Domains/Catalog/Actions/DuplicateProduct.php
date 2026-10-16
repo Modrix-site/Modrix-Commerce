@@ -4,6 +4,7 @@ namespace App\Domains\Catalog\Actions;
 
 use App\Core\Audit\AuditLogger;
 use App\Domains\Catalog\Enums\ProductStatus;
+use App\Domains\Catalog\Events\ProductCreated;
 use App\Domains\Catalog\Models\Product;
 use App\Domains\Catalog\Models\ProductVariant;
 use App\Domains\Catalog\ProductRelations;
@@ -107,6 +108,8 @@ final class DuplicateProduct
                 }
 
                 $this->audit->record('product.duplicated', $copy, ['source_id' => $source->id, 'copy_id' => $copy->id], $actor);
+                // Modules that react to new products (search, feeds) see copies too.
+                DB::afterCommit(fn () => ProductCreated::dispatch($copy->id));
 
                 return $copy;
             });

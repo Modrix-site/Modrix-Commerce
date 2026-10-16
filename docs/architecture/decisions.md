@@ -548,3 +548,25 @@ Each entry records a decision, its context, and its consequences. Entries are ap
     - **Orders keep the price charged:** they store the sale unit price, not the regular price or the sale name.
     - **Other modules still show regular prices:** frequently-bought-together bundle prices, the Tabby and Tamara instalment widgets, and the product-label "On sale" label read `priceIn()` directly. The cart still charges the sale price. They should move to `SalePrices`.
     - **Offer cache:** offers are cached per request and for at most 30 seconds in long-running workers. An offer that has ended is never applied.
+
+## ADR-048 — Product tools and digital products
+
+- **Date:** 2026-10-16
+- **Status:** Accepted
+- **Decision:**
+    - **Digital products are set per product** (`products.is_digital`), not per variant. Their files are `product_files` on the private `local` disk (`storage/app/private/downloads/{product}`), never web-served.
+    - **Checkout:** a cart whose items are all digital gets a free "No shipping needed" option (code `digital`) from `ShippingStep`, so checkout needs no shipping method. The address is still collected, for billing and tax.
+    - **Download links:**
+        - `download_grants` are created when an order is fully paid (`OrderPaid`, idempotent through `DownloadGrants::issueFor`): one per digital order item and file, with the store's limit (default 5) and expiry (default 30 days) at that moment;
+        - the payment email issues missing links itself, so it never depends on listener order;
+        - the 40-character random token is the secret, so links work for guests without signing in;
+        - each download is counted and logged, and rate-limited per IP;
+        - links stop when the order is cancelled or fully refunded (`RevokeDownloads`), and a link that no longer works shows a 410 page.
+    - **Delivery:** a paid order with only digital items is completed automatically (`OrderWorkflow::deliverDigital`), with no shipment.
+    - **Related products:** `product_relations` (related or upsell, ordered, at most 12 each). With no related products chosen, the page falls back to same-category products.
+    - **Bulk actions:** one endpoint, at most 200 products, with permission checked per action (update, delete or view). Each action runs in one transaction with one audit entry; skipped products are listed. Prices change in every currency and never go below the currency's smallest unit.
+    - **Duplicates** are hidden drafts with unique `-copy` slugs and `-COPY` SKUs. They share image media (files are only removed when unused) but get their own copies of digital files.
+- **Consequences:**
+    - **No license keys, file versions or bundles yet.**
+    - **Fixed amounts are not converted:** a fixed bulk price change uses the same number in every currency.
+    - **Downloads are not protected beyond the token:** anyone with a link can use it until it runs out or is revoked.

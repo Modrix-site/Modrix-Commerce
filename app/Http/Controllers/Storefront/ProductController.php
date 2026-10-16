@@ -131,9 +131,13 @@ class ProductController extends Controller
             'upsells' => $catalog->cardsFor(self::relatedIds($product, ProductRelations::UPSELL), $currency, ProductRelations::MAX),
             'related' => ($picked = $catalog->cardsFor(self::relatedIds($product, ProductRelations::RELATED), $currency, ProductRelations::MAX)) !== []
                 ? $picked
-                : ($category instanceof Category
-                    ? array_values($catalog->listing($currency, $category, perPage: 5)->items())
-                    : $catalog->latest($currency, 5)),
+                // (never the product being viewed).
+                : array_slice(array_values(array_filter(
+                    $category instanceof Category
+                        ? $catalog->listing($currency, $category, perPage: 6)->items()
+                        : $catalog->latest($currency, 6),
+                    fn (array $card) => $card['id'] !== $product->id,
+                )), 0, 5),
         ]);
     }
 }

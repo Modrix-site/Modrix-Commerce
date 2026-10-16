@@ -3,12 +3,14 @@
 namespace Tests\Feature\Catalog;
 
 use App\Domains\Catalog\Enums\ProductStatus;
+use App\Domains\Catalog\Events\ProductCreated;
 use App\Domains\Catalog\Models\Brand;
 use App\Domains\Catalog\Models\Category;
 use App\Domains\Catalog\Models\Product;
 use App\Domains\Catalog\Models\ProductFile;
 use App\Domains\Catalog\ProductRelations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Tests\Support\CommerceFixtures;
 use Tests\TestCase;
@@ -72,6 +74,15 @@ class DuplicateProductTest extends TestCase
         $this->assertEqualsCanonicalizing(['USD' => '25.0000', 'EUR' => '23.0000'], $variant->prices->pluck('amount', 'currency')->all());
         $this->assertSame(0, (int) $variant->onHand());
         $this->assertSame(7, (int) $this->source->variants()->firstOrFail()->onHand());
+    }
+
+    public function test_duplicate_fires_product_created_for_modules()
+    {
+        Event::fake([ProductCreated::class]);
+
+        $copy = $this->duplicate();
+
+        Event::assertDispatched(ProductCreated::class, fn (ProductCreated $e) => $e->productId === $copy->id);
     }
 
     public function test_duplicating_twice_gets_unique_slug_and_skus()

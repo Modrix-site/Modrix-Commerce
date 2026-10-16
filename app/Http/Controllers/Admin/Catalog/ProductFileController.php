@@ -33,7 +33,7 @@ class ProductFileController extends Controller
         abort_if($path === false, 500, 'The file could not be stored.');
 
         $file = $product->files()->create([
-            'name' => mb_substr($upload->getClientOriginalName(), 0, 160),
+            'name' => mb_substr(str_replace(['/', '\\'], '-', $upload->getClientOriginalName()), 0, 160),
             'disk' => ProductFile::DISK,
             'path' => $path,
             'size' => (int) $upload->getSize(),
@@ -48,7 +48,8 @@ class ProductFileController extends Controller
     public function update(Request $request, Product $product, ProductFile $file): RedirectResponse
     {
         $data = $request->validate([
-            'name' => ['sometimes', 'required', 'string', 'max:160'],
+            // Slashes would break the downloaded file's name.
+            'name' => ['sometimes', 'required', 'string', 'max:160', 'not_regex:#[/\\\\]#'],
             'position' => ['sometimes', 'integer', 'min:0', 'max:'.ProductFile::MAX_PER_PRODUCT],
         ]);
 

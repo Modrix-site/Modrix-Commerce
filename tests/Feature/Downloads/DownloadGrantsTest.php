@@ -4,6 +4,7 @@ namespace Tests\Feature\Downloads;
 
 use App\Domains\Catalog\Models\ProductFile;
 use App\Domains\Catalog\Models\ProductVariant;
+use App\Domains\Downloads\DownloadGrants;
 use App\Domains\Downloads\DownloadSettings;
 use App\Domains\Downloads\Models\DownloadGrant;
 use App\Domains\Orders\Enums\FulfillmentStatus;
@@ -121,6 +122,37 @@ class DownloadGrantsTest extends TestCase
         $grant->forceFill(['downloads' => 0])->save();
         $this->travel(31)->days();
         $this->get(route('storefront.downloads.show', $grant->token))->assertStatus(410)->assertSee('expired');
+    }
+
+    public function test_a_file_name_with_slashes_still_downloads()
+    {
+        $this->pay($this->order([$this->digital()]));
+        $grant = $this->grant();
+        // Stored before names were validated, or set directly.
+        ProductFile::query()->update(['name' => 'Part 1/2 AC\\DC.pdf']);
+
+        $response = $this->get(route('storefront.downloads.show', $grant->token));
+        $response->assertOk();
+        $this->assertStringContainsString('Part 1-2 AC-DC.pdf', (string) $response->headers->get('content-disposition'));
+        $this->assertSame(1, $grant->fresh()->downloads);
+    }
+
+    public function test_a_used_up_link_is_not_counted_again()
+    {
+        $this->pay($this->order([$this->digital()]));
+        $grant = $this->grant();
+        $grant->forceFill(['downloads' => 4])->save();
+        $stale = $grant->fresh();
+        // A parallel request takes the last download after this one checked the grant.
+        DownloadGrant::query()->whereKey($grant->id)->update(['downloads' => 5]);
+
+        $this->assertFalse(app(DownloadGrants::class)->consume($stale));
+        $this->assertSame(5, $grant->fresh()->downloads);
+
+        // Unlimited links always count.
+        DownloadGrant::query()->whereKey($grant->id)->update(['max_downloads' => null]);
+        $this->assertTrue(app(DownloadGrants::class)->consume($grant->fresh()));
+        $this->assertSame(6, $grant->fresh()->downloads);
     }
 
     public function test_unknown_token_is_404()

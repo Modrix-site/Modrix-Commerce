@@ -101,6 +101,8 @@ class ProductRelationsTest extends TestCase
 
         $this->get(route('storefront.product', $product->slug))->assertInertia(fn (Assert $page) => $page
             ->where('upsells', [])
-            ->where('related', fn ($related) => collect($related)->pluck('id')->contains($sibling->id)));
+            ->where('related', fn ($related) => collect($related)->pluck('id')->contains($sibling->id)
+                // The product being viewed is never suggested to itself.
+                && ! collect($related)->pluck('id')->contains($product->id)));
     }
 }

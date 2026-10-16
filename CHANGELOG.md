@@ -4,6 +4,26 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added (product tools and digital products)
+
+- **Duplicate product:** from the editor or the product list. The copy is a hidden draft ("Copy of …") with new slug and SKUs, the same details, variants, prices, images, categories, tags, translations, related products and files, and no stock.
+- **Bulk actions** on the product list (up to 200 selected products):
+    - publish, draft, archive;
+    - add to or remove from a category, set brand, add or remove tags, featured on or off;
+    - raise or lower prices by % or a fixed amount, never below the currency's smallest amount;
+    - set the stock quantity;
+    - delete, and export the selection to CSV.
+
+    Products that cannot change are listed in the result.
+- **Related products and upsells:** picked in the editor (up to 12 each). The product page shows "Customers also bought" and "You may also like", falling back to products from the same category.
+- **Digital products:**
+    - **Editor:** a "Digital product (no shipping)" switch, with files (up to 10, 500 MB each) stored privately.
+    - **Checkout:** a cart of digital products only has no shipping step.
+    - **After payment:** customers get download links in the payment email, on the order page and in their account. Links are limited to 5 downloads and 30 days by default (Settings → Store → Digital downloads), are counted and logged, and stop when the order is cancelled or fully refunded.
+    - **Delivery:** digital-only orders complete automatically.
+    - **Admin:** staff can reset, extend or revoke a link from the order page.
+- ADR-048.
+
 ### Added (flash sales)
 
 - **Flash Sales module** (Marketing → Flash Sales):
