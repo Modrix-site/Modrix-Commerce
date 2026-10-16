@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Catalog;
 use App\Core\Extensions\StorefrontSlots;
 use App\Core\Settings\StoreSettings;
 use App\Domains\Catalog\Actions\DeleteProduct;
+use App\Domains\Catalog\Actions\DuplicateProduct;
 use App\Domains\Catalog\Actions\SaveProduct;
 use App\Domains\Catalog\CategoryTree;
 use App\Domains\Catalog\Enums\ProductStatus;
@@ -115,6 +116,20 @@ class ProductController extends Controller
             'product' => null,
             ...$this->formOptions($store),
         ]);
+    }
+
+    /**
+     * Copies the product as a hidden draft and opens the copy.
+     */
+    public function duplicate(Request $request, Product $product, DuplicateProduct $duplicate): RedirectResponse
+    {
+        /** @var User $actor */
+        $actor = $request->user();
+        $copy = $duplicate->handle($product, $actor);
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Product duplicated. The copy is a hidden draft.')]);
+
+        return redirect()->route('admin.products.edit', $copy);
     }
 
     public function store(SaveProductRequest $request, SaveProduct $save, StoreSettings $store): RedirectResponse

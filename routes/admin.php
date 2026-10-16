@@ -112,6 +112,7 @@ Route::post('products/import', [ProductCsvController::class, 'import'])
 Route::middleware('can:products.create')->group(function () {
     Route::get('products/create', [ProductController::class, 'create'])->name('products.create');
     Route::post('products', [ProductController::class, 'store'])->name('products.store');
+    Route::post('products/{product}/duplicate', [ProductController::class, 'duplicate'])->name('products.duplicate');
 });
 Route::middleware('can:products.update')->group(function () {
     Route::get('products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');

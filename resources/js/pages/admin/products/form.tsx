@@ -1,5 +1,5 @@
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { ExternalLink, Languages } from 'lucide-react';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
+import { Copy, ExternalLink, Languages } from 'lucide-react';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import ProductController from '@/actions/App/Http/Controllers/Admin/Catalog/ProductController';
@@ -262,6 +262,30 @@ function ProductForm({
                                         <Languages /> Translations
                                     </Link>
                                 </Button>
+                                {can('products.create') && (
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => {
+                                            if (
+                                                isDirty &&
+                                                !window.confirm(
+                                                    'You have unsaved changes. The copy is made from the last saved version. Continue?',
+                                                )
+                                            ) {
+                                                return;
+                                            }
+
+                                            router.post(
+                                                ProductController.duplicate.url(
+                                                    product.id,
+                                                ),
+                                            );
+                                        }}
+                                    >
+                                        <Copy /> Duplicate
+                                    </Button>
+                                )}
                                 {can('products.delete') && (
                                     <DeleteProductDialog
                                         id={product.id}

@@ -1,6 +1,7 @@
-import { Form, Head, Link } from '@inertiajs/react';
-import { Download, ImageOff, Star, Plus, Upload } from 'lucide-react';
+import { Form, Head, Link, router } from '@inertiajs/react';
+import { Copy, Download, ImageOff, Star, Plus, Upload } from 'lucide-react';
 import { useState } from 'react';
+import ProductController from '@/actions/App/Http/Controllers/Admin/Catalog/ProductController';
 import ProductCsvController from '@/actions/App/Http/Controllers/Admin/Catalog/ProductCsvController';
 import { EmptyState } from '@/components/admin/empty-state';
 import { NativeSelect } from '@/components/admin/form-field';
@@ -273,6 +274,9 @@ export default function ProductsIndex({
                                 <TableHead>Status</TableHead>
                                 <TableHead>Price</TableHead>
                                 <TableHead>Stock</TableHead>
+                                <TableHead className="w-10">
+                                    <span className="sr-only">Actions</span>
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -346,6 +350,27 @@ export default function ProductsIndex({
                                         {product.stock === null
                                             ? 'Not tracked'
                                             : product.stock}
+                                    </TableCell>
+                                    <TableCell>
+                                        {can('products.create') && (
+                                            <Button
+                                                type="button"
+                                                size="icon"
+                                                variant="ghost"
+                                                className="size-8"
+                                                title="Duplicate"
+                                                aria-label={`Duplicate ${product.name}`}
+                                                onClick={() =>
+                                                    router.post(
+                                                        ProductController.duplicate.url(
+                                                            product.id,
+                                                        ),
+                                                    )
+                                                }
+                                            >
+                                                <Copy className="size-4" />
+                                            </Button>
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             ))}
