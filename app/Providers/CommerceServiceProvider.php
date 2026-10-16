@@ -12,9 +12,13 @@ use App\Domains\Checkout\Pricing\Steps\TaxStep;
 use App\Domains\Customers\Listeners\CreateCustomerProfile;
 use App\Domains\Customers\Listeners\LinkGuestOrdersOnVerification;
 use App\Domains\Customers\PersonalDataExport;
+use App\Domains\Downloads\Listeners\GrantDownloads;
+use App\Domains\Downloads\Listeners\RevokeDownloads;
 use App\Domains\Inventory\Events\InventoryLow;
 use App\Domains\Inventory\Listeners\SendLowStockAlert;
+use App\Domains\Orders\Events\OrderCancelled;
 use App\Domains\Orders\Events\OrderPaid;
+use App\Domains\Orders\Events\OrderRefunded;
 use App\Domains\Orders\Listeners\IssueInvoiceOnPayment;
 use App\Domains\Orders\Listeners\SendOrderEmails;
 use App\Domains\Payments\Gateways\Stripe\StripeGateway;
@@ -99,6 +103,10 @@ class CommerceServiceProvider extends ServiceProvider
         Event::listen(Login::class, MergeGuestCartOnLogin::class);
         Event::listen(InventoryLow::class, SendLowStockAlert::class);
         Event::listen(OrderPaid::class, IssueInvoiceOnPayment::class);
+        // Digital products: download links on payment, revoked on cancel or full refund.
+        Event::listen(OrderPaid::class, GrantDownloads::class);
+        Event::listen(OrderCancelled::class, RevokeDownloads::class);
+        Event::listen(OrderRefunded::class, RevokeDownloads::class);
         Event::subscribe(SendOrderEmails::class);
 
         RateLimiter::for('checkout', fn (Request $request) => [

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Core\Audit\AuditLogger;
 use App\Core\Settings\Currencies;
 use App\Core\Settings\StoreSettings;
+use App\Domains\Downloads\DownloadSettings;
 use App\Http\Controllers\Controller;
 use DateTimeZone;
 use Illuminate\Http\RedirectResponse;
@@ -19,6 +20,7 @@ class StoreSettingsController extends Controller
     {
         return Inertia::render('admin/settings/store', [
             'settings' => $store->toArray(),
+            'downloads' => ['limit' => app(DownloadSettings::class)->limit(), 'expiry_days' => app(DownloadSettings::class)->expiryDays()],
             'currencies' => collect(Currencies::ALL)->map(fn ($c, $code) => ['code' => $code, 'name' => $c['name']])->values(),
             'timezones' => DateTimeZone::listIdentifiers(),
             'weightUnits' => StoreSettings::UNITS_WEIGHT,

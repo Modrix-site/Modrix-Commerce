@@ -411,6 +411,35 @@ final class OrderWorkflow
     }
 
     /**
+     * A paid order of digital products only: delivered as downloads, with no
+     * shipment. Called by the system right after payment (no staff actor).
+     */
+    public function deliverDigital(Order $order): Order
+    {
+        return $this->transition($order, function (Order $order): Order {
+            $paid = ! $order->payment_status->isOutstanding() && $order->balanceDue()->isZero();
+
+            if (! $paid || $order->fulfillment_status !== FulfillmentStatus::Unfulfilled || in_array($order->status, [OrderStatus::Cancelled, OrderStatus::OnHold], true)) {
+                return $order;
+            }
+
+            $order->forceFill([
+                'fulfillment_status' => FulfillmentStatus::Delivered,
+                'delivered_at' => now(),
+                'status' => OrderStatus::Completed,
+                'completed_at' => now(),
+            ])->save();
+
+            $this->log($order, 'fulfillment', 'Delivered digitally (download links sent).', true, null);
+            $this->audit->record('order.delivered_digitally', $order, ['number' => $order->number]);
+
+            DB::afterCommit(fn () => OrderDelivered::dispatch($order->id));
+
+            return $order;
+        });
+    }
+
+    /**
      * Cancel an unfulfilled order that has no outstanding payment. Stock is
      * returned and the coupon use is released.
      */

@@ -1,5 +1,6 @@
 import { Form, Head } from '@inertiajs/react';
 import StoreSettingsController from '@/actions/App/Http/Controllers/Admin/StoreSettingsController';
+import { DownloadSettingsCard } from '@/components/admin/download-settings-card';
 import { FormField, NativeSelect } from '@/components/admin/form-field';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Button } from '@/components/ui/button';
@@ -188,6 +189,7 @@ export default function StoreSettings({
                         </>
                     )}
                 </Form>
+                <DownloadSettingsCard />
             </AdminPage>
         </>
     );

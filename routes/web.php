@@ -7,6 +7,7 @@ use App\Http\Controllers\Storefront\AccountOrderDocumentController;
 use App\Http\Controllers\Storefront\CartController;
 use App\Http\Controllers\Storefront\CatalogController;
 use App\Http\Controllers\Storefront\CheckoutController;
+use App\Http\Controllers\Storefront\DownloadController;
 use App\Http\Controllers\Storefront\ProductController;
 use App\Http\Middleware\ShareStorefrontData;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,11 @@ Route::middleware(['installed', ShareStorefrontData::class])->group(function () 
     Route::get('checkout', [CheckoutController::class, 'show'])->name('checkout.show');
     Route::post('checkout', [CheckoutController::class, 'store'])->middleware('throttle:checkout')->name('checkout.store');
     Route::get('checkout/complete/{order}', [CheckoutController::class, 'complete'])->name('checkout.complete');
+    // Purchased files; the 40-character token is the secret.
+    Route::get('downloads/{token}', [DownloadController::class, 'show'])
+        ->where('token', '[A-Za-z0-9]{40}')
+        ->middleware('throttle:30,1')
+        ->name('storefront.downloads.show');
     Route::post('checkout/orders/{order}/pay', [CheckoutController::class, 'pay'])->middleware('throttle:checkout')->name('checkout.pay');
     Route::get('checkout/orders/{order}/payment/return', [CheckoutController::class, 'paymentReturn'])->middleware('throttle:30,1')->name('checkout.payment.return');
 
