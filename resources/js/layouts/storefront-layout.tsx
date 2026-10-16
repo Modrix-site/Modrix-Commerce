@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useFlashToast } from '@/hooks/use-flash-toast';
+import { SiteHeader } from '@/components/storefront/site-header';
 import { useStoreTheme } from '@/hooks/use-store-theme';
 import { useT } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
@@ -54,13 +55,15 @@ export default function StorefrontLayout({
                     {theme.announcement}
                 </div>
             )}
-            {header === 'centered' ? (
-                <CenteredHeader />
-            ) : header === 'minimal' ? (
-                <MinimalHeader />
-            ) : (
-                <ClassicHeader />
-            )}
+            <SiteHeader>
+                {header === 'centered' ? (
+                    <CenteredHeader />
+                ) : header === 'minimal' ? (
+                    <MinimalHeader />
+                ) : (
+                    <ClassicHeader />
+                )}
+            </SiteHeader>
             <main
                 id="main"
                 className="mx-auto w-full max-w-[var(--store-container,72rem)] flex-1 px-4 py-8"
