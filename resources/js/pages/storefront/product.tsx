@@ -6,6 +6,7 @@ import { ExtensionSlot } from '@/components/extensions/extension-slot';
 import type { SlotItem } from '@/components/extensions/extension-slot';
 import InputError from '@/components/input-error';
 import { BuyNowButton } from '@/components/storefront/buy-now-button';
+import { StickyAddToCart } from '@/components/storefront/sticky-add-to-cart';
 import { RelatedProducts } from '@/components/storefront/related-products';
 import { SaleNotice } from '@/components/storefront/sale-notice';
 import { useStoreTheme } from '@/hooks/use-store-theme';
@@ -262,8 +263,17 @@ export default function ProductPage({
                         </fieldset>
                     ))}
 
+                    <StickyAddToCart
+                        targetId="product-add-to-cart"
+                        name={product.name}
+                        image={product.images[0]?.url}
+                        variant={variant}
+                        hasOptions={product.options.length > 0}
+                        showBuyButton={product.show_buy_button}
+                    />
                     {variant ? (
                         <Form
+                            id="product-add-to-cart"
                             {...CartController.store.form()}
                             options={{ preserveScroll: true }}
                             className="grid gap-3"
