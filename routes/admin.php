@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\Catalog\AttributeController;
 use App\Http\Controllers\Admin\Catalog\BrandController;
 use App\Http\Controllers\Admin\Catalog\CategoryController;
+use App\Http\Controllers\Admin\Catalog\ProductBulkController;
 use App\Http\Controllers\Admin\Catalog\ProductController;
 use App\Http\Controllers\Admin\Catalog\ProductCsvController;
 use App\Http\Controllers\Admin\Catalog\ProductFileController;
@@ -102,6 +103,8 @@ Route::post('products/{product}/images/from-library', [MediaController::class, '
 Route::middleware('can:products.view')->group(function () {
     Route::get('products', [ProductController::class, 'index'])->name('products.index');
     Route::get('products/export', [ProductCsvController::class, 'export'])->name('products.export');
+    // Each action checks its own permission (update, delete or view).
+    Route::post('products/bulk', ProductBulkController::class)->middleware('throttle:30,1')->name('products.bulk');
 });
 Route::post('products/import', [ProductCsvController::class, 'import'])
     ->middleware(['can:products.create', 'can:products.update', 'throttle:10,1'])

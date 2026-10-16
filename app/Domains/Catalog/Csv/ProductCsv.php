@@ -43,14 +43,16 @@ final class ProductCsv
     ) {}
 
     /**
+     * @param  list<int>|null  $productIds  only these products (bulk export), or all
      * @return Generator<int, list<string>>
      */
-    public function export(string $currency): Generator
+    public function export(string $currency, ?array $productIds = null): Generator
     {
         yield self::COLUMNS;
 
         $query = ProductVariant::query()
             ->whereHas('product')
+            ->when($productIds !== null, fn ($q) => $q->whereIn('product_id', $productIds))
             ->with(['product.categories:id,slug', 'prices', 'stocks'])
             ->orderBy('product_id')
             ->orderBy('position');

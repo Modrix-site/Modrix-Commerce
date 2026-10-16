@@ -1,9 +1,11 @@
 import { Form, Head, Link } from '@inertiajs/react';
 import { Download, ImageOff, Star, Plus, Upload } from 'lucide-react';
+import { useState } from 'react';
 import ProductCsvController from '@/actions/App/Http/Controllers/Admin/Catalog/ProductCsvController';
 import { EmptyState } from '@/components/admin/empty-state';
 import { NativeSelect } from '@/components/admin/form-field';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
+import { ProductBulkBar } from '@/components/admin/products/product-bulk-bar';
 import { Pagination } from '@/components/admin/pagination';
 import InputError from '@/components/input-error';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -74,6 +76,13 @@ export default function ProductsIndex({
     importErrors,
 }: Props) {
     const can = useCan();
+    // Products selected for a bulk action (on this page).
+    const [selected, setSelected] = useState<number[]>([]);
+    const pageIds = products.data.map((p) => p.id);
+    const allSelected =
+        pageIds.length > 0 && pageIds.every((id) => selected.includes(id));
+    const toggle = (id: number, on: boolean) =>
+        setSelected((s) => (on ? [...s, id] : s.filter((x) => x !== id)));
     const filtered =
         filters.search !== '' ||
         filters.status !== '' ||
@@ -245,6 +254,17 @@ export default function ProductsIndex({
                     <Table>
                         <TableHeader>
                             <TableRow>
+                                <TableHead className="w-8">
+                                    <Checkbox
+                                        aria-label="Select all products on this page"
+                                        checked={allSelected}
+                                        onCheckedChange={(c) =>
+                                            setSelected(
+                                                c === true ? pageIds : [],
+                                            )
+                                        }
+                                    />
+                                </TableHead>
                                 <TableHead className="w-14">
                                     <span className="sr-only">Image</span>
                                 </TableHead>
@@ -258,6 +278,17 @@ export default function ProductsIndex({
                         <TableBody>
                             {products.data.map((product) => (
                                 <TableRow key={product.id}>
+                                    <TableCell>
+                                        <Checkbox
+                                            aria-label={`Select ${product.name}`}
+                                            checked={selected.includes(
+                                                product.id,
+                                            )}
+                                            onCheckedChange={(c) =>
+                                                toggle(product.id, c === true)
+                                            }
+                                        />
+                                    </TableCell>
                                     <TableCell>
                                         {product.image ? (
                                             <img
@@ -321,6 +352,15 @@ export default function ProductsIndex({
                         </TableBody>
                     </Table>
                 )}
+
+                <ProductBulkBar
+                    selected={selected}
+                    onClear={() => setSelected([])}
+                    categories={categories}
+                    brands={brands}
+                    canUpdate={can('products.update')}
+                    canDelete={can('products.delete')}
+                />
 
                 <Pagination
                     from={products.from}
