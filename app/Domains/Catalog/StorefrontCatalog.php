@@ -8,6 +8,7 @@ use App\Domains\Catalog\Models\Category;
 use App\Domains\Catalog\Models\Product;
 use App\Domains\Catalog\Models\ProductImage;
 use App\Domains\Catalog\Models\ProductVariant;
+use App\Domains\Catalog\Pricing\SalePrices;
 use App\Domains\Pricing\Money;
 use App\Support\Like;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -53,8 +54,11 @@ final class StorefrontCatalog
             default => $query->orderByDesc('products.published_at')->orderByDesc('products.id'),
         };
 
-        return $query->paginate($perPage)->withQueryString()
-            ->through(fn (Product $product) => $this->card($product, $currency));
+        $page = $query->paginate($perPage)->withQueryString();
+        // One sale-price lookup for the whole page.
+        app(SalePrices::class)->preload($page->getCollection()->pluck('id'));
+
+        return $page->through(fn (Product $product) => $this->card($product, $currency));
     }
 
     /**
@@ -67,6 +71,7 @@ final class StorefrontCatalog
             ->orderByDesc('products.id')
             ->limit($limit)
             ->get();
+        app(SalePrices::class)->preload($products->pluck('id'));
 
         return array_values(array_map(fn (Product $p) => $this->card($p, $currency), $products->all()));
     }
@@ -84,6 +89,7 @@ final class StorefrontCatalog
             ->orderByDesc('products.id')
             ->limit($limit)
             ->get();
+        app(SalePrices::class)->preload($products->pluck('id'));
 
         return array_values(array_map(fn (Product $p) => $this->card($p, $currency), $products->all()));
     }
@@ -120,10 +126,21 @@ final class StorefrontCatalog
     {
         // Reuse the loaded parent instead of querying it again per variant.
         $variants = $product->variants->each(fn (ProductVariant $v) => $v->setRelation('product', $product));
-        $prices = $variants->map(fn (ProductVariant $v) => $v->priceIn($currency))->filter();
+        $sales = app(SalePrices::class);
+        // Sale prices (from modules such as flash sales) replace the regular price.
+        $prices = $variants->map(function (ProductVariant $v) use ($currency, $sales, $product) {
+            $price = $v->priceIn($currency);
+
+            return $price === null ? null : ($sales->apply($product->id, $price)['price'] ?? $price);
+        })->filter();
         $from = $prices->reduce(fn (?Money $carry, Money $m) => $carry === null || $m->lessThan($carry) ? $m : $carry);
         $default = $variants->first();
         $compareAt = $default?->compareAtPriceIn($currency);
+        $sale = $default === null ? null : $sales->forVariant($default, $currency);
+        if ($sale !== null) {
+            // The price before the sale is shown crossed out (or the compare-at price, if higher).
+            $compareAt = $compareAt !== null && $compareAt->greaterThan($sale['original']) ? $compareAt : $sale['original'];
+        }
         $image = $product->images->first();
 
         return [
@@ -134,9 +151,69 @@ final class StorefrontCatalog
             'image' => $image instanceof ProductImage ? ['url' => $image->url(), 'alt' => $image->alt] : null,
             'price' => $from,
             'compare_at_price' => $variants->count() === 1 ? $compareAt : null,
+            'sale' => $this->saleBadge($product, $variants, $currency),
             'has_variants' => $variants->count() > 1,
             'in_stock' => $variants->contains(fn (ProductVariant $v) => VariantAvailability::of($v, $currency)->purchasable),
         ];
+    }
+
+    /**
+     * Cards for these products (visible ones only, in the given order), e.g. a
+     * module's own product list.
+     *
+     * @param  list<int>  $productIds
+     * @return list<array<string, mixed>>
+     */
+    public function cardsFor(array $productIds, string $currency, int $limit = 12): array
+    {
+        if ($productIds === []) {
+            return [];
+        }
+
+        // Only the first $limit visible products (in the given order) are loaded.
+        $visible = array_map('intval', $this->visibleWithPrice($currency)->whereIn('products.id', $productIds)->pluck('products.id')->all());
+        $ids = array_slice(array_values(array_intersect($productIds, $visible)), 0, $limit);
+
+        if ($ids === []) {
+            return [];
+        }
+
+        app(SalePrices::class)->preload($ids);
+        $products = $this->visibleWithPrice($currency)->whereIn('products.id', $ids)->get()->keyBy('id');
+        $cards = [];
+
+        foreach ($ids as $id) {
+            if ($products->has($id)) {
+                $cards[] = $this->card($products->get($id), $currency);
+            }
+        }
+
+        return $cards;
+    }
+
+    /**
+     * The sale shown on a card ("−20%" badge and end time), if any variant is on sale.
+     *
+     * @param  iterable<ProductVariant>  $variants
+     * @return array{badge: string, name: string, ends_at: string|null}|null
+     */
+    private function saleBadge(Product $product, iterable $variants, string $currency): ?array
+    {
+        $sales = app(SalePrices::class);
+
+        foreach ($variants as $variant) {
+            $sale = $sales->forVariant($variant, $currency);
+
+            if ($sale !== null) {
+                return [
+                    'badge' => $sale['offer']->badge(),
+                    'name' => $sale['offer']->name,
+                    'ends_at' => $sale['offer']->endsAt?->toIso8601String(),
+                ];
+            }
+        }
+
+        return null;
     }
 
     /**

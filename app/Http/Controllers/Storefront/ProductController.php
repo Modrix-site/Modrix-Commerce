@@ -7,7 +7,10 @@ use App\Core\Settings\StoreSettings;
 use App\Domains\Catalog\Models\Category;
 use App\Domains\Catalog\Models\ProductAttributeValue;
 use App\Domains\Catalog\Models\ProductImage;
+use App\Domains\Catalog\Models\Product;
 use App\Domains\Catalog\Models\ProductVariant;
+use App\Domains\Catalog\Pricing\SalePrices;
+use App\Domains\Pricing\Money;
 use App\Domains\Catalog\StorefrontCatalog;
 use App\Domains\Catalog\VariantAvailability;
 use App\Http\Controllers\Controller;
@@ -16,6 +19,43 @@ use Inertia\Response;
 
 class ProductController extends Controller
 {
+    /**
+     * A variant's price, with any sale price (e.g. a flash sale) applied and
+     * the regular price shown crossed out.
+     *
+     * @return array{price: Money|null, compare_at_price: Money|null}
+     */
+    private static function variantPrices(ProductVariant $variant, string $currency): array
+    {
+        $compareAt = $variant->compareAtPriceIn($currency);
+        $sale = app(SalePrices::class)->forVariant($variant, $currency);
+
+        if ($sale === null) {
+            return ['price' => $variant->priceIn($currency), 'compare_at_price' => $compareAt];
+        }
+
+        return [
+            'price' => $sale['price'],
+            'compare_at_price' => $compareAt !== null && $compareAt->greaterThan($sale['original']) ? $compareAt : $sale['original'],
+        ];
+    }
+
+    /**
+     * @return array{badge: string, name: string, ends_at: string|null}|null
+     */
+    private static function sale(Product $product, string $currency): ?array
+    {
+        foreach ($product->variants as $variant) {
+            $sale = app(SalePrices::class)->forVariant($variant, $currency);
+
+            if ($sale !== null) {
+                return ['badge' => $sale['offer']->badge(), 'name' => $sale['offer']->name, 'ends_at' => $sale['offer']->endsAt?->toIso8601String()];
+            }
+        }
+
+        return null;
+    }
+
     public function show(string $slug, StorefrontCatalog $catalog, StoreSettings $store, StorefrontSlots $slots): Response
     {
         $product = $catalog->findVisible($slug);
@@ -50,6 +90,7 @@ class ProductController extends Controller
                 'meta_title' => $product->localized('meta_title') ?: $product->localized('name'),
                 'meta_description' => $product->localized('meta_description') ?: $product->localized('short_description'),
                 'images' => $product->images->map(fn (ProductImage $i) => ['id' => $i->id, 'url' => $i->url(), 'alt' => $i->alt])->values(),
+                'sale' => self::sale($product, $currency),
                 'brand' => $product->brand ? ['name' => $product->brand->name, 'slug' => $product->brand->slug] : null,
                 'options' => $options,
                 'variants' => $product->variants->map(function (ProductVariant $v) use ($currency) {
@@ -59,8 +100,7 @@ class ProductController extends Controller
                         'id' => $v->id,
                         'name' => $v->name,
                         'sku' => $v->sku,
-                        'price' => $v->priceIn($currency),
-                        'compare_at_price' => $v->compareAtPriceIn($currency),
+                        ...self::variantPrices($v, $currency),
                         'option_value_ids' => $v->options->pluck('id')->values(),
                         'purchasable' => $availability->purchasable,
                         'available' => $availability->available,

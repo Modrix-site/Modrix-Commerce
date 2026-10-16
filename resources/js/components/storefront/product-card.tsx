@@ -88,6 +88,11 @@ function Price({ product }: { product: ProductCardData }) {
                     {product.compare_at_price.formatted}
                 </s>
             )}
+            {product.sale && (
+                <span className="ml-2 rounded bg-orange-500 px-1.5 py-0.5 text-xs font-semibold text-white">
+                    {product.sale.badge}
+                </span>
+            )}
         </span>
     );
 }

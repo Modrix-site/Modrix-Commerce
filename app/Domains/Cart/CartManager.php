@@ -6,7 +6,9 @@ use App\Core\Settings\StoreSettings;
 use App\Domains\Cart\Models\Cart;
 use App\Domains\Cart\Models\CartItem;
 use App\Domains\Catalog\Models\ProductVariant;
+use App\Domains\Catalog\Pricing\SalePrices;
 use App\Domains\Catalog\VariantAvailability;
+use App\Domains\Pricing\Money;
 use App\Models\User;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Support\Facades\DB;
@@ -66,13 +68,21 @@ final class CartManager
                 'cart_id' => $cart->id,
                 'variant_id' => $variant->id,
                 'quantity' => $newQuantity,
-                'seen_unit_price' => $variant->priceIn($cart->currency)?->toDecimal(),
+                // The price the shopper saw, including any sale price (e.g. a flash sale).
+                'seen_unit_price' => $this->shownPrice($variant, $cart->currency)?->toDecimal(),
             ])->save();
 
             $cart->touch();
 
             return $item;
         });
+    }
+
+    private function shownPrice(ProductVariant $variant, string $currency): ?Money
+    {
+        $price = $variant->priceIn($currency);
+
+        return $price === null ? null : (app(SalePrices::class)->apply($variant->product_id, $price)['price'] ?? $price);
     }
 
     public function update(Cart $cart, CartItem $item, int $quantity): void

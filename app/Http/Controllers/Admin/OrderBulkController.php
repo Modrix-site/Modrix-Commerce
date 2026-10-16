@@ -86,7 +86,11 @@ class OrderBulkController extends Controller
             ...$this->numberRules(self::MAX_DOCUMENTS),
             'type' => ['required', Rule::in(['packing-slips', 'invoices'])],
         ]);
-        set_time_limit(120);
+        // Rendering takes about a second per page. Not in tests: the limit would
+        // apply to the rest of the PHPUnit process.
+        if (! app()->runningUnitTests()) {
+            set_time_limit(120);
+        }
 
         $orders = $this->orders($data['numbers']);
         // In the order staff selected them.

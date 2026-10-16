@@ -1,0 +1,70 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "ecomodular/flash-sales",
+    "display_name": "Flash Sales",
+    "description": "Time-limited sales with a percentage or fixed-amount discount. Pick the products in each sale or switch the sale on from the product editor. Shoppers see the sale price, the original price crossed out, a discount badge and a countdown; the cart and checkout charge the sale price.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "zap",
+    "accent": "#f97316",
+    "platform_version": "^1.0",
+    "author": "Eleydo",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\FlashSales\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\FlashSales\\FlashSalesServiceProvider",
+    "permissions": [
+        {
+            "name": "flash_sales.manage",
+            "label": "Manage flash sales",
+            "group": "Marketing"
+        }
+    ],
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "storefront.slots",
+        "database.migrations",
+        "catalog.sale_prices",
+        "settings",
+        "permissions"
+    ],
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages",
+        "slots": "resources/js/slots"
+    },
+    "settings": [
+        {
+            "key": "show_countdown",
+            "type": "boolean",
+            "label": "Show a countdown on sale product pages",
+            "default": true
+        },
+        {
+            "key": "banner_products",
+            "type": "integer",
+            "label": "Products in the home page sale banner",
+            "min": 2,
+            "max": 12,
+            "default": 8
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "sales",
+            "title": "Flash Sales",
+            "route": "index",
+            "icon": "zap",
+            "group": "Marketing",
+            "permission": "flash_sales.manage",
+            "order": 250
+        }
+    ]
+}

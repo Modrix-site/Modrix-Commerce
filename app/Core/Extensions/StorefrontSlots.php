@@ -21,6 +21,9 @@ final class StorefrontSlots
     public const SLOTS = [
         'home.after_featured' => [],
         'product.after_details' => ['product'],
+        // Admin: a panel in the product editor's sidebar (edit page). Context: the product.
+        // Props are built for the signed-in staff member; return null to show nothing.
+        'admin.product.sidebar' => ['product'],
         'order.confirmation' => ['order'],
     ];
 

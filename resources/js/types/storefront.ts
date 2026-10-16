@@ -47,6 +47,8 @@ export type ProductCard = {
     compare_at_price: MoneyValue | null;
     has_variants: boolean;
     in_stock: boolean;
+    /** A module sale (e.g. a flash sale) on this product. */
+    sale?: { badge: string; name: string; ends_at: string | null } | null;
 };
 
 export type CartLine = {

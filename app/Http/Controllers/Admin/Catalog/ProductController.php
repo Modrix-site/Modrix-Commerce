@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Catalog;
 
+use App\Core\Extensions\StorefrontSlots;
 use App\Core\Settings\StoreSettings;
 use App\Domains\Catalog\Actions\DeleteProduct;
 use App\Domains\Catalog\Actions\SaveProduct;
@@ -125,12 +126,14 @@ class ProductController extends Controller
         return redirect()->route('admin.products.edit', $product);
     }
 
-    public function edit(Product $product, StoreSettings $store): Response
+    public function edit(Product $product, StoreSettings $store, StorefrontSlots $slots): Response
     {
         $currency = $store->currency();
         $product->load(['variants.prices', 'variants.options', 'variants.stocks', 'categories:id', 'images', 'tags']);
 
         return Inertia::render('admin/products/form', [
+            // Panels that modules add to the editor sidebar (e.g. Flash Sales).
+            'extensionPanels' => $slots->render('admin.product.sidebar', ['product' => $product]),
             'product' => [
                 'id' => $product->id,
                 'type' => $product->type->value,

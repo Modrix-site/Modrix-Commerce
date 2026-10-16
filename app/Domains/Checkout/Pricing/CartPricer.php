@@ -2,6 +2,7 @@
 
 namespace App\Domains\Checkout\Pricing;
 
+use App\Domains\Catalog\Pricing\SalePrices;
 use App\Domains\Cart\Models\Cart;
 use App\Domains\Cart\Models\CartItem;
 use App\Domains\Catalog\VariantAvailability;
@@ -34,6 +35,8 @@ final class CartPricer
         ]);
 
         $lines = [];
+        // One sale-price lookup for the whole cart.
+        app(SalePrices::class)->preload($cart->items->map(fn ($item) => $item->variant->product_id));
 
         foreach ($cart->items as $item) {
             $lines[] = $this->priceLine($item, $cart->currency);
@@ -66,6 +69,11 @@ final class CartPricer
         $variant = $item->variant;
         $availability = VariantAvailability::of($variant, $currency);
         $unitPrice = $variant->priceIn($currency);
+
+        // A sale price from a module (e.g. a flash sale) is what the shopper pays.
+        if ($unitPrice !== null) {
+            $unitPrice = app(SalePrices::class)->apply($variant->product_id, $unitPrice)['price'] ?? $unitPrice;
+        }
 
         $line = new PricedLine($item->id, $variant, $item->quantity, $unitPrice, $availability, $currency);
 

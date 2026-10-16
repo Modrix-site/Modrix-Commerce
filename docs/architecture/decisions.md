@@ -526,3 +526,25 @@ Each entry records a decision, its context, and its consequences. Entries are ap
         - the CSV import and export don't carry brand, tags, cost or dimensions;
         - brand names and descriptions are not translatable;
         - shipping rates don't use dimensions.
+
+## ADR-047 — Catalog sale prices and the Flash Sales module
+
+- **Date:** 2026-10-16
+- **Status:** Accepted
+- **Decision:**
+    - **Sale prices are a core extension point.** Modules implement `SalePriceProvider` and register it with the `SalePrices` registry (capability `catalog.sale_prices`).
+        - For each product, the offer giving the lowest price wins. A price never goes below zero.
+        - A fixed-amount offer applies only to prices in its own currency.
+        - The same registry prices storefront cards, the product page and cart lines, so the price shown is the price charged.
+        - Coupons and other pricing steps apply on top of the sale price.
+        - A provider that throws is logged and ignored, so a broken module never stops the store selling at regular prices.
+    - **Admin product-editor slot** `admin.product.sidebar`: modules add panels to the editor sidebar. The panels save through their own routes and permissions.
+    - **Flash Sales** (`modules/ecomodular/flash-sales`) is the first user of both:
+        - sales with a name, a start and end time, and a percentage (1–90) or fixed-amount discount;
+        - products added from the sale page or with the "Flash sale" toggle in the product editor, each with an optional own discount;
+        - a "−20%" badge and the original price crossed out, a countdown on the product page, and an optional home page banner.
+- **Consequences:**
+    - **Sorting uses the regular price:** listings sort and filter by price using the SQL `min_price`, which ignores sale prices.
+    - **Orders keep the price charged:** they store the sale unit price, not the regular price or the sale name.
+    - **Other modules still show regular prices:** frequently-bought-together bundle prices, the Tabby and Tamara instalment widgets, and the product-label "On sale" label read `priceIn()` directly. The cart still charges the sale price. They should move to `SalePrices`.
+    - **Offer cache:** offers are cached per request and for at most 30 seconds in long-running workers. An offer that has ended is never applied.

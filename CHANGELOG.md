@@ -4,6 +4,16 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added (flash sales)
+
+- **Flash Sales module** (Marketing → Flash Sales):
+    - time-limited sales with a percentage or fixed-amount discount;
+    - pick products on the sale page, or switch on **Flash sale** in the product editor, with an optional per-product discount;
+    - shoppers see the sale price, the original price crossed out and a "−20%" badge, plus a countdown on the product page and an optional home page banner;
+    - the cart and checkout charge the sale price, and coupons apply on top.
+- **Sale prices extension point** for modules (`SalePriceProvider`, capability `catalog.sale_prices`) and an **admin product-editor panel slot** (`admin.product.sidebar`).
+- ADR-047.
+
 ### Added (product editor and product options)
 
 - Redesigned product editor:

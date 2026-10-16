@@ -1,4 +1,4 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { ExternalLink, Languages } from 'lucide-react';
 import type { ReactNode } from 'react';
 import ProductController from '@/actions/App/Http/Controllers/Admin/Catalog/ProductController';
@@ -23,6 +23,8 @@ import {
     VariantFields,
 } from '@/components/admin/products/variant-fields';
 import { VariantsTable } from '@/components/admin/products/variants-table';
+import { ExtensionSlot } from '@/components/extensions/extension-slot';
+import type { SlotItem } from '@/components/extensions/extension-slot';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import {
@@ -83,6 +85,9 @@ function ProductForm({
     attributes,
 }: ProductFormProps) {
     const can = useCan();
+    // Panels added by modules (e.g. Flash Sales); they save on their own.
+    const { extensionPanels } = usePage<{ extensionPanels?: SlotItem[] }>()
+        .props;
     const form = useForm<ProductFormData>({
         type: product?.type ?? 'simple',
         name: product?.name ?? '',
@@ -725,6 +730,10 @@ function ProductForm({
                                     </div>
                                 </CardContent>
                             </Card>
+                            <ExtensionSlot
+                                items={extensionPanels}
+                                className="grid gap-6"
+                            />
                         </aside>
                     </div>
 

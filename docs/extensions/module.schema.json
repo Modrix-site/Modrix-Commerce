@@ -92,6 +92,7 @@
                     "notifications",
                     "checkout.validators",
                     "pricing.steps",
+                    "catalog.sale_prices",
                     "payment.gateway",
                     "shipping.rates",
                     "tax.provider",
