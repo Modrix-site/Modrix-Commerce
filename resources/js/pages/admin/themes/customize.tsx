@@ -145,26 +145,28 @@ export default function ThemeCustomize({
                     value={tab}
                     onChange={setTab}
                 />
-                {tab === 'home' && (
+                {/* Cards with forms stay mounted (only hidden), so unsaved
+                    edits survive switching tabs. */}
+                <div hidden={tab !== 'home'}>
                     <SectionsCard
                         themeId={theme.id}
                         sections={sections}
                         images={images}
                     />
+                </div>
+                <div hidden={groupsForTab(design.fields, tab).length === 0}>
+                    <DesignCard
+                        themeId={theme.id}
+                        design={design}
+                        images={images}
+                        tab={tab}
+                    />
+                </div>
+                {/* Uploads are used by settings (General) and sections (Homepage). */}
+                {(tab === 'general' || tab === 'home') && (
+                    <ImageLibrary images={images} />
                 )}
-                {/* Always mounted, so unsaved edits survive switching tabs. */}
-                <DesignCard
-                    themeId={theme.id}
-                    design={design}
-                    images={images}
-                    tab={tab}
-                />
-                {tab === 'general' && (
-                    <>
-                        <ImageLibrary images={images} />
-                        <ResetCard theme={theme} />
-                    </>
-                )}
+                {tab === 'general' && <ResetCard theme={theme} />}
             </AdminPage>
         </>
     );

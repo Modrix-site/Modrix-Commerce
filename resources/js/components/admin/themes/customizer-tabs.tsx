@@ -23,7 +23,7 @@ function isTab(value: string | null): value is CustomizerTab {
 }
 
 export function tabOf(field: ThemeField): CustomizerTab {
-    const tab = (field as ThemeField & { tab?: string }).tab ?? 'general';
+    const tab = field.tab ?? 'general';
 
     return isTab(tab) ? tab : 'general';
 }
@@ -104,7 +104,11 @@ export function CustomizerTabs({
             visible:
                 t.key === 'general' || t.key === 'home' || inTab.length > 0,
             customised: inTab.filter((f) => overridden.includes(f.key)).length,
-            hasError: inTab.some((f) => errorKeys.includes(f.key)),
+            hasError:
+                inTab.some((f) => errorKeys.includes(f.key)) ||
+                // Homepage section errors are keyed by section ("0.heading").
+                (t.key === 'home' &&
+                    errorKeys.some((k) => /^(sections\.)?\d+\./.test(k))),
         };
     }).filter((t) => t.visible);
 

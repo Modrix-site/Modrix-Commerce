@@ -89,6 +89,40 @@ class ThemeStyleFieldsTest extends TestCase
         $this->assertStringContainsString('font-size:16px!important', $css);
     }
 
+    public function test_page_rules_keep_the_store_wide_values_they_do_not_override()
+    {
+        $css = $this->css([
+            'style.general.price_sale_color' => '#cc0000',
+            'style.general.button_hover_bg' => '#333333',
+            'style.catalog.price_color' => '#000000',
+            'style.catalog.button_bg' => '#123456',
+        ]);
+
+        // The catalog scope (more specific than General) repeats General's sale and hover colours.
+        $this->assertStringContainsString('.storefront[data-page="catalog"] .store-price-sale{color:#cc0000!important}', $css);
+        $this->assertStringContainsString('.storefront[data-page="catalog"] .store-button:hover', $css);
+        $catalogHover = substr($css, strpos($css, '.storefront[data-page="catalog"] .store-button:hover'));
+        $this->assertStringContainsString('background:#333333!important', $catalogHover);
+        // Pages that set nothing get no rules of their own.
+        $this->assertStringNotContainsString('data-page="product"', $css);
+    }
+
+    public function test_a_button_background_without_hover_still_reacts_on_hover()
+    {
+        $css = $this->css(['style.product.button_bg' => '#123456']);
+
+        $this->assertStringContainsString('.storefront[data-page="product"] .store-button:hover', $css);
+        $this->assertStringContainsString('filter:brightness(0.92)!important', $css);
+    }
+
+    public function test_card_prices_of_the_bundled_themes_follow_price_settings()
+    {
+        $css = $this->css(['style.catalog.price_color' => '#000000']);
+
+        $this->assertStringContainsString('.storefront[data-page="catalog"] .hearth-card-info strong', $css);
+        $this->assertStringContainsString('.storefront[data-page="catalog"] .vellaro-card-info strong', $css);
+    }
+
     public function test_invalid_style_values_are_rejected()
     {
         $this->makeTheme();

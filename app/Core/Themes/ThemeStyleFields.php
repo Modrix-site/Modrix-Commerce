@@ -34,7 +34,10 @@ final class ThemeStyleFields
     /** Elements and classes each kind of rule targets. */
     private const BUTTONS = ['.store-button', '.hearth-primary', '.vellaro-primary', '.vellaro-card-buy', '.electronics-button'];
 
-    private const PRICES = ['.store-price', '.hearth-product-price', '.vellaro-product-price', '.electronics-purchase-price strong', '.electronics-card-price strong', '.ecom-price'];
+    private const PRICES = ['.store-price', '.hearth-product-price', '.hearth-card-info strong', '.vellaro-product-price', '.vellaro-card-info strong', '.electronics-purchase-price strong', '.electronics-card-price strong', '.ecom-price'];
+
+    /** Property names of one area. */
+    private const PROPS = ['heading_font', 'heading_size', 'heading_weight', 'heading_color', 'body_font', 'body_size', 'body_color', 'button_bg', 'button_text', 'button_hover_bg', 'button_font', 'button_size', 'button_radius', 'price_size', 'price_color', 'price_sale_color'];
 
     /**
      * @return array<string, array<string, mixed>>
@@ -79,10 +82,21 @@ final class ThemeStyleFields
     public static function css(array $design): string
     {
         $css = '';
+        $general = self::values($design, 'general');
 
         foreach (self::AREAS as $area) {
             $scope = $area === 'general' ? '.storefront' : '.storefront[data-page="'.$area.'"]';
-            $value = fn (string $prop): ?string => self::clean($design["style.{$area}.{$prop}"] ?? null);
+            $own = self::values($design, $area);
+
+            // A page that sets nothing follows the General rules. A page that
+            // sets something repeats General's other values in its own (more
+            // specific) scope, so e.g. General's sale or hover colour still applies.
+            if ($area !== 'general' && $own === []) {
+                continue;
+            }
+
+            $values = $area === 'general' ? $own : $own + $general;
+            $value = fn (string $prop): ?string => $values[$prop] ?? null;
 
             $size = $value('heading_size');
             $heading = self::declarations([
@@ -110,8 +124,11 @@ final class ThemeStyleFields
                 'font-size' => $buttonSize === null ? null : "{$buttonSize}px",
                 'border-radius' => $value('button_radius'),
             ]));
+            $hover = $value('button_hover_bg');
             $css .= self::rule($scope, array_map(fn (string $s) => "{$s}:hover", self::BUTTONS), self::declarations([
-                'background' => $value('button_hover_bg'),
+                'background' => $hover,
+                // A set background beats the theme's own hover; keep some feedback.
+                'filter' => $hover === null && $value('button_bg') !== null ? 'brightness(0.92)' : null,
             ]));
 
             $priceSize = $value('price_size');
@@ -125,6 +142,27 @@ final class ThemeStyleFields
         }
 
         return $css;
+    }
+
+    /**
+     * The set (and safe) style values of one area, by property.
+     *
+     * @param  array<string, mixed>  $design
+     * @return array<string, string>
+     */
+    private static function values(array $design, string $area): array
+    {
+        $values = [];
+
+        foreach (self::PROPS as $prop) {
+            $clean = self::clean($design["style.{$area}.{$prop}"] ?? null);
+
+            if ($clean !== null) {
+                $values[$prop] = $clean;
+            }
+        }
+
+        return $values;
     }
 
     /**
