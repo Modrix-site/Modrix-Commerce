@@ -69,6 +69,8 @@ class HandleInertiaRequests extends Middleware
                     ? (object) []
                     : (object) app(InterfaceTranslations::class)->messages(app()->getLocale()),
             ],
+            // Unread count for the notification bell (staff and customers).
+            'notificationsUnread' => fn () => $user instanceof User ? $user->unreadNotifications()->count() : 0,
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }

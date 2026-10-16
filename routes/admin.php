@@ -31,6 +31,7 @@ use App\Http\Controllers\Admin\MarketplaceAdminController;
 use App\Http\Controllers\Admin\MarketplaceClientController;
 use App\Http\Controllers\Admin\MarketplaceSellerController;
 use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\OrderBulkController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\OrderDocumentController;
@@ -52,6 +53,16 @@ use Illuminate\Support\Facades\Route;
 Route::pattern('extension', '[0-9]+');
 
 Route::get('/', DashboardController::class)->name('dashboard');
+
+// Every staff member's own notifications (no extra permission).
+Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+Route::get('notifications/feed', [NotificationController::class, 'feed'])->middleware('throttle:20,1')->name('notifications.feed');
+Route::get('notifications/settings', [NotificationController::class, 'settings'])->name('notifications.settings');
+Route::put('notifications/settings', [NotificationController::class, 'updateSettings'])->name('notifications.settings.update');
+Route::post('notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
+Route::post('notifications/{id}/open', [NotificationController::class, 'open'])->whereUuid('id')->name('notifications.open');
+Route::post('notifications/{id}/read', [NotificationController::class, 'markRead'])->whereUuid('id')->name('notifications.read');
+Route::delete('notifications/{id}', [NotificationController::class, 'destroy'])->whereUuid('id')->name('notifications.destroy');
 
 Route::middleware('can:users.view')->group(function () {
     Route::get('users', [UserController::class, 'index'])->name('users.index');
