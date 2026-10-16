@@ -6,6 +6,7 @@ use App\Core\Extensions\ManifestValidator;
 use App\Core\Extensions\Models\Extension;
 use App\Core\Extensions\Models\ExtensionEvent;
 use App\Core\Extensions\ModuleState;
+use App\Core\Themes\CustomizerTabs;
 use App\Core\Themes\ThemeCustomizations;
 use App\Core\Themes\ThemeException;
 use App\Core\Themes\ThemeManager;
@@ -60,7 +61,7 @@ class ThemeController extends Controller
             if ($field['type'] === 'font') {
                 $field['options'] = [...array_keys(ThemeSchema::FONT_STACKS), ...array_map(fn ($f) => "custom:{$f}", $manifest->customFontFamilies())];
             }
-            $fields[] = ['key' => $key, ...$field];
+            $fields[] = ['key' => $key, ...$field, 'tab' => CustomizerTabs::for($key, $field)];
         }
 
         return Inertia::render('admin/themes/customize', [
