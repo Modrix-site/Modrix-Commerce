@@ -7,6 +7,7 @@ use App\Core\Settings\StoreSettings;
 use App\Core\Themes\ResolvedTheme;
 use App\Core\Themes\ThemeResolver;
 use App\Domains\Cart\CartManager;
+use App\Domains\Catalog\CategoryMenu;
 use App\Domains\Catalog\Models\Category;
 use App\Models\User;
 use Closure;
@@ -43,6 +44,8 @@ class ShareStorefrontData
                 ->limit(12)
                 ->get(['id', 'name', 'slug'])
                 ->map(fn (Category $c) => ['id' => $c->id, 'name' => $c->localized('name'), 'slug' => $c->slug]),
+            // Full category tree (with subcategories) for menus.
+            'categoryTree' => fn () => app(CategoryMenu::class)->tree(),
             'cartCount' => $this->cartCount($request),
             'theme' => $this->themes->forRequest($request)->toProps(),
             'themePreview' => $this->preview($request),

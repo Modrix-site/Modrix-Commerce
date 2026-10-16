@@ -1,5 +1,12 @@
 import { Form, Link, router, usePage } from '@inertiajs/react';
-import { Globe, Menu, Search, ShoppingBag, User } from 'lucide-react';
+import {
+    ChevronDown,
+    Globe,
+    Menu,
+    Search,
+    ShoppingBag,
+    User,
+} from 'lucide-react';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
@@ -18,11 +25,21 @@ import { show as cartShow } from '@/routes/cart';
 import { category, search } from '@/routes/storefront';
 import type { StorefrontShared } from '@/types';
 
-type NavLink = { label: string; url: string };
+type NavLink = { label: string; url: string; category_id?: number | null };
+
+/** A category with its subcategories (up to three levels). */
+export type CategoryNode = {
+    id: number;
+    name: string;
+    slug: string;
+    url: string;
+    children: CategoryNode[];
+};
 
 /** Shared storefront props, including the optional menu and currencies. */
 type Shared = StorefrontShared & {
     navigation?: { header: { links: NavLink[] } };
+    categoryTree?: CategoryNode[];
     currencies?: { code: string; name: string }[];
     displayCurrency?: string;
     canSwitchCurrency?: boolean;
@@ -41,7 +58,31 @@ function useShared() {
             url: category(c.slug).url,
         }));
 
-    return { storefront, auth, links };
+    return { storefront, auth, links, tree: storefront?.categoryTree ?? [] };
+}
+
+/** The category a menu link points to (by id, or by its /c/ address). */
+function findCategory(
+    tree: CategoryNode[],
+    link: NavLink,
+): CategoryNode | undefined {
+    for (const node of tree) {
+        if (
+            (link.category_id != null && node.id === link.category_id) ||
+            node.url === link.url ||
+            category(node.slug).url === link.url
+        ) {
+            return node;
+        }
+
+        const found = findCategory(node.children, link);
+
+        if (found) {
+            return found;
+        }
+    }
+
+    return undefined;
 }
 
 /** Changes a query parameter (lang, currency) and reloads the page. */
@@ -290,7 +331,7 @@ function MenuPanel({
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }) {
-    const { storefront, auth, links } = useShared();
+    const { storefront, auth, links, tree } = useShared();
     const t = useT();
     const close = () => onOpenChange(false);
     const locales = storefront?.locales ?? [];
@@ -300,7 +341,7 @@ function MenuPanel({
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetContent
                 side="left"
-                className="flex w-[85vw] max-w-sm flex-col gap-0 overflow-y-auto p-0"
+                className="flex w-full max-w-none flex-col gap-0 overflow-y-auto p-0 sm:max-w-none"
             >
                 <div className="border-b p-4 pr-12">
                     <SheetTitle className="truncate">
@@ -334,19 +375,30 @@ function MenuPanel({
                 </Form>
 
                 <nav aria-label={t('Main menu')} className="flex-1 py-2">
-                    <ul>
+                    {tree.length > 0 && (
+                        <MenuGroup title={t('Shop by category')}>
+                            {tree.map((node) => (
+                                <MenuItem
+                                    key={node.id}
+                                    label={node.name}
+                                    url={node.url}
+                                    items={node.children}
+                                    onNavigate={close}
+                                />
+                            ))}
+                        </MenuGroup>
+                    )}
+                    <MenuGroup title={tree.length > 0 ? t('Menu') : undefined}>
                         {links.map((link, index) => (
-                            <li key={index}>
-                                <Link
-                                    href={link.url}
-                                    onClick={close}
-                                    className="block px-4 py-3 text-base hover:bg-muted"
-                                >
-                                    {link.label}
-                                </Link>
-                            </li>
+                            <MenuItem
+                                key={index}
+                                label={link.label}
+                                url={link.url}
+                                items={findCategory(tree, link)?.children ?? []}
+                                onNavigate={close}
+                            />
                         ))}
-                    </ul>
+                    </MenuGroup>
                 </nav>
 
                 {(locales.length > 1 || currencies.length > 1) && (
@@ -433,5 +485,99 @@ function MenuPanel({
                 </div>
             </SheetContent>
         </Sheet>
+    );
+}
+
+function MenuGroup({
+    title,
+    children,
+}: {
+    title?: string;
+    children: ReactNode;
+}) {
+    return (
+        <div className="py-1">
+            {title && (
+                <p className="px-4 pt-3 pb-1 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                    {title}
+                </p>
+            )}
+            <ul>{children}</ul>
+        </div>
+    );
+}
+
+/**
+ * A menu entry; with sub-items it gets an arrow that opens them in place
+ * (sub-menus and subcategories, nested up to three levels).
+ */
+function MenuItem({
+    label,
+    url,
+    items,
+    depth = 0,
+    onNavigate,
+}: {
+    label: string;
+    url: string;
+    items: CategoryNode[];
+    depth?: number;
+    onNavigate: () => void;
+}) {
+    const [open, setOpen] = useState(false);
+    const t = useT();
+    const padding = { paddingInlineStart: `${1 + depth * 1}rem` };
+
+    return (
+        <li>
+            <div className="flex items-stretch border-b border-border/50">
+                <Link
+                    href={url}
+                    onClick={onNavigate}
+                    style={padding}
+                    className={cn(
+                        'flex-1 py-3 pr-2 hover:bg-muted',
+                        depth === 0 ? 'text-base' : 'text-sm',
+                    )}
+                >
+                    {label}
+                </Link>
+                {items.length > 0 && (
+                    <button
+                        type="button"
+                        onClick={() => setOpen((o) => !o)}
+                        aria-expanded={open}
+                        aria-label={
+                            open
+                                ? t('Hide :name', { name: label })
+                                : t('Show :name', { name: label })
+                        }
+                        className="flex w-12 items-center justify-center border-l border-border/50 hover:bg-muted"
+                    >
+                        <ChevronDown
+                            className={cn(
+                                'size-4 transition-transform motion-reduce:transition-none',
+                                open && 'rotate-180',
+                            )}
+                            aria-hidden
+                        />
+                    </button>
+                )}
+            </div>
+            {open && items.length > 0 && (
+                <ul className="bg-muted/40">
+                    {items.map((node) => (
+                        <MenuItem
+                            key={node.id}
+                            label={node.name}
+                            url={node.url}
+                            items={node.children}
+                            depth={depth + 1}
+                            onNavigate={onNavigate}
+                        />
+                    ))}
+                </ul>
+            )}
+        </li>
     );
 }
