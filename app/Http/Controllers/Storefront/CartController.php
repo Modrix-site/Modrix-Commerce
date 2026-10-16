@@ -52,6 +52,11 @@ class CartController extends Controller
         abort_if($cart === null, 500);
         $this->carts->add($cart, $variant, (int) $data['quantity']);
 
+        // "Buy now" on the product page: straight to checkout.
+        if ($request->boolean('buy_now')) {
+            return redirect()->route('checkout.show');
+        }
+
         Inertia::flash('toast', ['type' => 'success', 'message' => st('Added to your cart.')]);
 
         return back();

@@ -5,6 +5,7 @@ import CartController from '@/actions/App/Http/Controllers/Storefront/CartContro
 import { ExtensionSlot } from '@/components/extensions/extension-slot';
 import type { SlotItem } from '@/components/extensions/extension-slot';
 import InputError from '@/components/input-error';
+import { BuyNowButton } from '@/components/storefront/buy-now-button';
 import { RelatedProducts } from '@/components/storefront/related-products';
 import { SaleNotice } from '@/components/storefront/sale-notice';
 import { useStoreTheme } from '@/hooks/use-store-theme';
@@ -48,6 +49,8 @@ type Props = {
         variants: Variant[];
         /** A sale (e.g. a flash sale) on this product. */
         sale?: SaleInfo | null;
+        /** Buy now override: null follows the theme setting. */
+        show_buy_button?: boolean | null;
     };
     breadcrumbs: { name: string; slug: string }[];
     slots: SlotItem[];
@@ -299,6 +302,14 @@ export default function ProductPage({
                                                 : t('Unavailable')}
                                         </Button>
                                     </div>
+                                    {variant.purchasable && (
+                                        <BuyNowButton
+                                            showBuyButton={
+                                                product.show_buy_button
+                                            }
+                                            disabled={processing}
+                                        />
+                                    )}
                                     <InputError
                                         message={
                                             errors.quantity ?? errors.variant_id

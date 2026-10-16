@@ -83,7 +83,9 @@ export default function ProductsIndex({
     const allSelected =
         pageIds.length > 0 && pageIds.every((id) => selected.includes(id));
     const toggle = (id: number, on: boolean) =>
-        setSelected((s) => (on ? [...s, id] : s.filter((x) => x !== id)));
+        setSelected((s) =>
+            on ? (s.includes(id) ? s : [...s, id]) : s.filter((x) => x !== id),
+        );
     const filtered =
         filters.search !== '' ||
         filters.status !== '' ||

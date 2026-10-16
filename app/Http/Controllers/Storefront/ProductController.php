@@ -104,6 +104,8 @@ class ProductController extends Controller
                 'meta_description' => $product->localized('meta_description') ?: $product->localized('short_description'),
                 'images' => $product->images->map(fn (ProductImage $i) => ['id' => $i->id, 'url' => $i->url(), 'alt' => $i->alt])->values(),
                 'sale' => self::sale($product, $currency),
+                // Buy now / Buy button override: true, false, or null to follow the theme.
+                'show_buy_button' => array_key_exists('show_buy_button', $product->getAttributes()) ? $product->getAttribute('show_buy_button') : null,
                 'brand' => $product->brand ? ['name' => $product->brand->name, 'slug' => $product->brand->slug] : null,
                 'options' => $options,
                 'variants' => $product->variants->map(function (ProductVariant $v) use ($currency) {
