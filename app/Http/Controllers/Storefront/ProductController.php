@@ -10,6 +10,7 @@ use App\Domains\Catalog\Models\ProductImage;
 use App\Domains\Catalog\Models\Product;
 use App\Domains\Catalog\Models\ProductVariant;
 use App\Domains\Catalog\Pricing\SalePrices;
+use App\Domains\Catalog\ProductRelations;
 use App\Domains\Pricing\Money;
 use App\Domains\Catalog\StorefrontCatalog;
 use App\Domains\Catalog\VariantAvailability;
@@ -19,6 +20,18 @@ use Inertia\Response;
 
 class ProductController extends Controller
 {
+    /**
+     * Ids of the merchant-picked related products or upsells, in order.
+     *
+     * @return list<int>
+     */
+    private static function relatedIds(Product $product, string $type): array
+    {
+        $relation = $type === ProductRelations::UPSELL ? $product->upsellProducts() : $product->relatedProducts();
+
+        return array_values(array_map('intval', $relation->pluck('products.id')->all()));
+    }
+
     /**
      * A variant's price, with any sale price (e.g. a flash sale) applied and
      * the regular price shown crossed out.
@@ -113,6 +126,14 @@ class ProductController extends Controller
                     ->map(fn (Category $c) => ['name' => $c->localized('name'), 'slug' => $c->slug])->values()
                 : [],
             'slots' => $slots->render('product.after_details', ['product' => $product]),
+            // Merchant-picked upsells and related products; related falls back
+            // to the same category (or the newest products) when none are picked.
+            'upsells' => $catalog->cardsFor(self::relatedIds($product, ProductRelations::UPSELL), $currency, ProductRelations::MAX),
+            'related' => ($picked = $catalog->cardsFor(self::relatedIds($product, ProductRelations::RELATED), $currency, ProductRelations::MAX)) !== []
+                ? $picked
+                : ($category instanceof Category
+                    ? array_values($catalog->listing($currency, $category, perPage: 5)->items())
+                    : $catalog->latest($currency, 5)),
         ]);
     }
 }

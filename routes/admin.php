@@ -108,6 +108,7 @@ Route::middleware('can:products.create')->group(function () {
 });
 Route::middleware('can:products.update')->group(function () {
     Route::get('products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
+    Route::get('products/related-search', [ProductController::class, 'relatedSearch'])->name('products.related-search');
     Route::put('products/{product}', [ProductController::class, 'update'])->name('products.update');
     Route::post('products/{product}/images', [ProductImageController::class, 'store'])->name('products.images.store');
     Route::put('products/{product}/images/order', [ProductImageController::class, 'reorder'])->name('products.images.reorder');

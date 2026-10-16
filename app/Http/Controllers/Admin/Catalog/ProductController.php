@@ -21,6 +21,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\SaveProductRequest;
 use App\Models\User;
 use App\Support\Like;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -149,6 +150,8 @@ class ProductController extends Controller
                 'brand_id' => $product->brand_id,
                 'is_featured' => $product->is_featured,
                 'tags' => $product->tags->sortBy('tag')->pluck('tag')->values()->all(),
+                'related' => $product->relatedProducts()->with(['images', 'variants'])->get()->map(fn (Product $p) => self::pickerItem($p))->all(),
+                'upsells' => $product->upsellProducts()->with(['images', 'variants'])->get()->map(fn (Product $p) => self::pickerItem($p))->all(),
                 'view_url' => $product->isVisible() ? route('storefront.product', $product->slug) : null,
                 'option_attribute_ids' => $product->variants
                     ->flatMap(fn (ProductVariant $v) => $v->options->pluck('attribute_id'))
@@ -191,6 +194,36 @@ class ProductController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Product saved.')]);
 
         return redirect()->route('admin.products.edit', $product);
+    }
+
+    /**
+     * Product search for the related products and upsells pickers.
+     */
+    public function relatedSearch(Request $request): JsonResponse
+    {
+        $search = trim((string) $request->query('q', ''));
+
+        $products = Product::query()->with(['images', 'variants'])
+            ->when($search !== '', fn ($query) => $query->where(function ($q) use ($search) {
+                Like::where($q, 'name', $search);
+                $q->orWhereHas('variants', fn ($v) => Like::where($v, 'sku', $search));
+            }))
+            ->orderBy('name')->limit(20)->get();
+
+        return response()->json($products->map(fn (Product $p) => self::pickerItem($p))->values());
+    }
+
+    /**
+     * @return array{id: int, name: string, sku: string|null, image: string|null}
+     */
+    private static function pickerItem(Product $product): array
+    {
+        return [
+            'id' => $product->id,
+            'name' => $product->name,
+            'sku' => $product->variants->first()?->sku,
+            'image' => $product->images->first()?->url(),
+        ];
     }
 
     public function destroy(Product $product, DeleteProduct $delete): RedirectResponse

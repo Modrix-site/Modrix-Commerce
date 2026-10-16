@@ -1,5 +1,6 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { ExternalLink, Languages } from 'lucide-react';
+import { useState } from 'react';
 import type { ReactNode } from 'react';
 import ProductController from '@/actions/App/Http/Controllers/Admin/Catalog/ProductController';
 import { FormField, NativeSelect } from '@/components/admin/form-field';
@@ -9,6 +10,8 @@ import {
     SaveBar,
     useUnsavedChangesGuard,
 } from '@/components/admin/products/save-bar';
+import { ProductPicker } from '@/components/admin/products/product-picker';
+import type { PickerItem } from '@/components/admin/products/product-picker';
 import { SectionNav } from '@/components/admin/products/section-nav';
 import { TagsInput } from '@/components/admin/products/tags-input';
 import { emptyVariant, toRow } from '@/components/admin/products/types';
@@ -102,10 +105,19 @@ function ProductForm({
         brand_id: product?.brand_id ? String(product.brand_id) : '',
         is_featured: product?.is_featured ?? false,
         tags: product?.tags ?? [],
+        related_ids: (product?.related ?? []).map((p) => p.id),
+        upsell_ids: (product?.upsells ?? []).map((p) => p.id),
         option_attribute_ids: product?.option_attribute_ids ?? [],
         variants: product ? product.variants.map(toRow) : [emptyVariant()],
     });
     const { data, setData, processing, isDirty } = form;
+    // Picked products shown in the pickers; the form sends their ids.
+    const [related, setRelated] = useState<PickerItem[]>(
+        product?.related ?? [],
+    );
+    const [upsells, setUpsells] = useState<PickerItem[]>(
+        product?.upsells ?? [],
+    );
     const errors = form.errors as Errors;
     const errorKeys = Object.keys(errors).filter((k) => errors[k]);
     const isVariable = data.type === 'variable';
@@ -216,6 +228,7 @@ function ProductForm({
             label: isVariable ? 'Variants' : 'Pricing & inventory',
         },
         { id: 'shipping', label: 'Shipping' },
+        { id: 'related', label: 'Related products' },
         { id: 'seo', label: 'Search listing' },
     ].map((s) => ({ ...s, hasError: sectionHasError(s.id) }));
 
@@ -465,6 +478,49 @@ function ProductForm({
                                         />
                                     </div>
                                 ))}
+                            </Section>
+
+                            <Section
+                                id="related"
+                                title="Related products"
+                                description="Upsells show as “Customers also bought”, related products as “You may also like”. Without related products, products from the same category are shown."
+                            >
+                                <ProductPicker
+                                    id="upsell_ids"
+                                    label="Upsells"
+                                    value={upsells}
+                                    max={12}
+                                    excludeId={product?.id}
+                                    searchUrl={ProductController.relatedSearch.url()}
+                                    onChange={(items) => {
+                                        setUpsells(items);
+                                        setData(
+                                            'upsell_ids',
+                                            items.map((p) => p.id),
+                                        );
+                                    }}
+                                />
+                                <ProductPicker
+                                    id="related_ids"
+                                    label="Related products"
+                                    value={related}
+                                    max={12}
+                                    excludeId={product?.id}
+                                    searchUrl={ProductController.relatedSearch.url()}
+                                    onChange={(items) => {
+                                        setRelated(items);
+                                        setData(
+                                            'related_ids',
+                                            items.map((p) => p.id),
+                                        );
+                                    }}
+                                />
+                                {(errors.related_ids || errors.upsell_ids) && (
+                                    <p className="text-sm text-destructive">
+                                        {errors.related_ids ??
+                                            errors.upsell_ids}
+                                    </p>
+                                )}
                             </Section>
 
                             <Section

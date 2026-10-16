@@ -8,6 +8,7 @@ use App\Domains\Catalog\Enums\ProductType;
 use App\Domains\Catalog\Models\Product;
 use App\Domains\Catalog\Models\ProductTag;
 use App\Domains\Catalog\Models\ProductVariant;
+use App\Domains\Catalog\ProductRelations;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -72,6 +73,10 @@ class SaveProductRequest extends FormRequest
             'is_featured' => ['boolean'],
             'tags' => ['nullable', 'array', 'max:'.ProductTag::MAX_PER_PRODUCT],
             'tags.*' => ['string', 'max:'.ProductTag::MAX_LENGTH],
+            'related_ids' => ['nullable', 'array', 'max:'.ProductRelations::MAX],
+            'related_ids.*' => ['integer', Rule::exists('products', 'id')],
+            'upsell_ids' => ['nullable', 'array', 'max:'.ProductRelations::MAX],
+            'upsell_ids.*' => ['integer', Rule::exists('products', 'id')],
             'category_ids' => ['nullable', 'array'],
             'category_ids.*' => ['integer', 'distinct', Rule::exists('categories', 'id')],
             'option_attribute_ids' => ['nullable', 'array', 'max:3'],

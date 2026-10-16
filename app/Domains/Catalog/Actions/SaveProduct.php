@@ -10,6 +10,7 @@ use App\Domains\Catalog\Models\Product;
 use App\Domains\Catalog\Models\ProductAttributeValue;
 use App\Domains\Catalog\Models\ProductTag;
 use App\Domains\Catalog\Models\ProductVariant;
+use App\Domains\Catalog\ProductRelations;
 use App\Domains\Catalog\Slugger;
 use App\Domains\Inventory\InventoryService;
 use App\Domains\Inventory\MovementReason;
@@ -31,13 +32,14 @@ use Illuminate\Validation\ValidationException;
  *  - variants omitted from an update are soft-deleted (order history keeps them).
  *
  * @phpstan-type VariantInput array{id?: int|null, sku: string, name?: string|null, price: string, compare_at_price?: string|null, weight?: string|null, cost?: string|null, length?: string|null, width?: string|null, height?: string|null, barcode?: string|null, track_inventory?: bool, allow_backorder?: bool, low_stock_threshold?: int|null, is_active?: bool, option_value_ids?: list<int>, initial_stock?: int|null}
- * @phpstan-type ProductInput array{type: string, name: string, slug?: string|null, status: string, brand_id?: int|null, is_featured?: bool, tags?: list<string>, published_at?: string|null, short_description?: string|null, description?: string|null, meta_title?: string|null, meta_description?: string|null, category_ids?: list<int>, option_attribute_ids?: list<int>, variants: list<VariantInput>}
+ * @phpstan-type ProductInput array{type: string, name: string, slug?: string|null, status: string, brand_id?: int|null, is_featured?: bool, tags?: list<string>, related_ids?: list<int>, upsell_ids?: list<int>, published_at?: string|null, short_description?: string|null, description?: string|null, meta_title?: string|null, meta_description?: string|null, category_ids?: list<int>, option_attribute_ids?: list<int>, variants: list<VariantInput>}
  */
 final class SaveProduct
 {
     public function __construct(
         private readonly InventoryService $inventory,
         private readonly AuditLogger $audit,
+        private readonly ProductRelations $relations,
     ) {}
 
     /**
@@ -82,6 +84,10 @@ final class SaveProduct
 
             if (array_key_exists('tags', $data)) {
                 $this->syncTags($product, $data['tags']);
+            }
+
+            if (array_key_exists('related_ids', $data) || array_key_exists('upsell_ids', $data)) {
+                $this->relations->sync($product, array_map('intval', $data['related_ids'] ?? []), array_map('intval', $data['upsell_ids'] ?? []));
             }
 
             $this->syncVariants($product, $data['variants'], $optionAttributeIds, $currency, $actor);

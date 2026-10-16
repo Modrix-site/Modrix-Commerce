@@ -5,6 +5,7 @@ namespace App\Domains\Catalog\Models;
 use App\Domains\Catalog\Concerns\HasTranslations;
 use App\Domains\Catalog\Enums\ProductStatus;
 use App\Domains\Catalog\Enums\ProductType;
+use App\Domains\Catalog\ProductRelations;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -109,6 +110,36 @@ class Product extends Model
     public function tagNames(): array
     {
         return array_values(array_map('strval', $this->tags()->orderBy('tag')->pluck('tag')->all()));
+    }
+
+    /**
+     * Merchant-picked related products ("You may also like"), in order.
+     *
+     * @return BelongsToMany<Product, $this>
+     */
+    public function relatedProducts(): BelongsToMany
+    {
+        return $this->relationsOfType(ProductRelations::RELATED);
+    }
+
+    /**
+     * Merchant-picked upsells ("Customers also bought"), in order.
+     *
+     * @return BelongsToMany<Product, $this>
+     */
+    public function upsellProducts(): BelongsToMany
+    {
+        return $this->relationsOfType(ProductRelations::UPSELL);
+    }
+
+    /**
+     * @return BelongsToMany<Product, $this>
+     */
+    private function relationsOfType(string $type): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'product_relations', 'product_id', 'related_product_id')
+            ->wherePivot('type', $type)
+            ->orderByPivot('position');
     }
 
     /**

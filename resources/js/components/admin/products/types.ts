@@ -1,3 +1,4 @@
+import type { PickerItem } from '@/components/admin/products/product-picker';
 import type { CategoryOption, Option } from '@/types';
 
 export type AttributeOption = {
@@ -41,6 +42,8 @@ export type ProductData = {
     brand_id: number | null;
     is_featured: boolean;
     tags: string[];
+    related?: PickerItem[];
+    upsells?: PickerItem[];
     view_url: string | null;
     option_attribute_ids: number[];
     variants: VariantData[];
@@ -95,6 +98,8 @@ export type ProductFormData = {
     brand_id: string;
     is_featured: boolean;
     tags: string[];
+    related_ids: number[];
+    upsell_ids: number[];
     option_attribute_ids: number[];
     variants: VariantRow[];
 };

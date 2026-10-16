@@ -5,6 +5,7 @@ import CartController from '@/actions/App/Http/Controllers/Storefront/CartContro
 import { ExtensionSlot } from '@/components/extensions/extension-slot';
 import type { SlotItem } from '@/components/extensions/extension-slot';
 import InputError from '@/components/input-error';
+import { RelatedProducts } from '@/components/storefront/related-products';
 import { SaleNotice } from '@/components/storefront/sale-notice';
 import { useStoreTheme } from '@/hooks/use-store-theme';
 import { useT } from '@/lib/i18n';
@@ -14,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { home } from '@/routes';
 import { brand, category } from '@/routes/storefront';
-import type { MoneyValue, SaleInfo } from '@/types';
+import type { MoneyValue, ProductCard, SaleInfo } from '@/types';
 
 type Variant = {
     id: number;
@@ -50,9 +51,17 @@ type Props = {
     };
     breadcrumbs: { name: string; slug: string }[];
     slots: SlotItem[];
+    related?: ProductCard[];
+    upsells?: ProductCard[];
 };
 
-export default function ProductPage({ product, breadcrumbs, slots }: Props) {
+export default function ProductPage({
+    product,
+    breadcrumbs,
+    slots,
+    related = [],
+    upsells = [],
+}: Props) {
     const { productPage } = useStoreTheme();
     const t = useT();
     const [imageIndex, setImageIndex] = useState(0);
@@ -334,6 +343,11 @@ export default function ProductPage({ product, breadcrumbs, slots }: Props) {
                 </div>
             </div>
             <ExtensionSlot items={slots} className="mt-12 grid gap-8" />
+            <RelatedProducts
+                productId={product.id}
+                upsells={upsells}
+                related={related}
+            />
         </>
     );
 }
