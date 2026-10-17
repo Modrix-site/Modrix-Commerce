@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
+import { CustomerNotificationBell } from '@/components/storefront/customer-notification-bell';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -235,6 +236,7 @@ function Icons({ withSearch = true }: { withSearch?: boolean }) {
                     </Link>
                 </Button>
             )}
+            <CustomerNotificationBell />
             <Button variant="ghost" size="icon" asChild>
                 <Link
                     href={auth.user ? dashboard() : login()}
@@ -467,6 +469,15 @@ function MenuPanel({
                                     className="py-2"
                                 >
                                     {t('My orders')}
+                                </Link>
+                            )}
+                            {!auth.isStaff && (
+                                <Link
+                                    href="/account/notifications"
+                                    onClick={close}
+                                    className="py-2"
+                                >
+                                    {t('Notifications')}
                                 </Link>
                             )}
                         </>

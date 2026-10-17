@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useFlashToast } from '@/hooks/use-flash-toast';
+import { CustomerNotificationBell } from '@/components/storefront/customer-notification-bell';
 import { SiteHeader } from '@/components/storefront/site-header';
 import { useStoreTheme } from '@/hooks/use-store-theme';
 import { storePageFor } from '@/lib/store-page';
@@ -172,6 +173,7 @@ function AccountLinks() {
     return (
         <nav className="flex items-center gap-1" aria-label="Account">
             <LanguageSwitcher />
+            <CustomerNotificationBell />
             <Button variant="ghost" size="sm" asChild>
                 <Link href={auth.user ? dashboard() : login()}>
                     <User />

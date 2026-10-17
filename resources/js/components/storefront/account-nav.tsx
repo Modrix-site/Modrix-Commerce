@@ -2,7 +2,7 @@ import { Link } from '@inertiajs/react';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { useT } from '@/lib/i18n';
 import { logout } from '@/routes';
-import { addresses, orders, show } from '@/routes/account';
+import { addresses, notifications, orders, show } from '@/routes/account';
 import { edit as profileEdit } from '@/routes/profile';
 import { edit as securityEdit } from '@/routes/security';
 
@@ -12,6 +12,7 @@ export function AccountNav() {
     const items = [
         { title: t('Overview'), href: show() },
         { title: t('Orders'), href: orders() },
+        { title: t('Notifications'), href: notifications() },
         { title: t('Addresses'), href: addresses() },
         { title: t('Profile'), href: profileEdit() },
         { title: t('Password & security'), href: securityEdit() },

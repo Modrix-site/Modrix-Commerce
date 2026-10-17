@@ -117,6 +117,7 @@ export function NotificationBell({
     markAllLabel = 'Mark all as read',
     emptyLabel = 'No notifications yet.',
     translate = (item) => item,
+    formatTime = timeAgo,
     className,
 }: {
     feedUrl: string;
@@ -130,6 +131,8 @@ export function NotificationBell({
     emptyLabel?: string;
     /** Customer bells translate titles in the shopper's language. */
     translate?: (item: NotificationItem) => NotificationItem;
+    /** Defaults to "5 min ago" (English); the storefront passes a localized date. */
+    formatTime?: (iso: string | null) => string;
     className?: string;
 }) {
     const { notificationsUnread } = usePage<{
@@ -323,7 +326,7 @@ export function NotificationBell({
                                                 {item.body}
                                             </span>
                                             <span className="block text-[11px] text-muted-foreground">
-                                                {timeAgo(item.created_at)}
+                                                {formatTime(item.created_at)}
                                             </span>
                                         </span>
                                         {!item.read && (

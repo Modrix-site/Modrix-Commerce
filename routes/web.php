@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardRedirectController;
 use App\Http\Controllers\Storefront\AccountController;
+use App\Http\Controllers\Storefront\AccountNotificationController;
 use App\Http\Controllers\Storefront\AccountOrderController;
 use App\Http\Controllers\Storefront\AccountOrderDocumentController;
 use App\Http\Controllers\Storefront\CartController;
@@ -51,6 +52,10 @@ Route::middleware(['installed', ShareStorefrontData::class])->group(function () 
         Route::delete('addresses/{address}', [AccountController::class, 'destroyAddress'])->name('addresses.destroy');
         Route::get('orders', [AccountOrderController::class, 'index'])->name('orders');
         Route::get('orders/{order}', [AccountOrderController::class, 'show'])->name('orders.show');
+        Route::get('notifications', [AccountNotificationController::class, 'index'])->name('notifications');
+        Route::get('notifications/feed', [AccountNotificationController::class, 'feed'])->middleware('throttle:20,1')->name('notifications.feed');
+        Route::post('notifications/read-all', [AccountNotificationController::class, 'markAllRead'])->name('notifications.read-all');
+        Route::post('notifications/{id}/open', [AccountNotificationController::class, 'open'])->whereUuid('id')->name('notifications.open');
         Route::middleware('throttle:30,1')->group(function () {
             Route::get('orders/{order}/invoice.pdf', [AccountOrderDocumentController::class, 'invoice'])->name('orders.invoice');
             Route::get('orders/{order}/payments/{payment}/receipt.pdf', [AccountOrderDocumentController::class, 'receipt'])->scopeBindings()->name('orders.receipt');
