@@ -17,6 +17,7 @@ import {
     CUSTOMIZER_PANEL_ID,
     CustomizerTabs,
     groupsForTab,
+    tabOf,
     useCustomizerTab,
 } from '@/components/admin/themes/customizer-tabs';
 import type { CustomizerTab } from '@/components/admin/themes/customizer-tabs';
@@ -228,8 +229,11 @@ function DesignCard({
                             </legend>
                             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                 {design.fields
+                                    // A group ("Fonts and buttons") spans tabs: only this tab's fields.
                                     .filter(
-                                        (f) => (f.group ?? 'Other') === group,
+                                        (f) =>
+                                            (f.group ?? 'Other') === group &&
+                                            tabOf(f) === tab,
                                     )
                                     .map((field) => (
                                         <DesignInput
@@ -333,8 +337,9 @@ function DesignInput({
                     onChange={(e) => onChange(e.target.value)}
                 >
                     <option value="">
-                        Theme default (
-                        {optionLabel(field, String(fallback ?? ''))})
+                        {String(fallback ?? '') === ''
+                            ? 'Theme default'
+                            : `Theme default (${optionLabel(field, String(fallback))})`}
                     </option>
                     {field.options?.map((option) => (
                         <option key={option} value={option}>
