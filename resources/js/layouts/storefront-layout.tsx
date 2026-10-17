@@ -12,6 +12,7 @@ import type { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useFlashToast } from '@/hooks/use-flash-toast';
+import { PlaceSlot } from '@/components/extensions/place-slot';
 import { CustomerNotificationBell } from '@/components/storefront/customer-notification-bell';
 import { SiteHeader } from '@/components/storefront/site-header';
 import { useStoreTheme } from '@/hooks/use-store-theme';
@@ -186,6 +187,7 @@ function AccountLinks() {
     return (
         <nav className="flex items-center gap-1" aria-label="Account">
             <LanguageSwitcher />
+            <PlaceSlot place="header.actions" className="flex items-center gap-1" />
             <CustomerNotificationBell />
             <SearchIconLink />
             <Button

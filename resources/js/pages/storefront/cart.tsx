@@ -1,6 +1,7 @@
 import { Form, Head, Link } from '@inertiajs/react';
 import { ImageOff, TriangleAlert } from 'lucide-react';
 import CartController from '@/actions/App/Http/Controllers/Storefront/CartController';
+import { PlaceSlot } from '@/components/extensions/place-slot';
 import InputError from '@/components/input-error';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -41,6 +42,9 @@ export default function CartPage({ cart }: { cart: PricedCart | null }) {
                     {cart.lines.map((line) => (
                         <CartRow key={line.id} line={line} />
                     ))}
+                    <li className="list-none">
+                        <PlaceSlot place="cart.after_lines" />
+                    </li>
                 </ul>
 
                 <aside

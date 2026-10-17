@@ -47,6 +47,7 @@ class CatalogController extends Controller
                 ->values(),
             'subcategories' => $category->children()->active()->withCurrentTranslation()->get(['id', 'name', 'slug'])
                 ->map(fn (Category $c) => ['id' => $c->id, 'name' => $c->localized('name'), 'slug' => $c->slug]),
+            'placeSlots' => $slots->renderMany(['catalog.before_products'], ['category' => $category, 'brand' => null, 'query' => null]),
             'products' => $catalog->listing($store->currency(), $category, null, $sort, perPage: $this->pageSettings($request)['per_page']),
             'sort' => $sort,
             'query' => null,
@@ -65,6 +66,7 @@ class CatalogController extends Controller
             'meta' => ['title' => $brand->name, 'description' => $brand->description],
             'breadcrumbs' => [],
             'subcategories' => [],
+            'placeSlots' => $slots->renderMany(['catalog.before_products'], ['category' => null, 'brand' => $brand, 'query' => null]),
             'products' => $catalog->listing($store->currency(), null, null, $sort, perPage: $this->pageSettings($request)['per_page'], brand: $brand),
             'sort' => $sort,
             'query' => null,
@@ -83,6 +85,7 @@ class CatalogController extends Controller
             'meta' => ['title' => $query === '' ? st('All products') : st('Search: :query', ['query' => $query]), 'description' => null],
             'breadcrumbs' => [],
             'subcategories' => [],
+            'placeSlots' => $slots->renderMany(['catalog.before_products'], ['category' => null, 'brand' => null, 'query' => $query]),
             'products' => $catalog->listing($store->currency(), null, $query, $sort, perPage: $this->pageSettings($request)['per_page']),
             'sort' => $sort,
             'query' => $query,

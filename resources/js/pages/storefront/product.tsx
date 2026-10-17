@@ -6,6 +6,7 @@ import type { SlotItem } from '@/components/extensions/extension-slot';
 import InputError from '@/components/input-error';
 import { BuyNowButton } from '@/components/storefront/buy-now-button';
 import { StickyAddToCart } from '@/components/storefront/sticky-add-to-cart';
+import { PlaceSlot } from '@/components/extensions/place-slot';
 import { RelatedProducts } from '@/components/storefront/related-products';
 import { DescriptionPanels } from '@/components/storefront/page-settings/description-panels';
 import type { DescriptionSection } from '@/components/storefront/page-settings/description-panels';
@@ -244,6 +245,7 @@ export default function ProductPage({
                             </p>
                         )}
                         <SaleNotice sale={product.sale} />
+                        <PlaceSlot place="product.after_price" />
                         {product.short_description && (
                             <p className="text-muted-foreground">
                                 {product.short_description}
@@ -379,11 +381,13 @@ export default function ProductPage({
                             {t('This combination is not available.')}
                         </p>
                     )}
+                    <PlaceSlot place="product.after_add_to_cart" />
 
                     <DescriptionPanels
                         mode={pageSettings.description}
                         sections={descriptionSections}
                     />
+                    <PlaceSlot place="product.after_description" />
                 </div>
             </div>
             <ExtensionSlot items={slots} className="mt-12 grid gap-8" />

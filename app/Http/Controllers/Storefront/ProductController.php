@@ -128,6 +128,7 @@ class ProductController extends Controller
                     ->map(fn (Category $c) => ['name' => $c->localized('name'), 'slug' => $c->slug])->values()
                 : [],
             'slots' => $slots->render('product.after_details', ['product' => $product]),
+            'placeSlots' => $slots->renderMany(['product.after_price', 'product.after_add_to_cart', 'product.after_description'], ['product' => $product]),
             // Merchant-picked upsells and related products; related falls back
             // to the same category (or the newest products) when none are picked.
             'upsells' => $catalog->cardsFor(self::relatedIds($product, ProductRelations::UPSELL), $currency, ProductRelations::MAX),

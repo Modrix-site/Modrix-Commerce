@@ -145,3 +145,8 @@
         transition: none;
     }
 }
+
+/* Extension blocks placed inside a product grid take the whole row. */
+.store-product-grid > .store-place {
+    grid-column: 1 / -1;
+}

@@ -92,6 +92,7 @@ class CheckoutController extends Controller
             'email' => $user?->email,
             'countries' => fn () => Countries::options(),
             'checkoutToken' => fn () => (string) Str::uuid(),
+            'placeSlots' => fn () => app(StorefrontSlots::class)->renderMany(['checkout.before_place_order'], ['cart' => $price()]),
             'pageCheckout' => fn () => $this->checkoutSettings($request),
             'termsUrl' => fn () => CheckoutFieldRules::termsUrl(),
         ]);

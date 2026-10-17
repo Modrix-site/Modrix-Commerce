@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Storefront;
 
+use App\Core\Extensions\StorefrontSlots;
 use App\Core\Themes\PageSettingFields;
 use App\Core\Themes\ThemeResolver;
 use App\Domains\Cart\CartManager;
@@ -37,6 +38,7 @@ class CartController extends Controller
 
         return Inertia::render('storefront/cart', [
             'cart' => $priced?->toArray(),
+            'placeSlots' => $priced === null ? [] : app(StorefrontSlots::class)->renderMany(['cart.after_lines'], ['cart' => $priced]),
             // Cart page settings (customizer): free-shipping progress and cross-sells.
             'freeShipping' => $priced !== null && $settings['free_shipping_bar'] ? FreeShippingProgress::for($priced) : null,
             'crossSells' => $priced !== null && $settings['cross_sells'] ? app(CartCrossSells::class)->for($priced) : [],

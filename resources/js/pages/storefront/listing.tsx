@@ -1,4 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { PlaceSlot } from '@/components/extensions/place-slot';
 import { ProductGrid } from '@/components/storefront/product-card';
 import { Button } from '@/components/ui/button';
 import { useT } from '@/lib/i18n';
@@ -132,6 +133,8 @@ export default function Listing({
                     ))}
                 </ul>
             )}
+
+            <PlaceSlot place="catalog.before_products" className="mb-6" />
 
             {products.data.length > 0 ? (
                 <ProductGrid products={products.data} />

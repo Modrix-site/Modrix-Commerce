@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
+import { PlaceSlot } from '@/components/extensions/place-slot';
 import { CustomerNotificationBell } from '@/components/storefront/customer-notification-bell';
 import {
     CartIcon,
@@ -243,6 +244,7 @@ function Icons({ withSearch = true }: { withSearch?: boolean }) {
                     </Link>
                 </Button>
             )}
+            <PlaceSlot place="header.actions" className="flex items-center gap-1" />
             <CustomerNotificationBell />
             <Button
                 variant="ghost"

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Core\Extensions\StorefrontSlots;
 use App\Core\Localization\Locales;
 use App\Core\Settings\StoreSettings;
 use App\Core\Themes\ResolvedTheme;
@@ -48,6 +49,8 @@ class ShareStorefrontData
             'categoryTree' => fn () => app(CategoryMenu::class)->tree(),
             'cartCount' => $this->cartCount($request),
             'theme' => $this->themes->forRequest($request)->toProps(),
+            // Extension blocks in the header and on every product card (once per page).
+            'placeSlots' => fn () => app(StorefrontSlots::class)->renderMany(['header.actions', 'product.card'], []),
             'themePreview' => $this->preview($request),
         ]);
 

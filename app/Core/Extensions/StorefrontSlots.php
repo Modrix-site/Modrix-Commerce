@@ -173,6 +173,24 @@ final class StorefrontSlots
     }
 
     /**
+     * Several places at once (a page's places), keyed by place.
+     *
+     * @param  list<string>  $places
+     * @param  array<string, mixed>  $context
+     * @return array<string, list<array{key: string, component: string, props: array<string, mixed>}>>
+     */
+    public function renderMany(array $places, array $context): array
+    {
+        $rendered = [];
+
+        foreach ($places as $place) {
+            $rendered[$place] = $this->render($place, $context);
+        }
+
+        return $rendered;
+    }
+
+    /**
      * @param  array<string, mixed>  $context
      * @return list<array{key: string, component: string, props: array<string, mixed>}>
      */

@@ -4,6 +4,7 @@ import type { FormEvent } from 'react';
 import { useEffect, useRef } from 'react';
 import CheckoutController from '@/actions/App/Http/Controllers/Storefront/CheckoutController';
 import { FormField } from '@/components/admin/form-field';
+import { PlaceSlot } from '@/components/extensions/place-slot';
 import InputError from '@/components/input-error';
 import { OrderTotals } from '@/components/storefront/order-totals';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -487,6 +488,7 @@ export default function Checkout({
                             {issue}
                         </p>
                     ))}
+                    <PlaceSlot place="checkout.before_place_order" />
                     <Button
                         type="submit"
                         className="store-button"
