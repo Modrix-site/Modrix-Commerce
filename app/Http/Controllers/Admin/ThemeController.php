@@ -74,7 +74,7 @@ class ThemeController extends Controller
                 'places' => array_map(fn (string $key) => ['key' => $key, 'label' => StorefrontSlots::PLACES[$key]['label'], 'tab' => StorefrontSlots::PLACES[$key]['tab']], $block['places']),
                 'default' => $block['default'],
                 'place' => $place,
-                'order' => $saved['order'] ?? 100,
+                'order' => $saved['order'] ?? $block['order'],
                 'enabled' => $saved['enabled'] ?? true,
             ];
         }, app(StorefrontSlots::class)->blocks());

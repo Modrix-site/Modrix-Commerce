@@ -116,7 +116,7 @@ final class StorefrontSlots
     /**
      * Registered blocks, for the customizer.
      *
-     * @return list<array{id: string, module: string, key: string, label: string, component: string, places: list<string>, default: string}>
+     * @return list<array{id: string, module: string, key: string, label: string, component: string, places: list<string>, default: string, order: int}>
      */
     public function blocks(): array
     {
@@ -128,6 +128,7 @@ final class StorefrontSlots
             'component' => $block['component'],
             'places' => $block['places'],
             'default' => $block['default'],
+            'order' => $block['order'],
         ], $this->blocks));
     }
 

@@ -2,7 +2,10 @@
 
 namespace App\Core\Extensions;
 
+use App\Core\Audit\AuditLogger;
+use App\Core\Settings\SettingsRepository;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -15,7 +18,8 @@ final class TabSettings
     public function __construct(
         private readonly ModuleRepository $modules,
         private readonly ModuleSettingsSchema $settings,
-        private readonly ModuleManager $manager,
+        private readonly SettingsRepository $store,
+        private readonly AuditLogger $audit,
     ) {}
 
     /**
@@ -51,7 +55,8 @@ final class TabSettings
     }
 
     /**
-     * Saves this module's tab settings; its other settings stay as they are.
+     * Validates and stores only this module's tab settings; its other
+     * settings (and their defaults) are not touched.
      *
      * @param  array<string, mixed>  $input
      *
@@ -66,7 +71,29 @@ final class TabSettings
             throw ValidationException::withMessages(['settings' => 'This extension is not enabled.']);
         }
 
-        $tabKeys = array_column(array_filter($manifest->settings, fn (array $field) => isset($field['tab'])), 'key');
-        $this->manager->configure($module, [...$this->settings->values($manifest), ...array_intersect_key($input, array_flip($tabKeys))], $actor);
+        $fields = array_values(array_filter($manifest->settings, fn (array $field) => isset($field['tab'])));
+        $rules = [];
+        $labels = [];
+
+        foreach ($fields as $field) {
+            $rules[$field['key']] = ModuleSettingsSchema::rules($field);
+            $labels[$field['key']] = $field['label'];
+        }
+
+        $validated = Validator::make(array_intersect_key($input, $rules), $rules, [], $labels)->validate();
+        $values = [];
+
+        foreach ($fields as $field) {
+            if (array_key_exists($field['key'], $validated)) {
+                $values["{$manifest->settingsPrefix()}.{$field['key']}"] = ModuleSettingsSchema::coerce($field, $validated[$field['key']]);
+            }
+        }
+
+        if ($values === []) {
+            return;
+        }
+
+        $this->store->setMany($values);
+        $this->audit->record('extension.configured', null, ['name' => $module, 'settings' => array_keys($validated), 'via' => 'customizer'], $actor);
     }
 }

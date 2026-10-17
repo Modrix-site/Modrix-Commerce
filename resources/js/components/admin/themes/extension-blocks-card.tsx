@@ -88,16 +88,23 @@ export function ExtensionBlocksCard({
     const submit = (event: FormEvent) => {
         event.preventDefault();
         // The order on this tab follows the list; other blocks keep theirs.
+        // Only this tab's blocks are sent. Order is renumbered only for blocks
+        // now placed on this tab's page, so other pages keep their order.
+        const onThisTab = (id: string) =>
+            here
+                .find((b) => b.id === id)
+                ?.places.find((p) => p.key === form.data.blocks[id].place)
+                ?.tab === tab;
+        let position = 0;
         form.transform((data) => ({
-            blocks: {
-                ...data.blocks,
-                ...Object.fromEntries(
-                    sequence.map((id, i) => [
-                        id,
-                        { ...data.blocks[id], order: (i + 1) * 10 },
-                    ]),
-                ),
-            },
+            blocks: Object.fromEntries(
+                sequence.map((id) => [
+                    id,
+                    onThisTab(id)
+                        ? { ...data.blocks[id], order: ++position * 10 }
+                        : data.blocks[id],
+                ]),
+            ),
         }));
         form.put(ExtensionBlocksController.update.url(), {
             preserveScroll: true,

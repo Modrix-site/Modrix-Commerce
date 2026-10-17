@@ -166,6 +166,7 @@ function ModuleSettings({ group }: { group: ExtensionSettingsGroup }) {
                     );
                 })}
             </fieldset>
+            <InputError message={errors.settings} />
             <div>
                 <Button
                     type="submit"

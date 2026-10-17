@@ -403,7 +403,7 @@ final class ManifestValidator
                 $this->errors[] = "{$where}.label is required (max 120).";
             }
 
-            if (isset($field['tab']) && ! array_key_exists($field['tab'], CustomizerTabs::TABS)) {
+            if (isset($field['tab']) && (! is_string($field['tab']) || ! array_key_exists($field['tab'], CustomizerTabs::TABS))) {
                 $this->errors[] = "{$where}.tab must be one of ".implode(', ', array_keys(CustomizerTabs::TABS)).'.';
             }
 

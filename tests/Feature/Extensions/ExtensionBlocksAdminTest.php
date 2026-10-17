@@ -7,7 +7,9 @@ use App\Core\Extensions\Models\Extension;
 use App\Core\Extensions\ModuleManager;
 use App\Core\Extensions\ModuleRepository;
 use App\Core\Extensions\ModuleSettingsSchema;
+use App\Core\Extensions\ModuleState;
 use App\Core\Extensions\StorefrontSlots;
+use App\Core\Settings\SettingsRepository;
 use App\Core\Themes\ThemeManager;
 use App\Core\Themes\ThemeRepository;
 use App\Models\User;
@@ -113,5 +115,41 @@ class ExtensionBlocksAdminTest extends TestCase
     public function test_customers_cannot_save_blocks()
     {
         $this->actingAs(User::factory()->create())->put(route('admin.themes.blocks.update'), ['blocks' => []])->assertForbidden();
+    }
+
+    public function test_a_malformed_tab_marks_only_that_module_invalid()
+    {
+        $this->makeModule('acme/badtab', [
+            'capabilities' => ['settings'],
+            'settings' => [['key' => 'note', 'type' => 'boolean', 'label' => 'Note', 'default' => true, 'tab' => []]],
+        ]);
+        app(ModuleRepository::class)->sync();
+
+        $this->assertContains('settings[0].tab must be one of general, header, home, catalog, product, cart, checkout, footer.', (array) Extension::query()->where('name', 'acme/badtab')->firstOrFail()->errors);
+        $this->assertSame(ModuleState::Enabled, Extension::query()->where('name', 'acme/hello')->firstOrFail()->state);
+    }
+
+    public function test_tab_save_validates_and_stores_only_tab_settings()
+    {
+        // "limit" is not on a tab and was never saved: a tab save must not write it.
+        $key = app(ModuleRepository::class)->find('acme/hello')->manifest()->settingsPrefix().'.limit';
+        $this->assertNull(app(SettingsRepository::class)->get($key));
+
+        $this->actingAs($this->owner())->put(route('admin.themes.extension-settings.update', ['module' => 'acme/hello']), ['settings' => ['greeting' => str_repeat('x', 300)]])
+            ->assertSessionHasErrors('greeting');
+        $this->actingAs($this->owner())->put(route('admin.themes.extension-settings.update', ['module' => 'acme/hello']), ['settings' => ['greeting' => 'Hey']])
+            ->assertSessionHasNoErrors();
+
+        $this->assertSame('Hey', app(ModuleSettingsSchema::class)->of('acme/hello', 'greeting'));
+        $this->assertNull(app(SettingsRepository::class)->get($key));
+    }
+
+    public function test_customizer_order_follows_the_registered_order_until_saved()
+    {
+        app(StorefrontSlots::class)->block('acme/hello', 'early', 'Early', 'Early', ['product.after_details'], 'product.after_details', fn () => [], 50);
+
+        $this->actingAs($this->owner())->get(route('admin.themes.customize', $this->theme))->assertInertia(fn (Assert $page) => $page
+            ->where('blocks', fn ($blocks) => collect($blocks)->firstWhere('id', 'acme/hello:early')['order'] === 50
+                && collect($blocks)->firstWhere('id', 'acme/hello:banner')['order'] === 100));
     }
 }
