@@ -12,6 +12,7 @@ export const CUSTOMIZER_TABS = [
     { key: 'catalog', label: 'Catalog' },
     { key: 'product', label: 'Product' },
     { key: 'cart', label: 'Cart' },
+    { key: 'checkout', label: 'Checkout' },
     { key: 'footer', label: 'Footer' },
 ] as const;
 

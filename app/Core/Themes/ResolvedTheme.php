@@ -85,6 +85,7 @@ final class ResolvedTheme
             'version' => $this->manifest->version,
             'source' => $this->source,
             'css' => $this->css(),
+            'pages' => PageSettingFields::resolve($this->design),
             'layout' => [
                 'header' => $this->design['layout.header'],
                 'footer' => $this->design['layout.footer'],

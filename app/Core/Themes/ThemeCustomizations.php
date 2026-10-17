@@ -31,7 +31,11 @@ final class ThemeCustomizations
      */
     public function designOverrides(ThemeManifest $manifest): array
     {
-        return (array) ($this->settings->get("{$manifest->settingsPrefix()}.design") ?? []);
+        $own = (array) ($this->settings->get("{$manifest->settingsPrefix()}.design") ?? []);
+
+        // Page settings (Header, Catalog, …) belong to the store, not the theme.
+        return array_filter($own, fn (string $key) => ! PageSettingFields::isPageKey($key), ARRAY_FILTER_USE_KEY)
+            + (array) ($this->settings->get(PageSettingFields::STORE_KEY) ?? []);
     }
 
     /**
@@ -104,7 +108,9 @@ final class ThemeCustomizations
         }
 
         if ($errors === []) {
-            $this->settings->set("{$manifest->settingsPrefix()}.design", $overrides);
+            $page = array_filter($overrides, fn (string $key) => PageSettingFields::isPageKey($key), ARRAY_FILTER_USE_KEY);
+            $this->settings->set("{$manifest->settingsPrefix()}.design", array_diff_key($overrides, $page));
+            $this->settings->set(PageSettingFields::STORE_KEY, $page);
         }
 
         return $errors;

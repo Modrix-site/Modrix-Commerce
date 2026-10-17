@@ -17,6 +17,7 @@ final class CustomizerTabs
         'catalog' => 'Catalog',
         'product' => 'Product',
         'cart' => 'Cart',
+        'checkout' => 'Checkout',
         'footer' => 'Footer',
     ];
 
