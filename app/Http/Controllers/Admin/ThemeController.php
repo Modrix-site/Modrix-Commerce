@@ -7,6 +7,7 @@ use App\Core\Extensions\Models\Extension;
 use App\Core\Extensions\Models\ExtensionEvent;
 use App\Core\Extensions\ModuleState;
 use App\Core\Themes\CustomizerTabs;
+use App\Core\Themes\PageSettingFields;
 use App\Core\Themes\ThemeCustomizations;
 use App\Core\Themes\ThemeException;
 use App\Core\Themes\ThemeManager;
@@ -69,7 +70,8 @@ class ThemeController extends Controller
             'design' => [
                 'fields' => $fields,
                 'values' => $design,
-                'defaults' => $manifest->defaults(),
+                // Page settings the theme does not set show the platform's default.
+                'defaults' => $manifest->defaults() + PageSettingFields::displayDefaults(),
                 'overridden' => array_keys($this->customizations->designOverrides($manifest)),
                 'ignored' => $ignored,
             ],

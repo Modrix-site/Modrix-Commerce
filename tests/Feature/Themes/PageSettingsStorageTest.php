@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Themes;
 
+use App\Core\Extensions\Models\Extension;
 use App\Core\Themes\ThemeManager;
 use App\Core\Themes\ThemeRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -46,6 +47,16 @@ class PageSettingsStorageTest extends TestCase
             ->where('storefront.theme.pages.checkout.phone', 'required')
             ->where('storefront.theme.pages.catalog.per_page', 24)
             ->where('storefront.theme.pages.header.search', null));
+    }
+
+    public function test_customizer_shows_the_real_defaults_of_page_settings()
+    {
+        $theme = Extension::query()->where('name', 'acme/sunny')->firstOrFail();
+
+        $this->actingAs($this->owner())->get(route('admin.themes.customize', $theme))->assertInertia(fn (Assert $page) => $page
+            ->where('design.defaults', fn ($defaults) => ($defaults['product.show_sku'] ?? null) === true
+                && ($defaults['catalog.per_page'] ?? null) === 24
+                && ($defaults['checkout.button_label'] ?? null) === 'Place order'));
     }
 
     public function test_reset_keeps_page_settings()

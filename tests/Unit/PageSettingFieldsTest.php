@@ -42,7 +42,8 @@ class PageSettingFieldsTest extends TestCase
         $this->assertFalse($pages['cart']['free_shipping_bar']);
         $this->assertNull($pages['header']['search']);
         $this->assertSame('Place order', $pages['checkout']['button_label']);
-        $this->assertSame(4, $pages['product']['related_count']);
+        // Every merchant-picked related product still shows (up to 12).
+        $this->assertSame(12, $pages['product']['related_count']);
         // Untouched stores keep today's product page and card buttons.
         $this->assertTrue($pages['product']['show_sku']);
         $this->assertSame('low', $pages['product']['stock_note']);

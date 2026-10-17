@@ -116,6 +116,9 @@ final class ThemeResolver
             'platform_version' => '*',
         ]);
 
-        return new ResolvedTheme($manifest, ResolvedTheme::SOURCE_BUILTIN, ThemeSchema::builtinDesign(), $this->customizations, hasPackage: false);
+        // Page settings belong to the store, so they apply here too (checkout rules).
+        $design = array_replace(ThemeSchema::builtinDesign(), PageSettingFields::storeValues());
+
+        return new ResolvedTheme($manifest, ResolvedTheme::SOURCE_BUILTIN, $design, $this->customizations, hasPackage: false);
     }
 }

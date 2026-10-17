@@ -2,6 +2,7 @@
 
 namespace App\Core\Themes;
 
+use App\Core\Settings\SettingsRepository;
 use App\Domains\Catalog\StorefrontCatalog;
 
 /**
@@ -48,7 +49,7 @@ final class PageSettingFields
         'product.stock_note' => 'low',
         'product.description' => 'open',
         'product.related' => true,
-        'product.related_count' => 4,
+        'product.related_count' => 12,
         'product.upsells' => true,
         'product.quantity' => true,
         'cart.free_shipping_bar' => false,
@@ -141,6 +142,27 @@ final class PageSettingFields
         }
 
         return $fields;
+    }
+
+    /**
+     * Defaults the customizer shows as "Theme default (…)": the ones the
+     * platform fixes (null ones are the theme's own).
+     *
+     * @return array<string, mixed>
+     */
+    public static function displayDefaults(): array
+    {
+        return array_filter(self::DEFAULTS, fn ($value) => $value !== null);
+    }
+
+    /**
+     * The merchant's saved page settings, whatever theme renders the store.
+     *
+     * @return array<string, mixed>
+     */
+    public static function storeValues(): array
+    {
+        return (array) (app(SettingsRepository::class)->get(self::STORE_KEY) ?? []);
     }
 
     public static function isPageKey(string $key): bool

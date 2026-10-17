@@ -32,7 +32,7 @@ export const DEFAULT_PAGE_SETTINGS: PageSettings = {
         stock_note: 'low',
         description: 'open',
         related: true,
-        related_count: 4,
+        related_count: 12,
         upsells: true,
         quantity: true,
     },

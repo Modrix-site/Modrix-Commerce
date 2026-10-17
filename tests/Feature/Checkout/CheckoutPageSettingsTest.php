@@ -4,16 +4,19 @@ namespace Tests\Feature\Checkout;
 
 use App\Core\Settings\SettingsRepository;
 use App\Core\Themes\PageSettingFields;
+use App\Core\Themes\ResolvedTheme;
+use App\Core\Themes\ThemeResolver;
 use App\Domains\Orders\Models\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\Support\CommerceFixtures;
+use Tests\Support\ThemeFixtures;
 use Tests\TestCase;
 
 class CheckoutPageSettingsTest extends TestCase
 {
-    use CommerceFixtures, RefreshDatabase;
+    use CommerceFixtures, RefreshDatabase, ThemeFixtures;
 
     protected function setUp(): void
     {
@@ -69,6 +72,18 @@ class CheckoutPageSettingsTest extends TestCase
 
         $this->post(route('checkout.store'), $this->checkoutPayload(['terms' => '1']))->assertSessionHasNoErrors();
         $this->assertSame(1, Order::query()->count());
+    }
+
+    public function test_rules_apply_with_the_builtin_theme()
+    {
+        // No theme package at all: the store falls back to the built-in theme.
+        $this->setUpThemes();
+        $this->assertSame(ResolvedTheme::SOURCE_BUILTIN, app(ThemeResolver::class)->forRequest(request())->source);
+        $this->pageSettings(['checkout.phone' => 'required', 'checkout.order_note' => false]);
+
+        $this->post(route('checkout.store'), $this->checkoutPayload(['phone' => '']))->assertSessionHasErrors('phone');
+        $this->post(route('checkout.store'), $this->checkoutPayload(['customer_note' => 'Hi']))->assertSessionHasNoErrors();
+        $this->assertNull(Order::query()->firstOrFail()->customer_note);
     }
 
     public function test_defaults_change_nothing()
