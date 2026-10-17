@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers\Storefront;
 
+use App\Core\Themes\PageSettingFields;
+use App\Core\Themes\ThemeResolver;
 use App\Domains\Cart\CartManager;
 use App\Domains\Cart\Models\CartItem;
+use App\Domains\Catalog\CartCrossSells;
 use App\Domains\Catalog\Models\ProductVariant;
+use App\Domains\Checkout\FreeShippingProgress;
 use App\Domains\Checkout\Pricing\CartPricer;
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -24,6 +28,7 @@ class CartController extends Controller
     {
         $cart = $this->carts->current($request->session(), $this->user($request));
         $priced = $cart ? $this->pricer->price($cart) : null;
+        $settings = PageSettingFields::resolve(app(ThemeResolver::class)->forRequest($request)->design)['cart'];
 
         if ($priced !== null) {
             // Notices are computed above; from now on the current prices count as seen.
@@ -32,6 +37,9 @@ class CartController extends Controller
 
         return Inertia::render('storefront/cart', [
             'cart' => $priced?->toArray(),
+            // Cart page settings (customizer): free-shipping progress and cross-sells.
+            'freeShipping' => $priced !== null && $settings['free_shipping_bar'] ? FreeShippingProgress::for($priced) : null,
+            'crossSells' => $priced !== null && $settings['cross_sells'] ? app(CartCrossSells::class)->for($priced) : [],
         ]);
     }
 
