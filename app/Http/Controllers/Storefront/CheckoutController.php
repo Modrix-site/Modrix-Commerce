@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Core\Extensions\StorefrontSlots;
 use App\Core\Settings\Countries;
+use App\Core\Themes\PageSettingFields;
+use App\Core\Themes\ThemeResolver;
 use App\Domains\Cart\CartManager;
 use App\Domains\Checkout\CheckoutData;
+use App\Domains\Checkout\CheckoutFieldRules;
 use App\Domains\Checkout\PlaceOrder;
 use App\Domains\Checkout\Pricing\CartPricer;
 use App\Domains\Checkout\Pricing\PricingContext;
@@ -89,7 +92,19 @@ class CheckoutController extends Controller
             'email' => $user?->email,
             'countries' => fn () => Countries::options(),
             'checkoutToken' => fn () => (string) Str::uuid(),
+            'pageCheckout' => fn () => $this->checkoutSettings($request),
+            'termsUrl' => fn () => CheckoutFieldRules::termsUrl(),
         ]);
+    }
+
+    /**
+     * The merchant's Checkout page settings (customizer).
+     *
+     * @return array<string, mixed>
+     */
+    private function checkoutSettings(Request $request): array
+    {
+        return PageSettingFields::resolve(app(ThemeResolver::class)->forRequest($request)->design)['checkout'];
     }
 
     public function store(Request $request, PlaceOrder $placeOrder, PaymentStarter $starter): SymfonyResponse
@@ -106,6 +121,7 @@ class CheckoutController extends Controller
             $request->merge(['shipping_method' => ShippingStep::DIGITAL]);
         }
 
+        $checkout = $this->checkoutSettings($request);
         $validated = $request->validate([
             'email' => ['required', 'string', 'email', 'max:191'],
             'phone' => ['nullable', 'string', 'max:40'],
@@ -118,7 +134,10 @@ class CheckoutController extends Controller
             'checkout_token' => ['required', 'uuid'],
             'expected_total' => ['nullable', 'string', 'regex:/^\d{1,13}(\.\d{1,4})?$/'],
             'save_address' => ['boolean'],
-        ]);
+            ...CheckoutFieldRules::rules($checkout),
+        ], CheckoutFieldRules::messages());
+        // Fields the merchant hides are never stored.
+        $validated = CheckoutFieldRules::clean($validated, $checkout);
 
         $order = $placeOrder->handle($cart, new CheckoutData(
             email: $user->email ?? $validated['email'],
