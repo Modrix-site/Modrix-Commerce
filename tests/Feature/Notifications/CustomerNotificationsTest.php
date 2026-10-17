@@ -72,4 +72,24 @@ class CustomerNotificationsTest extends TestCase
         $this->get(route('account.notifications'))->assertRedirect(route('login'));
         $this->getJson(route('account.notifications.feed'))->assertUnauthorized();
     }
+
+    public function test_account_shows_only_customer_notifications()
+    {
+        $owner = $this->owner();
+        app(StoreNotifier::class)->toStaff('customer.new', ['name' => 'Mia', 'email' => 'mia@example.test'], '/admin', 'customer.new:1');
+        $this->notify($owner, 'EM-3');
+        $staffOnly = $owner->notifications()->where('data->kind', 'customer.new')->firstOrFail();
+
+        $this->actingAs($owner)->get(route('account.notifications'))->assertInertia(fn (Assert $page) => $page
+            ->has('notifications.data', 1)
+            ->where('notifications.data.0.kind', 'customer.order_shipped'));
+
+        $feed = $this->getJson(route('account.notifications.feed'))->assertOk()->json();
+        $this->assertSame(['customer.order_shipped'], array_column($feed['items'], 'kind'));
+        $this->assertSame(1, $feed['unread']);
+
+        $this->post(route('account.notifications.open', $staffOnly->id))->assertNotFound();
+        $this->post(route('account.notifications.read-all'))->assertRedirect();
+        $this->assertNull($staffOnly->fresh()->read_at);
+    }
 }
