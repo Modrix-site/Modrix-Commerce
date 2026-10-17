@@ -6,8 +6,11 @@ use App\Domains\Notifications\StoreNotifier;
 use App\Models\User;
 use App\Notifications\StoreNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Notifications\Channels\MailChannel;
+use Illuminate\Notifications\Notification as BaseNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
+use RuntimeException;
 use Tests\TestCase;
 
 class StoreNotifierTest extends TestCase
@@ -135,5 +138,49 @@ class StoreNotifierTest extends TestCase
         $this->artisan('notifications:prune')->assertSuccessful();
 
         $this->assertEqualsCanonicalizing([$oldUnread->id, $recentRead->id], $staff->notifications()->pluck('id')->all());
+    }
+
+    public function test_one_failing_email_does_not_stop_other_staff()
+    {
+        $first = $this->userWithRole('order-manager');
+        $first->forceFill(['notification_preferences' => ['order.placed' => ['bell' => true, 'email' => true]]])->save();
+        $second = $this->userWithRole('order-manager');
+        $this->app->bind(MailChannel::class, fn () => new class extends MailChannel
+        {
+            public function __construct() {}
+
+            public function send($notifiable, BaseNotification $notification)
+            {
+                throw new RuntimeException('SMTP down');
+            }
+        });
+
+        $this->send();
+
+        $this->assertSame(1, $first->notifications()->count());
+        $this->assertSame(1, $second->notifications()->count());
+    }
+
+    public function test_email_only_staff_get_one_email_per_event()
+    {
+        Notification::fake();
+        $emailOnly = $this->userWithRole('order-manager');
+        $emailOnly->forceFill(['notification_preferences' => ['order.placed' => ['bell' => false, 'email' => true]]])->save();
+
+        $this->send('stock.low:5:day');
+        $this->send('stock.low:5:day');
+
+        Notification::assertSentToTimes($emailOnly, StoreNotification::class, 1);
+    }
+
+    public function test_shopper_text_cannot_add_links_to_staff_email()
+    {
+        $staff = $this->userWithRole('order-manager');
+        $mail = (new StoreNotification('order.placed', ['number' => 'EM-1', 'total' => '$1.00', 'customer' => '[Verify payment](https://evil.example)'], null, 'x', ['mail']))->toMail($staff);
+
+        $html = (string) $mail->render();
+
+        $this->assertStringNotContainsString('href="https://evil.example', $html);
+        $this->assertStringContainsString('Verify payment', $html);
     }
 }

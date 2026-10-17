@@ -5,6 +5,7 @@ namespace App\Domains\Notifications;
 use App\Models\User;
 use App\Notifications\StoreNotification;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 /**
  * Sends store notifications to the right people: staff with the kind's
@@ -40,7 +41,12 @@ final class StoreNotifier
                 continue;
             }
 
-            $sent += $this->deliver($user, $kind, $params, $url, $dedupe) ? 1 : 0;
+            // One person's failure (a mail server error) never stops the rest.
+            try {
+                $sent += $this->deliver($user, $kind, $params, $url, $dedupe) ? 1 : 0;
+            } catch (Throwable $e) {
+                report($e);
+            }
         }
 
         return $sent;
@@ -71,7 +77,7 @@ final class StoreNotifier
             $user->wantsNotification($kind, 'email') ? 'mail' : null,
         ]));
 
-        if ($channels === [] || $this->alreadySent($user, $dedupe)) {
+        if ($channels === [] || ! $this->claim($user, $dedupe)) {
             return false;
         }
 
@@ -80,13 +86,17 @@ final class StoreNotifier
         return true;
     }
 
-    private function alreadySent(User $user, string $dedupe): bool
+    /**
+     * Records that this person got this event, whatever the channels; false
+     * when they already had it. The unique index makes it atomic.
+     */
+    private function claim(User $user, string $dedupe): bool
     {
-        return DB::table('notifications')
-            ->where('notifiable_type', $user->getMorphClass())
-            ->where('notifiable_id', $user->getKey())
-            ->where('data->dedupe', $dedupe)
-            ->exists();
+        return DB::table('notification_dedupes')->insertOrIgnore([
+            'user_id' => $user->getKey(),
+            'dedupe' => mb_substr($dedupe, 0, 191),
+            'created_at' => now(),
+        ]) === 1;
     }
 
     /** Only links inside the store (a path, not "//host" or another site). */

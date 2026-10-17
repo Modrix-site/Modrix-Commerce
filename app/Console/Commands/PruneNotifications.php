@@ -26,6 +26,9 @@ class PruneNotifications extends Command
                 ->orWhere('created_at', '<', now()->subDays(self::MAX_DAYS)))
             ->delete();
 
+        // Event keys are kept as long as any notification can be.
+        DB::table('notification_dedupes')->where('created_at', '<', now()->subDays(self::MAX_DAYS))->delete();
+
         $this->info("Deleted {$deleted} old notifications.");
 
         return self::SUCCESS;
