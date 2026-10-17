@@ -3,16 +3,21 @@
 namespace Tests\Feature\Extensions;
 
 use App\Core\Extensions\BlockPlacements;
+use App\Core\Extensions\ModuleManager;
+use App\Core\Extensions\ModuleRepository;
 use App\Core\Extensions\StorefrontSlots;
+use App\Core\Extensions\TabSettings;
 use App\Core\Settings\SettingsRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\File;
 use InvalidArgumentException;
 use RuntimeException;
+use Tests\Support\ModuleFixtures;
 use Tests\TestCase;
 
 class StorefrontBlocksTest extends TestCase
 {
-    use RefreshDatabase;
+    use ModuleFixtures, RefreshDatabase;
 
     private StorefrontSlots $slots;
 
@@ -132,5 +137,32 @@ class StorefrontBlocksTest extends TestCase
         $this->reviews();
 
         $this->assertSame(['acme/reviews/Reviews'], $this->components('product.after_details'));
+    }
+
+    public function test_bundled_modules_declare_their_blocks()
+    {
+        $this->setUpModules();
+        File::copyDirectory(base_path('modules'), $this->modulesPath);
+        $modules = app(ModuleManager::class);
+        app(ModuleRepository::class)->sync();
+
+        foreach (['ecomodular/product-reviews', 'ecomodular/tabby', 'ecomodular/tamara', 'ecomodular/frequently-bought-together', 'ecomodular/newsletter', 'ecomodular/flash-sales'] as $name) {
+            $modules->install($name);
+            $modules->enable($name, true);
+        }
+
+        $blocks = collect(app(StorefrontSlots::class)->blocks())->keyBy('id');
+
+        $this->assertSame(['product.after_details', 'product.after_description'], $blocks['ecomodular/product-reviews:reviews']['places']);
+        $this->assertSame('product.after_details', $blocks['ecomodular/tabby:promo']['default']);
+        $this->assertContains('product.after_price', $blocks['ecomodular/tamara:promo']['places']);
+        $this->assertContains('product.after_add_to_cart', $blocks['ecomodular/frequently-bought-together:bundle']['places']);
+        $this->assertSame('storefront.footer', $blocks['ecomodular/newsletter:signup-footer']['default']);
+        $this->assertContains('catalog.before_products', $blocks['ecomodular/flash-sales:banner']['places']);
+
+        $productTab = collect(app(TabSettings::class)->forTab('product'))->keyBy('module');
+        $this->assertContains('product_snippet', array_column($productTab['ecomodular/tabby']['fields'], 'key'));
+        $this->assertContains('max_products', array_column($productTab['ecomodular/frequently-bought-together']['fields'], 'key'));
+        $this->assertContains('heading', array_column(collect(app(TabSettings::class)->forTab('home'))->keyBy('module')['ecomodular/newsletter']['fields'], 'key'));
     }
 }

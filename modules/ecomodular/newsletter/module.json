@@ -42,6 +42,7 @@
     "settings": [
         {
             "key": "heading",
+            "tab": "home",
             "type": "string",
             "label": "Sign-up heading",
             "default": "Get our news and offers"

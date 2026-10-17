@@ -49,6 +49,7 @@
         },
         {
             "key": "banner_products",
+            "tab": "home",
             "type": "integer",
             "label": "Products in the home page sale banner",
             "min": 2,

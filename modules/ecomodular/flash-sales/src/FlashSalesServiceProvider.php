@@ -42,7 +42,7 @@ class FlashSalesServiceProvider extends ServiceProvider
             return $this->panelProps($product);
         });
 
-        $slots->register('home.after_featured', self::MODULE, 'FlashSaleBanner', function () use ($settings) {
+        $slots->block(self::MODULE, 'banner', 'Flash sale banner', 'FlashSaleBanner', ['home.after_featured', 'catalog.before_products'], 'home.after_featured', function () use ($settings) {
             $sale = FlashSale::query()->live()->where('show_banner', true)->orderBy('ends_at')->first();
 
             if ($sale === null) {

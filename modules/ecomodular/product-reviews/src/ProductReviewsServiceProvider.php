@@ -16,7 +16,7 @@ class ProductReviewsServiceProvider extends ServiceProvider
 
     public function boot(StorefrontSlots $slots): void
     {
-        $slots->register('product.after_details', self::MODULE, 'ProductReviews', function (array $context) {
+        $slots->block(self::MODULE, 'reviews', 'Product reviews', 'ProductReviews', ['product.after_details', 'product.after_description'], 'product.after_details', function (array $context) {
             $product = $context['product'] ?? null;
 
             return $product instanceof Product ? $this->app->make(ReviewSummary::class)->forProduct($product) : null;

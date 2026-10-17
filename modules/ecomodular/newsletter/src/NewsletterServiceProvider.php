@@ -35,7 +35,7 @@ class NewsletterServiceProvider extends ServiceProvider
             'source' => $source,
         ];
 
-        $slots->register('home.after_featured', self::MODULE, 'SignupForm', fn () => $props('home'));
+        $slots->block(self::MODULE, 'signup-home', 'Newsletter sign-up', 'SignupForm', ['home.after_featured', 'storefront.footer'], 'home.after_featured', fn () => $props('home'));
 
         $slots->register('order.confirmation', self::MODULE, 'SignupForm', function (array $context) use ($props, $settings) {
             return (bool) $settings->of(self::MODULE, 'show_on_confirmation', true) ? $props('order') : null;
