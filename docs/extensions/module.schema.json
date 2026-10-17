@@ -145,6 +145,7 @@
                         "maxLength": 120
                     },
                     "help": { "type": "string", "maxLength": 300 },
+                    "tab": { "description": "Also show this setting in this customizer tab.", "enum": ["general", "header", "home", "catalog", "product", "cart", "checkout", "footer"] },
                     "default": {},
                     "required": { "type": "boolean" },
                     "min": { "type": "integer" },

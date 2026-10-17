@@ -620,3 +620,17 @@ Each entry records a decision, its context, and its consequences. Entries are ap
 - **Consequences:**
     - **New themes:** a theme with its own product gallery marks its image with `.store-zoom`, card images with `.store-card-image` and grids with `.store-product-grid` to follow these settings; gallery thumbnail position applies to the shared product page.
     - **Theme overrides:** when both a theme setting and a page setting control the same thing (cart coupon field, catalog filters), both must allow it.
+
+## ADR-052 — Extension blocks and movable places
+
+- **Date:** 2026-10-17
+- **Status:** Accepted
+- **Decision:**
+    - **Places:** `StorefrontSlots` gains movable places (header icons, above products, product cards, under the price, under add to cart, below the description, under the cart items, above "Place order", plus the existing homepage, catalog, product, cart, checkout and footer places). Overlay, payment method, order confirmation and admin sidebar stay fixed.
+    - **Blocks:** modules register blocks with `block()`, listing the places the component works in and a default; `register()` keeps working as a one-place block (id `Component@slot`).
+    - **Placement:** the merchant's choice (place, order, on/off) is stored for the whole store (`extensions.blocks`), not per theme. A saved place the block no longer lists falls back to its default; entries of blocks whose module is off are kept.
+    - **Pages:** pages receive their places' blocks as `placeSlots`; the header and product-card places are shared once per page, and card blocks get the card's product on the page, so listings cost no extra work per card.
+    - **Settings in tabs:** a module setting with `"tab"` also appears in that customizer tab and is saved through the module's own settings validation (the module's other settings are untouched).
+- **Consequences:**
+    - **Themes:** a theme renders a place with `PlaceSlot`; a theme that leaves one out simply does not show those blocks.
+    - **Ids:** block ids are part of saved data: changing a block key or a component name in `register()` resets that block to its default.

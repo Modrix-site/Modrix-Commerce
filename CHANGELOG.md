@@ -4,6 +4,14 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added (extension blocks)
+
+- **Extension blocks in the customizer:** each page tab lists the extension blocks that can show on that page. Turn each on or off, choose where it shows and in which order. The same for every theme.
+- **More places for extensions:** header icons, above catalog products, on product cards, under the price, under add to cart, below the description, under the cart items and above "Place order", in all themes.
+- **Extension settings in the tabs:** extensions can show their page settings in the matching tab (for example the bundle heading on the Product tab).
+- Product reviews, Tabby, Tamara, Frequently bought together, Newsletter and Flash sales use them.
+- ADR-052.
+
 ### Added (page settings)
 
 - **Customizer page tabs with their own settings**, followed by every theme and kept when the theme changes:
