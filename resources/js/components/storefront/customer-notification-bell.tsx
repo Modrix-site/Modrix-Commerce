@@ -32,6 +32,7 @@ export function CustomerNotificationBell({
             viewAllLabel={t('View all')}
             markAllLabel={t('Mark all as read')}
             emptyLabel={t('No notifications yet.')}
+            unreadLabel={t('Unread')}
             translate={customerNotificationText(t)}
             formatTime={(iso) => (iso ? formatDate(iso) : '')}
         />

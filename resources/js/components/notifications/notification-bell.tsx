@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
     DropdownMenuContent,
+    DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
@@ -119,6 +120,7 @@ export function NotificationBell({
     markAllLabel = 'Mark all as read',
     emptyLabel = 'No notifications yet.',
     errorLabel = "Couldn't load notifications. Try again in a moment.",
+    unreadLabel = 'Unread',
     translate = (item) => item,
     formatTime = timeAgo,
     className,
@@ -133,6 +135,7 @@ export function NotificationBell({
     markAllLabel?: string;
     emptyLabel?: string;
     errorLabel?: string;
+    unreadLabel?: string;
     /** Customer bells translate titles in the shopper's language. */
     translate?: (item: NotificationItem) => NotificationItem;
     /** Defaults to "5 min ago" (English); the storefront passes a localized date. */
@@ -292,10 +295,11 @@ export function NotificationBell({
                 <div className="flex items-center justify-between border-b px-3 py-2">
                     <span className="text-sm font-semibold">{label}</span>
                     {unread > 0 && (
-                        <button
-                            type="button"
-                            className="text-xs text-muted-foreground hover:text-foreground"
-                            onClick={() =>
+                        <DropdownMenuItem
+                            className="cursor-pointer px-1.5 py-0.5 text-xs text-muted-foreground"
+                            // Stay open: the list updates in place.
+                            onSelect={(event) => {
+                                event.preventDefault();
                                 router.post(
                                     readAllUrl,
                                     {},
@@ -312,11 +316,11 @@ export function NotificationBell({
                                             );
                                         },
                                     },
-                                )
-                            }
+                                );
+                            }}
                         >
                             {markAllLabel}
-                        </button>
+                        </DropdownMenuItem>
                     )}
                 </div>
                 <ul className="max-h-96 overflow-y-auto">
@@ -344,11 +348,10 @@ export function NotificationBell({
 
                             return (
                                 <li key={item.id}>
-                                    <button
-                                        type="button"
-                                        onClick={() => open(item)}
+                                    <DropdownMenuItem
+                                        onSelect={() => open(item)}
                                         className={cn(
-                                            'flex w-full gap-3 px-3 py-2.5 text-left hover:bg-muted',
+                                            'flex w-full cursor-pointer items-start gap-3 rounded-none px-3 py-2.5 text-left',
                                             !item.read && 'bg-primary/5',
                                         )}
                                     >
@@ -368,24 +371,25 @@ export function NotificationBell({
                                             </span>
                                         </span>
                                         {!item.read && (
-                                            <span
-                                                className="mt-1.5 size-2 shrink-0 rounded-full bg-primary"
-                                                aria-label="Unread"
-                                            />
+                                            <span className="mt-1.5 size-2 shrink-0 rounded-full bg-primary">
+                                                <span className="sr-only">
+                                                    {unreadLabel}
+                                                </span>
+                                            </span>
                                         )}
-                                    </button>
+                                    </DropdownMenuItem>
                                 </li>
                             );
                         })
                     )}
                 </ul>
-                <div className="border-t px-3 py-2 text-center">
-                    <Link
-                        href={viewAllUrl}
-                        className="text-sm font-medium hover:underline"
+                <div className="border-t p-1">
+                    <DropdownMenuItem
+                        asChild
+                        className="cursor-pointer justify-center text-sm font-medium"
                     >
-                        {viewAllLabel}
-                    </Link>
+                        <Link href={viewAllUrl}>{viewAllLabel}</Link>
+                    </DropdownMenuItem>
                 </div>
             </DropdownMenuContent>
         </DropdownMenu>

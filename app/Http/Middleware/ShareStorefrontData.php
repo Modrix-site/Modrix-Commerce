@@ -22,6 +22,9 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ShareStorefrontData
 {
+    /** Storefront pages that show product cards (catalog, product, cart). */
+    private const PRODUCT_CARD_ROUTES = ['home', 'storefront.category', 'storefront.brand', 'storefront.search', 'storefront.product', 'cart.show'];
+
     public function __construct(
         private readonly Locales $locales,
         private readonly StoreSettings $store,
@@ -49,8 +52,12 @@ class ShareStorefrontData
             'categoryTree' => fn () => app(CategoryMenu::class)->tree(),
             'cartCount' => $this->cartCount($request),
             'theme' => $this->themes->forRequest($request)->toProps(),
-            // Extension blocks in the header and on every product card (once per page).
-            'placeSlots' => fn () => app(StorefrontSlots::class)->renderMany(['header.actions', 'product.card'], []),
+            // Extension blocks in the header, and on every product card (once per page)
+            // on the pages that show product cards.
+            'placeSlots' => fn () => app(StorefrontSlots::class)->renderMany(
+                $request->routeIs(...self::PRODUCT_CARD_ROUTES) ? ['header.actions', 'product.card'] : ['header.actions'],
+                [],
+            ),
             'themePreview' => $this->preview($request),
         ]);
 

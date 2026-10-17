@@ -4,6 +4,7 @@ namespace Tests\Feature\Extensions;
 
 use App\Core\Extensions\StorefrontSlots;
 use App\Domains\Catalog\Models\Product;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\Support\CommerceFixtures;
@@ -42,6 +43,23 @@ class StorefrontPlacesTest extends TestCase
             ->where('placeSlots', fn ($slots) => self::slotCount($slots, 'product.after_add_to_cart') === 1
                 && self::slotCount($slots, 'product.after_description') === 1
                 && collect($slots)->toArray()['product.after_price'][0]['props']['place'] === 'product.after_price'));
+    }
+
+    public function test_card_blocks_are_built_only_on_pages_with_product_cards()
+    {
+        $calls = 0;
+        $this->block('product.card', function () use (&$calls) {
+            $calls++;
+
+            return ['badge' => 'New'];
+        });
+        $this->block('header.actions');
+
+        // The account page shows the header but no product cards.
+        $this->actingAs(User::factory()->create())->get(route('account.show'))->assertInertia(fn (Assert $page) => $page
+            ->where('storefront.placeSlots', fn ($slots) => self::slotCount($slots, 'header.actions') === 1
+                && self::slotCount($slots, 'product.card') === 0));
+        $this->assertSame(0, $calls);
     }
 
     public function test_card_blocks_are_shared_once()

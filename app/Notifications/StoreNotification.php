@@ -66,9 +66,12 @@ class StoreNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         // Values can come from shoppers (a name): no Markdown links or formatting.
+        // The subject is plain text; only the body is rendered as Markdown.
+        $kinds = app(NotificationKinds::class);
         $params = array_map(fn ($value) => is_string($value) ? self::plainMarkdown($value) : $value, $this->params);
-        $text = app(NotificationKinds::class)->render($this->kind, $params);
-        $mail = (new MailMessage)->subject($text['title'])->line($text['body']);
+        $mail = (new MailMessage)
+            ->subject((string) preg_replace('/\s+/', ' ', $kinds->render($this->kind, $this->params)['title']))
+            ->line($kinds->render($this->kind, $params)['body']);
 
         return $this->url === null ? $mail : $mail->action('Open', url($this->url));
     }

@@ -185,6 +185,14 @@ class StoreNotifierTest extends TestCase
         $this->assertStringContainsString('Verify payment', $html);
     }
 
+    public function test_email_subjects_show_text_as_written()
+    {
+        $staff = $this->userWithRole('order-manager');
+        $mail = (new StoreNotification('order.placed', ['number' => 'EM-000123', 'total' => '$1,234.56', 'customer' => 'jane.doe@x.com'], null, 'x', ['mail']))->toMail($staff);
+
+        $this->assertSame('New order EM-000123', $mail->subject);
+    }
+
     public function test_notifications_are_indexed_for_the_daily_clean_up()
     {
         $this->assertTrue(Schema::hasIndex('notifications', ['created_at']));

@@ -89,10 +89,11 @@ export default function AccountNotifications({
                                                 </span>
                                             </span>
                                             {!item.read && (
-                                                <span
-                                                    className="mt-2 size-2 shrink-0 rounded-full bg-primary"
-                                                    aria-label={t('Unread')}
-                                                />
+                                                <span className="mt-2 size-2 shrink-0 rounded-full bg-primary">
+                                                    <span className="sr-only">
+                                                        {t('Unread')}
+                                                    </span>
+                                                </span>
                                             )}
                                         </button>
                                     </li>
