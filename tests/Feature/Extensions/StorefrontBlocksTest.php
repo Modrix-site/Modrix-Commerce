@@ -103,7 +103,7 @@ class StorefrontBlocksTest extends TestCase
     {
         foreach ([
             [['product.nowhere'], 'product.nowhere'],
-            [['storefront.overlay'], 'storefront.overlay'],
+            [['order.confirmation'], 'order.confirmation'],
             [['product.after_details'], 'product.after_price'],
         ] as [$places, $default]) {
             try {
@@ -117,15 +117,15 @@ class StorefrontBlocksTest extends TestCase
 
     public function test_register_still_works_and_is_listed_as_a_block()
     {
-        $this->slots->register('cart.after_totals', 'acme/pay', 'PayPromo', fn () => ['ok' => true]);
+        $this->slots->register('cart.after_lines', 'acme/pay', 'PayPromo', fn () => ['ok' => true]);
         $this->slots->register('product.after_details', 'acme/pay', 'PayPromo', fn () => ['ok' => true]);
-        $this->slots->register('storefront.overlay', 'acme/pop', 'Popup', fn () => []);
+        $this->slots->register('order.confirmation', 'acme/pop', 'Popup', fn () => []);
 
-        $this->assertSame(['acme/pay/PayPromo'], array_column($this->slots->render('cart.after_totals', ['cart' => null]), 'component'));
-        $this->assertSame(['acme/pop/Popup'], array_column($this->slots->render('storefront.overlay', []), 'component'));
+        $this->assertSame(['acme/pay/PayPromo'], array_column($this->slots->render('cart.after_lines', ['cart' => null]), 'component'));
+        $this->assertSame(['acme/pop/Popup'], array_column($this->slots->render('order.confirmation', ['order' => null]), 'component'));
 
         $blocks = collect($this->slots->blocks())->keyBy('id');
-        $this->assertSame(['cart.after_totals'], $blocks['acme/pay:PayPromo@cart.after_totals']['places']);
+        $this->assertSame(['cart.after_lines'], $blocks['acme/pay:PayPromo@cart.after_lines']['places']);
         $this->assertSame('product.after_details', $blocks['acme/pay:PayPromo@product.after_details']['default']);
         // Fixed places are not offered as movable blocks.
         $this->assertFalse($blocks->has('acme/pop:Popup'));
@@ -133,13 +133,13 @@ class StorefrontBlocksTest extends TestCase
 
     public function test_registering_a_component_twice_in_one_place_keeps_both()
     {
-        $this->slots->register('cart.after_totals', 'acme/pay', 'PayPromo', fn () => ['n' => 1]);
-        $this->slots->register('cart.after_totals', 'acme/pay', 'PayPromo', fn () => ['n' => 2]);
+        $this->slots->register('cart.after_lines', 'acme/pay', 'PayPromo', fn () => ['n' => 1]);
+        $this->slots->register('cart.after_lines', 'acme/pay', 'PayPromo', fn () => ['n' => 2]);
 
-        $this->assertSame([1, 2], array_column(array_column($this->slots->render('cart.after_totals', ['cart' => null]), 'props'), 'n'));
+        $this->assertSame([1, 2], array_column(array_column($this->slots->render('cart.after_lines', ['cart' => null]), 'props'), 'n'));
         $blocks = collect($this->slots->blocks())->keyBy('id');
-        $this->assertSame(['acme/pay:PayPromo@cart.after_totals', 'acme/pay:PayPromo@cart.after_totals#2'], $blocks->keys()->all());
-        $this->assertSame('Pay Promo', $blocks['acme/pay:PayPromo@cart.after_totals']['label']);
+        $this->assertSame(['acme/pay:PayPromo@cart.after_lines', 'acme/pay:PayPromo@cart.after_lines#2'], $blocks->keys()->all());
+        $this->assertSame('Pay Promo', $blocks['acme/pay:PayPromo@cart.after_lines']['label']);
     }
 
     public function test_failing_block_hides_alone()
@@ -168,17 +168,12 @@ class StorefrontBlocksTest extends TestCase
         $blocks = collect(app(StorefrontSlots::class)->blocks())->keyBy('id');
 
         $this->assertSame(['product.after_details', 'product.after_description'], $blocks['ecomodular/product-reviews:reviews']['places']);
-        $this->assertSame(['home.after_featured', 'storefront.footer'], $blocks['ecomodular/newsletter:signup-home']['places']);
+        $this->assertContains('home.after_featured', $blocks['ecomodular/newsletter:signup-home']['places']);
         $this->assertContains('catalog.before_products', $blocks['ecomodular/flash-sales:banner']['places']);
         $homeTab = collect(app(TabSettings::class)->forTab('home'))->keyBy('module');
         $this->assertContains('heading', array_column($homeTab['ecomodular/newsletter']['fields'], 'key'));
         $this->assertContains('banner_products', array_column($homeTab['ecomodular/flash-sales']['fields'], 'key'));
-        // Sign-ups record where the form was: the footer, wherever the block came from.
-        $this->place(['ecomodular/newsletter:signup-home' => ['place' => 'storefront.footer', 'order' => 1, 'enabled' => true]]);
-        $footer = app(StorefrontSlots::class)->render('storefront.footer', []);
-        $this->assertNotEmpty($footer);
-        $this->assertSame(['footer'], array_values(array_unique(array_column(array_column($footer, 'props'), 'source'))));
-        $this->place([]);
+        // Sign-ups record where the form was.
         $this->assertSame('home', app(StorefrontSlots::class)->render('home.after_featured', [])[0]['props']['source']);
         $this->post(route('ecomodular.newsletter.subscribe'), ['email' => 'ana@example.com', 'consent' => '1', 'source' => 'footer'])->assertSessionHasNoErrors();
 

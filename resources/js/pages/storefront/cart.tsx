@@ -6,14 +6,31 @@ import InputError from '@/components/input-error';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { CartCrossSells } from '@/components/storefront/page-settings/cart-cross-sells';
+import { FreeShippingBar } from '@/components/storefront/page-settings/free-shipping-bar';
+import type { FreeShipping } from '@/components/storefront/page-settings/free-shipping-bar';
+import { TrustBadges } from '@/components/storefront/page-settings/trust-badges';
+import { useStoreSettings } from '@/hooks/use-store-settings';
 import { useT } from '@/lib/i18n';
 import { home } from '@/routes';
 import { show as checkout } from '@/routes/checkout';
 import { product as productRoute } from '@/routes/storefront';
-import type { CartLine, PricedCart } from '@/types';
+import type { CartLine, PricedCart, ProductCard } from '@/types';
 
-export default function CartPage({ cart }: { cart: PricedCart | null }) {
+export default function CartPage({
+    cart,
+    freeShipping,
+    crossSells,
+}: {
+    cart: PricedCart | null;
+    /** Cart tab: free-shipping progress (null when off or no threshold). */
+    freeShipping?: FreeShipping | null;
+    /** Cart tab: related products of the cart's items. */
+    crossSells?: ProductCard[];
+}) {
     const t = useT();
+    // Cart tab settings (customizer).
+    const pageSettings = useStoreSettings().cart;
 
     if (!cart || cart.lines.length === 0) {
         return (
@@ -73,7 +90,9 @@ export default function CartPage({ cart }: { cart: PricedCart | null }) {
                         </div>
                     </dl>
 
-                    <CouponForm cart={cart} />
+                    <FreeShippingBar data={freeShipping} />
+
+                    {pageSettings.coupon && <CouponForm cart={cart} />}
 
                     {cart.issues.map((issue) => (
                         <Alert key={issue}>
@@ -92,8 +111,18 @@ export default function CartPage({ cart }: { cart: PricedCart | null }) {
                             )}
                         </p>
                     )}
+                    {pageSettings.trust_badges && <TrustBadges />}
+                    {pageSettings.continue_link && (
+                        <Link
+                            href={home()}
+                            className="text-center text-sm underline underline-offset-4"
+                        >
+                            {t('Continue shopping')}
+                        </Link>
+                    )}
                 </aside>
             </div>
+            <CartCrossSells products={crossSells} className="mt-12" />
         </>
     );
 }

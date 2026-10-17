@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { ImageOff } from 'lucide-react';
+import { PlaceSlot } from '@/components/extensions/place-slot';
 import { SaleTag } from '@/components/storefront/sale-notice';
 import { useStoreSettings } from '@/hooks/use-store-settings';
 import { useStoreTheme } from '@/hooks/use-store-theme';
@@ -17,6 +18,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
     const { productCard } = useStoreTheme();
     const t = useT();
     const framed = productCard === 'framed';
+    const { catalog } = useStoreSettings();
 
     return (
         <Link
@@ -28,7 +30,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
         >
             <div
                 className={cn(
-                    'aspect-square overflow-hidden bg-muted',
+                    'store-card-image relative aspect-square overflow-hidden bg-muted',
                     productCard === 'standard' && 'rounded-lg border',
                     productCard === 'minimal' && 'rounded-sm',
                     framed && 'rounded-md',
@@ -47,6 +49,16 @@ export function ProductCard({ product }: { product: ProductCardData }) {
                         <span className="sr-only">{t('No image')}</span>
                     </div>
                 )}
+                {product.image &&
+                    catalog.hover_image &&
+                    product.hover_image && (
+                        <img
+                            src={product.hover_image.url}
+                            alt=""
+                            loading="lazy"
+                            className="store-card-hover size-full object-cover"
+                        />
+                    )}
             </div>
             <div
                 className={cn(
@@ -62,7 +74,17 @@ export function ProductCard({ product }: { product: ProductCardData }) {
                 >
                     {product.name}
                 </span>
+                {catalog.show_brand && product.brand && (
+                    <span className="text-xs tracking-wide text-muted-foreground uppercase">
+                        {product.brand.name}
+                    </span>
+                )}
                 <Price product={product} />
+                <PlaceSlot
+                    place="product.card"
+                    extraProps={{ product }}
+                    className="gap-1 text-xs"
+                />
                 {!product.in_stock && (
                     <span className="text-xs text-muted-foreground">
                         {t('Out of stock')}

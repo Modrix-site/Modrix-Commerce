@@ -12,22 +12,16 @@ theme.
 | `header.actions` | Header | — |
 | `home.after_featured` | Homepage | — |
 | `catalog.before_products` | Catalog | `category`, `brand`, `query` |
-| `catalog.after_products` | Catalog | `category`, `brand`, `query` |
 | `product.card` | Catalog | — (each card adds `product` on the page) |
 | `product.after_price` | Product | `product` |
 | `product.after_add_to_cart` | Product | `product` |
 | `product.after_details` | Product | `product` |
 | `product.after_description` | Product | `product` |
 | `cart.after_lines` | Cart | `cart` |
-| `cart.after_totals` | Cart | `cart` |
-| `checkout.after_summary` | Checkout | `cart` |
 | `checkout.before_place_order` | Checkout | `cart` |
-| `storefront.footer` | Footer | — |
 
 Fixed slots stay where the module puts them; the merchant cannot move them:
 
-- `storefront.overlay`: every storefront page, outside the page content (popups, cookie bars);
-- `checkout.payment_method`: under the selected payment method at checkout;
 - `order.confirmation`: the order confirmation page;
 - `admin.product.sidebar`: the sidebar of the admin product editor.
 

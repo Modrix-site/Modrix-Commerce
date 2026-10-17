@@ -70,7 +70,7 @@ class CustomizerTabsTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->where('design.fields', fn ($fields) => collect($fields)->every(fn ($f) => in_array($f['tab'] ?? null, array_keys(CustomizerTabs::TABS), true))
                     && collect($fields)->firstWhere('key', 'color.primary')['tab'] === 'general'
-                    && collect($fields)->firstWhere('key', 'contact_email')['tab'] === 'footer'
-                    && collect($fields)->firstWhere('key', 'help_link')['tab'] === 'header'));
+                    && collect($fields)->firstWhere('key', 'header.cart_count')['tab'] === 'header'
+                    && collect($fields)->firstWhere('key', 'checkout.terms')['tab'] === 'checkout'));
     }
 }

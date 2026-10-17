@@ -11,8 +11,8 @@ use App\Models\User;
 /**
  * How far a cart is from free shipping: the lowest "free over" amount of
  * the active shipping methods (in the cart's currency) that ship to the
- * country, including their regional amounts for that country, or any
- * country when it is not known yet. Carts with nothing to ship get none.
+ * customer's country, or any country when it is not known yet. Carts with
+ * nothing to ship get none.
  */
 final class FreeShippingProgress
 {
@@ -36,12 +36,6 @@ final class FreeShippingProgress
         foreach ($methods as $method) {
             if ($method->free_over !== null) {
                 $thresholds[] = (string) $method->free_over;
-            }
-
-            foreach ($method->regional_rates ?? [] as $rule) {
-                if ($country !== null && strtoupper($rule['country_code']) === strtoupper($country) && ($rule['free_over'] ?? null) !== null) {
-                    $thresholds[] = (string) $rule['free_over'];
-                }
             }
         }
 

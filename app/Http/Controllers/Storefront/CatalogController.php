@@ -29,7 +29,7 @@ class CatalogController extends Controller
         ]);
     }
 
-    public function category(Request $request, string $slug, StorefrontCatalog $catalog, StoreSettings $store): Response
+    public function category(Request $request, string $slug, StorefrontCatalog $catalog, StoreSettings $store, StorefrontSlots $slots): Response
     {
         $category = Category::query()->active()->withCurrentTranslation()->where('slug', $slug)->firstOrFail();
         $sort = $this->sort($request);
@@ -54,7 +54,7 @@ class CatalogController extends Controller
         ]);
     }
 
-    public function brand(Request $request, string $slug, StorefrontCatalog $catalog, StoreSettings $store): Response
+    public function brand(Request $request, string $slug, StorefrontCatalog $catalog, StoreSettings $store, StorefrontSlots $slots): Response
     {
         $brand = Brand::query()->with('logo')->where('slug', $slug)->firstOrFail();
         $sort = $this->sort($request);
@@ -73,7 +73,7 @@ class CatalogController extends Controller
         ]);
     }
 
-    public function search(Request $request, StorefrontCatalog $catalog, StoreSettings $store): Response
+    public function search(Request $request, StorefrontCatalog $catalog, StoreSettings $store, StorefrontSlots $slots): Response
     {
         $data = $request->validate(['q' => ['nullable', 'string', 'max:120']]);
         $query = trim((string) ($data['q'] ?? ''));

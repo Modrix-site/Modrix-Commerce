@@ -37,7 +37,6 @@ final class StorefrontSlots
         'header.actions' => ['label' => 'Header icons', 'tab' => 'header', 'context' => []],
         'home.after_featured' => ['label' => 'After featured products', 'tab' => 'home', 'context' => []],
         'catalog.before_products' => ['label' => 'Above the products', 'tab' => 'catalog', 'context' => ['category', 'brand', 'query']],
-        'catalog.after_products' => ['label' => 'After the products', 'tab' => 'catalog', 'context' => ['category', 'brand', 'query']],
         // Rendered once per page; each product card adds its own product.
         'product.card' => ['label' => 'On product cards', 'tab' => 'catalog', 'context' => []],
         'product.after_price' => ['label' => 'Under the price', 'tab' => 'product', 'context' => ['product']],
@@ -45,10 +44,7 @@ final class StorefrontSlots
         'product.after_details' => ['label' => 'After the details', 'tab' => 'product', 'context' => ['product']],
         'product.after_description' => ['label' => 'Below the description', 'tab' => 'product', 'context' => ['product']],
         'cart.after_lines' => ['label' => 'Under the items', 'tab' => 'cart', 'context' => ['cart']],
-        'cart.after_totals' => ['label' => 'Under the total', 'tab' => 'cart', 'context' => ['cart']],
-        'checkout.after_summary' => ['label' => 'After the summary', 'tab' => 'checkout', 'context' => ['cart']],
         'checkout.before_place_order' => ['label' => 'Above "Place order"', 'tab' => 'checkout', 'context' => ['cart']],
-        'storefront.footer' => ['label' => 'Footer', 'tab' => 'footer', 'context' => []],
     ];
 
     /** @var array<string, list<array{module: string, component: string, props: Closure, order: int}>> fixed slots */

@@ -70,19 +70,21 @@ class CheckoutController extends Controller
 
         $customer = $user !== null ? $profiles->forUser($user) : null;
 
-        return Inertia::render('storefront/checkout', [
-            'summary' => function () use ($cart, $destination, $customer, $request) {
-                $priced = $this->pricer->price($cart, new PricingContext(
-                    customerId: $customer?->id,
-                    email: $customer->email ?? $request->string('email')->toString() ?: null,
-                    countryCode: $destination['country'] ?? null,
-                    region: $destination['region'] ?? null,
-                    postalCode: $destination['postal_code'] ?? null,
-                    shippingMethod: $destination['shipping_method'] ?? null,
-                ));
+        // Priced once per request, shared by the summary and the extension places.
+        $priced = null;
+        $price = function () use (&$priced, $cart, $destination, $customer, $request) {
+            return $priced ??= $this->pricer->price($cart, new PricingContext(
+                customerId: $customer?->id,
+                email: $customer->email ?? $request->string('email')->toString() ?: null,
+                countryCode: $destination['country'] ?? null,
+                region: $destination['region'] ?? null,
+                postalCode: $destination['postal_code'] ?? null,
+                shippingMethod: $destination['shipping_method'] ?? null,
+            ));
+        };
 
-                return $priced->toArray();
-            },
+        return Inertia::render('storefront/checkout', [
+            'summary' => fn () => $price()->toArray(),
             'paymentMethods' => fn () => array_values(array_map(fn (PaymentMethod $m) => [
                 'code' => $m->code(),
                 'label' => $m->label(),

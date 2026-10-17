@@ -7,12 +7,17 @@ import { FormField } from '@/components/admin/form-field';
 import { PlaceSlot } from '@/components/extensions/place-slot';
 import InputError from '@/components/input-error';
 import { OrderTotals } from '@/components/storefront/order-totals';
+import { CheckoutCoupon } from '@/components/storefront/page-settings/checkout-coupon';
+import { TermsCheckbox } from '@/components/storefront/page-settings/terms-checkbox';
+import { TrustBadges } from '@/components/storefront/page-settings/trust-badges';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useStoreSettings } from '@/hooks/use-store-settings';
 import { useT } from '@/lib/i18n';
+import { cn } from '@/lib/utils';
 import { show as cartShow } from '@/routes/cart';
 import type { Address, Country, PricedCart } from '@/types';
 
@@ -40,6 +45,8 @@ type Props = {
     email: string | null;
     countries: Country[];
     checkoutToken: string;
+    /** The store's terms page (Checkout tab "Require accepting the terms"). */
+    termsUrl?: string | null;
 };
 
 const emptyAddress: AddressFields = {
@@ -77,8 +84,11 @@ export default function Checkout({
     email,
     countries,
     checkoutToken,
+    termsUrl = null,
 }: Props) {
     const t = useT();
+    // Checkout tab settings (customizer).
+    const pageSettings = useStoreSettings().checkout;
     const defaultAddress =
         addresses.find((a) => a.is_default_shipping) ?? addresses[0];
     const form = useForm({
@@ -90,6 +100,7 @@ export default function Checkout({
         shipping_method: '',
         payment_method: paymentMethods[0]?.code ?? '',
         customer_note: '',
+        terms: false,
         save_address: addresses.length === 0,
         checkout_token: checkoutToken,
         expected_total: '',
@@ -160,7 +171,9 @@ export default function Checkout({
         <>
             <Head title={t('Checkout')} />
             <h1 className="mb-6 text-2xl font-semibold tracking-tight">
-                {t('Checkout')}
+                {pageSettings.heading === 'Checkout'
+                    ? t('Checkout')
+                    : pageSettings.heading}
             </h1>
 
             {generalError && (
@@ -207,21 +220,30 @@ export default function Checkout({
                                     required
                                 />
                             </FormField>
-                            <FormField
-                                id="phone"
-                                label={t('Phone (optional)')}
-                                error={errors.phone}
-                            >
-                                <Input
+                            {pageSettings.phone !== 'hidden' && (
+                                <FormField
                                     id="phone"
-                                    type="tel"
-                                    autoComplete="tel"
-                                    value={data.phone}
-                                    onChange={(e) =>
-                                        setData('phone', e.target.value)
+                                    label={
+                                        pageSettings.phone === 'required'
+                                            ? t('Phone')
+                                            : t('Phone (optional)')
                                     }
-                                />
-                            </FormField>
+                                    error={errors.phone}
+                                >
+                                    <Input
+                                        id="phone"
+                                        type="tel"
+                                        autoComplete="tel"
+                                        value={data.phone}
+                                        required={
+                                            pageSettings.phone === 'required'
+                                        }
+                                        onChange={(e) =>
+                                            setData('phone', e.target.value)
+                                        }
+                                    />
+                                </FormField>
+                            )}
                         </div>
                     </section>
 
@@ -429,24 +451,31 @@ export default function Checkout({
                         <InputError message={errors.payment_method} />
                     </section>
 
-                    <FormField
-                        id="customer_note"
-                        label={t('Order note (optional)')}
-                        error={errors.customer_note}
-                    >
-                        <Textarea
+                    {pageSettings.order_note && (
+                        <FormField
                             id="customer_note"
-                            rows={2}
-                            value={data.customer_note}
-                            onChange={(e) =>
-                                setData('customer_note', e.target.value)
-                            }
-                        />
-                    </FormField>
+                            label={t('Order note (optional)')}
+                            error={errors.customer_note}
+                        >
+                            <Textarea
+                                id="customer_note"
+                                rows={2}
+                                value={data.customer_note}
+                                onChange={(e) =>
+                                    setData('customer_note', e.target.value)
+                                }
+                            />
+                        </FormField>
+                    )}
                 </div>
 
                 <aside
-                    className="grid content-start gap-4 rounded-lg border p-5"
+                    className={cn(
+                        'grid content-start gap-4 self-start rounded-lg border p-5',
+                        pageSettings.summary_side === 'left' &&
+                            'lg:order-first',
+                        pageSettings.sticky_summary && 'lg:sticky lg:top-24',
+                    )}
                     aria-label={t('Order summary')}
                 >
                     <h2 className="font-semibold">{t('Order summary')}</h2>
@@ -456,7 +485,14 @@ export default function Checkout({
                                 key={line.id}
                                 className="flex justify-between gap-3"
                             >
-                                <span>
+                                {pageSettings.summary_images && line.image && (
+                                    <img
+                                        src={line.image.url}
+                                        alt=""
+                                        className="size-12 shrink-0 rounded border object-cover"
+                                    />
+                                )}
+                                <span className="min-w-0 flex-1">
                                     {line.product_name}
                                     {line.variant_name && (
                                         <span className="text-muted-foreground">
@@ -483,11 +519,22 @@ export default function Checkout({
                                 : null,
                         }}
                     />
+                    {pageSettings.coupon && (
+                        <CheckoutCoupon code={summary.coupon_code} />
+                    )}
                     {summary.issues.map((issue) => (
                         <p key={issue} className="text-sm text-destructive">
                             {issue}
                         </p>
                     ))}
+                    {pageSettings.terms && (
+                        <TermsCheckbox
+                            url={termsUrl}
+                            checked={data.terms}
+                            onChange={(checked) => setData('terms', checked)}
+                            error={errors.terms}
+                        />
+                    )}
                     <PlaceSlot place="checkout.before_place_order" />
                     <Button
                         type="submit"
@@ -499,8 +546,11 @@ export default function Checkout({
                             paymentMethods.length === 0
                         }
                     >
-                        {t('Place order')}
+                        {pageSettings.button_label === 'Place order'
+                            ? t('Place order')
+                            : pageSettings.button_label}
                     </Button>
+                    {pageSettings.trust_badges && <TrustBadges />}
                     <p className="text-xs text-muted-foreground">
                         {t(
                             'Your order is not paid until the store confirms your payment.',
@@ -526,6 +576,7 @@ function AddressInputs({
     errors: Record<string, string | undefined>;
 }) {
     const t = useT();
+    const pageSettings = useStoreSettings().checkout;
     const field = (
         name: keyof AddressFields,
         label: string,
@@ -551,10 +602,17 @@ function AddressInputs({
         <div className="grid gap-4 sm:grid-cols-2">
             {field('first_name', t('First name'), 'given-name', true)}
             {field('last_name', t('Last name'), 'family-name', true)}
-            {field('company', t('Company (optional)'), 'organization')}
-            {field('phone', t('Phone (optional)'), 'tel')}
+            {pageSettings.company &&
+                field('company', t('Company (optional)'), 'organization')}
+            {pageSettings.phone !== 'hidden' &&
+                field('phone', t('Phone (optional)'), 'tel')}
             {field('line1', t('Address'), 'address-line1', true)}
-            {field('line2', t('Apartment, suite (optional)'), 'address-line2')}
+            {pageSettings.address_line2 &&
+                field(
+                    'line2',
+                    t('Apartment, suite (optional)'),
+                    'address-line2',
+                )}
             {field('city', t('City'), 'address-level2', true)}
             {field(
                 'region',

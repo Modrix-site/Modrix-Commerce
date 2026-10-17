@@ -343,7 +343,35 @@ function DesignInput({
                     </button>
                 )}
             </div>
-            {field.type === 'color' ? (
+            {field.type === 'boolean' ? (
+                <NativeSelect
+                    id={id}
+                    value={overridden ? String(value) : ''}
+                    onChange={(event) =>
+                        onChange(
+                            event.target.value === ''
+                                ? ''
+                                : event.target.value === 'true',
+                        )
+                    }
+                >
+                    <option value="">
+                        Theme default ({fallback ? 'On' : 'Off'})
+                    </option>
+                    <option value="true">On</option>
+                    <option value="false">Off</option>
+                </NativeSelect>
+            ) : field.type === 'integer' ? (
+                <Input
+                    id={id}
+                    type="number"
+                    min={field.min}
+                    max={field.max}
+                    value={overridden ? String(value) : ''}
+                    placeholder={String(fallback ?? '')}
+                    onChange={(event) => onChange(event.target.value)}
+                />
+            ) : field.type === 'color' ? (
                 <div className="flex gap-2">
                     <input
                         type="color"
