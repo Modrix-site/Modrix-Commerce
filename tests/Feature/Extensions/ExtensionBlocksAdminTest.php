@@ -14,6 +14,7 @@ use App\Core\Themes\ThemeManager;
 use App\Core\Themes\ThemeRepository;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Route;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\Support\ModuleFixtures;
 use Tests\Support\ThemeFixtures;
@@ -142,6 +143,31 @@ class ExtensionBlocksAdminTest extends TestCase
 
         $this->assertSame('Hey', app(ModuleSettingsSchema::class)->of('acme/hello', 'greeting'));
         $this->assertNull(app(SettingsRepository::class)->get($key));
+    }
+
+    public function test_theme_managers_can_save_tab_settings()
+    {
+        $this->roleWithPermissions('designer', ['themes.manage']);
+        $designer = $this->userWithRole('designer');
+
+        $this->actingAs($designer)->put(route('admin.themes.extension-settings.update', ['module' => 'acme/hello']), ['settings' => ['greeting' => 'Hello']])
+            ->assertSessionHasNoErrors()->assertRedirect();
+        $this->actingAs($designer)->put(route('admin.themes.blocks.update'), ['blocks' => []])->assertSessionHasNoErrors();
+
+        $this->assertSame('Hello', app(ModuleSettingsSchema::class)->of('acme/hello', 'greeting'));
+    }
+
+    public function test_tab_settings_of_a_disabled_module_are_rejected()
+    {
+        app(ModuleManager::class)->disable('acme/hello');
+
+        $this->actingAs($this->owner())->put(route('admin.themes.extension-settings.update', ['module' => 'acme/hello']), ['settings' => ['greeting' => 'Hello']])
+            ->assertSessionHasErrors('settings');
+    }
+
+    public function test_tab_settings_saves_are_throttled()
+    {
+        $this->assertContains('throttle:30,1', Route::getRoutes()->getByName('admin.themes.extension-settings.update')->gatherMiddleware());
     }
 
     public function test_customizer_order_follows_the_registered_order_until_saved()

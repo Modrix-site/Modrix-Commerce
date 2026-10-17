@@ -1,6 +1,6 @@
 import { useForm } from '@inertiajs/react';
 import { ArrowDown, ArrowUp } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import ExtensionBlocksController from '@/actions/App/Http/Controllers/Admin/ExtensionBlocksController';
 import { NativeSelect } from '@/components/admin/form-field';
@@ -60,6 +60,25 @@ export function ExtensionBlocksCard({
     const [sequence, setSequence] = useState<string[]>(() =>
         [...here].sort((a, b) => a.order - b.order).map((block) => block.id),
     );
+    // Moves are announced, and focus stays on the moved block's arrow (or
+    // its other arrow once it reaches the end).
+    const [announcement, setAnnouncement] = useState('');
+    const [focusAfterMove, setFocusAfterMove] = useState<{
+        id: string;
+        step: -1 | 1;
+    } | null>(null);
+    const arrows = useRef(new Map<string, HTMLButtonElement | null>());
+
+    useEffect(() => {
+        if (!focusAfterMove) {
+            return;
+        }
+
+        const { id, step } = focusAfterMove;
+        const same = arrows.current.get(`${id}:${step}`);
+        const other = arrows.current.get(`${id}:${-step}`);
+        (same && !same.disabled ? same : other)?.focus();
+    }, [focusAfterMove, sequence]);
 
     if (here.length === 0) {
         return null;
@@ -71,19 +90,22 @@ export function ExtensionBlocksCard({
             [id]: { ...form.data.blocks[id], ...change },
         });
 
-    const move = (index: number, step: -1 | 1) =>
-        setSequence((ids) => {
-            const next = [...ids];
-            const target = index + step;
+    const move = (index: number, step: -1 | 1) => {
+        const target = index + step;
 
-            if (target < 0 || target >= next.length) {
-                return ids;
-            }
+        if (target < 0 || target >= sequence.length) {
+            return;
+        }
 
-            [next[index], next[target]] = [next[target], next[index]];
-
-            return next;
-        });
+        const next = [...sequence];
+        [next[index], next[target]] = [next[target], next[index]];
+        const label = here.find((b) => b.id === next[target])?.label ?? '';
+        setSequence(next);
+        setFocusAfterMove({ id: next[target], step });
+        setAnnouncement(
+            `${label} moved to position ${target + 1} of ${next.length}.`,
+        );
+    };
 
     const submit = (event: FormEvent) => {
         event.preventDefault();
@@ -190,6 +212,12 @@ export function ExtensionBlocksCard({
                                             variant="ghost"
                                             size="icon"
                                             aria-label={`Move ${block.label} up`}
+                                            ref={(el) => {
+                                                arrows.current.set(
+                                                    `${id}:-1`,
+                                                    el,
+                                                );
+                                            }}
                                             disabled={index === 0}
                                             onClick={() => move(index, -1)}
                                         >
@@ -200,6 +228,12 @@ export function ExtensionBlocksCard({
                                             variant="ghost"
                                             size="icon"
                                             aria-label={`Move ${block.label} down`}
+                                            ref={(el) => {
+                                                arrows.current.set(
+                                                    `${id}:1`,
+                                                    el,
+                                                );
+                                            }}
                                             disabled={
                                                 index === sequence.length - 1
                                             }
@@ -212,8 +246,11 @@ export function ExtensionBlocksCard({
                             );
                         })}
                     </ul>
-                    {errors.map((message) => (
-                        <InputError key={message} message={message} />
+                    <p className="sr-only" aria-live="polite">
+                        {announcement}
+                    </p>
+                    {errors.map((message, i) => (
+                        <InputError key={i} message={message} />
                     ))}
                     <div>
                         <Button type="submit" disabled={form.processing}>

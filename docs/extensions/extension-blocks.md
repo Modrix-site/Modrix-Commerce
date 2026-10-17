@@ -26,10 +26,10 @@ theme.
 
 Fixed slots stay where the module puts them; the merchant cannot move them:
 
-- `storefront.overlay`;
-- `checkout.payment_method`;
-- `order.confirmation`;
-- `admin.product.sidebar`.
+- `storefront.overlay`: every storefront page, outside the page content (popups, cookie bars);
+- `checkout.payment_method`: under the selected payment method at checkout;
+- `order.confirmation`: the order confirmation page;
+- `admin.product.sidebar`: the sidebar of the admin product editor.
 
 ## Registering a block
 
@@ -53,7 +53,7 @@ How a block behaves:
 - **Props closure:** it receives the place's context plus `place`. Return `null` to show nothing; an exception hides only this block.
 - **Places:** list only places your component works in. If a module update drops a place a merchant chose, the block shows at its default.
 - **Product cards:** `product.card` blocks render once per page. Read the card's product from the `product` prop.
-- **Older registrations:** `register($slot, …)` still works. In a movable place it becomes a one-place block named after the component.
+- **Older registrations:** `register($slot, …)` still works. In a movable place it becomes a one-place block named after the component (`PayPromo` shows as "Pay Promo"). Registering the same component twice in one place keeps both; the second id ends in `#2`.
 
 ## Settings in customizer tabs
 

@@ -131,6 +131,17 @@ class StorefrontBlocksTest extends TestCase
         $this->assertFalse($blocks->has('acme/pop:Popup'));
     }
 
+    public function test_registering_a_component_twice_in_one_place_keeps_both()
+    {
+        $this->slots->register('cart.after_totals', 'acme/pay', 'PayPromo', fn () => ['n' => 1]);
+        $this->slots->register('cart.after_totals', 'acme/pay', 'PayPromo', fn () => ['n' => 2]);
+
+        $this->assertSame([1, 2], array_column(array_column($this->slots->render('cart.after_totals', ['cart' => null]), 'props'), 'n'));
+        $blocks = collect($this->slots->blocks())->keyBy('id');
+        $this->assertSame(['acme/pay:PayPromo@cart.after_totals', 'acme/pay:PayPromo@cart.after_totals#2'], $blocks->keys()->all());
+        $this->assertSame('Pay Promo', $blocks['acme/pay:PayPromo@cart.after_totals']['label']);
+    }
+
     public function test_failing_block_hides_alone()
     {
         $this->slots->block('acme/broken', 'broken', 'Broken', 'Broken', ['product.after_details'], 'product.after_details', fn () => throw new RuntimeException('boom'), 1);
@@ -162,6 +173,14 @@ class StorefrontBlocksTest extends TestCase
         $homeTab = collect(app(TabSettings::class)->forTab('home'))->keyBy('module');
         $this->assertContains('heading', array_column($homeTab['ecomodular/newsletter']['fields'], 'key'));
         $this->assertContains('banner_products', array_column($homeTab['ecomodular/flash-sales']['fields'], 'key'));
+        // Sign-ups record where the form was: the footer, wherever the block came from.
+        $this->place(['ecomodular/newsletter:signup-home' => ['place' => 'storefront.footer', 'order' => 1, 'enabled' => true]]);
+        $footer = app(StorefrontSlots::class)->render('storefront.footer', []);
+        $this->assertNotEmpty($footer);
+        $this->assertSame(['footer'], array_values(array_unique(array_column(array_column($footer, 'props'), 'source'))));
+        $this->place([]);
+        $this->assertSame('home', app(StorefrontSlots::class)->render('home.after_featured', [])[0]['props']['source']);
+        $this->post(route('ecomodular.newsletter.subscribe'), ['email' => 'ana@example.com', 'consent' => '1', 'source' => 'footer'])->assertSessionHasNoErrors();
 
         if ($optional !== []) {
             $productTab = collect(app(TabSettings::class)->forTab('product'))->keyBy('module');

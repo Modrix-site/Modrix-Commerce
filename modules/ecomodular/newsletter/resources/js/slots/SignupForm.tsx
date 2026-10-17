@@ -1,5 +1,6 @@
 import { Form } from '@inertiajs/react';
 import { Mail } from 'lucide-react';
+import { useId } from 'react';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -9,7 +10,7 @@ type Props = {
     heading: string;
     consentText: string;
     submitUrl: string;
-    source: 'home' | 'order';
+    source: 'home' | 'order' | 'footer';
 };
 
 export default function SignupForm({
@@ -18,13 +19,16 @@ export default function SignupForm({
     submitUrl,
     source,
 }: Props) {
+    // Unique even when the form shows twice on a page (home and footer).
+    const headingId = useId();
+
     return (
         <section
             className="my-10 rounded-[var(--radius)] border bg-muted p-6"
-            aria-labelledby={`newsletter-${source}`}
+            aria-labelledby={headingId}
         >
             <h2
-                id={`newsletter-${source}`}
+                id={headingId}
                 className="mb-3 flex items-center gap-2 text-lg font-semibold"
             >
                 <Mail className="size-5" aria-hidden /> {heading}

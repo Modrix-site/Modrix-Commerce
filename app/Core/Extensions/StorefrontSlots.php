@@ -4,6 +4,7 @@ namespace App\Core\Extensions;
 
 use Closure;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Throwable;
 
@@ -71,7 +72,14 @@ final class StorefrontSlots
 
         if (array_key_exists($slot, self::PLACES)) {
             // A one-place block the merchant can still turn off or reorder.
-            $this->block($module, "{$component}@{$slot}", $component, $component, [$slot], $slot, $props, $order);
+            // Registering the same component twice in one place keeps both.
+            $key = "{$component}@{$slot}";
+
+            for ($n = 2; array_key_exists("{$module}:{$key}", $this->blocks); $n++) {
+                $key = "{$component}@{$slot}#{$n}";
+            }
+
+            $this->block($module, $key, Str::headline($component), $component, [$slot], $slot, $props, $order);
 
             return;
         }

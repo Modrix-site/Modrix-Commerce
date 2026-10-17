@@ -42,9 +42,7 @@ export default function CartPage({ cart }: { cart: PricedCart | null }) {
                     {cart.lines.map((line) => (
                         <CartRow key={line.id} line={line} />
                     ))}
-                    <li className="list-none">
-                        <PlaceSlot place="cart.after_lines" />
-                    </li>
+                    <PlaceSlot place="cart.after_lines" listItem />
                 </ul>
 
                 <aside

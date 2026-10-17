@@ -22,7 +22,7 @@ class SubscriptionController extends Controller
         $data = $request->validate([
             'email' => ['required', 'email', 'max:191'],
             'consent' => ['accepted'],
-            'source' => ['nullable', 'in:home,order'],
+            'source' => ['nullable', 'in:home,order,footer'],
         ], ['consent.accepted' => 'Tick the box to agree to receive emails.']);
 
         $email = Str::lower(trim($data['email']));

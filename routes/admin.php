@@ -267,6 +267,7 @@ Route::middleware('can:themes.manage')->group(function () {
     Route::put('themes/blocks', [ExtensionBlocksController::class, 'update'])->name('themes.blocks.update');
     Route::put('themes/extension-settings/{module}', [ExtensionBlocksController::class, 'settings'])
         ->where('module', '[a-z0-9][a-z0-9-]*/[a-z0-9][a-z0-9-]*')
+        ->middleware('throttle:30,1')
         ->name('themes.extension-settings.update');
     Route::post('themes/{theme}/reset', [ThemeController::class, 'reset'])->name('themes.reset');
     Route::post('themes/{theme}/demo', [ThemeController::class, 'demo'])->middleware('throttle:5,1')->name('themes.demo');
