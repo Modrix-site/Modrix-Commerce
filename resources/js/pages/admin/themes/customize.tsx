@@ -21,6 +21,10 @@ import {
     useCustomizerTab,
 } from '@/components/admin/themes/customizer-tabs';
 import type { CustomizerTab } from '@/components/admin/themes/customizer-tabs';
+import { ExtensionBlocksCard } from '@/components/admin/themes/extension-blocks-card';
+import type { ExtensionBlock } from '@/components/admin/themes/extension-blocks-card';
+import { ExtensionSettingsCard } from '@/components/admin/themes/extension-settings-card';
+import type { ExtensionSettingsGroup } from '@/components/admin/themes/extension-settings-card';
 import InputError from '@/components/input-error';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -71,6 +75,12 @@ type Props = {
         max: number;
     };
     images: ThemeImageOption[];
+    /** Extension blocks (placement is store-wide). */
+    blocks?: ExtensionBlock[];
+    /** Module settings shown in each tab. */
+    extensionSettings?: Partial<
+        Record<CustomizerTab, ExtensionSettingsGroup[]>
+    >;
 };
 
 const FONT_LABELS: Record<string, string> = {
@@ -99,6 +109,8 @@ export default function ThemeCustomize({
     design,
     sections,
     images,
+    blocks = [],
+    extensionSettings = {},
 }: Props) {
     const [tab, setTab] = useCustomizerTab();
 
@@ -175,6 +187,9 @@ export default function ThemeCustomize({
                         <ImageLibrary images={images} />
                     )}
                     {tab === 'general' && <ResetCard theme={theme} />}
+                    {/* Keyed by tab: the block order shown follows the tab's page. */}
+                    <ExtensionBlocksCard key={tab} blocks={blocks} tab={tab} />
+                    <ExtensionSettingsCard groups={extensionSettings[tab]} />
                 </div>
             </AdminPage>
         </>
