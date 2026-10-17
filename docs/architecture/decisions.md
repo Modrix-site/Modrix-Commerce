@@ -595,8 +595,9 @@ Each entry records a decision, its context, and its consequences. Entries are ap
 - **Status:** Accepted
 - **Decision:**
     - **Storage:** Laravel database notifications (`notifications` table) through one `StoreNotification` class; `NotificationKinds` maps each kind to its audience, permission, icon and English templates, and modules can register more.
-    - **Sending:** `StoreNotifier::toStaff` reaches owners and staff whose role has the kind's permission, skips the person who caused the event, and honours each person's bell/email choices (`users.notification_preferences`); `toCustomer` writes to the customer's bell only. A dedupe key in the data stops the same event twice.
+    - **Sending:** `StoreNotifier::toStaff` reaches owners and staff whose role has the kind's permission, skips the person who caused the event, and honours each person's bell/email choices (`users.notification_preferences`); `toCustomer` writes to the customer's bell only. A dedupe key, claimed per person in `notification_dedupes` (unique index) whatever the channels, stops the same event twice; one person's failure never stops the others.
     - **Triggers:** two event subscribers (`NotifyStaff`, `NotifyCustomer`) listen to the existing order, stock and customer events; failures are reported, never thrown into checkout.
+    - **Email:** queued (the bell row is written at once); shopper-supplied values are Markdown-escaped in staff emails.
     - **Real time:** the admin bell polls `admin/notifications/feed` every 30 seconds while the tab is visible (no websockets); the storefront refreshes counts on navigation only.
     - **Links:** only internal paths are stored and followed.
     - **Translation:** customer texts are re-rendered in the browser from `kind` and `params` through the storefront catalogue; staff texts stay English like the admin.
