@@ -1,6 +1,6 @@
 import { ImageOff } from 'lucide-react';
 import { useState } from 'react';
-import type { MouseEvent, ReactNode } from 'react';
+import type { KeyboardEvent, MouseEvent, ReactNode } from 'react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { useT } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
@@ -67,6 +67,20 @@ export function ProductGallery({
                         ? () => setOpen(true)
                         : undefined
                 }
+                // Keyboard users open the zoomed image (hover zoom needs a mouse).
+                {...(zoom && image
+                    ? {
+                          role: 'button',
+                          tabIndex: 0,
+                          'aria-label': t('Zoom image'),
+                          onKeyDown: (event: KeyboardEvent) => {
+                              if (event.key === 'Enter' || event.key === ' ') {
+                                  event.preventDefault();
+                                  setOpen(true);
+                              }
+                          },
+                      }
+                    : {})}
             >
                 {overlay}
                 {image ? (

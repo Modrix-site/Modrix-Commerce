@@ -45,7 +45,8 @@ final class ThemeCustomizations
      */
     public function effectiveDesign(ThemeManifest $manifest): array
     {
-        $design = $manifest->defaults();
+        // Checkout rules come from the merchant only, never from a theme package's defaults.
+        $design = array_filter($manifest->defaults(), fn (string $key) => ! str_starts_with($key, 'checkout.'), ARRAY_FILTER_USE_KEY);
         $fields = ThemeSchema::designFields();
         $ignored = [];
 

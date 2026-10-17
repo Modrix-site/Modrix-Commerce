@@ -90,6 +90,7 @@ export function DescriptionPanels({
                         id={`${baseId}-panel-${i}`}
                         aria-labelledby={`${baseId}-tab-${i}`}
                         hidden={i !== active}
+                        tabIndex={0}
                         className="text-muted-foreground"
                     >
                         {section.content}

@@ -25,13 +25,18 @@ final class CartCrossSells
             return [];
         }
 
-        $related = array_values(array_unique(array_map('intval', DB::table('product_relations')
+        $rows = DB::table('product_relations')
             ->whereIn('product_id', $inCart)
             ->where('type', ProductRelations::RELATED)
             ->whereNotIn('related_product_id', $inCart)
-            ->orderBy('position')
-            ->pluck('related_product_id')
-            ->all())));
+            ->get(['product_id', 'related_product_id', 'position']);
+        // In the cart's order, then each product's own order.
+        $order = array_flip($inCart);
+        $sorted = $rows->sortBy([
+            fn ($a, $b) => $order[(int) $a->product_id] <=> $order[(int) $b->product_id],
+            fn ($a, $b) => (int) $a->position <=> (int) $b->position,
+        ]);
+        $related = array_values(array_unique(array_map('intval', $sorted->pluck('related_product_id')->all())));
 
         return $this->catalog->cardsFor($related, $cart->currency, $limit);
     }

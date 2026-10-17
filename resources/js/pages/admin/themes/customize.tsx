@@ -104,6 +104,15 @@ function optionLabel(field: ThemeField, option: string): string {
     return option.charAt(0).toUpperCase() + option.slice(1).replace('_', ' ');
 }
 
+/** Tabs whose page settings are store-wide (PageSettingFields::PAGES). */
+const PAGE_SETTING_TABS: string[] = [
+    'header',
+    'catalog',
+    'product',
+    'cart',
+    'checkout',
+];
+
 export default function ThemeCustomize({
     theme,
     design,
@@ -175,6 +184,12 @@ export default function ThemeCustomize({
                         />
                     </div>
                     <div hidden={groupsForTab(design.fields, tab).length === 0}>
+                        {PAGE_SETTING_TABS.includes(tab) && (
+                            <p className="mb-3 text-sm text-muted-foreground">
+                                Page settings apply to your whole store,
+                                whichever theme is active.
+                            </p>
+                        )}
                         <DesignCard
                             themeId={theme.id}
                             design={design}

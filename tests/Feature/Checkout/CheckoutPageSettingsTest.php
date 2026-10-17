@@ -5,6 +5,8 @@ namespace Tests\Feature\Checkout;
 use App\Core\Settings\SettingsRepository;
 use App\Core\Themes\PageSettingFields;
 use App\Core\Themes\ResolvedTheme;
+use App\Core\Themes\ThemeManager;
+use App\Core\Themes\ThemeRepository;
 use App\Core\Themes\ThemeResolver;
 use App\Domains\Orders\Models\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -103,5 +105,39 @@ class CheckoutPageSettingsTest extends TestCase
         $this->get(route('checkout.show'))->assertInertia(fn (Assert $page) => $page
             ->where('pageCheckout.button_label', 'Pay now')
             ->where('termsUrl', null));
+    }
+
+    public function test_terms_accepts_the_checkbox_value_the_page_sends()
+    {
+        $this->pageSettings(['checkout.terms' => true]);
+
+        $this->post(route('checkout.store'), $this->checkoutPayload(['terms' => true]))->assertSessionHasNoErrors();
+        $this->assertSame(1, Order::query()->count());
+    }
+
+    public function test_hidden_billing_fields_are_not_stored()
+    {
+        $this->pageSettings(['checkout.company' => false, 'checkout.address_line2' => false]);
+
+        $this->post(route('checkout.store'), $this->checkoutPayload([
+            'billing_same' => false,
+            'billing' => ['first_name' => 'Bea', 'last_name' => 'Cruz', 'company' => 'Acme', 'line1' => '2 Side St', 'line2' => 'Unit 9', 'city' => 'Springfield', 'region' => 'IL', 'postal_code' => '62701', 'country_code' => 'US'],
+        ]))->assertSessionHasNoErrors();
+
+        $billing = Order::query()->with('addresses')->firstOrFail()->addresses->firstWhere('type', 'billing');
+        $this->assertEmpty($billing->company);
+        $this->assertEmpty($billing->line2);
+    }
+
+    public function test_theme_defaults_cannot_change_checkout_rules()
+    {
+        // A theme package that ships checkout page settings as design defaults.
+        $this->setUpThemes();
+        $this->makeTheme('acme/strict', ['design' => ['color.primary' => '#123456', 'checkout.terms' => true, 'checkout.phone' => 'required']]);
+        app(ThemeRepository::class)->sync();
+        app(ThemeManager::class)->activate('acme/strict');
+
+        $this->post(route('checkout.store'), $this->checkoutPayload(['phone' => '']))->assertSessionHasNoErrors();
+        $this->assertSame(1, Order::query()->count());
     }
 }

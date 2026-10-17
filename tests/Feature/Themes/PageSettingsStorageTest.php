@@ -66,4 +66,12 @@ class PageSettingsStorageTest extends TestCase
 
         $this->get(route('home'))->assertInertia(fn (Assert $page) => $page->where('storefront.theme.pages.catalog.per_page', 16));
     }
+
+    public function test_page_settings_do_not_mark_a_theme_customized()
+    {
+        app(ThemeManager::class)->customizeDesign('acme/sunny', ['catalog.per_page' => 12]);
+
+        $this->actingAs($this->owner())->get(route('admin.themes.index'))->assertInertia(fn (Assert $page) => $page
+            ->where('themes', fn ($themes) => collect($themes)->every(fn ($theme) => $theme['customized'] === false)));
+    }
 }

@@ -120,7 +120,10 @@ export default function ProductPage({
                   },
               ]
             : []),
-        ...(product.brand || product.options.length > 0
+        // Shown open, the options are already beside the price; Details only
+        // adds to the tabs and accordion.
+        ...(pageSettings.description !== 'open' &&
+        (product.brand || product.options.length > 0)
             ? [
                   {
                       id: 'details',

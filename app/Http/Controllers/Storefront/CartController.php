@@ -40,7 +40,7 @@ class CartController extends Controller
             'cart' => $priced?->toArray(),
             'placeSlots' => $priced === null ? [] : app(StorefrontSlots::class)->renderMany(['cart.after_lines'], ['cart' => $priced]),
             // Cart page settings (customizer): free-shipping progress and cross-sells.
-            'freeShipping' => $priced !== null && $settings['free_shipping_bar'] ? FreeShippingProgress::for($priced) : null,
+            'freeShipping' => $priced !== null && $settings['free_shipping_bar'] ? FreeShippingProgress::for($priced, FreeShippingProgress::countryFor($this->user($request))) : null,
             'crossSells' => $priced !== null && $settings['cross_sells'] ? app(CartCrossSells::class)->for($priced) : [],
         ]);
     }

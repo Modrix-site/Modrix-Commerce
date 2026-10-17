@@ -246,7 +246,7 @@ class ThemeController extends Controller
             'screenshot' => $manifest?->screenshot !== null ? route('theme.asset', ['vendor' => $manifest->vendor(), 'theme' => $manifest->package(), 'path' => $manifest->screenshot, 'v' => $manifest->version]) : null,
             'capabilities' => array_map(fn (string $c) => ThemeSchema::CAPABILITIES[$c] ?? $c, $manifest->capabilities ?? []),
             'has_demo' => $manifest?->demoContent !== null,
-            'customized' => $manifest !== null && ($this->customizations->designOverrides($manifest) !== [] || $this->customizations->hasSectionOverrides($manifest, 'home')),
+            'customized' => $manifest !== null && (array_filter($this->customizations->designOverrides($manifest), fn (string $key) => ! PageSettingFields::isPageKey($key), ARRAY_FILTER_USE_KEY) !== [] || $this->customizations->hasSectionOverrides($manifest, 'home')),
         ];
     }
 
