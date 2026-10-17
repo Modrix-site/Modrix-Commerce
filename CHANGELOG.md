@@ -4,6 +4,17 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added (page settings)
+
+- **Customizer page tabs with their own settings**, followed by every theme and kept when the theme changes:
+    - **Header:** logo height, header colours, search as a bar or an icon, menu alignment, cart icon and count, account link.
+    - **Catalog:** columns on desktop and phones, products per page, default sort, filters, image shape, second image on hover, quick add, badges, brand on cards.
+    - **Product:** gallery thumbnails at the side or below, image zoom, SKU, stock note, description as open, tabs or accordion, related products (and how many), upsells, quantity selector.
+    - **Cart:** free-shipping progress bar, cross-sells, coupon field, trust badges, continue-shopping link.
+    - **Checkout (new tab):** summary left or right and kept in view, company, address line 2, phone (hidden, optional or required), order note, required terms checkbox, trust badges, heading and button text, product images, coupon field.
+- Required and hidden checkout fields are enforced on the server.
+- ADR-051.
+
 ### Added (notifications)
 
 - **Admin bell:** a bell in the admin header with the unread count and the latest 10 notifications; opening one marks it read and goes to the order, product or customer.

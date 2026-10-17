@@ -605,3 +605,18 @@ Each entry records a decision, its context, and its consequences. Entries are ap
     - **Delay:** staff see a new notification up to 30 seconds late; a push channel can replace the poll later without changing the data.
     - **Clean-up:** `notifications:prune` (daily) deletes read notifications after 90 days and all after 365.
     - **Customer settings:** customers cannot turn notifications off in this version; order emails are unchanged.
+
+## ADR-051 — Page settings (Header, Catalog, Product, Cart, Checkout)
+
+- **Date:** 2026-10-17
+- **Status:** Accepted
+- **Decision:**
+    - **Fields:** 44 core design fields in `PageSettingFields`, each with an explicit customizer tab (Header, Catalog, Product, Cart and a new Checkout tab).
+    - **Storage:** stored for the whole store (`theme.pages.design`), not per theme like colours and fonts, so they survive a theme switch and a theme reset.
+    - **Defaults:** an unset value means "as before": defaults match how the storefront already behaved (SKU shown, stock note when low, Buy button as the theme sets it), so an untouched store looks the same.
+    - **Server:** the storefront receives them resolved (`theme.pages`). The server applies the ones that matter for correctness: catalog page size and default sort, checkout required phone and terms, hidden checkout fields never stored, free-shipping progress and cross-sells computed for the cart.
+    - **Themes:** visual toggles are data attributes on the storefront root with shared CSS (`page-settings.css`), so any theme maps them with its own classes. Shared React pieces (gallery, description panels, stock note, free-shipping bar, cross-sells, trust badges, terms checkbox, checkout coupon) are reused by themes with their own pages.
+    - **Checkout coupon:** the checkout coupon field uses the cart's coupon endpoints; checkout has no coupon input of its own.
+- **Consequences:**
+    - **New themes:** a theme with its own product gallery marks its image with `.store-zoom`, card images with `.store-card-image` and grids with `.store-product-grid` to follow these settings; gallery thumbnail position applies to the shared product page.
+    - **Theme overrides:** when both a theme setting and a page setting control the same thing (cart coupon field, catalog filters), both must allow it.
