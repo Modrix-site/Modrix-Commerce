@@ -9,7 +9,7 @@ import type { PageSettings } from '@/types/page-settings';
 export function pageSettingAttributes(
     pages: PageSettings,
 ): Record<string, string | CSSProperties | undefined> {
-    const { header, catalog } = pages;
+    const { header, catalog, product } = pages;
     const style: Record<string, string> = {};
 
     if (header.logo_height !== null) {
@@ -35,6 +35,8 @@ export function pageSettingAttributes(
         'data-catalog-columns-mobile': String(catalog.columns_mobile),
         'data-image-ratio': catalog.image_ratio ?? undefined,
         'data-hover-image': catalog.hover_image ? '' : undefined,
+        // Themes with their own product gallery mark the image with .store-zoom.
+        'data-product-zoom': product.zoom ? '' : undefined,
         style:
             Object.keys(style).length > 0
                 ? (style as CSSProperties)

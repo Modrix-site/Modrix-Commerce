@@ -5,16 +5,19 @@ import { useT } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { search } from '@/routes/storefront';
 
-/** The cart icon the Header tab picks (bag by default). */
+/** The cart icon the Header tab picks; "Theme default" keeps the theme's own. */
 export function CartIcon({
     className,
     size,
+    fallback = 'bag',
 }: {
     className?: string;
     size?: number;
+    fallback?: 'bag' | 'cart';
 }) {
     const { header } = useStoreSettings();
-    const Icon = header.cart_icon === 'cart' ? ShoppingCart : ShoppingBag;
+    const Icon =
+        (header.cart_icon ?? fallback) === 'cart' ? ShoppingCart : ShoppingBag;
 
     return <Icon className={className} size={size} aria-hidden />;
 }
