@@ -4,6 +4,17 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added (notifications)
+
+- **Admin bell:** a bell in the admin header with the unread count and the latest 10 notifications; opening one marks it read and goes to the order, product or customer.
+    - New orders, payments received, failed payments, cancellations, refunds, low stock and new customers, for staff whose role can see them (owners get all).
+    - **Live alerts:** while the admin is open, new notifications pop up every 30 seconds (at most 3, then "+N more").
+    - **Notifications page:** all or unread, mark read, mark all read, delete.
+    - **Settings:** each staff member chooses, per kind, "In the bell" and "By email".
+- **Customer bell:** signed-in customers see their order updates (confirmed, shipped, out for delivery, delivered, cancelled, refunded, payment failed, downloads ready) in the storefront header and under Account → Notifications, in English, Spanish, French and German.
+- Old notifications are cleaned up daily (read after 90 days, all after a year).
+- ADR-050.
+
 ### Added (storefront and theme customizer)
 
 - **Theme customizer tabs:** General, Header, Homepage, Catalog, Product, Cart and Footer. Every theme's settings are sorted into them, and switching tabs keeps unsaved edits.
