@@ -18,7 +18,11 @@ final class PageSettingFields
 
     public const PAGES = ['header', 'catalog', 'product', 'cart', 'checkout'];
 
-    /** Defaults when the merchant has not set a value (null: the theme decides). */
+    /**
+     * Defaults when the merchant has not set a value (null: the theme decides).
+     * They match how the storefront already behaved, so an untouched store
+     * looks the same.
+     */
     public const DEFAULTS = [
         'header.logo_height' => null,
         'header.background' => null,
@@ -35,13 +39,13 @@ final class PageSettingFields
         'catalog.filters' => true,
         'catalog.image_ratio' => null,
         'catalog.hover_image' => false,
-        'catalog.quick_add' => false,
+        'catalog.quick_add' => null,
         'catalog.badges' => true,
         'catalog.show_brand' => false,
         'product.thumbnails' => null,
         'product.zoom' => false,
-        'product.show_sku' => false,
-        'product.stock_note' => 'off',
+        'product.show_sku' => true,
+        'product.stock_note' => 'low',
         'product.description' => 'open',
         'product.related' => true,
         'product.related_count' => 4,
@@ -51,7 +55,7 @@ final class PageSettingFields
         'cart.cross_sells' => false,
         'cart.coupon' => true,
         'cart.trust_badges' => false,
-        'cart.continue_link' => true,
+        'cart.continue_link' => false,
         'checkout.summary_side' => 'right',
         'checkout.sticky_summary' => true,
         'checkout.company' => true,

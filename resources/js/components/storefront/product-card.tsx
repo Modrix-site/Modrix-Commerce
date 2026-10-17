@@ -1,6 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { ImageOff } from 'lucide-react';
 import { SaleTag } from '@/components/storefront/sale-notice';
+import { useStoreSettings } from '@/hooks/use-store-settings';
 import { useStoreTheme } from '@/hooks/use-store-theme';
 import { useT } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
@@ -74,6 +75,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
 
 function Price({ product }: { product: ProductCardData }) {
     const t = useT();
+    const { badges } = useStoreSettings().catalog;
 
     if (!product.price) {
         return null;
@@ -94,7 +96,9 @@ function Price({ product }: { product: ProductCardData }) {
                     {product.compare_at_price.formatted}
                 </s>
             )}
-            <SaleTag sale={product.sale} className="ml-2 align-middle" />
+            {badges && (
+                <SaleTag sale={product.sale} className="ml-2 align-middle" />
+            )}
         </span>
     );
 }
@@ -105,7 +109,7 @@ export function ProductGrid({ products }: { products: ProductCardData[] }) {
     return (
         <ul
             className={cn(
-                'grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3',
+                'store-product-grid grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3',
                 gridColumns === 4 && 'lg:grid-cols-4',
             )}
         >

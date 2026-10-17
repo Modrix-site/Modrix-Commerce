@@ -43,6 +43,10 @@ class PageSettingFieldsTest extends TestCase
         $this->assertNull($pages['header']['search']);
         $this->assertSame('Place order', $pages['checkout']['button_label']);
         $this->assertSame(4, $pages['product']['related_count']);
+        // Untouched stores keep today's product page and card buttons.
+        $this->assertTrue($pages['product']['show_sku']);
+        $this->assertSame('low', $pages['product']['stock_note']);
+        $this->assertNull($pages['catalog']['quick_add']);
     }
 
     public function test_out_of_range_is_rejected()

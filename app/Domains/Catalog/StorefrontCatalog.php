@@ -149,6 +149,8 @@ final class StorefrontCatalog
             'slug' => $product->slug,
             'short_description' => $product->localized('short_description'),
             'image' => $image instanceof ProductImage ? ['url' => $image->url(), 'alt' => $image->alt] : null,
+            'hover_image' => ($second = $product->images->get(1)) instanceof ProductImage ? ['url' => $second->url(), 'alt' => $second->alt] : null,
+            'brand' => $product->relationLoaded('brand') && $product->brand !== null ? ['name' => $product->brand->name, 'slug' => $product->brand->slug] : null,
             'price' => $from,
             'compare_at_price' => $variants->count() === 1 ? $compareAt : null,
             'sale' => $this->saleBadge($product, $variants, $currency),
@@ -238,7 +240,9 @@ final class StorefrontCatalog
                 'variants' => fn ($q) => $q->where('is_active', true),
                 'variants.prices',
                 'variants.stocks',
-                'images' => fn ($q) => $q->limit(1),
+                // Two: the second shows on hover when the merchant turns it on.
+                'images' => fn ($q) => $q->limit(2),
+                'brand:id,name,slug',
                 'translations' => fn ($q) => $q->where('locale', app()->getLocale()),
             ]);
     }

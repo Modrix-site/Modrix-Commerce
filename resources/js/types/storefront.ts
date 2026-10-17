@@ -22,6 +22,8 @@ export type StorefrontTheme = {
     version: string;
     source: 'active' | 'preview' | 'default' | 'builtin';
     css: string;
+    /** Theme settings (the theme's own customizer fields). */
+    settings?: Record<string, string | number | boolean | null>;
     layout: {
         header: 'classic' | 'centered' | 'minimal';
         footer: 'simple' | 'columns';
@@ -49,6 +51,9 @@ export type ProductCard = {
     in_stock: boolean;
     /** A module sale (e.g. a flash sale) on this product. */
     sale?: SaleInfo | null;
+    /** The second image, shown on hover when the Catalog tab turns it on. */
+    hover_image?: { url: string; alt: string | null } | null;
+    brand?: { name: string; slug: string } | null;
 };
 
 /** A sale on a product (e.g. a flash sale), for the tag and notice. */

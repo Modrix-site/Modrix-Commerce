@@ -1,5 +1,13 @@
 import { Form, Head, Link, router, usePage } from '@inertiajs/react';
-import { Eye, Globe, Search, ShoppingBag, User } from 'lucide-react';
+import { Eye, Globe, Search, User } from 'lucide-react';
+import { pageSettingAttributes } from '@/components/storefront/page-settings/attributes';
+import {
+    CartIcon,
+    SearchIconLink,
+    useShowAccountLink,
+    useShowCartCount,
+} from '@/components/storefront/page-settings/header-parts';
+import { useStoreSettings } from '@/hooks/use-store-settings';
 import type { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,10 +39,13 @@ export default function StorefrontLayout({
     useFlashToast();
     // Customizer styles can differ per page (Homepage, Catalog, Product, Cart).
     const storePage = storePageFor(usePage().component);
+    // Header and Catalog page settings, for every theme's CSS.
+    const pageSettings = useStoreSettings();
 
     return (
         <div
             data-page={storePage}
+            {...pageSettingAttributes(pageSettings)}
             className="storefront flex min-h-screen flex-col bg-background text-foreground"
         >
             {theme && (
@@ -169,12 +180,20 @@ function AccountLinks() {
     const { storefront, auth } = usePage().props;
     const cartCount = storefront?.cartCount ?? 0;
     const t = useT();
+    const showAccount = useShowAccountLink();
+    const showCount = useShowCartCount();
 
     return (
         <nav className="flex items-center gap-1" aria-label="Account">
             <LanguageSwitcher />
             <CustomerNotificationBell />
-            <Button variant="ghost" size="sm" asChild>
+            <SearchIconLink />
+            <Button
+                variant="ghost"
+                size="sm"
+                asChild
+                className={showAccount ? undefined : "hidden"}
+            >
                 <Link href={auth.user ? dashboard() : login()}>
                     <User />
                     <span className="hidden sm:inline">
@@ -191,8 +210,10 @@ function AccountLinks() {
                     href={cartShow()}
                     aria-label={t('Cart, :count items', { count: cartCount })}
                 >
-                    <ShoppingBag />
-                    <span className="tabular-nums">{cartCount}</span>
+                    <CartIcon />
+                    {showCount && (
+                        <span className="tabular-nums">{cartCount}</span>
+                    )}
                 </Link>
             </Button>
         </nav>

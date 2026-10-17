@@ -1,5 +1,4 @@
 import { Form, Head, Link } from '@inertiajs/react';
-import { ImageOff } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import CartController from '@/actions/App/Http/Controllers/Storefront/CartController';
 import { ExtensionSlot } from '@/components/extensions/extension-slot';
@@ -8,6 +7,11 @@ import InputError from '@/components/input-error';
 import { BuyNowButton } from '@/components/storefront/buy-now-button';
 import { StickyAddToCart } from '@/components/storefront/sticky-add-to-cart';
 import { RelatedProducts } from '@/components/storefront/related-products';
+import { DescriptionPanels } from '@/components/storefront/page-settings/description-panels';
+import type { DescriptionSection } from '@/components/storefront/page-settings/description-panels';
+import { ProductGallery } from '@/components/storefront/page-settings/product-gallery';
+import { StockNote } from '@/components/storefront/page-settings/stock-note';
+import { useStoreSettings } from '@/hooks/use-store-settings';
 import { SaleNotice } from '@/components/storefront/sale-notice';
 import { useStoreTheme } from '@/hooks/use-store-theme';
 import { useT } from '@/lib/i18n';
@@ -99,7 +103,55 @@ export default function ProductPage({
         );
     }, [selected, product]);
 
-    const image = product.images[imageIndex];
+    // Product tab settings (customizer).
+    const pageSettings = useStoreSettings().product;
+    const descriptionSections: DescriptionSection[] = [
+        ...(product.description
+            ? [
+                  {
+                      id: 'description',
+                      title: t('Description'),
+                      content: (
+                          <p className="whitespace-pre-line">
+                              {product.description}
+                          </p>
+                      ),
+                  },
+              ]
+            : []),
+        ...(product.brand || product.options.length > 0
+            ? [
+                  {
+                      id: 'details',
+                      title: t('Details'),
+                      content: (
+                          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
+                              {product.brand && (
+                                  <>
+                                      <dt className="font-medium text-foreground">
+                                          {t('Brand')}
+                                      </dt>
+                                      <dd>{product.brand.name}</dd>
+                                  </>
+                              )}
+                              {product.options.map((option) => (
+                                  <div key={option.id} className="contents">
+                                      <dt className="font-medium text-foreground">
+                                          {option.name}
+                                      </dt>
+                                      <dd>
+                                          {option.values
+                                              .map((v) => v.value)
+                                              .join(', ')}
+                                      </dd>
+                                  </div>
+                              ))}
+                          </dl>
+                      ),
+                  },
+              ]
+            : []),
+    ];
 
     return (
         <>
@@ -146,50 +198,14 @@ export default function ProductPage({
                         : 'mx-auto max-w-3xl',
                 )}
             >
-                <div className="grid content-start gap-3">
-                    <div className="aspect-square overflow-hidden rounded-lg border bg-muted">
-                        {image ? (
-                            <img
-                                src={image.url}
-                                alt={image.alt ?? product.name}
-                                className="size-full object-cover"
-                            />
-                        ) : (
-                            <div className="flex size-full items-center justify-center text-muted-foreground">
-                                <ImageOff className="size-8" aria-hidden />
-                                <span className="sr-only">
-                                    {t('No image available')}
-                                </span>
-                            </div>
-                        )}
-                    </div>
-                    {product.images.length > 1 && (
-                        <ul
-                            className="flex gap-2 overflow-x-auto"
-                            aria-label={t('Product images')}
-                        >
-                            {product.images.map((img, i) => (
-                                <li key={img.id}>
-                                    <button
-                                        type="button"
-                                        onClick={() => setImageIndex(i)}
-                                        aria-label={t('Show image :number', {
-                                            number: i + 1,
-                                        })}
-                                        aria-current={i === imageIndex}
-                                        className={`size-16 overflow-hidden rounded border ${i === imageIndex ? 'ring-2 ring-ring' : ''}`}
-                                    >
-                                        <img
-                                            src={img.url}
-                                            alt=""
-                                            className="size-full object-cover"
-                                        />
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </div>
+                <ProductGallery
+                    images={product.images}
+                    index={imageIndex}
+                    onIndex={setImageIndex}
+                    alt={product.name}
+                    thumbnails={pageSettings.thumbnails}
+                    zoom={pageSettings.zoom}
+                />
 
                 <div className="grid content-start gap-5">
                     <div className="grid gap-2">
@@ -292,7 +308,12 @@ export default function ProductPage({
                                         value={variant.id}
                                     />
                                     <div className="flex items-end gap-3">
-                                        <div className="grid w-24 gap-2">
+                                        <div
+                                            className={cn(
+                                                'grid w-24 gap-2',
+                                                !pageSettings.quantity && 'hidden',
+                                            )}
+                                        >
                                             <Label htmlFor="quantity">
                                                 {t('Quantity')}
                                             </Label>
@@ -337,18 +358,19 @@ export default function ProductPage({
                                             {variant.message}
                                         </p>
                                     )}
-                                    {variant.purchasable &&
-                                        variant.available !== null &&
-                                        variant.available <= 5 && (
-                                            <p className="text-sm text-muted-foreground">
-                                                {t('Only :count left.', {
-                                                    count: variant.available,
-                                                })}
-                                            </p>
-                                        )}
-                                    <p className="text-xs text-muted-foreground">
-                                        {t('SKU :sku', { sku: variant.sku })}
-                                    </p>
+                                    <StockNote
+                                        mode={pageSettings.stock_note}
+                                        quantity={
+                                            variant.purchasable
+                                                ? variant.available
+                                                : null
+                                        }
+                                    />
+                                    {pageSettings.show_sku && (
+                                        <p className="text-xs text-muted-foreground">
+                                            {t('SKU :sku', { sku: variant.sku })}
+                                        </p>
+                                    )}
                                 </>
                             )}
                         </Form>
@@ -358,23 +380,21 @@ export default function ProductPage({
                         </p>
                     )}
 
-                    {product.description && (
-                        <section className="grid gap-2 border-t pt-5">
-                            <h2 className="font-semibold">
-                                {t('Description')}
-                            </h2>
-                            <p className="whitespace-pre-line text-muted-foreground">
-                                {product.description}
-                            </p>
-                        </section>
-                    )}
+                    <DescriptionPanels
+                        mode={pageSettings.description}
+                        sections={descriptionSections}
+                    />
                 </div>
             </div>
             <ExtensionSlot items={slots} className="mt-12 grid gap-8" />
             <RelatedProducts
                 productId={product.id}
-                upsells={upsells}
-                related={related}
+                upsells={pageSettings.upsells ? upsells : []}
+                related={
+                    pageSettings.related
+                        ? related.slice(0, pageSettings.related_count)
+                        : []
+                }
             />
         </>
     );

@@ -21,7 +21,7 @@ export type PageSettings = {
         filters: boolean;
         image_ratio: 'square' | 'portrait' | 'landscape' | null;
         hover_image: boolean;
-        quick_add: boolean;
+        quick_add: boolean | null;
         badges: boolean;
         show_brand: boolean;
     };

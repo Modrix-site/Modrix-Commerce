@@ -4,12 +4,17 @@ import {
     Globe,
     Menu,
     Search,
-    ShoppingBag,
     User,
 } from 'lucide-react';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { CustomerNotificationBell } from '@/components/storefront/customer-notification-bell';
+import {
+    CartIcon,
+    SearchIconLink,
+    useShowAccountLink,
+    useShowCartCount,
+} from '@/components/storefront/page-settings/header-parts';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -226,6 +231,8 @@ function Icons({ withSearch = true }: { withSearch?: boolean }) {
     const { storefront, auth } = useShared();
     const t = useT();
     const count = storefront?.cartCount ?? 0;
+    const showAccount = useShowAccountLink();
+    const showCount = useShowCartCount();
 
     return (
         <div className="flex items-center justify-end gap-0.5">
@@ -237,7 +244,12 @@ function Icons({ withSearch = true }: { withSearch?: boolean }) {
                 </Button>
             )}
             <CustomerNotificationBell />
-            <Button variant="ghost" size="icon" asChild>
+            <Button
+                variant="ghost"
+                size="icon"
+                asChild
+                className={showAccount ? undefined : "hidden"}
+            >
                 <Link
                     href={auth.user ? dashboard() : login()}
                     aria-label={auth.user ? t('Account') : t('Log in')}
@@ -250,8 +262,8 @@ function Icons({ withSearch = true }: { withSearch?: boolean }) {
                     href={cartShow()}
                     aria-label={t('Cart, :count items', { count })}
                 >
-                    <ShoppingBag />
-                    {count > 0 && (
+                    <CartIcon />
+                    {showCount && count > 0 && (
                         <span className="absolute -top-0.5 -right-0.5 flex min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] leading-4 font-semibold text-primary-foreground tabular-nums">
                             {count > 99 ? '99+' : count}
                         </span>
