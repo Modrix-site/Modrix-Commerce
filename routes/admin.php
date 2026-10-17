@@ -57,7 +57,8 @@ Route::get('/', DashboardController::class)->name('dashboard');
 
 // Every staff member's own notifications (no extra permission).
 Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
-Route::get('notifications/feed', [NotificationController::class, 'feed'])->middleware('throttle:20,1')->name('notifications.feed');
+// Polled every 30 s per open admin tab.
+Route::get('notifications/feed', [NotificationController::class, 'feed'])->middleware('throttle:60,1')->name('notifications.feed');
 Route::get('notifications/settings', [NotificationController::class, 'settings'])->name('notifications.settings');
 Route::put('notifications/settings', [NotificationController::class, 'updateSettings'])->name('notifications.settings.update');
 Route::post('notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');

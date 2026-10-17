@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Core\Admin\AdminNavigation;
 use App\Core\Localization\InterfaceTranslations;
+use App\Domains\Notifications\NotificationVisibility;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -70,7 +71,7 @@ class HandleInertiaRequests extends Middleware
                     : (object) app(InterfaceTranslations::class)->messages(app()->getLocale()),
             ],
             // Unread count for the notification bell (staff and customers).
-            'notificationsUnread' => fn () => $user instanceof User ? $user->unreadNotifications()->count() : 0,
+            'notificationsUnread' => fn () => $user instanceof User ? app(NotificationVisibility::class)->unreadCount($user) : 0,
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }

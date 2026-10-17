@@ -18,7 +18,7 @@ final class NotificationKinds
 
     public const CUSTOMER = 'customer';
 
-    /** @var array<string, array{audience: string, permission: string|null, icon: string, label: string, title: string, body: string}> */
+    /** @var array<string, array{audience: string, permission: string|null, icon: string, label: string, title: string, body: string, help?: string}> */
     private array $kinds = [
         // Staff
         'order.placed' => ['audience' => self::STAFF, 'permission' => 'orders.view', 'icon' => 'shopping-bag', 'label' => 'New orders',
@@ -32,6 +32,7 @@ final class NotificationKinds
         'order.refunded' => ['audience' => self::STAFF, 'permission' => 'orders.view', 'icon' => 'undo-2', 'label' => 'Refunds',
             'title' => 'Refund on :number', 'body' => 'Order :number was refunded.'],
         'stock.low' => ['audience' => self::STAFF, 'permission' => 'inventory.view', 'icon' => 'package', 'label' => 'Low stock',
+            'help' => 'The store also sends its own low-stock email to the store address; turn email off here to avoid getting both.',
             'title' => 'Low stock: :product', 'body' => ':sku has :on_hand left.'],
         'customer.new' => ['audience' => self::STAFF, 'permission' => 'customers.view', 'icon' => 'user-plus', 'label' => 'New customers',
             'title' => 'New customer :name', 'body' => ':email created an account.'],
@@ -56,7 +57,7 @@ final class NotificationKinds
     ];
 
     /**
-     * @return array<string, array{audience: string, permission: string|null, icon: string, label: string, title: string, body: string}>
+     * @return array<string, array{audience: string, permission: string|null, icon: string, label: string, title: string, body: string, help?: string}>
      */
     public function all(): array
     {
@@ -64,7 +65,7 @@ final class NotificationKinds
     }
 
     /**
-     * @return array{audience: string, permission: string|null, icon: string, label: string, title: string, body: string}|null
+     * @return array{audience: string, permission: string|null, icon: string, label: string, title: string, body: string, help?: string}|null
      */
     public function get(string $kind): ?array
     {
@@ -72,7 +73,7 @@ final class NotificationKinds
     }
 
     /**
-     * @param  array{audience: string, permission?: string|null, icon?: string, label: string, title: string, body: string}  $definition
+     * @param  array{audience: string, permission?: string|null, icon?: string, label: string, title: string, body: string, help?: string}  $definition
      */
     public function register(string $kind, array $definition): void
     {
@@ -92,7 +93,7 @@ final class NotificationKinds
 
     /**
      * @param  array<string, scalar|null>  $params
-     * @return array{title: string, body: string}
+     * @return array{title: string, body: string, help?: string}
      */
     public function render(string $kind, array $params): array
     {

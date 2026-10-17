@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Notifications;
 
+use App\Core\Authorization\Models\Role;
 use App\Domains\Notifications\StoreNotifier;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -115,5 +116,51 @@ class AdminNotificationsTest extends TestCase
     public function test_customers_cannot_open_admin_notifications()
     {
         $this->actingAs(User::factory()->create())->get(route('admin.notifications.index'))->assertForbidden();
+    }
+
+    public function test_feed_cursor_overlaps_a_few_seconds()
+    {
+        $this->freezeTime();
+        $cursor = $this->actingAs($this->staff)->getJson(route('admin.notifications.feed'))->json('cursor');
+
+        // A row stored just before the response must still be found next time.
+        $this->assertSame(now()->subSeconds(5)->toIso8601String(), $cursor);
+    }
+
+    public function test_notifications_of_a_revoked_permission_are_hidden()
+    {
+        app(StoreNotifier::class)->toStaff('order.placed', ['number' => 'EM-1', 'total' => '$1.00', 'customer' => 'Ana'], '/admin/orders/EM-1', 'a');
+        app(StoreNotifier::class)->toStaff('stock.low', ['product' => 'Mug', 'sku' => 'M-1', 'on_hand' => 2], '/admin', 'b');
+        $this->assertSame(2, $this->staff->notifications()->count());
+        $stock = $this->staff->notifications()->where('data->kind', 'stock.low')->firstOrFail();
+
+        // Moved to a role without inventory access.
+        $this->staff->roles()->sync([Role::query()->where('name', 'support-agent')->firstOrFail()->id]);
+        $this->staff = $this->staff->fresh();
+
+        $this->actingAs($this->staff)->get(route('admin.notifications.index'))->assertInertia(fn (Assert $page) => $page
+            ->has('notifications.data', 1)
+            ->where('notifications.data.0.kind', 'order.placed')
+            ->where('notificationsUnread', 1));
+        $this->assertSame(1, $this->getJson(route('admin.notifications.feed'))->json('unread'));
+        $this->post(route('admin.notifications.open', $stock->id))->assertNotFound();
+    }
+
+    public function test_settings_accept_only_real_booleans()
+    {
+        $this->actingAs($this->staff)->put(route('admin.notifications.settings.update'), ['preferences' => [
+            'order.placed' => ['bell' => 'false', 'email' => '1'],
+        ]])->assertSessionHasNoErrors();
+        $this->assertSame(['order.placed' => ['bell' => false, 'email' => true]], $this->staff->fresh()->notification_preferences);
+
+        $this->put(route('admin.notifications.settings.update'), ['preferences' => [
+            'order.placed' => ['bell' => 'banana', 'email' => true],
+        ]])->assertSessionHasErrors();
+    }
+
+    public function test_low_stock_setting_mentions_the_store_email()
+    {
+        $this->actingAs($this->staff)->get(route('admin.notifications.settings'))->assertInertia(fn (Assert $page) => $page
+            ->where('kinds', fn ($kinds) => str_contains((string) collect($kinds)->firstWhere('kind', 'stock.low')['help'], 'low-stock email')));
     }
 }

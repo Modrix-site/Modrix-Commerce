@@ -10,6 +10,7 @@ use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Notifications\Notification as BaseNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Schema;
 use RuntimeException;
 use Tests\TestCase;
 
@@ -182,5 +183,10 @@ class StoreNotifierTest extends TestCase
 
         $this->assertStringNotContainsString('href="https://evil.example', $html);
         $this->assertStringContainsString('Verify payment', $html);
+    }
+
+    public function test_notifications_are_indexed_for_the_daily_clean_up()
+    {
+        $this->assertTrue(Schema::hasIndex('notifications', ['created_at']));
     }
 }

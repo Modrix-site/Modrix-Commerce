@@ -11,7 +11,13 @@ import {
 } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 
-type Kind = { kind: string; label: string; bell: boolean; email: boolean };
+type Kind = {
+    kind: string;
+    label: string;
+    help?: string | null;
+    bell: boolean;
+    email: boolean;
+};
 
 type Channel = 'bell' | 'email';
 
@@ -88,6 +94,11 @@ export default function NotificationSettings({ kinds }: { kinds: Kind[] }) {
                                         <tr key={k.kind} className="border-b">
                                             <td className="py-2.5">
                                                 {k.label}
+                                                {k.help && (
+                                                    <p className="text-xs text-muted-foreground">
+                                                        {k.help}
+                                                    </p>
+                                                )}
                                             </td>
                                             {(['bell', 'email'] as const).map(
                                                 (channel) => (

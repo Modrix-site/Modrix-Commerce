@@ -96,6 +96,8 @@ export function timeAgo(iso: string | null): string {
 }
 
 const POLL_MS = 30_000;
+/** No checks after this long without a click or key press, so an idle admin session can expire. */
+const IDLE_MS = 30 * 60_000;
 const MAX_TOASTS = 3;
 
 /**
@@ -116,6 +118,7 @@ export function NotificationBell({
     viewAllLabel = 'View all',
     markAllLabel = 'Mark all as read',
     emptyLabel = 'No notifications yet.',
+    errorLabel = "Couldn't load notifications. Try again in a moment.",
     translate = (item) => item,
     formatTime = timeAgo,
     className,
@@ -129,6 +132,7 @@ export function NotificationBell({
     viewAllLabel?: string;
     markAllLabel?: string;
     emptyLabel?: string;
+    errorLabel?: string;
     /** Customer bells translate titles in the shopper's language. */
     translate?: (item: NotificationItem) => NotificationItem;
     /** Defaults to "5 min ago" (English); the storefront passes a localized date. */
@@ -140,6 +144,8 @@ export function NotificationBell({
     }>().props;
     const [unread, setUnread] = useState(notificationsUnread ?? 0);
     const [items, setItems] = useState<NotificationItem[] | null>(null);
+    const [loadFailed, setLoadFailed] = useState(false);
+    const lastActivity = useRef(Date.now());
     const cursor = useRef<string | null>(null);
     const seen = useRef<Set<string>>(new Set());
 
@@ -173,7 +179,10 @@ export function NotificationBell({
         let stopped = false;
 
         const tick = async () => {
-            if (document.visibilityState !== 'visible') {
+            if (
+                document.visibilityState !== 'visible' ||
+                Date.now() - lastActivity.current > IDLE_MS
+            ) {
                 return;
             }
 
@@ -198,20 +207,32 @@ export function NotificationBell({
                     });
                 });
 
-                const extra = fresh.length - MAX_TOASTS + (feed.more ? 1 : 0);
+                const extra = fresh.length - MAX_TOASTS;
 
-                if (extra > 0) {
-                    toast(`+${extra} more notifications`, {
-                        action: {
-                            label: viewAllLabel,
-                            onClick: () => router.visit(viewAllUrl),
+                if (feed.more || extra > 0) {
+                    // The feed is capped: more than it returned may be new.
+                    toast(
+                        feed.more
+                            ? `${fresh.length}+ new notifications`
+                            : `+${extra} more notifications`,
+                        {
+                            action: {
+                                label: viewAllLabel,
+                                onClick: () => router.visit(viewAllUrl),
+                            },
                         },
-                    });
+                    );
                 }
             }
 
             cursor.current = feed.cursor;
         };
+
+        const onActivity = () => {
+            lastActivity.current = Date.now();
+        };
+        window.addEventListener('pointerdown', onActivity);
+        window.addEventListener('keydown', onActivity);
 
         void tick();
         const timer = window.setInterval(tick, POLL_MS);
@@ -226,6 +247,8 @@ export function NotificationBell({
             stopped = true;
             window.clearInterval(timer);
             document.removeEventListener('visibilitychange', onVisible);
+            window.removeEventListener('pointerdown', onActivity);
+            window.removeEventListener('keydown', onActivity);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [live, load]);
@@ -233,7 +256,12 @@ export function NotificationBell({
     const onOpenChange = async (isOpen: boolean) => {
         if (isOpen) {
             const feed = await load(null).catch(() => null);
-            setItems(feed ? feed.items.slice(0, 10) : []);
+            // A failed load keeps what was shown and says so.
+            setLoadFailed(feed === null);
+
+            if (feed) {
+                setItems(feed.items.slice(0, 10));
+            }
 
             if (feed) {
                 setUnread(feed.unread);
@@ -292,10 +320,20 @@ export function NotificationBell({
                     )}
                 </div>
                 <ul className="max-h-96 overflow-y-auto">
-                    {items === null ? (
-                        <li className="px-3 py-6 text-center text-sm text-muted-foreground">
-                            …
+                    {loadFailed && (
+                        <li
+                            role="alert"
+                            className="px-3 py-2 text-center text-xs text-muted-foreground"
+                        >
+                            {errorLabel}
                         </li>
+                    )}
+                    {items === null ? (
+                        loadFailed ? null : (
+                            <li className="px-3 py-6 text-center text-sm text-muted-foreground">
+                                …
+                            </li>
+                        )
                     ) : items.length === 0 ? (
                         <li className="px-3 py-6 text-center text-sm text-muted-foreground">
                             {emptyLabel}

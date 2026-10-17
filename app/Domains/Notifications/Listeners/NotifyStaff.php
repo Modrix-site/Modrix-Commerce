@@ -59,8 +59,10 @@ final class NotifyStaff
     public function refunded(OrderRefunded $event): void
     {
         // Several refunds on one order each notify; key by the refund count.
-        $order = Order::query()->find($event->orderId);
-        $this->order($event->orderId, 'order.refunded', 'order.refunded:'.($order?->refunds()->count() ?? 0));
+        $this->safely(function () use ($event) {
+            $order = Order::query()->find($event->orderId);
+            $this->order($event->orderId, 'order.refunded', 'order.refunded:'.($order?->refunds()->count() ?? 0));
+        });
     }
 
     public function statusChanged(OrderStatusChanged $event): void

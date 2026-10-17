@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Domains\Notifications\NotificationKinds;
 use App\Domains\Notifications\NotificationPresenter;
+use App\Domains\Notifications\NotificationVisibility;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -11,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -23,14 +25,21 @@ class NotificationController extends Controller
     /** Most items the live feed returns at once. */
     public const FEED_LIMIT = 20;
 
-    public function __construct(private readonly NotificationPresenter $presenter) {}
+    /** Seconds the next feed call looks back, so a row stored while a response was built is not missed. */
+    public const FEED_OVERLAP = 5;
+
+    public function __construct(
+        private readonly NotificationPresenter $presenter,
+        private readonly NotificationVisibility $visibility,
+    ) {}
 
     public function index(Request $request): Response
     {
         $user = $this->user($request);
         $unreadOnly = $request->query('filter') === 'unread';
 
-        $notifications = ($unreadOnly ? $user->unreadNotifications() : $user->notifications())
+        $visible = $this->visibility->query($user);
+        $notifications = ($unreadOnly ? $visible->whereNull('read_at') : $visible)
             ->paginate(25)->withQueryString()
             ->through(fn (DatabaseNotification $n) => $this->presenter->present($n));
 
@@ -48,7 +57,9 @@ class NotificationController extends Controller
     {
         $user = $this->user($request);
         $after = $request->query('after');
-        $query = $user->notifications();
+        // Taken before the query and moved back a little; the browser skips ids it already showed.
+        $cursor = now()->subSeconds(self::FEED_OVERLAP);
+        $query = $this->visibility->query($user);
 
         if (is_string($after) && $after !== '') {
             try {
@@ -64,8 +75,8 @@ class NotificationController extends Controller
         return response()->json([
             'items' => $items->take(self::FEED_LIMIT)->map(fn (DatabaseNotification $n) => $this->presenter->present($n))->values(),
             'more' => $items->count() > self::FEED_LIMIT,
-            'unread' => $user->unreadNotifications()->count(),
-            'cursor' => now()->toIso8601String(),
+            'unread' => $this->visibility->unreadCount($user),
+            'cursor' => $cursor->toIso8601String(),
         ]);
     }
 
@@ -87,7 +98,7 @@ class NotificationController extends Controller
 
     public function markAllRead(Request $request): RedirectResponse
     {
-        $this->user($request)->unreadNotifications()->update(['read_at' => now()]);
+        $this->visibility->query($this->user($request))->whereNull('read_at')->update(['read_at' => now()]);
 
         return back();
     }
@@ -107,6 +118,7 @@ class NotificationController extends Controller
             'kinds' => collect($this->allowedKinds($user, $kinds))->map(fn (array $definition, string $kind) => [
                 'kind' => $kind,
                 'label' => $definition['label'],
+                'help' => $definition['help'] ?? null,
                 'bell' => $user->wantsNotification($kind, 'bell'),
                 'email' => $user->wantsNotification($kind, 'email'),
             ])->values(),
@@ -116,20 +128,32 @@ class NotificationController extends Controller
     public function updateSettings(Request $request, NotificationKinds $kinds): RedirectResponse
     {
         $user = $this->user($request);
-        $data = $request->validate([
-            'preferences' => ['array'],
-            'preferences.*.bell' => ['boolean'],
-            'preferences.*.email' => ['boolean'],
-        ]);
+        $data = $request->validate(['preferences' => ['array']]);
         $preferences = [];
+        $errors = [];
 
         // Only kinds this person may receive are stored.
         foreach (array_keys($this->allowedKinds($user, $kinds)) as $kind) {
             $choice = $data['preferences'][$kind] ?? null;
 
-            if (is_array($choice)) {
-                $preferences[$kind] = ['bell' => (bool) ($choice['bell'] ?? true), 'email' => (bool) ($choice['email'] ?? false)];
+            if (! is_array($choice)) {
+                continue;
             }
+
+            $bell = filter_var($choice['bell'] ?? true, FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE);
+            $email = filter_var($choice['email'] ?? false, FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE);
+
+            if ($bell === null || $email === null) {
+                $errors['preferences'] = 'Each choice must be on or off.';
+
+                continue;
+            }
+
+            $preferences[$kind] = ['bell' => $bell, 'email' => $email];
+        }
+
+        if ($errors !== []) {
+            throw ValidationException::withMessages($errors);
         }
 
         $user->forceFill(['notification_preferences' => $preferences])->save();
@@ -139,7 +163,7 @@ class NotificationController extends Controller
     }
 
     /**
-     * @return array<string, array{audience: string, permission: string|null, icon: string, label: string, title: string, body: string}>
+     * @return array<string, array{audience: string, permission: string|null, icon: string, label: string, title: string, body: string, help?: string}>
      */
     private function allowedKinds(User $user, NotificationKinds $kinds): array
     {
@@ -149,7 +173,7 @@ class NotificationController extends Controller
 
     private function find(Request $request, string $id): DatabaseNotification
     {
-        $notification = $this->user($request)->notifications()->whereKey($id)->first();
+        $notification = $this->visibility->query($this->user($request))->whereKey($id)->first();
         abort_if($notification === null, 404);
 
         return $notification;
