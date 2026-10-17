@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DocumentSettingsController;
 use App\Http\Controllers\Admin\DownloadGrantController;
 use App\Http\Controllers\Admin\DownloadSettingsController;
+use App\Http\Controllers\Admin\ExtensionBlocksController;
 use App\Http\Controllers\Admin\ExtensionController;
 use App\Http\Controllers\Admin\InterfaceTextController;
 use App\Http\Controllers\Admin\InventoryController;
@@ -261,6 +262,11 @@ Route::middleware('can:themes.manage')->group(function () {
     Route::post('themes/{theme}/update', [ThemeController::class, 'update'])->name('themes.update');
     Route::put('themes/{theme}/design', [ThemeController::class, 'design'])->name('themes.design');
     Route::put('themes/{theme}/sections', [ThemeController::class, 'sections'])->name('themes.sections');
+    // Extension blocks and extension settings shown in the customizer tabs.
+    Route::put('themes/blocks', [ExtensionBlocksController::class, 'update'])->name('themes.blocks.update');
+    Route::put('themes/extension-settings/{module}', [ExtensionBlocksController::class, 'settings'])
+        ->where('module', '[a-z0-9][a-z0-9-]*/[a-z0-9][a-z0-9-]*')
+        ->name('themes.extension-settings.update');
     Route::post('themes/{theme}/reset', [ThemeController::class, 'reset'])->name('themes.reset');
     Route::post('themes/{theme}/demo', [ThemeController::class, 'demo'])->middleware('throttle:5,1')->name('themes.demo');
 });

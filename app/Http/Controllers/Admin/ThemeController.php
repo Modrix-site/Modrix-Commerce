@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Core\Extensions\BlockPlacements;
 use App\Core\Extensions\ManifestValidator;
 use App\Core\Extensions\Models\Extension;
 use App\Core\Extensions\Models\ExtensionEvent;
 use App\Core\Extensions\ModuleState;
+use App\Core\Extensions\StorefrontSlots;
+use App\Core\Extensions\TabSettings;
 use App\Core\Themes\CustomizerTabs;
 use App\Core\Themes\PageSettingFields;
 use App\Core\Themes\ThemeCustomizations;
@@ -51,6 +54,32 @@ class ThemeController extends Controller
         ]);
     }
 
+    /**
+     * Every extension block with its places and the merchant's placement.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function extensionBlocks(): array
+    {
+        $placements = app(BlockPlacements::class);
+
+        return array_map(function (array $block) use ($placements) {
+            $saved = $placements->for($block['id']);
+            $place = $saved !== null && in_array($saved['place'], $block['places'], true) ? $saved['place'] : $block['default'];
+
+            return [
+                'id' => $block['id'],
+                'module' => $block['module'],
+                'label' => $block['label'],
+                'places' => array_map(fn (string $key) => ['key' => $key, 'label' => StorefrontSlots::PLACES[$key]['label'], 'tab' => StorefrontSlots::PLACES[$key]['tab']], $block['places']),
+                'default' => $block['default'],
+                'place' => $place,
+                'order' => $saved['order'] ?? 100,
+                'enabled' => $saved['enabled'] ?? true,
+            ];
+        }, app(StorefrontSlots::class)->blocks());
+    }
+
     public function customize(Extension $theme): Response
     {
         $this->assertTheme($theme);
@@ -86,6 +115,9 @@ class ThemeController extends Controller
                 'max' => ThemeSchema::MAX_SECTIONS,
             ],
             'images' => $this->imageOptions($manifest),
+            // Extension blocks (store-wide placement) and extension settings per tab.
+            'blocks' => fn () => $this->extensionBlocks(),
+            'extensionSettings' => fn () => collect(array_keys(CustomizerTabs::TABS))->mapWithKeys(fn (string $tab) => [$tab => app(TabSettings::class)->forTab($tab)])->all(),
         ]);
     }
 

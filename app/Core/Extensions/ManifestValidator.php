@@ -3,6 +3,7 @@
 namespace App\Core\Extensions;
 
 use App\Core\Platform;
+use App\Core\Themes\CustomizerTabs;
 use Composer\Semver\Semver;
 use Composer\Semver\VersionParser;
 use Throwable;
@@ -400,6 +401,10 @@ final class ManifestValidator
 
             if (! is_string($field['label'] ?? null) || $field['label'] === '' || mb_strlen($field['label']) > 120) {
                 $this->errors[] = "{$where}.label is required (max 120).";
+            }
+
+            if (isset($field['tab']) && ! array_key_exists($field['tab'], CustomizerTabs::TABS)) {
+                $this->errors[] = "{$where}.tab must be one of ".implode(', ', array_keys(CustomizerTabs::TABS)).'.';
             }
 
             if (isset($field['help']) && (! is_string($field['help']) || mb_strlen($field['help']) > 300)) {
