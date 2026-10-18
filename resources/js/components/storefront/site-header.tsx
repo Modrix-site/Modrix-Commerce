@@ -12,11 +12,11 @@ import { PlaceSlot } from '@/components/extensions/place-slot';
 import { CustomerNotificationBell } from '@/components/storefront/customer-notification-bell';
 import {
     CartIcon,
-    SearchIconLink,
     useShowAccountLink,
     useShowCartCount,
 } from '@/components/storefront/page-settings/header-parts';
-import { Button } from '@/components/ui/button';
+import { SearchToggle } from '@/components/storefront/search-toggle';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
     Sheet,
@@ -238,11 +238,11 @@ function Icons({ withSearch = true }: { withSearch?: boolean }) {
     return (
         <div className="flex items-center justify-end gap-0.5">
             {withSearch && (
-                <Button variant="ghost" size="icon" asChild>
-                    <Link href={search()} aria-label={t('Search products')}>
-                        <Search />
-                    </Link>
-                </Button>
+                <SearchToggle
+                    className={buttonVariants({ variant: 'ghost', size: 'icon' })}
+                >
+                    <Search />
+                </SearchToggle>
             )}
             <PlaceSlot place="header.actions" className="flex items-center gap-1" />
             <CustomerNotificationBell />

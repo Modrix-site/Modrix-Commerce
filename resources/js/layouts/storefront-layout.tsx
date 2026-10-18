@@ -9,7 +9,8 @@ import {
 } from '@/components/storefront/page-settings/header-parts';
 import { useStoreSettings } from '@/hooks/use-store-settings';
 import type { ReactNode } from 'react';
-import { Button } from '@/components/ui/button';
+import { SearchToggle } from '@/components/storefront/search-toggle';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useFlashToast } from '@/hooks/use-flash-toast';
 import { PlaceSlot } from '@/components/extensions/place-slot';
@@ -311,16 +312,15 @@ function MinimalHeader() {
                         </Link>
                     ))}
                 </nav>
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="ml-auto md:ml-0"
-                    asChild
+                <SearchToggle
+                    className={buttonVariants({
+                        variant: 'ghost',
+                        size: 'icon',
+                        className: 'ml-auto md:ml-0',
+                    })}
                 >
-                    <Link href={search()} aria-label={t('Search products')}>
-                        <Search />
-                    </Link>
-                </Button>
+                    <Search />
+                </SearchToggle>
                 <AccountLinks />
             </div>
         </header>

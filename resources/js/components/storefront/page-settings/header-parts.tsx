@@ -1,9 +1,7 @@
-import { Link } from '@inertiajs/react';
-import { Search, ShoppingBag, ShoppingCart } from 'lucide-react';
+import { ShoppingBag, ShoppingCart } from 'lucide-react';
+import { SearchToggle } from '@/components/storefront/search-toggle';
 import { useStoreSettings } from '@/hooks/use-store-settings';
-import { useT } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
-import { search } from '@/routes/storefront';
 
 /** The cart icon the Header tab picks; "Theme default" keeps the theme's own. */
 export function CartIcon({
@@ -34,21 +32,16 @@ export function useShowAccountLink(): boolean {
 
 /**
  * A search icon that replaces the search field when the Header tab sets
- * search to "icon" (hidden otherwise; see page-settings.css).
+ * search to "icon" (hidden otherwise; see page-settings.css). It opens a
+ * search field instead of leaving for the catalog.
  */
 export function SearchIconLink({ className }: { className?: string }) {
-    const t = useT();
-
     return (
-        <Link
-            href={search()}
-            aria-label={t('Search products')}
+        <SearchToggle
             className={cn(
                 'store-search-icon items-center justify-center rounded-md p-2 hover:bg-accent',
                 className,
             )}
-        >
-            <Search className="size-4" aria-hidden />
-        </Link>
+        />
     );
 }
