@@ -49,6 +49,19 @@ final class ReviewSummary
     }
 
     /**
+     * The approved reviews' count and average, for the rating stars.
+     *
+     * @return array{count: int, average: string|null}
+     */
+    public function rating(Product $product): array
+    {
+        $approved = Review::query()->approved()->where('product_id', $product->id);
+        $count = (clone $approved)->count();
+
+        return ['count' => $count, 'average' => $count > 0 ? number_format((float) $approved->avg('rating'), 1) : null];
+    }
+
+    /**
      * @return string|null why the user cannot review ("login", "purchase"), or null when they can
      */
     public function eligibility(User $user, Product $product): ?string

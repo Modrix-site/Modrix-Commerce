@@ -42,7 +42,8 @@ export default function ProductReviews({
 }: Props) {
     return (
         <section
-            className="grid gap-6 border-t pt-8"
+            id="reviews"
+            className="grid scroll-mt-24 gap-6 border-t pt-8"
             aria-labelledby="reviews-heading"
         >
             <div className="flex flex-wrap items-baseline gap-3">

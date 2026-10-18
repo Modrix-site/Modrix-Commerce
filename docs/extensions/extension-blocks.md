@@ -13,6 +13,7 @@ theme.
 | `home.after_featured` | Homepage | — |
 | `catalog.before_products` | Catalog | `category`, `brand`, `query` |
 | `product.card` | Catalog | — (each card adds `product` on the page) |
+| `product.after_title` | Product | `product` |
 | `product.after_price` | Product | `product` |
 | `product.after_add_to_cart` | Product | `product` |
 | `product.after_details` | Product | `product` |

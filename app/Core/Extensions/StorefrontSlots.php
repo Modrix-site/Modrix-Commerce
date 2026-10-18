@@ -39,6 +39,7 @@ final class StorefrontSlots
         'catalog.before_products' => ['label' => 'Above the products', 'tab' => 'catalog', 'context' => ['category', 'brand', 'query']],
         // Rendered once per page; each product card adds its own product.
         'product.card' => ['label' => 'On product cards', 'tab' => 'catalog', 'context' => []],
+        'product.after_title' => ['label' => 'Under the title', 'tab' => 'product', 'context' => ['product']],
         'product.after_price' => ['label' => 'Under the price', 'tab' => 'product', 'context' => ['product']],
         'product.after_add_to_cart' => ['label' => 'Under add to cart', 'tab' => 'product', 'context' => ['product']],
         'product.after_details' => ['label' => 'After the details', 'tab' => 'product', 'context' => ['product']],

@@ -224,6 +224,7 @@ export default function ProductPage({
                         <h1 className="text-2xl font-semibold tracking-tight">
                             {product.name}
                         </h1>
+                        <PlaceSlot place="product.after_title" />
                         {variant?.price ? (
                             <p
                                 className={cn(
