@@ -1,0 +1,83 @@
+{
+    "categories": [
+        {
+            "name": "Audio",
+            "slug": "aurora-audio",
+            "description": "Headphones, speakers and everyday sound."
+        },
+        {
+            "name": "Wearables",
+            "slug": "aurora-wearables",
+            "description": "Watches and things you carry every day."
+        },
+        {
+            "name": "Accessories",
+            "slug": "aurora-accessories",
+            "description": "Bags, glassware and finishing touches."
+        }
+    ],
+    "products": [
+        {
+            "name": "Halo Headphones",
+            "slug": "aurora-halo-headphones",
+            "sku": "AURORA-HP-01",
+            "price": "149.00",
+            "compare_at_price": "189.00",
+            "short_description": "Over-ear headphones with a warm, balanced sound and 40 hours of battery.",
+            "categories": ["aurora-audio"],
+            "image": "assets/images/demo/headphones.webp",
+            "stock": 24
+        },
+        {
+            "name": "Orbit Speaker",
+            "slug": "aurora-orbit-speaker",
+            "sku": "AURORA-SPK-01",
+            "price": "99.00",
+            "short_description": "A compact room speaker with a surprisingly full low end.",
+            "categories": ["aurora-audio"],
+            "image": "assets/images/demo/speaker.webp",
+            "stock": 31
+        },
+        {
+            "name": "Meridian Watch",
+            "slug": "aurora-meridian-watch",
+            "sku": "AURORA-WATCH-01",
+            "price": "219.00",
+            "short_description": "A slim everyday watch with a sapphire face and recycled steel case.",
+            "categories": ["aurora-wearables"],
+            "image": "assets/images/demo/watch.webp",
+            "stock": 12
+        },
+        {
+            "name": "Field Tote",
+            "slug": "aurora-field-tote",
+            "sku": "AURORA-BAG-01",
+            "price": "79.00",
+            "compare_at_price": "95.00",
+            "short_description": "A structured tote in vegetable-tanned leather that ages beautifully.",
+            "categories": ["aurora-accessories"],
+            "image": "assets/images/demo/bag.webp",
+            "stock": 18
+        },
+        {
+            "name": "Daybreak Sunglasses",
+            "slug": "aurora-daybreak-sunglasses",
+            "sku": "AURORA-SUN-01",
+            "price": "129.00",
+            "short_description": "Lightweight frames with polarised lenses and a matte finish.",
+            "categories": ["aurora-accessories"],
+            "image": "assets/images/demo/sunglasses.webp",
+            "stock": 27
+        },
+        {
+            "name": "Still Water Bottle",
+            "slug": "aurora-still-water-bottle",
+            "sku": "AURORA-BTL-01",
+            "price": "39.00",
+            "short_description": "Double-walled stainless steel that keeps drinks cold all day.",
+            "categories": ["aurora-accessories"],
+            "image": "assets/images/demo/bottle.webp",
+            "stock": 40
+        }
+    ]
+}

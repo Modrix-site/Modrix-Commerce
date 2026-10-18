@@ -54,7 +54,7 @@ final class ThemeResolver
 
             if ($preview !== null) {
                 $theme = $this->repository->find($preview);
-                $manifest = $theme?->manifest !== null && $theme->state !== ModuleState::Invalid ? ThemeManifest::fromArray($theme->manifest) : null;
+                $manifest = $theme?->manifest !== null && ! in_array($theme->state, [ModuleState::Invalid, ModuleState::Disabled], true) ? ThemeManifest::fromArray($theme->manifest) : null;
 
                 if ($manifest !== null) {
                     return $this->make($manifest, ResolvedTheme::SOURCE_PREVIEW);
@@ -82,6 +82,9 @@ final class ThemeResolver
     private function defaultTheme(): ?ThemeManifest
     {
         $name = (string) config('ecomodular.themes.default', 'ecomodular/essence');
+        if ($this->repository->find($name)?->state === ModuleState::Disabled) {
+            return null;
+        }
         $dir = ThemeRepository::packageDir($name);
 
         $file = $dir.DIRECTORY_SEPARATOR.ThemeManifest::FILE;

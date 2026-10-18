@@ -7,21 +7,41 @@
     "additionalProperties": false,
     "required": ["name", "display_name", "version", "type", "platform_version"],
     "properties": {
-        "$schema": { "type": "string" },
+        "$schema": {
+            "type": "string"
+        },
         "name": {
             "type": "string",
             "pattern": "^[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?/[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?$"
         },
-        "display_name": { "type": "string", "minLength": 1, "maxLength": 120 },
-        "description": { "type": "string", "maxLength": 500 },
+        "display_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+        },
+        "description": {
+            "type": "string",
+            "maxLength": 500
+        },
         "version": {
             "type": "string",
             "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?$"
         },
-        "type": { "const": "module" },
-        "platform_version": { "type": "string", "maxLength": 100 },
-        "author": { "type": "string", "maxLength": 120 },
-        "license": { "type": "string", "maxLength": 60 },
+        "type": {
+            "const": "module"
+        },
+        "platform_version": {
+            "type": "string",
+            "maxLength": 100
+        },
+        "author": {
+            "type": "string",
+            "maxLength": 120
+        },
+        "license": {
+            "type": "string",
+            "maxLength": 60
+        },
         "autoload": {
             "type": "object",
             "additionalProperties": false,
@@ -34,7 +54,9 @@
                     "propertyNames": {
                         "pattern": "^[A-Z][A-Za-z0-9_]*(\\\\[A-Z][A-Za-z0-9_]*)+\\\\$"
                     },
-                    "additionalProperties": { "$ref": "#/$defs/relativePath" }
+                    "additionalProperties": {
+                        "$ref": "#/$defs/relativePath"
+                    }
                 }
             }
         },
@@ -44,8 +66,12 @@
         },
         "requires": {
             "type": "object",
-            "propertyNames": { "$ref": "#/properties/name" },
-            "additionalProperties": { "type": "string" }
+            "propertyNames": {
+                "$ref": "#/properties/name"
+            },
+            "additionalProperties": {
+                "type": "string"
+            }
         },
         "permissions": {
             "type": "array",
@@ -96,25 +122,38 @@
                     "payment.gateway",
                     "shipping.rates",
                     "tax.provider",
-                    "search.provider"
+                    "search.provider",
+                    "sitemap.provider",
+                    "product.labels",
+                    "content_security"
                 ]
             }
         },
-        "migrations": { "$ref": "#/$defs/relativePath" },
+        "migrations": {
+            "$ref": "#/$defs/relativePath"
+        },
         "routes": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
-                "admin": { "$ref": "#/$defs/relativePath" },
-                "storefront": { "$ref": "#/$defs/relativePath" }
+                "admin": {
+                    "$ref": "#/$defs/relativePath"
+                },
+                "storefront": {
+                    "$ref": "#/$defs/relativePath"
+                }
             }
         },
         "assets": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
-                "pages": { "$ref": "#/$defs/relativePath" },
-                "slots": { "$ref": "#/$defs/relativePath" }
+                "pages": {
+                    "$ref": "#/$defs/relativePath"
+                },
+                "slots": {
+                    "$ref": "#/$defs/relativePath"
+                }
             }
         },
         "settings": {
@@ -144,13 +183,55 @@
                         "minLength": 1,
                         "maxLength": 120
                     },
-                    "help": { "type": "string", "maxLength": 300 },
-                    "tab": { "description": "Also show this setting in this customizer tab.", "enum": ["general", "header", "home", "catalog", "product", "cart", "checkout", "footer"] },
+                    "help": {
+                        "type": "string",
+                        "maxLength": 300
+                    },
+                    "tab": {
+                        "description": "Also show this setting in this customizer tab.",
+                        "enum": ["general", "header", "home", "catalog", "product", "cart", "checkout", "footer"]
+                    },
                     "default": {},
-                    "required": { "type": "boolean" },
-                    "min": { "type": "integer" },
-                    "max": { "type": "integer" },
-                    "max_length": { "type": "integer" },
+                    "required": {
+                        "type": "boolean"
+                    },
+                    "min": {
+                        "type": "integer"
+                    },
+                    "max": {
+                        "type": "integer"
+                    },
+                    "max_length": {
+                        "type": "integer"
+                    },
+                    "suggestions": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 50,
+                        "items": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 200
+                        }
+                    },
+                    "visible_when": {
+                        "type": "object",
+                        "minProperties": 1,
+                        "additionalProperties": {
+                            "oneOf": [
+                                {
+                                    "type": ["string", "number", "boolean"]
+                                },
+                                {
+                                    "type": "array",
+                                    "minItems": 1,
+                                    "items": {
+                                        "type": ["string", "number", "boolean"]
+                                    }
+                                }
+                            ]
+                        }
+                    },
                     "options": {
                         "type": "array",
                         "minItems": 1,
@@ -162,10 +243,44 @@
                                 "value": {
                                     "type": ["string", "number", "boolean"]
                                 },
-                                "label": { "type": "string" }
+                                "label": {
+                                    "type": "string"
+                                }
                             }
                         }
                     }
+                }
+            }
+        },
+        "icon": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]{1,40}$",
+            "description": "Lucide icon name shown for the module in the admin extensions list and menu (default \"puzzle\")."
+        },
+        "accent": {
+            "type": "string",
+            "pattern": "^#[0-9a-fA-F]{6}$",
+            "description": "Optional brand colour (6-digit hex) used as the module's accent, e.g. the vendor's brand colour."
+        },
+        "content_security": {
+            "type": "object",
+            "maxProperties": 5,
+            "propertyNames": {
+                "enum": [
+                    "script-src",
+                    "frame-src",
+                    "connect-src",
+                    "img-src",
+                    "form-action"
+                ]
+            },
+            "additionalProperties": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 10,
+                "items": {
+                    "type": "string",
+                    "pattern": "^https:\\/\\/(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]{2,63}(?::\\d{1,5})?$"
                 }
             }
         },
@@ -177,7 +292,10 @@
                 "additionalProperties": false,
                 "required": ["key", "title", "route", "permission"],
                 "properties": {
-                    "key": { "type": "string", "pattern": "^[a-z0-9-]{1,40}$" },
+                    "key": {
+                        "type": "string",
+                        "pattern": "^[a-z0-9-]{1,40}$"
+                    },
                     "title": {
                         "type": "string",
                         "minLength": 1,
@@ -191,11 +309,23 @@
                         "type": "string",
                         "pattern": "^[a-z0-9-]{1,40}$"
                     },
-                    "group": { "type": "string", "maxLength": 60 },
-                    "permission": { "type": "string" },
-                    "order": { "type": "integer" }
+                    "group": {
+                        "type": "string",
+                        "maxLength": 60
+                    },
+                    "permission": {
+                        "type": "string"
+                    },
+                    "order": {
+                        "type": "integer"
+                    }
                 }
             }
+        },
+        "logo": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "Package-relative PNG, JPEG or WebP logo, at most 256 KB."
         }
     },
     "$defs": {

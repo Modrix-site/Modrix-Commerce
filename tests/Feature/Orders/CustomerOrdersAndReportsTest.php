@@ -4,6 +4,9 @@ namespace Tests\Feature\Orders;
 
 use App\Core\Settings\StoreSettings;
 use App\Domains\Orders\Models\Order;
+use App\Domains\Orders\Models\Refund;
+use App\Domains\Orders\OrderWorkflow;
+use App\Domains\Pricing\Money;
 use App\Domains\Reports\SalesReport;
 use App\Models\User;
 use Carbon\CarbonImmutable;
@@ -114,5 +117,51 @@ class CustomerOrdersAndReportsTest extends TestCase
         $this->actingAs($this->owner())
             ->get(route('admin.reports.index', ['from' => '2026-05-01', 'to' => '2026-04-01']))
             ->assertSessionHasErrors('from');
+    }
+
+    public function test_historical_order_currency_is_selected_instead_of_showing_zero_after_currency_change(): void
+    {
+        $this->withoutVite();
+        $this->addToCart($this->sellable('15.00'));
+        $this->post(route('checkout.store'), $this->checkoutPayload())->assertSessionHasNoErrors();
+        $order = Order::firstOrFail();
+        $manager = $this->userWithRole('store-manager');
+        app(OrderWorkflow::class)->recordManualPayment($order, $manager);
+        app(StoreSettings::class)->update(['store_name' => 'Test', 'default_currency' => 'AED', 'timezone' => 'UTC']);
+        $this->actingAs($manager)->get(route('admin.reports.index'))->assertInertia(fn (Assert $page) => $page
+            ->where('report.currency', 'USD')->where('storeCurrency', 'AED')->where('report.orders', 1)
+            ->where('report.gross_sales.amount', '20.00')->where('report.payments_received.amount', '20.00')
+            ->where('report.outstanding.amount', '0.00')->where('report.paid_orders', 1)->has('currencies', 2));
+        $this->get(route('admin.reports.index', ['currency' => 'AED']))->assertInertia(fn (Assert $page) => $page->where('report.currency', 'AED')->where('report.orders', 0)->where('report.payments_received.amount', '0.00'));
+        $aed = $order->replicate();
+        $aed->forceFill(['number' => 'AED-TEST', 'idempotency_key' => null, 'currency' => 'AED', 'grand_total' => '100', 'paid_total' => '0', 'paid_at' => null, 'payment_status' => 'unpaid'])->save();
+        $this->get(route('admin.reports.index', ['currency' => 'AED']))->assertInertia(fn (Assert $page) => $page->where('report.orders', 1)->where('report.gross_sales.amount', '100.00')->where('report.outstanding.amount', '100.00')->where('report.payments_received.amount', '0.00'));
+        $this->get(route('admin.reports.index', ['currency' => 'USD']))->assertInertia(fn (Assert $page) => $page->where('report.orders', 1)->where('report.gross_sales.amount', '20.00')->where('report.payments_received.amount', '20.00'));
+        $this->get(route('admin.reports.index', ['currency' => 'INVALID']))->assertSessionHasErrors('currency');
+    }
+
+    public function test_payments_are_bucketed_by_payment_date_and_only_completed_refunds_reduce_collections(): void
+    {
+        $this->withoutVite();
+        $this->travelTo(CarbonImmutable::parse('2026-03-03 12:00:00', 'UTC'));
+        $this->addToCart($this->sellable('15.00'));
+        $this->post(route('checkout.store'), $this->checkoutPayload())->assertSessionHasNoErrors();
+        $order = Order::firstOrFail();
+        $order->forceFill(['placed_at' => '2026-02-01 12:00:00'])->save();
+        $manager = $this->userWithRole('store-manager');
+        app(OrderWorkflow::class)->recordManualPayment($order, $manager, amount: Money::of('10', 'USD'), paidAt: CarbonImmutable::parse('2026-03-01 23:30:00', 'UTC'));
+        foreach (['completed' => '2', 'pending' => '3', 'failed' => '4'] as $status => $amount) {
+            $refund = new Refund;
+            $refund->forceFill(['order_id' => $order->id, 'currency' => 'USD', 'amount' => $amount, 'reason' => 'Test', 'status' => $status, 'created_at' => '2026-03-02 01:00:00'])->save();
+        }
+        $report = app(SalesReport::class)->build(CarbonImmutable::parse('2026-03-02', 'Asia/Manila'), CarbonImmutable::parse('2026-03-02', 'Asia/Manila'), 'Asia/Manila', 'USD');
+        $this->assertSame(0, $report['orders']);
+        $this->assertSame('10.00', $report['payments_received']->toDisplayDecimal());
+        $this->assertSame('10.00', $report['series'][0]['payments']->toDisplayDecimal());
+        $this->assertSame('2.00', $report['refunds']->toDisplayDecimal());
+        $this->assertSame('8.00', $report['net_collections']->toDisplayDecimal());
+        $cohort = app(SalesReport::class)->build(CarbonImmutable::parse('2026-02-01'), CarbonImmutable::parse('2026-02-01'), 'UTC', 'USD');
+        $this->assertSame('10.00', $cohort['outstanding']->toDisplayDecimal());
+        $this->assertSame('0.00', $cohort['payments_received']->toDisplayDecimal());
     }
 }

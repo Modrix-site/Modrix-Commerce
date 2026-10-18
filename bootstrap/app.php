@@ -81,5 +81,6 @@ return Application::configure(basePath: dirname(__DIR__))
         // Never write credentials or tokens from request input into logs.
         $exceptions->dontFlash([
             'current_password', 'password', 'password_confirmation', 'token', 'setup_token',
+            'api_key',
         ]);
     })->create();

@@ -47,7 +47,7 @@ final class ThemeCustomizations
     {
         // Checkout rules come from the merchant only, never from a theme package's defaults.
         $design = array_filter($manifest->defaults(), fn (string $key) => ! str_starts_with($key, 'checkout.'), ARRAY_FILTER_USE_KEY);
-        $fields = ThemeSchema::designFields();
+        $fields = $manifest->designFields();
         $ignored = [];
 
         foreach ($this->designOverrides($manifest) as $key => $value) {
@@ -74,7 +74,7 @@ final class ThemeCustomizations
      */
     public function saveDesign(ThemeManifest $manifest, array $input): array
     {
-        $fields = ThemeSchema::designFields();
+        $fields = $manifest->designFields();
         $overrides = $this->designOverrides($manifest);
         $errors = [];
 

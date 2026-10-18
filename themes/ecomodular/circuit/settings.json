@@ -1,0 +1,765 @@
+{
+    "title": "Circuit design",
+    "description": "Electronics megastore. Homepage tiles and banners are in Homepage sections; menus in Navigation; newsletter uses the Newsletter extension.",
+    "fields": {
+        "custom.accent": {
+            "type": "color",
+            "label": "Sale and highlight color",
+            "group": "Colors",
+            "tab": "general",
+            "default": "#e5484d"
+        },
+        "custom.success": {
+            "type": "color",
+            "label": "Stock badge color",
+            "group": "Colors",
+            "tab": "general",
+            "default": "#1f9d55"
+        },
+        "custom.panel": {
+            "type": "color",
+            "label": "Panel background",
+            "group": "Colors",
+            "tab": "general",
+            "default": "#f4f4f6"
+        },
+        "custom.button_shape": {
+            "type": "select",
+            "label": "Button shape",
+            "group": "Buttons",
+            "tab": "general",
+            "default": "pill",
+            "options": [
+                "pill",
+                "rounded",
+                "square"
+            ]
+        },
+        "custom.brand": {
+            "type": "string",
+            "label": "Wordmark",
+            "group": "Header",
+            "tab": "header",
+            "default": "circuit",
+            "max": 40
+        },
+        "custom.logo_image": {
+            "type": "image",
+            "label": "Logo image (replaces the wordmark)",
+            "group": "Header",
+            "tab": "header",
+            "default": ""
+        },
+        "custom.header_background": {
+            "type": "color",
+            "label": "Header background",
+            "group": "Header",
+            "tab": "header",
+            "default": "#14102a"
+        },
+        "custom.header_foreground": {
+            "type": "color",
+            "label": "Header text",
+            "group": "Header",
+            "tab": "header",
+            "default": "#ffffff"
+        },
+        "custom.announcement_1": {
+            "type": "string",
+            "label": "Announcement 1",
+            "group": "Announcement bar",
+            "tab": "header",
+            "default": "Gadgets - every Friday 75% Off. Shop Sale",
+            "max": 140
+        },
+        "custom.announcement_2": {
+            "type": "string",
+            "label": "Announcement 2",
+            "group": "Announcement bar",
+            "tab": "header",
+            "default": "Summer sale: discount off 50%. Shop Sale",
+            "max": 140
+        },
+        "custom.announcement_3": {
+            "type": "string",
+            "label": "Announcement 3",
+            "group": "Announcement bar",
+            "tab": "header",
+            "default": "Free delivery on orders over $150",
+            "max": 140
+        },
+        "custom.top_link_1_label": {
+            "type": "string",
+            "label": "Top link 1 label",
+            "group": "Announcement bar",
+            "tab": "header",
+            "default": "Help Center",
+            "max": 40
+        },
+        "custom.top_link_1": {
+            "type": "link",
+            "label": "Top link 1 address",
+            "group": "Announcement bar",
+            "tab": "header",
+            "default": "/account"
+        },
+        "custom.top_link_2_label": {
+            "type": "string",
+            "label": "Top link 2 label",
+            "group": "Announcement bar",
+            "tab": "header",
+            "default": "About Us",
+            "max": 40
+        },
+        "custom.top_link_2": {
+            "type": "link",
+            "label": "Top link 2 address",
+            "group": "Announcement bar",
+            "tab": "header",
+            "default": "/search"
+        },
+        "custom.top_link_3_label": {
+            "type": "string",
+            "label": "Top link 3 label",
+            "group": "Announcement bar",
+            "tab": "header",
+            "default": "Our Store",
+            "max": 40
+        },
+        "custom.top_link_3": {
+            "type": "link",
+            "label": "Top link 3 address",
+            "group": "Announcement bar",
+            "tab": "header",
+            "default": "/search"
+        },
+        "custom.search_placeholder": {
+            "type": "string",
+            "label": "Search placeholder",
+            "group": "Header",
+            "tab": "header",
+            "default": "I'm looking for…",
+            "max": 80
+        },
+        "custom.shop_menu_label": {
+            "type": "string",
+            "label": "Categories menu label",
+            "group": "Menu row",
+            "tab": "header",
+            "default": "Shop",
+            "max": 30
+        },
+        "custom.highlight_label": {
+            "type": "string",
+            "label": "Highlighted menu link",
+            "group": "Menu row",
+            "tab": "header",
+            "default": "Today's Deals",
+            "max": 40
+        },
+        "custom.highlight_link": {
+            "type": "link",
+            "label": "Highlighted menu link address",
+            "group": "Menu row",
+            "tab": "header",
+            "default": "/search?sort=price_asc"
+        },
+        "custom.show_recent": {
+            "type": "boolean",
+            "label": "Show \"Recently viewed products\"",
+            "group": "Menu row",
+            "tab": "header",
+            "default": true
+        },
+        "custom.show_rail": {
+            "type": "boolean",
+            "label": "Show the category icon rail (desktop)",
+            "group": "Menu row",
+            "tab": "header",
+            "default": true
+        },
+        "custom.show_saved": {
+            "type": "boolean",
+            "label": "Wishlist (saved on this device)",
+            "group": "Header",
+            "tab": "header",
+            "default": true
+        },
+        "custom.sticky_header": {
+            "type": "boolean",
+            "label": "Sticky header (replaces Circuit's header on phones and tablets)",
+            "group": "Header",
+            "tab": "header",
+            "default": false
+        },
+        "custom.shop_button": {
+            "type": "string",
+            "label": "Tile button label",
+            "group": "Homepage",
+            "tab": "home",
+            "default": "Shop Now",
+            "max": 30
+        },
+        "custom.deals_end": {
+            "type": "string",
+            "label": "Best deals countdown ends (YYYY-MM-DD HH:MM, empty to hide)",
+            "group": "Deals",
+            "tab": "home",
+            "default": "2026-12-31 23:59",
+            "max": 16
+        },
+        "custom.deals_label": {
+            "type": "string",
+            "label": "Countdown label",
+            "group": "Deals",
+            "tab": "home",
+            "default": "Hurry up! Offer ends in:",
+            "max": 60
+        },
+        "custom.voucher_code": {
+            "type": "string",
+            "label": "Voucher code",
+            "group": "Voucher strip",
+            "tab": "home",
+            "default": "GET35PSL",
+            "max": 30
+        },
+        "custom.voucher_color": {
+            "type": "color",
+            "label": "Voucher strip color",
+            "group": "Voucher strip",
+            "tab": "home",
+            "default": "#0b4d3f"
+        },
+        "custom.picks_title": {
+            "type": "string",
+            "label": "Section shown as \"Popular Picks\" (its title)",
+            "group": "Popular picks",
+            "tab": "home",
+            "default": "Popular Picks",
+            "max": 80
+        },
+        "custom.picks_eyebrow": {
+            "type": "string",
+            "label": "Centre card eyebrow",
+            "group": "Popular picks",
+            "tab": "home",
+            "default": "Best offer deal",
+            "max": 60
+        },
+        "custom.picks_heading": {
+            "type": "string",
+            "label": "Centre card heading",
+            "group": "Popular picks",
+            "tab": "home",
+            "default": "Tablet Pro Ultra 15.6\"",
+            "max": 80
+        },
+        "custom.picks_text": {
+            "type": "string",
+            "label": "Centre card text",
+            "group": "Popular picks",
+            "tab": "home",
+            "default": "Starts at: $779.99",
+            "max": 80
+        },
+        "custom.picks_image": {
+            "type": "image",
+            "label": "Centre card image",
+            "group": "Popular picks",
+            "tab": "home",
+            "default": "asset:assets/campaign-tablet.jpg"
+        },
+        "custom.picks_button": {
+            "type": "string",
+            "label": "Centre card button",
+            "group": "Popular picks",
+            "tab": "home",
+            "default": "Shop Save",
+            "max": 30
+        },
+        "custom.picks_link": {
+            "type": "link",
+            "label": "Centre card link",
+            "group": "Popular picks",
+            "tab": "home",
+            "default": "/search?q=tablet"
+        },
+        "custom.spotlight_eyebrow": {
+            "type": "string",
+            "label": "Spotlight eyebrow",
+            "group": "Spotlight",
+            "tab": "home",
+            "default": "Save 30-60% electronics",
+            "max": 60
+        },
+        "custom.spotlight_price": {
+            "type": "string",
+            "label": "Spotlight price line",
+            "group": "Spotlight",
+            "tab": "home",
+            "default": "From $135.00",
+            "max": 40
+        },
+        "custom.show_services": {
+            "type": "boolean",
+            "label": "Show service features",
+            "group": "Services",
+            "tab": "home",
+            "default": true
+        },
+        "custom.service_1_title": {
+            "type": "string",
+            "label": "Service 1 title",
+            "group": "Services",
+            "tab": "home",
+            "default": "Free Shipping",
+            "max": 40
+        },
+        "custom.service_1_text": {
+            "type": "string",
+            "label": "Service 1 text",
+            "group": "Services",
+            "tab": "home",
+            "default": "Enjoy free worldwide shipping and returns, with customs and duties taxes included.",
+            "max": 160
+        },
+        "custom.service_2_title": {
+            "type": "string",
+            "label": "Service 2 title",
+            "group": "Services",
+            "tab": "home",
+            "default": "Free Returns",
+            "max": 40
+        },
+        "custom.service_2_text": {
+            "type": "string",
+            "label": "Service 2 text",
+            "group": "Services",
+            "tab": "home",
+            "default": "Free returns within 15 days, please make sure the items are in undamaged condition.",
+            "max": 160
+        },
+        "custom.service_3_title": {
+            "type": "string",
+            "label": "Service 3 title",
+            "group": "Services",
+            "tab": "home",
+            "default": "Support Online",
+            "max": 40
+        },
+        "custom.service_3_text": {
+            "type": "string",
+            "label": "Service 3 text",
+            "group": "Services",
+            "tab": "home",
+            "default": "We support customers 24/7, send questions we will solve for you immediately.",
+            "max": 160
+        },
+        "custom.show_support": {
+            "type": "boolean",
+            "label": "Show \"Online support\"",
+            "group": "Support",
+            "tab": "home",
+            "default": true
+        },
+        "custom.support_eyebrow": {
+            "type": "string",
+            "label": "Support eyebrow",
+            "group": "Support",
+            "tab": "home",
+            "default": "Help center",
+            "max": 40
+        },
+        "custom.support_heading": {
+            "type": "string",
+            "label": "Support heading",
+            "group": "Support",
+            "tab": "home",
+            "default": "Online Support 24/7",
+            "max": 60
+        },
+        "custom.support_1_title": {
+            "type": "string",
+            "label": "Support card 1 title",
+            "group": "Support",
+            "tab": "home",
+            "default": "Call Us",
+            "max": 40
+        },
+        "custom.support_1_text": {
+            "type": "string",
+            "label": "Support card 1 text",
+            "group": "Support",
+            "tab": "home",
+            "default": "Call now +1 (973) 435-3638",
+            "max": 80
+        },
+        "custom.support_1_link": {
+            "type": "link",
+            "label": "Support card 1 link",
+            "group": "Support",
+            "tab": "home",
+            "default": "/account"
+        },
+        "custom.support_2_title": {
+            "type": "string",
+            "label": "Support card 2 title",
+            "group": "Support",
+            "tab": "home",
+            "default": "Chat with Us",
+            "max": 40
+        },
+        "custom.support_2_text": {
+            "type": "string",
+            "label": "Support card 2 text",
+            "group": "Support",
+            "tab": "home",
+            "default": "Chat now with an expert",
+            "max": 80
+        },
+        "custom.support_2_link": {
+            "type": "link",
+            "label": "Support card 2 link",
+            "group": "Support",
+            "tab": "home",
+            "default": "/account"
+        },
+        "custom.support_3_title": {
+            "type": "string",
+            "label": "Support card 3 title",
+            "group": "Support",
+            "tab": "home",
+            "default": "Email Us",
+            "max": 40
+        },
+        "custom.support_3_text": {
+            "type": "string",
+            "label": "Support card 3 text",
+            "group": "Support",
+            "tab": "home",
+            "default": "hello@circuit.example",
+            "max": 80
+        },
+        "custom.support_3_link": {
+            "type": "link",
+            "label": "Support card 3 link",
+            "group": "Support",
+            "tab": "home",
+            "default": "/account"
+        },
+        "custom.trusted_text": {
+            "type": "string",
+            "label": "Line under the support cards",
+            "group": "Support",
+            "tab": "home",
+            "default": "Trusted by thousands of shoppers. We always try to bring the best experience when shopping with us.",
+            "max": 200
+        },
+        "custom.catalog_grid": {
+            "type": "select",
+            "label": "Default grid",
+            "group": "Catalog",
+            "tab": "catalog",
+            "default": "3",
+            "options": [
+                "2",
+                "3",
+                "4",
+                "list"
+            ]
+        },
+        "custom.coupon_show": {
+            "type": "boolean",
+            "label": "Show the coupon card under the filters",
+            "group": "Coupon card",
+            "tab": "catalog",
+            "default": true
+        },
+        "custom.coupon_eyebrow": {
+            "type": "string",
+            "label": "Coupon card eyebrow",
+            "group": "Coupon card",
+            "tab": "catalog",
+            "default": "Top sale",
+            "max": 40
+        },
+        "custom.coupon_heading": {
+            "type": "string",
+            "label": "Coupon card heading",
+            "group": "Coupon card",
+            "tab": "catalog",
+            "default": "Here's Your 15% Coupon",
+            "max": 60
+        },
+        "custom.coupon_image": {
+            "type": "image",
+            "label": "Coupon card image",
+            "group": "Coupon card",
+            "tab": "catalog",
+            "default": "asset:assets/coupon-card.jpg"
+        },
+        "custom.coupon_button": {
+            "type": "string",
+            "label": "Coupon card button",
+            "group": "Coupon card",
+            "tab": "catalog",
+            "default": "Discover Now",
+            "max": 30
+        },
+        "custom.coupon_link": {
+            "type": "link",
+            "label": "Coupon card link",
+            "group": "Coupon card",
+            "tab": "catalog",
+            "default": "/search?sort=price_asc"
+        },
+        "custom.delivery_1": {
+            "type": "string",
+            "label": "Delivery box line 1",
+            "group": "Delivery box",
+            "tab": "product",
+            "default": "Estimate delivery times: 3-5 days International.",
+            "max": 120
+        },
+        "custom.delivery_2": {
+            "type": "string",
+            "label": "Delivery box line 2",
+            "group": "Delivery box",
+            "tab": "product",
+            "default": "Use code \"WELCOME15\" for discount 15% on your first order.",
+            "max": 120
+        },
+        "custom.delivery_3": {
+            "type": "string",
+            "label": "Delivery box line 3",
+            "group": "Delivery box",
+            "tab": "product",
+            "default": "Free shipping & returns: On all orders over $150.",
+            "max": 120
+        },
+        "custom.size_guide_label": {
+            "type": "string",
+            "label": "Size guide label (empty to hide)",
+            "group": "Options",
+            "tab": "product",
+            "default": "Size guide",
+            "max": 30
+        },
+        "custom.size_guide_link": {
+            "type": "link",
+            "label": "Size guide link",
+            "group": "Options",
+            "tab": "product",
+            "default": "/search"
+        },
+        "custom.show_share": {
+            "type": "boolean",
+            "label": "Show \"Share\"",
+            "group": "Options",
+            "tab": "product",
+            "default": true
+        },
+        "custom.ask_link": {
+            "type": "link",
+            "label": "Ask a question link (empty to hide)",
+            "group": "Options",
+            "tab": "product",
+            "default": "/account"
+        },
+        "custom.stock_threshold": {
+            "type": "integer",
+            "label": "Show \"Hurry up! Only N left\" at or below",
+            "group": "Stock",
+            "tab": "product",
+            "default": 20,
+            "min": 1,
+            "max": 999
+        },
+        "custom.payment_labels": {
+            "type": "string",
+            "label": "Payment badges (separated by commas)",
+            "group": "Payments",
+            "tab": "product",
+            "default": "Amex, Klarna, Bank, Mastercard, Wallet, Visa, PayPal",
+            "max": 200
+        },
+        "custom.shipping_text": {
+            "type": "text",
+            "label": "Shipping and Returns text",
+            "group": "Accordions",
+            "tab": "product",
+            "default": "Orders ship within 1-2 business days. Delivery takes 3-5 days in country and 5-10 days internationally.",
+            "max": 1000
+        },
+        "custom.returns_text": {
+            "type": "text",
+            "label": "Return Policies text",
+            "group": "Accordions",
+            "tab": "product",
+            "default": "Return any unused item within 15 days of delivery for a full refund. Items must be in their original packaging.",
+            "max": 1000
+        },
+        "custom.marquee": {
+            "type": "string",
+            "label": "Scrolling benefits (separated by |)",
+            "group": "Benefits strip",
+            "tab": "product",
+            "default": "Free returns within 30 days | Unlimited delivery for only $175 | Secure checkout",
+            "max": 200
+        },
+        "custom.related_heading": {
+            "type": "string",
+            "label": "Related products heading",
+            "group": "Related",
+            "tab": "product",
+            "default": "People Also Bought",
+            "max": 60
+        },
+        "custom.related_text": {
+            "type": "string",
+            "label": "Related products text",
+            "group": "Related",
+            "tab": "product",
+            "default": "Here's some of our most similar products people are buying.",
+            "max": 160
+        },
+        "custom.recent_heading": {
+            "type": "string",
+            "label": "Recently viewed heading",
+            "group": "Related",
+            "tab": "product",
+            "default": "Recently Viewed",
+            "max": 60
+        },
+        "custom.recent_text": {
+            "type": "string",
+            "label": "Recently viewed text",
+            "group": "Related",
+            "tab": "product",
+            "default": "Explore your recently viewed items.",
+            "max": 160
+        },
+        "custom.cart_note": {
+            "type": "string",
+            "label": "Note under the checkout button",
+            "group": "Cart",
+            "tab": "cart",
+            "default": "Taxes and shipping calculated at checkout.",
+            "max": 160
+        },
+        "custom.cart_payments": {
+            "type": "boolean",
+            "label": "Show payment badges",
+            "group": "Cart",
+            "tab": "cart",
+            "default": true
+        },
+        "custom.about_heading": {
+            "type": "string",
+            "label": "About heading",
+            "group": "About",
+            "tab": "footer",
+            "default": "About The Store",
+            "max": 60
+        },
+        "custom.about_text": {
+            "type": "text",
+            "label": "About text",
+            "group": "About",
+            "tab": "footer",
+            "default": "Find a location nearest you to reduce shipping costs and make shopping easier.",
+            "max": 400
+        },
+        "custom.map_label": {
+            "type": "string",
+            "label": "Map link label",
+            "group": "About",
+            "tab": "footer",
+            "default": "Show on google maps.",
+            "max": 60
+        },
+        "custom.map_link": {
+            "type": "link",
+            "label": "Map link",
+            "group": "About",
+            "tab": "footer",
+            "default": ""
+        },
+        "custom.phone": {
+            "type": "string",
+            "label": "Phone",
+            "group": "About",
+            "tab": "footer",
+            "default": "+1 (973) 435-3638",
+            "max": 40
+        },
+        "custom.email": {
+            "type": "string",
+            "label": "Email",
+            "group": "About",
+            "tab": "footer",
+            "default": "hello@circuit.example",
+            "max": 120
+        },
+        "custom.social_facebook": {
+            "type": "link",
+            "label": "Facebook link",
+            "group": "Social",
+            "tab": "footer",
+            "default": ""
+        },
+        "custom.social_instagram": {
+            "type": "link",
+            "label": "Instagram link",
+            "group": "Social",
+            "tab": "footer",
+            "default": ""
+        },
+        "custom.social_tiktok": {
+            "type": "link",
+            "label": "Tiktok link",
+            "group": "Social",
+            "tab": "footer",
+            "default": ""
+        },
+        "custom.social_youtube": {
+            "type": "link",
+            "label": "Youtube link",
+            "group": "Social",
+            "tab": "footer",
+            "default": ""
+        },
+        "custom.social_pinterest": {
+            "type": "link",
+            "label": "Pinterest link",
+            "group": "Social",
+            "tab": "footer",
+            "default": ""
+        },
+        "custom.newsletter_heading": {
+            "type": "string",
+            "label": "Newsletter heading",
+            "group": "Newsletter",
+            "tab": "footer",
+            "default": "Sign Up to Newsletter",
+            "max": 60
+        },
+        "custom.newsletter_text": {
+            "type": "string",
+            "label": "Newsletter text",
+            "group": "Newsletter",
+            "tab": "footer",
+            "default": "Sign up for 10% off your first purchase and free shipping. Updates information on Sales and Offers.",
+            "max": 200
+        },
+        "custom.copyright": {
+            "type": "string",
+            "label": "Copyright line",
+            "group": "Bottom",
+            "tab": "footer",
+            "default": "© 2026 Circuit store. All rights reserved.",
+            "max": 120
+        }
+    }
+}

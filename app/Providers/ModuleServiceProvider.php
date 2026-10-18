@@ -2,11 +2,14 @@
 
 namespace App\Providers;
 
+use App\Core\Catalog\ProductLabels;
 use App\Core\Extensions\DashboardWidgets;
+use App\Core\Extensions\ModuleContentSecurity;
 use App\Core\Extensions\ModuleLoader;
 use App\Core\Extensions\ModuleRepository;
 use App\Core\Extensions\ModuleSettingsSchema;
 use App\Core\Extensions\StorefrontSlots;
+use App\Core\Seo\Sitemap;
 use App\Domains\Catalog\Contracts\SearchProvider;
 use App\Domains\Catalog\DatabaseSearchProvider;
 use App\Domains\Checkout\CheckoutValidators;
@@ -30,8 +33,11 @@ class ModuleServiceProvider extends ServiceProvider
 
         // Extension points modules register into from their providers.
         $this->app->singleton(StorefrontSlots::class);
+        $this->app->singleton(ModuleContentSecurity::class);
         $this->app->singleton(DashboardWidgets::class);
         $this->app->singleton(CheckoutValidators::class);
+        $this->app->singleton(Sitemap::class);
+        $this->app->singleton(ProductLabels::class);
         $this->app->bindIf(SearchProvider::class, DatabaseSearchProvider::class);
 
         $this->app->make(Router::class)->aliasMiddleware('module.authorized', EnsureModuleRouteIsAuthorized::class);

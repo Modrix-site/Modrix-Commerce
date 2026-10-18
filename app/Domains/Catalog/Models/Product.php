@@ -32,12 +32,13 @@ use Illuminate\Support\Carbon;
  * @property int|null $brand_id
  * @property bool $is_featured
  * @property bool $is_digital
+ * @property bool|null $show_buy_button
  * @property-read Brand|null $brand
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  */
-#[Fillable(['type', 'name', 'slug', 'short_description', 'description', 'status', 'published_at', 'meta_title', 'meta_description', 'brand_id', 'is_featured', 'is_digital'])]
+#[Fillable(['type', 'name', 'slug', 'short_description', 'description', 'status', 'published_at', 'meta_title', 'meta_description', 'brand_id', 'is_featured', 'is_digital', 'show_buy_button'])]
 #[UseFactory(ProductFactory::class)]
 class Product extends Model
 {
@@ -71,6 +72,7 @@ class Product extends Model
             'published_at' => 'datetime',
             'is_featured' => 'boolean',
             'is_digital' => 'boolean',
+            'show_buy_button' => 'boolean',
         ];
     }
 

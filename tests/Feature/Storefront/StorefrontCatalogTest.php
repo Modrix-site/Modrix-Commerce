@@ -2,8 +2,10 @@
 
 namespace Tests\Feature\Storefront;
 
+use App\Core\Settings\StoreSettings;
 use App\Domains\Catalog\Models\Category;
 use App\Domains\Catalog\Models\Product;
+use App\Domains\Catalog\StorefrontCatalog;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
@@ -94,5 +96,24 @@ class StorefrontCatalogTest extends TestCase
 
         $this->get(route('storefront.search'))
             ->assertInertia(fn (Assert $page) => $page->where('products.data.0.in_stock', false));
+    }
+
+    public function test_cards_carry_the_buy_button_override()
+    {
+        // Null means "follow the theme"; the field is passed through as-is.
+        $inherit = Product::factory()->withVariant()->create(['name' => 'Inherits', 'show_buy_button' => null]);
+        $on = Product::factory()->withVariant()->create(['name' => 'Forced on', 'show_buy_button' => true]);
+        $off = Product::factory()->withVariant()->create(['name' => 'Forced off', 'show_buy_button' => false]);
+
+        $cards = collect(app(StorefrontCatalog::class)
+            ->listing(app(StoreSettings::class)->currency(), null)
+            ->items())
+            ->keyBy('name');
+
+        $this->assertNull($cards['Inherits']['show_buy_button']);
+        $this->assertTrue($cards['Forced on']['show_buy_button']);
+        $this->assertFalse($cards['Forced off']['show_buy_button']);
+        // A simple, in-stock product exposes the variant the Buy button adds.
+        $this->assertIsInt($cards['Inherits']['variant_id']);
     }
 }

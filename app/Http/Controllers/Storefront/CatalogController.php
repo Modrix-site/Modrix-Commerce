@@ -8,6 +8,7 @@ use App\Core\Themes\PageSettingFields;
 use App\Core\Themes\ThemeResolver;
 use App\Domains\Catalog\Models\Brand;
 use App\Domains\Catalog\Models\Category;
+use App\Domains\Catalog\Models\ProductAttribute;
 use App\Domains\Catalog\StorefrontCatalog;
 use App\Http\Controllers\Controller;
 use App\Http\Presenters\HomeSectionsPresenter;
@@ -37,6 +38,7 @@ class CatalogController extends Controller
         return Inertia::render('storefront/listing', [
             'title' => $category->localized('name'),
             'description' => $category->localized('description'),
+            'image' => $category->imageUrl(),
             'meta' => [
                 'title' => $category->localized('meta_title') ?: $category->localized('name'),
                 'description' => $category->localized('meta_description'),
@@ -45,12 +47,14 @@ class CatalogController extends Controller
                 ->map(fn (Category $c) => ['name' => $c->localized('name'), 'slug' => $c->slug])
                 ->push(['name' => $category->localized('name'), 'slug' => $category->slug])
                 ->values(),
-            'subcategories' => $category->children()->active()->withCurrentTranslation()->get(['id', 'name', 'slug'])
-                ->map(fn (Category $c) => ['id' => $c->id, 'name' => $c->localized('name'), 'slug' => $c->slug]),
+            'subcategories' => $category->children()->active()->withCurrentTranslation()->get(['id', 'name', 'slug', 'image_disk', 'image_path'])
+                ->map(fn (Category $c) => ['id' => $c->id, 'name' => $c->localized('name'), 'slug' => $c->slug, 'image_url' => $c->imageUrl()]),
+            ...$this->filterProps($request),
             'placeSlots' => $slots->renderMany(['catalog.before_products'], ['category' => $category, 'brand' => null, 'query' => null]),
-            'products' => $catalog->listing($store->currency(), $category, null, $sort, perPage: $this->pageSettings($request)['per_page']),
+            'products' => $catalog->listing($store->currency(), $category, null, $sort, perPage: $this->pageSettings($request)['per_page'], filters: $this->filters($request)),
             'sort' => $sort,
             'query' => null,
+            'slots' => $slots->render('catalog.after_products', ['category' => $category, 'brand' => null, 'query' => null]),
         ]);
     }
 
@@ -66,10 +70,12 @@ class CatalogController extends Controller
             'meta' => ['title' => $brand->name, 'description' => $brand->description],
             'breadcrumbs' => [],
             'subcategories' => [],
+            ...$this->filterProps($request),
             'placeSlots' => $slots->renderMany(['catalog.before_products'], ['category' => null, 'brand' => $brand, 'query' => null]),
-            'products' => $catalog->listing($store->currency(), null, null, $sort, perPage: $this->pageSettings($request)['per_page'], brand: $brand),
+            'products' => $catalog->listing($store->currency(), null, null, $sort, perPage: $this->pageSettings($request)['per_page'], brand: $brand, filters: $this->filters($request)),
             'sort' => $sort,
             'query' => null,
+            'slots' => $slots->render('catalog.after_products', ['category' => null, 'brand' => $brand, 'query' => null]),
         ]);
     }
 
@@ -85,10 +91,12 @@ class CatalogController extends Controller
             'meta' => ['title' => $query === '' ? st('All products') : st('Search: :query', ['query' => $query]), 'description' => null],
             'breadcrumbs' => [],
             'subcategories' => [],
+            ...$this->filterProps($request),
             'placeSlots' => $slots->renderMany(['catalog.before_products'], ['category' => null, 'brand' => null, 'query' => $query]),
-            'products' => $catalog->listing($store->currency(), null, $query, $sort, perPage: $this->pageSettings($request)['per_page']),
+            'products' => $catalog->listing($store->currency(), null, $query, $sort, perPage: $this->pageSettings($request)['per_page'], filters: $this->filters($request)),
             'sort' => $sort,
             'query' => $query,
+            'slots' => $slots->render('catalog.after_products', ['category' => null, 'brand' => null, 'query' => $query]),
         ]);
     }
 
@@ -107,5 +115,30 @@ class CatalogController extends Controller
     private function pageSettings(Request $request): array
     {
         return PageSettingFields::resolve(app(ThemeResolver::class)->forRequest($request)->design)['catalog'];
+    }
+
+    /** @return array<string, mixed> */
+    private function filters(Request $request): array
+    {
+        return $request->validate([
+            'brand_id' => ['nullable', 'integer', 'exists:brands,id'],
+            'in_stock' => ['nullable', 'boolean'],
+            'min_price' => ['nullable', 'numeric', 'min:0', 'max:999999999'],
+            'max_price' => ['nullable', 'numeric', 'min:0', 'max:999999999'],
+            'options' => ['sometimes', 'array', 'max:30'], 'options.*' => ['integer', 'distinct', 'exists:product_attribute_values,id'],
+        ]);
+    }
+
+    /** @return array<string, mixed> */
+    private function filterProps(Request $request): array
+    {
+        return [
+            'filters' => $this->filters($request),
+            'filterBrands' => Brand::query()->orderBy('name')->get(['id', 'name']),
+            'filterOptions' => ProductAttribute::query()->with('values')->orderBy('position')->get()->map(fn (ProductAttribute $attribute) => [
+                'id' => $attribute->id, 'name' => $attribute->name,
+                'values' => $attribute->values->map(fn ($value) => ['id' => $value->id, 'value' => $value->value]),
+            ]),
+        ];
     }
 }

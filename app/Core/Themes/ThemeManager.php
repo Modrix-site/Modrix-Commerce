@@ -6,12 +6,15 @@ use App\Core\Audit\AuditLogger;
 use App\Core\Extensions\Models\Extension;
 use App\Core\Extensions\ModuleRepository;
 use App\Core\Extensions\ModuleState;
+use App\Core\Marketplace\PackageArchive;
 use App\Models\User;
 use Closure;
 use Composer\Semver\Comparator;
 use Composer\Semver\Semver;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -171,6 +174,43 @@ final class ThemeManager
     /**
      * The manifest a theme renders with: the applied snapshot when active, else its files.
      */
+    public function disable(string $name, ?User $actor = null): Extension
+    {
+        return $this->operation($name, function (Extension $theme) use ($actor) {
+            $from = $theme->state;
+            $theme->forceFill(['state' => ModuleState::Disabled, 'enabled_before_update' => false])->save();
+            $this->repository->record($theme, 'disabled', $from, true, null, $actor);
+            $this->audit->record('theme.disabled', null, ['name' => $theme->name], $actor);
+
+            return $theme;
+        });
+    }
+
+    public function delete(string $name, ?User $actor = null): Extension
+    {
+        return $this->operation($name, function (Extension $theme) use ($actor, $name) {
+            if ($theme->state === ModuleState::Enabled) {
+                throw new ThemeException('Disable this theme before deleting it.');
+            }
+            $root = realpath(ThemeRepository::path());
+            $dir = realpath(ThemeRepository::packageDir($name));
+            if ($root === false || $dir === false || ! str_starts_with($dir, $root.DIRECTORY_SEPARATOR) || is_link(ThemeRepository::packageDir($name))) {
+                throw new ThemeException('The theme package directory is unavailable.');
+            }
+            $backup = storage_path('app/private/theme-archives/'.str_replace('/', '-', $name).'-'.now()->format('YmdHis').'-'.Str::random(8).'.zip');
+            File::ensureDirectoryExists(dirname($backup));
+            PackageArchive::create($dir, $backup);
+            if (! is_file($backup) || filesize($backup) === 0 || ! File::deleteDirectory($dir)) {
+                throw new ThemeException('The theme could not be deleted.');
+            }
+            $this->repository->record($theme, 'deleted', $theme->state, true, 'Package archived; customizations kept.', $actor);
+            $this->audit->record('theme.deleted', null, ['name' => $name, 'archive' => basename($backup)], $actor);
+            $theme->delete();
+
+            return $theme;
+        });
+    }
+
     public function renderedManifest(Extension $theme): ThemeManifest
     {
         $data = $theme->state === ModuleState::Enabled && $theme->applied_manifest !== null ? $theme->applied_manifest : $theme->manifest;

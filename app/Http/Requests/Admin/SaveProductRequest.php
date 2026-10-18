@@ -52,6 +52,12 @@ class SaveProductRequest extends FormRequest
         if ($this->has('is_digital')) {
             $this->merge(['is_digital' => filter_var($this->input('is_digital'), FILTER_VALIDATE_BOOLEAN)]);
         }
+
+        // Tri-state: "" (inherit the theme), "1" (show) or "0" (hide).
+        if ($this->has('show_buy_button')) {
+            $value = $this->input('show_buy_button');
+            $this->merge(['show_buy_button' => ($value === '' || $value === null) ? null : filter_var($value, FILTER_VALIDATE_BOOLEAN)]);
+        }
     }
 
     /**
@@ -76,6 +82,7 @@ class SaveProductRequest extends FormRequest
             'brand_id' => ['nullable', 'integer', Rule::exists('brands', 'id')],
             'is_featured' => ['boolean'],
             'is_digital' => ['boolean'],
+            'show_buy_button' => ['nullable', 'boolean'],
             'tags' => ['nullable', 'array', 'max:'.ProductTag::MAX_PER_PRODUCT],
             'tags.*' => ['string', 'max:'.ProductTag::MAX_LENGTH],
             'related_ids' => ['nullable', 'array', 'max:'.ProductRelations::MAX],
@@ -90,6 +97,7 @@ class SaveProductRequest extends FormRequest
             'variants.*.id' => ['nullable', 'integer', Rule::in($ownVariantIds)],
             'variants.*.sku' => ['required', 'string', 'max:64', 'regex:/^[A-Za-z0-9._-]+$/', 'distinct:ignore_case'],
             'variants.*.name' => ['nullable', 'string', 'max:191'],
+            'variants.*.image_id' => ['nullable', 'integer', Rule::exists('product_images', 'id')->where('product_id', $product->id ?? 0)],
             'variants.*.price' => ['required', 'string', 'regex:'.self::MONEY_PATTERN],
             'variants.*.compare_at_price' => ['nullable', 'string', 'regex:'.self::MONEY_PATTERN],
             'variants.*.weight' => ['nullable', 'numeric', 'min:0', 'max:9999999'],

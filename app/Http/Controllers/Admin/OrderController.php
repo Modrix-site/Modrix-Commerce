@@ -35,9 +35,14 @@ class OrderController extends Controller
         $filters = $request->validate(OrderFilters::rules());
 
         $orders = OrderFilters::query($filters, $store->timezone())
+            ->with(['customer', 'items'])
             ->paginate(25)
             ->withQueryString()
-            ->through(fn (Order $o) => $presenter->summary($o));
+            ->through(fn (Order $o) => [
+                ...$presenter->summary($o),
+                'customer_name' => $o->customer?->fullName(),
+                'product_names' => $o->items->pluck('product_name')->values(),
+            ]);
 
         return Inertia::render('admin/orders/index', [
             'orders' => $orders,

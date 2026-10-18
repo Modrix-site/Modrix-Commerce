@@ -8,6 +8,7 @@ use App\Domains\Catalog\Enums\ProductType;
 use App\Domains\Catalog\Events\ProductCreated;
 use App\Domains\Catalog\Models\Product;
 use App\Domains\Catalog\Models\ProductAttributeValue;
+use App\Domains\Catalog\Models\ProductImage;
 use App\Domains\Catalog\Models\ProductTag;
 use App\Domains\Catalog\Models\ProductVariant;
 use App\Domains\Catalog\ProductRelations;
@@ -31,8 +32,8 @@ use Illuminate\Validation\ValidationException;
  *    selected option attribute, and option combinations are unique;
  *  - variants omitted from an update are soft-deleted (order history keeps them).
  *
- * @phpstan-type VariantInput array{id?: int|null, sku: string, name?: string|null, price: string, compare_at_price?: string|null, weight?: string|null, cost?: string|null, length?: string|null, width?: string|null, height?: string|null, barcode?: string|null, track_inventory?: bool, allow_backorder?: bool, low_stock_threshold?: int|null, is_active?: bool, option_value_ids?: list<int>, initial_stock?: int|null}
- * @phpstan-type ProductInput array{type: string, name: string, slug?: string|null, status: string, brand_id?: int|null, is_featured?: bool, is_digital?: bool, tags?: list<string>, related_ids?: list<int>, upsell_ids?: list<int>, published_at?: string|null, short_description?: string|null, description?: string|null, meta_title?: string|null, meta_description?: string|null, category_ids?: list<int>, option_attribute_ids?: list<int>, variants: list<VariantInput>}
+ * @phpstan-type VariantInput array{id?: int|null, sku: string, name?: string|null, image_id?: int|null, price: string, compare_at_price?: string|null, weight?: string|null, cost?: string|null, length?: string|null, width?: string|null, height?: string|null, barcode?: string|null, track_inventory?: bool, allow_backorder?: bool, low_stock_threshold?: int|null, is_active?: bool, option_value_ids?: list<int>, initial_stock?: int|null}
+ * @phpstan-type ProductInput array{type: string, name: string, slug?: string|null, status: string, brand_id?: int|null, is_featured?: bool, is_digital?: bool, show_buy_button?: bool|null, tags?: list<string>, related_ids?: list<int>, upsell_ids?: list<int>, published_at?: string|null, short_description?: string|null, description?: string|null, meta_title?: string|null, meta_description?: string|null, category_ids?: list<int>, option_attribute_ids?: list<int>, variants: list<VariantInput>}
  */
 final class SaveProduct
 {
@@ -55,10 +56,6 @@ final class SaveProduct
             $isNew = $product === null;
             $product ??= new Product;
 
-            if (! $isNew && $product->type !== $type) {
-                throw ValidationException::withMessages(['type' => 'The product type cannot be changed after creation.']);
-            }
-
             $status = ProductStatus::from($data['status']);
             $slug = $this->resolveSlug($product, $data);
 
@@ -79,6 +76,9 @@ final class SaveProduct
                 'brand_id' => isset($data['brand_id']) ? (int) $data['brand_id'] : null,
                 'is_featured' => (bool) ($data['is_featured'] ?? false),
                 'is_digital' => (bool) ($data['is_digital'] ?? false),
+                'show_buy_button' => array_key_exists('show_buy_button', $data) && $data['show_buy_button'] !== null
+                    ? (bool) $data['show_buy_button']
+                    : null,
             ])->save();
 
             $product->categories()->sync(array_map('intval', $data['category_ids'] ?? []));
@@ -222,12 +222,19 @@ final class SaveProduct
             $variant = ($variantId !== null ? $existing->get($variantId) : null) ?? new ProductVariant;
             $isNewVariant = ! $variant->exists;
 
+            if (isset($row['image_id']) && ! ProductImage::query()->whereKey($row['image_id'])->where('product_id', $product->id)->exists()) {
+                throw ValidationException::withMessages(["variants.{$position}.image_id" => 'Choose an image from this product.']);
+            }
+
             $optionValueIds = array_map('intval', $row['option_value_ids'] ?? []);
             $name = filled($row['name'] ?? null)
                 ? (string) $row['name']
                 : ($optionValueIds === [] ? null : collect($optionValueIds)->map(fn ($id) => $optionNames[$id] ?? '')->implode(' / '));
 
             $variant->product_id = $product->id;
+            if (array_key_exists('image_id', $row)) {
+                $variant->image_id = $row['image_id'];
+            }
             $variant->fill([
                 'sku' => Str::upper(trim($row['sku'])),
                 'name' => $name,

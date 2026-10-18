@@ -5,8 +5,10 @@ namespace App\Domains\Reports;
 use App\Core\Settings\SettingsRepository;
 use App\Domains\Inventory\InventoryService;
 use App\Domains\Orders\Enums\OrderStatus;
+use App\Domains\Orders\Enums\PaymentStatus;
 use App\Domains\Orders\Models\Order;
 use App\Domains\Orders\Models\Refund;
+use App\Domains\Payments\Models\Payment;
 use App\Domains\Pricing\Money;
 use Brick\Math\RoundingMode;
 use Carbon\CarbonImmutable;
@@ -41,20 +43,24 @@ final class SalesReport
         $orders = Order::query()
             ->where('currency', $currency)
             ->whereBetween('placed_at', [$start->utc(), $end->utc()])
-            ->get(['id', 'status', 'grand_total', 'placed_at', 'currency']);
+            ->get(['id', 'status', 'grand_total', 'placed_at', 'currency', 'payment_status', 'paid_total', 'number']);
 
         $days = [];
 
         foreach (CarbonPeriod::create($start, '1 day', $end->startOfDay()) as $day) {
-            $days[$day->format('Y-m-d')] = ['date' => $day->format('Y-m-d'), 'orders' => 0, 'sales' => Money::zero($currency)];
+            $days[$day->format('Y-m-d')] = ['date' => $day->format('Y-m-d'), 'orders' => 0, 'sales' => Money::zero($currency), 'payments' => Money::zero($currency)];
         }
 
         $gross = Money::zero($currency);
         $count = 0;
+        $outstanding = Money::zero($currency);
+        $paidOrders = 0;
+        $paymentStatuses = array_fill_keys(array_map(fn (PaymentStatus $status) => $status->value, PaymentStatus::cases()), 0);
         $byStatus = array_fill_keys(array_map(fn (OrderStatus $s) => $s->value, OrderStatus::cases()), 0);
 
         foreach ($orders as $order) {
             $byStatus[$order->status->value]++;
+            $paymentStatuses[$order->payment_status->value]++;
 
             if ($order->status === OrderStatus::Cancelled) {
                 continue;
@@ -70,11 +76,30 @@ final class SalesReport
 
             $gross = $gross->plus($amount);
             $count++;
+            $balance = $amount->minus($order->money('paid_total'));
+            if ($balance->compareTo(Money::zero($currency)) > 0) {
+                $outstanding = $outstanding->plus($balance);
+            }
+            if (in_array($order->payment_status, [PaymentStatus::Paid, PaymentStatus::PartiallyRefunded, PaymentStatus::Refunded], true)) {
+                $paidOrders++;
+            }
         }
 
+        $received = Money::zero($currency);
+        $paymentCount = 0;
+        foreach (Payment::query()->where('currency', $currency)->where('status', Payment::STATUS_PAID)
+            ->whereBetween(DB::raw('COALESCE(paid_at, created_at)'), [$start->utc(), $end->utc()])->get() as $payment) {
+            $amount = $payment->money();
+            $received = $received->plus($amount);
+            $paymentCount++;
+            $key = ($payment->paid_at ?? $payment->created_at)?->setTimezone($timezone)->format('Y-m-d');
+            if (isset($days[$key])) {
+                $days[$key]['payments'] = $days[$key]['payments']->plus($amount);
+            }
+        }
         $refunds = Money::zero($currency);
 
-        foreach (Refund::query()->where('currency', $currency)->whereBetween('created_at', [$start->utc(), $end->utc()])->pluck('amount') as $amount) {
+        foreach (Refund::query()->where('currency', $currency)->where('status', Refund::STATUS_COMPLETED)->whereBetween('created_at', [$start->utc(), $end->utc()])->pluck('amount') as $amount) {
             $refunds = $refunds->plus(Money::of((string) $amount, $currency));
         }
 
@@ -84,6 +109,18 @@ final class SalesReport
             'timezone' => $timezone,
             'currency' => $currency,
             'gross_sales' => $gross,
+            'payments_received' => $received,
+            'payment_count' => $paymentCount,
+            'net_collections' => $received->minus($refunds),
+            'outstanding' => $outstanding,
+            'paid_orders' => $paidOrders,
+            'total_orders' => $orders->count(),
+            'payment_statuses' => $paymentStatuses,
+            'recent_orders' => $orders->sortByDesc('placed_at')->take(8)->map(fn (Order $order) => [
+                'id' => $order->id, 'number' => $order->number, 'date' => $order->placed_at->setTimezone($timezone)->format('Y-m-d H:i'),
+                'status' => $order->status->label(), 'payment_status' => $order->payment_status->label(),
+                'total' => $order->money('grand_total'), 'paid' => $order->money('paid_total'),
+            ])->values()->all(),
             'orders' => $count,
             'average_order_value' => $count > 0
                 ? Money::of($gross->amount()->dividedBy($count, 4, RoundingMode::HALF_UP), $currency)->rounded()
@@ -94,6 +131,23 @@ final class SalesReport
             'series' => array_values($days),
             'top_products' => $this->topProducts(array_values(array_map('intval', $orders->where('status', '!=', OrderStatus::Cancelled)->pluck('id')->all())), $currency),
         ];
+    }
+
+    /** @return list<string> */
+    public function currencies(string $default): array
+    {
+        $currencies = [$default];
+        $recorded = Order::query()->distinct()->pluck('currency')
+            ->merge(Payment::query()->distinct()->pluck('currency'))
+            ->merge(Refund::query()->distinct()->pluck('currency'));
+        foreach ($recorded as $code) {
+            if (is_string($code) && preg_match('/^[A-Z]{3}$/', $code) === 1 && ! in_array($code, $currencies, true)) {
+                $currencies[] = $code;
+            }
+        }
+        sort($currencies);
+
+        return $currencies;
     }
 
     /**

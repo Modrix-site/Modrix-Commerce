@@ -5,6 +5,7 @@ namespace App\Domains\Catalog\Actions;
 use App\Core\Audit\AuditLogger;
 use App\Domains\Catalog\Models\Category;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 final class DeleteCategory
@@ -25,6 +26,9 @@ final class DeleteCategory
             $category->products()->detach();
             $this->audit->record('category.deleted', $category, ['name' => $category->name, 'products_unlinked' => $productCount]);
             $category->delete();
+            if ($category->image_path !== null) {
+                DB::afterCommit(fn () => Storage::disk($category->image_disk ?? 'public')->delete($category->image_path));
+            }
         });
     }
 }

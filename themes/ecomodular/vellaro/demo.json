@@ -1,0 +1,88 @@
+{
+    "categories": [
+        {
+            "name": "Shirts",
+            "slug": "vellaro-shirts"
+        },
+        {
+            "name": "Trousers",
+            "slug": "vellaro-trousers"
+        },
+        {
+            "name": "Essentials",
+            "slug": "vellaro-essentials"
+        }
+    ],
+    "products": [
+        {
+            "name": "Linen blend everyday shirt",
+            "slug": "vellaro-demo-1",
+            "sku": "VELLARO-DEMO-01",
+            "price": "89",
+            "compare_at_price": "149",
+            "stock": 10,
+            "short_description": "Optional Vellaro demonstration product.",
+            "description": "Theme demonstration content. Replace materials, sizing and fulfillment details before selling.",
+            "categories": [
+                "vellaro-shirts"
+            ],
+            "image": "assets/shirt.jpg"
+        },
+        {
+            "name": "Stretch cotton tailored chinos",
+            "slug": "vellaro-demo-2",
+            "sku": "VELLARO-DEMO-02",
+            "price": "99",
+            "compare_at_price": "159",
+            "stock": 10,
+            "short_description": "Optional Vellaro demonstration product.",
+            "description": "Theme demonstration content. Replace materials, sizing and fulfillment details before selling.",
+            "categories": [
+                "vellaro-trousers"
+            ],
+            "image": "assets/chinos.jpg"
+        },
+        {
+            "name": "Soft cotton essential top",
+            "slug": "vellaro-demo-3",
+            "sku": "VELLARO-DEMO-03",
+            "price": "59",
+            "compare_at_price": "99",
+            "stock": 10,
+            "short_description": "Optional Vellaro demonstration product.",
+            "description": "Theme demonstration content. Replace materials, sizing and fulfillment details before selling.",
+            "categories": [
+                "vellaro-essentials"
+            ],
+            "image": "assets/top.jpg"
+        },
+        {
+            "name": "Relaxed summer linen shirt",
+            "slug": "vellaro-demo-4",
+            "sku": "VELLARO-DEMO-04",
+            "price": "79",
+            "compare_at_price": "129",
+            "stock": 10,
+            "short_description": "Optional Vellaro demonstration product.",
+            "description": "Theme demonstration content. Replace materials, sizing and fulfillment details before selling.",
+            "categories": [
+                "vellaro-shirts"
+            ],
+            "image": "assets/shirt.jpg"
+        },
+        {
+            "name": "Everyday tapered trousers",
+            "slug": "vellaro-demo-5",
+            "sku": "VELLARO-DEMO-05",
+            "price": "95",
+            "compare_at_price": "149",
+            "stock": 10,
+            "short_description": "Optional Vellaro demonstration product.",
+            "description": "Theme demonstration content. Replace materials, sizing and fulfillment details before selling.",
+            "categories": [
+                "vellaro-trousers"
+            ],
+            "image": "assets/chinos.jpg"
+        }
+    ]
+}

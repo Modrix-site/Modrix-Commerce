@@ -33,10 +33,13 @@ use App\Http\Controllers\Admin\MarketplaceAdminController;
 use App\Http\Controllers\Admin\MarketplaceClientController;
 use App\Http\Controllers\Admin\MarketplaceSellerController;
 use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\NavigationController;
 use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\OrderBulkController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\OrderDocumentController;
+use App\Http\Controllers\Admin\PackageUploadController;
+use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PaymentSettingsController;
 use App\Http\Controllers\Admin\PaymentWebhookEventController;
 use App\Http\Controllers\Admin\ReportController;
@@ -193,6 +196,9 @@ Route::middleware('can:orders.view')->group(function () {
     Route::get('orders/{order}/invoice.pdf', [OrderDocumentController::class, 'invoice'])->name('orders.documents.invoice');
     Route::get('orders/{order}/payments/{payment}/receipt.pdf', [OrderDocumentController::class, 'receipt'])->scopeBindings()->name('orders.documents.receipt');
     Route::get('orders/{order}/packing-slip.pdf', [OrderDocumentController::class, 'packingSlip'])->name('orders.documents.packing-slip');
+    Route::get('orders/{order}/invoice.pdf', [OrderDocumentController::class, 'invoice'])->name('orders.documents.invoice');
+    Route::get('orders/{order}/payments/{payment}/receipt.pdf', [OrderDocumentController::class, 'receipt'])->scopeBindings()->name('orders.documents.receipt');
+    Route::get('orders/{order}/packing-slip.pdf', [OrderDocumentController::class, 'packingSlip'])->name('orders.documents.packing-slip');
 });
 Route::middleware('can:orders.manage')->group(function () {
     Route::post('orders/{order}/payments', [OrderController::class, 'recordPayment'])->name('orders.payments.store');
@@ -264,11 +270,19 @@ Route::get('reports', [ReportController::class, 'index'])->middleware('can:repor
 
 // Appearance (themes). Themes are data-only, so no password confirmation is needed.
 Route::middleware('can:themes.manage')->group(function () {
+    Route::resource('pages', PageController::class)->except('show');
+    Route::post('pages/{page}/restore', [PageController::class, 'restore'])->whereNumber('page')->name('pages.restore');
+    Route::get('navigation', [NavigationController::class, 'index'])->name('navigation.index');
+    Route::put('navigation', [NavigationController::class, 'update'])->name('navigation.update');
     Route::get('themes', [ThemeController::class, 'index'])->name('themes.index');
+    Route::post('themes/packages', [PackageUploadController::class, 'theme'])->middleware('throttle:10,1')->name('themes.packages.store');
     Route::post('themes/preview/exit', [ThemeController::class, 'exitPreview'])->name('themes.preview.exit');
     Route::post('themes/uploads', [ThemeController::class, 'upload'])->middleware('throttle:30,1')->name('themes.uploads.store');
     Route::get('themes/{theme}/customize', [ThemeController::class, 'customize'])->name('themes.customize');
     Route::post('themes/{theme}/activate', [ThemeController::class, 'activate'])->name('themes.activate');
+    Route::post('themes/{theme}/enable', [ThemeController::class, 'enable'])->name('themes.enable');
+    Route::post('themes/{theme}/disable', [ThemeController::class, 'disable'])->name('themes.disable');
+    Route::delete('themes/{theme}', [ThemeController::class, 'destroy'])->name('themes.destroy');
     Route::post('themes/{theme}/preview', [ThemeController::class, 'preview'])->name('themes.preview');
     Route::post('themes/{theme}/update', [ThemeController::class, 'update'])->name('themes.update');
     Route::put('themes/{theme}/design', [ThemeController::class, 'design'])->name('themes.design');
@@ -324,6 +338,7 @@ Route::middleware(['marketplace.server', 'can:licenses.manage'])->prefix('market
 });
 
 // Extensions. Actions that run, change or remove code and data need a recent password confirmation.
+Route::post('extensions/packages', [PackageUploadController::class, 'module'])->middleware(['can:extensions.install', 'password.confirm', 'throttle:10,1'])->name('extensions.packages.store');
 Route::middleware('can:extensions.view')->group(function () {
     Route::get('extensions', [ExtensionController::class, 'index'])->name('extensions.index');
     Route::get('extensions/{extension}', [ExtensionController::class, 'show'])->name('extensions.show');

@@ -1,0 +1,2168 @@
+/* Circuit Market: every rule is scoped to the theme. */
+[data-theme='ecomodular/circuit'] {
+    --ci-accent: #e5484d;
+    --ci-success: #1f9d55;
+    --ci-panel: #f4f4f6;
+    --ci-header-bg: #14102a;
+    --ci-header-ink: #ffffff;
+    --ci-voucher: #0b4d3f;
+    --ci-button-radius: 999px;
+    --ci-ink: var(--foreground);
+    --ci-muted: var(--muted-foreground);
+    --ci-line: var(--border);
+    --ci-width: 1360px;
+    --ci-rail: 0px;
+    font-size: 14px;
+    color: var(--ci-ink);
+    background: var(--background);
+}
+@media (min-width: 1280px) {
+    [data-theme='ecomodular/circuit']:has(.ci-rail) {
+        --ci-rail: 56px;
+    }
+}
+[data-theme='ecomodular/circuit'] main#main {
+    width: 100%;
+    max-width: none;
+    padding: 0 0 0 var(--ci-rail);
+}
+[data-theme='ecomodular/circuit'] :is(h1, h2, h3) {
+    font-family: var(--font-heading, inherit);
+    letter-spacing: -0.01em;
+}
+[data-theme='ecomodular/circuit'] button {
+    cursor: pointer;
+}
+[data-theme='ecomodular/circuit'] button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+[data-theme='ecomodular/circuit'] .ci-frame {
+    width: 100%;
+    max-width: var(--ci-width);
+    margin-inline: auto;
+    padding-inline: 36px;
+}
+[data-theme='ecomodular/circuit'] .ci-muted {
+    color: var(--ci-muted);
+}
+
+/* ---------- Buttons, badges ---------- */
+[data-theme='ecomodular/circuit'] .ci-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 10px 26px;
+    border-radius: var(--ci-button-radius);
+    background: var(--primary);
+    color: var(--primary-foreground);
+    font-weight: 600;
+    border: 1px solid var(--primary);
+    transition: filter 0.15s;
+}
+[data-theme='ecomodular/circuit'] .ci-button:hover {
+    filter: brightness(1.15);
+}
+[data-theme='ecomodular/circuit'] .ci-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    padding: 8px 26px;
+    border-radius: var(--ci-button-radius);
+    font-size: 13px;
+    font-weight: 600;
+}
+[data-theme='ecomodular/circuit'] .ci-pill-light {
+    background: #fff;
+    color: #111;
+}
+[data-theme='ecomodular/circuit'] .ci-link {
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+[data-theme='ecomodular/circuit'] .ci-link-button {
+    margin-top: 10px;
+    font-size: 13px;
+    text-decoration: underline;
+}
+[data-theme='ecomodular/circuit'] .ci-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.4;
+}
+[data-theme='ecomodular/circuit'] .ci-badge-sale {
+    background: var(--ci-accent);
+}
+[data-theme='ecomodular/circuit'] .ci-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+[data-theme='ecomodular/circuit'] .ci-icon-badge {
+    position: relative;
+    display: inline-flex;
+}
+[data-theme='ecomodular/circuit'] .ci-icon-badge b {
+    position: absolute;
+    top: -6px;
+    inset-inline-end: -8px;
+    min-width: 17px;
+    height: 17px;
+    padding-inline: 4px;
+    border-radius: 999px;
+    background: var(--ci-accent);
+    color: #fff;
+    font-size: 10px;
+    line-height: 17px;
+    text-align: center;
+}
+
+/* ---------- Header ---------- */
+[data-theme='ecomodular/circuit'] .ci-header {
+    position: relative;
+    z-index: 30;
+}
+[data-theme='ecomodular/circuit'] :is(.ci-topbar, .ci-mainbar) {
+    background: var(--ci-header-bg);
+    color: var(--ci-header-ink);
+}
+[data-theme='ecomodular/circuit'] .ci-topbar {
+    border-bottom: 1px solid rgb(255 255 255 / 0.08);
+    font-size: 12px;
+}
+[data-theme='ecomodular/circuit'] .ci-topbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    min-height: 38px;
+}
+[data-theme='ecomodular/circuit'] .ci-announce {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+[data-theme='ecomodular/circuit'] .ci-announce button {
+    opacity: 0.7;
+}
+[data-theme='ecomodular/circuit'] .ci-announce p {
+    margin-inline-start: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+}
+[data-theme='ecomodular/circuit'] .ci-toplinks {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    white-space: nowrap;
+}
+[data-theme='ecomodular/circuit'] .ci-region {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+[data-theme='ecomodular/circuit'] .ci-region select {
+    background: transparent;
+    color: inherit;
+    border: 0;
+    font-size: 12px;
+}
+[data-theme='ecomodular/circuit'] .ci-region select option {
+    color: #111;
+}
+[data-theme='ecomodular/circuit'] .ci-mainbar-inner {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    min-height: 74px;
+}
+[data-theme='ecomodular/circuit'] .ci-logo {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    flex-shrink: 0;
+}
+[data-theme='ecomodular/circuit'] .ci-logo img {
+    max-height: 40px;
+    max-width: 180px;
+    object-fit: contain;
+}
+[data-theme='ecomodular/circuit'] .ci-search-wrap {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+[data-theme='ecomodular/circuit'] .ci-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 640px;
+    min-height: 42px;
+    padding-inline: 18px;
+    border-radius: 999px;
+    background: #fff;
+    color: #6b6b76;
+}
+[data-theme='ecomodular/circuit'] .ci-search input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: 0;
+    outline: none;
+    color: #111;
+    font-size: 13px;
+}
+[data-theme='ecomodular/circuit'] .ci-actions {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+[data-theme='ecomodular/circuit'] .ci-search-toggle,
+[data-theme='ecomodular/circuit'] .ci-menu-button {
+    display: none;
+}
+[data-theme='ecomodular/circuit'] .ci-cart {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+[data-theme='ecomodular/circuit'] .ci-cart-label {
+    font-size: 12px;
+    font-weight: 600;
+}
+[data-theme='ecomodular/circuit'] .ci-menubar {
+    background: var(--background);
+    border-bottom: 1px solid var(--ci-line);
+}
+[data-theme='ecomodular/circuit'] .ci-menubar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    min-height: 52px;
+}
+[data-theme='ecomodular/circuit'] .ci-menu {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    font-size: 14px;
+    font-weight: 600;
+}
+[data-theme='ecomodular/circuit'] .ci-menu > a:hover,
+[data-theme='ecomodular/circuit'] .ci-shop > button:hover {
+    color: var(--ci-accent);
+}
+[data-theme='ecomodular/circuit'] .ci-menu-highlight {
+    color: var(--ci-accent);
+}
+[data-theme='ecomodular/circuit'] .ci-shop {
+    position: relative;
+}
+[data-theme='ecomodular/circuit'] .ci-shop > button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding-block: 16px;
+    font-weight: 600;
+}
+[data-theme='ecomodular/circuit'] .ci-dropdown {
+    position: absolute;
+    top: 100%;
+    inset-inline-start: -16px;
+    z-index: 40;
+    display: grid;
+    min-width: 240px;
+    padding: 10px;
+    border: 1px solid var(--ci-line);
+    border-radius: 10px;
+    background: var(--background);
+    box-shadow: 0 16px 40px rgb(17 17 17 / 0.12);
+}
+[data-theme='ecomodular/circuit'] .ci-dropdown[hidden] {
+    display: none;
+}
+[data-theme='ecomodular/circuit'] .ci-dropdown a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+[data-theme='ecomodular/circuit'] .ci-dropdown a:hover {
+    background: var(--ci-panel);
+}
+[data-theme='ecomodular/circuit'] .ci-recent {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+}
+[data-theme='ecomodular/circuit'] .ci-rail {
+    display: none;
+}
+@media (min-width: 1280px) {
+    [data-theme='ecomodular/circuit'] .ci-rail {
+        position: fixed;
+        inset-block: 0;
+        inset-inline-start: 0;
+        z-index: 35;
+        width: 56px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+        padding-top: 18px;
+        background: var(--background);
+        border-inline-end: 1px solid var(--ci-line);
+    }
+    [data-theme='ecomodular/circuit'] .ci-rail a {
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-rail a:hover {
+        background: var(--ci-panel);
+        color: var(--ci-accent);
+    }
+    [data-theme='ecomodular/circuit'] .ci-rail-menu {
+        display: grid;
+        place-items: center;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: var(--ci-accent);
+        color: #fff;
+        margin-bottom: 10px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-header,
+    [data-theme='ecomodular/circuit'] .ci-footer {
+        margin-inline-start: var(--ci-rail);
+    }
+}
+
+/* Drawers (menu, filters, wishlist, recently viewed) */
+[data-theme='ecomodular/circuit'] .ci-drawer {
+    margin: 0;
+    margin-inline-start: auto;
+    height: 100dvh;
+    max-height: none;
+    width: min(400px, 100%);
+    padding: 22px;
+    border: 0;
+    background: var(--background);
+    color: var(--ci-ink);
+    overflow-y: auto;
+}
+[data-theme='ecomodular/circuit'] .ci-menu-drawer {
+    margin-inline-start: 0;
+    margin-inline-end: auto;
+}
+[data-theme='ecomodular/circuit'] .ci-drawer::backdrop {
+    background: rgb(10 8 20 / 0.5);
+}
+[data-theme='ecomodular/circuit'] .ci-drawer-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+[data-theme='ecomodular/circuit'] .ci-drawer-head h2 {
+    font-size: 18px;
+    font-weight: 600;
+}
+[data-theme='ecomodular/circuit'] .ci-drawer .ci-search {
+    border: 1px solid var(--ci-line);
+    margin-bottom: 14px;
+}
+[data-theme='ecomodular/circuit'] .ci-drawer nav {
+    display: grid;
+}
+[data-theme='ecomodular/circuit'] .ci-drawer nav a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--ci-line);
+    font-weight: 500;
+}
+[data-theme='ecomodular/circuit'] .ci-drawer-categories h3 {
+    margin-top: 22px;
+    font-size: 13px;
+    text-transform: uppercase;
+    color: var(--ci-muted);
+}
+[data-theme='ecomodular/circuit'] .ci-drawer-region {
+    margin-top: 20px;
+}
+[data-theme='ecomodular/circuit'] .ci-drawer-region select {
+    color: inherit;
+    font-size: 13px;
+}
+[data-theme='ecomodular/circuit'] .ci-drawer-list {
+    display: grid;
+    gap: 12px;
+}
+[data-theme='ecomodular/circuit'] .ci-drawer-list a {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+[data-theme='ecomodular/circuit'] .ci-drawer-list img,
+[data-theme='ecomodular/circuit'] .ci-drawer-thumb {
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    object-fit: contain;
+    background: var(--ci-panel);
+    flex-shrink: 0;
+}
+[data-theme='ecomodular/circuit'] .ci-drawer-list span {
+    display: grid;
+    gap: 4px;
+    font-size: 13px;
+}
+[data-theme='ecomodular/circuit'] .ci-drawer-note {
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--ci-muted);
+}
+
+/* ---------- Homepage ---------- */
+[data-theme='ecomodular/circuit'] .ci-home-top {
+    background: var(--ci-panel);
+    padding-block: 28px 8px;
+}
+[data-theme='ecomodular/circuit'] .ci-section {
+    margin-block: 56px;
+}
+[data-theme='ecomodular/circuit'] .ci-section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+[data-theme='ecomodular/circuit'] .ci-section-head h2 {
+    font-size: 24px;
+    font-weight: 600;
+}
+[data-theme='ecomodular/circuit'] .ci-view-all {
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+[data-theme='ecomodular/circuit'] .ci-campaign {
+    position: relative;
+    display: flex;
+    overflow: hidden;
+    isolation: isolate;
+    border-radius: 10px;
+    background: #1d1d24;
+    color: #fff;
+}
+[data-theme='ecomodular/circuit'] .ci-campaign > img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+    transition: transform 0.6s;
+}
+[data-theme='ecomodular/circuit'] .ci-campaign::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+        90deg,
+        rgb(0 0 0 / 0.55),
+        rgb(0 0 0 / 0.05) 70%
+    );
+}
+[data-theme='ecomodular/circuit'] .ci-campaign:hover > img {
+    transform: scale(1.03);
+}
+[data-theme='ecomodular/circuit'] .ci-campaign-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 30px;
+    max-width: 75%;
+}
+[data-theme='ecomodular/circuit'] .ci-campaign-copy h2 {
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.1;
+}
+[data-theme='ecomodular/circuit'] .ci-campaign-body {
+    font-size: 13px;
+    opacity: 0.9;
+}
+[data-theme='ecomodular/circuit'] .ci-campaign-copy .ci-pill {
+    margin-top: 6px;
+}
+[data-theme='ecomodular/circuit'] .ci-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: 16px;
+    height: 460px;
+}
+[data-theme='ecomodular/circuit'] .ci-hero[data-tiles='false'] {
+    grid-template-columns: 1fr;
+}
+[data-theme='ecomodular/circuit'] .ci-hero-slide {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+}
+[data-theme='ecomodular/circuit'] .ci-hero-slide > .ci-campaign {
+    height: 100%;
+    align-items: center;
+}
+[data-theme='ecomodular/circuit'] .ci-hero-slide .ci-campaign-copy h2 {
+    font-size: clamp(36px, 4.4vw, 62px);
+    font-weight: 700;
+    color: #ffd84d;
+    letter-spacing: -0.03em;
+}
+[data-theme='ecomodular/circuit'] .ci-hero-slide .ci-campaign-body {
+    font-size: 14px;
+}
+[data-theme='ecomodular/circuit'] :is(.ci-slide-prev, .ci-slide-next) {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: rgb(255 255 255 / 0.9);
+    color: #111;
+}
+[data-theme='ecomodular/circuit'] .ci-slide-prev {
+    inset-inline-start: 12px;
+}
+[data-theme='ecomodular/circuit'] .ci-slide-next {
+    inset-inline-end: 12px;
+}
+[data-theme='ecomodular/circuit'] .ci-dots {
+    position: absolute;
+    bottom: 16px;
+    inset-inline: 0;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+[data-theme='ecomodular/circuit'] .ci-dots button {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.5);
+}
+[data-theme='ecomodular/circuit'] .ci-dots [aria-current='true'] {
+    width: 22px;
+    background: #fff;
+}
+[data-theme='ecomodular/circuit'] .ci-hero-tall {
+    align-items: flex-start;
+    justify-content: center;
+    text-align: center;
+}
+[data-theme='ecomodular/circuit'] .ci-hero-tall::after {
+    background: linear-gradient(180deg, rgb(0 0 0 / 0.45), rgb(0 0 0 / 0) 55%);
+}
+[data-theme='ecomodular/circuit'] .ci-hero-tall .ci-campaign-copy {
+    align-items: center;
+    max-width: none;
+}
+[data-theme='ecomodular/circuit'] .ci-hero-stack {
+    display: grid;
+    gap: 16px;
+}
+[data-theme='ecomodular/circuit'] .ci-hero-small {
+    align-items: center;
+}
+[data-theme='ecomodular/circuit'] .ci-hero-small .ci-campaign-copy {
+    padding: 22px;
+    gap: 6px;
+}
+[data-theme='ecomodular/circuit'] .ci-hero-small h2 {
+    font-size: 20px;
+}
+
+[data-theme='ecomodular/circuit'] .ci-circles {
+    margin-block: 30px 10px;
+}
+[data-theme='ecomodular/circuit'] .ci-circle-track {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 16px;
+}
+[data-theme='ecomodular/circuit'] .ci-circle {
+    display: grid;
+    justify-items: center;
+    gap: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+}
+[data-theme='ecomodular/circuit'] .ci-circle-disc {
+    display: grid;
+    place-items: center;
+    width: 108px;
+    height: 108px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid var(--ci-line);
+    transition: transform 0.2s;
+}
+[data-theme='ecomodular/circuit'] .ci-circle:hover .ci-circle-disc {
+    transform: translateY(-3px);
+}
+[data-theme='ecomodular/circuit'] .ci-circle-disc img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+[data-theme='ecomodular/circuit'] .ci-circle-disc b {
+    padding: 10px;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
+    color: #fff;
+}
+[data-theme='ecomodular/circuit']
+    .ci-circle[data-tone='0']
+    .ci-circle-disc:has(b) {
+    background: var(--ci-accent);
+    border-color: var(--ci-accent);
+}
+[data-theme='ecomodular/circuit']
+    .ci-circle[data-tone='1']
+    .ci-circle-disc:has(b) {
+    background: #ffc531;
+    border-color: #ffc531;
+}
+[data-theme='ecomodular/circuit'] .ci-circle[data-tone='1'] .ci-circle-disc b {
+    color: #111;
+}
+[data-theme='ecomodular/circuit']
+    .ci-circle[data-tone='2']
+    .ci-circle-disc:has(b) {
+    background: #8b5cf6;
+    border-color: #8b5cf6;
+}
+
+[data-theme='ecomodular/circuit'] .ci-countdown {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+}
+[data-theme='ecomodular/circuit'] .ci-countdown span {
+    margin-inline-end: 6px;
+}
+[data-theme='ecomodular/circuit'] .ci-countdown b {
+    min-width: 34px;
+    padding: 6px 4px;
+    border-radius: 4px;
+    background: var(--ci-accent);
+    color: #fff;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Product cards and rows */
+[data-theme='ecomodular/circuit'] .ci-row {
+    display: grid;
+    grid-template-columns: repeat(var(--ci-row-columns, 5), minmax(0, 1fr));
+    gap: 28px 20px;
+}
+[data-theme='ecomodular/circuit'] .ci-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+[data-theme='ecomodular/circuit'] .ci-card-photo {
+    position: relative;
+    border-radius: 8px;
+    background: #fff;
+}
+[data-theme='ecomodular/circuit'] .ci-card-photo > a {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 8px;
+}
+[data-theme='ecomodular/circuit'] .ci-card-photo img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 8%;
+    transition: transform 0.3s;
+}
+[data-theme='ecomodular/circuit'] .ci-card:hover .ci-card-photo img {
+    transform: scale(1.04);
+}
+[data-theme='ecomodular/circuit'] .ci-card-badges {
+    position: absolute;
+    top: 10px;
+    inset-inline-start: 10px;
+    z-index: 1;
+    display: grid;
+    justify-items: start;
+    gap: 6px;
+}
+[data-theme='ecomodular/circuit'] .ci-card-sale {
+    position: absolute;
+    bottom: 10px;
+    inset-inline-start: 10px;
+    z-index: 1;
+}
+[data-theme='ecomodular/circuit'] .ci-save {
+    position: absolute;
+    top: 10px;
+    inset-inline-end: 10px;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 2px 10px rgb(0 0 0 / 0.08);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+[data-theme='ecomodular/circuit'] .ci-card:hover .ci-save,
+[data-theme='ecomodular/circuit'] .ci-save:focus-visible,
+[data-theme='ecomodular/circuit'] .ci-save[aria-pressed='true'] {
+    opacity: 1;
+}
+[data-theme='ecomodular/circuit'] .ci-save[aria-pressed='true'] {
+    color: var(--ci-accent);
+}
+[data-theme='ecomodular/circuit'] .ci-card-copy {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 14px;
+}
+[data-theme='ecomodular/circuit'] .ci-card-copy h3 {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+[data-theme='ecomodular/circuit'] .ci-card-copy h3 a:hover {
+    color: var(--ci-accent);
+}
+[data-theme='ecomodular/circuit'] .ci-card-brand,
+[data-theme='ecomodular/circuit'] .ci-card-note {
+    font-size: 12px;
+    color: var(--ci-muted);
+}
+[data-theme='ecomodular/circuit'] .ci-price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px;
+    margin-top: 6px;
+    font-size: 13px;
+    font-weight: 500;
+}
+[data-theme='ecomodular/circuit'] .ci-price-sale {
+    color: var(--ci-accent);
+}
+[data-theme='ecomodular/circuit'] .ci-price s {
+    color: var(--ci-muted);
+    font-size: 12px;
+}
+[data-theme='ecomodular/circuit'] .ci-card-buy {
+    margin-top: auto;
+    min-height: 38px;
+    padding: 8px 14px;
+    font-size: 12px;
+    opacity: 0;
+    transform: translateY(6px);
+    transition:
+        opacity 0.2s,
+        transform 0.2s;
+}
+[data-theme='ecomodular/circuit'] .ci-card:hover .ci-card-buy,
+[data-theme='ecomodular/circuit'] .ci-card-buy:focus-visible {
+    opacity: 1;
+    transform: none;
+}
+@media (hover: none) {
+    [data-theme='ecomodular/circuit'] .ci-card-buy,
+    [data-theme='ecomodular/circuit'] .ci-save {
+        opacity: 1;
+        transform: none;
+    }
+}
+[data-theme='ecomodular/circuit'] .ci-card[data-variant='compact'] {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+}
+[data-theme='ecomodular/circuit']
+    .ci-card[data-variant='compact']
+    .ci-card-photo {
+    width: 96px;
+    flex-shrink: 0;
+}
+[data-theme='ecomodular/circuit']
+    .ci-card[data-variant='compact']
+    .ci-card-copy {
+    padding: 0;
+}
+[data-theme='ecomodular/circuit']
+    .ci-card[data-variant='compact']
+    .ci-card-badges {
+    display: none;
+}
+
+/* Voucher strip */
+[data-theme='ecomodular/circuit'] .ci-voucher {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    padding: 22px 34px;
+    border-radius: 999px;
+    background: var(--ci-voucher);
+    color: #fff;
+}
+[data-theme='ecomodular/circuit'] .ci-voucher h2 {
+    display: grid;
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1.2;
+}
+[data-theme='ecomodular/circuit'] .ci-voucher > p {
+    flex: 1;
+    max-width: 340px;
+    font-size: 12px;
+    opacity: 0.85;
+}
+[data-theme='ecomodular/circuit'] .ci-voucher-code {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-inline-start: auto;
+    padding: 10px 26px;
+    border: 1px dashed rgb(255 255 255 / 0.7);
+    border-radius: 999px;
+    color: #ffd84d;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+}
+
+/* Popular picks */
+[data-theme='ecomodular/circuit'] .ci-picks {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: 24px;
+    align-items: stretch;
+}
+[data-theme='ecomodular/circuit'] .ci-picks-list {
+    display: grid;
+    align-content: center;
+    gap: 22px;
+}
+[data-theme='ecomodular/circuit'] .ci-picks-card {
+    min-height: 380px;
+    align-items: flex-start;
+}
+
+/* Promo mosaic */
+[data-theme='ecomodular/circuit'] .ci-mosaic-band {
+    padding: 56px 0;
+    position: relative;
+}
+/* A full-width grey band behind the mosaic, whatever the page frame. */
+[data-theme='ecomodular/circuit'] .ci-mosaic-band {
+    background: var(--ci-panel);
+    box-shadow: 0 0 0 100vmax var(--ci-panel);
+    clip-path: inset(0 -100vmax);
+}
+[data-theme='ecomodular/circuit'] .ci-mosaic {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-rows: 210px;
+    gap: 16px;
+}
+[data-theme='ecomodular/circuit'] .ci-mosaic-tile {
+    align-items: flex-start;
+}
+[data-theme='ecomodular/circuit'] .ci-mosaic-tile .ci-campaign-copy h2 {
+    font-size: 22px;
+}
+[data-theme='ecomodular/circuit'] .ci-mosaic[data-count='4'] > :nth-child(3) {
+    grid-column: span 2;
+}
+[data-theme='ecomodular/circuit'] .ci-mosaic[data-count='4'] > :nth-child(4) {
+    grid-column: 3 / span 2;
+    grid-row: 1 / span 2;
+}
+[data-theme='ecomodular/circuit'] .ci-mosaic-tile[data-big='true'] {
+    align-items: flex-start;
+    justify-content: center;
+    text-align: center;
+}
+[data-theme='ecomodular/circuit'] .ci-mosaic-tile[data-big='true']::after {
+    background: linear-gradient(180deg, rgb(0 0 0 / 0.55), rgb(0 0 0 / 0) 60%);
+}
+[data-theme='ecomodular/circuit']
+    .ci-mosaic-tile[data-big='true']
+    .ci-campaign-copy {
+    align-items: center;
+    max-width: 440px;
+    padding-top: 44px;
+}
+[data-theme='ecomodular/circuit'] .ci-mosaic-tile[data-big='true'] h2 {
+    font-size: 30px;
+    color: #ffc46b;
+}
+
+/* Brands */
+[data-theme='ecomodular/circuit'] .ci-brands {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 16px;
+}
+[data-theme='ecomodular/circuit'] .ci-brands a {
+    display: grid;
+    place-items: center;
+    min-height: 84px;
+    border: 1px solid var(--ci-line);
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    transition: border-color 0.2s;
+}
+[data-theme='ecomodular/circuit'] .ci-brands a:hover {
+    border-color: var(--ci-ink);
+}
+[data-theme='ecomodular/circuit'] .ci-brands img {
+    max-height: 40px;
+    max-width: 70%;
+    object-fit: contain;
+}
+
+/* Spotlight */
+[data-theme='ecomodular/circuit'] .ci-spotlight {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 16px;
+}
+[data-theme='ecomodular/circuit'] .ci-spotlight[data-image='right'] > img {
+    order: 2;
+}
+[data-theme='ecomodular/circuit'] .ci-spotlight > img {
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+[data-theme='ecomodular/circuit'] .ci-spotlight-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 40px;
+    border-radius: 10px;
+    background: var(--ci-panel);
+    text-align: center;
+}
+[data-theme='ecomodular/circuit'] .ci-spotlight-copy h2 {
+    font-size: 30px;
+    font-weight: 600;
+}
+[data-theme='ecomodular/circuit'] .ci-spotlight-copy > p:not(.ci-eyebrow) {
+    max-width: 420px;
+    color: var(--ci-muted);
+    font-size: 13px;
+}
+[data-theme='ecomodular/circuit'] .ci-spotlight-product {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    width: min(420px, 100%);
+    margin-top: 14px;
+    padding: 14px 20px;
+    border-radius: 999px;
+    background: #fff;
+    font-size: 13px;
+    font-weight: 600;
+}
+[data-theme='ecomodular/circuit'] .ci-spotlight-product b {
+    color: var(--ci-accent);
+}
+
+/* Services and support */
+[data-theme='ecomodular/circuit'] .ci-services {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 40px;
+    text-align: center;
+}
+[data-theme='ecomodular/circuit'] .ci-services div {
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+}
+[data-theme='ecomodular/circuit'] .ci-services h3 {
+    font-size: 14px;
+    font-weight: 600;
+}
+[data-theme='ecomodular/circuit'] .ci-services p {
+    max-width: 320px;
+    font-size: 12px;
+    color: var(--ci-muted);
+}
+[data-theme='ecomodular/circuit'] .ci-support {
+    background: var(--ci-panel);
+    padding-block: 56px;
+    text-align: center;
+}
+[data-theme='ecomodular/circuit'] .ci-support h2 {
+    margin: 6px 0 26px;
+    font-size: 26px;
+    font-weight: 600;
+}
+[data-theme='ecomodular/circuit'] .ci-support-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    max-width: 1000px;
+    margin-inline: auto;
+}
+[data-theme='ecomodular/circuit'] .ci-support-cards a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 22px;
+    border-radius: 12px;
+    background: #fff;
+    text-align: start;
+}
+[data-theme='ecomodular/circuit'] .ci-support-cards span {
+    display: grid;
+    gap: 2px;
+}
+[data-theme='ecomodular/circuit'] .ci-support-cards small {
+    color: var(--ci-muted);
+}
+[data-theme='ecomodular/circuit'] .ci-trusted {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 22px;
+    font-size: 12px;
+    color: var(--ci-muted);
+}
+[data-theme='ecomodular/circuit'] .ci-home-extensions {
+    margin-block: 30px;
+}
+
+/* ---------- Catalog ---------- */
+[data-theme='ecomodular/circuit'] .ci-crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-block: 22px;
+    font-size: 12px;
+    color: var(--ci-muted);
+}
+[data-theme='ecomodular/circuit'] .ci-crumbs > * + *::before {
+    content: '·';
+    margin-inline-end: 8px;
+}
+[data-theme='ecomodular/circuit'] .ci-crumbs > :last-child {
+    color: var(--ci-ink);
+}
+[data-theme='ecomodular/circuit'] .ci-crumbs-center {
+    justify-content: center;
+}
+[data-theme='ecomodular/circuit'] .ci-catalog-head {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    padding-block: 26px 40px;
+    text-align: center;
+}
+[data-theme='ecomodular/circuit'] .ci-catalog-head .ci-crumbs {
+    padding: 0;
+}
+[data-theme='ecomodular/circuit'] .ci-catalog-head h1 {
+    font-size: 34px;
+    font-weight: 600;
+}
+[data-theme='ecomodular/circuit'] .ci-catalog-head p {
+    max-width: 640px;
+    color: var(--ci-muted);
+}
+[data-theme='ecomodular/circuit'] .ci-catalog-layout {
+    display: grid;
+    grid-template-columns: 250px minmax(0, 1fr);
+    gap: 40px;
+    padding-bottom: 60px;
+}
+[data-theme='ecomodular/circuit'] .ci-catalog-layout[data-filters='false'] {
+    grid-template-columns: 1fr;
+}
+[data-theme='ecomodular/circuit'] .ci-sidebar {
+    display: grid;
+    align-content: start;
+    gap: 28px;
+}
+[data-theme='ecomodular/circuit'] .ci-filters {
+    display: grid;
+    font-size: 13px;
+}
+[data-theme='ecomodular/circuit'] .ci-filters details {
+    padding-block: 18px;
+    border-bottom: 1px solid var(--ci-line);
+}
+[data-theme='ecomodular/circuit'] .ci-filters summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 600;
+}
+[data-theme='ecomodular/circuit'] .ci-filters summary::-webkit-details-marker {
+    display: none;
+}
+[data-theme='ecomodular/circuit'] .ci-filters summary::after {
+    content: '+';
+    font-weight: 400;
+    color: var(--ci-muted);
+}
+[data-theme='ecomodular/circuit'] .ci-filters details[open] summary::after {
+    content: '−';
+}
+[data-theme='ecomodular/circuit'] .ci-filters details[open] summary {
+    margin-bottom: 14px;
+}
+[data-theme='ecomodular/circuit'] .ci-filters nav {
+    display: grid;
+    gap: 10px;
+    color: var(--ci-muted);
+}
+[data-theme='ecomodular/circuit'] .ci-filters nav a:hover {
+    color: var(--ci-ink);
+}
+[data-theme='ecomodular/circuit'] .ci-filters label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-block: 8px;
+    color: var(--ci-muted);
+}
+[data-theme='ecomodular/circuit'] .ci-filters select {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--ci-line);
+    border-radius: 8px;
+    background: var(--background);
+}
+[data-theme='ecomodular/circuit'] .ci-price-filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+[data-theme='ecomodular/circuit'] .ci-price-filter label {
+    flex: 1;
+    margin: 0;
+    padding: 8px 10px;
+    border: 1px solid var(--ci-line);
+    border-radius: 8px;
+    gap: 6px;
+}
+[data-theme='ecomodular/circuit'] .ci-price-filter input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: var(--ci-ink);
+}
+[data-theme='ecomodular/circuit'] .ci-filters > .ci-button {
+    margin-top: 20px;
+    width: 100%;
+}
+[data-theme='ecomodular/circuit'] .ci-coupon {
+    position: relative;
+    display: grid;
+    min-height: 330px;
+    overflow: hidden;
+    isolation: isolate;
+    border-radius: 10px;
+    color: #fff;
+    text-align: center;
+}
+[data-theme='ecomodular/circuit'] .ci-coupon img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+[data-theme='ecomodular/circuit'] .ci-coupon > span {
+    display: grid;
+    justify-items: center;
+    align-content: end;
+    gap: 8px;
+    padding: 24px 16px;
+    background: linear-gradient(180deg, transparent 35%, rgb(0 0 0 / 0.55));
+}
+[data-theme='ecomodular/circuit'] .ci-coupon small {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+[data-theme='ecomodular/circuit'] .ci-coupon strong {
+    font-size: 24px;
+    line-height: 1.1;
+}
+[data-theme='ecomodular/circuit'] .ci-coupon em {
+    margin-top: 10px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 999px;
+    background: #fff;
+    color: #111;
+    font-style: normal;
+    font-weight: 600;
+}
+[data-theme='ecomodular/circuit'] .ci-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    font-size: 13px;
+}
+[data-theme='ecomodular/circuit'] .ci-toolbar > p {
+    flex: 1;
+    color: var(--ci-muted);
+}
+[data-theme='ecomodular/circuit'] .ci-grid-switch {
+    display: flex;
+    gap: 4px;
+}
+[data-theme='ecomodular/circuit'] .ci-grid-switch button {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    color: var(--ci-muted);
+}
+[data-theme='ecomodular/circuit'] .ci-grid-switch [aria-pressed='true'] {
+    color: var(--ci-ink);
+    background: var(--ci-panel);
+}
+[data-theme='ecomodular/circuit'] .ci-sort {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--ci-muted);
+}
+[data-theme='ecomodular/circuit'] .ci-sort select {
+    border: 0;
+    background: transparent;
+    font-weight: 600;
+    color: var(--ci-ink);
+}
+[data-theme='ecomodular/circuit'] .ci-filter-button {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+}
+[data-theme='ecomodular/circuit'] .ci-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 34px 22px;
+}
+[data-theme='ecomodular/circuit'] .ci-grid[data-grid='2'] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+[data-theme='ecomodular/circuit'] .ci-grid[data-grid='4'] {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+[data-theme='ecomodular/circuit'] .ci-grid[data-grid='list'] {
+    grid-template-columns: 1fr;
+}
+[data-theme='ecomodular/circuit'] .ci-card[data-variant='list'] {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 24px;
+    align-items: center;
+}
+[data-theme='ecomodular/circuit'] .ci-card[data-variant='list'] .ci-card-copy {
+    padding: 0;
+}
+[data-theme='ecomodular/circuit'] .ci-card[data-variant='list'] .ci-card-buy {
+    opacity: 1;
+    transform: none;
+    align-self: flex-start;
+}
+[data-theme='ecomodular/circuit'] .ci-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding-block: 40px 10px;
+}
+[data-theme='ecomodular/circuit'] .ci-pagination :is(a, span) {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--ci-line);
+    border-radius: 50%;
+    font-size: 13px;
+}
+[data-theme='ecomodular/circuit'] .ci-pagination [aria-current='page'] {
+    background: var(--ci-ink);
+    border-color: var(--ci-ink);
+    color: var(--background);
+}
+[data-theme='ecomodular/circuit'] .ci-empty {
+    display: grid;
+    justify-items: center;
+    gap: 14px;
+    padding: 60px 20px;
+    text-align: center;
+}
+[data-theme='ecomodular/circuit'] .ci-extensions {
+    padding-block: 24px;
+}
+
+/* ---------- Product page ---------- */
+[data-theme='ecomodular/circuit'] .ci-product-page {
+    padding-bottom: 40px;
+}
+[data-theme='ecomodular/circuit'] .ci-product {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: 56px;
+    max-width: 1180px;
+    margin-inline: auto;
+    padding-block: 10px 50px;
+}
+[data-theme='ecomodular/circuit'] .ci-gallery {
+    position: sticky;
+    top: 20px;
+    align-self: start;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+}
+[data-theme='ecomodular/circuit'] .ci-gallery[data-thumbnails='true'] {
+    grid-template-columns: 64px minmax(0, 1fr);
+}
+[data-theme='ecomodular/circuit'] .ci-thumbs {
+    display: grid;
+    align-content: start;
+    gap: 12px;
+}
+[data-theme='ecomodular/circuit'] .ci-thumbs button {
+    aspect-ratio: 1;
+    padding: 4px;
+    border: 1px solid var(--ci-line);
+    border-radius: 8px;
+    background: #fff;
+}
+[data-theme='ecomodular/circuit'] .ci-thumbs [aria-pressed='true'] {
+    border-color: var(--ci-ink);
+}
+[data-theme='ecomodular/circuit'] .ci-thumbs img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+[data-theme='ecomodular/circuit'] .ci-main-image {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    border-radius: 10px;
+    background: #fff;
+}
+[data-theme='ecomodular/circuit'] .ci-main-image > img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 6%;
+}
+[data-theme='ecomodular/circuit'] .ci-zoom {
+    position: absolute;
+    top: 12px;
+    inset-inline-end: 12px;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--ci-line);
+    border-radius: 50%;
+    background: #fff;
+}
+[data-theme='ecomodular/circuit'] .ci-info {
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    gap: 12px;
+}
+[data-theme='ecomodular/circuit'] .ci-info > * {
+    max-width: 100%;
+}
+[data-theme='ecomodular/circuit'] .ci-info-brand {
+    font-size: 13px;
+    color: var(--ci-muted);
+}
+[data-theme='ecomodular/circuit'] .ci-info h1 {
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.2;
+}
+[data-theme='ecomodular/circuit'] .ci-info-price {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-size: 24px;
+    font-weight: 600;
+}
+[data-theme='ecomodular/circuit'] .ci-info-price s {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--ci-muted);
+}
+[data-theme='ecomodular/circuit'] .ci-info-lead {
+    color: var(--ci-muted);
+    line-height: 1.6;
+}
+[data-theme='ecomodular/circuit'] .ci-delivery {
+    display: grid;
+    width: 100%;
+    border: 1px solid var(--ci-line);
+    border-radius: 10px;
+    font-size: 13px;
+}
+[data-theme='ecomodular/circuit'] .ci-delivery li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+}
+[data-theme='ecomodular/circuit'] .ci-delivery li + li {
+    border-top: 1px solid var(--ci-line);
+}
+[data-theme='ecomodular/circuit'] .ci-buy {
+    display: grid;
+    gap: 16px;
+    width: 100%;
+}
+[data-theme='ecomodular/circuit'] .ci-option {
+    position: relative;
+}
+[data-theme='ecomodular/circuit'] .ci-size-guide {
+    position: absolute;
+    top: 0;
+    inset-inline-end: 0;
+    font-size: 12px;
+    text-decoration: underline;
+}
+[data-theme='ecomodular/circuit'] .ci-social-actions {
+    display: flex;
+    gap: 22px;
+    font-size: 13px;
+    color: var(--ci-muted);
+}
+[data-theme='ecomodular/circuit'] .ci-social-actions :is(a, button) {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+[data-theme='ecomodular/circuit'] .ci-stock {
+    display: grid;
+    gap: 8px;
+    padding-top: 14px;
+    border-top: 1px solid var(--ci-line);
+    font-size: 13px;
+}
+[data-theme='ecomodular/circuit'] .ci-stock b {
+    color: var(--ci-accent);
+    font-weight: 600;
+}
+[data-theme='ecomodular/circuit'] .ci-stock-bar {
+    height: 3px;
+    background: var(--ci-line);
+}
+[data-theme='ecomodular/circuit'] .ci-stock-bar span {
+    display: block;
+    height: 100%;
+    background: var(--ci-accent);
+}
+[data-theme='ecomodular/circuit'] .ci-buy-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+[data-theme='ecomodular/circuit'] .ci-qty {
+    display: flex;
+    align-items: center;
+    height: 46px;
+    border: 1px solid var(--ci-line);
+    border-radius: var(--ci-button-radius);
+}
+[data-theme='ecomodular/circuit'] .ci-qty button {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 100%;
+}
+[data-theme='ecomodular/circuit'] .ci-qty input {
+    width: 40px;
+    text-align: center;
+    border: 0;
+    background: transparent;
+    -moz-appearance: textfield;
+}
+[data-theme='ecomodular/circuit'] .ci-qty input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+[data-theme='ecomodular/circuit'] .ci-add {
+    flex: 1;
+    min-height: 46px;
+}
+[data-theme='ecomodular/circuit'] .ci-round {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 46px;
+    height: 46px;
+    border: 1px solid var(--ci-line);
+    border-radius: 50%;
+}
+[data-theme='ecomodular/circuit'] .ci-round[aria-pressed='true'] {
+    color: var(--ci-accent);
+}
+[data-theme='ecomodular/circuit'] .ci-buy-now {
+    width: 100%;
+    background: color-mix(in srgb, var(--ci-accent) 60%, #fff);
+    border-color: transparent;
+    color: #fff;
+}
+[data-theme='ecomodular/circuit'] .ci-meta {
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr);
+    gap: 8px 12px;
+    width: 100%;
+    font-size: 13px;
+}
+[data-theme='ecomodular/circuit'] .ci-meta dt {
+    color: var(--ci-muted);
+}
+[data-theme='ecomodular/circuit'] .ci-safe-checkout {
+    display: grid;
+    justify-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 18px;
+    border-radius: 10px;
+    background: var(--ci-panel);
+    font-size: 13px;
+    font-weight: 600;
+}
+[data-theme='ecomodular/circuit'] .ci-payments {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+[data-theme='ecomodular/circuit'] .ci-payments li {
+    padding: 3px 8px;
+    border: 1px solid var(--ci-line);
+    border-radius: 4px;
+    background: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #1b1b2f;
+}
+[data-theme='ecomodular/circuit'] .ci-accordions {
+    width: 100%;
+}
+[data-theme='ecomodular/circuit'] .ci-accordion {
+    border-top: 1px solid var(--ci-line);
+}
+[data-theme='ecomodular/circuit'] .ci-accordion:last-child {
+    border-bottom: 1px solid var(--ci-line);
+}
+[data-theme='ecomodular/circuit'] .ci-accordion summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 16px;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 600;
+}
+[data-theme='ecomodular/circuit']
+    .ci-accordion
+    summary::-webkit-details-marker {
+    display: none;
+}
+[data-theme='ecomodular/circuit'] .ci-accordion .ci-accordion-minus,
+[data-theme='ecomodular/circuit'] .ci-accordion[open] .ci-accordion-plus {
+    display: none;
+}
+[data-theme='ecomodular/circuit'] .ci-accordion[open] .ci-accordion-minus {
+    display: block;
+}
+[data-theme='ecomodular/circuit'] .ci-accordion > div {
+    padding-bottom: 16px;
+    color: var(--ci-muted);
+    line-height: 1.7;
+}
+[data-theme='ecomodular/circuit'] .ci-description {
+    white-space: pre-line;
+}
+[data-theme='ecomodular/circuit'] .ci-marquee {
+    position: relative;
+    overflow: hidden;
+    margin-inline: calc(50% - 50vw + var(--ci-rail) / 2);
+    padding-block: 26px;
+    background: var(--ci-panel);
+}
+[data-theme='ecomodular/circuit'] .ci-marquee > div {
+    display: flex;
+    gap: 70px;
+    width: max-content;
+    animation: ci-marquee 40s linear infinite;
+    font-size: 22px;
+    color: #c7c7cf;
+    white-space: nowrap;
+}
+@keyframes ci-marquee {
+    to {
+        transform: translateX(-33.333%);
+    }
+}
+[data-theme='ecomodular/circuit'] .ci-centered-section {
+    text-align: center;
+}
+[data-theme='ecomodular/circuit'] .ci-centered-section > h2 {
+    font-size: 30px;
+    font-weight: 600;
+}
+[data-theme='ecomodular/circuit'] .ci-centered-section > p {
+    margin: 8px 0 34px;
+    color: var(--ci-muted);
+    font-size: 13px;
+}
+[data-theme='ecomodular/circuit'] .ci-centered-section .ci-row {
+    text-align: start;
+}
+[data-theme='ecomodular/circuit'] .ci-zoom-dialog {
+    max-width: min(1000px, 94vw);
+    max-height: 94vh;
+    padding: 20px;
+    border: 0;
+    border-radius: 12px;
+    background: #fff;
+}
+[data-theme='ecomodular/circuit'] .ci-zoom-dialog::backdrop {
+    background: rgb(10 8 20 / 0.7);
+}
+[data-theme='ecomodular/circuit'] .ci-zoom-dialog img {
+    max-height: 84vh;
+    object-fit: contain;
+}
+[data-theme='ecomodular/circuit'] .ci-zoom-dialog button {
+    position: absolute;
+    top: 10px;
+    inset-inline-end: 10px;
+}
+
+/* ---------- Cart ---------- */
+[data-theme='ecomodular/circuit'] .ci-cart-page {
+    padding-bottom: 60px;
+}
+[data-theme='ecomodular/circuit'] .ci-cart-page [class*='rounded'] {
+    border-radius: 10px;
+}
+[data-theme='ecomodular/circuit'] .ci-cart-page .store-button,
+[data-theme='ecomodular/circuit']
+    .ci-cart-page
+    [data-slot='button'][class*='bg-primary'] {
+    border-radius: var(--ci-button-radius);
+}
+[data-theme='ecomodular/circuit'] .ci-cart-empty {
+    display: grid;
+    justify-items: center;
+    gap: 14px;
+    padding: 60px 20px 90px;
+    text-align: center;
+}
+[data-theme='ecomodular/circuit'] .ci-cart-empty h1 {
+    font-size: 28px;
+    font-weight: 600;
+}
+[data-theme='ecomodular/circuit'] .ci-cart-empty p {
+    color: var(--ci-muted);
+}
+[data-theme='ecomodular/circuit'] .ci-cart-foot {
+    display: grid;
+    justify-items: end;
+    gap: 10px;
+    margin-top: 20px;
+    font-size: 12px;
+}
+[data-theme='ecomodular/circuit']
+    main#main:not(
+        :has(.ci-home, .ci-catalog, .ci-product-page, .ci-cart-page)
+    ) {
+    max-width: calc(var(--ci-width) + var(--ci-rail));
+    margin-inline: auto;
+    padding: 32px 36px 48px calc(36px + var(--ci-rail));
+}
+
+/* ---------- Footer ---------- */
+[data-theme='ecomodular/circuit'] .ci-footer {
+    margin-top: auto;
+    padding-block: 60px 26px;
+    background: var(--ci-panel);
+    font-size: 13px;
+}
+[data-theme='ecomodular/circuit'] .ci-footer-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.8fr) minmax(
+            0,
+            0.8fr
+        ) minmax(0, 1.4fr);
+    gap: 40px;
+}
+[data-theme='ecomodular/circuit'] .ci-footer h2 {
+    margin-bottom: 22px;
+    font-size: 14px;
+    font-weight: 600;
+}
+[data-theme='ecomodular/circuit'] .ci-footer nav > a {
+    display: block;
+    margin-block: 12px;
+    color: var(--ci-muted);
+}
+[data-theme='ecomodular/circuit'] .ci-footer nav > a:hover {
+    color: var(--ci-ink);
+}
+[data-theme='ecomodular/circuit'] .ci-footer-about {
+    color: var(--ci-muted);
+    line-height: 1.7;
+}
+[data-theme='ecomodular/circuit'] .ci-strong {
+    color: var(--ci-ink);
+    font-weight: 600;
+}
+[data-theme='ecomodular/circuit'] .ci-footer-contact {
+    margin-top: 12px;
+}
+[data-theme='ecomodular/circuit'] .ci-socials {
+    display: flex !important;
+    gap: 10px;
+    margin-top: 20px;
+}
+[data-theme='ecomodular/circuit'] .ci-socials a {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    margin: 0;
+    border: 1px solid var(--ci-line);
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ci-ink);
+}
+[data-theme='ecomodular/circuit'] .ci-newsletter > p {
+    margin-bottom: 18px;
+    color: var(--ci-muted);
+    line-height: 1.7;
+}
+[data-theme='ecomodular/circuit'] .ci-newsletter section {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+[data-theme='ecomodular/circuit'] .ci-newsletter h2 + p + div h2,
+[data-theme='ecomodular/circuit'] .ci-newsletter section > h2 {
+    display: none;
+}
+[data-theme='ecomodular/circuit'] .ci-newsletter input[type='email'] {
+    border-radius: 999px;
+    background: #fff;
+}
+[data-theme='ecomodular/circuit'] .ci-newsletter button[type='submit'] {
+    border-radius: 999px;
+    background: var(--ci-accent);
+    color: #fff;
+}
+[data-theme='ecomodular/circuit'] .ci-footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 50px;
+    padding-top: 22px;
+    border-top: 1px solid var(--ci-line);
+    font-size: 12px;
+}
+[data-theme='ecomodular/circuit'] .ci-to-top {
+    position: fixed;
+    bottom: 22px;
+    inset-inline-end: 22px;
+    z-index: 30;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--ci-ink);
+    color: var(--background);
+    box-shadow: 0 6px 20px rgb(0 0 0 / 0.2);
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1100px) {
+    [data-theme='ecomodular/circuit'] .ci-frame {
+        padding-inline: 24px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-menu {
+        gap: 20px;
+        overflow-x: auto;
+    }
+    [data-theme='ecomodular/circuit'] .ci-hero {
+        grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+        height: auto;
+    }
+    [data-theme='ecomodular/circuit'] .ci-hero-slide {
+        grid-column: 1 / -1;
+        height: 420px;
+    }
+    [data-theme='ecomodular/circuit'] :is(.ci-hero-tall, .ci-hero-small) {
+        min-height: 210px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-row {
+        grid-template-columns: repeat(
+            min(var(--ci-row-columns, 5), 3),
+            minmax(0, 1fr)
+        );
+    }
+    [data-theme='ecomodular/circuit'] .ci-circle-track {
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 8px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-circle {
+        flex: 0 0 120px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-picks {
+        grid-template-columns: 1fr 1fr;
+    }
+    [data-theme='ecomodular/circuit'] .ci-picks-card {
+        grid-column: 1 / -1;
+        order: -1;
+    }
+    [data-theme='ecomodular/circuit'] .ci-catalog-layout {
+        grid-template-columns: 210px minmax(0, 1fr);
+        gap: 26px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-grid,
+    [data-theme='ecomodular/circuit'] .ci-grid[data-grid='4'] {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    [data-theme='ecomodular/circuit'] .ci-product {
+        gap: 32px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-footer-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* ---------- Phone ---------- */
+@media (max-width: 767px) {
+    [data-theme='ecomodular/circuit'] .ci-frame {
+        padding-inline: 16px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-topbar-inner {
+        justify-content: center;
+        min-height: 34px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-toplinks {
+        display: none;
+    }
+    [data-theme='ecomodular/circuit'] .ci-announce p {
+        font-size: 11px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-mainbar-inner {
+        gap: 10px;
+        min-height: 60px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-menu-button {
+        display: grid;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-logo {
+        flex: 1;
+        font-size: 24px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-search-wrap,
+    [data-theme='ecomodular/circuit'] .ci-menubar,
+    [data-theme='ecomodular/circuit'] .ci-cart-label,
+    [data-theme='ecomodular/circuit'] .ci-wish {
+        display: none;
+    }
+    [data-theme='ecomodular/circuit'] .ci-search-toggle {
+        display: grid;
+        place-items: center;
+    }
+    [data-theme='ecomodular/circuit'] .ci-actions {
+        gap: 14px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-home-top {
+        padding-block: 16px 4px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-section {
+        margin-block: 36px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-section-head {
+        flex-wrap: wrap;
+    }
+    [data-theme='ecomodular/circuit'] .ci-section-head h2 {
+        font-size: 20px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-hero {
+        grid-template-columns: 1fr;
+    }
+    [data-theme='ecomodular/circuit'] .ci-hero-slide {
+        height: 340px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-hero-stack {
+        grid-template-columns: 1fr 1fr;
+    }
+    [data-theme='ecomodular/circuit'] .ci-hero-small h2 {
+        font-size: 16px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-hero-small .ci-campaign-copy {
+        padding: 16px;
+        max-width: none;
+    }
+    [data-theme='ecomodular/circuit'] .ci-campaign-copy {
+        padding: 22px;
+        max-width: 90%;
+    }
+    [data-theme='ecomodular/circuit'] .ci-circle {
+        flex-basis: 92px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-circle-disc {
+        width: 80px;
+        height: 80px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 22px 12px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-voucher {
+        flex-wrap: wrap;
+        gap: 14px;
+        border-radius: 18px;
+        padding: 22px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-voucher-code {
+        margin-inline-start: 0;
+    }
+    [data-theme='ecomodular/circuit'] .ci-picks {
+        grid-template-columns: 1fr;
+    }
+    [data-theme='ecomodular/circuit'] .ci-mosaic {
+        grid-template-columns: 1fr 1fr;
+        grid-auto-rows: 180px;
+    }
+    [data-theme='ecomodular/circuit']
+        .ci-mosaic[data-count='4']
+        > :nth-child(3) {
+        grid-column: 1 / -1;
+    }
+    [data-theme='ecomodular/circuit']
+        .ci-mosaic[data-count='4']
+        > :nth-child(4) {
+        grid-column: 1 / -1;
+        grid-row: auto;
+        min-height: 300px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-mosaic-tile .ci-campaign-copy {
+        padding: 18px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-mosaic-tile .ci-campaign-copy h2 {
+        font-size: 18px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-brands {
+        display: flex;
+        overflow-x: auto;
+    }
+    [data-theme='ecomodular/circuit'] .ci-brands a {
+        flex: 0 0 150px;
+        font-size: 17px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-spotlight {
+        grid-template-columns: 1fr;
+    }
+    [data-theme='ecomodular/circuit'] .ci-spotlight > img {
+        min-height: 260px;
+        order: 0 !important;
+    }
+    [data-theme='ecomodular/circuit'] .ci-spotlight-copy {
+        padding: 28px 18px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-services,
+    [data-theme='ecomodular/circuit'] .ci-support-cards {
+        grid-template-columns: 1fr;
+        gap: 22px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-catalog-head {
+        padding-block: 14px 24px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-catalog-head h1 {
+        font-size: 26px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-catalog-layout {
+        grid-template-columns: 1fr;
+    }
+    [data-theme='ecomodular/circuit'] .ci-sidebar {
+        display: none;
+    }
+    [data-theme='ecomodular/circuit'] .ci-filter-button {
+        display: inline-flex;
+    }
+    [data-theme='ecomodular/circuit'] .ci-toolbar {
+        flex-wrap: wrap;
+    }
+    [data-theme='ecomodular/circuit'] .ci-toolbar > p {
+        order: 3;
+        flex-basis: 100%;
+    }
+    [data-theme='ecomodular/circuit'] .ci-grid-switch {
+        display: none;
+    }
+    [data-theme='ecomodular/circuit'] .ci-sort {
+        margin-inline-start: auto;
+    }
+    [data-theme='ecomodular/circuit'] .ci-grid,
+    [data-theme='ecomodular/circuit'] .ci-grid[data-grid] {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px 12px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-card[data-variant='list'] {
+        display: flex;
+    }
+    [data-theme='ecomodular/circuit'] .ci-product {
+        grid-template-columns: 1fr;
+        gap: 22px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-gallery {
+        position: static;
+    }
+    [data-theme='ecomodular/circuit'] .ci-gallery[data-thumbnails='true'] {
+        grid-template-columns: 1fr;
+    }
+    [data-theme='ecomodular/circuit'] .ci-thumbs {
+        order: 2;
+        display: flex;
+        overflow-x: auto;
+    }
+    [data-theme='ecomodular/circuit'] .ci-thumbs button {
+        width: 64px;
+        flex-shrink: 0;
+    }
+    [data-theme='ecomodular/circuit'] .ci-info h1 {
+        font-size: 22px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-marquee > div {
+        font-size: 16px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-centered-section > h2 {
+        font-size: 22px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-footer-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    [data-theme='ecomodular/circuit'] .ci-footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    [data-theme='ecomodular/circuit'] * {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Store labels (Product Label extension) flow under the discount badge. */
+[data-theme='ecomodular/circuit'] .ci-card-badges .ci-labels {
+    position: static;
+}
+[data-theme='ecomodular/circuit']
+    .ci-card[data-variant='compact']
+    .ci-card-sale {
+    display: none;
+}

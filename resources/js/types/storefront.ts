@@ -1,13 +1,40 @@
 import type { MoneyValue } from './admin';
+export type StoreMenu = {
+    title: string;
+    links: {
+        label: string;
+        url: string;
+        type?: 'link' | 'page' | 'category';
+        page_id?: number | null;
+        category_id?: number | null;
+    }[];
+};
+export type StoreMenus = { header: StoreMenu; footer: StoreMenu[] };
 
 export type StorefrontShared = {
+    seoTitle?: string | null;
+    seoDescription?: string | null;
+    direction?: 'rtl' | 'ltr';
+    displayCurrency?: string;
+    canSwitchCurrency?: boolean;
+    baseCurrency?: string;
+    currencies?: { code: string; name: string }[];
+    currencyNotice?: string | null;
     storeName: string;
+    navigation?: StoreMenus;
     currency: string;
     locale: string;
     locales: { code: string; name: string }[];
     categories: { id: number; name: string; slug: string }[];
     cartCount: number;
     theme: StorefrontTheme;
+    /** Global overlays (marketing popups, cookie bars) rendered on every page. */
+    overlays?: {
+        key: string;
+        component: string;
+        props: Record<string, unknown>;
+    }[];
+    footerSlots?: import('@/components/extensions/extension-slot').SlotItem[];
     themePreview: {
         name: string;
         displayName: string;
@@ -20,26 +47,44 @@ export type StorefrontTheme = {
     name: string;
     displayName: string;
     version: string;
+    frontend?: Partial<
+        Record<
+            | 'index'
+            | 'catalog'
+            | 'cart'
+            | 'header'
+            | 'footer'
+            | 'product'
+            | 'stylesheet',
+            string
+        >
+    >;
     source: 'active' | 'preview' | 'default' | 'builtin';
-    css: string;
-    /** Theme settings (the theme's own customizer fields). */
     settings?: Record<string, string | number | boolean | null>;
+    css: string;
     layout: {
-        header: 'classic' | 'centered' | 'minimal';
-        footer: 'simple' | 'columns';
-        productCard: 'standard' | 'minimal' | 'framed';
+        header: 'classic' | 'centered' | 'minimal' | 'electronics' | 'atelier';
+        footer: 'simple' | 'columns' | 'electronics' | 'atelier';
+        productCard:
+            | 'standard'
+            | 'minimal'
+            | 'framed'
+            | 'electronics'
+            | 'atelier';
         gridColumns: 3 | 4;
-        productPage: 'split' | 'stacked';
+        productPage: 'split' | 'stacked' | 'electronics' | 'atelier';
         density: 'compact' | 'comfortable' | 'spacious';
-        container: 'narrow' | 'default' | 'wide';
+        container: 'narrow' | 'default' | 'reference' | 'wide';
     };
     logo: string | null;
     favicon: string | null;
     announcement: string | null;
     footerText: string | null;
+    content?: Record<string, string>;
 };
 
 export type ProductCard = {
+    variant_id?: number | null;
     id: number;
     name: string;
     slug: string;
@@ -51,6 +96,9 @@ export type ProductCard = {
     in_stock: boolean;
     /** A module sale (e.g. a flash sale) on this product. */
     sale?: SaleInfo | null;
+    labels?: ProductLabel[];
+    /** Per-product Buy button override: null follows the theme setting. */
+    show_buy_button?: boolean | null;
     /** The second image, shown on hover when the Catalog tab turns it on. */
     hover_image?: { url: string; alt: string | null } | null;
     brand?: { name: string; slug: string } | null;
@@ -67,6 +115,15 @@ export type SaleInfo = {
     ends_at: string | null;
     /** Whether to show a countdown to ends_at. */
     countdown: boolean;
+};
+
+/** A badge contributed by a module (e.g. Product Label) for a product card. */
+export type ProductLabel = {
+    key: string;
+    text: string;
+    tone: 'new' | 'sale' | 'featured' | 'stock' | 'info' | 'warning' | 'danger';
+    position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+    style: 'solid' | 'soft' | 'outline';
 };
 
 export type CartLine = {
@@ -98,10 +155,20 @@ export type PricedCart = {
     prices_include_tax: boolean;
     coupon_code: string | null;
     coupon_error: string | null;
-    shipping: { code: string; label: string; amount: MoneyValue } | null;
+    shipping: {
+        code: string;
+        label: string;
+        amount: MoneyValue;
+        description?: string | null;
+    } | null;
     /** False when every item is digital (nothing to ship). */
     requires_shipping?: boolean;
-    shipping_options: { code: string; label: string; amount: MoneyValue }[];
+    shipping_options: {
+        code: string;
+        label: string;
+        amount: MoneyValue;
+        description?: string | null;
+    }[];
     issues: string[];
     can_checkout: boolean;
 };

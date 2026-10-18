@@ -2,9 +2,9 @@
 
 namespace App\Domains\Checkout\Pricing;
 
-use App\Domains\Catalog\Pricing\SalePrices;
 use App\Domains\Cart\Models\Cart;
 use App\Domains\Cart\Models\CartItem;
+use App\Domains\Catalog\Pricing\SalePrices;
 use App\Domains\Catalog\VariantAvailability;
 use App\Domains\Pricing\Money;
 

@@ -110,13 +110,13 @@ class StatusEmailTest extends TestCase
 
     public function test_email_settings_are_saved_on_the_settings_page()
     {
-        $this->actingAs($this->owner())->get(route('admin.settings.documents.edit'))
-            ->assertInertia(fn ($page) => $page->where('emails.shipped', true)->where('emails.payment_failed', true));
+        $this->actingAs($this->owner())->get(route('admin.settings.store.edit'))
+            ->assertInertia(fn ($page) => $page->where('documents.emails.shipped', true)->where('documents.emails.payment_failed', true));
 
         $settings = app(DocumentSettings::class)->toArray();
         $this->put(route('admin.settings.documents.update'), [...$settings, 'emails' => ['shipped' => false, 'delivered' => true]])->assertSessionHasNoErrors();
 
-        $this->get(route('admin.settings.documents.edit'))
-            ->assertInertia(fn ($page) => $page->where('emails.shipped', false)->where('emails.delivered', true)->where('emails.returned', true));
+        $this->get(route('admin.settings.store.edit'))
+            ->assertInertia(fn ($page) => $page->where('documents.emails.shipped', false)->where('documents.emails.delivered', true)->where('documents.emails.returned', true));
     }
 }

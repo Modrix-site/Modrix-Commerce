@@ -17,5 +17,18 @@ export function AppShell({ children, variant = 'sidebar' }: Props) {
         );
     }
 
-    return <SidebarProvider defaultOpen={isOpen}>{children}</SidebarProvider>;
+    return (
+        <SidebarProvider
+            defaultOpen={isOpen}
+            className="admin-shell"
+            style={
+                {
+                    '--sidebar-width': '16.25rem',
+                    '--sidebar-width-icon': '4rem',
+                } as React.CSSProperties
+            }
+        >
+            {children}
+        </SidebarProvider>
+    );
 }

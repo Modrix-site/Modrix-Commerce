@@ -58,7 +58,7 @@ final class ThemeSchema
 
     public const ASSET_EXTENSIONS = ['png', 'jpg', 'jpeg', 'webp', 'woff2'];
 
-    public const MAX_SECTIONS = 12;
+    public const MAX_SECTIONS = 32;
 
     /** Pages whose content is a list of sections. */
     public const SECTION_PAGES = ['home'];
@@ -82,17 +82,42 @@ final class ThemeSchema
             'font_heading' => ['type' => 'font', 'label' => 'Heading font', 'group' => 'Typography'],
             'radius' => ['type' => 'select', 'label' => 'Corner radius', 'group' => 'Shape and spacing', 'options' => self::RADII],
             'density' => ['type' => 'select', 'label' => 'Spacing', 'group' => 'Shape and spacing', 'options' => ['compact', 'comfortable', 'spacious']],
-            'container' => ['type' => 'select', 'label' => 'Page width', 'group' => 'Shape and spacing', 'options' => ['narrow', 'default', 'wide']],
-            'layout.header' => ['type' => 'select', 'label' => 'Header', 'group' => 'Layout', 'options' => ['classic', 'centered', 'minimal']],
-            'layout.footer' => ['type' => 'select', 'label' => 'Footer', 'group' => 'Layout', 'options' => ['simple', 'columns']],
-            'layout.product_card' => ['type' => 'select', 'label' => 'Product cards', 'group' => 'Layout', 'options' => ['standard', 'minimal', 'framed']],
+            'container' => ['type' => 'select', 'label' => 'Page width', 'group' => 'Shape and spacing', 'options' => ['narrow', 'default', 'reference', 'wide']],
+            'layout.header' => ['type' => 'select', 'label' => 'Header', 'group' => 'Layout', 'options' => ['classic', 'centered', 'minimal', 'electronics', 'atelier']],
+            'layout.footer' => ['type' => 'select', 'label' => 'Footer', 'group' => 'Layout', 'options' => ['simple', 'columns', 'electronics', 'atelier']],
+            'layout.product_card' => ['type' => 'select', 'label' => 'Product cards', 'group' => 'Layout', 'options' => ['standard', 'minimal', 'framed', 'electronics', 'atelier']],
             'layout.grid_columns' => ['type' => 'select', 'label' => 'Products per row', 'group' => 'Layout', 'options' => ['3', '4']],
-            'layout.product_page' => ['type' => 'select', 'label' => 'Product page', 'group' => 'Layout', 'options' => ['split', 'stacked']],
+            'layout.product_page' => ['type' => 'select', 'label' => 'Product page', 'group' => 'Layout', 'options' => ['split', 'stacked', 'electronics', 'atelier']],
             'logo' => ['type' => 'image', 'label' => 'Logo', 'group' => 'Branding'],
             'favicon' => ['type' => 'image', 'label' => 'Favicon', 'group' => 'Branding'],
             'announcement' => ['type' => 'string', 'label' => 'Announcement bar', 'group' => 'Branding', 'max' => 160],
             'footer_text' => ['type' => 'text', 'label' => 'Footer text', 'group' => 'Branding', 'max' => 500],
-        ] + ThemeStyleFields::fields() + PageSettingFields::fields();
+        ] + self::commerceContentFields() + ThemeStyleFields::fields() + PageSettingFields::fields();
+    }
+
+    /** @return array<string, array<string, mixed>> */
+    private static function commerceContentFields(): array
+    {
+        $fields = [
+            'color.search' => ['type' => 'color', 'label' => 'Search button', 'group' => 'Colors'],
+            'color.sale' => ['type' => 'color', 'label' => 'Sale badges', 'group' => 'Colors'],
+            'contact_email' => ['type' => 'string', 'label' => 'Contact email', 'group' => 'Footer', 'max' => 120],
+            'contact_phone' => ['type' => 'string', 'label' => 'Contact telephone', 'group' => 'Footer', 'max' => 40],
+            'help_link' => ['type' => 'link', 'label' => 'Help link', 'group' => 'Navigation'],
+        ];
+        for ($i = 1; $i <= 12; $i++) {
+            $fields["menu_{$i}_label"] = ['type' => 'string', 'label' => "Menu {$i} label", 'group' => 'Navigation', 'max' => 40];
+            $fields["menu_{$i}_link"] = ['type' => 'link', 'label' => "Menu {$i} link", 'group' => 'Navigation'];
+        }
+        for ($column = 1; $column <= 3; $column++) {
+            $fields["footer_{$column}_title"] = ['type' => 'string', 'label' => "Footer column {$column} title", 'group' => 'Footer', 'max' => 60];
+            for ($i = 1; $i <= 6; $i++) {
+                $fields["footer_{$column}_{$i}_label"] = ['type' => 'string', 'label' => "Column {$column}, link {$i} label", 'group' => 'Footer', 'max' => 60];
+                $fields["footer_{$column}_{$i}_link"] = ['type' => 'link', 'label' => "Column {$column}, link {$i} address", 'group' => 'Footer'];
+            }
+        }
+
+        return $fields;
     }
 
     /**
@@ -126,7 +151,7 @@ final class ThemeSchema
             'favicon' => '',
             'announcement' => '',
             'footer_text' => '',
-        ];
+        ] + ['color.search' => '#12b8b4', 'color.sale' => '#cd2454'] + array_fill_keys(array_diff(array_keys(self::commerceContentFields()), ['color.search', 'color.sale']), '');
     }
 
     /**
@@ -139,7 +164,31 @@ final class ThemeSchema
             'button_link' => ['type' => 'link', 'label' => 'Button link'],
         ];
 
+        $tiles = ['title' => ['type' => 'string', 'label' => 'Section title', 'max' => 80],
+            'columns' => ['type' => 'select', 'label' => 'Columns', 'options' => ['3', '4', '5', '6', '7', '8'], 'default' => '4'],
+            'style' => ['type' => 'select', 'label' => 'Tile style', 'options' => ['offer', 'circle', 'service', 'plain', 'card', 'editorial', 'overlay'], 'default' => 'offer'],
+            'image_height' => ['type' => 'integer', 'label' => 'Desktop image height (px)', 'min' => 60, 'max' => 600, 'default' => 220],
+            'mobile_image_height' => ['type' => 'integer', 'label' => 'Mobile image height (px)', 'min' => 60, 'max' => 400, 'default' => 170],
+            'wrap' => ['type' => 'boolean', 'label' => 'Wrap tiles into rows', 'default' => false]];
+        for ($i = 1; $i <= 8; $i++) {
+            $tiles["tile_{$i}_title"] = ['type' => 'string', 'label' => "Tile {$i} title", 'max' => 80];
+            $tiles["tile_{$i}_text"] = ['type' => 'string', 'label' => "Tile {$i} caption", 'max' => 120];
+            $tiles["tile_{$i}_image"] = ['type' => 'image', 'label' => "Tile {$i} image"];
+            $tiles["tile_{$i}_link"] = ['type' => 'link', 'label' => "Tile {$i} link"];
+        }
+
         return [
+            'promotion_grid' => ['label' => 'Promotional tiles', 'fields' => $tiles],
+            'campaign' => ['label' => 'Electronics campaign', 'fields' => [
+                'heading' => ['type' => 'string', 'label' => 'Heading', 'max' => 120, 'required' => true],
+                'eyebrow' => ['type' => 'string', 'label' => 'Eyebrow', 'max' => 60],
+                'body' => ['type' => 'text', 'label' => 'Text', 'max' => 300],
+                'image' => ['type' => 'image', 'label' => 'Product image'],
+                'background' => ['type' => 'color', 'label' => 'Background', 'default' => '#e8ecf5'],
+                'foreground' => ['type' => 'color', 'label' => 'Text color', 'default' => '#073b7a'],
+                'height' => ['type' => 'select', 'label' => 'Height', 'options' => ['small', 'medium', 'large'], 'default' => 'medium'],
+                ...$button,
+            ]],
             'hero' => ['label' => 'Hero banner', 'fields' => [
                 'heading' => ['type' => 'string', 'label' => 'Heading', 'max' => 120, 'required' => true],
                 'subheading' => ['type' => 'text', 'label' => 'Text', 'max' => 300],
@@ -172,6 +221,7 @@ final class ThemeSchema
             ]],
             'promo_banner' => ['label' => 'Promotion banner', 'fields' => [
                 'text' => ['type' => 'string', 'label' => 'Text', 'max' => 200, 'required' => true],
+                'subtext' => ['type' => 'string', 'label' => 'Second line', 'max' => 200],
                 ...$button,
                 'tone' => ['type' => 'select', 'label' => 'Style', 'options' => ['primary', 'accent', 'muted'], 'default' => 'primary'],
             ]],

@@ -63,11 +63,11 @@ export function OrderView({ order }: { order: OrderDetail }) {
                                 {item.variant_name && (
                                     <span className="text-muted-foreground">
                                         {' '}
-                                        · {item.variant_name}
+                                        {'\u00b7'} {item.variant_name}
                                     </span>
                                 )}
                                 <span className="block text-muted-foreground">
-                                    {item.quantity} ×{' '}
+                                    {item.quantity} {'\u00d7'}{' '}
                                     {item.unit_price.formatted}
                                 </span>
                             </span>

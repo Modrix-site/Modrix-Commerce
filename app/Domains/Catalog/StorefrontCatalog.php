@@ -2,10 +2,13 @@
 
 namespace App\Domains\Catalog;
 
+use App\Core\Catalog\ProductLabels;
+use App\Core\Settings\StorefrontCurrencies;
 use App\Domains\Catalog\Contracts\SearchProvider;
 use App\Domains\Catalog\Models\Brand;
 use App\Domains\Catalog\Models\Category;
 use App\Domains\Catalog\Models\Product;
+use App\Domains\Catalog\Models\ProductAttributeValue;
 use App\Domains\Catalog\Models\ProductImage;
 use App\Domains\Catalog\Models\ProductVariant;
 use App\Domains\Catalog\Pricing\SalePrices;
@@ -24,14 +27,56 @@ final class StorefrontCatalog
 {
     public const SORTS = ['newest', 'price_asc', 'price_desc', 'name'];
 
-    public function __construct(private readonly SearchProvider $search) {}
+    public function __construct(
+        private readonly SearchProvider $search,
+        private readonly ProductLabels $labels,
+    ) {}
 
     /**
+     * @param  array<string, mixed>  $filters
      * @return LengthAwarePaginator<int, array<string, mixed>>
      */
-    public function listing(string $currency, ?Category $category = null, ?string $search = null, string $sort = 'newest', int $perPage = 24, ?Brand $brand = null): LengthAwarePaginator
+    public function listing(string $currency, ?Category $category = null, ?string $search = null, string $sort = 'newest', int $perPage = 24, ?Brand $brand = null, array $filters = []): LengthAwarePaginator
     {
+        $displayCurrency = request()->attributes->get('storefront.display_currency');
+        if (is_string($displayCurrency) && $displayCurrency !== $currency) {
+            foreach (['min_price', 'max_price'] as $key) {
+                if (filled($filters[$key] ?? null)) {
+                    $filters[$key] = app(StorefrontCurrencies::class)->display(Money::of((string) $filters[$key], $displayCurrency), $currency)->toDisplayDecimal();
+                }
+            }
+        }
         $query = $this->visibleWithPrice($currency);
+        if ($filters['in_stock'] ?? false) {
+            $query->whereHas('variants', fn ($variant) => $variant->where('is_active', true)
+                ->whereHas('prices', fn ($price) => $price->where('currency', $currency))
+                ->where(fn ($stock) => $stock->where('track_inventory', false)
+                    ->orWhereRaw('(SELECT COALESCE(SUM(on_hand), 0) FROM inventory_stocks WHERE inventory_stocks.variant_id = product_variants.id) > 0')));
+        }
+
+        if (filled($filters['brand_id'] ?? null)) {
+            $query->where('products.brand_id', (int) $filters['brand_id']);
+        }
+        if (filled($filters['min_price'] ?? null) || filled($filters['max_price'] ?? null)) {
+            $query->whereHas('variants', fn ($variant) => $variant->where('is_active', true)->whereHas('prices', function ($prices) use ($currency, $filters) {
+                $prices->where('currency', $currency);
+                if (filled($filters['min_price'] ?? null)) {
+                    $prices->where('amount', '>=', $filters['min_price']);
+                }
+                if (filled($filters['max_price'] ?? null)) {
+                    $prices->where('amount', '<=', $filters['max_price']);
+                }
+            }));
+        }
+        if (($filters['options'] ?? []) !== []) {
+            $groups = ProductAttributeValue::query()->whereIn('id', $filters['options'])->get()->groupBy('attribute_id');
+            $query->whereHas('variants', function ($variant) use ($groups) {
+                $variant->where('is_active', true);
+                foreach ($groups as $values) {
+                    $variant->whereHas('options', fn ($option) => $option->whereIn('product_attribute_values.id', $values->pluck('id')));
+                }
+            });
+        }
 
         if ($brand !== null) {
             $query->where('products.brand_id', $brand->id);
@@ -155,7 +200,12 @@ final class StorefrontCatalog
             'compare_at_price' => $variants->count() === 1 ? $compareAt : null,
             'sale' => $this->saleBadge($product, $variants, $currency),
             'has_variants' => $variants->count() > 1,
+            'variant_id' => $variants->count() === 1 ? $default?->id : null,
             'in_stock' => $variants->contains(fn (ProductVariant $v) => VariantAvailability::of($v, $currency)->purchasable),
+            // Per-product override for the Buy button (null follows the theme).
+            'show_buy_button' => $product->show_buy_button,
+            // Badges contributed by modules (the core has none of its own).
+            'labels' => $this->labels->labels($product),
         ];
     }
 

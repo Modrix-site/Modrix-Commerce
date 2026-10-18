@@ -1,0 +1,94 @@
+{
+    "categories": [
+        {
+            "name": "Voltora electronics",
+            "slug": "voltora-electronics"
+        }
+    ],
+    "products": [
+        {
+            "name": "Noviq Nova Phone",
+            "slug": "voltora-demo-1",
+            "sku": "VOLTORA-DEMO-01",
+            "price": "899",
+            "compare_at_price": "1124",
+            "stock": 10,
+            "short_description": "Optional Voltora demonstration product.",
+            "description": "Theme demo content. Replace specifications, warranty and delivery terms before selling.",
+            "categories": [
+                "voltora-electronics"
+            ],
+            "image": "assets/phone-photo.jpg"
+        },
+        {
+            "name": "Orbexa Studio Notebook",
+            "slug": "voltora-demo-2",
+            "sku": "VOLTORA-DEMO-02",
+            "price": "1899",
+            "compare_at_price": "2374",
+            "stock": 10,
+            "short_description": "Optional Voltora demonstration product.",
+            "description": "Theme demo content. Replace specifications, warranty and delivery terms before selling.",
+            "categories": [
+                "voltora-electronics"
+            ],
+            "image": "assets/laptop-photo.jpg"
+        },
+        {
+            "name": "Auralis Quiet Headphones",
+            "slug": "voltora-demo-3",
+            "sku": "VOLTORA-DEMO-03",
+            "price": "249",
+            "compare_at_price": "311",
+            "stock": 10,
+            "short_description": "Optional Voltora demonstration product.",
+            "description": "Theme demo content. Replace specifications, warranty and delivery terms before selling.",
+            "categories": [
+                "voltora-electronics"
+            ],
+            "image": "assets/headphones-photo.jpg"
+        },
+        {
+            "name": "Voltora Halo Watch",
+            "slug": "voltora-demo-4",
+            "sku": "VOLTORA-DEMO-04",
+            "price": "329",
+            "compare_at_price": "411",
+            "stock": 10,
+            "short_description": "Optional Voltora demonstration product.",
+            "description": "Theme demo content. Replace specifications, warranty and delivery terms before selling.",
+            "categories": [
+                "voltora-electronics"
+            ],
+            "image": "assets/watch-photo.jpg"
+        },
+        {
+            "name": "Auralis Pulse Speaker",
+            "slug": "voltora-demo-5",
+            "sku": "VOLTORA-DEMO-05",
+            "price": "159",
+            "compare_at_price": "199",
+            "stock": 10,
+            "short_description": "Optional Voltora demonstration product.",
+            "description": "Theme demo content. Replace specifications, warranty and delivery terms before selling.",
+            "categories": [
+                "voltora-electronics"
+            ],
+            "image": "assets/headphones-photo.jpg"
+        },
+        {
+            "name": "Homena Fresh Refrigerator",
+            "slug": "voltora-demo-6",
+            "sku": "VOLTORA-DEMO-06",
+            "price": "1299",
+            "compare_at_price": "1624",
+            "stock": 10,
+            "short_description": "Optional Voltora demonstration product.",
+            "description": "Theme demo content. Replace specifications, warranty and delivery terms before selling.",
+            "categories": [
+                "voltora-electronics"
+            ],
+            "image": "assets/kitchen-photo.jpg"
+        }
+    ]
+}

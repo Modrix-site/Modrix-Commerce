@@ -5,6 +5,8 @@
     "description": "Emails a chosen address when an order is paid, optionally only above a minimum total.",
     "version": "1.0.0",
     "type": "module",
+    "icon": "bell",
+    "accent": "#f97316",
     "platform_version": "^0.4 || ^1.0",
     "author": "Eleydo",
     "license": "MIT",

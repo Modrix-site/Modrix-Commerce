@@ -102,6 +102,13 @@ class OrderDocumentsPdfTest extends TestCase
 
         $this->assertStringContainsString($item->sku, $text);
         $this->assertStringContainsString('Packing slip', $text);
+        $this->assertStringContainsString('Packed by', $text);
+        $this->assertStringContainsString('Checked by', $text);
+        $this->assertStringContainsString('total units', $text);
+        $this->assertStringContainsString('staff login', $text);
+        $this->assertStringContainsString('not an invoice', $text);
+        $pdf = app(OrderDocuments::class)->packingSlipPdf($order);
+        $this->assertStringContainsString(route('admin.orders.show', $order), $pdf);
         $this->assertStringNotContainsString($order->money('grand_total')->format(), $text);
         $this->assertStringNotContainsString('25.00', $text);
     }

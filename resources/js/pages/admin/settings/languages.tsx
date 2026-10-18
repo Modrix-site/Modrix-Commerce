@@ -1,4 +1,5 @@
 import { Form, Head, Link } from '@inertiajs/react';
+import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import LanguageSettingsController from '@/actions/App/Http/Controllers/Admin/LanguageSettingsController';
 import { FormField, NativeSelect } from '@/components/admin/form-field';
@@ -21,6 +22,7 @@ export default function LanguageSettings({
     default: defaultLocale,
     additional,
 }: Props) {
+    const [search, setSearch] = useState('');
     const [base, setBase] = useState(defaultLocale);
     const [extra, setExtra] = useState<string[]>(additional);
 
@@ -80,9 +82,25 @@ export default function LanguageSettings({
                                         <legend className="mb-2 text-sm font-medium">
                                             Additional languages
                                         </legend>
-                                        <div className="grid gap-2 sm:grid-cols-3">
+                                        <Input
+                                            aria-label="Search languages"
+                                            placeholder="Search languages by name or code..."
+                                            value={search}
+                                            onChange={(e) =>
+                                                setSearch(e.target.value)
+                                            }
+                                        />
+                                        <div className="grid max-h-96 gap-2 overflow-auto sm:grid-cols-3">
                                             {available
-                                                .filter((l) => l.code !== base)
+                                                .filter(
+                                                    (l) =>
+                                                        l.code !== base &&
+                                                        `${l.name} ${l.code}`
+                                                            .toLowerCase()
+                                                            .includes(
+                                                                search.toLowerCase(),
+                                                            ),
+                                                )
                                                 .map((l) => (
                                                     <label
                                                         key={l.code}
@@ -115,6 +133,32 @@ export default function LanguageSettings({
                                                     value={code}
                                                 />
                                             ))}
+                                        <div className="flex flex-wrap gap-2">
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                onClick={() =>
+                                                    setExtra(
+                                                        available
+                                                            .filter(
+                                                                (l) =>
+                                                                    l.code !==
+                                                                    base,
+                                                            )
+                                                            .map((l) => l.code),
+                                                    )
+                                                }
+                                            >
+                                                Select all languages
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                onClick={() => setExtra([])}
+                                            >
+                                                Clear additional languages
+                                            </Button>
+                                        </div>
                                         <InputError
                                             message={errors.additional}
                                         />

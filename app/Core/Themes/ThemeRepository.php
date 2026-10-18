@@ -135,6 +135,8 @@ final class ThemeRepository
             $theme->forceFill(['state' => ModuleState::Enabled, 'failure' => null, 'enabled_before_update' => false]);
         } elseif ($manifest === null) {
             $theme->state = ModuleState::Invalid;
+        } elseif ($from === ModuleState::Disabled) {
+            $theme->state = ModuleState::Disabled;
         } else {
             $theme->state = ModuleState::Discovered;
         }

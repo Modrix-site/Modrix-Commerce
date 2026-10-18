@@ -72,8 +72,9 @@ class CoreServiceProvider extends ServiceProvider
         $navigation->add('general-settings', 'General settings', 'admin.settings.general.edit', 'sliders-horizontal', 'Administration', 'settings.manage', 919);
         $navigation->add('settings', 'Store settings', 'admin.settings.store.edit', 'settings', 'Administration', 'settings.manage', 920);
         $navigation->add('languages', 'Languages', 'admin.settings.languages.edit', 'languages', 'Administration', 'settings.manage', 921);
-        $navigation->add('documents', 'Orders & documents', 'admin.settings.documents.edit', 'receipt', 'Administration', 'settings.manage', 922);
         $navigation->add('appearance', 'Appearance', 'admin.themes.index', 'palette', 'Configuration', 'themes.manage', 790);
+        $navigation->add('pages', 'Pages', 'admin.pages.index', 'file-text', 'Configuration', 'themes.manage', 792);
+        $navigation->add('navigation', 'Navigation', 'admin.navigation.index', 'list', 'Configuration', 'themes.manage', 791);
         $navigation->add('extensions', 'Extensions', 'admin.extensions.index', 'puzzle', 'Administration', 'extensions.view', 925);
         $navigation->add('marketplace-client', 'Marketplace', 'admin.marketplace-client.index', 'store', 'Administration', 'extensions.view', 926);
 

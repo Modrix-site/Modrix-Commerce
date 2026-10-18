@@ -1,0 +1,164 @@
+{
+    "title": "Studio",
+    "description": "Prism adds its own editorial controls. Set the hero eyebrow, the wordmark's letter-spacing and the product-tile treatment, alongside the standard colours and type.",
+    "fields": {
+        "custom.show_buy_button": {
+            "type": "boolean",
+            "label": "Show Buy now button (product cards and product page)",
+            "group": "Prism catalog",
+            "default": true
+        },
+        "custom.sticky_add_to_cart": {
+            "type": "boolean",
+            "label": "Sticky add-to-cart bar on phones",
+            "group": "Product page",
+            "default": true
+        },
+        "custom.hero_eyebrow": {
+            "type": "string",
+            "label": "Hero eyebrow",
+            "group": "Hero",
+            "default": "OBJECTS OF INTENTION",
+            "max": 60
+        },
+        "custom.hero_points": {
+            "type": "string",
+            "label": "Hero assurance line",
+            "group": "Hero",
+            "default": "Complimentary shipping · Lifetime repairs · 30-day returns",
+            "max": 160
+        },
+        "custom.hero_tone": {
+            "type": "select",
+            "label": "Hero treatment",
+            "group": "Hero",
+            "default": "image",
+            "options": ["image", "plain", "soft"]
+        },
+        "custom.wordmark_tracking": {
+            "type": "select",
+            "label": "Wordmark spacing",
+            "group": "Typography",
+            "default": "wide",
+            "options": ["normal", "wide", "wider"]
+        },
+        "custom.heading_scale": {
+            "type": "select",
+            "label": "Heading scale",
+            "group": "Typography",
+            "default": "editorial",
+            "options": ["compact", "editorial", "dramatic"]
+        },
+        "custom.card_tone": {
+            "type": "select",
+            "label": "Product tile",
+            "group": "Layout",
+            "default": "stone",
+            "options": ["stone", "paper", "outline"]
+        },
+        "custom.show_wishlist": {
+            "type": "boolean",
+            "label": "Show wishlist on tiles",
+            "group": "Layout",
+            "default": true
+        },
+        "custom.show_explore_all": {
+            "type": "boolean",
+            "label": "Show \"Explore all\" link",
+            "group": "Layout",
+            "default": true
+        },
+        "custom.show_trust_band": {
+            "type": "boolean",
+            "label": "Show trust band above footer",
+            "group": "Layout",
+            "default": true
+        },
+        "custom.trust_items": {
+            "type": "string",
+            "label": "Trust band items (separate with |)",
+            "group": "Layout",
+            "default": "Complimentary shipping|Lifetime repairs|Considered materials|Made to last",
+            "max": 300
+        },
+        "custom.footer_heading": {
+            "type": "string",
+            "label": "Footer heading",
+            "group": "Footer",
+            "default": "Stories worth keeping.",
+            "max": 80
+        },
+        "custom.footer_note": {
+            "type": "string",
+            "label": "Footer bottom note",
+            "group": "Footer",
+            "default": "thought made everyday",
+            "max": 60
+        }
+    },
+    "presets": {
+        "gallery": {
+            "color.background": "#ffffff",
+            "color.foreground": "#111111",
+            "color.primary": "#111111",
+            "color.primary_foreground": "#ffffff",
+            "color.muted": "#f4f4f2",
+            "color.muted_foreground": "#6f6f6f",
+            "color.accent": "#ececea",
+            "color.accent_foreground": "#111111",
+            "color.border": "#e6e6e6",
+            "font_body": "sans",
+            "font_heading": "sans",
+            "radius": "0.25rem",
+            "density": "spacious",
+            "custom.hero_tone": "image",
+            "custom.wordmark_tracking": "wide",
+            "custom.heading_scale": "editorial",
+            "custom.card_tone": "stone",
+            "custom.show_wishlist": true,
+            "custom.show_explore_all": true
+        },
+        "paper": {
+            "color.background": "#faf9f6",
+            "color.foreground": "#1b1a17",
+            "color.primary": "#1b1a17",
+            "color.primary_foreground": "#faf9f6",
+            "color.muted": "#f0ede6",
+            "color.muted_foreground": "#726c62",
+            "color.accent": "#e8e4da",
+            "color.accent_foreground": "#1b1a17",
+            "color.border": "#e0dbd0",
+            "font_body": "humanist",
+            "font_heading": "serif",
+            "radius": "0.25rem",
+            "density": "comfortable",
+            "custom.hero_tone": "soft",
+            "custom.wordmark_tracking": "wider",
+            "custom.heading_scale": "dramatic",
+            "custom.card_tone": "paper",
+            "custom.show_wishlist": true,
+            "custom.show_explore_all": true
+        },
+        "ink": {
+            "color.background": "#111111",
+            "color.foreground": "#f4f4f2",
+            "color.primary": "#f4f4f2",
+            "color.primary_foreground": "#111111",
+            "color.muted": "#1c1c1c",
+            "color.muted_foreground": "#a0a09b",
+            "color.accent": "#262626",
+            "color.accent_foreground": "#f4f4f2",
+            "color.border": "#2e2e2e",
+            "font_body": "sans",
+            "font_heading": "sans",
+            "radius": "0",
+            "density": "spacious",
+            "custom.hero_tone": "plain",
+            "custom.wordmark_tracking": "wide",
+            "custom.heading_scale": "editorial",
+            "custom.card_tone": "outline",
+            "custom.show_wishlist": false,
+            "custom.show_explore_all": true
+        }
+    }
+}

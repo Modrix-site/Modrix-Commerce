@@ -77,6 +77,23 @@ class ProductManagementTest extends TestCase
         $this->assertDatabaseHas('product_prices', ['currency' => 'USD', 'amount' => '0.1000']);
     }
 
+    public function test_the_buy_button_can_be_forced_on_off_or_left_to_the_theme()
+    {
+        $owner = $this->owner();
+
+        // Show: "1".
+        $this->actingAs($owner)->post(route('admin.products.store'), $this->simplePayload(['name' => 'Shown', 'show_buy_button' => '1'], ['sku' => 'BUY-1']));
+        $this->assertTrue(Product::query()->where('name', 'Shown')->firstOrFail()->show_buy_button);
+
+        // Hide: "0".
+        $this->actingAs($owner)->post(route('admin.products.store'), $this->simplePayload(['name' => 'Hidden', 'show_buy_button' => '0'], ['sku' => 'BUY-2']));
+        $this->assertFalse(Product::query()->where('name', 'Hidden')->firstOrFail()->show_buy_button);
+
+        // Theme default: "".
+        $this->actingAs($owner)->post(route('admin.products.store'), $this->simplePayload(['name' => 'Default', 'show_buy_button' => ''], ['sku' => 'BUY-3']));
+        $this->assertNull(Product::query()->where('name', 'Default')->firstOrFail()->show_buy_button);
+    }
+
     public function test_validation_rejects_bad_input()
     {
         ProductVariant::factory()->create(['sku' => 'TAKEN-1']);

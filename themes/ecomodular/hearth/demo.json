@@ -1,0 +1,80 @@
+{
+    "categories": [
+        {
+            "name": "Sofas",
+            "slug": "hearth-sofas"
+        },
+        {
+            "name": "Armchairs and chairs",
+            "slug": "hearth-armchairs"
+        }
+    ],
+    "products": [
+        {
+            "name": "Sand Linen Armchair",
+            "slug": "hearth-demo-1",
+            "sku": "HEARTH-DEMO-01",
+            "price": "3590",
+            "stock": 10,
+            "short_description": "Optional Hearth demonstration furniture. Replace specifications before selling.",
+            "description": "Theme demonstration content. Update materials, dimensions, warranty and fulfillment information before publishing to shoppers.",
+            "categories": ["hearth-armchairs"],
+            "image": "assets/chair.png"
+        },
+        {
+            "name": "Ochre Three-Seat Sofa",
+            "slug": "hearth-demo-2",
+            "sku": "HEARTH-DEMO-02",
+            "price": "12590",
+            "stock": 10,
+            "short_description": "Optional Hearth demonstration furniture. Replace specifications before selling.",
+            "description": "Theme demonstration content. Update materials, dimensions, warranty and fulfillment information before publishing to shoppers.",
+            "categories": ["hearth-sofas"],
+            "image": "assets/sofa.png"
+        },
+        {
+            "name": "Linen Lounge Sofa",
+            "slug": "hearth-demo-3",
+            "sku": "HEARTH-DEMO-03",
+            "price": "11990",
+            "stock": 10,
+            "short_description": "Optional Hearth demonstration furniture. Replace specifications before selling.",
+            "description": "Theme demonstration content. Update materials, dimensions, warranty and fulfillment information before publishing to shoppers.",
+            "categories": ["hearth-sofas"],
+            "image": "assets/sofa.png"
+        },
+        {
+            "name": "Sand Reading Chair",
+            "slug": "hearth-demo-4",
+            "sku": "HEARTH-DEMO-04",
+            "price": "3290",
+            "stock": 10,
+            "short_description": "Optional Hearth demonstration furniture. Replace specifications before selling.",
+            "description": "Theme demonstration content. Update materials, dimensions, warranty and fulfillment information before publishing to shoppers.",
+            "categories": ["hearth-armchairs"],
+            "image": "assets/chair.png"
+        },
+        {
+            "name": "Ochre Modular Sofa",
+            "slug": "hearth-demo-5",
+            "sku": "HEARTH-DEMO-05",
+            "price": "14990",
+            "stock": 10,
+            "short_description": "Optional Hearth demonstration furniture. Replace specifications before selling.",
+            "description": "Theme demonstration content. Update materials, dimensions, warranty and fulfillment information before publishing to shoppers.",
+            "categories": ["hearth-sofas"],
+            "image": "assets/sofa.png"
+        },
+        {
+            "name": "Natural Lounge Chair",
+            "slug": "hearth-demo-6",
+            "sku": "HEARTH-DEMO-06",
+            "price": "3890",
+            "stock": 10,
+            "short_description": "Optional Hearth demonstration furniture. Replace specifications before selling.",
+            "description": "Theme demonstration content. Update materials, dimensions, warranty and fulfillment information before publishing to shoppers.",
+            "categories": ["hearth-armchairs"],
+            "image": "assets/chair.png"
+        }
+    ]
+}

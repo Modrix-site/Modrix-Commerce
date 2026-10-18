@@ -12,7 +12,7 @@ final class ThemeCss
 {
     private const SPACING = ['compact' => '2rem', 'comfortable' => '3rem', 'spacious' => '4.5rem'];
 
-    private const CONTAINER = ['narrow' => '60rem', 'default' => '72rem', 'wide' => '84rem'];
+    private const CONTAINER = ['narrow' => '60rem', 'default' => '72rem', 'reference' => '80rem', 'wide' => '84rem'];
 
     public static function build(ResolvedTheme $theme): string
     {
@@ -41,6 +41,8 @@ final class ThemeCss
             '--font-heading' => self::font((string) $design['font_heading']),
             '--store-section-gap' => self::SPACING[$design['density']] ?? self::SPACING['comfortable'],
             '--store-container' => self::CONTAINER[$design['container']] ?? self::CONTAINER['default'],
+            '--store-search' => (string) $design['color.search'],
+            '--store-sale' => (string) $design['color.sale'],
         ];
 
         $css .= ':root{'.self::declarations($light + $shared).'}';

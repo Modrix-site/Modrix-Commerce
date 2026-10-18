@@ -1,0 +1,75 @@
+{
+    "categories": [
+        {
+            "name": "Tempo collection",
+            "slug": "tempo-collection"
+        }
+    ],
+    "products": [
+        {
+            "name": "Autumn essentials",
+            "slug": "tempo-demo-1",
+            "sku": "TEMPO-DEMO-1",
+            "price": "49.00",
+            "stock": 10,
+            "short_description": "Tempo collection",
+            "description": "Optional demonstration product. Replace product details and confirm inventory before selling.",
+            "categories": [
+                "tempo-collection"
+            ],
+            "image": "assets/season.png"
+        },
+        {
+            "name": "Everyday living",
+            "slug": "tempo-demo-2",
+            "sku": "TEMPO-DEMO-2",
+            "price": "49.00",
+            "stock": 10,
+            "short_description": "Tempo collection",
+            "description": "Optional demonstration product. Replace product details and confirm inventory before selling.",
+            "categories": [
+                "tempo-collection"
+            ],
+            "image": "assets/living.webp"
+        },
+        {
+            "name": "Active edit",
+            "slug": "tempo-demo-3",
+            "sku": "TEMPO-DEMO-3",
+            "price": "49.00",
+            "stock": 10,
+            "short_description": "Tempo collection",
+            "description": "Optional demonstration product. Replace product details and confirm inventory before selling.",
+            "categories": [
+                "tempo-collection"
+            ],
+            "image": "assets/active.webp"
+        },
+        {
+            "name": "Little discoveries",
+            "slug": "tempo-demo-4",
+            "sku": "TEMPO-DEMO-4",
+            "price": "49.00",
+            "stock": 10,
+            "short_description": "Tempo collection",
+            "description": "Optional demonstration product. Replace product details and confirm inventory before selling.",
+            "categories": [
+                "tempo-collection"
+            ],
+            "image": "assets/kids.webp"
+        },
+        {
+            "name": "Beauty rituals",
+            "slug": "tempo-demo-5",
+            "sku": "TEMPO-DEMO-5",
+            "price": "49.00",
+            "stock": 10,
+            "short_description": "Tempo collection",
+            "description": "Optional demonstration product. Replace product details and confirm inventory before selling.",
+            "categories": [
+                "tempo-collection"
+            ],
+            "image": "assets/beauty.webp"
+        }
+    ]
+}

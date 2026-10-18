@@ -1,0 +1,76 @@
+{
+    "categories": [
+        {
+            "name": "Writing instruments",
+            "slug": "prism-writing",
+            "description": "Notebooks, pens and desk tools."
+        },
+        {
+            "name": "Bags",
+            "slug": "prism-bags",
+            "description": "Leather satchels and everyday carry."
+        },
+        {
+            "name": "Small leather goods",
+            "slug": "prism-leather",
+            "description": "Wallets, cases and finishing touches."
+        },
+        {
+            "name": "Accessories",
+            "slug": "prism-accessories",
+            "description": "Watches, eyewear and daily essentials."
+        }
+    ],
+    "products": [
+        {
+            "name": "Everyday leather satchel",
+            "slug": "prism-everyday-satchel",
+            "sku": "PRISM-BAG-01",
+            "price": "480.00",
+            "short_description": "A vegetable-tanned leather satchel with solid brass hardware, built to age well.",
+            "categories": ["prism-bags"],
+            "image": "assets/images/demo/bag.webp",
+            "stock": 12
+        },
+        {
+            "name": "The writing journal",
+            "slug": "prism-writing-journal",
+            "sku": "PRISM-NBK-01",
+            "price": "65.00",
+            "short_description": "A thread-bound journal on acid-free paper, with a linen cover.",
+            "categories": ["prism-writing"],
+            "image": "assets/images/demo/notebook.webp",
+            "stock": 45
+        },
+        {
+            "name": "Minimal dial watch",
+            "slug": "prism-minimal-watch",
+            "sku": "PRISM-WTC-01",
+            "price": "240.00",
+            "short_description": "A quiet, legible field watch with a brushed case and canvas strap.",
+            "categories": ["prism-accessories"],
+            "image": "assets/images/demo/watch.webp",
+            "stock": 20
+        },
+        {
+            "name": "Writing essentials",
+            "slug": "prism-writing-essentials",
+            "sku": "PRISM-PEN-01",
+            "price": "90.00",
+            "short_description": "A considered desk set: pen, pencil and holder in brushed metal.",
+            "categories": ["prism-writing"],
+            "image": "assets/images/demo/tray.webp",
+            "stock": 30
+        },
+        {
+            "name": "Amber glass candle",
+            "slug": "prism-amber-candle",
+            "sku": "PRISM-CDL-01",
+            "price": "42.00",
+            "short_description": "Hand-poured soy wax in a reusable amber glass vessel.",
+            "categories": ["prism-accessories"],
+            "image": "assets/images/demo/candle.webp",
+            "stock": 38
+        }
+    ]
+}

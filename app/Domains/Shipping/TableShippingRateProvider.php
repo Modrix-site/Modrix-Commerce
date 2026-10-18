@@ -7,7 +7,7 @@ use App\Domains\Shipping\Contracts\ShippingRateProvider;
 use App\Domains\Shipping\Models\ShippingMethod;
 
 /**
- * Core provider: methods configured by the merchant in Admin → Shipping.
+ * Core provider: methods configured by the merchant in Admin â†’ Shipping.
  */
 final class TableShippingRateProvider implements ShippingRateProvider
 {
@@ -27,14 +27,26 @@ final class TableShippingRateProvider implements ShippingRateProvider
                 continue;
             }
 
-            $amount = Money::of($method->rate, $request->currency);
-            $freeOver = $method->free_over === null ? null : Money::of($method->free_over, $request->currency);
+            $regional = null;
+            foreach ($method->regional_rates ?? [] as $rule) {
+                if ($rule['country_code'] === strtoupper($request->countryCode)
+                    && ShippingRegions::normalize($rule['region'], $request->countryCode) === ShippingRegions::normalize($request->region, $request->countryCode)) {
+                    $regional = $rule;
+                    break;
+                }
+            }
+            if ($method->regions_only && $regional === null) {
+                continue;
+            }
+            $amount = Money::of($regional['rate'] ?? $method->rate, $request->currency);
+            $threshold = $regional['free_over'] ?? $method->free_over;
+            $freeOver = $threshold === null ? null : Money::of($threshold, $request->currency);
 
             if ($freeOver !== null && ! $request->merchandiseTotal->lessThan($freeOver)) {
                 $amount = Money::zero($request->currency);
             }
 
-            $rates[] = new ShippingRate($method->code, $method->name, $amount->rounded(), $method->description);
+            $rates[] = new ShippingRate($method->code, $method->name, $amount->rounded(), implode(' · ', array_filter([$method->description, $method->delivery_estimate])) ?: null);
         }
 
         return $rates;

@@ -1,5 +1,13 @@
 import { Form, Head, Link } from '@inertiajs/react';
-import { CircleAlert, PauseCircle, Truck, Undo2 } from 'lucide-react';
+import {
+    CircleAlert,
+    Package,
+    PauseCircle,
+    ShoppingBag,
+    Truck,
+    Undo2,
+    UserRound,
+} from 'lucide-react';
 import OrderController from '@/actions/App/Http/Controllers/Admin/OrderController';
 import { OrderActions } from '@/components/admin/orders/order-actions';
 import type { MethodOption } from '@/components/admin/orders/order-actions';
@@ -16,7 +24,14 @@ import { OrderTotals } from '@/components/storefront/order-totals';
 import { AddressBlock, formatDate } from '@/components/storefront/order-view';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
     Table,
@@ -27,6 +42,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
+import { useInitials } from '@/hooks/use-initials';
 import { show as customerShow } from '@/routes/admin/customers';
 import { index } from '@/routes/admin/orders';
 
@@ -47,6 +63,7 @@ export default function OrderShow({
     emailDefaults,
     manualMethods,
 }: Props) {
+    const initials = useInitials();
     const heldReason = order.timeline.find((e) => e.kind === 'held')?.message;
     const failedReason = order.timeline.find((e) =>
         e.message.startsWith('Delivery attempt failed'),
@@ -61,7 +78,7 @@ export default function OrderShow({
             <AdminPage>
                 <PageHeader
                     title={`Order ${order.number}`}
-                    description={`Placed ${formatDate(order.placed_at)} · ${order.email} · ${order.grand_total.formatted}`}
+                    description={`Placed on ${formatDate(order.placed_at)}`}
                     actions={
                         <OrderActions
                             order={order}
@@ -72,12 +89,148 @@ export default function OrderShow({
                     }
                 />
 
-                <div className="flex flex-wrap items-center gap-2 text-sm">
-                    <StatusBadge status={order.display_status} />
-                    <span className="text-muted-foreground">Payment</span>
-                    <StatusBadge status={order.payment_status} />
-                    <span className="text-muted-foreground">Fulfilment</span>
-                    <StatusBadge status={order.fulfillment_status} />
+                <div className="grid items-stretch gap-5 lg:grid-cols-3">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Package
+                                    className="size-4 text-muted-foreground"
+                                    aria-hidden
+                                />
+                                Order Details
+                            </CardTitle>
+                            <CardDescription>
+                                Core order information
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <dl>
+                                <div className="admin-detail-row">
+                                    <dt>Order ID</dt>
+                                    <dd className="font-mono text-xs">
+                                        {order.number}
+                                    </dd>
+                                </div>
+                                <div className="admin-detail-row">
+                                    <dt>Status</dt>
+                                    <dd>
+                                        <StatusBadge
+                                            status={order.display_status}
+                                        />
+                                    </dd>
+                                </div>
+                                <div className="admin-detail-row">
+                                    <dt>Date</dt>
+                                    <dd>{formatDate(order.placed_at)}</dd>
+                                </div>
+                                <div className="admin-detail-row">
+                                    <dt>Amount</dt>
+                                    <dd className="tabular-nums">
+                                        {order.grand_total.formatted}
+                                    </dd>
+                                </div>
+                            </dl>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <UserRound
+                                    className="size-4 text-muted-foreground"
+                                    aria-hidden
+                                />
+                                Customer
+                            </CardTitle>
+                            <CardDescription>
+                                Customer information
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex items-center gap-3">
+                                <Avatar className="size-10 shrink-0">
+                                    <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
+                                        {initials(
+                                            order.customer?.name ?? order.email,
+                                        )}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <div className="min-w-0">
+                                    {order.customer ? (
+                                        <Link
+                                            href={customerShow(
+                                                order.customer.id,
+                                            )}
+                                            className="font-medium hover:text-primary hover:underline"
+                                        >
+                                            {order.customer.name}
+                                        </Link>
+                                    ) : (
+                                        <span className="font-medium">
+                                            Guest customer
+                                        </span>
+                                    )}
+                                    <p
+                                        className="truncate text-xs text-muted-foreground"
+                                        title={order.email}
+                                    >
+                                        {order.email}
+                                    </p>
+                                    {order.phone && (
+                                        <p className="mt-1 text-xs text-muted-foreground">
+                                            {order.phone}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <ShoppingBag
+                                    className="size-4 text-muted-foreground"
+                                    aria-hidden
+                                />
+                                Product
+                            </CardTitle>
+                            <CardDescription>
+                                Purchased product details
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <dl>
+                                <div className="admin-detail-row">
+                                    <dt>Name</dt>
+                                    <dd>
+                                        {order.items[0]?.product_name ?? '—'}
+                                        {order.items.length > 1 && (
+                                            <p className="mt-1 text-xs font-normal text-muted-foreground">
+                                                +{order.items.length - 1} more
+                                                products
+                                            </p>
+                                        )}
+                                    </dd>
+                                </div>
+                                <div className="admin-detail-row">
+                                    <dt>Price</dt>
+                                    <dd className="tabular-nums">
+                                        {order.items[0]?.unit_price.formatted ??
+                                            '—'}
+                                    </dd>
+                                </div>
+                                <div className="admin-detail-row">
+                                    <dt>Quantity</dt>
+                                    <dd>
+                                        {order.items.reduce(
+                                            (quantity, item) =>
+                                                quantity + item.quantity,
+                                            0,
+                                        )}
+                                    </dd>
+                                </div>
+                            </dl>
+                        </CardContent>
+                    </Card>
                 </div>
 
                 {order.status === 'on_hold' && (
@@ -121,6 +274,21 @@ export default function OrderShow({
                 {order.status !== 'cancelled' && (
                     <Card>
                         <CardContent className="pt-6">
+                            <div className="mb-5 flex flex-wrap items-center gap-2 text-xs">
+                                <span className="font-medium">
+                                    Order progress
+                                </span>
+                                <span className="ml-auto text-muted-foreground">
+                                    Payment
+                                </span>
+                                <StatusBadge status={order.payment_status} />
+                                <span className="text-muted-foreground">
+                                    Fulfilment
+                                </span>
+                                <StatusBadge
+                                    status={order.fulfillment_status}
+                                />
+                            </div>
                             <OrderStepper steps={order.steps} />
                         </CardContent>
                     </Card>
@@ -218,7 +386,7 @@ export default function OrderShow({
                     <div className="grid content-start gap-6">
                         <Card>
                             <CardHeader>
-                                <CardTitle>Customer</CardTitle>
+                                <CardTitle>Delivery information</CardTitle>
                             </CardHeader>
                             <CardContent className="grid gap-3 text-sm">
                                 {order.customer ? (

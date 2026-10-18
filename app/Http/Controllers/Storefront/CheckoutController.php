@@ -24,6 +24,7 @@ use App\Domains\Payments\Models\Payment;
 use App\Domains\Payments\PaymentMethods;
 use App\Domains\Payments\PaymentReconciler;
 use App\Domains\Payments\PaymentStarter;
+use App\Domains\Shipping\ShippingCoverage;
 use App\Http\Controllers\Controller;
 use App\Http\Presenters\OrderPresenter;
 use App\Models\User;
@@ -47,7 +48,7 @@ class CheckoutController extends Controller
         private readonly PaymentMethods $paymentMethods,
     ) {}
 
-    public function show(Request $request, PlaceOrder $placeOrder, CustomerProfiles $profiles): Response|RedirectResponse
+    public function show(Request $request, PlaceOrder $placeOrder, CustomerProfiles $profiles, StorefrontSlots $slots): Response|RedirectResponse
     {
         $user = $this->user($request);
         $cart = $this->carts->current($request->session(), $user);
@@ -70,7 +71,7 @@ class CheckoutController extends Controller
 
         $customer = $user !== null ? $profiles->forUser($user) : null;
 
-        // Priced once per request, shared by the summary and the extension places.
+        // Priced once per request, shared by the summary and the payment method slots.
         $priced = null;
         $price = function () use (&$priced, $cart, $destination, $customer, $request) {
             return $priced ??= $this->pricer->price($cart, new PricingContext(
@@ -85,6 +86,11 @@ class CheckoutController extends Controller
 
         return Inertia::render('storefront/checkout', [
             'summary' => fn () => $price()->toArray(),
+            'slots' => fn () => $slots->render('checkout.after_summary', ['cart' => $price()]),
+            'paymentSlots' => fn () => array_values(array_filter(
+                $slots->render('checkout.payment_method', ['cart' => $price()]),
+                fn (array $item) => is_string($item['props']['method'] ?? null),
+            )),
             'paymentMethods' => fn () => array_values(array_map(fn (PaymentMethod $m) => [
                 'code' => $m->code(),
                 'label' => $m->label(),
@@ -92,7 +98,8 @@ class CheckoutController extends Controller
             ], $this->paymentMethods->enabled())),
             'addresses' => fn () => $customer?->addresses()->get()->map(fn (CustomerAddress $a) => $a->toPresentable())->all() ?? [],
             'email' => $user?->email,
-            'countries' => fn () => Countries::options(),
+            'countries' => fn () => app(ShippingCoverage::class)->options($price()->currency),
+            'soleCountry' => fn () => app(ShippingCoverage::class)->sole($price()->currency),
             'checkoutToken' => fn () => (string) Str::uuid(),
             'placeSlots' => fn () => app(StorefrontSlots::class)->renderMany(['checkout.before_place_order'], ['cart' => $price()]),
             'pageCheckout' => fn () => $this->checkoutSettings($request),
@@ -235,7 +242,11 @@ class CheckoutController extends Controller
                 route('checkout.complete', [$order, 'payment' => 'cancelled']),
             );
         } catch (GatewayException|ValidationException $e) {
-            $message = $e instanceof ValidationException ? collect($e->errors())->flatten()->first() : __('We could not open the payment page. Please try again in a moment.');
+            $message = match (true) {
+                $e instanceof ValidationException => collect($e->errors())->flatten()->first(),
+                $e->customerMessage !== null => $e->customerMessage,
+                default => __('We could not open the payment page. Please try again in a moment.'),
+            };
             Inertia::flash('toast', ['type' => 'error', 'message' => (string) $message]);
 
             return redirect()->route('checkout.complete', $order);

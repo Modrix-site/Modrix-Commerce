@@ -1,5 +1,6 @@
 <?php
 
+use App\Domains\Content\Models\Page;
 use App\Http\Controllers\DashboardRedirectController;
 use App\Http\Controllers\Storefront\AccountController;
 use App\Http\Controllers\Storefront\AccountNotificationController;
@@ -10,13 +11,18 @@ use App\Http\Controllers\Storefront\CatalogController;
 use App\Http\Controllers\Storefront\CheckoutController;
 use App\Http\Controllers\Storefront\DownloadController;
 use App\Http\Controllers\Storefront\ProductController;
+use App\Http\Controllers\Storefront\SitemapController;
 use App\Http\Middleware\ShareStorefrontData;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 use Laravel\Fortify\Http\Controllers\NewPasswordController;
 use Laravel\Fortify\Http\Controllers\PasswordResetLinkController;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 
 Route::middleware(['installed', ShareStorefrontData::class])->group(function () {
+    Route::get('pages/{slug}', function (string $slug) {
+        return Inertia::render('storefront/page', ['page' => Page::query()->where('slug', $slug)->where('status', 'published')->firstOrFail()]);
+    })->name('storefront.page');
     Route::get('/', [CatalogController::class, 'home'])->name('home');
     Route::get('search', [CatalogController::class, 'search'])->name('storefront.search');
     Route::get('c/{slug}', [CatalogController::class, 'category'])->name('storefront.category');
@@ -44,6 +50,9 @@ Route::middleware(['installed', ShareStorefrontData::class])->group(function () 
     Route::get('checkout/orders/{order}/payment/return', [CheckoutController::class, 'paymentReturn'])->middleware('throttle:30,1')->name('checkout.payment.return');
 
     Route::middleware('auth')->prefix('account')->name('account.')->group(function () {
+        Route::get('pages/{slug}', function (string $slug) {
+            return Inertia::render('storefront/page', ['page' => Page::query()->where('slug', $slug)->where('status', 'published')->firstOrFail()]);
+        })->name('storefront.page');
         Route::get('/', [AccountController::class, 'show'])->name('show');
         Route::get('addresses', [AccountController::class, 'addresses'])->name('addresses');
         Route::get('data-export', [AccountController::class, 'exportData'])->middleware('throttle:5,1')->name('data-export');
@@ -66,6 +75,9 @@ Route::middleware(['installed', ShareStorefrontData::class])->group(function () 
 Route::middleware(['installed', 'auth', 'verified'])->group(function () {
     Route::get('dashboard', DashboardRedirectController::class)->name('dashboard');
 });
+
+// XML sitemap, contributed by modules with the "sitemap.provider" capability.
+Route::middleware('installed')->get('sitemap.xml', SitemapController::class)->name('sitemap');
 
 // Fortify registers these without an IP limit; redeclared here (same names) with one.
 Route::middleware(['web', 'guest:'.config('fortify.guard'), 'throttle:auth-sensitive'])->group(function () {

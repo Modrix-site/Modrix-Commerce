@@ -19,6 +19,8 @@ final class ThemeManifest
      * @param  array<string, string>  $darkColors
      * @param  array<string, list<array{type: string, settings: array<string, mixed>}>>  $sections
      * @param  list<array{version: string, date: string, notes: string}>  $changelog
+     * @param  array<string, mixed>  $customizer
+     * @param  array<string, string>  $frontend
      */
     public function __construct(
         public readonly string $name,
@@ -38,6 +40,8 @@ final class ThemeManifest
         public readonly array $sections,
         public readonly ?string $demoContent,
         public readonly array $changelog,
+        public readonly array $customizer = [],
+        public readonly array $frontend = [],
     ) {}
 
     /**
@@ -68,6 +72,8 @@ final class ThemeManifest
             sections: (array) ($data['sections'] ?? []),
             demoContent: isset($data['demo_content']) ? (string) $data['demo_content'] : null,
             changelog: array_values((array) ($data['changelog'] ?? [])),
+            customizer: (array) ($data['customizer'] ?? []),
+            frontend: (array) ($data['frontend'] ?? []),
         );
     }
 
@@ -96,7 +102,30 @@ final class ThemeManifest
      */
     public function defaults(): array
     {
-        return array_replace(ThemeSchema::builtinDesign(), $this->design);
+        return array_replace(ThemeSchema::builtinDesign(), $this->design, array_map(fn (array $field) => $field['default'], $this->customFields()));
+    }
+
+    /** @return array<string, array<string, mixed>> */
+    public function customFields(): array
+    {
+        return (array) ($this->customizer['fields'] ?? []);
+    }
+
+    /**
+     * Named palettes a theme ships: applying one sets several design fields
+     * at once, then individual fields remain editable.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public function presets(): array
+    {
+        return (array) ($this->customizer['presets'] ?? []);
+    }
+
+    /** @return array<string, array<string, mixed>> */
+    public function designFields(): array
+    {
+        return ThemeSchema::designFields() + $this->customFields();
     }
 
     /**
@@ -140,6 +169,8 @@ final class ThemeManifest
             'sections' => $this->sections,
             'demo_content' => $this->demoContent,
             'changelog' => $this->changelog,
+            'customizer' => $this->customizer,
+            'frontend' => $this->frontend,
         ], fn ($value) => $value !== null);
     }
 }

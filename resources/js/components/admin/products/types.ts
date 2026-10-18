@@ -12,6 +12,7 @@ export type VariantData = {
     id?: number;
     sku: string;
     name: string | null;
+    image_id: number | null;
     price: string;
     compare_at_price: string;
     cost: string;
@@ -42,6 +43,7 @@ export type ProductData = {
     category_ids: number[];
     brand_id: number | null;
     is_featured: boolean;
+    show_buy_button: boolean | null;
     is_digital: boolean;
     files?: DigitalFile[];
     tags: string[];
@@ -50,7 +52,13 @@ export type ProductData = {
     view_url: string | null;
     option_attribute_ids: number[];
     variants: VariantData[];
-    images: { id: number; url: string; alt: string | null }[];
+    images: {
+        id: number;
+        url: string;
+        alt: string | null;
+        width?: number | null;
+        height?: number | null;
+    }[];
 };
 
 export type ProductFormProps = {
@@ -64,12 +72,14 @@ export type ProductFormProps = {
     statuses: Option[];
     types: Option[];
     attributes: AttributeOption[];
+    inventoryReasons: Option[];
 };
 
 export type VariantRow = {
     id: number | null;
     sku: string;
     name: string;
+    image_id: number | null;
     price: string;
     compare_at_price: string;
     cost: string;
@@ -100,6 +110,7 @@ export type ProductFormData = {
     category_ids: number[];
     brand_id: string;
     is_featured: boolean;
+    show_buy_button: string;
     is_digital: boolean;
     tags: string[];
     related_ids: number[];
@@ -114,6 +125,7 @@ export const emptyVariant = (): VariantRow => ({
     id: null,
     sku: '',
     name: '',
+    image_id: null,
     price: '',
     compare_at_price: '',
     cost: '',
@@ -136,6 +148,7 @@ export function toRow(v: VariantData): VariantRow {
         id: v.id ?? null,
         sku: v.sku,
         name: v.name ?? '',
+        image_id: v.image_id ?? null,
         price: v.price,
         compare_at_price: v.compare_at_price ?? '',
         cost: v.cost ?? '',

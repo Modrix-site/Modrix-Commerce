@@ -12,16 +12,16 @@ use Throwable;
 
 /**
  * Validates a theme package: the manifest (docs/extensions/theme.schema.json)
- * and the files in the package. A theme may only contain data files; any
- * code, markup or script file (PHP, JS, HTML, SVG, …) rejects the package,
- * and every referenced path must stay inside it.
+ * and package files. Explicit frontend entries permit compiled TypeScript
+ * and CSS under src/. Server code and markup are prohibited, and every
+ * referenced path must stay inside the package.
  */
 final class ThemeManifestValidator
 {
     private const KEYS = [
         '$schema', 'name', 'display_name', 'description', 'version', 'type', 'theme_type', 'platform_version',
         'author', 'license', 'requires', 'capabilities', 'assets', 'screenshot', 'design', 'fonts', 'dark_colors',
-        'sections', 'demo_content', 'changelog',
+        'sections', 'demo_content', 'changelog', 'customizer', 'customizer_file', 'frontend',
     ];
 
     /** File types a theme package may contain. Files without an extension are allowed for LICENSE/README. */
@@ -49,7 +49,18 @@ final class ThemeManifestValidator
             $this->errors[] = "Unknown manifest key \"{$unknown}\".";
         }
 
-        $this->packageFiles($packageDir);
+        $frontend = $data['frontend'] ?? [];
+        if (! is_array($frontend) || array_diff(array_keys($frontend), ['index', 'catalog', 'cart', 'header', 'footer', 'product', 'stylesheet']) !== []) {
+            $this->errors[] = 'frontend must contain only index, catalog, cart, header, footer, product and stylesheet paths.';
+            $frontend = [];
+        }
+        foreach ($frontend as $entry => $path) {
+            $expected = ['index' => 'src/index.tsx', 'catalog' => 'src/catalog.tsx', 'cart' => 'src/cart.tsx', 'header' => 'src/header.tsx', 'footer' => 'src/footer.tsx', 'product' => 'src/product.tsx', 'stylesheet' => 'src/style.css'][$entry];
+            if ($path !== $expected || ManifestValidator::resolvePath($packageDir, $expected, directory: false) === null) {
+                $this->errors[] = "frontend.{$entry} must point to the existing {$expected}.";
+            }
+        }
+        $this->packageFiles($packageDir, $frontend !== []);
 
         $name = $this->string($data, 'name', 100, true);
         if ($name !== null && ! preg_match('/^[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?\/[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?$/', $name)) {
@@ -94,7 +105,21 @@ final class ThemeManifestValidator
             $this->errors[] = 'screenshot must be a PNG, JPEG or WebP file in the assets directory.';
         }
 
+        if (isset($data['customizer_file'])) {
+            $settingsFile = is_string($data['customizer_file']) ? ManifestValidator::resolvePath($packageDir, $data['customizer_file'], directory: false) : null;
+            if ($settingsFile === null || strtolower(pathinfo($settingsFile, PATHINFO_EXTENSION)) !== 'json' || filesize($settingsFile) > ThemeManifest::MAX_BYTES) {
+                $this->errors[] = 'customizer_file must be a JSON file inside the theme, up to 128 KB.';
+            } else {
+                $data['customizer'] = json_decode((string) file_get_contents($settingsFile), true, 32);
+                if (! is_array($data['customizer'])) {
+                    $this->errors[] = 'customizer_file must contain a valid JSON object.';
+                }
+            }
+        }
         $fonts = $this->fonts($data, $capabilities, $packageDir, $assetsDir);
+        if (isset($data['customizer'])) {
+            $this->errors = [...$this->errors, ...ThemeCustomizerSchema::errors($data['customizer'], $assetExists)];
+        }
         $this->design($data, $assetExists, $fonts);
         $this->darkColors($data, $capabilities);
         $this->sections($data, $capabilities, $assetExists);
@@ -121,7 +146,7 @@ final class ThemeManifestValidator
             && filesize($resolved) <= self::MAX_ASSET_BYTES;
     }
 
-    private function packageFiles(string $packageDir): void
+    private function packageFiles(string $packageDir, bool $frontend = false): void
     {
         $count = 0;
         $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($packageDir, RecursiveDirectoryIterator::SKIP_DOTS));
@@ -137,8 +162,9 @@ final class ThemeManifestValidator
 
             if ($file->isLink()) {
                 $this->errors[] = "Symbolic links are not allowed ({$relative}).";
-            } elseif (! in_array(strtolower($file->getExtension()), self::PACKAGE_EXTENSIONS, true)) {
-                $this->errors[] = "Themes may only contain data files; {$relative} is not allowed.";
+            } elseif (! in_array(strtolower($file->getExtension()), self::PACKAGE_EXTENSIONS, true)
+                && ! ($frontend && str_starts_with($relative, 'src/') && in_array(strtolower($file->getExtension()), ['tsx', 'ts', 'css'], true))) {
+                $this->errors[] = "Themes may only contain data files or declared browser source under src/; {$relative} is not allowed.";
             }
         }
     }

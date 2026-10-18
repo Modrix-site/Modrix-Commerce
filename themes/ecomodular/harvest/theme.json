@@ -3,7 +3,7 @@
     "name": "ecomodular/harvest",
     "display_name": "Harvest",
     "description": "A warm, appetising theme for grocers, farm shops, bakeries and food delivery: large product cards, a friendly rounded look and a delivery-first home page.",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "type": "theme",
     "theme_type": "storefront",
     "platform_version": "^1.0",
@@ -11,7 +11,7 @@
     "license": "MIT",
     "capabilities": ["home.sections", "dark_mode"],
     "assets": "assets",
-    "screenshot": "assets/images/hero.webp",
+    "screenshot": "assets/demo-preview.png",
     "design": {
         "color.background": "#fffdf7",
         "color.foreground": "#2a2418",
@@ -62,7 +62,10 @@
             },
             {
                 "type": "category_grid",
-                "settings": { "title": "Shop the aisles", "limit": 8 }
+                "settings": {
+                    "title": "Shop the aisles",
+                    "limit": 8
+                }
             },
             {
                 "type": "featured_products",
@@ -95,6 +98,11 @@
         ]
     },
     "changelog": [
-        { "version": "1.0.0", "date": "2026-10-13", "notes": "First release." }
-    ]
+        {
+            "version": "1.0.0",
+            "date": "2026-10-13",
+            "notes": "First release."
+        }
+    ],
+    "customizer_file": "settings.json"
 }

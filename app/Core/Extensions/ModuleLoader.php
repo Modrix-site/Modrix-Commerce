@@ -91,6 +91,7 @@ final class ModuleLoader
 
         if (! isset($this->failures[$name])) {
             $this->app->booted(fn () => $this->routes($name, $dir, $manifest));
+            $this->app->make(ModuleContentSecurity::class)->add($manifest);
         }
 
         return ! isset($this->failures[$name]);
@@ -154,6 +155,7 @@ final class ModuleLoader
                 $item['group'],
                 $item['permission'],
                 $item['order'],
+                paymentGateway: in_array('payment.gateway', $manifest->capabilities, true),
             );
         }
     }

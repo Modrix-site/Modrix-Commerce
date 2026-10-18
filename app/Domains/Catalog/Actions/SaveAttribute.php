@@ -19,7 +19,7 @@ final class SaveAttribute
     public function __construct(private readonly AuditLogger $audit) {}
 
     /**
-     * @param  array{name: string, values: list<array{id?: int|null, value: string}>}  $data
+     * @param  array{name: string, display_type?: string, values: list<array{id?: int|null, value: string, color?: string|null}>}  $data
      */
     public function handle(?ProductAttribute $attribute, array $data): ProductAttribute
     {
@@ -27,6 +27,7 @@ final class SaveAttribute
             $isNew = $attribute === null;
             $attribute ??= new ProductAttribute;
             $attribute->name = $data['name'];
+            $attribute->display_type = $data['display_type'] ?? $attribute->display_type ?? 'buttons';
 
             if ($isNew) {
                 $attribute->slug = Slugger::unique(ProductAttribute::class, $data['name']);
@@ -49,7 +50,7 @@ final class SaveAttribute
                     : new ProductAttributeValue;
 
                 $value->attribute_id = $attribute->id;
-                $value->fill(['value' => $row['value'], 'slug' => $slug, 'position' => $position])->save();
+                $value->fill(['value' => $row['value'], 'slug' => $slug, 'position' => $position, 'color' => array_key_exists('color', $row) ? $row['color'] : $value->color])->save();
                 $keptIds[] = $value->id;
             }
 

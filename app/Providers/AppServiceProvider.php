@@ -4,7 +4,9 @@ namespace App\Providers;
 
 use App\Core\Settings\GeneralSettings;
 use Carbon\CarbonImmutable;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Events\ConnectionEstablished;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
@@ -17,7 +19,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->make(Dispatcher::class)->listen(ConnectionEstablished::class, function (ConnectionEstablished $event): void {
+            if ($event->connection->getDriverName() === 'sqlite') {
+                // Nested writes use temporary statement journals. Keep those in
+                // memory so Windows service/sandbox temp paths cannot break saves.
+                // The main database and rollback journal remain durable on disk.
+                $event->connection->getPdo()->exec('PRAGMA temp_store = MEMORY');
+            }
+        });
     }
 
     /**

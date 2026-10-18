@@ -3,6 +3,7 @@ import {
     AlertTriangle,
     ArrowDown,
     ArrowUp,
+    Copy,
     Eye,
     Plus,
     RotateCcw,
@@ -62,11 +63,14 @@ type Value = string | number | boolean | null;
 type Props = {
     theme: ThemeSummary;
     design: {
+        title: string;
+        description: string | null;
         fields: ThemeField[];
         values: Record<string, Value>;
         defaults: Record<string, Value>;
         overridden: string[];
         ignored: string[];
+        presets: Record<string, Record<string, Value>>;
     };
     sections: {
         types: { key: string; label: string; fields: ThemeField[] }[];
@@ -235,6 +239,17 @@ function DesignCard({
         design: initial,
     });
     const groups = groupsForTab(design.fields, tab);
+    const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
+    const toggleGroup = (group: string) =>
+        setCollapsed((prev) => {
+            const next = new Set(prev);
+            if (next.has(group)) {
+                next.delete(group);
+            } else {
+                next.add(group);
+            }
+            return next;
+        });
 
     const submit = (event: FormEvent) => {
         event.preventDefault();
@@ -244,61 +259,104 @@ function DesignCard({
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Design</CardTitle>
-                <CardDescription>
-                    Leave a setting on "Theme default" to follow the theme,
-                    including future updates of it.
-                </CardDescription>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                        <CardTitle>{design.title}</CardTitle>
+                        <CardDescription>
+                            Leave a setting on "Theme default" to follow the
+                            theme, including future updates of it.
+                        </CardDescription>
+                    </div>
+                    {Object.keys(design.presets).length > 0 && (
+                        <PaletteBar
+                            presets={design.presets}
+                            fields={design.fields}
+                            onApply={(next) =>
+                                form.setData('design', {
+                                    ...form.data.design,
+                                    ...next,
+                                })
+                            }
+                        />
+                    )}
+                </div>
             </CardHeader>
             <CardContent>
                 <form onSubmit={submit} className="grid gap-8">
-                    {groups.map((group) => (
-                        <fieldset key={group} className="grid gap-4">
-                            <legend className="mb-2 text-sm font-semibold">
-                                {group}
-                            </legend>
-                            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                                {design.fields
-                                    // A group ("Fonts and buttons") spans tabs: only this tab's fields.
-                                    .filter(
-                                        (f) =>
-                                            (f.group ?? 'Other') === group &&
-                                            tabOf(f) === tab,
-                                    )
-                                    .map((field) => (
-                                        <DesignInput
-                                            key={field.key}
-                                            field={field}
-                                            value={form.data.design[field.key]}
-                                            fallback={
-                                                design.defaults[field.key]
-                                            }
-                                            images={images}
-                                            error={
-                                                (
-                                                    form.errors as Record<
-                                                        string,
-                                                        string
-                                                    >
-                                                )[`design.${field.key}`] ??
-                                                (
-                                                    form.errors as Record<
-                                                        string,
-                                                        string
-                                                    >
-                                                )[field.key]
-                                            }
-                                            onChange={(value) =>
-                                                form.setData('design', {
-                                                    ...form.data.design,
-                                                    [field.key]: value,
-                                                })
-                                            }
-                                        />
-                                    ))}
-                            </div>
-                        </fieldset>
-                    ))}
+                    {groups.map((group) => {
+                        // A group ("Fonts and buttons") spans tabs: only this tab's fields.
+                        const groupFields = design.fields.filter(
+                            (f) =>
+                                (f.group ?? 'Other') === group &&
+                                tabOf(f) === tab,
+                        );
+                        const isCollapsed = collapsed.has(group);
+                        const overriddenInGroup = groupFields.filter((f) =>
+                            design.overridden.includes(f.key),
+                        ).length;
+
+                        return (
+                            <fieldset key={group} className="grid gap-4">
+                                <div className="flex items-center justify-between gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => toggleGroup(group)}
+                                        className="flex items-center gap-1 text-sm font-semibold hover:text-foreground"
+                                        aria-expanded={!isCollapsed}
+                                    >
+                                        {isCollapsed ? (
+                                            <ArrowDown className="size-3" />
+                                        ) : (
+                                            <ArrowUp className="size-3" />
+                                        )}
+                                        {group}
+                                    </button>
+                                    {overriddenInGroup > 0 && (
+                                        <Badge variant="secondary">
+                                            {overriddenInGroup} customized
+                                        </Badge>
+                                    )}
+                                </div>
+                                {!isCollapsed && (
+                                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                        {groupFields.map((field) => (
+                                            <DesignInput
+                                                key={field.key}
+                                                field={field}
+                                                value={
+                                                    form.data.design[field.key]
+                                                }
+                                                fallback={
+                                                    design.defaults[field.key]
+                                                }
+                                                images={images}
+                                                error={
+                                                    (
+                                                        form.errors as Record<
+                                                            string,
+                                                            string
+                                                        >
+                                                    )[`design.${field.key}`] ??
+                                                    (
+                                                        form.errors as Record<
+                                                            string,
+                                                            string
+                                                        >
+                                                    )[field.key]
+                                                }
+                                                onChange={(value) =>
+                                                    form.setData('design', {
+                                                        ...form.data.design,
+                                                        [field.key]: value,
+                                                    })
+                                                }
+                                            />
+                                        ))}
+                                    </div>
+                                )}
+                            </fieldset>
+                        );
+                    })}
                     <div>
                         <Button type="submit" disabled={form.processing}>
                             Save design
@@ -307,6 +365,92 @@ function DesignCard({
                 </form>
             </CardContent>
         </Card>
+    );
+}
+
+function PaletteBar({
+    presets,
+    fields,
+    onApply,
+}: {
+    presets: Record<string, Record<string, Value>>;
+    fields: ThemeField[];
+    onApply: (next: Record<string, Value>) => void;
+}) {
+    const names = Object.keys(presets);
+    const [open, setOpen] = useState(false);
+
+    if (names.length === 0) {
+        return null;
+    }
+
+    const apply = (name: string) => {
+        const patch = presets[name];
+        const next: Record<string, Value> = {};
+
+        for (const [key, value] of Object.entries(patch)) {
+            const field = fields.find((f) => f.key === key);
+            if (!field) {
+                continue;
+            }
+            // Only override fields that the palette actually sets; a value
+            // matching the theme default is the same as leaving it alone.
+            next[key] = value;
+        }
+
+        onApply(next);
+        setOpen(false);
+    };
+
+    return (
+        <div className="relative">
+            <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setOpen((prev) => !prev)}
+                aria-expanded={open}
+            >
+                Palettes
+                <span className="ml-1 text-xs text-muted-foreground">
+                    ({names.length})
+                </span>
+            </Button>
+            {open && (
+                <div className="absolute right-0 z-20 mt-2 w-56 overflow-hidden rounded-md border bg-popover p-1 shadow-md">
+                    {names.map((name) => (
+                        <button
+                            key={name}
+                            type="button"
+                            className="flex w-full items-center justify-between gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent"
+                            onClick={() => apply(name)}
+                        >
+                            <span>{name}</span>
+                            <span className="flex">
+                                {Object.entries(presets[name])
+                                    .slice(0, 4)
+                                    .map(([key]) => {
+                                        const field = fields.find(
+                                            (f) => f.key === key,
+                                        );
+                                        return field?.type === 'color' ? (
+                                            <span
+                                                key={key}
+                                                className="size-3.5 rounded border"
+                                                style={{
+                                                    backgroundColor: String(
+                                                        presets[name][key],
+                                                    ),
+                                                }}
+                                            />
+                                        ) : null;
+                                    })}
+                            </span>
+                        </button>
+                    ))}
+                </div>
+            )}
+        </div>
     );
 }
 
@@ -449,31 +593,104 @@ function ImagePicker({
     images: ThemeImageOption[];
     onChange: (value: string) => void;
 }) {
-    const selected = images.find((i) => i.value === value);
+    const [uploaded, setUploaded] = useState<ThemeImageOption[]>([]);
+    const [uploading, setUploading] = useState(false);
+    const [uploadError, setUploadError] = useState('');
+    const choices = Array.from(
+        new Map(
+            [...images, ...uploaded].map((image) => [image.value, image]),
+        ).values(),
+    );
+    const selected = choices.find((i) => i.value === value);
+    const upload = async (file: File) => {
+        setUploadError('');
+        if (
+            !['image/jpeg', 'image/png', 'image/webp'].includes(file.type) ||
+            file.size > 5 * 1024 * 1024
+        ) {
+            setUploadError('Choose a PNG, JPEG or WebP image up to 5 MB.');
+            return;
+        }
+        setUploading(true);
+        try {
+            const body = new FormData();
+            body.append('file', file);
+            const token = document.cookie
+                .split('; ')
+                .find((cookie) => cookie.startsWith('XSRF-TOKEN='))
+                ?.slice(11);
+            const response = await fetch('/admin/themes/uploads', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    Accept: 'application/json',
+                    ...(token
+                        ? { 'X-XSRF-TOKEN': decodeURIComponent(token) }
+                        : {}),
+                },
+                body,
+            });
+            const data = await response.json();
+            if (!response.ok)
+                throw new Error(
+                    (Object.values(data.errors ?? {}).flat()[0] as string) ||
+                        'Image upload failed. Try again.',
+                );
+            setUploaded((previous) => [...previous, data.image]);
+            onChange(data.image.value);
+        } catch (error) {
+            setUploadError(
+                error instanceof Error ? error.message : 'Image upload failed.',
+            );
+        } finally {
+            setUploading(false);
+        }
+    };
 
     return (
-        <div className="flex items-center gap-2">
-            {selected ? (
-                <img
-                    src={selected.url}
-                    alt=""
-                    className="size-9 shrink-0 rounded border object-cover"
-                />
-            ) : (
-                <span className="size-9 shrink-0 rounded border bg-muted" />
-            )}
-            <NativeSelect
-                id={id}
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
+        <div className="grid gap-2">
+            <div className="flex items-center gap-2">
+                {selected ? (
+                    <img
+                        src={selected.url}
+                        alt=""
+                        className="size-9 shrink-0 rounded border object-cover"
+                    />
+                ) : (
+                    <span className="size-9 shrink-0 rounded border bg-muted" />
+                )}
+                <NativeSelect
+                    id={id}
+                    value={value}
+                    onChange={(e) => onChange(e.target.value)}
+                >
+                    <option value="">{fallbackLabel}</option>
+                    {choices.map((image) => (
+                        <option key={image.value} value={image.value}>
+                            {image.label}
+                        </option>
+                    ))}
+                </NativeSelect>
+            </div>
+            <Label
+                htmlFor={`${id}-upload`}
+                className="cursor-pointer text-xs text-primary"
             >
-                <option value="">{fallbackLabel}</option>
-                {images.map((image) => (
-                    <option key={image.value} value={image.value}>
-                        {image.label}
-                    </option>
-                ))}
-            </NativeSelect>
+                {uploading ? 'Uploading…' : 'Upload image for this field'}
+            </Label>
+            <Input
+                id={`${id}-upload`}
+                aria-label={`Upload image for ${id}`}
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                disabled={uploading}
+                onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    if (file) void upload(file);
+                    event.target.value = '';
+                }}
+            />
+            <InputError message={uploadError} />
         </div>
     );
 }
@@ -561,6 +778,13 @@ function SectionsCard({
         update(next);
     };
 
+    const duplicate = (index: number) => {
+        const item = list[index];
+        const next = [...list];
+        next.splice(index + 1, 0, { ...item, settings: { ...item.settings } });
+        update(next);
+    };
+
     const add = () => {
         const type = typeOf(adding);
 
@@ -622,6 +846,15 @@ function SectionsCard({
                                             {type?.label ?? section.type}
                                         </span>
                                         <div className="ml-auto flex gap-1">
+                                            <Button
+                                                type="button"
+                                                size="icon"
+                                                variant="ghost"
+                                                aria-label="Duplicate section"
+                                                onClick={() => duplicate(i)}
+                                            >
+                                                <Copy />
+                                            </Button>
                                             <Button
                                                 type="button"
                                                 size="icon"

@@ -14,7 +14,12 @@ import {
 } from '@/components/ui/table';
 import { create, edit, index } from '@/routes/admin/attributes';
 
-type AttributeRow = { id: number; name: string; values: string[] };
+type AttributeRow = {
+    id: number;
+    name: string;
+    values: string[];
+    product_count: number;
+};
 
 export default function AttributesIndex({
     attributes,
@@ -23,30 +28,31 @@ export default function AttributesIndex({
 }) {
     return (
         <>
-            <Head title="Options" />
+            <Head title="Variant attributes" />
             <AdminPage>
                 <PageHeader
-                    title="Options"
-                    description="Option types such as Size or Color that define product variants."
+                    title="Variant attributes"
+                    description="Attributes such as Size or Color and their available values."
                     actions={
                         <Button asChild>
                             <Link href={create()}>
-                                <Plus /> Add option
+                                <Plus /> Add attribute
                             </Link>
                         </Button>
                     }
                 />
                 {attributes.length === 0 ? (
                     <EmptyState
-                        title="No options yet"
-                        description="Create an option such as Size with values S, M and L."
+                        title="No attributes yet"
+                        description="Create a attribute such as Size with values S, M and L."
                     />
                 ) : (
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Option</TableHead>
+                                <TableHead>Attribute</TableHead>
                                 <TableHead>Values</TableHead>
+                                <TableHead>Connected products</TableHead>
                                 <TableHead>
                                     <span className="sr-only">Actions</span>
                                 </TableHead>
@@ -70,6 +76,14 @@ export default function AttributesIndex({
                                             ))}
                                         </div>
                                     </TableCell>
+                                    <TableCell>
+                                        <Link
+                                            href={`/admin/products?attribute=${attribute.id}`}
+                                            className="text-primary underline"
+                                        >
+                                            {attribute.product_count} products
+                                        </Link>
+                                    </TableCell>
                                     <TableCell className="text-right">
                                         <Button
                                             variant="outline"
@@ -92,5 +106,5 @@ export default function AttributesIndex({
 }
 
 AttributesIndex.layout = {
-    breadcrumbs: [{ title: 'Options', href: index() }],
+    breadcrumbs: [{ title: 'Variant attributes', href: index() }],
 };

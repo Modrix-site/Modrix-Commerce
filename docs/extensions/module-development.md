@@ -91,11 +91,14 @@ Administrators see these before enabling a module. Declare every capability your
     { "key": "auto_approve", "type": "boolean", "label": "Publish without moderation", "default": false },
     { "key": "min_length", "type": "integer", "label": "Minimum length", "default": 10, "min": 0, "max": 500 },
     { "key": "mode", "type": "select", "label": "Mode", "options": [{ "value": "a", "label": "A" }] },
-    { "key": "recipient", "type": "email", "label": "Send to", "help": "Leave empty to pause." }
+    { "key": "recipient", "type": "email", "label": "Send to", "help": "Leave empty to pause." },
+    { "key": "a_model", "type": "string", "label": "Model", "suggestions": ["model-1", "model-2"], "visible_when": { "mode": "a" } }
 ]
 ```
 
 - **Types:** `boolean`, `string` (`max_length` ≤ 500), `text` (`max_length` ≤ 10000), `integer` (`min`, `max`), `select` (`options`), `email`. Optional keys: `help`, `default`, `required`.
+- **Suggestions:** a `string` setting may list up to 50 `suggestions`. The form shows them as a dropdown with a **Custom…** choice for any other value. Suggestions are not an allowlist.
+- **Conditional fields:** `visible_when` maps other setting keys to a value or list of values, e.g. `{ "provider": ["openai", "azure"] }`. The field is shown only when every condition holds. A hidden field is not required, and leaving it empty keeps its stored value.
 - **Where values go:** they are validated by the platform from the type and stored under `extension.<vendor>.<package>.<key>`.
 - **Admin form:** the form in **Admin → Extensions → (module)** is generated from the schema.
 - **No code:** values are data only. Never evaluate them as code, templates, SQL or validation rules.
@@ -177,7 +180,7 @@ Typed contracts for critical operations; events for reactions. **Stable** means 
 | Sale prices                         | implement `App\Domains\Catalog\Pricing\SalePriceProvider`, `SalePrices::addProvider()`; lowest offer wins, cart charges it                                                                                                                          | Stable            |
 | Checkout validation                 | implement `App\Domains\Checkout\Contracts\CheckoutValidator`, `CheckoutValidators::register()`. Fails closed.                                                                                                                                       | Stable            |
 | Search                              | bind `App\Domains\Catalog\Contracts\SearchProvider`; may only narrow the visible-product query                                                                                                                                                      | Stable            |
-| Storefront slots                    | `App\Core\Extensions\StorefrontSlots::register()`: `home.after_featured`, `product.after_details`, `order.confirmation`                                                                                                                             | Stable            |
+| Storefront slots                    | `App\Core\Extensions\StorefrontSlots::register()`: `home.after_featured`, `catalog.after_products`, `product.after_details`, `cart.after_totals`, `checkout.payment_method`, `checkout.after_summary`, `order.confirmation`, `storefront.footer`, `storefront.overlay` | Stable            |
 | Admin product panel                 | `StorefrontSlots::register('admin.product.sidebar', ...)`: a panel in the product editor sidebar (see flash-sales)                                                                                                                                  | Stable            |
 | Dashboard widgets                   | `App\Core\Extensions\DashboardWidgets::register()`                                                                                                                                                                                                  | Stable            |
 | Personal data export                | `App\Domains\Customers\PersonalDataExport::contribute('<key>', fn (User $user) => [...])`: add the data your module stores about a customer to their export (see the newsletter module)                                                             | Stable            |

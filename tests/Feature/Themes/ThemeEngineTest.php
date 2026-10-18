@@ -39,6 +39,95 @@ class ThemeEngineTest extends TestCase
         return Extension::query()->where('type', 'theme')->where('name', $name)->firstOrFail();
     }
 
+    public function test_section_image_upload_returns_selectable_sanitized_image(): void
+    {
+        Storage::fake('public');
+        $response = $this->actingAs($this->userWithRole('administrator'))->post(route('admin.themes.uploads.store'), [
+            'file' => UploadedFile::fake()->image('section.png', 100, 60),
+        ], ['Accept' => 'application/json'])->assertOk()->assertJsonStructure(['image' => ['value', 'label', 'url']]);
+        $this->assertStringStartsWith('media:themes/', $response->json('image.value'));
+        $this->makeTheme();
+        app(ThemeManager::class)->activate('acme/sunny');
+        app(ThemeManager::class)->customizeSections('acme/sunny', 'home', [['type' => 'hero', 'settings' => ['heading' => 'Uploaded section', 'image' => $response->json('image.value')]]]);
+        $manifest = app(ThemeManager::class)->renderedManifest($this->theme());
+        $this->assertSame($response->json('image.value'), app(ThemeCustomizations::class)->sections($manifest, 'home')[0]['settings']['image']);
+    }
+
+    public function test_themes_load_their_own_settings_file_and_reject_external_paths(): void
+    {
+        $dir = $this->makeTheme(overrides: ['customizer_file' => 'settings.json']);
+        File::put($dir.'/settings.json', json_encode(['title' => 'Own customizer', 'fields' => ['custom.cart_heading' => ['type' => 'string', 'label' => 'Cart heading', 'default' => 'Shopping bag', 'max' => 120]]], JSON_THROW_ON_ERROR));
+        $theme = $this->theme();
+        $this->assertNull($theme->errors);
+        $this->assertSame('Shopping bag', app(ThemeManager::class)->renderedManifest($theme)->defaults()['custom.cart_heading']);
+        $manifest = json_decode(File::get($dir.'/theme.json'), true);
+        $manifest['customizer_file'] = '../settings.json';
+        File::put($dir.'/theme.json', json_encode($manifest, JSON_THROW_ON_ERROR));
+        $this->assertSame(ModuleState::Invalid, $this->theme()->state);
+    }
+
+    public function test_disabled_themes_stay_disabled_and_can_be_enabled_again(): void
+    {
+        $this->makeTheme();
+        $manager = app(ThemeManager::class);
+        $manager->activate('acme/sunny');
+        $manager->customizeDesign('acme/sunny', ['color.primary' => '#123456']);
+        $manager->disable('acme/sunny');
+        app(ThemeRepository::class)->sync();
+        $this->assertSame(ModuleState::Disabled, $this->theme()->state);
+        $this->assertNull(app(ThemeRepository::class)->active());
+        $manager->activate('acme/sunny');
+        $this->assertSame(ModuleState::Enabled, $this->theme()->state);
+        $this->assertSame('#123456', app(ThemeCustomizations::class)->designOverrides($manager->renderedManifest($this->theme()))['color.primary']);
+    }
+
+    public function test_theme_catalog_fields_override_defaults_and_are_shared_with_storefront(): void
+    {
+        config(['inertia.ssr.enabled' => false]);
+        $this->makeTheme(overrides: ['customizer' => ['title' => 'Catalog settings', 'fields' => [
+            'custom.catalog_heading' => ['type' => 'string', 'label' => 'Catalog heading', 'default' => 'Our products', 'max' => 120],
+            'custom.catalog_show_filters' => ['type' => 'boolean', 'label' => 'Show filters', 'default' => true],
+        ]]]);
+        $manager = app(ThemeManager::class);
+        $manager->activate('acme/sunny');
+        $manager->customizeDesign('acme/sunny', ['custom.catalog_heading' => 'Browse products', 'custom.catalog_show_filters' => false]);
+        $this->get('/search')->assertInertia(fn (Assert $page) => $page
+            ->where('storefront.theme.settings.catalog_heading', 'Browse products')
+            ->where('storefront.theme.settings.catalog_show_filters', false));
+        $manager->customizeDesign('acme/sunny', ['custom.catalog_heading' => '']);
+        $this->get('/search')->assertInertia(fn (Assert $page) => $page->where('storefront.theme.settings.catalog_heading', 'Our products'));
+    }
+
+    public function test_frontend_theme_entries_must_exist_and_cannot_declare_php(): void
+    {
+        $dir = $this->makeTheme(overrides: ['frontend' => ['index' => 'src/index.tsx', 'catalog' => 'src/catalog.tsx', 'stylesheet' => 'src/style.css']]);
+        File::ensureDirectoryExists($dir.'/src');
+        File::put($dir.'/src/index.tsx', 'export default function Index() { return null; }');
+        File::put($dir.'/src/catalog.tsx', 'export default function Catalog() { return null; }');
+        File::put($dir.'/src/style.css', '.theme-example { color: red; }');
+        $this->assertNull($this->theme()->errors);
+        File::put($dir.'/src/server.php', '<?php echo "no";');
+        $this->assertSame(ModuleState::Invalid, $this->theme()->state);
+    }
+
+    public function test_deleting_theme_archives_files_and_active_theme_must_be_disabled_first(): void
+    {
+        $this->makeTheme();
+        $manager = app(ThemeManager::class);
+        $manager->activate('acme/sunny');
+        try {
+            $manager->delete('acme/sunny');
+            $this->fail('An active theme must not be deleted.');
+        } catch (ThemeException $e) {
+            $this->assertStringContainsString('Disable', $e->getMessage());
+        }
+        $manager->disable('acme/sunny');
+        $manager->delete('acme/sunny');
+        $this->assertDirectoryDoesNotExist($this->themesPath.'/acme/sunny');
+        $this->assertNull(app(ThemeRepository::class)->find('acme/sunny'));
+        $this->assertNotEmpty(glob(storage_path('app/private/theme-archives/acme-sunny-*.zip')));
+    }
+
     /**
      * @return array<string, array{array<string, mixed>, string}>
      */
@@ -58,6 +147,8 @@ class ThemeEngineTest extends TestCase
             'sections without capability' => [['capabilities' => []], 'requires the "home.sections" capability'],
             'unknown capability' => [['capabilities' => ['home.sections', 'run_php']], 'Unknown capability "run_php"'],
             'fonts without capability' => [['fonts' => [['family' => 'Fancy', 'file' => 'assets/fonts/fancy.woff2']]], 'requires the "custom_fonts" capability'],
+            'palette with unknown field' => [['customizer' => ['presets' => ['warm' => ['custom_css' => '#fff']]]], 'customizer.presets.warm.custom_css is not a design setting'],
+            'palette with invalid value' => [['customizer' => ['presets' => ['warm' => ['color.primary' => 'red']]]], 'customizer.presets.warm.color.primary must be a color'],
         ];
     }
 
@@ -212,6 +303,35 @@ class ThemeEngineTest extends TestCase
         $manager->customizeDesign('acme/sunny', ['logo' => 'media:themes/'.str_repeat('a', 40).'.png']); // not an uploaded file
     }
 
+    public function test_theme_palette_presets_are_exposed_and_applied_as_design_overrides()
+    {
+        $this->makeTheme(overrides: ['customizer' => [
+            'title' => 'Brand',
+            'presets' => [
+                'warm' => ['color.primary' => '#aa3300', 'font_heading' => 'serif', 'radius' => '1rem'],
+                'cool' => ['color.primary' => '#0033aa', 'layout.header' => 'minimal'],
+            ],
+        ]]);
+
+        $theme = $this->theme();
+        $this->assertSame(ModuleState::Discovered, $theme->state, implode("\n", (array) $theme->errors));
+
+        $manifest = app(ThemeManager::class)->renderedManifest($theme);
+        $this->assertSame(['warm', 'cool'], array_keys($manifest->presets()));
+
+        $manager = app(ThemeManager::class);
+        $manager->activate('acme/sunny');
+
+        // Applying a palette is an ordinary design change; every field remains editable after.
+        $manager->customizeDesign('acme/sunny', $manifest->presets()['warm']);
+
+        $this->get('/')->assertInertia(fn (Assert $page) => $page->where(
+            'storefront.theme.css',
+            fn (string $css) => str_contains($css, '--primary:#aa3300') && str_contains($css, '--radius:1rem'),
+        ));
+        $this->assertSame('serif', app(ThemeCustomizations::class)->designOverrides($manifest)['font_heading']);
+    }
+
     public function test_reset_requires_confirmation_and_restores_defaults()
     {
         $this->makeTheme();
@@ -289,7 +409,7 @@ class ThemeEngineTest extends TestCase
         $this->actingAs($this->userWithRole('store-manager'))->get(route('admin.themes.index'))->assertForbidden();
         $this->actingAs($this->userWithRole('store-manager'))->post(route('admin.themes.activate', $this->theme()))->assertForbidden();
         $this->actingAs($this->userWithRole('administrator'))->get(route('admin.themes.index'))
-            ->assertInertia(fn (Assert $page) => $page->component('admin/themes/index')->has('themes', 5)); // four bundled + the fixture
+            ->assertInertia(fn (Assert $page) => $page->component('admin/themes/index')->has('themes', count(glob(base_path('themes').'/*/*/theme.json') ?: []) + 1));
         $this->actingAs($this->userWithRole('administrator'))->get(route('admin.themes.customize', $this->theme()))
             ->assertInertia(fn (Assert $page) => $page->component('admin/themes/customize')->has('sections.home', 2));
     }

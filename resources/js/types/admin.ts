@@ -75,6 +75,8 @@ export type CurrencyOption = {
 };
 
 export type MoneyValue = {
+    display_amount?: string;
+    display_currency?: string;
     amount: string;
     currency: string;
     formatted: string;
@@ -92,11 +94,14 @@ export type CategoryOption = {
 };
 
 export type ExtensionSummary = {
+    logo: string | null;
     id: number;
     name: string;
     display_name: string;
     description: string | null;
     author: string | null;
+    icon: string;
+    accent: string | null;
     state: string;
     state_label: string;
     version: string | null;
@@ -110,7 +115,7 @@ export type ExtensionSummary = {
 
 export type ExtensionSettingField = {
     key: string;
-    type: 'boolean' | 'string' | 'text' | 'integer' | 'select' | 'email';
+    type: "boolean" | "string" | "text" | "integer" | "select" | "email";
     label: string;
     help?: string;
     default?: unknown;
@@ -119,6 +124,11 @@ export type ExtensionSettingField = {
     max?: number;
     max_length?: number;
     options?: { value: string | number; label: string }[];
+    suggestions?: string[];
+    visible_when?: Record<
+        string,
+        string | number | boolean | (string | number | boolean)[]
+    >;
 };
 
 export type ThemeSummary = {
@@ -127,7 +137,7 @@ export type ThemeSummary = {
     display_name: string;
     description: string | null;
     author: string | null;
-    state: 'active' | 'available' | 'invalid' | 'failed';
+    state: "active" | "available" | "disabled" | "invalid" | "failed";
     version: string | null;
     available_version: string | null;
     update_available: boolean;
@@ -145,15 +155,15 @@ export type ThemeSummary = {
 export type ThemeField = {
     key: string;
     type:
-        | 'color'
-        | 'select'
-        | 'boolean'
-        | 'integer'
-        | 'string'
-        | 'text'
-        | 'link'
-        | 'image'
-        | 'font';
+        | "color"
+        | "select"
+        | "boolean"
+        | "integer"
+        | "string"
+        | "text"
+        | "link"
+        | "image"
+        | "font";
     label: string;
     group?: string;
     /** Customizer tab (general, header, home, catalog, product, cart, footer). */
@@ -175,7 +185,7 @@ export type ThemeImageOption = { value: string; label: string; url: string };
 /** A marketplace security advisory (signed into license tokens). */
 export type Advisory = {
     id: number;
-    severity: 'low' | 'medium' | 'high' | 'critical';
+    severity: "low" | "medium" | "high" | "critical";
     title: string;
     body: string;
     affected_versions: string;

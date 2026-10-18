@@ -16,9 +16,12 @@ export type SlotItem = {
 export function ExtensionSlot({
     items,
     className,
+    extraProps,
 }: {
     items: SlotItem[] | undefined;
     className?: string;
+    /** Live page values passed to every component next to its server props. */
+    extraProps?: Record<string, unknown>;
 }) {
     if (!items || items.length === 0) {
         return null;
@@ -28,14 +31,20 @@ export function ExtensionSlot({
         <div className={className}>
             {items.map((item) => (
                 <SlotBoundary key={item.key} component={item.component}>
-                    <SlotComponent item={item} />
+                    <SlotComponent item={item} extraProps={extraProps} />
                 </SlotBoundary>
             ))}
         </div>
     );
 }
 
-export function SlotComponent({ item }: { item: SlotItem }) {
+export function SlotComponent({
+    item,
+    extraProps,
+}: {
+    item: SlotItem;
+    extraProps?: Record<string, unknown>;
+}) {
     const Loaded = useMemo(() => {
         const loader = slotLoader(item.component);
 
@@ -48,7 +57,7 @@ export function SlotComponent({ item }: { item: SlotItem }) {
 
     return (
         <Suspense fallback={null}>
-            <Loaded {...item.props} />
+            <Loaded {...item.props} {...extraProps} />
         </Suspense>
     );
 }

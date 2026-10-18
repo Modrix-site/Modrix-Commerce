@@ -66,9 +66,13 @@ final class ModuleSettingsSchema
     {
         $rules = [];
         $labels = [];
+        $current = $this->values($manifest);
+        $hidden = [];
 
         foreach ($manifest->settings as $field) {
-            $rules[$field['key']] = self::rules($field);
+            // A field hidden by visible_when is not required and keeps its stored value when left empty.
+            $hidden[$field['key']] = ! self::visible($field, [...$current, ...$input]);
+            $rules[$field['key']] = self::rules($hidden[$field['key']] ? [...$field, 'required' => false] : $field);
             $labels[$field['key']] = $field['label'];
         }
 
@@ -76,7 +80,10 @@ final class ModuleSettingsSchema
         $values = [];
 
         foreach ($manifest->settings as $field) {
-            $values["{$manifest->settingsPrefix()}.{$field['key']}"] = self::coerce($field, $validated[$field['key']] ?? null);
+            $value = $validated[$field['key']] ?? null;
+            $values["{$manifest->settingsPrefix()}.{$field['key']}"] = $hidden[$field['key']] && ($value === null || $value === '')
+                ? $current[$field['key']]
+                : self::coerce($field, $value);
         }
 
         $this->settings->setMany($values);
@@ -106,6 +113,35 @@ final class ModuleSettingsSchema
             'select' => [...$base, Rule::in(array_map(fn (array $o) => (string) $o['value'], $field['options']))],
             'text' => [...$base, 'string', 'max:'.min(10000, (int) ($field['max_length'] ?? 2000))],
             default => [...$base, 'string', 'max:'.min(500, (int) ($field['max_length'] ?? 255))],
+        };
+    }
+
+    /**
+     * Whether a field's visible_when conditions ({"other_key": value or [values]}) hold for the given values.
+     *
+     * @param  array<string, mixed>  $field
+     * @param  array<string, mixed>  $values
+     */
+    public static function visible(array $field, array $values): bool
+    {
+        foreach ((array) ($field['visible_when'] ?? []) as $key => $expected) {
+            $actual = self::scalarString($values[$key] ?? null);
+            $allowed = array_map(self::scalarString(...), is_array($expected) ? $expected : [$expected]);
+
+            if (! in_array($actual, $allowed, true)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static function scalarString(mixed $value): string
+    {
+        return match (true) {
+            is_bool($value) => $value ? '1' : '0',
+            is_scalar($value) => (string) $value,
+            default => '',
         };
     }
 

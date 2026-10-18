@@ -1,36 +1,36 @@
-import { Form, Link, router, usePage } from '@inertiajs/react';
+import { Form, Link, router, usePage } from "@inertiajs/react";
 import {
     ChevronDown,
     Globe,
     Menu,
     Search,
     User,
-} from 'lucide-react';
-import { useState } from 'react';
-import type { ReactNode } from 'react';
-import { PlaceSlot } from '@/components/extensions/place-slot';
-import { CustomerNotificationBell } from '@/components/storefront/customer-notification-bell';
+} from "lucide-react";
+import { useState } from "react";
+import type { ReactNode } from "react";
+import { PlaceSlot } from "@/components/extensions/place-slot";
+import { CustomerNotificationBell } from "@/components/storefront/customer-notification-bell";
 import {
     CartIcon,
     useShowAccountLink,
     useShowCartCount,
-} from '@/components/storefront/page-settings/header-parts';
-import { SearchToggle } from '@/components/storefront/search-toggle';
-import { Button, buttonVariants } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+} from "@/components/storefront/page-settings/header-parts";
+import { SearchToggle } from "@/components/storefront/search-toggle";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
     Sheet,
     SheetContent,
     SheetDescription,
     SheetTitle,
-} from '@/components/ui/sheet';
-import { useCompactOnScroll } from '@/hooks/use-compact-on-scroll';
-import { useT } from '@/lib/i18n';
-import { cn } from '@/lib/utils';
-import { dashboard, home, login } from '@/routes';
-import { show as cartShow } from '@/routes/cart';
-import { category, search } from '@/routes/storefront';
-import type { StorefrontShared } from '@/types';
+} from "@/components/ui/sheet";
+import { useCompactOnScroll } from "@/hooks/use-compact-on-scroll";
+import { useT } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
+import { dashboard, home, login } from "@/routes";
+import { show as cartShow } from "@/routes/cart";
+import { category, search } from "@/routes/storefront";
+import type { StorefrontShared } from "@/types";
 
 type NavLink = { label: string; url: string; category_id?: number | null };
 
@@ -109,19 +109,29 @@ function visitWith(key: string, value: string) {
  */
 export function SiteHeader({ children }: { children: ReactNode }) {
     const compact = useCompactOnScroll();
+    const { storefront } = useShared();
+
+    // A theme can retain its own responsive header instead of the shared
+    // compact/mobile replacement. Other themes keep the platform behavior.
+    if (
+        storefront?.theme.frontend?.header &&
+        storefront.theme.settings?.sticky_header === false
+    ) {
+        return <>{children}</>;
+    }
 
     return (
         <>
             <MobileNotice />
             <div
                 className={cn(
-                    'sticky top-0 z-40 bg-background transition-shadow motion-reduce:transition-none',
-                    compact && 'shadow-md',
+                    "sticky top-0 z-40 bg-background transition-shadow motion-reduce:transition-none",
+                    compact && "shadow-md",
                 )}
-                data-compact={compact ? '' : undefined}
+                data-compact={compact ? "" : undefined}
             >
                 {/* Kept mounted (only hidden) so theme headers do not reload. */}
-                <div className={cn('hidden', !compact && 'lg:block')}>
+                <div className={cn("hidden", !compact && "lg:block")}>
                     {children}
                 </div>
                 {compact && <CompactBar />}
@@ -141,17 +151,16 @@ function MobileNotice() {
     const settings =
         (
             storefront?.theme as
-                | { settings?: Record<string, unknown> }
-                | undefined
+                { settings?: Record<string, unknown> } | undefined
         )?.settings ?? {};
-    const notice = typeof settings.notice === 'string' ? settings.notice : '';
+    const notice = typeof settings.notice === "string" ? settings.notice : "";
 
-    if (notice === '' || settings.show_notice === false) {
+    if (notice === "" || settings.show_notice === false) {
         return null;
     }
 
     const background =
-        typeof settings.notice_color === 'string'
+        typeof settings.notice_color === "string"
             ? settings.notice_color
             : undefined;
 
@@ -184,7 +193,7 @@ function readableOn(hex: string): string | undefined {
             0.114 * (value & 255)) /
         255;
 
-    return luminance > 0.6 ? '#111111' : '#ffffff';
+    return luminance > 0.6 ? "#111111" : "#ffffff";
 }
 
 function Brand({ small = false }: { small?: boolean }) {
@@ -193,22 +202,21 @@ function Brand({ small = false }: { small?: boolean }) {
     const settings =
         (
             storefront?.theme as
-                | { settings?: Record<string, unknown> }
-                | undefined
+                { settings?: Record<string, unknown> } | undefined
         )?.settings ?? {};
     const setting = (key: string) =>
-        typeof settings[key] === 'string' && settings[key] !== ''
+        typeof settings[key] === "string" && settings[key] !== ""
             ? (settings[key] as string)
             : null;
-    const name = setting('brand') ?? storefront?.storeName ?? '';
-    const logo = storefront?.theme.logo ?? setting('logo_image');
+    const name = setting("brand") ?? storefront?.storeName ?? "";
+    const logo = storefront?.theme.logo ?? setting("logo_image");
 
     return (
         <Link
             href={home()}
             className={cn(
-                'block truncate font-semibold tracking-wide transition-all motion-reduce:transition-none',
-                small ? 'text-base' : 'text-lg',
+                "block truncate font-semibold tracking-wide transition-all motion-reduce:transition-none",
+                small ? "text-base" : "text-lg",
             )}
             aria-label={logo ? name : undefined}
         >
@@ -217,8 +225,8 @@ function Brand({ small = false }: { small?: boolean }) {
                     src={logo}
                     alt=""
                     className={cn(
-                        'w-auto max-w-40 transition-all motion-reduce:transition-none',
-                        small ? 'h-6' : 'h-8',
+                        "w-auto max-w-40 transition-all motion-reduce:transition-none",
+                        small ? "h-6" : "h-8",
                     )}
                 />
             ) : (
@@ -239,7 +247,7 @@ function Icons({ withSearch = true }: { withSearch?: boolean }) {
         <div className="flex items-center justify-end gap-0.5">
             {withSearch && (
                 <SearchToggle
-                    className={buttonVariants({ variant: 'ghost', size: 'icon' })}
+                    className={buttonVariants({ variant: "ghost", size: "icon" })}
                 >
                     <Search />
                 </SearchToggle>
@@ -254,7 +262,7 @@ function Icons({ withSearch = true }: { withSearch?: boolean }) {
             >
                 <Link
                     href={auth.user ? dashboard() : login()}
-                    aria-label={auth.user ? t('Account') : t('Log in')}
+                    aria-label={auth.user ? t("Account") : t("Log in")}
                 >
                     <User />
                 </Link>
@@ -262,12 +270,12 @@ function Icons({ withSearch = true }: { withSearch?: boolean }) {
             <Button variant="ghost" size="icon" className="relative" asChild>
                 <Link
                     href={cartShow()}
-                    aria-label={t('Cart, :count items', { count })}
+                    aria-label={t("Cart, :count items", { count })}
                 >
                     <CartIcon />
                     {showCount && count > 0 && (
                         <span className="absolute -top-0.5 -right-0.5 flex min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] leading-4 font-semibold text-primary-foreground tabular-nums">
-                            {count > 99 ? '99+' : count}
+                            {count > 99 ? "99+" : count}
                         </span>
                     )}
                 </Link>
@@ -286,7 +294,7 @@ function CompactBar() {
             <div className="mx-auto flex max-w-[var(--store-container,72rem)] items-center gap-6 px-4 py-2">
                 <Brand small />
                 <nav
-                    aria-label={t('Main menu')}
+                    aria-label={t("Main menu")}
                     className="flex min-w-0 flex-1 gap-5 overflow-hidden text-sm"
                 >
                     {links.map((link, index) => (
@@ -314,15 +322,15 @@ function MobileHeader({ compact }: { compact: boolean }) {
         <div className="border-b lg:hidden">
             <div
                 className={cn(
-                    'grid grid-cols-[1fr_auto_1fr] items-center gap-2 px-2 transition-all motion-reduce:transition-none',
-                    compact ? 'py-1' : 'py-3',
+                    "grid grid-cols-[1fr_auto_1fr] items-center gap-2 px-2 transition-all motion-reduce:transition-none",
+                    compact ? "py-1" : "py-3",
                 )}
             >
                 <div>
                     <Button
                         variant="ghost"
                         size="icon"
-                        aria-label={t('Open menu')}
+                        aria-label={t("Open menu")}
                         aria-expanded={open}
                         onClick={() => setOpen(true)}
                     >
@@ -361,10 +369,10 @@ function MenuPanel({
             >
                 <div className="border-b p-4 pr-12">
                     <SheetTitle className="truncate">
-                        {storefront?.storeName ?? t('Menu')}
+                        {storefront?.storeName ?? t("Menu")}
                     </SheetTitle>
                     <SheetDescription className="sr-only">
-                        {t('Main menu')}
+                        {t("Main menu")}
                     </SheetDescription>
                 </div>
 
@@ -377,22 +385,22 @@ function MenuPanel({
                     <Input
                         type="search"
                         name="q"
-                        placeholder={t('Search products')}
-                        aria-label={t('Search products')}
+                        placeholder={t("Search products")}
+                        aria-label={t("Search products")}
                     />
                     <Button
                         type="submit"
                         variant="outline"
                         size="icon"
-                        aria-label={t('Search')}
+                        aria-label={t("Search")}
                     >
                         <Search />
                     </Button>
                 </Form>
 
-                <nav aria-label={t('Main menu')} className="flex-1 py-2">
+                <nav aria-label={t("Main menu")} className="flex-1 py-2">
                     {tree.length > 0 && (
-                        <MenuGroup title={t('Shop by category')}>
+                        <MenuGroup title={t("Shop by category")}>
                             {tree.map((node) => (
                                 <MenuItem
                                     key={node.id}
@@ -404,7 +412,7 @@ function MenuPanel({
                             ))}
                         </MenuGroup>
                     )}
-                    <MenuGroup title={tree.length > 0 ? t('Menu') : undefined}>
+                    <MenuGroup title={tree.length > 0 ? t("Menu") : undefined}>
                         {links.map((link, index) => (
                             <MenuItem
                                 key={index}
@@ -423,12 +431,12 @@ function MenuPanel({
                             <label className="flex items-center justify-between gap-3">
                                 <span className="flex items-center gap-2">
                                     <Globe className="size-4" aria-hidden />
-                                    {t('Language')}
+                                    {t("Language")}
                                 </span>
                                 <select
                                     value={storefront?.locale}
                                     onChange={(e) =>
-                                        visitWith('lang', e.target.value)
+                                        visitWith("lang", e.target.value)
                                     }
                                     className="h-9 rounded-md border bg-background px-2"
                                 >
@@ -446,12 +454,12 @@ function MenuPanel({
                         )}
                         {currencies.length > 1 && (
                             <label className="flex items-center justify-between gap-3">
-                                <span>{t('Currency')}</span>
+                                <span>{t("Currency")}</span>
                                 <select
                                     value={storefront?.displayCurrency}
                                     disabled={!storefront?.canSwitchCurrency}
                                     onChange={(e) =>
-                                        visitWith('currency', e.target.value)
+                                        visitWith("currency", e.target.value)
                                     }
                                     className="h-9 rounded-md border bg-background px-2"
                                 >
@@ -474,7 +482,7 @@ function MenuPanel({
                                 onClick={close}
                                 className="py-2 font-medium"
                             >
-                                {auth.isStaff ? t('Admin') : t('My account')}
+                                {auth.isStaff ? t("Admin") : t("My account")}
                             </Link>
                             {!auth.isStaff && (
                                 <Link
@@ -482,7 +490,7 @@ function MenuPanel({
                                     onClick={close}
                                     className="py-2"
                                 >
-                                    {t('My orders')}
+                                    {t("My orders")}
                                 </Link>
                             )}
                             {!auth.isStaff && (
@@ -491,7 +499,7 @@ function MenuPanel({
                                     onClick={close}
                                     className="py-2"
                                 >
-                                    {t('Notifications')}
+                                    {t("Notifications")}
                                 </Link>
                             )}
                         </>
@@ -501,11 +509,11 @@ function MenuPanel({
                             onClick={close}
                             className="py-2 font-medium"
                         >
-                            {t('Log in')}
+                            {t("Log in")}
                         </Link>
                     )}
                     <Link href={cartShow()} onClick={close} className="py-2">
-                        {t('Cart')} ({storefront?.cartCount ?? 0})
+                        {t("Cart")} ({storefront?.cartCount ?? 0})
                     </Link>
                 </div>
             </SheetContent>
@@ -561,8 +569,8 @@ function MenuItem({
                     onClick={onNavigate}
                     style={padding}
                     className={cn(
-                        'flex-1 py-3 pr-2 hover:bg-muted',
-                        depth === 0 ? 'text-base' : 'text-sm',
+                        "flex-1 py-3 pr-2 hover:bg-muted",
+                        depth === 0 ? "text-base" : "text-sm",
                     )}
                 >
                     {label}
@@ -574,15 +582,15 @@ function MenuItem({
                         aria-expanded={open}
                         aria-label={
                             open
-                                ? t('Hide :name', { name: label })
-                                : t('Show :name', { name: label })
+                                ? t("Hide :name", { name: label })
+                                : t("Show :name", { name: label })
                         }
                         className="flex w-12 items-center justify-center border-l border-border/50 hover:bg-muted"
                     >
                         <ChevronDown
                             className={cn(
-                                'size-4 transition-transform motion-reduce:transition-none',
-                                open && 'rotate-180',
+                                "size-4 transition-transform motion-reduce:transition-none",
+                                open && "rotate-180",
                             )}
                             aria-hidden
                         />

@@ -1,0 +1,18 @@
+{
+    "title": "Noir settings",
+    "description": "Customize Noir.",
+    "fields": {
+        "custom.show_buy_button": {
+            "type": "boolean",
+            "label": "Show Buy now button (product cards and product page)",
+            "group": "Noir catalog",
+            "default": true
+        },
+        "custom.sticky_add_to_cart": {
+            "type": "boolean",
+            "label": "Sticky add-to-cart bar on phones",
+            "group": "Product page",
+            "default": true
+        }
+    }
+}

@@ -15,6 +15,10 @@ use App\Domains\Orders\OrderWorkflow;
 use App\Domains\Payments\Models\Payment;
 use App\Domains\Pricing\Money;
 use App\Models\User;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Writer;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -210,7 +214,12 @@ final class OrderDocuments
      */
     private function packingSlipData(Order $order): array
     {
-        $order->loadMissing('items', 'addresses');
+        $order->loadMissing('items', 'addresses', 'shipments');
+        $orderUrl = route('admin.orders.show', $order);
+        $qr = new Writer(new ImageRenderer(
+            new RendererStyle(240, 4),
+            new SvgImageBackEnd,
+        ));
 
         return [
             'title' => __('Packing slip'),
@@ -219,6 +228,9 @@ final class OrderDocuments
             'seller' => $this->currentSeller(),
             'order' => $order,
             'shipping' => $order->addresses->firstWhere('type', 'shipping')?->toPresentable(),
+            'shipment' => $order->shipments->sortByDesc('id')->first(),
+            'orderUrl' => $orderUrl,
+            'orderQr' => 'data:image/svg+xml;base64,'.base64_encode($qr->writeString($orderUrl)),
             'footer' => null,
         ];
     }

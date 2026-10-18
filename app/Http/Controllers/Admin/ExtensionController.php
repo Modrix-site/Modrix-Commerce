@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Core\Extensions\Manifest;
+use App\Core\Extensions\ManifestValidator;
 use App\Core\Extensions\Models\Extension;
 use App\Core\Extensions\Models\ExtensionEvent;
 use App\Core\Extensions\ModuleException;
@@ -151,6 +152,9 @@ class ExtensionController extends Controller
             'display_name' => $extension->display_name,
             'description' => $extension->description,
             'author' => $manifest?->author,
+            'icon' => $manifest === null ? 'puzzle' : $manifest->icon,
+            'accent' => $manifest?->accent,
+            'logo' => $this->logo($extension, $manifest),
             'state' => $extension->state->value,
             'state_label' => $extension->state->label(),
             'version' => $extension->version,
@@ -162,6 +166,28 @@ class ExtensionController extends Controller
             'requires' => $manifest->requires ?? [],
             'capabilities' => array_map(fn (string $c) => ['key' => $c, 'label' => Manifest::CAPABILITIES[$c] ?? $c], $manifest->capabilities ?? []),
         ];
+    }
+
+    private function logo(Extension $extension, ?Manifest $manifest): ?string
+    {
+        if ($manifest?->logo !== null) {
+            $file = ManifestValidator::resolvePath(ModuleRepository::packageDir($extension), $manifest->logo, directory: false);
+            if ($file !== null && filesize($file) <= 262144) {
+                $info = @getimagesize($file);
+                if ($info !== false && in_array($info['mime'], ['image/png', 'image/jpeg', 'image/webp'], true)) {
+                    $bytes = file_get_contents($file);
+                    if ($bytes !== false) {
+                        return 'data:'.$info['mime'].';base64,'.base64_encode($bytes);
+                    }
+                }
+            }
+        }
+
+        return match ($extension->name) {
+            'ecomodular/tabby' => '/images/extensions/tabby.svg',
+            'ecomodular/tamara' => '/images/extensions/tamara.svg',
+            default => null,
+        };
     }
 
     private function actor(Request $request): User

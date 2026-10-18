@@ -9,12 +9,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property int $id
  * @property int $attribute_id
+ * @property string|null $color
  * @property string $value
  * @property string $slug
  * @property int $position
  * @property-read ProductAttribute $attribute
  */
-#[Fillable(['value', 'slug', 'position'])]
+#[Fillable(['value', 'slug', 'position', 'color'])]
 class ProductAttributeValue extends Model
 {
     /**

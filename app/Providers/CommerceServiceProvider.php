@@ -88,7 +88,7 @@ class CommerceServiceProvider extends ServiceProvider
             $navigation->add('brands', 'Brands', 'admin.brands.index', 'tags', 'Catalog', 'products.update', 115);
             $navigation->add('translations', 'Translations', 'admin.translations.index', 'languages', 'Catalog', 'products.update', 115);
             $navigation->add('media', 'Media library', 'admin.media.index', 'image', 'Catalog', 'media.manage', 116);
-            $navigation->add('attributes', 'Options', 'admin.attributes.index', 'tags', 'Catalog', 'products.update', 120);
+            $navigation->add('attributes', 'Variant attributes', 'admin.attributes.index', 'tags', 'Catalog', 'products.update', 120);
             $navigation->add('inventory', 'Inventory', 'admin.inventory.index', 'warehouse', 'Catalog', 'inventory.view', 130);
             $navigation->add('shipping', 'Shipping', 'admin.shipping-methods.index', 'truck', 'Configuration', 'shipping.manage', 800);
             $navigation->add('taxes', 'Taxes', 'admin.tax-rates.index', 'percent', 'Configuration', 'settings.manage', 810);

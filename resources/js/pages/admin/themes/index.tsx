@@ -3,6 +3,7 @@ import { AlertTriangle, Check, Eye, Palette } from 'lucide-react';
 import ThemeController from '@/actions/App/Http/Controllers/Admin/ThemeController';
 import { EmptyState } from '@/components/admin/empty-state';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
+import { PackageUpload } from '@/components/admin/package-upload';
 import InputError from '@/components/input-error';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -42,6 +43,7 @@ export default function ThemesIndex({
             <AdminPage>
                 <PageHeader
                     title="Appearance"
+                    actions={<PackageUpload type="theme" />}
                     description="Choose how your store looks. Themes only change presentation; prices, checkout and payments always work the same. Your changes to each theme are kept when you switch or update."
                 />
 
@@ -66,7 +68,7 @@ export default function ThemesIndex({
                         description="Add a theme to themes/<vendor>/<name>/ with a theme.json manifest, then reload this page."
                     />
                 ) : (
-                    <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                    <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         {themes.map((theme) => (
                             <li key={theme.id}>
                                 <ThemeCard theme={theme} />
@@ -92,6 +94,9 @@ function ThemeCard({ theme }: { theme: ThemeSummary }) {
                         <Badge>
                             <Check /> Active
                         </Badge>
+                    )}
+                    {theme.state === 'disabled' && (
+                        <Badge variant="secondary">Disabled</Badge>
                     )}
                     {theme.state === 'invalid' && (
                         <Badge variant="destructive">Invalid</Badge>
@@ -136,8 +141,22 @@ function ThemeCard({ theme }: { theme: ThemeSummary }) {
                     </Alert>
                 )}
                 <div className="flex flex-wrap gap-2">
-                    {theme.state === 'available' && (
+                    {(theme.state === 'available' ||
+                        theme.state === 'disabled') && (
                         <ActivateDialog theme={theme} />
+                    )}
+                    {usable && (
+                        <Form
+                            action={`/admin/themes/${theme.id}/disable`}
+                            method="post"
+                        >
+                            <Button size="sm" variant="outline">
+                                Disable
+                            </Button>
+                        </Form>
+                    )}
+                    {theme.state !== 'active' && (
+                        <DeleteThemeDialog theme={theme} />
                     )}
                     {usable && (
                         <Form {...ThemeController.preview.form(theme.id)}>
@@ -166,8 +185,8 @@ function ThemeThumbnail({ theme }: { theme: ThemeSummary }) {
         return (
             <img
                 src={theme.screenshot}
-                alt=""
-                className="aspect-[16/9] w-full border-b object-cover"
+                alt={`${theme.display_name} demo preview`}
+                className="aspect-[16/10] w-full border-b object-cover object-top"
             />
         );
     }
@@ -204,17 +223,25 @@ function ActivateDialog({ theme }: { theme: ThemeSummary }) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button size="sm">Activate</Button>
+                <Button size="sm">
+                    {theme.state === 'disabled' ? 'Enable' : 'Activate'}
+                </Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogTitle>Activate {theme.display_name}?</DialogTitle>
+                <DialogTitle>
+                    {theme.state === 'disabled' ? 'Enable' : 'Activate'}{' '}
+                    {theme.display_name}?
+                </DialogTitle>
                 <DialogDescription>
                     Shoppers will see this theme immediately. Your products,
                     orders and settings are not changed, and your customizations
                     of every theme are kept, so you can switch back at any time.
                     Preview first if you have not yet.
                 </DialogDescription>
-                <Form {...ThemeController.activate.form(theme.id)}>
+                <Form
+                    action={`/admin/themes/${theme.id}/${theme.state === 'disabled' ? 'enable' : 'activate'}`}
+                    method="post"
+                >
                     {({ processing, errors }) => (
                         <>
                             <InputError message={errors.theme} />
@@ -223,7 +250,48 @@ function ActivateDialog({ theme }: { theme: ThemeSummary }) {
                                     <Button variant="secondary">Cancel</Button>
                                 </DialogClose>
                                 <Button type="submit" disabled={processing}>
-                                    Activate theme
+                                    {theme.state === 'disabled'
+                                        ? 'Enable theme'
+                                        : 'Activate theme'}
+                                </Button>
+                            </DialogFooter>
+                        </>
+                    )}
+                </Form>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+function DeleteThemeDialog({ theme }: { theme: ThemeSummary }) {
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button size="sm" variant="outline">
+                    Delete
+                </Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogTitle>Delete {theme.display_name}?</DialogTitle>
+                <DialogDescription>
+                    The theme will be removed from Appearance. Its package is
+                    archived on this server and your customizations are kept.
+                    Products, images and orders are unaffected. You can restore
+                    the theme by uploading its ZIP again.
+                </DialogDescription>
+                <Form action={`/admin/themes/${theme.id}`} method="delete">
+                    {({ processing, errors }) => (
+                        <>
+                            <InputError message={errors.theme} />
+                            <DialogFooter>
+                                <DialogClose asChild>
+                                    <Button variant="secondary">Cancel</Button>
+                                </DialogClose>
+                                <Button
+                                    variant="destructive"
+                                    disabled={processing}
+                                >
+                                    Delete theme
                                 </Button>
                             </DialogFooter>
                         </>

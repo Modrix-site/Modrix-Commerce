@@ -56,7 +56,8 @@ final class PricedLine
      */
     public function toArray(): array
     {
-        $image = $this->variant->product->images->first();
+        $image = $this->variant->product->images->firstWhere('id', $this->variant->image_id)
+            ?? $this->variant->product->images->first();
 
         return [
             'id' => $this->itemId,

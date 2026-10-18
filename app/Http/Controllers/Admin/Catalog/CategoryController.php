@@ -9,6 +9,7 @@ use App\Domains\Catalog\Models\Category;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -50,7 +51,7 @@ class CategoryController extends Controller
         $excluded = $category->descendantIdsAndSelf();
 
         return Inertia::render('admin/categories/form', [
-            'category' => $category->only(['id', 'parent_id', 'name', 'slug', 'description', 'position', 'is_active', 'meta_title', 'meta_description']),
+            'category' => $category->only(['id', 'parent_id', 'name', 'slug', 'description', 'position', 'is_active', 'meta_title', 'meta_description']) + ['image_url' => $category->imageUrl()],
             'parents' => array_values(array_filter(CategoryTree::flatten(), fn ($c) => ! in_array($c['id'], $excluded, true))),
         ]);
     }
@@ -74,13 +75,13 @@ class CategoryController extends Controller
     }
 
     /**
-     * @return array{name: string, slug?: string|null, parent_id?: int|null, description?: string|null, position?: int|null, is_active?: bool, meta_title?: string|null, meta_description?: string|null}
+     * @return array{name: string, slug?: string|null, parent_id?: int|null, description?: string|null, position?: int|null, is_active?: bool, meta_title?: string|null, meta_description?: string|null, image?: UploadedFile|null, remove_image?: bool}
      */
     private function validated(Request $request, ?Category $category): array
     {
         $request->merge(['is_active' => $request->boolean('is_active')]);
 
-        /** @var array{name: string, slug?: string|null, parent_id?: int|null, description?: string|null, position?: int|null, is_active?: bool, meta_title?: string|null, meta_description?: string|null} */
+        /** @var array{name: string, slug?: string|null, parent_id?: int|null, description?: string|null, position?: int|null, is_active?: bool, meta_title?: string|null, meta_description?: string|null, image?: UploadedFile|null, remove_image?: bool} */
         return $request->validate([
             'name' => ['required', 'string', 'max:160'],
             'slug' => ['nullable', 'string', 'max:191', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'],
@@ -90,6 +91,8 @@ class CategoryController extends Controller
             'is_active' => ['boolean'],
             'meta_title' => ['nullable', 'string', 'max:191'],
             'meta_description' => ['nullable', 'string', 'max:500'],
+            'image' => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
+            'remove_image' => ['sometimes', 'boolean'],
         ]);
     }
 }

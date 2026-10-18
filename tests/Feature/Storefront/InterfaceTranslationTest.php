@@ -92,9 +92,10 @@ class InterfaceTranslationTest extends TestCase
         $this->withCookie('storefront_locale', 'es')->post(route('checkout.store'), [])
             ->assertSessionHasErrors(['email' => 'El campo correo electrónico es obligatorio.']);
 
-        // Country names follow the language.
+        // Country names follow the language (the checkout lists the countries
+        // the store ships to; the fixture ships to US and PH).
         $this->withCookie('storefront_locale', 'de')->get(route('checkout.show'))
-            ->assertInertia(fn (Assert $page) => $page->where('countries', fn ($countries) => collect($countries)->contains(fn ($c) => $c['code'] === 'ES' && $c['name'] === 'Spanien')));
+            ->assertInertia(fn (Assert $page) => $page->where('countries', fn ($countries) => collect($countries)->contains(fn ($c) => $c['code'] === 'US' && $c['name'] === 'Vereinigte Staaten')));
     }
 
     public function test_failed_sign_in_messages_are_translated()

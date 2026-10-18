@@ -3,10 +3,12 @@ import { useState } from 'react';
 import AccountController from '@/actions/App/Http/Controllers/Storefront/AccountController';
 import { FormField, NativeSelect } from '@/components/admin/form-field';
 import { AccountNav } from '@/components/storefront/account-nav';
+import RegionCombobox from '@/components/storefront/region-combobox';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { useT } from '@/lib/i18n';
+import { regionsFor } from '@/lib/regions';
 import type { Address, Country } from '@/types';
 
 export default function Addresses({
@@ -145,6 +147,10 @@ function AddressForm({
         : AccountController.storeAddress.form();
     const id = (field: string) => `${address?.id ?? 'new'}-${field}`;
     const t = useT();
+    const [country, setCountry] = useState(address?.country_code ?? '');
+    const [region, setRegion] = useState(address?.region ?? '');
+    const regions = regionsFor(country);
+    const regionRequired = regions.length > 0;
 
     return (
         <Form
@@ -247,14 +253,23 @@ function AddressForm({
                         </FormField>
                         <FormField
                             id={id('region')}
-                            label={t('State / province (optional)')}
+                            label={
+                                regionRequired
+                                    ? t('State / province')
+                                    : t('State / province (optional)')
+                            }
                             error={errors.region}
                         >
-                            <Input
+                            <RegionCombobox
                                 id={id('region')}
                                 name="region"
-                                defaultValue={address?.region ?? ''}
+                                value={region}
+                                onChange={setRegion}
+                                options={regions}
+                                placeholder={t('Start typing…')}
                                 autoComplete="address-level1"
+                                required={regionRequired}
+                                invalid={Boolean(errors.region)}
                             />
                         </FormField>
                         <FormField
@@ -278,6 +293,18 @@ function AddressForm({
                                 id={id('country_code')}
                                 name="country_code"
                                 defaultValue={address?.country_code ?? ''}
+                                onChange={(e) => {
+                                    setCountry(e.target.value);
+
+                                    // A region for another country no longer applies.
+                                    if (
+                                        !regionsFor(e.target.value).includes(
+                                            region,
+                                        )
+                                    ) {
+                                        setRegion('');
+                                    }
+                                }}
                                 required
                             >
                                 <option value="" disabled>

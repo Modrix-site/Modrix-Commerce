@@ -1,35 +1,62 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { Suspense } from 'react';
 import { PlaceSlot } from '@/components/extensions/place-slot';
 import { ProductGrid } from '@/components/storefront/product-card';
+import { ElectronicsListing } from '@/components/storefront/electronics-listing';
+import { useStoreTheme } from '@/hooks/use-store-theme';
+import { themeCatalog } from '@/lib/theme-pages';
 import { Button } from '@/components/ui/button';
 import { useT } from '@/lib/i18n';
 import { home } from '@/routes';
 import { category } from '@/routes/storefront';
 import type { Paginated, ProductCard } from '@/types';
+import { ExtensionSlot } from '@/components/extensions/extension-slot';
+import type { SlotItem } from '@/components/extensions/extension-slot';
 
-type Props = {
+export type ListingProps = {
+    slots?: SlotItem[];
     title: string;
     description: string | null;
     image?: string | null;
     meta: { title: string; description: string | null };
     breadcrumbs: { name: string; slug: string }[];
-    subcategories: { id: number; name: string; slug: string }[];
+    subcategories: {
+        id: number;
+        name: string;
+        slug: string;
+        image_url?: string | null;
+    }[];
     products: Paginated<ProductCard>;
     sort: string;
     query: string | null;
+    filters?: {
+        brand_id?: number | string;
+        in_stock?: boolean | number | string;
+        min_price?: string;
+        max_price?: string;
+        options?: number[];
+    };
+    filterBrands?: { id: number; name: string }[];
+    filterOptions?: {
+        id: number;
+        name: string;
+        values: { id: number; value: string }[];
+    }[];
 };
 
-export default function Listing({
-    title,
-    description,
-    image,
-    meta,
-    breadcrumbs,
-    subcategories,
-    products,
-    sort,
-}: Props) {
+export default function Listing(props: ListingProps) {
+    const {
+        title,
+        description,
+        image,
+        meta,
+        breadcrumbs,
+        subcategories,
+        products,
+        sort,
+    } = props;
     const t = useT();
+    const { header, theme } = useStoreTheme();
     const sorts = [
         { value: 'newest', label: t('Newest') },
         { value: 'price_asc', label: t('Price: low to high') },
@@ -44,6 +71,14 @@ export default function Listing({
         router.visit(url.pathname + url.search, { preserveScroll: true });
     };
 
+    const CustomCatalog = themeCatalog(theme?.name);
+    if (CustomCatalog)
+        return (
+            <Suspense fallback={<p role="status">Loading catalog…</p>}>
+                <CustomCatalog {...props} />
+            </Suspense>
+        );
+    if (header === 'electronics') return <ElectronicsListing {...props} />;
     return (
         <>
             <Head title={meta.title}>
@@ -126,8 +161,24 @@ export default function Listing({
                 <ul className="mb-6 flex flex-wrap gap-2">
                     {subcategories.map((c) => (
                         <li key={c.id}>
-                            <Button variant="outline" size="sm" asChild>
-                                <Link href={category(c.slug)}>{c.name}</Link>
+                            <Button
+                                variant="outline"
+                                className={
+                                    c.image_url ? 'h-auto py-2' : undefined
+                                }
+                                size="sm"
+                                asChild
+                            >
+                                <Link href={category(c.slug)}>
+                                    {c.image_url && (
+                                        <img
+                                            src={c.image_url}
+                                            alt=""
+                                            className="size-12 rounded object-cover"
+                                        />
+                                    )}
+                                    {c.name}
+                                </Link>
                             </Button>
                         </li>
                     ))}
@@ -185,6 +236,7 @@ export default function Listing({
                     </Button>
                 </nav>
             )}
+            <ExtensionSlot items={props.slots} className="mt-10 grid gap-8" />
         </>
     );
 }

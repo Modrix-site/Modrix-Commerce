@@ -1,10 +1,12 @@
 import { Link } from '@inertiajs/react';
-import { ProductGrid } from '@/components/storefront/product-card';
+import { ProductCard, ProductGrid } from '@/components/storefront/product-card';
+import { ElectronicsCard } from '@/components/storefront/electronics-card';
+import { useStoreTheme } from '@/hooks/use-store-theme';
 import { Button } from '@/components/ui/button';
 import { useT } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { category } from '@/routes/storefront';
-import type { ProductCard } from '@/types';
+import type { ProductCard as ProductCardData } from '@/types';
 
 /**
  * Core renderers for theme sections. Themes choose which sections appear,
@@ -17,25 +19,43 @@ export type HomeSection = {
         | 'hero'
         | 'featured_products'
         | 'category_grid'
+        | 'campaign'
+        | 'promotion_grid'
         | 'image_with_text'
         | 'rich_text'
         | 'promo_banner';
+    // Campaign and tile content is validated by the theme schema.
     settings: Record<string, string | number | boolean | null>;
     data: {
         image?: string | null;
-        products?: ProductCard[];
+        tiles?: {
+            title: string;
+            text: string;
+            image: string | null;
+            link: string;
+        }[];
+        products?: ProductCardData[];
         categories?: {
             id: number;
             name: string;
             slug: string;
             description: string | null;
+            image_url?: string | null;
         }[];
     };
 };
 
 export function HomeSections({ sections }: { sections: HomeSection[] }) {
+    const { header } = useStoreTheme();
     return (
-        <div className="grid" style={{ gap: 'var(--store-section-gap, 3rem)' }}>
+        <div
+            className={header === 'electronics' ? 'electronics-home' : 'grid'}
+            style={
+                header === 'electronics'
+                    ? undefined
+                    : { gap: 'var(--store-section-gap, 3rem)' }
+            }
+        >
             {sections.map((section) => (
                 <Section key={section.key} section={section} />
             ))}
@@ -45,6 +65,10 @@ export function HomeSections({ sections }: { sections: HomeSection[] }) {
 
 function Section({ section }: { section: HomeSection }) {
     switch (section.type) {
+        case 'campaign':
+            return <Campaign section={section} />;
+        case 'promotion_grid':
+            return <PromotionalGrid section={section} />;
         case 'hero':
             return <Hero section={section} />;
         case 'featured_products':
@@ -60,6 +84,73 @@ function Section({ section }: { section: HomeSection }) {
         default:
             return null;
     }
+}
+
+function Campaign({ section }: { section: HomeSection }) {
+    const settings = section.settings;
+    return (
+        <section
+            className="electronics-campaign"
+            data-height={text(settings.height)}
+            style={{
+                backgroundColor: text(settings.background),
+                color: text(settings.foreground),
+            }}
+        >
+            <div className="electronics-campaign-copy">
+                <p>{text(settings.eyebrow)}</p>
+                <h1>{text(settings.heading)}</h1>
+                <p>{text(settings.body)}</p>
+                {text(settings.button_label) && (
+                    <a href={text(settings.button_link) || '/search'}>
+                        {text(settings.button_label)}
+                    </a>
+                )}
+            </div>
+            {section.data.image && <img src={section.data.image} alt="" />}
+        </section>
+    );
+}
+
+function PromotionalGrid({ section }: { section: HomeSection }) {
+    return (
+        <section>
+            {text(section.settings.title) && (
+                <h2>{text(section.settings.title)}</h2>
+            )}
+            <div
+                className="electronics-promotions"
+                data-style={text(section.settings.style)}
+                style={
+                    {
+                        '--tile-columns': Number(section.settings.columns) || 4,
+                    } as import('react').CSSProperties
+                }
+            >
+                {section.data.tiles?.map((tile, i) => (
+                    <a
+                        className="electronics-promo"
+                        href={tile.link || '/search'}
+                        key={i}
+                    >
+                        <div>
+                            <h3>{tile.title}</h3>
+                            {tile.text && <p>{tile.text}</p>}
+                            <small>EXPLORE</small>
+                        </div>
+                        {!tile.image && section.settings.style === 'circle' && (
+                            <span className="electronics-brand-circle">
+                                {tile.title}
+                            </span>
+                        )}
+                        {tile.image && (
+                            <img src={tile.image} alt="" loading="lazy" />
+                        )}
+                    </a>
+                ))}
+            </div>
+        </section>
+    );
 }
 
 function text(value: unknown): string {
@@ -97,6 +188,49 @@ function Hero({ section }: { section: HomeSection }) {
     const s = section.settings;
     const image = section.data.image;
     const centered = s.alignment === 'center';
+    const { header, theme } = useStoreTheme();
+    const settings = theme?.settings;
+    const eyebrow = text(settings?.hero_eyebrow);
+    const heroPoints = text(settings?.hero_points)
+        .split('·')
+        .map((point) => point.trim())
+        .filter(Boolean);
+
+    if (header === 'atelier') {
+        return (
+            <section className="ecom-hero">
+                <div className="ecom-hero-copy">
+                    {eyebrow && <p className="ecom-eyebrow">{eyebrow}</p>}
+                    <h1>{text(s.heading)}</h1>
+                    {text(s.subheading) && (
+                        <p className="ecom-hero-description">
+                            {text(s.subheading)}
+                        </p>
+                    )}
+                    {text(s.button_label) && (
+                        <a
+                            href={text(s.button_link) || '/search'}
+                            className="ecom-button ecom-primary"
+                        >
+                            {text(s.button_label)}
+                        </a>
+                    )}
+                    {heroPoints.length > 0 && (
+                        <div className="ecom-hero-points">
+                            {heroPoints.map((point) => (
+                                <span key={point}>{point}</span>
+                            ))}
+                        </div>
+                    )}
+                </div>
+                {image && (
+                    <div className="ecom-hero-photo">
+                        <img src={image} alt="" />
+                    </div>
+                )}
+            </section>
+        );
+    }
 
     return (
         <section
@@ -127,6 +261,11 @@ function Hero({ section }: { section: HomeSection }) {
                     centered && 'mx-auto text-center',
                 )}
             >
+                {eyebrow && (
+                    <p className="text-sm font-medium tracking-[0.18em] uppercase">
+                        {eyebrow}
+                    </p>
+                )}
                 <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">
                     {text(s.heading)}
                 </h1>
@@ -155,6 +294,64 @@ function Hero({ section }: { section: HomeSection }) {
 function FeaturedProducts({ section }: { section: HomeSection }) {
     const products = section.data.products ?? [];
     const t = useT();
+    const { header, theme } = useStoreTheme();
+    const settings = theme?.settings;
+    const showExploreAll = settings?.show_explore_all !== false;
+
+    if (header === 'electronics')
+        return (
+            <section className="electronics-rail">
+                <div className="electronics-rail-header">
+                    <h2>{text(section.settings.title)}</h2>
+                    <Link
+                        href={
+                            text(section.settings.category)
+                                ? category(text(section.settings.category))
+                                : '/search'
+                        }
+                    >
+                        View all ›
+                    </Link>
+                </div>
+                {products.length ? (
+                    <div className="electronics-product-rail">
+                        {products.map((product) => (
+                            <ElectronicsCard
+                                key={product.id}
+                                product={product}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <p className="electronics-empty">
+                        No products available in this collection yet.
+                    </p>
+                )}
+            </section>
+        );
+
+    if (header === 'atelier') {
+        return (
+            <section className="ecom-section ecom-essentials">
+                <div className="ecom-section-heading">
+                    <h2>{text(section.settings.title)}</h2>
+                    {showExploreAll && (
+                        <Link href="/search" className="ecom-text-link">
+                            Explore all
+                            <span aria-hidden>→</span>
+                        </Link>
+                    )}
+                </div>
+                {products.length > 0 && (
+                    <div className="ecom-product-row">
+                        {products.map((product) => (
+                            <ProductCard key={product.id} product={product} />
+                        ))}
+                    </div>
+                )}
+            </section>
+        );
+    }
 
     return (
         <section
@@ -181,9 +378,34 @@ function FeaturedProducts({ section }: { section: HomeSection }) {
 
 function CategoryGrid({ section }: { section: HomeSection }) {
     const categories = section.data.categories ?? [];
+    const { header } = useStoreTheme();
 
     if (categories.length === 0) {
         return null;
+    }
+
+    if (header === 'atelier') {
+        return (
+            <section className="ecom-section ecom-category-section">
+                {text(section.settings.title) && (
+                    <div className="ecom-section-heading">
+                        <h2>{text(section.settings.title)}</h2>
+                    </div>
+                )}
+                <div className="ecom-categories">
+                    {categories.map((c) => (
+                        <Link key={c.id} href={category(c.slug)}>
+                            {c.image_url && (
+                                <img src={c.image_url} alt="" loading="lazy" />
+                            )}
+                            <span>
+                                {c.name} <span aria-hidden>→</span>
+                            </span>
+                        </Link>
+                    ))}
+                </div>
+            </section>
+        );
     }
 
     return (
@@ -203,6 +425,14 @@ function CategoryGrid({ section }: { section: HomeSection }) {
                             href={category(c.slug)}
                             className="block h-full rounded-[var(--radius)] border bg-card p-4 transition-colors hover:bg-muted/60"
                         >
+                            {c.image_url && (
+                                <img
+                                    src={c.image_url}
+                                    alt=""
+                                    loading="lazy"
+                                    className="mb-3 aspect-[4/3] w-full rounded-md object-cover"
+                                />
+                            )}
                             <span className="font-medium">{c.name}</span>
                             {c.description && (
                                 <span className="mt-1 line-clamp-2 block text-sm text-muted-foreground">
@@ -220,6 +450,29 @@ function CategoryGrid({ section }: { section: HomeSection }) {
 function ImageWithText({ section }: { section: HomeSection }) {
     const s = section.settings;
     const image = section.data.image;
+    const { header } = useStoreTheme();
+
+    if (header === 'atelier') {
+        return (
+            <section className="ecom-story">
+                {image && <img src={image} alt="" loading="lazy" />}
+                <div>
+                    <p className="ecom-eyebrow">Our approach</p>
+                    <h2>{text(s.heading)}</h2>
+                    <p>{text(s.body)}</p>
+                    {text(s.button_label) && (
+                        <a
+                            href={text(s.button_link) || '/search'}
+                            className="ecom-text-link"
+                        >
+                            {text(s.button_label)}
+                            <span aria-hidden>→</span>
+                        </a>
+                    )}
+                </div>
+            </section>
+        );
+    }
 
     return (
         <section className="grid items-center gap-8 md:grid-cols-2">
@@ -257,6 +510,14 @@ function ImageWithText({ section }: { section: HomeSection }) {
 
 function RichText({ section }: { section: HomeSection }) {
     const s = section.settings;
+    const { header } = useStoreTheme();
+    if (header === 'electronics')
+        return (
+            <section className="electronics-description">
+                <h2>{text(s.heading)}</h2>
+                <p>{text(s.body)}</p>
+            </section>
+        );
 
     return (
         <section
@@ -279,6 +540,18 @@ function RichText({ section }: { section: HomeSection }) {
 
 function PromoBanner({ section }: { section: HomeSection }) {
     const s = section.settings;
+    const { header } = useStoreTheme();
+    if (header === 'electronics')
+        return (
+            <section className="electronics-promo-strip">
+                <p>{text(s.text)}</p>
+                {text(s.button_label) && (
+                    <a href={text(s.button_link) || '/search'}>
+                        {text(s.button_label)} ›
+                    </a>
+                )}
+            </section>
+        );
 
     return (
         <section
@@ -290,9 +563,12 @@ function PromoBanner({ section }: { section: HomeSection }) {
                     'bg-primary text-primary-foreground',
             )}
         >
-            <p className="text-center font-medium sm:text-left">
-                {text(s.text)}
-            </p>
+            <div className="text-center sm:text-left">
+                <p className="font-medium">{text(s.text)}</p>
+                {text(s.subtext) && (
+                    <p className="mt-1 text-sm opacity-80">{text(s.subtext)}</p>
+                )}
+            </div>
             <SectionLink
                 href={text(s.button_link)}
                 label={text(s.button_label)}

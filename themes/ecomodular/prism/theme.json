@@ -1,0 +1,144 @@
+{
+    "$schema": "../../../docs/extensions/theme.schema.json",
+    "name": "ecomodular/prism",
+    "display_name": "Prism",
+    "description": "An editorial, gallery-calm theme: centred wordmark, wide white canvas, near-black type and understated product tiles. Suits considered design, lifestyle and accessories brands. Adds its own typography and layout controls.",
+    "version": "1.0.1",
+    "type": "theme",
+    "theme_type": "storefront",
+    "platform_version": "^1.0",
+    "author": "Eleydo",
+    "license": "MIT",
+    "capabilities": ["home.sections", "dark_mode", "demo_content"],
+    "assets": "assets",
+    "screenshot": "assets/demo-preview.png",
+    "design": {
+        "color.background": "#ffffff",
+        "color.foreground": "#111111",
+        "color.primary": "#111111",
+        "color.primary_foreground": "#ffffff",
+        "color.muted": "#f4f4f2",
+        "color.muted_foreground": "#6f6f6f",
+        "color.accent": "#ececea",
+        "color.accent_foreground": "#111111",
+        "color.border": "#e6e6e6",
+        "color.search": "#111111",
+        "color.sale": "#b23a2e",
+        "font_body": "sans",
+        "font_heading": "sans",
+        "radius": "0.25rem",
+        "density": "spacious",
+        "container": "wide",
+        "layout.header": "atelier",
+        "layout.footer": "atelier",
+        "layout.product_card": "atelier",
+        "layout.grid_columns": "4",
+        "layout.product_page": "atelier",
+        "announcement": "Discover considered design, made for everyday life",
+        "footer_text": "Discover objects that bring intention to everyday life.",
+        "contact_email": "studio@prism.example",
+        "help_link": "/account",
+        "menu_1_label": "New arrivals",
+        "menu_1_link": "/search",
+        "menu_2_label": "Bags",
+        "menu_2_link": "/search?q=bag",
+        "menu_3_label": "Writing instruments",
+        "menu_3_link": "/search?q=writing",
+        "menu_4_label": "Accessories",
+        "menu_4_link": "/search?q=accessories",
+        "menu_5_label": "The journal",
+        "menu_5_link": "/search",
+        "footer_1_title": "Shop",
+        "footer_1_1_label": "New arrivals",
+        "footer_1_1_link": "/search",
+        "footer_1_2_label": "Bags",
+        "footer_1_2_link": "/search?q=bag",
+        "footer_1_3_label": "Writing instruments",
+        "footer_1_3_link": "/search?q=writing",
+        "footer_2_title": "Help",
+        "footer_2_1_label": "Your account",
+        "footer_2_1_link": "/account",
+        "footer_2_2_label": "Track your order",
+        "footer_2_2_link": "/account/orders",
+        "footer_2_3_label": "Shipping and returns",
+        "footer_2_3_link": "/search",
+        "footer_3_title": "Studio",
+        "footer_3_1_label": "Our story",
+        "footer_3_1_link": "/account",
+        "footer_3_2_label": "Materials",
+        "footer_3_2_link": "/account",
+        "footer_3_3_label": "Contact",
+        "footer_3_3_link": "/account"
+    },
+    "dark_colors": {
+        "background": "#0e0e0e",
+        "foreground": "#f2f2f0",
+        "primary": "#f2f2f0",
+        "primary_foreground": "#111111",
+        "muted": "#1a1a1a",
+        "muted_foreground": "#9a9a95",
+        "accent": "#232323",
+        "accent_foreground": "#f2f2f0",
+        "border": "#2a2a2a"
+    },
+    "sections": {
+        "home": [
+            {
+                "type": "hero",
+                "settings": {
+                    "heading": "The art of everyday.",
+                    "subheading": "Discover essentials with a lasting point of view.",
+                    "button_label": "Discover the collection",
+                    "button_link": "/search",
+                    "image": "asset:assets/images/hero.webp",
+                    "alignment": "left",
+                    "height": "large"
+                }
+            },
+            {
+                "type": "featured_products",
+                "settings": {
+                    "title": "Considered essentials",
+                    "source": "latest",
+                    "limit": 8
+                }
+            },
+            {
+                "type": "category_grid",
+                "settings": {
+                    "title": "Discover our categories",
+                    "limit": 6
+                }
+            },
+            {
+                "type": "image_with_text",
+                "settings": {
+                    "heading": "Considered essentials. Lasting stories.",
+                    "body": "Considered essentials, designed to go wherever life takes you.",
+                    "image": "asset:assets/images/studio.webp",
+                    "image_position": "right",
+                    "button_label": "Discover more",
+                    "button_link": "/search"
+                }
+            },
+            {
+                "type": "promo_banner",
+                "settings": {
+                    "text": "Be the first to discover new collections and stories.",
+                    "button_label": "Create an account",
+                    "button_link": "/register",
+                    "tone": "muted"
+                }
+            }
+        ]
+    },
+    "demo_content": "demo.json",
+    "changelog": [
+        {
+            "version": "1.0.0",
+            "date": "2026-10-14",
+            "notes": "First release. Editorial layout with a centred wordmark, minimal tiles and custom typography controls."
+        }
+    ],
+    "customizer_file": "settings.json"
+}

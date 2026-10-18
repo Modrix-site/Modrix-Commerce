@@ -3,7 +3,7 @@
     "name": "ecomodular/noir",
     "display_name": "Noir",
     "description": "A dark, high-contrast luxury theme with gold accents and fashion typography, for jewelry, accessories and premium goods.",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "type": "theme",
     "theme_type": "storefront",
     "platform_version": "^0.4 || ^1.0",
@@ -11,7 +11,7 @@
     "license": "MIT",
     "capabilities": ["home.sections", "demo_content"],
     "assets": "assets",
-    "screenshot": "assets/images/hero.webp",
+    "screenshot": "assets/demo-preview.png",
     "design": {
         "color.background": "#0e0e10",
         "color.foreground": "#f4f1ea",
@@ -79,7 +79,10 @@
             },
             {
                 "type": "category_grid",
-                "settings": { "title": "Collections", "limit": 6 }
+                "settings": {
+                    "title": "Collections",
+                    "limit": 6
+                }
             },
             {
                 "type": "rich_text",
@@ -93,6 +96,11 @@
     },
     "demo_content": "demo.json",
     "changelog": [
-        { "version": "1.0.0", "date": "2026-10-16", "notes": "First release." }
-    ]
+        {
+            "version": "1.0.0",
+            "date": "2026-10-16",
+            "notes": "First release."
+        }
+    ],
+    "customizer_file": "settings.json"
 }

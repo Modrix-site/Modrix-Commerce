@@ -50,6 +50,56 @@ class CategoryAndImageTest extends TestCase
             ->assertSessionHasErrors('slug');
     }
 
+    public function test_categories_and_subcategories_have_independent_images(): void
+    {
+        Storage::fake('public');
+        $owner = $this->owner();
+        $this->actingAs($owner)->post(route('admin.categories.store'), [
+            'name' => 'Apparel', 'is_active' => true,
+            'image' => UploadedFile::fake()->image('apparel.jpg', 60, 40),
+        ])->assertSessionHasNoErrors();
+        $parent = Category::query()->where('slug', 'apparel')->firstOrFail();
+
+        $this->post(route('admin.categories.store'), [
+            'name' => 'Shirts', 'parent_id' => $parent->id, 'is_active' => true,
+            'image' => UploadedFile::fake()->image('shirts.png', 50, 50),
+        ])->assertSessionHasNoErrors();
+        $child = Category::query()->where('slug', 'shirts')->firstOrFail();
+        $this->assertNotSame($parent->image_path, $child->image_path);
+        Storage::disk('public')->assertExists([$parent->image_path, $child->image_path]);
+        $this->assertMatchesRegularExpression('#^categories/[A-Za-z0-9]{40}\\.jpg$#', $parent->image_path);
+
+        $this->get(route('storefront.category', $parent->slug))->assertInertia(fn ($page) => $page
+            ->component('storefront/listing')
+            ->where('image', $parent->imageUrl())
+            ->where('subcategories.0.image_url', $child->imageUrl()));
+
+        $original = $child->image_path;
+        $this->put(route('admin.categories.update', $child), ['name' => 'Shirts', 'parent_id' => $parent->id])->assertSessionHasNoErrors();
+        $this->assertSame($original, $child->fresh()->image_path);
+        $this->post(route('admin.categories.update', $child), [
+            '_method' => 'put', 'name' => 'Shirts', 'parent_id' => $parent->id,
+            'image' => UploadedFile::fake()->image('new.webp'),
+        ])->assertSessionHasNoErrors();
+        $this->assertNotSame($original, $child->fresh()->image_path);
+        $this->put(route('admin.categories.update', $child), [
+            'name' => 'Shirts', 'parent_id' => $parent->id, 'remove_image' => true,
+        ])->assertSessionHasNoErrors();
+        $this->assertNull($child->fresh()->imageUrl());
+        $this->assertSame($parent->image_path, $parent->fresh()->image_path);
+    }
+
+    public function test_invalid_category_images_are_rejected(): void
+    {
+        Storage::fake('public');
+        $this->actingAs($this->owner())->post(route('admin.categories.store'), [
+            'name' => 'Invalid image',
+            'image' => UploadedFile::fake()->createWithContent('bad.jpg', '<?php echo "bad"; ?>'),
+        ])->assertSessionHasErrors('image');
+        $this->assertDatabaseMissing('categories', ['name' => 'Invalid image']);
+        $this->assertSame([], Storage::disk('public')->allFiles('categories'));
+    }
+
     public function test_uploaded_images_are_reencoded_and_stored_with_random_names()
     {
         Storage::fake('public');

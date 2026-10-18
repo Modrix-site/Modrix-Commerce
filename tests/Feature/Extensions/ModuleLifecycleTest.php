@@ -396,6 +396,50 @@ class ModuleLifecycleTest extends TestCase
         $this->modules->configure('acme/hello', ['greeting' => 'Hi', 'limit' => '50', 'mode' => 'z']);
     }
 
+    public function test_settings_hidden_by_visible_when_are_optional_and_keep_their_values()
+    {
+        $this->makeHelloModule(overrides: ['settings' => [
+            ['key' => 'mode', 'type' => 'select', 'label' => 'Mode', 'default' => 'a', 'options' => [['value' => 'a', 'label' => 'A'], ['value' => 'b', 'label' => 'B']]],
+            ['key' => 'a_model', 'type' => 'string', 'label' => 'A model', 'required' => true, 'default' => 'a-1', 'suggestions' => ['a-1', 'a-2'], 'visible_when' => ['mode' => 'a']],
+            ['key' => 'b_model', 'type' => 'string', 'label' => 'B model', 'required' => true, 'default' => 'b-1', 'visible_when' => ['mode' => ['b']]],
+        ]]);
+        $this->modules->install('acme/hello');
+        $settings = app(ModuleSettingsSchema::class);
+        $manifest = app(ModuleRepository::class)->find('acme/hello')->manifest();
+
+        // b_model is hidden while mode is "a": empty is allowed and the stored value is kept.
+        $this->modules->configure('acme/hello', ['mode' => 'a', 'a_model' => 'a-custom-snapshot', 'b_model' => '']);
+        $this->assertSame(['mode' => 'a', 'a_model' => 'a-custom-snapshot', 'b_model' => 'b-1'], $settings->values($manifest));
+
+        // A visible required field is still required.
+        try {
+            $this->modules->configure('acme/hello', ['mode' => 'b', 'a_model' => '', 'b_model' => '']);
+            $this->fail('A visible required setting accepted an empty value.');
+        } catch (ValidationException $e) {
+            $this->assertSame(['b_model'], array_keys($e->errors()));
+        }
+        $this->assertSame('a-custom-snapshot', $settings->values($manifest)['a_model']);
+    }
+
+    public function test_invalid_visible_when_and_suggestions_are_rejected()
+    {
+        $this->makeHelloModule(overrides: ['settings' => [
+            ['key' => 'mode', 'type' => 'select', 'label' => 'Mode', 'options' => [['value' => 'a', 'label' => 'A']]],
+            ['key' => 'limit', 'type' => 'integer', 'label' => 'Limit', 'suggestions' => ['1']],
+            ['key' => 'model', 'type' => 'string', 'label' => 'Model', 'visible_when' => ['missing' => 'a']],
+            ['key' => 'other', 'type' => 'string', 'label' => 'Other', 'visible_when' => ['a']],
+        ]]);
+
+        app(ModuleRepository::class)->sync();
+
+        $extension = $this->extension();
+        $this->assertSame(ModuleState::Invalid, $extension->state);
+        $errors = implode("\n", (array) $extension->errors);
+        $this->assertStringContainsString('settings[1].suggestions', $errors);
+        $this->assertStringContainsString('settings[2].visible_when refers to unknown setting missing', $errors);
+        $this->assertStringContainsString('settings[3].visible_when must map setting keys', $errors);
+    }
+
     public function test_module_admin_routes_require_a_declared_permission()
     {
         $this->makeHelloModule();

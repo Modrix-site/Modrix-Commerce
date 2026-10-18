@@ -5,6 +5,8 @@
     "description": "Verified buyers rate and review products; staff moderate reviews before they appear. Only reviews from a paid order are shown.",
     "version": "1.2.0",
     "type": "module",
+    "icon": "star",
+    "accent": "#eab308",
     "platform_version": "^0.4 || ^1.0",
     "author": "Eleydo",
     "license": "MIT",

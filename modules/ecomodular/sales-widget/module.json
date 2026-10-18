@@ -5,6 +5,8 @@
     "description": "Adds a daily sales chart for recent days to the admin dashboard.",
     "version": "1.0.0",
     "type": "module",
+    "icon": "chart-column",
+    "accent": "#10b981",
     "platform_version": "^0.4 || ^1.0",
     "author": "Eleydo",
     "license": "MIT",

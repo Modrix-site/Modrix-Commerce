@@ -1,0 +1,139 @@
+{
+    "categories": [
+        {
+            "name": "Smart Watches",
+            "slug": "circuit-watches"
+        },
+        {
+            "name": "Audio",
+            "slug": "circuit-audio"
+        },
+        {
+            "name": "Laptops",
+            "slug": "circuit-laptops"
+        },
+        {
+            "name": "Phones",
+            "slug": "circuit-phones"
+        },
+        {
+            "name": "Tablets",
+            "slug": "circuit-tablets"
+        },
+        {
+            "name": "Cameras",
+            "slug": "circuit-cameras"
+        }
+    ],
+    "products": [
+        {
+            "name": "Wireless Smart Watch Series 5",
+            "slug": "circuit-demo-1",
+            "sku": "CIRCUIT-DEMO-1",
+            "price": "129.00",
+            "stock": 15,
+            "short_description": "Always-on display, heart-rate tracking and seven-day battery.",
+            "description": "Always-on display, heart-rate tracking and seven-day battery. Optional demonstration product: replace the details and confirm stock before selling.",
+            "categories": [
+                "circuit-watches"
+            ],
+            "image": "assets/hero-watch.jpg",
+            "compare_at_price": "149.00"
+        },
+        {
+            "name": "Studio Wireless Headphones",
+            "slug": "circuit-demo-2",
+            "sku": "CIRCUIT-DEMO-2",
+            "price": "95.00",
+            "stock": 15,
+            "short_description": "Over-ear headphones with active noise cancelling and 30-hour playback.",
+            "description": "Over-ear headphones with active noise cancelling and 30-hour playback. Optional demonstration product: replace the details and confirm stock before selling.",
+            "categories": [
+                "circuit-audio"
+            ],
+            "image": "assets/product-headphones.jpg",
+            "compare_at_price": "120.00"
+        },
+        {
+            "name": "True Wireless Earbuds Pro",
+            "slug": "circuit-demo-3",
+            "sku": "CIRCUIT-DEMO-3",
+            "price": "79.00",
+            "stock": 4,
+            "short_description": "Compact earbuds with a pocket charging case and touch controls.",
+            "description": "Compact earbuds with a pocket charging case and touch controls. Optional demonstration product: replace the details and confirm stock before selling.",
+            "categories": [
+                "circuit-audio"
+            ],
+            "image": "assets/product-earbuds.jpg"
+        },
+        {
+            "name": "Portable Bluetooth Speaker",
+            "slug": "circuit-demo-4",
+            "sku": "CIRCUIT-DEMO-4",
+            "price": "59.00",
+            "stock": 15,
+            "short_description": "Water-resistant speaker with rich bass and 12-hour battery.",
+            "description": "Water-resistant speaker with rich bass and 12-hour battery. Optional demonstration product: replace the details and confirm stock before selling.",
+            "categories": [
+                "circuit-audio"
+            ],
+            "image": "assets/product-speaker.jpg",
+            "compare_at_price": "69.00"
+        },
+        {
+            "name": "Vivid 14 Laptop",
+            "slug": "circuit-demo-5",
+            "sku": "CIRCUIT-DEMO-5",
+            "price": "899.00",
+            "stock": 15,
+            "short_description": "Thin 14-inch laptop with a bright, colourful display.",
+            "description": "Thin 14-inch laptop with a bright, colourful display. Optional demonstration product: replace the details and confirm stock before selling.",
+            "categories": [
+                "circuit-laptops"
+            ],
+            "image": "assets/cat-laptop.jpg",
+            "compare_at_price": "999.00"
+        },
+        {
+            "name": "Everyday Smartphone 128GB",
+            "slug": "circuit-demo-6",
+            "sku": "CIRCUIT-DEMO-6",
+            "price": "399.00",
+            "stock": 4,
+            "short_description": "6.1-inch smartphone with a dual camera and all-day battery.",
+            "description": "6.1-inch smartphone with a dual camera and all-day battery. Optional demonstration product: replace the details and confirm stock before selling.",
+            "categories": [
+                "circuit-phones"
+            ],
+            "image": "assets/product-phone.jpg"
+        },
+        {
+            "name": "Creator Tablet 11",
+            "slug": "circuit-demo-7",
+            "sku": "CIRCUIT-DEMO-7",
+            "price": "449.00",
+            "stock": 15,
+            "short_description": "11-inch tablet for drawing, notes and streaming.",
+            "description": "11-inch tablet for drawing, notes and streaming. Optional demonstration product: replace the details and confirm stock before selling.",
+            "categories": [
+                "circuit-tablets"
+            ],
+            "image": "assets/cat-tablet.jpg",
+            "compare_at_price": "499.00"
+        },
+        {
+            "name": "Mirrorless Video Camera Kit",
+            "slug": "circuit-demo-8",
+            "sku": "CIRCUIT-DEMO-8",
+            "price": "1199.00",
+            "stock": 15,
+            "short_description": "Video-ready camera kit with a fast lens and cage.",
+            "description": "Video-ready camera kit with a fast lens and cage. Optional demonstration product: replace the details and confirm stock before selling.",
+            "categories": [
+                "circuit-cameras"
+            ],
+            "image": "assets/cat-camera.jpg"
+        }
+    ]
+}

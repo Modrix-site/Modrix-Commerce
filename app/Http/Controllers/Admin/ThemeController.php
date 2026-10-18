@@ -23,6 +23,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Closure;
 use Composer\Semver\Comparator;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -87,7 +88,10 @@ class ThemeController extends Controller
         [$design, $ignored] = $this->customizations->effectiveDesign($manifest);
 
         $fields = [];
-        foreach (ThemeSchema::designFields() as $key => $field) {
+        foreach (array_diff_key($manifest->designFields(), array_flip($manifest->customizer['hide_core_fields'] ?? [])) as $key => $field) {
+            if (str_starts_with($key, 'menu_') || preg_match('/^footer_[1-3]_/', $key)) {
+                continue; // Links are managed globally in Admin → Navigation.
+            }
             if ($field['type'] === 'font') {
                 $field['options'] = [...array_keys(ThemeSchema::FONT_STACKS), ...array_map(fn ($f) => "custom:{$f}", $manifest->customFontFamilies())];
             }
@@ -97,12 +101,15 @@ class ThemeController extends Controller
         return Inertia::render('admin/themes/customize', [
             'theme' => $this->summary($theme),
             'design' => [
+                'title' => $manifest->customizer['title'] ?? 'Design',
+                'description' => $manifest->customizer['description'] ?? null,
                 'fields' => $fields,
                 'values' => $design,
                 // Page settings the theme does not set show the platform's default.
                 'defaults' => $manifest->defaults() + PageSettingFields::displayDefaults(),
                 'overridden' => array_keys($this->customizations->designOverrides($manifest)),
                 'ignored' => $ignored,
+                'presets' => $manifest->presets(),
             ],
             'sections' => [
                 'types' => collect(ThemeSchema::sectionTypes())->map(fn ($type, $key) => [
@@ -126,6 +133,21 @@ class ThemeController extends Controller
         return $this->run($theme, fn () => $this->manager->activate($theme->name, $this->actor($request)), "{$theme->display_name} is now your store's theme.");
     }
 
+    public function disable(Request $request, Extension $theme): RedirectResponse
+    {
+        return $this->run($theme, fn () => $this->manager->disable($theme->name, $this->actor($request)), 'Theme disabled. The storefront uses its fallback design.');
+    }
+
+    public function enable(Request $request, Extension $theme): RedirectResponse
+    {
+        return $this->activate($request, $theme);
+    }
+
+    public function destroy(Request $request, Extension $theme): RedirectResponse
+    {
+        return $this->run($theme, fn () => $this->manager->delete($theme->name, $this->actor($request)), 'Theme deleted. An archive and your customizations were kept.');
+    }
+
     public function update(Request $request, Extension $theme): RedirectResponse
     {
         return $this->run($theme, function () use ($request, $theme) {
@@ -140,7 +162,7 @@ class ThemeController extends Controller
     public function preview(Request $request, Extension $theme): RedirectResponse
     {
         $this->assertTheme($theme);
-        abort_if($theme->state === ModuleState::Invalid || $theme->manifest === null, 422, 'This theme cannot be previewed.');
+        abort_if(in_array($theme->state, [ModuleState::Invalid, ModuleState::Disabled], true) || $theme->manifest === null, 422, 'Enable this theme before previewing it.');
 
         $request->session()->put(ThemeResolver::PREVIEW_SESSION_KEY, $theme->name);
         ExtensionEvent::query()->forceCreate([
@@ -182,13 +204,16 @@ class ThemeController extends Controller
         return $this->run($theme, fn () => $this->manager->reset($theme->name, $data['confirmation'], $this->actor($request)), 'Theme reset to its defaults.', back: true);
     }
 
-    public function upload(Request $request): RedirectResponse
+    public function upload(Request $request): RedirectResponse|JsonResponse
     {
         $request->validate(['file' => ['required', 'file', 'max:5120']]);
         $file = $request->file('file');
         abort_unless($file !== null && ! is_array($file), 422);
 
-        $this->customizations->upload($file);
+        $image = $this->customizations->upload($file);
+        if ($request->expectsJson()) {
+            return response()->json(['image' => ['value' => $image['value'], 'label' => $image['name'], 'url' => $image['url']]]);
+        }
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Image uploaded. You can now choose it in any image setting.')]);
 
         return back();
@@ -226,6 +251,7 @@ class ThemeController extends Controller
                 ModuleState::Enabled => 'active',
                 ModuleState::Invalid => 'invalid',
                 ModuleState::Failed => 'failed',
+                ModuleState::Disabled => 'disabled',
                 default => 'available',
             },
             'version' => $theme->state === ModuleState::Enabled ? $theme->version : $theme->available_version,

@@ -1,6 +1,11 @@
 import { Form, Head, Link } from '@inertiajs/react';
+import { Suspense } from 'react';
+import { useStoreTheme } from '@/hooks/use-store-theme';
+import { themeCart } from '@/lib/theme-pages';
 import { ImageOff, TriangleAlert } from 'lucide-react';
 import CartController from '@/actions/App/Http/Controllers/Storefront/CartController';
+import { ExtensionSlot } from '@/components/extensions/extension-slot';
+import type { SlotItem } from '@/components/extensions/extension-slot';
 import { PlaceSlot } from '@/components/extensions/place-slot';
 import InputError from '@/components/input-error';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -17,20 +22,36 @@ import { show as checkout } from '@/routes/checkout';
 import { product as productRoute } from '@/routes/storefront';
 import type { CartLine, PricedCart, ProductCard } from '@/types';
 
-export default function CartPage({
-    cart,
-    freeShipping,
-    crossSells,
-}: {
+export type CartProps = {
     cart: PricedCart | null;
+    slots?: SlotItem[];
     /** Cart tab: free-shipping progress (null when off or no threshold). */
     freeShipping?: FreeShipping | null;
     /** Cart tab: related products of the cart's items. */
     crossSells?: ProductCard[];
-}) {
+};
+export default function CartPage(props: CartProps) {
+    const { theme } = useStoreTheme();
+    const CustomCart = themeCart(theme?.name);
+    return CustomCart ? (
+        <Suspense fallback={<p role="status">Loading cart…</p>}>
+            <CustomCart {...props} />
+        </Suspense>
+    ) : (
+        <PlatformCartPage {...props} />
+    );
+}
+export function PlatformCartPage({
+    cart,
+    slots,
+    freeShipping,
+    crossSells,
+}: CartProps) {
     const t = useT();
     // Cart tab settings (customizer).
     const pageSettings = useStoreSettings().cart;
+    const { theme } = useStoreTheme();
+    const settings = theme?.settings ?? {};
 
     if (!cart || cart.lines.length === 0) {
         return (
@@ -38,10 +59,18 @@ export default function CartPage({
                 <Head title={t('Cart')} />
                 <div className="grid justify-items-center gap-4 py-16 text-center">
                     <h1 className="text-2xl font-semibold">
-                        {t('Your cart is empty')}
+                        {String(
+                            settings.cart_empty_heading ??
+                                t('Your cart is empty'),
+                        )}
                     </h1>
                     <Button asChild>
-                        <Link href={home()}>{t('Continue shopping')}</Link>
+                        <Link href={home()}>
+                            {String(
+                                settings.cart_continue_label ??
+                                    t('Continue shopping'),
+                            )}
+                        </Link>
                     </Button>
                 </div>
             </>
@@ -52,7 +81,7 @@ export default function CartPage({
         <>
             <Head title={t('Cart')} />
             <h1 className="mb-6 text-2xl font-semibold tracking-tight">
-                {t('Cart')}
+                {String(settings.cart_heading ?? t('Cart'))}
             </h1>
             <div className="grid gap-8 lg:grid-cols-3">
                 <ul className="grid content-start gap-4 lg:col-span-2">
@@ -66,7 +95,9 @@ export default function CartPage({
                     className="grid content-start gap-4 rounded-lg border p-5"
                     aria-label={t('Order summary')}
                 >
-                    <h2 className="font-semibold">{t('Summary')}</h2>
+                    <h2 className="font-semibold">
+                        {String(settings.cart_summary_heading ?? t('Summary'))}
+                    </h2>
                     <dl className="grid gap-2 text-sm">
                         <div className="flex justify-between">
                             <dt>{t('Subtotal')}</dt>
@@ -92,7 +123,11 @@ export default function CartPage({
 
                     <FreeShippingBar data={freeShipping} />
 
-                    {pageSettings.coupon && <CouponForm cart={cart} />}
+                    <ExtensionSlot items={slots} className="grid gap-3" />
+
+                    {pageSettings.coupon && settings.cart_show_coupon !== false && (
+                        <CouponForm cart={cart} />
+                    )}
 
                     {cart.issues.map((issue) => (
                         <Alert key={issue}>
@@ -102,7 +137,12 @@ export default function CartPage({
                     ))}
                     {cart.can_checkout ? (
                         <Button className="store-button" asChild>
-                            <Link href={checkout()}>{t('Checkout')}</Link>
+                            <Link href={checkout()}>
+                                {String(
+                                    settings.cart_checkout_label ??
+                                        t('Checkout'),
+                                )}
+                            </Link>
                         </Button>
                     ) : (
                         <p className="text-sm text-muted-foreground">

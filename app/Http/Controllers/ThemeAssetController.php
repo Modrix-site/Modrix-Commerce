@@ -28,7 +28,9 @@ class ThemeAssetController extends Controller
     {
         $name = "{$vendor}/{$theme}";
         $record = $themes->find($name);
-        $data = $record->applied_manifest ?? $record?->manifest;
+        $data = $record !== null && in_array($record->state, [ModuleState::Enabled, ModuleState::Failed], true)
+            ? ($record->applied_manifest ?? $record->manifest)
+            : $record?->manifest;
 
         // Before discovery, the bundled default theme is still served.
         if ($record === null && $name === config('ecomodular.themes.default', 'ecomodular/essence')) {

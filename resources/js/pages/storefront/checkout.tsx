@@ -1,15 +1,18 @@
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import { TriangleAlert } from 'lucide-react';
 import type { FormEvent } from 'react';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import CheckoutController from '@/actions/App/Http/Controllers/Storefront/CheckoutController';
 import { FormField } from '@/components/admin/form-field';
+import { ExtensionSlot } from '@/components/extensions/extension-slot';
+import type { SlotItem } from '@/components/extensions/extension-slot';
 import { PlaceSlot } from '@/components/extensions/place-slot';
 import InputError from '@/components/input-error';
 import { OrderTotals } from '@/components/storefront/order-totals';
 import { CheckoutCoupon } from '@/components/storefront/page-settings/checkout-coupon';
 import { TermsCheckbox } from '@/components/storefront/page-settings/terms-checkbox';
 import { TrustBadges } from '@/components/storefront/page-settings/trust-badges';
+import RegionCombobox from '@/components/storefront/region-combobox';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -18,6 +21,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useStoreSettings } from '@/hooks/use-store-settings';
 import { useT } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
+import { regionsFor } from '@/lib/regions';
 import { show as cartShow } from '@/routes/cart';
 import type { Address, Country, PricedCart } from '@/types';
 
@@ -41,9 +45,12 @@ type Props = {
         label: string;
         instructions: string | null;
     }[];
+    paymentSlots?: SlotItem[];
+    slots?: SlotItem[];
     addresses: Address[];
     email: string | null;
     countries: Country[];
+    soleCountry: string | null;
     checkoutToken: string;
     /** The store's terms page (Checkout tab "Require accepting the terms"). */
     termsUrl?: string | null;
@@ -80,9 +87,12 @@ function fromSaved(a: Address): AddressFields {
 export default function Checkout({
     summary,
     paymentMethods,
+    paymentSlots = [],
+    slots = [],
     addresses,
     email,
     countries,
+    soleCountry,
     checkoutToken,
     termsUrl = null,
 }: Props) {
@@ -91,12 +101,18 @@ export default function Checkout({
     const pageSettings = useStoreSettings().checkout;
     const defaultAddress =
         addresses.find((a) => a.is_default_shipping) ?? addresses[0];
+    // A store that ships to one country starts with it filled in. The server
+    // sends `soleCountry`; fall back to the single option in the list.
+    const defaultCountry =
+        soleCountry ?? (countries.length === 1 ? countries[0].code : '');
     const form = useForm({
         email: email ?? '',
         phone: '',
-        shipping: defaultAddress ? fromSaved(defaultAddress) : emptyAddress,
+        shipping: defaultAddress
+            ? fromSaved(defaultAddress)
+            : { ...emptyAddress, country_code: defaultCountry },
         billing_same: true,
-        billing: emptyAddress,
+        billing: { ...emptyAddress, country_code: defaultCountry },
         shipping_method: '',
         payment_method: paymentMethods[0]?.code ?? '',
         customer_note: '',
@@ -107,6 +123,42 @@ export default function Checkout({
     });
     const { data, setData } = form;
     const errors = form.errors as Record<string, string | undefined>;
+    // Payment methods a module reported as unavailable for this order (e.g. a provider's eligibility check).
+    const [unavailable, setUnavailable] = useState<Record<string, string>>({});
+    const reportAvailability = useCallback(
+        (code: string, reason: string | null) =>
+            setUnavailable((current) => {
+                if ((current[code] ?? null) === reason) {
+                    return current;
+                }
+
+                const next = { ...current };
+
+                if (reason === null) {
+                    delete next[code];
+                } else {
+                    next[code] = reason;
+                }
+
+                return next;
+            }),
+        [],
+    );
+
+    // Move off a method that just became unavailable.
+    useEffect(() => {
+        if (unavailable[data.payment_method] === undefined) {
+            return;
+        }
+
+        const fallback = paymentMethods.find(
+            (m) => unavailable[m.code] === undefined,
+        );
+
+        if (fallback) {
+            setData('payment_method', fallback.code);
+        }
+    }, [unavailable, data.payment_method, paymentMethods, setData]);
     const firstQuote = useRef(true);
 
     // Re-quote shipping and tax on the server whenever the destination or method changes.
@@ -120,7 +172,7 @@ export default function Checkout({
         firstQuote.current = false;
         const timer = window.setTimeout(() => {
             router.reload({
-                only: ['summary'],
+                only: ['summary', 'paymentSlots', 'slots'],
                 data: {
                     country: data.shipping.country_code || undefined,
                     region: data.shipping.region || undefined,
@@ -151,9 +203,24 @@ export default function Checkout({
     }, [summary.shipping_options, data.shipping_method, setData]);
 
     const setShipping = (field: keyof AddressFields, value: string) =>
-        setData('shipping', { ...data.shipping, [field]: value });
+        setData('shipping', {
+            ...data.shipping,
+            [field]: value,
+            // A region chosen for another country no longer applies.
+            ...(field === 'country_code' &&
+            !regionsFor(value).includes(data.shipping.region)
+                ? { region: '' }
+                : {}),
+        });
     const setBilling = (field: keyof AddressFields, value: string) =>
-        setData('billing', { ...data.billing, [field]: value });
+        setData('billing', {
+            ...data.billing,
+            [field]: value,
+            ...(field === 'country_code' &&
+            !regionsFor(value).includes(data.billing.region)
+                ? { region: '' }
+                : {}),
+        });
 
     const submit = (event: FormEvent) => {
         event.preventDefault();
@@ -235,9 +302,7 @@ export default function Checkout({
                                         type="tel"
                                         autoComplete="tel"
                                         value={data.phone}
-                                        required={
-                                            pageSettings.phone === 'required'
-                                        }
+                                        required={pageSettings.phone === 'required'}
                                         onChange={(e) =>
                                             setData('phone', e.target.value)
                                         }
@@ -274,7 +339,13 @@ export default function Checkout({
                                             'shipping',
                                             chosen
                                                 ? fromSaved(chosen)
-                                                : emptyAddress,
+                                                : // A new address keeps the store's only country,
+                                                  // so shipping can be quoted.
+                                                  {
+                                                      ...emptyAddress,
+                                                      country_code:
+                                                          defaultCountry,
+                                                  },
                                         );
                                     }}
                                 >
@@ -295,6 +366,7 @@ export default function Checkout({
                             values={data.shipping}
                             onChange={setShipping}
                             countries={countries}
+                            soleCountry={defaultCountry || null}
                             errors={errors}
                         />
                         <label className="flex items-center gap-2 text-sm">
@@ -324,6 +396,7 @@ export default function Checkout({
                                 values={data.billing}
                                 onChange={setBilling}
                                 countries={countries}
+                                soleCountry={defaultCountry || null}
                                 errors={errors}
                             />
                         </section>
@@ -353,7 +426,9 @@ export default function Checkout({
                             </p>
                         ) : summary.shipping_options.length === 0 ? (
                             <p className="text-sm text-destructive">
-                                {t('We do not ship to the selected country.')}
+                                {t(
+                                    'We do not ship to the selected destination.',
+                                )}
                             </p>
                         ) : (
                             <fieldset className="grid gap-2">
@@ -381,7 +456,21 @@ export default function Checkout({
                                                     )
                                                 }
                                             />
-                                            {option.label}
+                                            <span>
+                                                <span>
+                                                    {option.label}
+                                                    {option.description && (
+                                                        <span className="block text-xs text-muted-foreground">
+                                                            {option.description}
+                                                        </span>
+                                                    )}
+                                                </span>
+                                                {option.description && (
+                                                    <span className="block text-xs text-muted-foreground">
+                                                        {option.description}
+                                                    </span>
+                                                )}
+                                            </span>
                                         </span>
                                         <span className="tabular-nums">
                                             {Number(option.amount.amount) === 0
@@ -416,36 +505,73 @@ export default function Checkout({
                                 <legend className="sr-only">
                                     {t('Payment method')}
                                 </legend>
-                                {paymentMethods.map((method) => (
-                                    <label
-                                        key={method.code}
-                                        className="grid gap-1 rounded-lg border p-3 text-sm has-[:checked]:border-primary"
-                                    >
-                                        <span className="flex items-center gap-2">
-                                            <input
-                                                type="radio"
-                                                name="payment_method"
-                                                value={method.code}
-                                                checked={
-                                                    data.payment_method ===
-                                                    method.code
-                                                }
-                                                onChange={() =>
-                                                    setData(
-                                                        'payment_method',
+                                {paymentMethods.map((method) => {
+                                    const selected =
+                                        data.payment_method === method.code;
+                                    const reason = unavailable[method.code];
+
+                                    return (
+                                        <div
+                                            key={method.code}
+                                            className="grid gap-2 rounded-lg border p-3 text-sm has-[:checked]:border-primary"
+                                        >
+                                            <label className="grid gap-1">
+                                                <span className="flex items-center gap-2">
+                                                    <input
+                                                        type="radio"
+                                                        name="payment_method"
+                                                        value={method.code}
+                                                        checked={selected}
+                                                        disabled={
+                                                            reason !== undefined
+                                                        }
+                                                        onChange={() =>
+                                                            setData(
+                                                                'payment_method',
+                                                                method.code,
+                                                            )
+                                                        }
+                                                    />
+                                                    {method.label}
+                                                </span>
+                                                {method.instructions && (
+                                                    <span className="pl-5 text-muted-foreground">
+                                                        {method.instructions}
+                                                    </span>
+                                                )}
+                                            </label>
+                                            {reason !== undefined && (
+                                                <p className="pl-5 text-muted-foreground">
+                                                    {reason}
+                                                </p>
+                                            )}
+                                            <ExtensionSlot
+                                                items={paymentSlots.filter(
+                                                    (item) =>
+                                                        item.props.method ===
                                                         method.code,
-                                                    )
-                                                }
+                                                )}
+                                                className="pl-5"
+                                                extraProps={{
+                                                    checkout: {
+                                                        selected,
+                                                        email: data.email,
+                                                        phone:
+                                                            data.phone ||
+                                                            data.shipping.phone,
+                                                        reportAvailability: (
+                                                            next: string | null,
+                                                        ) =>
+                                                            reportAvailability(
+                                                                method.code,
+                                                                next,
+                                                            ),
+                                                    },
+                                                }}
                                             />
-                                            {method.label}
-                                        </span>
-                                        {method.instructions && (
-                                            <span className="pl-5 text-muted-foreground">
-                                                {method.instructions}
-                                            </span>
-                                        )}
-                                    </label>
-                                ))}
+                                        </div>
+                                    );
+                                })}
                             </fieldset>
                         )}
                         <InputError message={errors.payment_method} />
@@ -472,8 +598,7 @@ export default function Checkout({
                 <aside
                     className={cn(
                         'grid content-start gap-4 self-start rounded-lg border p-5',
-                        pageSettings.summary_side === 'left' &&
-                            'lg:order-first',
+                        pageSettings.summary_side === 'left' && 'lg:order-first',
                         pageSettings.sticky_summary && 'lg:sticky lg:top-24',
                     )}
                     aria-label={t('Order summary')}
@@ -492,20 +617,20 @@ export default function Checkout({
                                         className="size-12 shrink-0 rounded border object-cover"
                                     />
                                 )}
-                                <span className="min-w-0 flex-1">
-                                    {line.product_name}
+                                <div className="min-w-0 flex-1">
+                                    <p className="font-medium">
+                                        {line.product_name}
+                                    </p>
                                     {line.variant_name && (
-                                        <span className="text-muted-foreground">
-                                            {' '}
-                                            · {line.variant_name}
-                                        </span>
+                                        <p className="mt-1 text-muted-foreground">
+                                            {line.variant_name}
+                                        </p>
                                     )}
-                                    <span className="text-muted-foreground">
-                                        {' '}
-                                        × {line.quantity}
-                                    </span>
-                                </span>
-                                <span className="tabular-nums">
+                                    <p className="mt-1 text-xs text-muted-foreground">
+                                        {t('Quantity')}: {line.quantity}
+                                    </p>
+                                </div>
+                                <span className="shrink-0 whitespace-nowrap tabular-nums">
                                     {line.subtotal.formatted}
                                 </span>
                             </li>
@@ -527,6 +652,11 @@ export default function Checkout({
                             {issue}
                         </p>
                     ))}
+                    <ExtensionSlot
+                        items={slots}
+                        className="grid gap-4"
+                        extraProps={{ summary }}
+                    />
                     {pageSettings.terms && (
                         <TermsCheckbox
                             url={termsUrl}
@@ -567,12 +697,14 @@ function AddressInputs({
     values,
     onChange,
     countries,
+    soleCountry,
     errors,
 }: {
     prefix: string;
     values: AddressFields;
     onChange: (field: keyof AddressFields, value: string) => void;
     countries: Country[];
+    soleCountry: string | null;
     errors: Record<string, string | undefined>;
 }) {
     const t = useT();
@@ -614,35 +746,90 @@ function AddressInputs({
                     'address-line2',
                 )}
             {field('city', t('City'), 'address-level2', true)}
-            {field(
-                'region',
-                t('State / province (optional)'),
-                'address-level1',
-            )}
+            {(() => {
+                // The country that applies: a single-country store locks it in,
+                // so the region list still follows the shown country.
+                const effectiveCountry =
+                    values.country_code ||
+                    soleCountry ||
+                    (countries.length === 1 ? countries[0].code : '');
+                const regions = regionsFor(effectiveCountry);
+                const required = regions.length > 0;
+
+                // Typeable picker with autosuggest for countries that have a
+                // region list (US states, CA provinces, AE emirates, ...).
+                // Everywhere else stays free text.
+                if (required) {
+                    return (
+                        <FormField
+                            id={`${prefix}-region`}
+                            label={t('State / province')}
+                            error={errors[`${prefix}.region`]}
+                        >
+                            <RegionCombobox
+                                id={`${prefix}-region`}
+                                name={`${prefix}_region`}
+                                value={values.region}
+                                onChange={(value) => onChange('region', value)}
+                                options={regions}
+                                placeholder={t('Start typing…')}
+                                autoComplete={`${prefix === 'shipping' ? 'shipping' : 'billing'} address-level1`}
+                                required
+                                invalid={Boolean(errors[`${prefix}.region`])}
+                            />
+                        </FormField>
+                    );
+                }
+
+                return field(
+                    'region',
+                    t('State / province (optional)'),
+                    'address-level1',
+                );
+            })()}
             {field('postal_code', t('Postal code'), 'postal-code')}
-            <FormField
-                id={`${prefix}-country_code`}
-                label={t('Country')}
-                error={errors[`${prefix}.country_code`]}
-            >
-                <select
+            {soleCountry ? (
+                <FormField id={`${prefix}-country_code`} label={t('Country')}>
+                    <div
+                        id={`${prefix}-country_code`}
+                        className="flex h-9 items-center rounded-md border border-input bg-muted px-3 text-sm"
+                    >
+                        {countries.find((c) => c.code === soleCountry)?.name ??
+                            soleCountry}
+                    </div>
+                    <input
+                        type="hidden"
+                        name={`${prefix}_country_code`}
+                        value={soleCountry}
+                    />
+                </FormField>
+            ) : (
+                <FormField
                     id={`${prefix}-country_code`}
-                    value={values.country_code}
-                    autoComplete={`${prefix === 'shipping' ? 'shipping' : 'billing'} country`}
-                    onChange={(e) => onChange('country_code', e.target.value)}
-                    required
-                    className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm dark:bg-input/30"
+                    label={t('Country')}
+                    error={errors[`${prefix}.country_code`]}
                 >
-                    <option value="" disabled>
-                        {t('Choose…')}
-                    </option>
-                    {countries.map((c) => (
-                        <option key={c.code} value={c.code}>
-                            {c.name}
+                    <select
+                        id={`${prefix}-country_code`}
+                        value={values.country_code}
+                        autoComplete={`${prefix === 'shipping' ? 'shipping' : 'billing'} country`}
+                        onChange={(e) =>
+                            onChange('country_code', e.target.value)
+                        }
+                        required
+                        className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm dark:bg-input/30"
+                    >
+                        <option value="" disabled>
+                            {t('Choose…')}
                         </option>
-                    ))}
-                </select>
-            </FormField>
+                        {countries.map((c) => (
+                            <option key={c.code} value={c.code}>
+                                {c.name}
+                            </option>
+                        ))}
+                    </select>
+                </FormField>
+            )}
         </div>
     );
 }

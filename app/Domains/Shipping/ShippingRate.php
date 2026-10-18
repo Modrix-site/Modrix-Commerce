@@ -14,10 +14,10 @@ final class ShippingRate
     ) {}
 
     /**
-     * @return array{code: string, label: string, amount: Money}
+     * @return array{code: string, label: string, amount: Money, description: string|null}
      */
     public function toArray(): array
     {
-        return ['code' => $this->code, 'label' => $this->label, 'amount' => $this->amount];
+        return ['code' => $this->code, 'label' => $this->label, 'amount' => $this->amount, 'description' => $this->description];
     }
 }

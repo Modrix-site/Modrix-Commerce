@@ -1,0 +1,80 @@
+{
+    "categories": [
+        {
+            "name": "Women",
+            "slug": "nord-women"
+        },
+        {
+            "name": "Accessories",
+            "slug": "nord-accessories"
+        }
+    ],
+    "products": [
+        {
+            "name": "Luxe Crew Neck Sweater",
+            "slug": "nord-demo-1",
+            "sku": "NORD-DEMO-1",
+            "price": "189",
+            "stock": 10,
+            "short_description": "Cotton On",
+            "description": "Optional theme demonstration product. Replace this description and confirm product, care and delivery information before selling.",
+            "categories": ["nord-women"],
+            "image": "assets/sweater.jpg"
+        },
+        {
+            "name": "Statement Shearling Coat",
+            "slug": "nord-demo-2",
+            "sku": "NORD-DEMO-2",
+            "price": "549",
+            "stock": 10,
+            "short_description": "The Seasonal Edit",
+            "description": "Optional theme demonstration product. Replace this description and confirm product, care and delivery information before selling.",
+            "categories": ["nord-women"],
+            "image": "assets/coat.jpg"
+        },
+        {
+            "name": "Corduroy Wide Leg Pants",
+            "slug": "nord-demo-3",
+            "sku": "NORD-DEMO-3",
+            "price": "229",
+            "stock": 10,
+            "short_description": "The Seasonal Edit",
+            "description": "Optional theme demonstration product. Replace this description and confirm product, care and delivery information before selling.",
+            "categories": ["nord-women"],
+            "image": "assets/corduroy.jpg"
+        },
+        {
+            "name": "The Everyday Tote",
+            "slug": "nord-demo-4",
+            "sku": "NORD-DEMO-4",
+            "price": "329",
+            "stock": 10,
+            "short_description": "Atelier",
+            "description": "Optional theme demonstration product. Replace this description and confirm product, care and delivery information before selling.",
+            "categories": ["nord-accessories"],
+            "image": "assets/tote.jpg"
+        },
+        {
+            "name": "Fall Essentials",
+            "slug": "nord-demo-5",
+            "sku": "NORD-DEMO-5",
+            "price": "399",
+            "stock": 10,
+            "short_description": "The Seasonal Edit",
+            "description": "Optional theme demonstration product. Replace this description and confirm product, care and delivery information before selling.",
+            "categories": ["nord-women"],
+            "image": "assets/fall.jpg"
+        },
+        {
+            "name": "Classic Leather Boots",
+            "slug": "nord-demo-6",
+            "sku": "NORD-DEMO-6",
+            "price": "479",
+            "stock": 10,
+            "short_description": "Atelier",
+            "description": "Optional theme demonstration product. Replace this description and confirm product, care and delivery information before selling.",
+            "categories": ["nord-accessories"],
+            "image": "assets/boots.jpg"
+        }
+    ]
+}

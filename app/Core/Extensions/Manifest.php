@@ -39,7 +39,13 @@ final class Manifest
         'shipping.rates' => 'Adds shipping rates',
         'tax.provider' => 'Replaces tax calculation',
         'search.provider' => 'Replaces storefront search',
+        'sitemap.provider' => 'Contributes the storefront XML sitemap',
+        'product.labels' => 'Badges storefront product cards',
+        'content_security' => 'Loads content from outside the store',
     ];
+
+    /** Content-Security-Policy directives a module may extend (with exact https origins). */
+    public const CONTENT_SECURITY_DIRECTIVES = ['script-src', 'frame-src', 'connect-src', 'img-src', 'form-action'];
 
     public const SETTING_TYPES = ['boolean', 'string', 'text', 'integer', 'select', 'email'];
 
@@ -52,6 +58,7 @@ final class Manifest
      * @param  array{pages?: string, slots?: string}  $assets
      * @param  list<array<string, mixed>>  $settings
      * @param  list<array{key: string, title: string, route: string, icon: string, group: string, permission: string|null, order: int}>  $adminNavigation
+     * @param  array<string, list<string>>  $contentSecurity  directive => https origins
      */
     public function __construct(
         public readonly string $name,
@@ -71,6 +78,12 @@ final class Manifest
         public readonly array $assets,
         public readonly array $settings,
         public readonly array $adminNavigation,
+        public readonly array $contentSecurity = [],
+        /** Lucide icon name shown for the module in the admin (default "puzzle"). */
+        public readonly string $icon = 'puzzle',
+        /** Optional brand colour (6-digit hex) used as the module's accent. */
+        public readonly ?string $accent = null,
+        public readonly ?string $logo = null,
     ) {}
 
     /**
@@ -104,6 +117,10 @@ final class Manifest
                 'permission' => isset($item['permission']) ? (string) $item['permission'] : null,
                 'order' => (int) ($item['order'] ?? 500),
             ], (array) ($data['admin_navigation'] ?? []))),
+            contentSecurity: array_map(fn ($origins) => array_values((array) $origins), (array) ($data['content_security'] ?? [])),
+            icon: isset($data['icon']) ? (string) $data['icon'] : 'puzzle',
+            accent: isset($data['accent']) ? (string) $data['accent'] : null,
+            logo: isset($data['logo']) ? (string) $data['logo'] : null,
         );
     }
 
@@ -200,6 +217,10 @@ final class Manifest
             'assets' => $this->assets,
             'settings' => $this->settings,
             'admin_navigation' => $this->adminNavigation,
+            'content_security' => $this->contentSecurity === [] ? null : $this->contentSecurity,
+            'icon' => $this->icon,
+            'accent' => $this->accent,
+            ...($this->logo !== null ? ['logo' => $this->logo] : []),
         ], fn ($value) => $value !== null);
     }
 }

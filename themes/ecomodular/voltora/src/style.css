@@ -1,0 +1,918 @@
+/* Voltora: MagicPath merrily-hour-1817, published revision 456415732427804672. */
+.storefront[data-theme="ecomodular/voltora"] {
+    font: 14px var(--font-sans);
+    color: var(--foreground);
+    background: var(--background);
+    --voltora-width: 1140px;
+    --voltora-gap: 28px;
+}
+.storefront[data-theme="ecomodular/voltora"] :is(h1, h2, h3) {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    line-height: 1.25;
+}
+.storefront[data-theme="ecomodular/voltora"] h1 {
+    font-size: 28px;
+}
+.storefront[data-theme="ecomodular/voltora"] h2 {
+    font-size: 23px;
+}
+.storefront[data-theme="ecomodular/voltora"] h3 {
+    font-size: 16px;
+}
+.storefront[data-theme="ecomodular/voltora"] button {
+    cursor: pointer;
+    font-family: inherit;
+}
+.storefront[data-theme="ecomodular/voltora"] button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.storefront[data-theme="ecomodular/voltora"]
+    :is(a, button, input, select):focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+}
+.voltora-wrap {
+    width: 100%;
+    max-width: var(--voltora-width);
+    margin-inline: auto;
+    padding-block: 20px 50px;
+}
+.voltora-header {
+    background: var(--accent);
+    z-index: 30;
+}
+.voltora-header[data-sticky="true"] {
+    position: sticky;
+    top: 0;
+}
+.voltora-header-top {
+    max-width: var(--voltora-width);
+    margin: auto;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    min-height: 65px;
+}
+.voltora-logo {
+    font-size: 29px;
+    font-weight: 800;
+    color: var(--accent-foreground);
+    white-space: nowrap;
+    display: flex;
+    align-items: baseline;
+}
+.voltora-logo small {
+    font-size: 12px;
+}
+.voltora-logo img {
+    height: 42px;
+    max-width: 180px;
+    object-fit: contain;
+}
+.voltora-search {
+    flex: 1;
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--background);
+    min-width: 100px;
+}
+.voltora-search input {
+    min-width: 0;
+    width: 100%;
+    padding: 12px 16px;
+    background: transparent;
+    border: 0;
+    font-size: 14px;
+    outline: none;
+}
+.voltora-search button {
+    padding-inline: 12px;
+    color: var(--primary);
+}
+.voltora-preferences {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    font-size: 12px;
+    white-space: nowrap;
+}
+.voltora-preferences select {
+    background: transparent;
+    max-width: 96px;
+    font-size: 12px;
+    border: 0;
+}
+.voltora-preferences a {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.voltora-nav {
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 25px;
+    align-items: center;
+    justify-content: center;
+    min-height: 43px;
+    font-size: 12px;
+    background: var(--background);
+    padding: 10px 15px;
+}
+.voltora-nav a:hover {
+    color: var(--primary);
+}
+.voltora-location {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    white-space: nowrap;
+}
+.voltora-primary {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    padding: 12px 24px;
+    border-radius: var(--radius);
+    font-size: 14px;
+}
+.voltora-primary:hover {
+    filter: brightness(1.08);
+}
+.voltora-hero {
+    position: relative;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    border-radius: 3px;
+    display: flex;
+    align-items: flex-start;
+    color: white;
+}
+.voltora-hero > div {
+    padding: 48px 40px;
+    max-width: 560px;
+}
+.voltora-hero small {
+    font-size: 12px;
+}
+.storefront[data-theme="ecomodular/voltora"] .voltora-hero h1 {
+    font-size: 38px;
+    line-height: 1.15;
+    margin: 10px 0;
+    max-width: 480px;
+}
+.voltora-hero p {
+    margin: 12px 0 3px;
+}
+.voltora-next {
+    position: absolute;
+    inset-inline-end: 15px;
+    top: 45%;
+    background: white;
+    color: #333;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+}
+.voltora-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px;
+    color: var(--accent);
+}
+.voltora-dots button {
+    min-width: 24px;
+    min-height: 24px;
+}
+.voltora-benefits {
+    display: flex;
+    justify-content: center;
+    gap: 35px;
+    font-size: 12px;
+    margin: 12px 0 25px;
+    flex-wrap: wrap;
+}
+.voltora-benefits span {
+    background: #fff9eb;
+    padding: 8px 13px;
+    border-radius: 30px;
+}
+.voltora-tiles {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+.voltora-tile {
+    background: #f2f4f6;
+    overflow: hidden;
+    border-radius: 5px;
+    display: block;
+}
+.voltora-tile img {
+    width: 100%;
+    height: 155px;
+    object-fit: cover;
+}
+.voltora-tile > div {
+    padding: 14px;
+}
+.storefront[data-theme="ecomodular/voltora"] .voltora-tile h2 {
+    font-size: 16px;
+    margin-bottom: 7px;
+}
+.voltora-tile small {
+    font-size: 12px;
+}
+.voltora-spotlight {
+    background: var(--muted);
+    padding: 22px;
+    border-radius: 6px;
+    margin: var(--voltora-gap) 0;
+}
+.voltora-spotlight > h2 {
+    margin-bottom: 16px;
+}
+.voltora-tabs {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+}
+.voltora-tabs button {
+    padding: 10px 20px;
+    border-radius: 5px;
+    background: #e6e6e6;
+}
+.voltora-tabs button[aria-selected="true"] {
+    background: var(--primary);
+    color: var(--primary-foreground);
+}
+.voltora-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    align-items: center;
+}
+.voltora-split > img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+.storefront[data-theme="ecomodular/voltora"] .voltora-split h2 {
+    font-size: 30px;
+    margin: 14px 0;
+}
+.voltora-split p {
+    line-height: 1.7;
+    margin-bottom: 14px;
+}
+.voltora-finance {
+    display: block;
+    background: #68f596;
+    padding: 18px;
+    text-align: center;
+    border-radius: 5px;
+    margin: 25px 0;
+    font-size: 18px;
+}
+.voltora-section-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: center;
+    margin: var(--voltora-gap) 0 16px;
+}
+.voltora-section-heading > a {
+    font-size: 12px;
+    color: var(--primary);
+}
+.voltora-home > .voltora-wrap {
+    padding: 0;
+}
+.voltora-rail {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 15px;
+}
+.voltora-card {
+    position: relative;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    font-size: 12px;
+}
+.voltora-card-photo {
+    height: 180px;
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.voltora-card-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.voltora-card-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    align-items: baseline;
+    width: 100%;
+    padding: 12px 0 8px;
+}
+.voltora-card-info > span {
+    width: 100%;
+    order: -1;
+    font-weight: 600;
+    line-height: 1.5;
+    min-height: 36px;
+}
+.voltora-card-info strong {
+    font-weight: 800;
+}
+.voltora-card-info s {
+    color: var(--muted-foreground);
+    font-size: 10px;
+}
+.voltora-card-info small {
+    display: none;
+}
+.voltora-discount {
+    position: absolute;
+    bottom: 0;
+    inset-inline-start: 0;
+    color: var(--primary);
+    font-size: 10px;
+    z-index: 1;
+    background: #ffffffd9;
+    padding: 2px 5px;
+}
+.voltora-badge {
+    position: absolute;
+    top: 8px;
+    inset-inline-start: 8px;
+    background: var(--muted);
+    padding: 3px 7px;
+    font-size: 9px;
+    z-index: 12;
+}
+.voltora-save {
+    position: absolute;
+    top: 6px;
+    inset-inline-end: 4px;
+    z-index: 15;
+    padding: 5px;
+    background: #ffffffcc;
+    border-radius: 50%;
+}
+.voltora-card-buy {
+    width: 100%;
+    font-size: 11px;
+    padding: 8px 12px;
+    margin-top: auto;
+    border-radius: 3px;
+    background: var(--primary);
+    color: var(--primary-foreground);
+}
+.voltora-home > section > h2 {
+    margin: var(--voltora-gap) 0 16px;
+}
+.voltora-lifestyle {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.voltora-lifestyle .voltora-tile {
+    position: relative;
+    height: 210px;
+    background: #333;
+}
+.voltora-lifestyle img {
+    height: 100%;
+    opacity: 0.8;
+}
+.voltora-lifestyle .voltora-tile > div {
+    position: absolute;
+    bottom: 10px;
+    inset-inline-start: 8px;
+    color: white;
+    text-shadow: 0 1px 5px #333;
+}
+.voltora-brands {
+    display: flex;
+    justify-content: space-around;
+    font-size: 25px;
+    font-weight: 800;
+    margin: 45px 0;
+    color: #223342;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.voltora-home-extensions {
+    margin-top: var(--voltora-gap);
+}
+.voltora-breadcrumb {
+    font-size: 12px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    color: var(--muted-foreground);
+    margin-bottom: 20px;
+}
+.voltora-catalog-title {
+    margin: 8px 0 20px;
+}
+.voltora-catalog-description {
+    color: var(--muted-foreground);
+    line-height: 1.7;
+    margin: 12px 0;
+}
+.voltora-catalog-banner {
+    width: 100%;
+    max-height: 310px;
+    object-fit: cover;
+    margin-block: 20px;
+}
+.voltora-subcategories {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    margin-bottom: 24px;
+}
+.voltora-subcategories a {
+    padding: 8px 12px;
+    background: var(--muted);
+    border-radius: 4px;
+}
+.voltora-catalog-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 12px;
+    margin: 20px 0;
+}
+.voltora-catalog-toolbar label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.voltora-catalog-toolbar select {
+    margin-inline-start: auto;
+    background: transparent;
+    max-width: 180px;
+}
+.voltora-catalog-toolbar .voltora-primary {
+    font-size: 12px;
+    padding: 8px 12px;
+}
+.voltora-catalog-body[data-filters="true"] {
+    display: grid;
+    grid-template-columns: 210px minmax(0, 1fr);
+    gap: 25px;
+    align-items: start;
+}
+.voltora-filter-panel {
+    display: grid;
+    gap: 20px;
+    background: #fafafa;
+    padding: 15px;
+    font-size: 12px;
+}
+.voltora-filter-panel fieldset,
+.voltora-filter-panel form {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 15px;
+    display: grid;
+    gap: 10px;
+}
+.voltora-filter-panel label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.voltora-filter-panel legend,
+.voltora-filter-panel h3 {
+    font-size: 13px !important;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+.voltora-filter-panel input[type="number"],
+.voltora-filter-panel select {
+    width: 100%;
+    max-width: 100%;
+    border: 1px solid var(--border);
+    padding: 8px;
+    background: var(--background);
+}
+.voltora-catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--voltora-columns, 4), minmax(0, 1fr));
+    gap: 28px 15px;
+}
+.voltora-catalog-grid .voltora-card-photo {
+    height: var(--voltora-image-height, 220px);
+}
+.voltora-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-top: 35px;
+    font-size: 13px;
+}
+.voltora-pagination a {
+    color: var(--primary);
+}
+.voltora-product {
+    display: grid;
+    grid-template-columns: 42% 30% 24%;
+    gap: 2%;
+    align-items: start;
+}
+.voltora-main-photo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+.voltora-main-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.voltora-thumbnails {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    overflow: auto;
+}
+.voltora-thumbnails button {
+    width: 65px;
+    height: 65px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    padding: 4px;
+}
+.voltora-thumbnails button[aria-pressed="true"] {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 1px var(--primary);
+}
+.voltora-thumbnails img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.voltora-product-info {
+    display: grid;
+    gap: 18px;
+}
+.voltora-product-brand {
+    font-size: 12px;
+    color: var(--muted-foreground);
+}
+.storefront[data-theme="ecomodular/voltora"] .voltora-product-info h1 {
+    font-size: 23px;
+}
+.voltora-purchase {
+    border: 1px solid var(--border);
+    padding: 20px;
+    border-radius: 4px;
+    display: grid;
+    gap: 15px;
+}
+.voltora-product-price {
+    font-size: 23px;
+    font-weight: 800;
+}
+.voltora-product-price s {
+    font-size: 12px;
+    color: var(--muted-foreground);
+    font-weight: 400;
+    display: block;
+}
+.voltora-availability {
+    font-size: 13px;
+}
+.voltora-quantity {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-size: 12px;
+}
+.voltora-quantity input {
+    border: 1px solid var(--border);
+    width: 70px;
+    padding: 8px;
+}
+.voltora-add {
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px 8px;
+}
+.voltora-sku {
+    font-size: 10px;
+    color: var(--muted-foreground);
+    overflow-wrap: anywhere;
+}
+.voltora-product-service {
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+}
+.voltora-product-service p {
+    margin-top: 10px;
+    line-height: 1.7;
+}
+.voltora-purchase-trust {
+    font-size: 12px;
+    color: var(--muted-foreground);
+}
+.voltora-product-details {
+    padding: var(--voltora-gap) 0;
+}
+.voltora-product-details > h2 {
+    display: none;
+}
+.voltora-product-details p {
+    line-height: 1.8;
+    margin-top: 14px;
+}
+.voltora-product-extensions {
+    display: grid;
+    gap: var(--voltora-gap);
+    margin-top: var(--voltora-gap);
+}
+.voltora-cart aside {
+    align-self: start;
+}
+.voltora-cart > h1 {
+    margin: 5px 0 25px;
+}
+.voltora-cart ul > li {
+    border-radius: 5px;
+    background: var(--background);
+}
+.voltora-cart-promo {
+    position: relative;
+    text-align: center;
+    background: #eefcff;
+    border-radius: 5px;
+    margin-top: var(--voltora-gap);
+    overflow: hidden;
+}
+.voltora-cart-promo > img {
+    width: 100%;
+    max-height: 260px;
+    object-fit: cover;
+}
+.voltora-cart-promo > div {
+    padding: 22px;
+}
+.voltora-cart-promo h2 {
+    margin: 10px 0;
+}
+.voltora-cart-promo p {
+    margin-bottom: 15px;
+}
+.voltora-cart-promo a {
+    color: var(--primary);
+}
+.voltora-empty {
+    padding: 60px 15px;
+    text-align: center;
+    line-height: 1.8;
+}
+.voltora-empty h1,
+.voltora-empty h2 {
+    margin-bottom: 20px;
+}
+.voltora-footer {
+    background: var(--background);
+}
+.voltora-newsletter {
+    border-top: 1px solid var(--border);
+    padding: 25px;
+    text-align: center;
+}
+.voltora-newsletter:empty {
+    display: none;
+}
+.voltora-newsletter section {
+    max-width: 720px;
+    margin: auto;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+}
+.voltora-newsletter h2 {
+    font-size: 16px !important;
+    margin-bottom: 15px;
+}
+.voltora-newsletter input[type="email"] {
+    background: white;
+    border-radius: 4px;
+}
+.voltora-newsletter button {
+    background: var(--primary);
+    color: var(--primary-foreground);
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+.voltora-newsletter label {
+    font-size: 11px;
+}
+.voltora-help {
+    border-block: 1px solid var(--border);
+    display: flex;
+    gap: 60px;
+    justify-content: center;
+    padding: 18px;
+    font-size: 12px;
+    flex-wrap: wrap;
+}
+.voltora-footer-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 30px;
+    padding-block: 30px;
+    font-size: 11px;
+}
+.voltora-footer-grid nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.voltora-footer-grid h3 {
+    font-size: 12px !important;
+    margin-bottom: 5px;
+}
+.voltora-footer-grid a:hover {
+    text-decoration: underline;
+}
+.voltora-bottom {
+    text-align: center;
+    background: var(--muted);
+    padding: 20px;
+    font-size: 10px;
+}
+@media (max-width: 1200px) {
+    .voltora-wrap {
+        padding-inline: 20px;
+    }
+    .voltora-header-top {
+        padding-inline: 20px;
+        gap: 20px;
+    }
+    .voltora-preferences {
+        gap: 12px;
+    }
+    .voltora-nav {
+        gap: 20px;
+        overflow: auto;
+        justify-content: flex-start;
+        white-space: nowrap;
+    }
+    .voltora-nav > a {
+        flex-shrink: 0;
+    }
+    .voltora-product {
+        grid-template-columns: 40% 32% 24%;
+    }
+}
+@media (max-width: 700px) {
+    .voltora-header-top {
+        padding: 15px;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    .voltora-search {
+        order: 2;
+        flex-basis: 100%;
+    }
+    .voltora-logo {
+        font-size: 26px;
+    }
+    .voltora-preferences {
+        margin-inline-start: auto;
+        gap: 10px;
+        font-size: 11px;
+    }
+    .voltora-preferences select {
+        max-width: 80px;
+    }
+    .voltora-preferences a > span {
+        display: none;
+    }
+    .voltora-nav {
+        padding: 10px 14px;
+        gap: 20px;
+    }
+    .voltora-wrap {
+        padding: 15px;
+    }
+    .voltora-hero {
+        height: 260px !important;
+    }
+    .voltora-hero > div {
+        padding: 40px 25px;
+        max-width: 95%;
+    }
+    .storefront[data-theme="ecomodular/voltora"] .voltora-hero h1 {
+        font-size: 30px;
+        max-width: 400px;
+    }
+    .voltora-benefits {
+        gap: 5px;
+        flex-wrap: wrap;
+    }
+    .voltora-tiles {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .voltora-tile img {
+        height: 130px;
+    }
+    .voltora-spotlight {
+        padding: 18px;
+    }
+    .voltora-tabs {
+        gap: 8px;
+        overflow: auto;
+    }
+    .voltora-tabs button {
+        padding: 9px 14px;
+        white-space: nowrap;
+    }
+    .voltora-split,
+    .voltora-product {
+        grid-template-columns: 1fr;
+        gap: 22px;
+    }
+    .voltora-split > img {
+        height: 240px;
+    }
+    .voltora-finance {
+        font-size: 16px;
+    }
+    .voltora-rail,
+    .voltora-catalog-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px 15px;
+    }
+    .voltora-lifestyle .voltora-tile {
+        height: 160px;
+    }
+    .voltora-lifestyle h3 {
+        font-size: 14px !important;
+    }
+    .voltora-brands {
+        font-size: 15px;
+        gap: 20px;
+    }
+    .voltora-catalog-body[data-filters="true"] {
+        grid-template-columns: 1fr;
+    }
+    .voltora-filter-panel {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 15px;
+    }
+    .voltora-catalog-toolbar {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .voltora-catalog-toolbar select {
+        max-width: 150px;
+    }
+    .voltora-subcategories {
+        flex-wrap: nowrap;
+        overflow: auto;
+    }
+    .voltora-subcategories a {
+        white-space: nowrap;
+    }
+    .voltora-main-photo {
+        max-height: 360px;
+    }
+    .voltora-footer-grid {
+        padding: 25px 15px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 25px;
+    }
+    .voltora-help {
+        gap: 20px;
+    }
+    .voltora-newsletter {
+        padding: 25px 15px;
+    }
+}

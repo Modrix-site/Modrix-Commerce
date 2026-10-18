@@ -20,7 +20,7 @@ class LanguageSettingsController extends Controller
     public function edit(Locales $locales): Response
     {
         return Inertia::render('admin/settings/languages', [
-            'available' => Locales::options(array_keys(Locales::AVAILABLE)),
+            'available' => Locales::adminOptions(array_keys(Locales::AVAILABLE)),
             'default' => $locales->default(),
             'additional' => $locales->additional(),
         ]);

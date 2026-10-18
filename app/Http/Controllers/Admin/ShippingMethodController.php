@@ -6,11 +6,13 @@ use App\Core\Audit\AuditLogger;
 use App\Core\Settings\Countries;
 use App\Core\Settings\StoreSettings;
 use App\Domains\Shipping\Models\ShippingMethod;
+use App\Domains\Shipping\ShippingRegions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -20,8 +22,9 @@ class ShippingMethodController extends Controller
     {
         return Inertia::render('admin/shipping/index', [
             'methods' => ShippingMethod::query()->orderBy('position')->orderBy('id')->get()->map(fn (ShippingMethod $m) => [
-                ...$m->only(['id', 'code', 'name', 'description', 'rate', 'currency', 'free_over', 'is_active', 'position']),
+                ...$m->only(['id', 'code', 'name', 'description', 'rate', 'currency', 'free_over', 'is_active', 'position', 'regions_only', 'delivery_estimate']),
                 'countries' => $m->countries ?? [],
+                'regional_rates' => $m->regional_rates ?? [],
             ]),
             'countries' => Countries::options(),
             'currency' => $store->currency(),
@@ -68,6 +71,7 @@ class ShippingMethodController extends Controller
         $request->merge([
             'code' => Str::slug((string) ($request->input('code') ?: $request->input('name')), '_'),
             'is_active' => $request->boolean('is_active'),
+            'regions_only' => $request->boolean('regions_only'),
         ]);
 
         $data = $request->validate([
@@ -79,9 +83,35 @@ class ShippingMethodController extends Controller
             'countries' => ['nullable', 'array'],
             'countries.*' => ['string', 'size:2', Rule::in(Countries::codes())],
             'is_active' => ['boolean'],
+            'delivery_estimate' => ['nullable', 'string', 'max:255'],
+            'regions_only' => ['boolean'],
+            'regional_rates' => ['sometimes', 'array', 'list', 'max:100'],
+            'regional_rates.*' => ['array:country_code,region,rate,free_over'],
+            'regional_rates.*.country_code' => ['required', Rule::in(Countries::codes())],
+            'regional_rates.*.region' => ['required', 'string', 'max:120'],
+            'regional_rates.*.rate' => ['required', 'string', 'regex:/^\d{1,13}(\.\d{1,4})?$/'],
+            'regional_rates.*.free_over' => ['nullable', 'string', 'regex:/^\d{1,13}(\.\d{1,4})?$/'],
             'position' => ['nullable', 'integer', 'min:0', 'max:10000'],
         ]);
 
+        $data['regional_rates'] ??= $method->regional_rates ?? [];
+        $seen = [];
+        foreach ($data['regional_rates'] as $index => &$rule) {
+            $rule['region'] = trim($rule['region']);
+            $rule['free_over'] ??= null;
+            $key = $rule['country_code'].':'.ShippingRegions::normalize($rule['region'], $rule['country_code']);
+            if (isset($seen[$key])) {
+                throw ValidationException::withMessages(["regional_rates.$index.region" => 'This state already has a rate.']);
+            }
+            if (! empty($data['countries']) && ! in_array($rule['country_code'], $data['countries'], true)) {
+                throw ValidationException::withMessages(["regional_rates.$index.country_code" => 'Select this country in the delivery coverage first.']);
+            }
+            $seen[$key] = true;
+        }
+        unset($rule);
+        if ($data['regions_only'] && empty($data['regional_rates'])) {
+            throw ValidationException::withMessages(['regional_rates' => 'Add at least one state rate for restricted delivery.']);
+        }
         $data['countries'] = empty($data['countries']) ? null : array_values(array_unique($data['countries']));
         $data['position'] ??= 0;
 

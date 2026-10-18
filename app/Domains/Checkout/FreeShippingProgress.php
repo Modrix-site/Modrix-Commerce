@@ -6,20 +6,22 @@ use App\Domains\Checkout\Pricing\PricedCart;
 use App\Domains\Customers\Models\Customer;
 use App\Domains\Pricing\Money;
 use App\Domains\Shipping\Models\ShippingMethod;
+use App\Domains\Shipping\ShippingRegions;
 use App\Models\User;
 
 /**
  * How far a cart is from free shipping: the lowest "free over" amount of
  * the active shipping methods (in the cart's currency) that ship to the
- * customer's country, or any country when it is not known yet. Carts with
- * nothing to ship get none.
+ * customer's country, or any country when it is not known yet. A method's
+ * regional rule replaces its amount exactly as in TableShippingRateProvider.
+ * Carts with nothing to ship get none.
  */
 final class FreeShippingProgress
 {
     /**
      * @return array{threshold: Money, remaining: Money}|null null when no method offers free shipping
      */
-    public static function for(PricedCart $cart, ?string $country = null): ?array
+    public static function for(PricedCart $cart, ?string $country = null, ?string $region = null): ?array
     {
         if (! $cart->requiresShipping()) {
             return null;
@@ -34,8 +36,17 @@ final class FreeShippingProgress
             ->filter(fn (ShippingMethod $method) => $country === null || $method->shipsTo($country));
 
         foreach ($methods as $method) {
-            if ($method->free_over !== null) {
-                $thresholds[] = (string) $method->free_over;
+            $regional = $country === null ? null : self::regionalRule($method, $country, $region);
+
+            // Regions-only methods are offered only where a rule matches.
+            if ($method->regions_only && $regional === null) {
+                continue;
+            }
+
+            $threshold = $regional['free_over'] ?? $method->free_over;
+
+            if ($threshold !== null) {
+                $thresholds[] = (string) $threshold;
             }
         }
 
@@ -54,16 +65,39 @@ final class FreeShippingProgress
         ];
     }
 
+    /**
+     * The rule the rate provider would use for this destination.
+     *
+     * @return array{country_code: string, region: string, rate: string, free_over: string|null}|null
+     */
+    private static function regionalRule(ShippingMethod $method, string $country, ?string $region): ?array
+    {
+        foreach ($method->regional_rates ?? [] as $rule) {
+            if ($rule['country_code'] === strtoupper($country)
+                && ShippingRegions::normalize($rule['region'], $country) === ShippingRegions::normalize($region, $country)) {
+                return $rule;
+            }
+        }
+
+        return null;
+    }
+
     /** The signed-in customer's default shipping country, when there is one. */
     public static function countryFor(?User $user): ?string
     {
-        if ($user === null) {
-            return null;
-        }
+        return self::destinationFor($user)['country'];
+    }
 
-        $customer = Customer::query()->where('user_id', $user->getKey())->first();
-        $address = $customer?->addresses()->where('is_default_shipping', true)->first();
+    /**
+     * The signed-in customer's default shipping country and region.
+     *
+     * @return array{country: string|null, region: string|null}
+     */
+    public static function destinationFor(?User $user): array
+    {
+        $address = $user === null ? null : Customer::query()->where('user_id', $user->getKey())->first()
+            ?->addresses()->where('is_default_shipping', true)->first();
 
-        return $address?->country_code;
+        return ['country' => $address?->country_code, 'region' => $address?->region];
     }
 }

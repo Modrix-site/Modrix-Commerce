@@ -2,6 +2,7 @@
 
 namespace App\Core\Marketplace;
 
+use App\Core\Authorization\PermissionRegistry;
 use App\Core\Extensions\Manifest;
 use App\Core\Extensions\ManifestValidator;
 use App\Core\Extensions\ValidationContext;
@@ -159,7 +160,7 @@ final class PackageArchive
         $data = json_decode((string) file_get_contents($file), true, 32);
 
         if ($type === 'module') {
-            $result = app(ManifestValidator::class)->validate($dir, $expectedName, $data, new ValidationContext);
+            $result = app(ManifestValidator::class)->validate($dir, $expectedName, $data, self::moduleContext());
 
             if ($result->manifest === null) {
                 throw new PackageException('The module is invalid: '.implode(' ', $result->errors));
@@ -175,5 +176,28 @@ final class PackageArchive
         }
 
         return $manifest;
+    }
+
+    /**
+     * Core permissions and migration names, so a package may use them the
+     * same way a module discovered on disk can.
+     */
+    private static function moduleContext(): ValidationContext
+    {
+        $permissions = [];
+
+        foreach (app(PermissionRegistry::class)->all() as $definition) {
+            if ($definition['source'] === 'core') {
+                $permissions[$definition['name']] = 'core';
+            }
+        }
+
+        $migrations = [];
+
+        foreach (glob(database_path('migrations/*.php')) ?: [] as $file) {
+            $migrations[basename($file)] = 'core';
+        }
+
+        return new ValidationContext(permissionOwners: $permissions, migrationOwners: $migrations);
     }
 }

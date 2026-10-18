@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Core\Admin\AdminNavigation;
 use App\Core\Audit\AuditLogger;
 use App\Core\Settings\SettingsRepository;
 use App\Domains\Payments\Gateways\Stripe\StripeSettings;
@@ -18,7 +19,7 @@ use Inertia\Response;
  */
 class PaymentSettingsController extends Controller
 {
-    public function edit(PaymentMethods $methods, SettingsRepository $settings, StripeSettings $stripe): Response
+    public function edit(Request $request, AdminNavigation $navigation, PaymentMethods $methods, SettingsRepository $settings, StripeSettings $stripe): Response
     {
         $manual = [];
 
@@ -28,6 +29,7 @@ class PaymentSettingsController extends Controller
 
         return Inertia::render('admin/payments/settings', [
             'methods' => $manual,
+            'gatewayExtensions' => $navigation->paymentGatewaysForUser($request->user()),
             'guestCheckout' => (bool) $settings->get('checkout.guest_enabled', true),
             'stripe' => [
                 'enabled' => $stripe->enabled(),

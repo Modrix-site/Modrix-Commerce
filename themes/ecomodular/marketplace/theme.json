@@ -1,0 +1,483 @@
+{
+    "$schema": "../../../docs/extensions/theme.schema.json",
+    "name": "ecomodular/marketplace",
+    "display_name": "Marketplace Electronics",
+    "description": "An unbranded electronics storefront inspired by the supplied reference: Manrope typography, navy and teal navigation, campaign banners, offer tiles, sidebar filtering and a three-column product page.",
+    "version": "1.2.0",
+    "type": "theme",
+    "theme_type": "storefront",
+    "platform_version": "^0.4 || ^1.0",
+    "author": "Eleydo",
+    "license": "MIT",
+    "capabilities": ["home.sections", "custom_fonts", "demo_content"],
+    "assets": "assets",
+    "design": {
+        "color.background": "#ffffff",
+        "color.foreground": "#222222",
+        "color.primary": "#073b7a",
+        "color.primary_foreground": "#ffffff",
+        "color.muted": "#f5f5f5",
+        "color.muted_foreground": "#757575",
+        "color.accent": "#eaf8f8",
+        "color.accent_foreground": "#073b7a",
+        "color.border": "#e7e7e7",
+        "color.search": "#12b8b4",
+        "color.sale": "#cd2454",
+        "font_body": "custom:Manrope",
+        "font_heading": "custom:Manrope",
+        "radius": "0.375rem",
+        "density": "compact",
+        "container": "reference",
+        "layout.header": "electronics",
+        "layout.footer": "electronics",
+        "layout.product_card": "electronics",
+        "layout.grid_columns": "4",
+        "layout.product_page": "electronics",
+        "footer_text": "© 2026. All rights reserved.",
+        "contact_email": "",
+        "contact_phone": "",
+        "help_link": "/account",
+        "menu_1_label": "New arrivals",
+        "menu_1_link": "/search",
+        "menu_2_label": "Brands",
+        "menu_2_link": "/search",
+        "menu_3_label": "Laptops",
+        "menu_3_link": "/search?q=laptop",
+        "menu_4_label": "Televisions",
+        "menu_4_link": "/search?q=television",
+        "menu_5_label": "Audio",
+        "menu_5_link": "/search?q=audio",
+        "menu_6_label": "Best sellers",
+        "menu_6_link": "/search",
+        "menu_7_label": "Services",
+        "menu_7_link": "/account",
+        "footer_1_title": "Customer service",
+        "footer_1_1_label": "Your account",
+        "footer_1_1_link": "/account",
+        "footer_1_2_label": "Track your order",
+        "footer_1_2_link": "/account/orders",
+        "footer_1_3_label": "Delivery information",
+        "footer_1_3_link": "/search",
+        "footer_1_4_label": "Returns and exchanges",
+        "footer_1_4_link": "/search",
+        "footer_1_5_label": "Contact support",
+        "footer_1_5_link": "/search",
+        "footer_1_6_label": "FAQs",
+        "footer_1_6_link": "/search",
+        "footer_2_title": "Online advantage",
+        "footer_2_1_label": "Secure checkout",
+        "footer_2_1_link": "/account",
+        "footer_2_2_label": "Payment options",
+        "footer_2_2_link": "/account/orders",
+        "footer_2_3_label": "Browse all products",
+        "footer_2_3_link": "/search",
+        "footer_2_4_label": "Latest arrivals",
+        "footer_2_4_link": "/search",
+        "footer_2_5_label": "Customer support",
+        "footer_2_5_link": "/search",
+        "footer_2_6_label": "Your orders",
+        "footer_2_6_link": "/search",
+        "footer_3_title": "About our store",
+        "footer_3_1_label": "Our story",
+        "footer_3_1_link": "/account",
+        "footer_3_2_label": "Store information",
+        "footer_3_2_link": "/account/orders",
+        "footer_3_3_label": "Terms and conditions",
+        "footer_3_3_link": "/search",
+        "footer_3_4_label": "Privacy and cookies",
+        "footer_3_4_link": "/search",
+        "footer_3_5_label": "Discover our products",
+        "footer_3_5_link": "/search",
+        "footer_3_6_label": "Help and support",
+        "footer_3_6_link": "/search"
+    },
+    "fonts": [
+        {
+            "family": "Manrope",
+            "file": "assets/fonts/manrope-latin.woff2",
+            "weight": "400 800",
+            "style": "normal"
+        }
+    ],
+    "sections": {
+        "home": [
+            {
+                "type": "promo_banner",
+                "settings": {
+                    "text": "Great technology. More choice. Discover something new every day.",
+                    "button_label": "EXPLORE",
+                    "button_link": "/search",
+                    "tone": "primary"
+                }
+            },
+            {
+                "type": "campaign",
+                "settings": {
+                    "heading": "Your next upgrade starts here.",
+                    "image": "asset:assets/images/laptop-blue.jpg",
+                    "background": "#dce5f3",
+                    "foreground": "#073b7a",
+                    "eyebrow": "THE NEW TECHNOLOGY EDIT",
+                    "body": "Laptops, phones and everyday essentials. Find what works for you.",
+                    "button_label": "SHOP NOW",
+                    "button_link": "/search",
+                    "height": "medium"
+                }
+            },
+            {
+                "type": "promotion_grid",
+                "settings": {
+                    "title": "Shop by category",
+                    "style": "circle",
+                    "columns": "8",
+                    "tile_1_title": "Smartphones",
+                    "tile_1_image": "asset:assets/images/cat-phones.png",
+                    "tile_1_text": "",
+                    "tile_1_link": "/search?q=phone",
+                    "tile_2_title": "Televisions & audio",
+                    "tile_2_image": "asset:assets/images/cat-televisions.jpg",
+                    "tile_2_text": "",
+                    "tile_2_link": "/search?q=television",
+                    "tile_3_title": "Home & kitchen",
+                    "tile_3_image": "asset:assets/images/cat-appliances.jpg",
+                    "tile_3_text": "",
+                    "tile_3_link": "/search?q=washer",
+                    "tile_4_title": "Laptops & tablets",
+                    "tile_4_image": "asset:assets/images/cat-laptops.jpg",
+                    "tile_4_text": "",
+                    "tile_4_link": "/search?q=laptop",
+                    "tile_5_title": "Cameras",
+                    "tile_5_image": "asset:assets/images/cat-cameras.jpg",
+                    "tile_5_text": "",
+                    "tile_5_link": "/search",
+                    "tile_6_title": "Gaming",
+                    "tile_6_image": "asset:assets/images/cat-gaming.jpg",
+                    "tile_6_text": "",
+                    "tile_6_link": "/search?q=gaming",
+                    "tile_7_title": "Headphones & speakers",
+                    "tile_7_image": "asset:assets/images/cat-audio.jpg",
+                    "tile_7_text": "",
+                    "tile_7_link": "/search",
+                    "tile_8_title": "Watches & more",
+                    "tile_8_image": "asset:assets/images/cat-watches.png",
+                    "tile_8_text": "",
+                    "tile_8_link": "/search?q=watch"
+                }
+            },
+            {
+                "type": "promo_banner",
+                "settings": {
+                    "text": "Discover the latest arrivals for work, home and everything in between.",
+                    "button_label": "EXPLORE",
+                    "button_link": "/search",
+                    "tone": "primary"
+                }
+            },
+            {
+                "type": "promotion_grid",
+                "settings": {
+                    "title": "New launches",
+                    "style": "offer",
+                    "columns": "4",
+                    "tile_1_title": "A new way to work.",
+                    "tile_1_image": "asset:assets/images/laptop-blush.jpg",
+                    "tile_1_text": "Slim, capable and ready to go.",
+                    "tile_1_link": "/search",
+                    "tile_2_title": "Your everyday essential.",
+                    "tile_2_image": "asset:assets/images/phone-blue.jpg",
+                    "tile_2_text": "Discover the latest smartphones.",
+                    "tile_2_link": "/search",
+                    "tile_3_title": "Ready for every moment.",
+                    "tile_3_image": "asset:assets/images/watch.jpg",
+                    "tile_3_text": "Explore smart watches.",
+                    "tile_3_link": "/search",
+                    "tile_4_title": "Work. Create. Play.",
+                    "tile_4_image": "asset:assets/images/tablet.jpg",
+                    "tile_4_text": "Discover portable possibilities.",
+                    "tile_4_link": "/search"
+                }
+            },
+            {
+                "type": "promotion_grid",
+                "settings": {
+                    "title": "Offers of the week",
+                    "style": "offer",
+                    "columns": "4",
+                    "tile_1_title": "Power your next project",
+                    "tile_1_image": "asset:assets/images/laptop-gaming.jpg",
+                    "tile_1_text": "Explore laptops and gaming.",
+                    "tile_1_link": "/search",
+                    "tile_2_title": "Make more of every day",
+                    "tile_2_image": "asset:assets/images/phone.jpg",
+                    "tile_2_text": "Find your next phone.",
+                    "tile_2_link": "/search",
+                    "tile_3_title": "A bigger view",
+                    "tile_3_image": "asset:assets/images/television.jpg",
+                    "tile_3_text": "Explore home entertainment.",
+                    "tile_3_link": "/search",
+                    "tile_4_title": "A fresh perspective",
+                    "tile_4_image": "asset:assets/images/laptop-blue.jpg",
+                    "tile_4_text": "Discover slim laptops.",
+                    "tile_4_link": "/search",
+                    "tile_5_title": "Smart living starts here",
+                    "tile_5_image": "asset:assets/images/washer.jpg",
+                    "tile_5_text": "Appliances for your home.",
+                    "tile_5_link": "/search",
+                    "tile_6_title": "Create without limits",
+                    "tile_6_image": "asset:assets/images/tablet.jpg",
+                    "tile_6_text": "Portable creativity.",
+                    "tile_6_link": "/search",
+                    "tile_7_title": "Time for something new",
+                    "tile_7_image": "asset:assets/images/watch.jpg",
+                    "tile_7_text": "Smart watches and more.",
+                    "tile_7_link": "/search",
+                    "tile_8_title": "Take your work anywhere",
+                    "tile_8_image": "asset:assets/images/laptop-blush.jpg",
+                    "tile_8_text": "Everyday essentials.",
+                    "tile_8_link": "/search"
+                }
+            },
+            {
+                "type": "campaign",
+                "settings": {
+                    "heading": "Meet your next favourite.",
+                    "image": "asset:assets/images/phone.jpg",
+                    "background": "#e5e9e7",
+                    "foreground": "#073b7a",
+                    "eyebrow": "POWERFUL POSSIBILITIES",
+                    "body": "Discover smartphones made for the way you live.",
+                    "button_label": "SHOP NOW",
+                    "button_link": "/search",
+                    "height": "small"
+                }
+            },
+            {
+                "type": "promotion_grid",
+                "settings": {
+                    "title": "Popular brands",
+                    "style": "circle",
+                    "columns": "8",
+                    "tile_1_title": "Apple",
+                    "tile_1_image": "",
+                    "tile_1_text": "",
+                    "tile_1_link": "/search?q=Apple",
+                    "tile_2_title": "Samsung",
+                    "tile_2_image": "",
+                    "tile_2_text": "",
+                    "tile_2_link": "/search?q=Samsung",
+                    "tile_3_title": "Sony",
+                    "tile_3_image": "",
+                    "tile_3_text": "",
+                    "tile_3_link": "/search?q=Sony",
+                    "tile_4_title": "Honor",
+                    "tile_4_image": "",
+                    "tile_4_text": "",
+                    "tile_4_link": "/search?q=Honor",
+                    "tile_5_title": "Microsoft",
+                    "tile_5_image": "",
+                    "tile_5_text": "",
+                    "tile_5_link": "/search?q=Microsoft",
+                    "tile_6_title": "Oppo",
+                    "tile_6_image": "",
+                    "tile_6_text": "",
+                    "tile_6_link": "/search?q=Oppo",
+                    "tile_7_title": "Motorola",
+                    "tile_7_image": "",
+                    "tile_7_text": "",
+                    "tile_7_link": "/search?q=Motorola",
+                    "tile_8_title": "Lenovo",
+                    "tile_8_image": "",
+                    "tile_8_text": "",
+                    "tile_8_link": "/search?q=Lenovo"
+                }
+            },
+            {
+                "type": "promo_banner",
+                "settings": {
+                    "text": "Find the accessories that complete your setup.",
+                    "button_label": "EXPLORE",
+                    "button_link": "/search",
+                    "tone": "primary"
+                }
+            },
+            {
+                "type": "promotion_grid",
+                "settings": {
+                    "title": "Sound, your way",
+                    "style": "offer",
+                    "columns": "3",
+                    "tile_1_title": "Your everyday soundtrack",
+                    "tile_1_image": "asset:assets/images/cat-audio.jpg",
+                    "tile_1_text": "Headphones and speakers.",
+                    "tile_1_link": "/search",
+                    "tile_2_title": "Made for every moment",
+                    "tile_2_image": "asset:assets/images/cat-gaming.jpg",
+                    "tile_2_text": "Gaming essentials.",
+                    "tile_2_link": "/search",
+                    "tile_3_title": "Bring the cinema home",
+                    "tile_3_image": "asset:assets/images/television.jpg",
+                    "tile_3_text": "Explore televisions.",
+                    "tile_3_link": "/search"
+                }
+            },
+            {
+                "type": "promo_banner",
+                "settings": {
+                    "text": "More choice for the things you love. Explore our latest collections.",
+                    "button_label": "EXPLORE",
+                    "button_link": "/search",
+                    "tone": "primary"
+                }
+            },
+            {
+                "type": "promotion_grid",
+                "settings": {
+                    "title": "Accessories",
+                    "style": "circle",
+                    "columns": "6",
+                    "tile_1_title": "Phone essentials",
+                    "tile_1_image": "asset:assets/images/cat-phones.png",
+                    "tile_1_text": "",
+                    "tile_1_link": "/search",
+                    "tile_2_title": "Work accessories",
+                    "tile_2_image": "asset:assets/images/cat-laptops.jpg",
+                    "tile_2_text": "",
+                    "tile_2_link": "/search",
+                    "tile_3_title": "Gaming gear",
+                    "tile_3_image": "asset:assets/images/cat-gaming.jpg",
+                    "tile_3_text": "",
+                    "tile_3_link": "/search",
+                    "tile_4_title": "Sound and audio",
+                    "tile_4_image": "asset:assets/images/cat-audio.jpg",
+                    "tile_4_text": "",
+                    "tile_4_link": "/search",
+                    "tile_5_title": "Wearables",
+                    "tile_5_image": "asset:assets/images/cat-watches.png",
+                    "tile_5_text": "",
+                    "tile_5_link": "/search",
+                    "tile_6_title": "Cameras and more",
+                    "tile_6_image": "asset:assets/images/cat-cameras.jpg",
+                    "tile_6_text": "",
+                    "tile_6_link": "/search"
+                }
+            },
+            {
+                "type": "featured_products",
+                "settings": {
+                    "title": "Laptop & tablet savings",
+                    "source": "category",
+                    "category": "marketplace-laptops",
+                    "limit": 4
+                }
+            },
+            {
+                "type": "featured_products",
+                "settings": {
+                    "title": "Top deals on mobiles",
+                    "source": "category",
+                    "category": "marketplace-phones",
+                    "limit": 4
+                }
+            },
+            {
+                "type": "promotion_grid",
+                "settings": {
+                    "title": "Shop with confidence",
+                    "style": "service",
+                    "columns": "4",
+                    "tile_1_title": "Delivery options",
+                    "tile_1_image": "",
+                    "tile_1_text": "Choose at checkout.",
+                    "tile_1_link": "/account",
+                    "tile_2_title": "Customer support",
+                    "tile_2_image": "",
+                    "tile_2_text": "Here when you need us.",
+                    "tile_2_link": "/account",
+                    "tile_3_title": "Secure payments",
+                    "tile_3_image": "",
+                    "tile_3_text": "Shop with confidence.",
+                    "tile_3_link": "/account",
+                    "tile_4_title": "Your orders",
+                    "tile_4_image": "",
+                    "tile_4_text": "Keep track of your purchases.",
+                    "tile_4_link": "/account/orders"
+                }
+            },
+            {
+                "type": "featured_products",
+                "settings": {
+                    "title": "Latest television deals",
+                    "source": "category",
+                    "category": "marketplace-televisions",
+                    "limit": 4
+                }
+            },
+            {
+                "type": "featured_products",
+                "settings": {
+                    "title": "Big savings, smart living",
+                    "source": "category",
+                    "category": "marketplace-appliances",
+                    "limit": 4
+                }
+            },
+            {
+                "type": "featured_products",
+                "settings": {
+                    "title": "Save big on watches",
+                    "source": "category",
+                    "category": "marketplace-watches",
+                    "limit": 4
+                }
+            },
+            {
+                "type": "promotion_grid",
+                "settings": {
+                    "title": "Store services",
+                    "style": "service",
+                    "columns": "4",
+                    "tile_1_title": "Expert support",
+                    "tile_1_image": "",
+                    "tile_1_text": "Find help for your purchase.",
+                    "tile_1_link": "/account",
+                    "tile_2_title": "Order tracking",
+                    "tile_2_image": "",
+                    "tile_2_text": "Follow your delivery.",
+                    "tile_2_link": "/account/orders",
+                    "tile_3_title": "Manage your account",
+                    "tile_3_image": "",
+                    "tile_3_text": "Everything in one place.",
+                    "tile_3_link": "/account",
+                    "tile_4_title": "Discover more",
+                    "tile_4_image": "",
+                    "tile_4_text": "Explore the full catalog.",
+                    "tile_4_link": "/search"
+                }
+            },
+            {
+                "type": "rich_text",
+                "settings": {
+                    "heading": "Electronics and everyday technology, all in one place",
+                    "alignment": "left",
+                    "body": "Explore a growing range of technology for work, play and home. Browse laptops, smartphones, televisions, appliances and useful accessories. Compare product details and choose the items that suit your needs.\n\nFind your next laptop\nFrom portable everyday notebooks to machines for creative work and gaming, the right laptop starts with your priorities. Check the screen size, memory, storage and connectivity in each product listing.\n\nCreate your connected home\nExplore entertainment, practical home appliances and accessories that bring your setup together. Review the product information before you order, and use the available delivery and payment options at checkout.\n\nShop your way\nUse categories, search and filters to explore the catalog. Your recently viewed products make it easy to return to a favourite. Sign in to manage your account and review your orders."
+                }
+            }
+        ]
+    },
+    "demo_content": "demo.json",
+    "changelog": [
+        {
+            "version": "1.0.0",
+            "date": "2026-10-14",
+            "notes": "Reference-inspired electronics layouts and editable merchandising sections."
+        }
+    ],
+    "screenshot": "assets/demo-preview.png",
+    "frontend": {
+        "index": "src/index.tsx",
+        "catalog": "src/catalog.tsx",
+        "stylesheet": "src/style.css",
+        "cart": "src/cart.tsx"
+    },
+    "customizer_file": "settings.json"
+}

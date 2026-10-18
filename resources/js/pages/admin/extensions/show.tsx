@@ -1,10 +1,13 @@
 import { Form, Head } from '@inertiajs/react';
 import { AlertTriangle, ShieldAlert } from 'lucide-react';
 import { useState } from 'react';
+import type { ComponentProps, SyntheticEvent } from 'react';
 import ExtensionController from '@/actions/App/Http/Controllers/Admin/ExtensionController';
+import { ExtensionIcon } from '@/components/admin/extension-icon';
 import { ExtensionStateBadge } from '@/components/admin/extension-state-badge';
 import { FormField, NativeSelect } from '@/components/admin/form-field';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
+import { SuggestedInput } from '@/components/admin/suggested-input';
 import InputError from '@/components/input-error';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -95,6 +98,17 @@ export default function ExtensionShow({ extension, settings, events }: Props) {
         <>
             <Head title={extension.display_name} />
             <AdminPage>
+                <div className="mb-4 flex items-center gap-3">
+                    <ExtensionIcon
+                        logo={extension.logo}
+                        icon={extension.icon}
+                        accent={extension.accent}
+                        className="size-16"
+                    />
+                    <span className="text-sm text-muted-foreground">
+                        {extension.name}
+                    </span>
+                </div>
                 <PageHeader
                     title={extension.display_name}
                     description={extension.description ?? extension.name}
@@ -500,6 +514,33 @@ function SettingsCard({
     fields: ExtensionSettingField[];
     values: Record<string, unknown>;
 }) {
+    // Current form values, read back from the form so visible_when reacts as the merchant edits.
+    const [current, setCurrent] = useState<Record<string, string>>(() =>
+        Object.fromEntries(
+            fields.map((field) => [
+                field.key,
+                settingString(values[field.key]),
+            ]),
+        ),
+    );
+    const sync = (event: SyntheticEvent<HTMLDivElement>) => {
+        const form = event.currentTarget.closest('form');
+
+        if (!form) {
+            return;
+        }
+
+        const data = new FormData(form);
+        setCurrent(
+            Object.fromEntries(
+                fields.map((field) => [
+                    field.key,
+                    lastString(data.getAll(`settings[${field.key}]`)),
+                ]),
+            ),
+        );
+    };
+
     return (
         <Card>
             <CardHeader>
@@ -513,14 +554,26 @@ function SettingsCard({
                 >
                     {({ processing, errors }) => (
                         <>
-                            {fields.map((field) => (
-                                <SettingInput
-                                    key={field.key}
-                                    field={field}
-                                    value={values[field.key]}
-                                    error={errors[field.key]}
-                                />
-                            ))}
+                            <div
+                                className="grid gap-4"
+                                onChange={sync}
+                                onClick={sync}
+                            >
+                                {fields.map((field) => {
+                                    const visible = isVisible(field, current);
+
+                                    return (
+                                        <div key={field.key} hidden={!visible}>
+                                            <SettingInput
+                                                field={field}
+                                                value={values[field.key]}
+                                                error={errors[field.key]}
+                                                hidden={!visible}
+                                            />
+                                        </div>
+                                    );
+                                })}
+                            </div>
                             <InputError message={errors.module} />
                             <div>
                                 <Button type="submit" disabled={processing}>
@@ -535,14 +588,43 @@ function SettingsCard({
     );
 }
 
+function lastString(entries: FormDataEntryValue[]): string {
+    const last = entries.at(-1);
+
+    return typeof last === 'string' ? last : '';
+}
+
+function settingString(value: unknown): string {
+    if (typeof value === 'boolean') {
+        return value ? '1' : '0';
+    }
+
+    return typeof value === 'string' || typeof value === 'number'
+        ? String(value)
+        : '';
+}
+
+function isVisible(
+    field: ExtensionSettingField,
+    current: Record<string, string>,
+): boolean {
+    return Object.entries(field.visible_when ?? {}).every(([key, expected]) =>
+        (Array.isArray(expected) ? expected : [expected])
+            .map(settingString)
+            .includes(current[key] ?? ''),
+    );
+}
+
 function SettingInput({
     field,
     value,
     error,
+    hidden = false,
 }: {
     field: ExtensionSettingField;
     value: unknown;
     error?: string;
+    hidden?: boolean;
 }) {
     const id = `setting-${field.key}`;
     const name = `settings[${field.key}]`;
@@ -584,7 +666,7 @@ function SettingInput({
                     rows={4}
                     defaultValue={text}
                     maxLength={field.max_length}
-                    required={field.required}
+                    required={field.required && !hidden}
                 />
             ) : field.type === 'select' ? (
                 <NativeSelect id={id} name={name} defaultValue={text}>
@@ -595,6 +677,15 @@ function SettingInput({
                         </option>
                     ))}
                 </NativeSelect>
+            ) : field.type === 'string' && field.suggestions?.length ? (
+                <SuggestedSetting
+                    id={id}
+                    name={name}
+                    initial={text}
+                    suggestions={field.suggestions}
+                    required={field.required && !hidden}
+                    maxLength={field.max_length}
+                />
             ) : (
                 <Input
                     id={id}
@@ -610,11 +701,22 @@ function SettingInput({
                     max={field.max}
                     maxLength={field.max_length}
                     defaultValue={text}
-                    required={field.required}
+                    required={field.required && !hidden}
                 />
             )}
         </FormField>
     );
+}
+
+function SuggestedSetting({
+    initial,
+    ...props
+}: Omit<ComponentProps<typeof SuggestedInput>, 'value' | 'onValueChange'> & {
+    initial: string;
+}) {
+    const [value, setValue] = useState(initial);
+
+    return <SuggestedInput {...props} value={value} onValueChange={setValue} />;
 }
 
 ExtensionShow.layout = {

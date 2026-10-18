@@ -18,6 +18,7 @@ use Illuminate\Support\Carbon;
 /**
  * @property int $id
  * @property int $product_id
+ * @property int|null $image_id
  * @property string $sku
  * @property string|null $name
  * @property int $position
@@ -37,7 +38,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $deleted_at
  * @property-read Product $product
  */
-#[Fillable(['sku', 'name', 'position', 'is_default', 'is_active', 'weight', 'cost', 'length', 'width', 'height', 'barcode', 'track_inventory', 'allow_backorder', 'low_stock_threshold'])]
+#[Fillable(['image_id', 'sku', 'name', 'position', 'is_default', 'is_active', 'weight', 'cost', 'length', 'width', 'height', 'barcode', 'track_inventory', 'allow_backorder', 'low_stock_threshold'])]
 #[UseFactory(ProductVariantFactory::class)]
 class ProductVariant extends Model
 {

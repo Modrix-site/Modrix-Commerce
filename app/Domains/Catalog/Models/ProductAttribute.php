@@ -11,10 +11,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property int $id
  * @property string $name
+ * @property string $display_type
  * @property string $slug
  * @property int $position
  */
-#[Fillable(['name', 'slug', 'position'])]
+#[Fillable(['name', 'slug', 'position', 'display_type'])]
 class ProductAttribute extends Model
 {
     /**

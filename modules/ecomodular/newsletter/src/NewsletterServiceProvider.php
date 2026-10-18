@@ -37,7 +37,9 @@ class NewsletterServiceProvider extends ServiceProvider
         // Sign-ups record where the form was shown.
         $placed = fn (array $context) => $props(($context['place'] ?? null) === 'storefront.footer' ? 'footer' : 'home');
 
-        $slots->block(self::MODULE, 'signup-home', 'Newsletter sign-up', 'SignupForm', ['home.after_featured'], 'home.after_featured', $placed);
+        $slots->block(self::MODULE, 'signup-footer', 'Newsletter sign-up (footer)', 'SignupForm', ['storefront.footer', 'home.after_featured'], 'storefront.footer', $placed);
+
+        $slots->block(self::MODULE, 'signup-home', 'Newsletter sign-up', 'SignupForm', ['home.after_featured', 'storefront.footer'], 'home.after_featured', $placed);
 
         $slots->register('order.confirmation', self::MODULE, 'SignupForm', function (array $context) use ($props, $settings) {
             return (bool) $settings->of(self::MODULE, 'show_on_confirmation', true) ? $props('order') : null;

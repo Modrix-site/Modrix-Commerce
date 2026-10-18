@@ -18,6 +18,7 @@ use App\Domains\Catalog\Models\ProductFile;
 use App\Domains\Catalog\Models\ProductImage;
 use App\Domains\Catalog\Models\ProductTag;
 use App\Domains\Catalog\Models\ProductVariant;
+use App\Domains\Inventory\MovementReason;
 use App\Domains\Pricing\Money;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\SaveProductRequest;
@@ -38,6 +39,7 @@ class ProductController extends Controller
             'search' => ['nullable', 'string', 'max:120'],
             'status' => ['nullable', Rule::enum(ProductStatus::class)],
             'category' => ['nullable', 'integer'],
+            'attribute' => ['nullable', 'integer', 'exists:product_attributes,id'],
             'brand' => ['nullable', 'integer'],
             'tag' => ['nullable', 'string', 'max:60'],
             'featured' => ['nullable', 'boolean'],
@@ -63,6 +65,7 @@ class ProductController extends Controller
             })
             ->when($filters['status'] ?? null, fn ($q, string $status) => $q->where('status', $status))
             ->when($filters['category'] ?? null, fn ($q, int $category) => $q->whereHas('categories', fn ($c) => $c->whereKey($category)))
+            ->when($filters['attribute'] ?? null, fn ($q, int $attribute) => $q->whereHas('variants.options', fn ($option) => $option->where('attribute_id', $attribute)))
             ->when($filters['brand'] ?? null, fn ($q, int $brand) => $q->where('brand_id', $brand))
             // Exact (normalised) match: % and _ in a tag are literal.
             ->when($filters['tag'] ?? null, fn ($q, string $tag) => $q->whereHas('tags', fn ($t) => $t->where('tag', ProductTag::normalise($tag))))
@@ -96,6 +99,7 @@ class ProductController extends Controller
             'products' => $products,
             'filters' => [
                 'search' => $filters['search'] ?? '',
+                'attribute' => isset($filters['attribute']) ? (string) $filters['attribute'] : '',
                 'status' => $filters['status'] ?? '',
                 'category' => isset($filters['category']) ? (string) $filters['category'] : '',
                 'brand' => isset($filters['brand']) ? (string) $filters['brand'] : '',
@@ -165,6 +169,7 @@ class ProductController extends Controller
                 'category_ids' => $product->categories->pluck('id')->all(),
                 'brand_id' => $product->brand_id,
                 'is_featured' => $product->is_featured,
+                'show_buy_button' => $product->show_buy_button,
                 'tags' => $product->tags->sortBy('tag')->pluck('tag')->values()->all(),
                 'related' => $product->relatedProducts()->with(['images', 'variants'])->get()->map(fn (Product $p) => self::pickerItem($p))->all(),
                 'upsells' => $product->upsellProducts()->with(['images', 'variants'])->get()->map(fn (Product $p) => self::pickerItem($p))->all(),
@@ -176,6 +181,7 @@ class ProductController extends Controller
                     'id' => $v->id,
                     'sku' => $v->sku,
                     'name' => $v->name,
+                    'image_id' => $v->image_id,
                     'price' => $v->priceIn($currency)?->toDisplayDecimal() ?? '',
                     'compare_at_price' => $v->compareAtPriceIn($currency)?->toDisplayDecimal() ?? '',
                     'weight' => $v->weight,
@@ -202,6 +208,8 @@ class ProductController extends Controller
                     'id' => $image->id,
                     'url' => $image->url(),
                     'alt' => $image->alt,
+                    'width' => $image->width,
+                    'height' => $image->height,
                 ])->values()->all(),
             ],
             ...$this->formOptions($store),
@@ -265,6 +273,7 @@ class ProductController extends Controller
     {
         return [
             'currency' => $store->currency(),
+            'inventoryReasons' => array_map(fn (MovementReason $reason) => ['value' => $reason->value, 'label' => $reason->label()], MovementReason::manual()),
             'weightUnit' => $store->toArray()['weight_unit'],
             'dimensionUnit' => $store->toArray()['dimension_unit'],
             'brands' => Brand::query()->orderBy('name')->get(['id', 'name'])->map(fn (Brand $b) => ['id' => $b->id, 'name' => $b->name])->all(),

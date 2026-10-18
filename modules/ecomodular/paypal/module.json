@@ -1,0 +1,41 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "ecomodular/paypal",
+    "display_name": "PayPal",
+    "description": "Accept PayPal and card payments on PayPal's checkout page. The customer approves the payment at PayPal, and this store captures it only after PayPal confirms the order.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "credit-card",
+    "accent": "#003087",
+    "platform_version": "^1.0",
+    "author": "Eleydo",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\Paypal\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\Paypal\\PaypalServiceProvider",
+    "capabilities": [
+        "payment.gateway",
+        "admin.routes",
+        "admin.navigation"
+    ],
+    "routes": {
+        "admin": "routes/admin.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages"
+    },
+    "admin_navigation": [
+        {
+            "key": "paypal",
+            "title": "PayPal",
+            "route": "index",
+            "icon": "credit-card",
+            "group": "Configuration",
+            "permission": "payments.manage",
+            "order": 866
+        }
+    ]
+}

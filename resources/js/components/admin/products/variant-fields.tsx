@@ -2,6 +2,8 @@ import { FormField } from '@/components/admin/form-field';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import type { Option } from '@/types';
+import { VariantInventory } from './variant-inventory';
 import { margin } from './types';
 import type { Errors, VariantRow } from './types';
 
@@ -13,6 +15,7 @@ type Props = {
     onChange: (patch: Partial<VariantRow>) => void;
     /** Simple products show SKU and price here; variants show them in the table row. */
     withBasics?: boolean;
+    inventoryReasons: Option[];
 };
 
 /**
@@ -25,6 +28,7 @@ export function VariantFields({
     errors,
     onChange,
     withBasics = false,
+    inventoryReasons,
 }: Props) {
     const pct = margin(variant.price, variant.cost);
     const profit =
@@ -146,14 +150,10 @@ export function VariantFields({
                 ) : (
                     <div className="grid content-start gap-2">
                         <span className="text-sm font-medium">On hand</span>
-                        <span className="py-2 text-sm tabular-nums">
-                            {variant.track_inventory
-                                ? (variant.on_hand ?? 0)
-                                : 'Not tracked'}
-                            <span className="block text-xs text-muted-foreground">
-                                Change stock on the Inventory page.
-                            </span>
-                        </span>
+                        <VariantInventory
+                            variant={variant}
+                            reasons={inventoryReasons}
+                        />
                     </div>
                 )}
                 <FormField

@@ -14,6 +14,7 @@ use App\Domains\Orders\Enums\PaymentStatus;
 use App\Domains\Orders\Mail\OrderMail;
 use App\Domains\Orders\Models\Order;
 use App\Domains\Pricing\Money;
+use App\Domains\Shipping\Models\ShippingMethod;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
@@ -288,5 +289,58 @@ class CheckoutTest extends TestCase
                 ->where('summary.grand_total.amount', '49.00')
                 ->has('paymentMethods', 2)
                 ->has('checkoutToken'));
+    }
+
+    public function test_a_us_address_requires_a_state_province()
+    {
+        $this->addToCart($this->sellable('20.00'));
+
+        // The country has a known region list, so the region is required.
+        $this->post(route('checkout.store'), $this->checkoutPayload([
+            'shipping' => ['country_code' => 'US', 'region' => ''],
+        ]))->assertSessionHasErrors('shipping.region');
+
+        $this->assertDatabaseCount('orders', 0);
+    }
+
+    public function test_a_country_without_a_region_list_does_not_require_one()
+    {
+        $this->addToCart($this->sellable('20.00'));
+
+        // No region list for the Philippines: the region stays optional.
+        $this->post(route('checkout.store'), $this->checkoutPayload([
+            'shipping' => ['country_code' => 'PH', 'region' => ''],
+        ]))->assertSessionHasNoErrors();
+
+        $this->assertDatabaseCount('orders', 1);
+    }
+
+    public function test_checkout_offers_only_the_countries_the_store_ships_to()
+    {
+        $this->addToCart($this->sellable('20.00'));
+
+        // The fixture method ships to US and PH only.
+        $this->get(route('checkout.show'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('countries', 2)
+                ->where('countries.0.code', 'PH')
+                ->where('countries.1.code', 'US')
+                ->where('soleCountry', null));
+    }
+
+    public function test_a_single_country_store_locks_the_country_field()
+    {
+        $this->addToCart($this->sellable('20.00'));
+
+        // Narrow coverage to one country.
+        ShippingMethod::query()->update(['countries' => ['PH']]);
+
+        $this->get(route('checkout.show'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('countries', 1)
+                ->where('countries.0.code', 'PH')
+                ->where('soleCountry', 'PH'));
     }
 }

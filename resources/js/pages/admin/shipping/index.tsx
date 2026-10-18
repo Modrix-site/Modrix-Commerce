@@ -10,10 +10,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { trimDecimal } from '@/lib/decimal';
+import { regionsFor } from '@/lib/regions';
 import { index } from '@/routes/admin/shipping-methods';
+import RegionCombobox from '@/components/storefront/region-combobox';
 import type { Country } from '@/types';
 
+type RegionalRate = {
+    country_code: string;
+    region: string;
+    rate: string;
+    free_over: string | null;
+};
+const gccCountries = ['AE', 'SA', 'BH', 'KW', 'OM', 'QA'];
 type Method = {
+    regional_rates: RegionalRate[];
+    regions_only: boolean;
+    delivery_estimate: string | null;
     id: number;
     code: string;
     name: string;
@@ -43,7 +55,7 @@ export default function ShippingIndex({
             <AdminPage>
                 <PageHeader
                     title="Shipping methods"
-                    description={`Flat-rate methods in ${currency}, optionally free above an order value and limited to certain countries.`}
+                    description={`Configure delivery coverage, regional prices and free-shipping thresholds in ${currency}.`}
                     actions={
                         editing === null && (
                             <Button onClick={() => setEditing('new')}>
@@ -93,6 +105,8 @@ export default function ShippingIndex({
                                                 {m.free_over !== null &&
                                                     ` · free over ${trimDecimal(m.free_over)} ${m.currency}`}
                                                 {' · '}
+                                                {m.regional_rates.length > 0 &&
+                                                    `${m.regional_rates.length} state rates · `}
                                                 {m.countries.length === 0
                                                     ? 'all countries'
                                                     : m.countries.join(', ')}
@@ -147,6 +161,10 @@ function MethodForm({
     currency: string;
     onDone: () => void;
 }) {
+    const [regionalRates, setRegionalRates] = useState<RegionalRate[]>(
+        method?.regional_rates ?? [],
+    );
+    const [countrySearch, setCountrySearch] = useState('');
     const [selected, setSelected] = useState<string[]>(method?.countries ?? []);
     const form = method
         ? ShippingMethodController.update.form(method.id)
@@ -162,6 +180,10 @@ function MethodForm({
             <CardContent>
                 <Form
                     {...form}
+                    transform={(data) => ({
+                        ...data,
+                        regional_rates: regionalRates,
+                    })}
                     onSuccess={onDone}
                     options={{ preserveScroll: true }}
                     className="grid gap-4"
@@ -194,7 +216,7 @@ function MethodForm({
                                 </FormField>
                                 <FormField
                                     id="rate"
-                                    label={`Rate (${currency})`}
+                                    label={`Default rate (${currency})`}
                                     error={errors.rate}
                                 >
                                     <Input
@@ -243,30 +265,362 @@ function MethodForm({
                                     Active
                                 </label>
                             </div>
-                            <FormField
-                                id="countries"
-                                label="Ships to (leave empty for all countries)"
-                                error={errors.countries}
-                            >
-                                <select
-                                    id="countries"
-                                    multiple
-                                    value={selected}
+                            <div className="grid gap-3 rounded-lg border p-4">
+                                <h3 className="font-semibold">
+                                    Delivery coverage
+                                </h3>
+                                <p className="text-sm text-muted-foreground">
+                                    Leave countries unselected for worldwide
+                                    delivery. Regional prices override the
+                                    default rate.
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() =>
+                                            setSelected(
+                                                Array.from(
+                                                    new Set([
+                                                        ...selected,
+                                                        ...gccCountries,
+                                                    ]),
+                                                ),
+                                            )
+                                        }
+                                    >
+                                        Select GCC countries
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        onClick={() => setSelected([])}
+                                    >
+                                        All countries
+                                    </Button>
+                                </div>
+                                <Input
+                                    aria-label="Search countries"
+                                    placeholder="Search countries..."
+                                    value={countrySearch}
                                     onChange={(e) =>
-                                        setSelected(
-                                            Array.from(
-                                                e.target.selectedOptions,
-                                            ).map((o) => o.value),
-                                        )
+                                        setCountrySearch(e.target.value)
                                     }
-                                    className="h-40 w-full rounded-md border border-input bg-transparent p-2 text-sm dark:bg-input/30"
+                                />
+                                <div className="grid max-h-44 gap-2 overflow-y-auto sm:grid-cols-3">
+                                    {countries
+                                        .filter((c) =>
+                                            c.name
+                                                .toLowerCase()
+                                                .includes(
+                                                    countrySearch.toLowerCase(),
+                                                ),
+                                        )
+                                        .map((c) => (
+                                            <label
+                                                key={c.code}
+                                                className="flex items-center gap-2 text-sm"
+                                            >
+                                                <Checkbox
+                                                    checked={selected.includes(
+                                                        c.code,
+                                                    )}
+                                                    onCheckedChange={(
+                                                        checked,
+                                                    ) =>
+                                                        setSelected(
+                                                            checked
+                                                                ? [
+                                                                      ...selected,
+                                                                      c.code,
+                                                                  ]
+                                                                : selected.filter(
+                                                                      (code) =>
+                                                                          code !==
+                                                                          c.code,
+                                                                  ),
+                                                        )
+                                                    }
+                                                />
+                                                {c.name}
+                                            </label>
+                                        ))}
+                                </div>
+                                <p className="text-sm text-muted-foreground">
+                                    {selected.length
+                                        ? selected.join(', ')
+                                        : 'All countries'}
+                                </p>
+                                {errors.countries && (
+                                    <p className="text-sm text-destructive">
+                                        {errors.countries}
+                                    </p>
+                                )}
+                            </div>
+                            <div className="grid gap-4 rounded-lg border p-4">
+                                <div className="flex flex-wrap items-center justify-between gap-3">
+                                    <div>
+                                        <h3 className="font-semibold">
+                                            Regional shipping prices
+                                        </h3>
+                                        <p className="text-sm text-muted-foreground">
+                                            Each row replaces the default rate
+                                            for that country and region. Use any
+                                            worldwide destination. A blank free
+                                            threshold inherits the method
+                                            threshold.
+                                        </p>
+                                    </div>
+                                </div>
+                                <label className="flex items-center gap-2 text-sm">
+                                    <Checkbox
+                                        name="regions_only"
+                                        value="1"
+                                        defaultChecked={
+                                            method?.regions_only ?? false
+                                        }
+                                    />
+                                    Deliver only to the regions listed below
+                                </label>
+                                <p className="text-xs text-muted-foreground">
+                                    Otherwise, destinations without a matching
+                                    row use the default rate.
+                                </p>
+                                {regionalRates.map((rule, i) => (
+                                    <div
+                                        key={i}
+                                        className="grid items-start gap-3 rounded-lg bg-muted/40 p-3 sm:grid-cols-2 xl:grid-cols-5"
+                                    >
+                                        <FormField
+                                            id={`region-country-${i}`}
+                                            label="Country"
+                                            error={
+                                                errors[
+                                                    `regional_rates.${i}.country_code`
+                                                ]
+                                            }
+                                        >
+                                            <select
+                                                id={`region-country-${i}`}
+                                                className="h-9 w-full rounded-md border bg-background px-2 text-sm"
+                                                value={rule.country_code}
+                                                onChange={(e) =>
+                                                    setRegionalRates(
+                                                        regionalRates.map(
+                                                            (r, n) =>
+                                                                n === i
+                                                                    ? {
+                                                                          ...r,
+                                                                          country_code:
+                                                                              e
+                                                                                  .target
+                                                                                  .value,
+                                                                          // A region for another country no longer applies.
+                                                                          region: regionsFor(
+                                                                              e
+                                                                                  .target
+                                                                                  .value,
+                                                                          ).includes(
+                                                                              r.region,
+                                                                          )
+                                                                              ? r.region
+                                                                              : '',
+                                                                      }
+                                                                    : r,
+                                                        ),
+                                                    )
+                                                }
+                                            >
+                                                <option value="">
+                                                    Choose country...
+                                                </option>
+                                                {countries.map((c) => (
+                                                    <option
+                                                        key={c.code}
+                                                        value={c.code}
+                                                    >
+                                                        {c.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </FormField>
+                                        <FormField
+                                            id={`region-name-${i}`}
+                                            label="State / province / region"
+                                            error={
+                                                errors[
+                                                    `regional_rates.${i}.region`
+                                                ]
+                                            }
+                                        >
+                                            {(() => {
+                                                const regions = regionsFor(
+                                                    rule.country_code,
+                                                );
+                                                const update = (
+                                                    region: string,
+                                                ) =>
+                                                    setRegionalRates(
+                                                        regionalRates.map(
+                                                            (r, n) =>
+                                                                n === i
+                                                                    ? {
+                                                                          ...r,
+                                                                          region,
+                                                                      }
+                                                                    : r,
+                                                        ),
+                                                    );
+
+                                                // Pick the country's states
+                                                // when we know them; otherwise a
+                                                // free-text region.
+                                                if (regions.length > 0) {
+                                                    return (
+                                                        <RegionCombobox
+                                                            id={`region-name-${i}`}
+                                                            value={rule.region}
+                                                            onChange={update}
+                                                            options={regions}
+                                                            placeholder="Start typing…"
+                                                        />
+                                                    );
+                                                }
+
+                                                return (
+                                                    <Input
+                                                        id={`region-name-${i}`}
+                                                        value={rule.region}
+                                                        placeholder="Enter state, province or region"
+                                                        onChange={(e) =>
+                                                            update(
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                    />
+                                                );
+                                            })()}
+                                        </FormField>
+                                        <FormField
+                                            id={`region-rate-${i}`}
+                                            label={`Rate (${currency})`}
+                                            error={
+                                                errors[
+                                                    `regional_rates.${i}.rate`
+                                                ]
+                                            }
+                                        >
+                                            <Input
+                                                id={`region-rate-${i}`}
+                                                inputMode="decimal"
+                                                value={rule.rate}
+                                                onChange={(e) =>
+                                                    setRegionalRates(
+                                                        regionalRates.map(
+                                                            (r, n) =>
+                                                                n === i
+                                                                    ? {
+                                                                          ...r,
+                                                                          rate: e
+                                                                              .target
+                                                                              .value,
+                                                                      }
+                                                                    : r,
+                                                        ),
+                                                    )
+                                                }
+                                            />
+                                        </FormField>
+                                        <FormField
+                                            id={`region-free-${i}`}
+                                            label="Free over (optional)"
+                                            error={
+                                                errors[
+                                                    `regional_rates.${i}.free_over`
+                                                ]
+                                            }
+                                        >
+                                            <Input
+                                                id={`region-free-${i}`}
+                                                inputMode="decimal"
+                                                value={rule.free_over ?? ''}
+                                                placeholder="Inherit"
+                                                onChange={(e) =>
+                                                    setRegionalRates(
+                                                        regionalRates.map(
+                                                            (r, n) =>
+                                                                n === i
+                                                                    ? {
+                                                                          ...r,
+                                                                          free_over:
+                                                                              e
+                                                                                  .target
+                                                                                  .value,
+                                                                      }
+                                                                    : r,
+                                                        ),
+                                                    )
+                                                }
+                                            />
+                                        </FormField>
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            className="self-end"
+                                            onClick={() =>
+                                                setRegionalRates(
+                                                    regionalRates.filter(
+                                                        (_, n) => n !== i,
+                                                    ),
+                                                )
+                                            }
+                                        >
+                                            Remove
+                                        </Button>
+                                    </div>
+                                ))}
+
+                                {errors.regional_rates && (
+                                    <p className="text-sm text-destructive">
+                                        {errors.regional_rates}
+                                    </p>
+                                )}
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="w-fit"
+                                    disabled={regionalRates.length >= 100}
+                                    onClick={() =>
+                                        setRegionalRates([
+                                            ...regionalRates,
+                                            {
+                                                country_code:
+                                                    selected.length === 1
+                                                        ? selected[0]
+                                                        : '',
+                                                region: '',
+                                                rate: '',
+                                                free_over: '',
+                                            },
+                                        ])
+                                    }
                                 >
-                                    {countries.map((c) => (
-                                        <option key={c.code} value={c.code}>
-                                            {c.name}
-                                        </option>
-                                    ))}
-                                </select>
+                                    Add regional rate
+                                </Button>
+                            </div>
+                            <FormField
+                                id="delivery_estimate"
+                                label="Estimated delivery (optional)"
+                                error={errors.delivery_estimate}
+                            >
+                                <Input
+                                    id="delivery_estimate"
+                                    name="delivery_estimate"
+                                    placeholder="1-2 business days"
+                                    defaultValue={
+                                        method?.delivery_estimate ?? ''
+                                    }
+                                />
                             </FormField>
                             {selected.map((code) => (
                                 <input

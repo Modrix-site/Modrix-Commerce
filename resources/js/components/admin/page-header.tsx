@@ -10,9 +10,9 @@ export function PageHeader({
     actions?: ReactNode;
 }) {
     return (
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="admin-page-header flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1">
-                <h1 className="text-xl font-semibold tracking-tight">
+                <h1 className="text-2xl leading-8 font-semibold tracking-tight">
                     {title}
                 </h1>
                 {description && (
@@ -32,7 +32,7 @@ export function PageHeader({
 
 export function AdminPage({ children }: { children: ReactNode }) {
     return (
-        <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 p-4 md:p-6">
+        <div className="admin-page flex w-full min-w-0 flex-1 flex-col gap-5 p-4 pt-2 md:px-6 md:pt-2 md:pb-6">
             {children}
         </div>
     );

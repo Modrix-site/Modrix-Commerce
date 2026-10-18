@@ -1,0 +1,761 @@
+{
+    "title": "Nord storefront",
+    "description": "Customize the reference campaigns, images and page layouts. Shared navigation, products, currencies and extensions come from EcoModular.",
+    "hide_core_fields": [
+        "layout.header",
+        "layout.footer",
+        "layout.product_card",
+        "layout.product_page",
+        "layout.grid_columns",
+        "container"
+    ],
+    "fields": {
+        "custom.brand": {
+            "type": "string",
+            "label": "Wordmark",
+            "group": "Header",
+            "default": "NORD",
+            "max": 60
+        },
+        "custom.logo_image": {
+            "type": "image",
+            "label": "Logo upload",
+            "group": "Header",
+            "default": ""
+        },
+        "custom.notice": {
+            "type": "string",
+            "label": "Announcement",
+            "group": "Header",
+            "default": "Shopping internationally?",
+            "max": 160
+        },
+        "custom.notice_link_label": {
+            "type": "string",
+            "label": "Announcement link label",
+            "group": "Header",
+            "default": "Learn About International Shopping",
+            "max": 100
+        },
+        "custom.notice_link": {
+            "type": "link",
+            "label": "Announcement link",
+            "group": "Header",
+            "default": "/account/orders"
+        },
+        "custom.search_placeholder": {
+            "type": "string",
+            "label": "Search placeholder",
+            "group": "Header",
+            "default": "Search for products or brands",
+            "max": 100
+        },
+        "custom.show_notice": {
+            "type": "boolean",
+            "label": "Show announcement",
+            "group": "Header",
+            "default": true
+        },
+        "custom.sticky_header": {
+            "type": "boolean",
+            "label": "Sticky header",
+            "group": "Header",
+            "default": false
+        },
+        "custom.show_saved": {
+            "type": "boolean",
+            "label": "Save products on this device",
+            "group": "Product cards",
+            "default": true
+        },
+        "custom.show_buy_button": {
+            "type": "boolean",
+            "label": "Show optional Buy now actions",
+            "group": "Product cards",
+            "default": false
+        },
+        "custom.sticky_add_to_cart": {
+            "type": "boolean",
+            "label": "Sticky purchase bar on phones",
+            "group": "Product",
+            "default": true
+        },
+        "custom.section_gap": {
+            "type": "integer",
+            "label": "Section spacing (px)",
+            "group": "Layout",
+            "default": 64,
+            "min": 24,
+            "max": 100
+        },
+        "custom.page_width": {
+            "type": "integer",
+            "label": "Maximum page width (px)",
+            "group": "Layout",
+            "default": 1920,
+            "min": 1000,
+            "max": 2000
+        },
+        "custom.show_hero": {
+            "type": "boolean",
+            "label": "Show campaign hero",
+            "group": "Hero",
+            "default": true
+        },
+        "custom.hero_heading": {
+            "type": "string",
+            "label": "Heading",
+            "group": "Hero",
+            "default": "Fall Winter Collection",
+            "max": 120
+        },
+        "custom.hero_button": {
+            "type": "string",
+            "label": "Button label",
+            "group": "Hero",
+            "default": "Discover More",
+            "max": 60
+        },
+        "custom.hero_link": {
+            "type": "link",
+            "label": "Button destination",
+            "group": "Hero",
+            "default": "/search"
+        },
+        "custom.hero_image": {
+            "type": "image",
+            "label": "Campaign image",
+            "group": "Hero",
+            "default": "asset:assets/hero.jpg"
+        },
+        "custom.hero_height": {
+            "type": "integer",
+            "label": "Desktop hero height (px)",
+            "group": "Hero",
+            "default": 950,
+            "min": 440,
+            "max": 1100
+        },
+        "custom.hero_mobile_height": {
+            "type": "integer",
+            "label": "Mobile hero height (px)",
+            "group": "Hero",
+            "default": 570,
+            "min": 320,
+            "max": 800
+        },
+        "custom.show_dressing": {
+            "type": "boolean",
+            "label": "Show fall editorial",
+            "group": "Fall editorial",
+            "tab": "home",
+            "default": true
+        },
+        "custom.dressing_heading": {
+            "type": "text",
+            "label": "Heading",
+            "group": "Fall editorial",
+            "tab": "home",
+            "default": "Fall Dressing\nStarts Here",
+            "max": 120
+        },
+        "custom.dressing_text": {
+            "type": "string",
+            "label": "Description",
+            "group": "Fall editorial",
+            "tab": "home",
+            "default": "From color to texture, this season’s fashion has range.",
+            "max": 240
+        },
+        "custom.dressing_image_1": {
+            "type": "image",
+            "label": "Left image",
+            "group": "Fall editorial",
+            "tab": "home",
+            "default": "asset:assets/coat.jpg"
+        },
+        "custom.dressing_image_2": {
+            "type": "image",
+            "label": "Right image",
+            "group": "Fall editorial",
+            "tab": "home",
+            "default": "asset:assets/fall.jpg"
+        },
+        "custom.dressing_button": {
+            "type": "string",
+            "label": "Button label",
+            "group": "Fall editorial",
+            "tab": "home",
+            "default": "Women’s New Arrivals",
+            "max": 80
+        },
+        "custom.dressing_link": {
+            "type": "link",
+            "label": "Button destination",
+            "group": "Fall editorial",
+            "tab": "home",
+            "default": "/search"
+        },
+        "custom.dressing_secondary": {
+            "type": "string",
+            "label": "Secondary link label",
+            "group": "Fall editorial",
+            "tab": "home",
+            "default": "What’s Hot Now",
+            "max": 80
+        },
+        "custom.dressing_secondary_link": {
+            "type": "link",
+            "label": "Secondary destination",
+            "group": "Fall editorial",
+            "tab": "home",
+            "default": "/search?sort=newest"
+        },
+        "custom.show_style": {
+            "type": "boolean",
+            "label": "Show section",
+            "group": "Style editorial",
+            "tab": "home",
+            "default": true
+        },
+        "custom.style_heading": {
+            "type": "string",
+            "label": "Section heading",
+            "group": "Style editorial",
+            "tab": "home",
+            "default": "Your Next Style Obsession",
+            "max": 120
+        },
+        "custom.style_1_image": {
+            "type": "image",
+            "label": "Card 1 image",
+            "group": "Style editorial",
+            "tab": "home",
+            "default": "asset:assets/corduroy.jpg"
+        },
+        "custom.style_1_title": {
+            "type": "string",
+            "label": "Card 1 heading",
+            "group": "Style editorial",
+            "tab": "home",
+            "default": "The Return to Corduroy",
+            "max": 100
+        },
+        "custom.style_1_link": {
+            "type": "link",
+            "label": "Card 1 destination",
+            "group": "Style editorial",
+            "tab": "home",
+            "default": "/search"
+        },
+        "custom.style_2_image": {
+            "type": "image",
+            "label": "Card 2 image",
+            "group": "Style editorial",
+            "tab": "home",
+            "default": "asset:assets/espresso.jpg"
+        },
+        "custom.style_2_title": {
+            "type": "string",
+            "label": "Card 2 heading",
+            "group": "Style editorial",
+            "tab": "home",
+            "default": "Espresso Yourself",
+            "max": 100
+        },
+        "custom.style_2_link": {
+            "type": "link",
+            "label": "Card 2 destination",
+            "group": "Style editorial",
+            "tab": "home",
+            "default": "/search"
+        },
+        "custom.style_3_image": {
+            "type": "image",
+            "label": "Card 3 image",
+            "group": "Style editorial",
+            "tab": "home",
+            "default": "asset:assets/boots.jpg"
+        },
+        "custom.style_3_title": {
+            "type": "string",
+            "label": "Card 3 heading",
+            "group": "Style editorial",
+            "tab": "home",
+            "default": "Dress Boots for Fall",
+            "max": 100
+        },
+        "custom.style_3_link": {
+            "type": "link",
+            "label": "Card 3 destination",
+            "group": "Style editorial",
+            "tab": "home",
+            "default": "/search"
+        },
+        "custom.show_designer": {
+            "type": "boolean",
+            "label": "Show section",
+            "group": "Designer editorial",
+            "tab": "home",
+            "default": true
+        },
+        "custom.designer_heading": {
+            "type": "string",
+            "label": "Section heading",
+            "group": "Designer editorial",
+            "tab": "home",
+            "default": "The Designer Edit",
+            "max": 120
+        },
+        "custom.designer_1_image": {
+            "type": "image",
+            "label": "Card 1 image",
+            "group": "Designer editorial",
+            "tab": "home",
+            "default": "asset:assets/layers.jpg"
+        },
+        "custom.designer_1_title": {
+            "type": "string",
+            "label": "Card 1 heading",
+            "group": "Designer editorial",
+            "tab": "home",
+            "default": "The Layered Look",
+            "max": 100
+        },
+        "custom.designer_1_link": {
+            "type": "link",
+            "label": "Card 1 destination",
+            "group": "Designer editorial",
+            "tab": "home",
+            "default": "/search"
+        },
+        "custom.designer_2_image": {
+            "type": "image",
+            "label": "Card 2 image",
+            "group": "Designer editorial",
+            "tab": "home",
+            "default": "asset:assets/tote.jpg"
+        },
+        "custom.designer_2_title": {
+            "type": "string",
+            "label": "Card 2 heading",
+            "group": "Designer editorial",
+            "tab": "home",
+            "default": "The Everyday Tote",
+            "max": 100
+        },
+        "custom.designer_2_link": {
+            "type": "link",
+            "label": "Card 2 destination",
+            "group": "Designer editorial",
+            "tab": "home",
+            "default": "/search"
+        },
+        "custom.designer_3_image": {
+            "type": "image",
+            "label": "Card 3 image",
+            "group": "Designer editorial",
+            "tab": "home",
+            "default": "asset:assets/sunglasses.jpg"
+        },
+        "custom.designer_3_title": {
+            "type": "string",
+            "label": "Card 3 heading",
+            "group": "Designer editorial",
+            "tab": "home",
+            "default": "The Oversized Lens",
+            "max": 100
+        },
+        "custom.designer_3_link": {
+            "type": "link",
+            "label": "Card 3 destination",
+            "group": "Designer editorial",
+            "tab": "home",
+            "default": "/search"
+        },
+        "custom.show_brands": {
+            "type": "boolean",
+            "label": "Show section",
+            "group": "Brands editorial",
+            "tab": "home",
+            "default": true
+        },
+        "custom.brands_heading": {
+            "type": "string",
+            "label": "Section heading",
+            "group": "Brands editorial",
+            "tab": "home",
+            "default": "One Brand at a Time",
+            "max": 120
+        },
+        "custom.brands_1_image": {
+            "type": "image",
+            "label": "Card 1 image",
+            "group": "Brands editorial",
+            "tab": "home",
+            "default": "asset:assets/coat.jpg"
+        },
+        "custom.brands_1_title": {
+            "type": "string",
+            "label": "Card 1 heading",
+            "group": "Brands editorial",
+            "tab": "home",
+            "default": "Exclusive Style",
+            "max": 100
+        },
+        "custom.brands_1_link": {
+            "type": "link",
+            "label": "Card 1 destination",
+            "group": "Brands editorial",
+            "tab": "home",
+            "default": "/search"
+        },
+        "custom.brands_2_image": {
+            "type": "image",
+            "label": "Card 2 image",
+            "group": "Brands editorial",
+            "tab": "home",
+            "default": "asset:assets/espresso.jpg"
+        },
+        "custom.brands_2_title": {
+            "type": "string",
+            "label": "Card 2 heading",
+            "group": "Brands editorial",
+            "tab": "home",
+            "default": "In Full Bloom",
+            "max": 100
+        },
+        "custom.brands_2_link": {
+            "type": "link",
+            "label": "Card 2 destination",
+            "group": "Brands editorial",
+            "tab": "home",
+            "default": "/search"
+        },
+        "custom.brands_3_image": {
+            "type": "image",
+            "label": "Card 3 image",
+            "group": "Brands editorial",
+            "tab": "home",
+            "default": "asset:assets/fall.jpg"
+        },
+        "custom.brands_3_title": {
+            "type": "string",
+            "label": "Card 3 heading",
+            "group": "Brands editorial",
+            "tab": "home",
+            "default": "Perfectly Tailored",
+            "max": 100
+        },
+        "custom.brands_3_link": {
+            "type": "link",
+            "label": "Card 3 destination",
+            "group": "Brands editorial",
+            "tab": "home",
+            "default": "/search"
+        },
+        "custom.editorial_text": {
+            "type": "string",
+            "label": "Card description",
+            "group": "Editorial cards",
+            "tab": "home",
+            "default": "Explore considered styles and fresh inspiration for the season.",
+            "max": 240
+        },
+        "custom.editorial_button": {
+            "type": "string",
+            "label": "Card button label",
+            "group": "Editorial cards",
+            "tab": "home",
+            "default": "Shop the Edit",
+            "max": 60
+        },
+        "custom.show_runway": {
+            "type": "boolean",
+            "label": "Show runway campaign",
+            "group": "Runway",
+            "tab": "home",
+            "default": true
+        },
+        "custom.runway_heading": {
+            "type": "string",
+            "label": "Heading",
+            "group": "Runway",
+            "tab": "home",
+            "default": "The 5: Runway Edition",
+            "max": 120
+        },
+        "custom.runway_text": {
+            "type": "string",
+            "label": "Description",
+            "group": "Runway",
+            "tab": "home",
+            "default": "Introducing a curated edit of pieces to love now, inspired by the latest runway collections.",
+            "max": 240
+        },
+        "custom.runway_button": {
+            "type": "string",
+            "label": "Button label",
+            "group": "Runway",
+            "tab": "home",
+            "default": "Fashion Month",
+            "max": 60
+        },
+        "custom.runway_link": {
+            "type": "link",
+            "label": "Button destination",
+            "group": "Runway",
+            "tab": "home",
+            "default": "/search"
+        },
+        "custom.runway_image": {
+            "type": "image",
+            "label": "Runway image",
+            "group": "Runway",
+            "tab": "home",
+            "default": "asset:assets/runway.jpg"
+        },
+        "custom.show_clearance": {
+            "type": "boolean",
+            "label": "Show markdown campaign",
+            "group": "Markdowns",
+            "tab": "home",
+            "default": true
+        },
+        "custom.clearance_badge": {
+            "type": "text",
+            "label": "Campaign tile text",
+            "group": "Markdowns",
+            "tab": "home",
+            "default": "New\nMarkdowns",
+            "max": 100
+        },
+        "custom.clearance_heading": {
+            "type": "string",
+            "label": "Heading",
+            "group": "Markdowns",
+            "tab": "home",
+            "default": "Look Here First",
+            "max": 120
+        },
+        "custom.clearance_text": {
+            "type": "string",
+            "label": "Description",
+            "group": "Markdowns",
+            "tab": "home",
+            "default": "Explore newly discounted deals from favorite brands.",
+            "max": 240
+        },
+        "custom.clearance_button": {
+            "type": "string",
+            "label": "Button label",
+            "group": "Markdowns",
+            "tab": "home",
+            "default": "New Markdowns",
+            "max": 60
+        },
+        "custom.clearance_link": {
+            "type": "link",
+            "label": "Button destination",
+            "group": "Markdowns",
+            "tab": "home",
+            "default": "/search"
+        },
+        "custom.clearance_color": {
+            "type": "color",
+            "label": "Tile background",
+            "group": "Markdowns",
+            "tab": "home",
+            "default": "#ef373b"
+        },
+        "custom.catalog_heading": {
+            "type": "string",
+            "label": "Default catalog heading",
+            "group": "Catalog",
+            "default": "Beauty & Style",
+            "max": 100
+        },
+        "custom.catalog_campaigns": {
+            "type": "boolean",
+            "label": "Show campaigns outside search results",
+            "group": "Catalog",
+            "default": true
+        },
+        "custom.catalog_banner_heading": {
+            "type": "string",
+            "label": "Banner heading",
+            "group": "Catalog",
+            "default": "Discover More to Love",
+            "max": 120
+        },
+        "custom.catalog_banner_text": {
+            "type": "string",
+            "label": "Banner description",
+            "group": "Catalog",
+            "default": "Explore new arrivals and everyday favorites.",
+            "max": 240
+        },
+        "custom.catalog_banner_button": {
+            "type": "string",
+            "label": "Banner button",
+            "group": "Catalog",
+            "default": "Shop New Arrivals",
+            "max": 80
+        },
+        "custom.catalog_editorial_heading": {
+            "type": "string",
+            "label": "Editorial heading",
+            "group": "Catalog",
+            "default": "The Beauty Edit",
+            "max": 120
+        },
+        "custom.catalog_editorial_text": {
+            "type": "string",
+            "label": "Editorial description",
+            "group": "Catalog",
+            "default": "The season’s biggest beauty moments, from runway-inspired looks to the latest launches.",
+            "max": 240
+        },
+        "custom.catalog_editorial_button": {
+            "type": "string",
+            "label": "Editorial button",
+            "group": "Catalog",
+            "default": "Discover Your Beauty Inspiration",
+            "max": 100
+        },
+        "custom.catalog_editorial_image": {
+            "type": "image",
+            "label": "Editorial image",
+            "group": "Catalog",
+            "default": "asset:assets/beauty.jpg"
+        },
+        "custom.catalog_editorial_link": {
+            "type": "link",
+            "label": "Editorial destination",
+            "group": "Catalog",
+            "default": "/search"
+        },
+        "custom.catalog_filters": {
+            "type": "boolean",
+            "label": "Show catalog filters",
+            "group": "Catalog",
+            "default": true
+        },
+        "custom.catalog_columns": {
+            "type": "select",
+            "label": "Desktop grid columns",
+            "group": "Catalog",
+            "default": "4",
+            "options": ["3", "4", "5", "6"]
+        },
+        "custom.product_button": {
+            "type": "string",
+            "label": "Add-to-bag button",
+            "group": "Product",
+            "default": "Add to Bag",
+            "max": 60
+        },
+        "custom.related_heading": {
+            "type": "string",
+            "label": "Related products heading",
+            "group": "Product",
+            "default": "Recommended for You",
+            "max": 120
+        },
+        "custom.product_offer": {
+            "type": "string",
+            "label": "Product reassurance",
+            "group": "Product",
+            "default": "Find your next favorite. Explore new arrivals and special offers.",
+            "max": 240
+        },
+        "custom.delivery_text": {
+            "type": "string",
+            "label": "Shipping and returns",
+            "group": "Product",
+            "default": "Delivery options and rates are calculated at checkout. Contact the store for returns information.",
+            "max": 500
+        },
+        "custom.cart_heading": {
+            "type": "string",
+            "label": "Bag heading",
+            "group": "Cart",
+            "default": "Shopping Bag",
+            "max": 100
+        },
+        "custom.cart_empty_heading": {
+            "type": "string",
+            "label": "Empty bag heading",
+            "group": "Cart",
+            "default": "Your bag is waiting",
+            "max": 100
+        },
+        "custom.cart_summary_heading": {
+            "type": "string",
+            "label": "Order summary heading",
+            "group": "Cart",
+            "default": "Order Summary",
+            "max": 100
+        },
+        "custom.cart_checkout_label": {
+            "type": "string",
+            "label": "Checkout button",
+            "group": "Cart",
+            "default": "Proceed to Checkout",
+            "max": 80
+        },
+        "custom.cart_continue_label": {
+            "type": "string",
+            "label": "Continue shopping button",
+            "group": "Cart",
+            "default": "Continue Shopping",
+            "max": 80
+        },
+        "custom.cart_show_coupon": {
+            "type": "boolean",
+            "label": "Show promotion-code field",
+            "group": "Cart",
+            "default": true
+        },
+        "custom.footer_account_heading": {
+            "type": "string",
+            "label": "Account column heading",
+            "group": "Footer",
+            "default": "Your Account",
+            "max": 80
+        },
+        "custom.footer_explore_heading": {
+            "type": "string",
+            "label": "Explore column heading",
+            "group": "Footer",
+            "default": "More to Explore",
+            "max": 80
+        },
+        "custom.footer_connect_heading": {
+            "type": "string",
+            "label": "Extension column heading",
+            "group": "Footer",
+            "default": "Stay Connected",
+            "max": 80
+        },
+        "custom.footer_note": {
+            "type": "string",
+            "label": "Footer note",
+            "group": "Footer",
+            "default": "Discover your next favorite.",
+            "max": 160
+        },
+        "custom.privacy_link": {
+            "type": "link",
+            "label": "Privacy page",
+            "group": "Footer",
+            "default": ""
+        },
+        "custom.terms_link": {
+            "type": "link",
+            "label": "Terms page",
+            "group": "Footer",
+            "default": ""
+        }
+    }
+}

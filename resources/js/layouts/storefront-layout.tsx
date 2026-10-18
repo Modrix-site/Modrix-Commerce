@@ -1,29 +1,48 @@
-import { Form, Head, Link, router, usePage } from '@inertiajs/react';
-import { Eye, Globe, Search, User } from 'lucide-react';
-import { pageSettingAttributes } from '@/components/storefront/page-settings/attributes';
+import { Form, Head, router, usePage } from "@inertiajs/react";
+import { Eye, Globe, Search, User } from "lucide-react";
+import { pageSettingAttributes } from "@/components/storefront/page-settings/attributes";
 import {
     CartIcon,
     SearchIconLink,
     useShowAccountLink,
     useShowCartCount,
-} from '@/components/storefront/page-settings/header-parts';
-import { useStoreSettings } from '@/hooks/use-store-settings';
-import type { ReactNode } from 'react';
-import { SearchToggle } from '@/components/storefront/search-toggle';
-import { Button, buttonVariants } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useFlashToast } from '@/hooks/use-flash-toast';
-import { PlaceSlot } from '@/components/extensions/place-slot';
-import { CustomerNotificationBell } from '@/components/storefront/customer-notification-bell';
-import { SiteHeader } from '@/components/storefront/site-header';
-import { useStoreTheme } from '@/hooks/use-store-theme';
-import { storePageFor } from '@/lib/store-page';
-import { useT } from '@/lib/i18n';
-import { cn } from '@/lib/utils';
-import { dashboard, home, login } from '@/routes';
-import { show as cartShow } from '@/routes/cart';
-import { category, search } from '@/routes/storefront';
-import type { StorefrontShared } from '@/types';
+} from "@/components/storefront/page-settings/header-parts";
+import { useStoreSettings } from "@/hooks/use-store-settings";
+import type { ReactNode } from "react";
+import { Suspense } from "react";
+import { themeHeader, themeFooter } from "@/lib/theme-pages";
+import {
+    AtelierFooter,
+    AtelierHeader,
+    AtelierTrustBand,
+} from "@/components/storefront/atelier-chrome";
+import {
+    ElectronicsFooter,
+    ElectronicsHeader,
+} from "@/components/storefront/electronics-chrome";
+import { RecentlyViewed } from "@/components/storefront/recent-products";
+import { ExtensionSlot } from "@/components/extensions/extension-slot";
+import {
+    StoreFooterMenus,
+    StoreMenuLink as Link,
+} from "@/components/storefront/footer-menus";
+import "@/components/storefront/electronics.css";
+import "@/components/storefront/atelier.css";
+import { SearchToggle } from "@/components/storefront/search-toggle";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useFlashToast } from "@/hooks/use-flash-toast";
+import { PlaceSlot } from "@/components/extensions/place-slot";
+import { CustomerNotificationBell } from "@/components/storefront/customer-notification-bell";
+import { SiteHeader } from "@/components/storefront/site-header";
+import { useStoreTheme } from "@/hooks/use-store-theme";
+import { storePageFor } from "@/lib/store-page";
+import { useT } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
+import { dashboard, home, login } from "@/routes";
+import { show as cartShow } from "@/routes/cart";
+import { search } from "@/routes/storefront";
+import type { StorefrontShared } from "@/types";
 
 /**
  * Storefront chrome, rendered from the active theme's validated design
@@ -35,9 +54,22 @@ export default function StorefrontLayout({
 }: {
     children: ReactNode;
 }) {
-    const { storefront } = usePage().props;
+    const page = usePage();
+    const { storefront } = page.props;
     const { header, footer, theme } = useStoreTheme();
+    const customPage = [
+        "storefront/home",
+        "storefront/listing",
+        "storefront/product",
+        "storefront/cart",
+    ].includes(page.component);
     const t = useT();
+    const CustomHeader = theme?.frontend?.header
+        ? themeHeader(theme.name)
+        : undefined;
+    const CustomFooter = theme?.frontend?.footer
+        ? themeFooter(theme.name)
+        : undefined;
     useFlashToast();
     // Customizer styles can differ per page (Homepage, Catalog, Product, Cart).
     const storePage = storePageFor(usePage().component);
@@ -46,10 +78,26 @@ export default function StorefrontLayout({
 
     return (
         <div
+            data-theme={theme?.name}
             data-page={storePage}
             {...pageSettingAttributes(pageSettings)}
-            className="storefront flex min-h-screen flex-col bg-background text-foreground"
+            data-component={page.component}
+            dir={storefront?.direction ?? "ltr"}
+            lang={storefront?.locale}
+            className={cn(
+                "storefront flex min-h-screen flex-col bg-background text-foreground",
+                header === "electronics" && "electronics-store",
+                header === "atelier" && "ecom-atelier",
+            )}
         >
+            {storefront?.seoDescription && (
+                <Head>
+                    <meta
+                        name="description"
+                        content={storefront.seoDescription}
+                    />
+                </Head>
+            )}
             {theme && (
                 <>
                     {/* Generated by the server from validated values only. */}
@@ -65,45 +113,122 @@ export default function StorefrontLayout({
                 href="#main"
                 className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded focus:bg-background focus:px-3 focus:py-2"
             >
-                {t('Skip to content')}
+                {t("Skip to content")}
             </a>
             {storefront?.themePreview && (
                 <PreviewBanner preview={storefront.themePreview} />
             )}
-            {theme?.announcement && (
-                <div className="bg-primary px-4 py-2 text-center text-sm text-primary-foreground">
+            {!CustomHeader && theme?.announcement && (
+                <div
+                    className={
+                        header === "atelier"
+                            ? "ecom-announcement"
+                            : "bg-primary px-4 py-2 text-center text-sm text-primary-foreground"
+                    }
+                >
                     {theme.announcement}
                 </div>
             )}
+            {!CustomHeader && (storefront?.currencies?.length ?? 0) > 1 && (
+                <div className="hidden border-b bg-muted/30 px-4 py-2 text-sm lg:block">
+                    <div className="mx-auto flex max-w-[var(--store-container,72rem)] flex-wrap items-center justify-between gap-2">
+                        <span className="text-xs text-muted-foreground">
+                            {storefront?.currencyNotice}
+                        </span>
+                        <label className="flex items-center gap-2">
+                            Currency
+                            <select
+                                aria-label="Store currency"
+                                className="rounded border bg-background px-2 py-1"
+                                disabled={!storefront?.canSwitchCurrency}
+                                value={storefront?.displayCurrency}
+                                onChange={(e) => {
+                                    const params = new URLSearchParams(
+                                        window.location.search,
+                                    );
+                                    params.set("currency", e.target.value);
+                                    router.visit(
+                                        `${window.location.pathname}?${params.toString()}`,
+                                        { preserveScroll: true },
+                                    );
+                                }}
+                            >
+                                {storefront?.currencies?.map((c) => (
+                                    <option key={c.code} value={c.code}>
+                                        {c.code} — {c.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                    </div>
+                </div>
+            )}
             <SiteHeader>
-                {header === 'centered' ? (
-                    <CenteredHeader />
-                ) : header === 'minimal' ? (
-                    <MinimalHeader />
-                ) : (
-                    <ClassicHeader />
-                )}
+            {CustomHeader ? (
+                <Suspense
+                    fallback={
+                        <div className="h-32" aria-label="Loading header" />
+                    }
+                >
+                    <CustomHeader />
+                </Suspense>
+            ) : header === "electronics" ? (
+                <ElectronicsHeader />
+            ) : header === "atelier" ? (
+                <AtelierHeader />
+            ) : header === "centered" ? (
+                <CenteredHeader />
+            ) : header === "minimal" ? (
+                <MinimalHeader />
+            ) : (
+                <ClassicHeader />
+            )}
             </SiteHeader>
             <main
                 id="main"
-                className="mx-auto w-full max-w-[var(--store-container,72rem)] flex-1 px-4 py-8"
+                className={cn(
+                    "flex-1",
+                    (!CustomHeader || !customPage) &&
+                        header !== "atelier" &&
+                        "mx-auto w-full max-w-[var(--store-container,72rem)] px-4 py-8",
+                )}
             >
                 {children}
             </main>
-            {footer === 'columns' ? <ColumnsFooter /> : <SimpleFooter />}
+            {header === "electronics" && <RecentlyViewed />}
+            {!CustomFooter &&
+                footer === "atelier" &&
+                theme?.settings?.show_trust_band !== false && (
+                    <AtelierTrustBand />
+                )}
+            {CustomFooter ? (
+                <Suspense fallback={null}>
+                    <CustomFooter />
+                </Suspense>
+            ) : footer === "electronics" ? (
+                <ElectronicsFooter />
+            ) : footer === "atelier" ? (
+                <AtelierFooter />
+            ) : footer === "columns" ? (
+                <ColumnsFooter />
+            ) : (
+                <SimpleFooter />
+            )}
+            {/* Global module overlays (marketing popups, cookie bars). */}
+            <ExtensionSlot items={storefront?.overlays} />
         </div>
     );
 }
 
 function Brand({ className }: { className?: string }) {
     const { storefront } = usePage().props;
-    const name = storefront?.storeName ?? '';
+    const name = storefront?.storeName ?? "";
     const logo = storefront?.theme.logo;
 
     return (
         <Link
             href={home()}
-            className={cn('text-lg font-semibold', className)}
+            className={cn("text-lg font-semibold", className)}
             aria-label={logo ? name : undefined}
         >
             {logo ? (
@@ -121,20 +246,20 @@ function SearchForm({ className }: { className?: string }) {
     return (
         <Form
             {...search.form()}
-            className={cn('flex items-center gap-2', className)}
+            className={cn("flex items-center gap-2", className)}
             role="search"
         >
             <Input
                 type="search"
                 name="q"
-                placeholder={t('Search products')}
-                aria-label={t('Search products')}
+                placeholder={t("Search products")}
+                aria-label={t("Search products")}
             />
             <Button
                 type="submit"
                 variant="outline"
                 size="icon"
-                aria-label={t('Search')}
+                aria-label={t("Search")}
             >
                 <Search />
             </Button>
@@ -153,7 +278,7 @@ function LanguageSwitcher() {
 
     const change = (code: string) => {
         const params = new URLSearchParams(window.location.search);
-        params.set('lang', code);
+        params.set("lang", code);
         router.visit(`${window.location.pathname}?${params.toString()}`, {
             preserveScroll: true,
         });
@@ -162,7 +287,7 @@ function LanguageSwitcher() {
     return (
         <label className="flex items-center gap-1 text-sm">
             <Globe className="size-4" aria-hidden />
-            <span className="sr-only">{t('Language')}</span>
+            <span className="sr-only">{t("Language")}</span>
             <select
                 value={storefront.locale}
                 onChange={(e) => change(e.target.value)}
@@ -202,16 +327,16 @@ function AccountLinks() {
                     <span className="hidden sm:inline">
                         {auth.user
                             ? auth.isStaff
-                                ? t('Admin')
-                                : t('Account')
-                            : t('Log in')}
+                                ? t("Admin")
+                                : t("Account")
+                            : t("Log in")}
                     </span>
                 </Link>
             </Button>
             <Button variant="outline" size="sm" asChild>
                 <Link
                     href={cartShow()}
-                    aria-label={t('Cart, :count items', { count: cartCount })}
+                    aria-label={t("Cart, :count items", { count: cartCount })}
                 >
                     <CartIcon />
                     {showCount && (
@@ -227,36 +352,30 @@ function CategoryNav({ centered = false }: { centered?: boolean }) {
     const { storefront } = usePage().props;
     const t = useT();
 
-    if (!storefront || storefront.categories.length === 0) {
+    if (!storefront) {
         return null;
     }
 
     return (
-        <nav aria-label={t('Categories')} className="border-t">
+        <nav aria-label={t("Categories")} className="border-t">
             <ul
                 className={cn(
-                    'mx-auto flex max-w-[var(--store-container,72rem)] gap-5 overflow-x-auto px-4 py-2 text-sm',
-                    centered && 'justify-center',
+                    "mx-auto flex max-w-[var(--store-container,72rem)] gap-5 overflow-x-auto px-4 py-2 text-sm",
+                    centered && "justify-center",
                 )}
             >
-                <li>
-                    <Link
-                        href={search()}
-                        className="whitespace-nowrap text-muted-foreground hover:text-foreground"
-                    >
-                        {t('All products')}
-                    </Link>
-                </li>
-                {storefront.categories.map((c) => (
-                    <li key={c.id}>
-                        <Link
-                            href={category(c.slug)}
-                            className="whitespace-nowrap text-muted-foreground hover:text-foreground"
-                        >
-                            {c.name}
-                        </Link>
-                    </li>
-                ))}
+                {(storefront.navigation?.header.links ?? []).map(
+                    (link, index) => (
+                        <li key={index}>
+                            <Link
+                                href={link.url}
+                                className="whitespace-nowrap text-muted-foreground hover:text-foreground"
+                            >
+                                {link.label}
+                            </Link>
+                        </li>
+                    ),
+                )}
             </ul>
         </nav>
     );
@@ -299,24 +418,26 @@ function MinimalHeader() {
             <div className="mx-auto flex max-w-[var(--store-container,72rem)] items-center gap-6 px-4 py-3">
                 <Brand />
                 <nav
-                    aria-label={t('Categories')}
+                    aria-label={t("Categories")}
                     className="mr-auto hidden gap-5 text-sm md:flex"
                 >
-                    {storefront?.categories.slice(0, 5).map((c) => (
-                        <Link
-                            key={c.id}
-                            href={category(c.slug)}
-                            className="text-muted-foreground hover:text-foreground"
-                        >
-                            {c.name}
-                        </Link>
-                    ))}
+                    {(storefront?.navigation?.header.links ?? []).map(
+                        (link, index) => (
+                            <Link
+                                key={index}
+                                href={link.url}
+                                className="text-muted-foreground hover:text-foreground"
+                            >
+                                {link.label}
+                            </Link>
+                        ),
+                    )}
                 </nav>
                 <SearchToggle
                     className={buttonVariants({
-                        variant: 'ghost',
-                        size: 'icon',
-                        className: 'ml-auto md:ml-0',
+                        variant: "ghost",
+                        size: "icon",
+                        className: "ml-auto md:ml-0",
                     })}
                 >
                     <Search />
@@ -333,14 +454,15 @@ function SimpleFooter() {
 
     return (
         <footer className="grid gap-1 border-t px-4 py-6 text-center text-xs text-muted-foreground">
+            <StoreFooterMenus />
             {storefront?.theme.footerText && (
                 <p className="whitespace-pre-line">
                     {storefront.theme.footerText}
                 </p>
             )}
             <p>
-                © {new Date().getFullYear()} {storefront?.storeName}.{' '}
-                {t('Powered by EcoModular, open-source commerce (MIT).')}
+                © {new Date().getFullYear()} {storefront?.storeName}.{" "}
+                {t("Powered by EcoModular, open-source commerce (MIT).")}
             </p>
         </footer>
     );
@@ -348,64 +470,11 @@ function SimpleFooter() {
 
 function ColumnsFooter() {
     const { storefront } = usePage().props;
-    const t = useT();
-
     return (
         <footer className="border-t bg-muted/40">
-            <div className="mx-auto grid max-w-[var(--store-container,72rem)] gap-8 px-4 py-10 text-sm sm:grid-cols-3">
-                <div className="grid content-start gap-2">
-                    <span className="font-semibold">
-                        {storefront?.storeName}
-                    </span>
-                    {storefront?.theme.footerText && (
-                        <p className="whitespace-pre-line text-muted-foreground">
-                            {storefront.theme.footerText}
-                        </p>
-                    )}
-                </div>
-                <nav
-                    aria-label={t('Shop')}
-                    className="grid content-start gap-2"
-                >
-                    <span className="font-semibold">{t('Shop')}</span>
-                    <Link
-                        href={search()}
-                        className="text-muted-foreground hover:text-foreground"
-                    >
-                        {t('All products')}
-                    </Link>
-                    {storefront?.categories.slice(0, 6).map((c) => (
-                        <Link
-                            key={c.id}
-                            href={category(c.slug)}
-                            className="text-muted-foreground hover:text-foreground"
-                        >
-                            {c.name}
-                        </Link>
-                    ))}
-                </nav>
-                <nav
-                    aria-label={t('Help')}
-                    className="grid content-start gap-2"
-                >
-                    <span className="font-semibold">{t('Your account')}</span>
-                    <Link
-                        href={login()}
-                        className="text-muted-foreground hover:text-foreground"
-                    >
-                        {t('Sign in')}
-                    </Link>
-                    <Link
-                        href={cartShow()}
-                        className="text-muted-foreground hover:text-foreground"
-                    >
-                        {t('Cart')}
-                    </Link>
-                </nav>
-            </div>
-            <p className="border-t px-4 py-4 text-center text-xs text-muted-foreground">
-                © {new Date().getFullYear()} {storefront?.storeName}.{' '}
-                {t('Powered by EcoModular, open-source commerce (MIT).')}
+            <StoreFooterMenus />
+            <p className="px-4 pb-6 text-center text-xs text-muted-foreground">
+                {storefront?.theme.footerText ?? storefront?.storeName}
             </p>
         </footer>
     );
@@ -414,7 +483,7 @@ function ColumnsFooter() {
 function PreviewBanner({
     preview,
 }: {
-    preview: NonNullable<StorefrontShared['themePreview']>;
+    preview: NonNullable<StorefrontShared["themePreview"]>;
 }) {
     return (
         <div

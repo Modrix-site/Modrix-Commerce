@@ -3,7 +3,7 @@
     "name": "ecomodular/bloom",
     "display_name": "Bloom",
     "description": "A warm, airy theme with soft cream tones, sage green and rounded cards, for home goods, plants, food and lifestyle brands.",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "type": "theme",
     "theme_type": "storefront",
     "platform_version": "^0.4 || ^1.0",
@@ -11,7 +11,7 @@
     "license": "MIT",
     "capabilities": ["home.sections", "dark_mode", "demo_content"],
     "assets": "assets",
-    "screenshot": "assets/images/hero.webp",
+    "screenshot": "assets/demo-preview.png",
     "design": {
         "color.background": "#fbf7f1",
         "color.foreground": "#2d2a26",
@@ -62,7 +62,10 @@
             },
             {
                 "type": "category_grid",
-                "settings": { "title": "Shop by room", "limit": 6 }
+                "settings": {
+                    "title": "Shop by room",
+                    "limit": 6
+                }
             },
             {
                 "type": "featured_products",
@@ -96,6 +99,11 @@
     },
     "demo_content": "demo.json",
     "changelog": [
-        { "version": "1.0.0", "date": "2026-10-16", "notes": "First release." }
-    ]
+        {
+            "version": "1.0.0",
+            "date": "2026-10-16",
+            "notes": "First release."
+        }
+    ],
+    "customizer_file": "settings.json"
 }

@@ -78,7 +78,7 @@ class SampleModulesTest extends TestCase
         $this->modules->enable('ecomodular/newsletter', true, $owner);
 
         // The sign-up form is offered in the home page slot.
-        $this->get('/')->assertInertia(fn (Assert $page) => $page->where('slots.0.component', 'ecomodular/newsletter/SignupForm')->where('slots.0.props.source', 'home'));
+        $this->get('/')->assertInertia(fn (Assert $page) => $page->where('slots.0.component', 'ecomodular/newsletter/SignupForm')->where('slots.0.props.source', 'home')->where('storefront.footerSlots.0.component', 'ecomodular/newsletter/SignupForm')->where('storefront.footerSlots.0.props.source', 'footer'));
 
         $subscribe = route('ecomodular.newsletter.subscribe');
         $this->post($subscribe, ['email' => 'ana@example.com'])->assertSessionHasErrors('consent');

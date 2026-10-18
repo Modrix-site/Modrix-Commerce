@@ -1,0 +1,128 @@
+{
+    "title": "Marketplace design & catalog",
+    "description": "Theme-owned storefront and catalog settings. Saved values override the theme defaults.",
+    "fields": {
+        "custom.show_buy_button": {
+            "type": "boolean",
+            "label": "Show Buy now button (product cards and product page)",
+            "group": "Marketplace catalog",
+            "default": true
+        },
+        "custom.sticky_add_to_cart": {
+            "type": "boolean",
+            "label": "Sticky add-to-cart bar on phones",
+            "group": "Product page",
+            "default": true
+        },
+        "custom.catalog_heading": {
+            "type": "string",
+            "label": "Catalog heading",
+            "group": "Marketplace catalog",
+            "default": "Our products",
+            "max": 120
+        },
+        "custom.catalog_heading_align": {
+            "type": "select",
+            "label": "Catalog heading alignment",
+            "group": "Marketplace catalog",
+            "default": "left",
+            "options": ["left", "center"]
+        },
+        "custom.catalog_columns": {
+            "type": "select",
+            "label": "Catalog columns",
+            "group": "Marketplace catalog",
+            "default": "3",
+            "options": ["2", "3", "4"]
+        },
+        "custom.catalog_image_height": {
+            "type": "integer",
+            "label": "Catalog image height (px)",
+            "group": "Marketplace catalog",
+            "default": 240,
+            "min": 160,
+            "max": 360
+        },
+        "custom.catalog_show_filters": {
+            "type": "boolean",
+            "label": "Show catalog filters",
+            "group": "Marketplace catalog",
+            "default": true
+        },
+        "custom.catalog_show_count": {
+            "type": "boolean",
+            "label": "Show product count",
+            "group": "Marketplace catalog",
+            "default": true
+        },
+        "custom.home_section_gap": {
+            "type": "integer",
+            "label": "Home section spacing (px)",
+            "group": "Marketplace homepage",
+            "default": 20,
+            "min": 12,
+            "max": 48
+        },
+        "custom.home_show_extensions": {
+            "type": "boolean",
+            "label": "Show extension content",
+            "group": "Marketplace homepage",
+            "default": true
+        },
+        "custom.header_brand": {
+            "type": "string",
+            "label": "Header brand name",
+            "group": "Marketplace header",
+            "default": "MARKETPLACE",
+            "max": 60
+        },
+        "custom.header_search_placeholder": {
+            "type": "string",
+            "label": "Search placeholder",
+            "group": "Marketplace header",
+            "default": "Search products, brands and more",
+            "max": 120
+        },
+        "custom.cart_heading": {
+            "type": "string",
+            "label": "Cart heading",
+            "group": "Marketplace cart",
+            "default": "Shopping cart",
+            "max": 120
+        },
+        "custom.cart_empty_heading": {
+            "type": "string",
+            "label": "Empty cart heading",
+            "group": "Marketplace cart",
+            "default": "Your cart is empty",
+            "max": 120
+        },
+        "custom.cart_continue_label": {
+            "type": "string",
+            "label": "Continue shopping label",
+            "group": "Marketplace cart",
+            "default": "Continue shopping",
+            "max": 120
+        },
+        "custom.cart_summary_heading": {
+            "type": "string",
+            "label": "Summary heading",
+            "group": "Marketplace cart",
+            "default": "Order summary",
+            "max": 120
+        },
+        "custom.cart_checkout_label": {
+            "type": "string",
+            "label": "Checkout button label",
+            "group": "Marketplace cart",
+            "default": "Proceed to checkout",
+            "max": 120
+        },
+        "custom.cart_show_coupon": {
+            "type": "boolean",
+            "label": "Show coupon entry",
+            "group": "Marketplace cart",
+            "default": true
+        }
+    }
+}

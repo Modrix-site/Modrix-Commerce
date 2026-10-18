@@ -5,6 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import type { Option } from '@/types';
+import { VariantImagePicker } from './variant-image-picker';
+import type { VariantImageProps } from './variant-image-picker';
+import { VariantInventory } from './variant-inventory';
 import type { AttributeOption, Errors, VariantRow } from './types';
 import { VariantFields } from './variant-fields';
 
@@ -23,7 +27,10 @@ export function VariantsTable({
     onChange,
     onRemove,
     onAdd,
-}: {
+    productId,
+    images,
+    inventoryReasons,
+}: VariantImageProps & {
     variants: VariantRow[];
     attributes: AttributeOption[];
     currency: string;
@@ -31,6 +38,7 @@ export function VariantsTable({
     onChange: (index: number, patch: Partial<VariantRow>) => void;
     onRemove: (index: number) => void;
     onAdd: () => void;
+    inventoryReasons: Option[];
 }) {
     const [open, setOpen] = useState<number | null>(null);
 
@@ -57,6 +65,7 @@ export function VariantsTable({
                             <th className="w-8 p-2">
                                 <span className="sr-only">Details</span>
                             </th>
+                            <th className="p-2 font-medium">Image</th>
                             {attributes.map((a) => (
                                 <th key={a.id} className="p-2 font-medium">
                                     {a.name}
@@ -106,6 +115,24 @@ export function VariantsTable({
                                                     <ChevronRight />
                                                 )}
                                             </Button>
+                                        </td>
+                                        <td className="p-2">
+                                            <VariantImagePicker
+                                                productId={productId}
+                                                images={images}
+                                                imageId={variant.image_id}
+                                                label={`Choose image for variant ${i + 1}`}
+                                                onChange={(image_id) =>
+                                                    onChange(i, { image_id })
+                                                }
+                                            />
+                                            <InputError
+                                                message={
+                                                    errors[
+                                                        `variants.${i}.image_id`
+                                                    ]
+                                                }
+                                            />
                                         </td>
                                         {attributes.map((attribute) => {
                                             const selected =
@@ -182,12 +209,35 @@ export function VariantsTable({
                                                 required
                                             />
                                         </td>
-                                        <td className="p-2 py-4 tabular-nums">
-                                            {variant.id === null
-                                                ? variant.initial_stock || 0
-                                                : variant.track_inventory
-                                                  ? (variant.on_hand ?? 0)
-                                                  : '—'}
+                                        <td className="p-2 tabular-nums">
+                                            {variant.id === null ? (
+                                                <Input
+                                                    aria-label={`Initial stock for variant ${i + 1}`}
+                                                    type="number"
+                                                    min={0}
+                                                    max={1000000}
+                                                    step={1}
+                                                    className="w-24"
+                                                    disabled={
+                                                        !variant.track_inventory
+                                                    }
+                                                    value={
+                                                        variant.initial_stock
+                                                    }
+                                                    onChange={(event) =>
+                                                        onChange(i, {
+                                                            initial_stock:
+                                                                event.target
+                                                                    .value,
+                                                        })
+                                                    }
+                                                />
+                                            ) : (
+                                                <VariantInventory
+                                                    variant={variant}
+                                                    reasons={inventoryReasons}
+                                                />
+                                            )}
                                         </td>
                                         <td className="p-2 py-3">
                                             <Checkbox
@@ -221,7 +271,7 @@ export function VariantsTable({
                                         errors[`variants.${i}.price`]) && (
                                         <tr>
                                             <td
-                                                colSpan={attributes.length + 6}
+                                                colSpan={attributes.length + 7}
                                                 className="px-2 pb-2"
                                             >
                                                 <InputError
@@ -243,7 +293,7 @@ export function VariantsTable({
                                     {expanded && (
                                         <tr className="bg-muted/20">
                                             <td
-                                                colSpan={attributes.length + 6}
+                                                colSpan={attributes.length + 7}
                                                 className="p-4"
                                             >
                                                 <VariantFields
@@ -251,6 +301,9 @@ export function VariantsTable({
                                                     variant={variant}
                                                     currency={currency}
                                                     errors={errors}
+                                                    inventoryReasons={
+                                                        inventoryReasons
+                                                    }
                                                     onChange={(patch) =>
                                                         onChange(i, patch)
                                                     }

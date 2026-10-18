@@ -1,0 +1,50 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "ecomodular/authorize-net",
+    "display_name": "Authorize.Net",
+    "description": "Accept cards on Authorize.Net's hosted payment form. The customer pays at Authorize.Net, and this store marks the order paid only after Authorize.Net confirms the transaction.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "credit-card",
+    "accent": "#1a4f8b",
+    "platform_version": "^1.0",
+    "author": "Eleydo",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\AuthorizeNet\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\AuthorizeNet\\AuthorizeNetServiceProvider",
+    "capabilities": [
+        "payment.gateway",
+        "storefront.routes",
+        "admin.routes",
+        "admin.navigation",
+        "content_security"
+    ],
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages"
+    },
+    "content_security": {
+        "form-action": [
+            "https://test.authorize.net",
+            "https://accept.authorize.net"
+        ]
+    },
+    "admin_navigation": [
+        {
+            "key": "authorize-net",
+            "title": "Authorize.Net",
+            "route": "index",
+            "icon": "credit-card",
+            "group": "Configuration",
+            "permission": "payments.manage",
+            "order": 868
+        }
+    ]
+}

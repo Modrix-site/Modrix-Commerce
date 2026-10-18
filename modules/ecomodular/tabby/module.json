@@ -1,0 +1,117 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "ecomodular/tabby",
+    "display_name": "Tabby: Buy Now, Pay Later",
+    "description": "Let customers in the UAE and Saudi Arabia split payments with Tabby. Adds Tabby at checkout, promo messaging on product and cart pages, webhooks, capture and refunds.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "credit-card",
+    "accent": "#14b8a6",
+    "platform_version": "^1.0",
+    "author": "Eleydo",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\Tabby\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\Tabby\\TabbyServiceProvider",
+    "capabilities": [
+        "payment.gateway",
+        "storefront.slots",
+        "storefront.routes",
+        "admin.routes",
+        "admin.navigation",
+        "settings",
+        "content_security"
+    ],
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages",
+        "slots": "resources/js/slots"
+    },
+    "content_security": {
+        "script-src": ["https://checkout.tabby.ai"],
+        "frame-src": ["https://checkout.tabby.ai", "https://checkout.tabby.sa"],
+        "connect-src": [
+            "https://checkout.tabby.ai",
+            "https://checkout.tabby.sa",
+            "https://api.tabby.ai",
+            "https://api.tabby.sa"
+        ],
+        "img-src": ["https://checkout.tabby.ai", "https://checkout.tabby.sa"],
+        "form-action": [
+            "https://checkout.tabby.ai",
+            "https://checkout.tabby.sa"
+        ]
+    },
+    "settings": [
+        {
+            "key": "product_snippet",
+            "tab": "product",
+            "type": "boolean",
+            "label": "Show Tabby on product pages",
+            "help": "The split-payment message and \"Learn more\" pop-up near the price.",
+            "default": true
+        },
+        {
+            "key": "cart_snippet",
+            "type": "boolean",
+            "label": "Show Tabby in the cart",
+            "default": true
+        },
+        {
+            "key": "checkout_card",
+            "type": "boolean",
+            "label": "Show the payment schedule at checkout",
+            "help": "Tabby's checkout card under the payment method, with the instalment breakdown.",
+            "default": true
+        },
+        {
+            "key": "eligibility_check",
+            "type": "boolean",
+            "label": "Check eligibility before customers choose Tabby",
+            "help": "Asks Tabby in the background whether the customer can use it, and disables Tabby with Tabby's own message when not.",
+            "default": true
+        },
+        {
+            "key": "inherit_background",
+            "type": "boolean",
+            "label": "Snippets use the page background",
+            "help": "Off: Tabby's white snippet background.",
+            "default": false
+        },
+        {
+            "key": "min_amount",
+            "type": "integer",
+            "label": "Minimum order total for Tabby",
+            "help": "In the store currency. 0 for no minimum.",
+            "min": 0,
+            "max": 1000000,
+            "default": 0
+        },
+        {
+            "key": "max_amount",
+            "type": "integer",
+            "label": "Maximum order total for Tabby",
+            "help": "In the store currency. 0 for no maximum.",
+            "min": 0,
+            "max": 1000000,
+            "default": 0
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "tabby",
+            "title": "Tabby",
+            "route": "index",
+            "icon": "credit-card",
+            "group": "Configuration",
+            "permission": "payments.manage",
+            "order": 860
+        }
+    ]
+}

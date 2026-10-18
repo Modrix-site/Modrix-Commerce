@@ -14,7 +14,7 @@ use InvalidArgumentException;
  */
 final class AdminNavigation
 {
-    /** @var array<string, array{key: string, title: string, route: string, icon: string, group: string, permission: string|null, order: int}> */
+    /** @var array<string, array{key: string, title: string, route: string, icon: string, group: string, permission: string|null, order: int, paymentGateway: bool}> */
     private array $items = [];
 
     /**
@@ -28,22 +28,30 @@ final class AdminNavigation
         string $group = 'Store',
         ?string $permission = null,
         int $order = 100,
+        bool $paymentGateway = false,
     ): void {
         if (isset($this->items[$key])) {
             throw new InvalidArgumentException("Admin navigation item [{$key}] is already registered.");
         }
 
-        $this->items[$key] = compact('key', 'title', 'route', 'icon', 'group', 'permission', 'order');
+        $this->items[$key] = compact('key', 'title', 'route', 'icon', 'group', 'permission', 'order', 'paymentGateway');
+    }
+
+    /** @return list<array{key: string, title: string, href: string, icon: string}> */
+    public function paymentGatewaysForUser(User $user): array
+    {
+        return array_merge([], ...array_column($this->forUser($user, true), 'items'));
     }
 
     /**
      * @return list<array{title: string, items: list<array{key: string, title: string, href: string, icon: string}>}>
      */
-    public function forUser(User $user): array
+    public function forUser(User $user, bool $paymentGateways = false): array
     {
         $groups = [];
 
         $items = collect($this->items)
+            ->filter(fn (array $item) => $item['paymentGateway'] === $paymentGateways)
             ->filter(fn (array $item) => $item['permission'] === null || $user->can($item['permission']))
             ->filter(fn (array $item) => app('router')->has($item['route']))
             ->sortBy([['order', 'asc'], ['title', 'asc']]);

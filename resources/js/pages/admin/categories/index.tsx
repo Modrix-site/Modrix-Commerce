@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import { Plus } from 'lucide-react';
+import { ImageIcon, Plus } from 'lucide-react';
 import { EmptyState } from '@/components/admin/empty-state';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Badge } from '@/components/ui/badge';
@@ -22,6 +22,7 @@ type CategoryRow = {
     depth: number;
     is_active: boolean;
     products_count: number;
+    image_url: string | null;
 };
 
 export default function CategoriesIndex({
@@ -78,6 +79,17 @@ export default function CategoriesIndex({
                                                     className="text-muted-foreground"
                                                 >
                                                     └
+                                                </span>
+                                            )}
+                                            {category.image_url ? (
+                                                <img
+                                                    src={category.image_url}
+                                                    alt=""
+                                                    className="size-10 shrink-0 rounded-md border bg-background object-cover"
+                                                />
+                                            ) : (
+                                                <span className="flex size-10 shrink-0 items-center justify-center rounded-md border bg-muted text-muted-foreground">
+                                                    <ImageIcon className="size-4" />
                                                 </span>
                                             )}
                                             {category.name}

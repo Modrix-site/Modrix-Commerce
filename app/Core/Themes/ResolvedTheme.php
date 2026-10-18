@@ -84,6 +84,8 @@ final class ResolvedTheme
             'displayName' => $this->manifest->displayName,
             'version' => $this->manifest->version,
             'source' => $this->source,
+            'frontend' => $this->manifest->frontend,
+            'settings' => collect($this->manifest->customFields())->mapWithKeys(fn (array $field, string $key) => [substr($key, 7) => $field['type'] === 'image' ? $this->imageUrl($this->design[$key] ?? null) : ($this->design[$key] ?? $field['default'])])->all(),
             'css' => $this->css(),
             'pages' => PageSettingFields::resolve($this->design),
             'layout' => [
@@ -99,6 +101,7 @@ final class ResolvedTheme
             'favicon' => $this->imageUrl($this->design['favicon']),
             'announcement' => $this->design['announcement'] !== '' ? $this->design['announcement'] : null,
             'footerText' => $this->design['footer_text'] !== '' ? $this->design['footer_text'] : null,
+            'content' => array_intersect_key($this->design, array_filter(ThemeSchema::designFields(), fn (array $field, string $key) => str_starts_with($key, 'menu_') || str_starts_with($key, 'footer_') || str_starts_with($key, 'contact_') || $key === 'help_link', ARRAY_FILTER_USE_BOTH)),
         ];
     }
 }

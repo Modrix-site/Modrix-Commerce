@@ -73,5 +73,43 @@ export function StatusBadge({ status }: { status: string }) {
         labels[status] ??
         status.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase());
 
-    return <Badge variant={variants[status] ?? 'outline'}>{label}</Badge>;
+    const tone = [
+        'completed',
+        'delivered',
+        'paid',
+        'published',
+        'active',
+    ].includes(status)
+        ? 'success'
+        : ['cancelled', 'failed', 'payment_failed', 'delivery_failed'].includes(
+                status,
+            )
+          ? 'danger'
+          : [
+                  'pending',
+                  'pending_payment',
+                  'unpaid',
+                  'partially_paid',
+                  'on_hold',
+              ].includes(status)
+            ? 'warning'
+            : [
+                    'confirmed',
+                    'processing',
+                    'shipped',
+                    'in_transit',
+                    'out_for_delivery',
+                ].includes(status)
+              ? 'progress'
+              : 'neutral';
+
+    return (
+        <Badge
+            className="status-badge"
+            data-tone={tone}
+            variant={variants[status] ?? 'outline'}
+        >
+            {label}
+        </Badge>
+    );
 }

@@ -1,23 +1,24 @@
-import { Form, Head, Link } from '@inertiajs/react';
-import PaymentSettingsController from '@/actions/App/Http/Controllers/Admin/PaymentSettingsController';
-import { FormField } from '@/components/admin/form-field';
-import { AdminPage, PageHeader } from '@/components/admin/page-header';
-import { Tabs } from '@/components/admin/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Form, Head, Link } from "@inertiajs/react";
+import PaymentSettingsController from "@/actions/App/Http/Controllers/Admin/PaymentSettingsController";
+import { ExtensionIcon } from "@/components/admin/extension-icon";
+import { FormField } from "@/components/admin/form-field";
+import { AdminPage, PageHeader } from "@/components/admin/page-header";
+import { Tabs } from "@/components/admin/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { settings as settingsRoute } from '@/routes/admin/payments';
-import { edit as stripeEdit } from '@/routes/admin/payments/stripe';
-import { index as webhooks } from '@/routes/admin/payments/webhooks';
+} from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { settings as settingsRoute } from "@/routes/admin/payments";
+import { edit as stripeEdit } from "@/routes/admin/payments/stripe";
+import { index as webhooks } from "@/routes/admin/payments/webhooks";
 
 type Method = {
     code: string;
@@ -40,8 +41,15 @@ function OnOff({ on, extra }: { on: boolean; extra?: string }) {
 export default function PaymentSettings({
     methods,
     guestCheckout,
+    gatewayExtensions,
     stripe,
 }: {
+    gatewayExtensions: {
+        key: string;
+        title: string;
+        href: string;
+        icon: string;
+    }[];
     methods: Method[];
     guestCheckout: boolean;
     stripe: { enabled: boolean; configured: boolean; mode: string | null };
@@ -52,7 +60,7 @@ export default function PaymentSettings({
             <AdminPage>
                 <PageHeader
                     title="Payments and checkout"
-                    description="Card payments are confirmed by Stripe. Manual methods are paid outside the store, and those orders stay unpaid until you record the payment."
+                    description="Configure payment gateways and checkout. Manual payment orders stay unpaid until you record the payment."
                     actions={
                         <Button variant="outline" asChild>
                             <Link href={webhooks()}>Payment events</Link>
@@ -71,15 +79,15 @@ export default function PaymentSettings({
                                 label="Payment settings"
                                 items={[
                                     {
-                                        id: 'stripe',
+                                        id: "stripe",
                                         label: (
                                             <>
                                                 Stripe
                                                 <OnOff
                                                     on={stripe.configured}
                                                     extra={
-                                                        stripe.mode === 'test'
-                                                            ? ' (test)'
+                                                        stripe.mode === "test"
+                                                            ? " (test)"
                                                             : undefined
                                                     }
                                                 />
@@ -115,9 +123,50 @@ export default function PaymentSettings({
                                             </Card>
                                         ),
                                     },
+                                    ...gatewayExtensions.map((gateway) => ({
+                                        id: gateway.key,
+                                        label: (
+                                            <>
+                                                <ExtensionIcon
+                                                    name={gateway.key}
+                                                    icon={gateway.icon}
+                                                    className="h-7 w-16 rounded bg-white"
+                                                />
+                                                {gateway.title}
+                                            </>
+                                        ),
+                                        content: (
+                                            <Card>
+                                                <CardHeader>
+                                                    <CardTitle>
+                                                        {gateway.title}
+                                                    </CardTitle>
+                                                    <CardDescription>
+                                                        Configure this payment
+                                                        gateway extension,
+                                                        credentials and checkout
+                                                        options.
+                                                    </CardDescription>
+                                                </CardHeader>
+                                                <CardContent>
+                                                    <Button
+                                                        variant="outline"
+                                                        asChild
+                                                    >
+                                                        <Link
+                                                            href={gateway.href}
+                                                        >
+                                                            Configure{" "}
+                                                            {gateway.title}
+                                                        </Link>
+                                                    </Button>
+                                                </CardContent>
+                                            </Card>
+                                        ),
+                                    })),
                                     {
-                                        id: 'checkout',
-                                        label: 'Checkout',
+                                        id: "checkout",
+                                        label: "Checkout",
                                         hasError: Boolean(
                                             errors.guest_checkout,
                                         ),
@@ -199,9 +248,9 @@ function MethodCard({
             <CardHeader>
                 <CardTitle>{m.label}</CardTitle>
                 <CardDescription>
-                    {m.code === 'cash_on_delivery'
-                        ? 'Orders can be shipped before payment is recorded.'
-                        : 'Orders can be shipped only after you record the payment.'}
+                    {m.code === "cash_on_delivery"
+                        ? "Orders can be shipped before payment is recorded."
+                        : "Orders can be shipped only after you record the payment."}
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
@@ -243,5 +292,5 @@ function MethodCard({
 }
 
 PaymentSettings.layout = {
-    breadcrumbs: [{ title: 'Payments', href: settingsRoute() }],
+    breadcrumbs: [{ title: "Payments", href: settingsRoute() }],
 };

@@ -44,6 +44,20 @@ class ProductDetailsTest extends TestCase
         return Brand::query()->create(['name' => $name, 'slug' => strtolower($name)]);
     }
 
+    public function test_storefront_combines_price_and_brand_filters(): void
+    {
+        config(['inertia.ssr.enabled' => false]);
+        $brand = $this->brand();
+        $this->actingAs($this->userWithRole('catalog-manager'));
+        foreach ([['Budget laptop', 'BUDGET', '20.00', $brand->id], ['Premium laptop', 'PREMIUM', '90.00', $brand->id], ['Other laptop', 'OTHER', '20.00', null]] as [$name, $sku, $price, $brandId]) {
+            $this->post(route('admin.products.store'), $this->payload(['name' => $name, 'brand_id' => $brandId], ['sku' => $sku, 'price' => $price]))->assertSessionHasNoErrors();
+        }
+        $this->get('/search?q=laptop&min_price=10&max_price=30&brand_id='.$brand->id)
+            ->assertInertia(fn (Assert $page) => $page->has('products.data', 1)->where('products.data.0.name', 'Budget laptop'));
+        $this->getJson('/search?min_price=-1')->assertUnprocessable();
+        $this->getJson('/search?options[]=999999')->assertUnprocessable();
+    }
+
     public function test_products_save_brand_tags_featured_cost_and_dimensions()
     {
         $brand = $this->brand();

@@ -1,0 +1,3 @@
+# Checkout.com
+
+Payment gateway for EcoModular. Customers pay on Checkout.com's hosted page or in Flow on the store. See [docs/extensions/checkout-com.md](../../../docs/extensions/checkout-com.md).

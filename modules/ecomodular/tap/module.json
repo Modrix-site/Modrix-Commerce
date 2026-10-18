@@ -1,0 +1,41 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "ecomodular/tap",
+    "display_name": "Tap Payments",
+    "description": "Accept cards and the payment methods enabled on a Tap account. The customer pays on Tap's hosted page, and this store marks the order paid only after Tap confirms the charge.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "credit-card",
+    "accent": "#00C48C",
+    "platform_version": "^1.0",
+    "author": "Eleydo",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\Tap\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\Tap\\TapServiceProvider",
+    "capabilities": [
+        "payment.gateway",
+        "admin.routes",
+        "admin.navigation"
+    ],
+    "routes": {
+        "admin": "routes/admin.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages"
+    },
+    "admin_navigation": [
+        {
+            "key": "tap",
+            "title": "Tap Payments",
+            "route": "index",
+            "icon": "credit-card",
+            "group": "Configuration",
+            "permission": "payments.manage",
+            "order": 870
+        }
+    ]
+}

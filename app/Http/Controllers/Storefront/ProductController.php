@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers\Storefront;
 
+use App\Core\Catalog\ProductLabels;
 use App\Core\Extensions\StorefrontSlots;
 use App\Core\Settings\StoreSettings;
 use App\Domains\Catalog\Models\Category;
+use App\Domains\Catalog\Models\Product;
 use App\Domains\Catalog\Models\ProductAttributeValue;
 use App\Domains\Catalog\Models\ProductImage;
-use App\Domains\Catalog\Models\Product;
 use App\Domains\Catalog\Models\ProductVariant;
 use App\Domains\Catalog\Pricing\SalePrices;
 use App\Domains\Catalog\ProductRelations;
-use App\Domains\Pricing\Money;
 use App\Domains\Catalog\StorefrontCatalog;
 use App\Domains\Catalog\VariantAvailability;
+use App\Domains\Pricing\Money;
 use App\Http\Controllers\Controller;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -69,7 +70,7 @@ class ProductController extends Controller
         return null;
     }
 
-    public function show(string $slug, StorefrontCatalog $catalog, StoreSettings $store, StorefrontSlots $slots): Response
+    public function show(string $slug, StorefrontCatalog $catalog, StoreSettings $store, StorefrontSlots $slots, ProductLabels $labels): Response
     {
         $product = $catalog->findVisible($slug);
         abort_if($product === null, 404);
@@ -86,8 +87,9 @@ class ProductController extends Controller
                 'id' => $values->first()->attribute->id,
                 'name' => $values->first()->attribute->name,
                 'position' => $values->first()->attribute->position,
+                'display_type' => $values->first()->attribute->display_type,
                 'values' => $values->sortBy('position')
-                    ->map(fn (ProductAttributeValue $v) => ['id' => $v->id, 'value' => $v->value])
+                    ->map(fn (ProductAttributeValue $v) => ['id' => $v->id, 'value' => $v->value, 'color' => $v->color])
                     ->values(),
             ])
             ->sortBy('position')
@@ -103,6 +105,7 @@ class ProductController extends Controller
                 'meta_title' => $product->localized('meta_title') ?: $product->localized('name'),
                 'meta_description' => $product->localized('meta_description') ?: $product->localized('short_description'),
                 'images' => $product->images->map(fn (ProductImage $i) => ['id' => $i->id, 'url' => $i->url(), 'alt' => $i->alt])->values(),
+                'labels' => $labels->labels($product),
                 'sale' => self::sale($product, $currency),
                 // Buy now / Buy button override: true, false, or null to follow the theme.
                 'show_buy_button' => array_key_exists('show_buy_button', $product->getAttributes()) ? $product->getAttribute('show_buy_button') : null,
@@ -115,6 +118,7 @@ class ProductController extends Controller
                         'id' => $v->id,
                         'name' => $v->name,
                         'sku' => $v->sku,
+                        'image_id' => $v->image_id,
                         ...self::variantPrices($v, $currency),
                         'option_value_ids' => $v->options->pluck('id')->values(),
                         'purchasable' => $availability->purchasable,

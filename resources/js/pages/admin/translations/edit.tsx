@@ -1,5 +1,6 @@
 import { Form, Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
+import { AiDraft } from '@/components/admin/ai-draft';
 import { EmptyState } from '@/components/admin/empty-state';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import InputError from '@/components/input-error';
@@ -55,6 +56,15 @@ export default function TranslationEdit({
 }: Props) {
     const [active, setActive] = useState(locales[0]?.code ?? '');
     const current = locales.find((l) => l.code === active);
+    const [drafts, setDrafts] = useState<
+        Record<string, Partial<Record<Field, string>>>
+    >({});
+    const currentValues = { ...current?.values, ...drafts[active] };
+    const updateField = (field: Field, value: string) =>
+        setDrafts((previous) => ({
+            ...previous,
+            [active]: { ...previous[active], [field]: value },
+        }));
 
     return (
         <>
@@ -137,6 +147,29 @@ export default function TranslationEdit({
                                     >
                                         {({ processing, errors }) => (
                                             <>
+                                                <div className="flex justify-end">
+                                                    <AiDraft
+                                                        key={current.code}
+                                                        operation="translate"
+                                                        kind={kind}
+                                                        locale={current.code}
+                                                        source={source}
+                                                        fields={fields}
+                                                        onApply={(values) =>
+                                                            setDrafts(
+                                                                (previous) => ({
+                                                                    ...previous,
+                                                                    [active]: {
+                                                                        ...previous[
+                                                                            active
+                                                                        ],
+                                                                        ...values,
+                                                                    },
+                                                                }),
+                                                            )
+                                                        }
+                                                    />
+                                                </div>
                                                 {fields.map((field) => {
                                                     const id = `${current.code}-${field}`;
                                                     const isLong =
@@ -201,12 +234,21 @@ export default function TranslationEdit({
                                                                                 ? 8
                                                                                 : 3
                                                                         }
-                                                                        defaultValue={
-                                                                            current
-                                                                                .values[
+                                                                        value={
+                                                                            currentValues[
                                                                                 field
                                                                             ] ??
                                                                             ''
+                                                                        }
+                                                                        onChange={(
+                                                                            event,
+                                                                        ) =>
+                                                                            updateField(
+                                                                                field,
+                                                                                event
+                                                                                    .target
+                                                                                    .value,
+                                                                            )
                                                                         }
                                                                     />
                                                                 ) : (
@@ -218,12 +260,21 @@ export default function TranslationEdit({
                                                                         lang={
                                                                             current.code
                                                                         }
-                                                                        defaultValue={
-                                                                            current
-                                                                                .values[
+                                                                        value={
+                                                                            currentValues[
                                                                                 field
                                                                             ] ??
                                                                             ''
+                                                                        }
+                                                                        onChange={(
+                                                                            event,
+                                                                        ) =>
+                                                                            updateField(
+                                                                                field,
+                                                                                event
+                                                                                    .target
+                                                                                    .value,
+                                                                            )
                                                                         }
                                                                     />
                                                                 )}

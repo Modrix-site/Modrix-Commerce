@@ -1,0 +1,748 @@
+{
+    "title": "Hearth storefront",
+    "description": "Independent Hearth settings for every storefront area. Upload images directly into each image field, then save. Product data, prices, menus and checkout come from your platform.",
+    "hide_core_fields": [
+        "layout.header",
+        "layout.footer",
+        "layout.product_card",
+        "layout.product_page",
+        "layout.grid_columns",
+        "announcement",
+        "container",
+        "logo",
+        "footer_text"
+    ],
+    "fields": {
+        "custom.show_buy_button": {
+            "type": "boolean",
+            "label": "Show Buy now button (product cards and product page)",
+            "group": "Catalog",
+            "default": true
+        },
+        "custom.sticky_add_to_cart": {
+            "type": "boolean",
+            "label": "Sticky add-to-cart bar on phones",
+            "group": "Product page",
+            "default": true
+        },
+        "custom.brand": {
+            "type": "string",
+            "label": "Wordmark",
+            "group": "Header",
+            "default": "HEARTH",
+            "max": 60
+        },
+        "custom.brand_tagline": {
+            "type": "string",
+            "label": "Wordmark subtitle",
+            "group": "Header",
+            "default": "HOME",
+            "max": 60
+        },
+        "custom.notice": {
+            "type": "string",
+            "label": "Announcement text",
+            "group": "Header",
+            "default": "Design Consultations: Personal Approach to Creating Your Home",
+            "max": 160
+        },
+        "custom.notice_color": {
+            "type": "color",
+            "label": "Announcement background",
+            "group": "Header",
+            "default": "#c7e7fc"
+        },
+        "custom.show_notice": {
+            "type": "boolean",
+            "label": "Show announcement",
+            "group": "Header",
+            "default": true
+        },
+        "custom.logo_image": {
+            "type": "image",
+            "label": "Upload header logo",
+            "group": "Header",
+            "default": ""
+        },
+        "custom.search_placeholder": {
+            "type": "string",
+            "label": "Search placeholder",
+            "group": "Header",
+            "default": "Search furniture, rooms and collections",
+            "max": 160
+        },
+        "custom.page_width": {
+            "type": "integer",
+            "label": "Content width (px)",
+            "group": "Layout",
+            "default": 1240,
+            "min": 960,
+            "max": 1600
+        },
+        "custom.section_gap": {
+            "type": "integer",
+            "label": "Section spacing (px)",
+            "group": "Layout",
+            "default": 72,
+            "min": 24,
+            "max": 120
+        },
+        "custom.hero_height": {
+            "type": "integer",
+            "label": "Desktop hero height (px)",
+            "group": "Homepage hero",
+            "default": 700,
+            "min": 320,
+            "max": 900
+        },
+        "custom.hero_image": {
+            "type": "image",
+            "label": "Hero background image",
+            "group": "Homepage hero",
+            "default": "asset:assets/hero.png"
+        },
+        "custom.hero_heading": {
+            "type": "string",
+            "label": "Hero heading",
+            "group": "Homepage hero",
+            "default": "A Softer Place to Land",
+            "max": 160
+        },
+        "custom.hero_text": {
+            "type": "string",
+            "label": "Hero description",
+            "group": "Homepage hero",
+            "default": "Simple shapes. Natural textures. Everyday comfort.",
+            "max": 160
+        },
+        "custom.hero_button": {
+            "type": "string",
+            "label": "Hero button label",
+            "group": "Homepage hero",
+            "default": "MORE",
+            "max": 60
+        },
+        "custom.hero_link": {
+            "type": "link",
+            "label": "Hero button link",
+            "group": "Homepage hero",
+            "default": "/search"
+        },
+        "custom.show_hero": {
+            "type": "boolean",
+            "label": "Show hero",
+            "group": "Homepage hero",
+            "default": true
+        },
+        "custom.hero_position": {
+            "type": "select",
+            "label": "Hero text position",
+            "group": "Homepage hero",
+            "default": "left",
+            "options": ["left", "center", "right"]
+        },
+        "custom.hero_overlay": {
+            "type": "integer",
+            "label": "Hero overlay opacity (%)",
+            "group": "Homepage hero",
+            "default": 30,
+            "min": 0,
+            "max": 70
+        },
+        "custom.categories_heading": {
+            "type": "string",
+            "label": "Category section heading",
+            "group": "Categories",
+            "default": "Products · Rooms · Styles",
+            "max": 160
+        },
+        "custom.show_categories": {
+            "type": "boolean",
+            "label": "Show categories",
+            "group": "Categories",
+            "default": true
+        },
+        "custom.category_1_label": {
+            "type": "string",
+            "label": "Category 1 label",
+            "group": "Categories",
+            "default": "Sofas",
+            "max": 80
+        },
+        "custom.category_1_image": {
+            "type": "image",
+            "label": "Category 1 image",
+            "group": "Categories",
+            "default": "asset:assets/sofa.png"
+        },
+        "custom.category_1_link": {
+            "type": "link",
+            "label": "Category 1 link",
+            "group": "Categories",
+            "default": "/search?q=sofas"
+        },
+        "custom.category_2_label": {
+            "type": "string",
+            "label": "Category 2 label",
+            "group": "Categories",
+            "default": "Beds and mattresses",
+            "max": 80
+        },
+        "custom.category_2_image": {
+            "type": "image",
+            "label": "Category 2 image",
+            "group": "Categories",
+            "default": "asset:assets/chair.png"
+        },
+        "custom.category_2_link": {
+            "type": "link",
+            "label": "Category 2 link",
+            "group": "Categories",
+            "default": "/search?q=beds"
+        },
+        "custom.category_3_label": {
+            "type": "string",
+            "label": "Category 3 label",
+            "group": "Categories",
+            "default": "Armchairs and chairs",
+            "max": 80
+        },
+        "custom.category_3_image": {
+            "type": "image",
+            "label": "Category 3 image",
+            "group": "Categories",
+            "default": "asset:assets/sofa.png"
+        },
+        "custom.category_3_link": {
+            "type": "link",
+            "label": "Category 3 link",
+            "group": "Categories",
+            "default": "/search?q=armchairs"
+        },
+        "custom.category_4_label": {
+            "type": "string",
+            "label": "Category 4 label",
+            "group": "Categories",
+            "default": "Tables and consoles",
+            "max": 80
+        },
+        "custom.category_4_image": {
+            "type": "image",
+            "label": "Category 4 image",
+            "group": "Categories",
+            "default": "asset:assets/chair.png"
+        },
+        "custom.category_4_link": {
+            "type": "link",
+            "label": "Category 4 link",
+            "group": "Categories",
+            "default": "/search?q=tables"
+        },
+        "custom.category_5_label": {
+            "type": "string",
+            "label": "Category 5 label",
+            "group": "Categories",
+            "default": "Dressers and nightstands",
+            "max": 80
+        },
+        "custom.category_5_image": {
+            "type": "image",
+            "label": "Category 5 image",
+            "group": "Categories",
+            "default": "asset:assets/sofa.png"
+        },
+        "custom.category_5_link": {
+            "type": "link",
+            "label": "Category 5 link",
+            "group": "Categories",
+            "default": "/search?q=dressers"
+        },
+        "custom.category_6_label": {
+            "type": "string",
+            "label": "Category 6 label",
+            "group": "Categories",
+            "default": "Cabinets",
+            "max": 80
+        },
+        "custom.category_6_image": {
+            "type": "image",
+            "label": "Category 6 image",
+            "group": "Categories",
+            "default": "asset:assets/chair.png"
+        },
+        "custom.category_6_link": {
+            "type": "link",
+            "label": "Category 6 link",
+            "group": "Categories",
+            "default": "/search?q=cabinets"
+        },
+        "custom.category_7_label": {
+            "type": "string",
+            "label": "Category 7 label",
+            "group": "Categories",
+            "default": "Lighting",
+            "max": 80
+        },
+        "custom.category_7_image": {
+            "type": "image",
+            "label": "Category 7 image",
+            "group": "Categories",
+            "default": "asset:assets/sofa.png"
+        },
+        "custom.category_7_link": {
+            "type": "link",
+            "label": "Category 7 link",
+            "group": "Categories",
+            "default": "/search?q=lighting"
+        },
+        "custom.show_shortcuts": {
+            "type": "boolean",
+            "label": "Show shopping shortcuts",
+            "group": "Shopping shortcuts",
+            "default": true
+        },
+        "custom.shortcut_1_title": {
+            "type": "string",
+            "label": "Shortcut 1 title",
+            "group": "Shopping shortcuts",
+            "default": "New",
+            "max": 80
+        },
+        "custom.shortcut_1_image": {
+            "type": "image",
+            "label": "Shortcut 1 image",
+            "group": "Shopping shortcuts",
+            "default": "asset:assets/sofa.png"
+        },
+        "custom.shortcut_1_link": {
+            "type": "link",
+            "label": "Shortcut 1 link",
+            "group": "Shopping shortcuts",
+            "default": "/search?sort=newest"
+        },
+        "custom.shortcut_2_title": {
+            "type": "string",
+            "label": "Shortcut 2 title",
+            "group": "Shopping shortcuts",
+            "default": "Top items",
+            "max": 80
+        },
+        "custom.shortcut_2_image": {
+            "type": "image",
+            "label": "Shortcut 2 image",
+            "group": "Shopping shortcuts",
+            "default": "asset:assets/sofa.png"
+        },
+        "custom.shortcut_2_link": {
+            "type": "link",
+            "label": "Shortcut 2 link",
+            "group": "Shopping shortcuts",
+            "default": "/search"
+        },
+        "custom.shortcut_3_title": {
+            "type": "string",
+            "label": "Shortcut 3 title",
+            "group": "Shopping shortcuts",
+            "default": "In stock",
+            "max": 80
+        },
+        "custom.shortcut_3_image": {
+            "type": "image",
+            "label": "Shortcut 3 image",
+            "group": "Shopping shortcuts",
+            "default": "asset:assets/sofa.png"
+        },
+        "custom.shortcut_3_link": {
+            "type": "link",
+            "label": "Shortcut 3 link",
+            "group": "Shopping shortcuts",
+            "default": "/search?in_stock=1"
+        },
+        "custom.show_collection": {
+            "type": "boolean",
+            "label": "Show collection story",
+            "group": "Collection story",
+            "default": true
+        },
+        "custom.collection_image": {
+            "type": "image",
+            "label": "Collection image",
+            "group": "Collection story",
+            "default": "asset:assets/interior.png"
+        },
+        "custom.collection_heading": {
+            "type": "string",
+            "label": "Collection heading",
+            "group": "Collection story",
+            "default": "The soft seating collection",
+            "max": 160
+        },
+        "custom.collection_text": {
+            "type": "string",
+            "label": "Collection text",
+            "group": "Collection story",
+            "default": "A place to slow down.",
+            "max": 160
+        },
+        "custom.collection_link": {
+            "type": "link",
+            "label": "Collection link",
+            "group": "Collection story",
+            "default": "/search"
+        },
+        "custom.show_trust": {
+            "type": "boolean",
+            "label": "Show assurances",
+            "group": "Store assurances",
+            "default": true
+        },
+        "custom.trust_1": {
+            "type": "string",
+            "label": "Assurance 1",
+            "group": "Store assurances",
+            "default": "Showrooms",
+            "max": 80
+        },
+        "custom.trust_2": {
+            "type": "string",
+            "label": "Assurance 2",
+            "group": "Store assurances",
+            "default": "Online support",
+            "max": 80
+        },
+        "custom.trust_3": {
+            "type": "string",
+            "label": "Assurance 3",
+            "group": "Store assurances",
+            "default": "Flexible payment",
+            "max": 80
+        },
+        "custom.trust_4": {
+            "type": "string",
+            "label": "Assurance 4",
+            "group": "Store assurances",
+            "default": "Thoughtful collections",
+            "max": 80
+        },
+        "custom.show_promotions": {
+            "type": "boolean",
+            "label": "Show promotion tiles",
+            "group": "Promotions",
+            "default": true
+        },
+        "custom.promo_1_title": {
+            "type": "string",
+            "label": "Tile 1 heading",
+            "group": "Promotions",
+            "default": "New Home, New Start",
+            "max": 100
+        },
+        "custom.promo_1_text": {
+            "type": "string",
+            "label": "Tile 1 description",
+            "group": "Promotions",
+            "default": "Thoughtfully made for everyday living",
+            "max": 160
+        },
+        "custom.promo_1_image": {
+            "type": "image",
+            "label": "Tile 1 background image",
+            "group": "Promotions",
+            "default": ""
+        },
+        "custom.promo_1_link": {
+            "type": "link",
+            "label": "Tile 1 link",
+            "group": "Promotions",
+            "default": "/search"
+        },
+        "custom.promo_1_color": {
+            "type": "color",
+            "label": "Tile 1 background",
+            "group": "Promotions",
+            "default": "#3f6679"
+        },
+        "custom.promo_2_title": {
+            "type": "string",
+            "label": "Tile 2 heading",
+            "group": "Promotions",
+            "default": "Shop with Ease",
+            "max": 100
+        },
+        "custom.promo_2_text": {
+            "type": "string",
+            "label": "Tile 2 description",
+            "group": "Promotions",
+            "default": "Thoughtfully made for everyday living",
+            "max": 160
+        },
+        "custom.promo_2_image": {
+            "type": "image",
+            "label": "Tile 2 background image",
+            "group": "Promotions",
+            "default": ""
+        },
+        "custom.promo_2_link": {
+            "type": "link",
+            "label": "Tile 2 link",
+            "group": "Promotions",
+            "default": "/search"
+        },
+        "custom.promo_2_color": {
+            "type": "color",
+            "label": "Tile 2 background",
+            "group": "Promotions",
+            "default": "#faf7f2"
+        },
+        "custom.promo_3_title": {
+            "type": "string",
+            "label": "Tile 3 heading",
+            "group": "Promotions",
+            "default": "Introducing more possibilities",
+            "max": 100
+        },
+        "custom.promo_3_text": {
+            "type": "string",
+            "label": "Tile 3 description",
+            "group": "Promotions",
+            "default": "Thoughtfully made for everyday living",
+            "max": 160
+        },
+        "custom.promo_3_image": {
+            "type": "image",
+            "label": "Tile 3 background image",
+            "group": "Promotions",
+            "default": ""
+        },
+        "custom.promo_3_link": {
+            "type": "link",
+            "label": "Tile 3 link",
+            "group": "Promotions",
+            "default": "/search"
+        },
+        "custom.promo_3_color": {
+            "type": "color",
+            "label": "Tile 3 background",
+            "group": "Promotions",
+            "default": "#b99f69"
+        },
+        "custom.promo_4_title": {
+            "type": "string",
+            "label": "Tile 4 heading",
+            "group": "Promotions",
+            "default": "Gift Cards",
+            "max": 100
+        },
+        "custom.promo_4_text": {
+            "type": "string",
+            "label": "Tile 4 description",
+            "group": "Promotions",
+            "default": "Thoughtfully made for everyday living",
+            "max": 160
+        },
+        "custom.promo_4_image": {
+            "type": "image",
+            "label": "Tile 4 background image",
+            "group": "Promotions",
+            "default": ""
+        },
+        "custom.promo_4_link": {
+            "type": "link",
+            "label": "Tile 4 link",
+            "group": "Promotions",
+            "default": "/search"
+        },
+        "custom.promo_4_color": {
+            "type": "color",
+            "label": "Tile 4 background",
+            "group": "Promotions",
+            "default": "#3f6679"
+        },
+        "custom.show_feature": {
+            "type": "boolean",
+            "label": "Show brand story",
+            "group": "Brand story",
+            "default": true
+        },
+        "custom.feature_image": {
+            "type": "image",
+            "label": "Brand story image",
+            "group": "Brand story",
+            "default": "asset:assets/interior.png"
+        },
+        "custom.feature_heading": {
+            "type": "string",
+            "label": "Brand story heading",
+            "group": "Brand story",
+            "default": "Furniture with a story",
+            "max": 160
+        },
+        "custom.feature_text": {
+            "type": "text",
+            "label": "Brand story description",
+            "group": "Brand story",
+            "default": "Comfort, craftsmanship and timeless design. Explore considered pieces that make your home your own.",
+            "max": 1000
+        },
+        "custom.feature_button": {
+            "type": "string",
+            "label": "Brand story button label",
+            "group": "Brand story",
+            "default": "MORE",
+            "max": 60
+        },
+        "custom.feature_link": {
+            "type": "link",
+            "label": "Brand story link",
+            "group": "Brand story",
+            "default": "/search"
+        },
+        "custom.catalog_columns": {
+            "type": "select",
+            "label": "Catalog columns",
+            "group": "Catalog",
+            "default": "3",
+            "options": ["2", "3", "4"]
+        },
+        "custom.catalog_image_height": {
+            "type": "integer",
+            "label": "Product image height (px)",
+            "group": "Catalog",
+            "default": 280,
+            "min": 160,
+            "max": 420
+        },
+        "custom.catalog_filters": {
+            "type": "boolean",
+            "label": "Show filters",
+            "group": "Catalog",
+            "default": true
+        },
+        "custom.catalog_stock_filter": {
+            "type": "boolean",
+            "label": "Show in-stock filter",
+            "group": "Catalog",
+            "default": true
+        },
+        "custom.catalog_banner": {
+            "type": "image",
+            "label": "Optional catalog banner",
+            "group": "Catalog",
+            "default": ""
+        },
+        "custom.catalog_heading": {
+            "type": "string",
+            "label": "Search page heading",
+            "group": "Catalog",
+            "default": "Catalogue",
+            "max": 100
+        },
+        "custom.show_product_details": {
+            "type": "boolean",
+            "label": "Show product description",
+            "group": "Product page",
+            "default": true
+        },
+        "custom.product_button": {
+            "type": "string",
+            "label": "Add-to-cart button label",
+            "group": "Product page",
+            "default": "ADD TO BAG",
+            "max": 60
+        },
+        "custom.product_buy_now_button": {
+            "type": "string",
+            "label": "Buy now button label",
+            "group": "Product page",
+            "default": "BUY NOW",
+            "max": 60
+        },
+        "custom.delivery_text": {
+            "type": "text",
+            "label": "Delivery Text",
+            "group": "Product page",
+            "default": "Available delivery methods and prices are shown at checkout.",
+            "max": 1000
+        },
+        "custom.payment_text": {
+            "type": "text",
+            "label": "Payment Text",
+            "group": "Product page",
+            "default": "Choose from the secure payment methods available at checkout.",
+            "max": 1000
+        },
+        "custom.warranty_text": {
+            "type": "text",
+            "label": "Warranty Text",
+            "group": "Product page",
+            "default": "Contact our team for product warranty and service information.",
+            "max": 1000
+        },
+        "custom.cart_heading": {
+            "type": "string",
+            "label": "Cart heading",
+            "group": "Cart",
+            "default": "Your bag",
+            "max": 100
+        },
+        "custom.cart_checkout_label": {
+            "type": "string",
+            "label": "Checkout button label",
+            "group": "Cart",
+            "default": "PROCEED TO CHECKOUT",
+            "max": 60
+        },
+        "custom.cart_show_coupon": {
+            "type": "boolean",
+            "label": "Show coupon field",
+            "group": "Cart",
+            "default": true
+        },
+        "custom.cart_image": {
+            "type": "image",
+            "label": "Empty-cart image",
+            "group": "Cart",
+            "default": "asset:assets/chair.png"
+        },
+        "custom.cart_empty_heading": {
+            "type": "string",
+            "label": "Empty-cart heading",
+            "group": "Cart",
+            "default": "A little room for something lovely",
+            "max": 120
+        },
+        "custom.footer_image": {
+            "type": "image",
+            "label": "Footer catalogue image",
+            "group": "Footer",
+            "default": "asset:assets/interior.png"
+        },
+        "custom.footer_message": {
+            "type": "string",
+            "label": "Footer assurance message",
+            "group": "Footer",
+            "default": "A home for thoughtful living",
+            "max": 160
+        },
+        "custom.newsletter_heading": {
+            "type": "string",
+            "label": "Newsletter heading",
+            "group": "Footer",
+            "default": "Sign up to our newsletter for inspiration, exclusive offers & more",
+            "max": 160
+        },
+        "custom.footer_newsletter": {
+            "type": "boolean",
+            "label": "Show newsletter when extension is enabled",
+            "group": "Footer",
+            "default": true
+        },
+        "custom.footer_copyright": {
+            "type": "string",
+            "label": "Copyright text",
+            "group": "Footer",
+            "default": "© 2026 Hearth. All rights reserved.",
+            "max": 160
+        }
+    }
+}

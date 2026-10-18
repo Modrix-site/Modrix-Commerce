@@ -64,7 +64,7 @@ final class ShippingStep implements PricingStep
         $priced->shippingOptions = array_map(fn (ShippingRate $r) => $r->toArray(), $options);
 
         if ($options === []) {
-            $priced->issues[] = 'We do not ship to the selected country.';
+            $priced->issues[] = 'We do not ship to the selected destination.';
 
             return;
         }

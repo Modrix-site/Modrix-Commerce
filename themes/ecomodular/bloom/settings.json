@@ -1,0 +1,65 @@
+{
+    "title": "Brand",
+    "description": "Tune Bloom's warm, botanical look. Start from a palette, then tweak individual swatches.",
+    "presets": {
+        "warm": {
+            "color.background": "#fbf7f1",
+            "color.foreground": "#2d2a26",
+            "color.primary": "#3f6b4f",
+            "color.primary_foreground": "#fbf7f1",
+            "color.muted": "#f1eadf",
+            "color.muted_foreground": "#776d62",
+            "color.accent": "#e9d8c4",
+            "color.accent_foreground": "#2d2a26",
+            "color.border": "#e4d9ca",
+            "font_body": "humanist",
+            "font_heading": "serif",
+            "radius": "1rem",
+            "density": "comfortable"
+        },
+        "cool": {
+            "color.background": "#f4f6f8",
+            "color.foreground": "#1f2430",
+            "color.primary": "#2f6b8a",
+            "color.primary_foreground": "#f4f6f8",
+            "color.muted": "#e6ebf0",
+            "color.muted_foreground": "#5a6473",
+            "color.accent": "#cfe3ec",
+            "color.accent_foreground": "#1f2430",
+            "color.border": "#d3dbe3",
+            "font_body": "system",
+            "font_heading": "sans",
+            "radius": "0.375rem",
+            "density": "compact"
+        },
+        "earthy": {
+            "color.background": "#f3ece0",
+            "color.foreground": "#2b2520",
+            "color.primary": "#8a5a2b",
+            "color.primary_foreground": "#f3ece0",
+            "color.muted": "#e6d9c6",
+            "color.muted_foreground": "#6b5d4d",
+            "color.accent": "#d9b184",
+            "color.accent_foreground": "#2b2520",
+            "color.border": "#cdbda6",
+            "font_body": "rounded",
+            "font_heading": "didone",
+            "radius": "1.5rem",
+            "density": "spacious"
+        }
+    },
+    "fields": {
+        "custom.show_buy_button": {
+            "type": "boolean",
+            "label": "Show Buy now button (product cards and product page)",
+            "group": "Bloom catalog",
+            "default": true
+        },
+        "custom.sticky_add_to_cart": {
+            "type": "boolean",
+            "label": "Sticky add-to-cart bar on phones",
+            "group": "Product page",
+            "default": true
+        }
+    }
+}

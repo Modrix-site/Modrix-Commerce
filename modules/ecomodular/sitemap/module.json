@@ -1,0 +1,101 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "ecomodular/sitemap",
+    "display_name": "XML Sitemap",
+    "description": "Publishes an XML sitemap of your storefront at /sitemap.xml for search engines: your home page, products, categories, brands and content pages, with images and last-modified dates.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "scroll-text",
+    "accent": "#0f766e",
+    "platform_version": "^1.0",
+    "author": "Eleydo",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\Sitemap\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\Sitemap\\SitemapServiceProvider",
+    "permissions": [
+        {
+            "name": "sitemap.manage",
+            "label": "Manage the XML sitemap",
+            "group": "Marketing"
+        }
+    ],
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "settings",
+        "permissions",
+        "sitemap.provider"
+    ],
+    "routes": {
+        "admin": "routes/admin.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages"
+    },
+    "settings": [
+        {
+            "key": "enabled",
+            "type": "boolean",
+            "label": "Publish the sitemap at /sitemap.xml",
+            "default": true
+        },
+        {
+            "key": "include_products",
+            "type": "boolean",
+            "label": "Include products",
+            "default": true
+        },
+        {
+            "key": "include_categories",
+            "type": "boolean",
+            "label": "Include categories",
+            "default": true
+        },
+        {
+            "key": "include_brands",
+            "type": "boolean",
+            "label": "Include brands",
+            "default": true
+        },
+        {
+            "key": "include_pages",
+            "type": "boolean",
+            "label": "Include content pages",
+            "default": true
+        },
+        {
+            "key": "include_images",
+            "type": "boolean",
+            "label": "Include product images",
+            "help": "Adds image entries so images can appear in Google Images. Increases the sitemap size.",
+            "default": false
+        },
+        {
+            "key": "changefreq",
+            "type": "select",
+            "label": "Change frequency hint",
+            "help": "A hint for crawlers, not a command. Weekly suits most catalogues.",
+            "default": "weekly",
+            "options": [
+                { "value": "daily", "label": "Daily" },
+                { "value": "weekly", "label": "Weekly" },
+                { "value": "monthly", "label": "Monthly" }
+            ]
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "sitemap",
+            "title": "XML Sitemap",
+            "route": "index",
+            "icon": "scroll-text",
+            "group": "Marketing",
+            "permission": "sitemap.manage",
+            "order": 340
+        }
+    ]
+}

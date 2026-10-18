@@ -1,9 +1,13 @@
+import {
+    VariantSelector,
+    type VariantOption,
+} from '@/components/storefront/variant-selector';
 import { Form, Head, Link } from '@inertiajs/react';
-import { useMemo, useState } from 'react';
+import { Suspense, useMemo, useState } from 'react';
+import { themeProduct } from '@/lib/theme-pages';
 import CartController from '@/actions/App/Http/Controllers/Storefront/CartController';
-import { ExtensionSlot } from '@/components/extensions/extension-slot';
-import type { SlotItem } from '@/components/extensions/extension-slot';
-import InputError from '@/components/input-error';
+import { ElectronicsProduct } from '@/components/storefront/electronics-product';
+import { ProductLabels } from '@/components/storefront/product-labels';
 import { BuyNowButton } from '@/components/storefront/buy-now-button';
 import { StickyAddToCart } from '@/components/storefront/sticky-add-to-cart';
 import { PlaceSlot } from '@/components/extensions/place-slot';
@@ -14,20 +18,25 @@ import { ProductGallery } from '@/components/storefront/page-settings/product-ga
 import { StockNote } from '@/components/storefront/page-settings/stock-note';
 import { useStoreSettings } from '@/hooks/use-store-settings';
 import { SaleNotice } from '@/components/storefront/sale-notice';
+import { ExtensionSlot } from '@/components/extensions/extension-slot';
+import type { SlotItem } from '@/components/extensions/extension-slot';
+import InputError from '@/components/input-error';
 import { useStoreTheme } from '@/hooks/use-store-theme';
 import { useT } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
+import { selectionForVariant, selectVariant } from '@/lib/variant-selection';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { home } from '@/routes';
 import { brand, category } from '@/routes/storefront';
-import type { MoneyValue, ProductCard, SaleInfo } from '@/types';
+import type { MoneyValue, ProductCard, ProductLabel, SaleInfo } from '@/types';
 
-type Variant = {
+export type Variant = {
     id: number;
     name: string | null;
     sku: string;
+    image_id: number | null;
     price: MoneyValue | null;
     compare_at_price: MoneyValue | null;
     option_value_ids: number[];
@@ -36,7 +45,9 @@ type Variant = {
     message: string | null;
 };
 
-type Props = {
+export type ProductPageProps = {
+    related?: ProductCard[];
+    upsells?: ProductCard[];
     product: {
         id: number;
         name: string;
@@ -46,12 +57,9 @@ type Props = {
         meta_title: string;
         meta_description: string | null;
         images: { id: number; url: string; alt: string | null }[];
+        labels?: ProductLabel[];
         brand: { name: string; slug: string } | null;
-        options: {
-            id: number;
-            name: string;
-            values: { id: number; value: string }[];
-        }[];
+        options: VariantOption[];
         variants: Variant[];
         /** A sale (e.g. a flash sale) on this product. */
         sale?: SaleInfo | null;
@@ -60,8 +68,6 @@ type Props = {
     };
     breadcrumbs: { name: string; slug: string }[];
     slots: SlotItem[];
-    related?: ProductCard[];
-    upsells?: ProductCard[];
 };
 
 export default function ProductPage({
@@ -70,29 +76,48 @@ export default function ProductPage({
     slots,
     related = [],
     upsells = [],
-}: Props) {
-    const { productPage } = useStoreTheme();
+}: ProductPageProps) {
+    const { productPage, theme } = useStoreTheme();
+    const CustomProduct = theme?.frontend?.product
+        ? themeProduct(theme.name)
+        : undefined;
     const t = useT();
-    const [imageIndex, setImageIndex] = useState(0);
     const firstPurchasable =
         product.variants.find((v) => v.purchasable) ?? product.variants[0];
-    const [selected, setSelected] = useState<Record<number, number>>(() => {
-        const initial: Record<number, number> = {};
-        product.options.forEach((option) => {
-            const match = option.values.find((v) =>
-                firstPurchasable?.option_value_ids.includes(v.id),
-            );
-            if (match) {
-                initial[option.id] = match.id;
-            }
-        });
-
-        return initial;
-    });
+    const [imageIndex, setImageIndex] = useState(() =>
+        Math.max(
+            0,
+            product.images.findIndex(
+                (image) => image.id === firstPurchasable?.image_id,
+            ),
+        ),
+    );
+    const [selected, setSelected] = useState<Record<number, number>>(() =>
+        selectionForVariant(product.options, firstPurchasable),
+    );
+    const chooseOption = (attributeId: number, valueId: number) => {
+        const match = selectVariant(
+            product.options,
+            product.variants,
+            selected,
+            attributeId,
+            valueId,
+        );
+        if (!match) return;
+        setSelected(selectionForVariant(product.options, match));
+        setImageIndex(
+            Math.max(
+                0,
+                product.images.findIndex(
+                    (image) => image.id === match.image_id,
+                ),
+            ),
+        );
+    };
 
     const variant = useMemo(() => {
         if (product.options.length === 0) {
-            return product.variants[0];
+            return firstPurchasable;
         }
 
         const chosen = Object.values(selected);
@@ -106,6 +131,10 @@ export default function ProductPage({
 
     // Product tab settings (customizer).
     const pageSettings = useStoreSettings().product;
+    const shownRelated = pageSettings.related
+        ? related.slice(0, pageSettings.related_count)
+        : [];
+    const shownUpsells = pageSettings.upsells ? upsells : [];
     const descriptionSections: DescriptionSection[] = [
         ...(product.description
             ? [
@@ -156,6 +185,39 @@ export default function ProductPage({
               ]
             : []),
     ];
+
+    if (CustomProduct)
+        return (
+            <Suspense fallback={<p role="status">Loading product…</p>}>
+                <CustomProduct
+                    product={product}
+                    breadcrumbs={breadcrumbs}
+                    slots={slots}
+                    related={shownRelated}
+                    upsells={shownUpsells}
+                    variant={variant}
+                    imageIndex={imageIndex}
+                    onImage={setImageIndex}
+                    selected={selected}
+                    onOption={chooseOption}
+                />
+            </Suspense>
+        );
+    if (productPage === 'electronics')
+        return (
+            <ElectronicsProduct
+                product={product}
+                breadcrumbs={breadcrumbs}
+                slots={slots}
+                related={shownRelated}
+                upsells={shownUpsells}
+                variant={variant}
+                imageIndex={imageIndex}
+                onImage={setImageIndex}
+                selected={selected}
+                onOption={chooseOption}
+            />
+        );
 
     return (
         <>
@@ -209,6 +271,7 @@ export default function ProductPage({
                     alt={product.name}
                     thumbnails={pageSettings.thumbnails}
                     zoom={pageSettings.zoom}
+                    overlay={<ProductLabels labels={product.labels} />}
                 />
 
                 <div className="grid content-start gap-5">
@@ -258,37 +321,12 @@ export default function ProductPage({
                     </div>
 
                     {product.options.map((option) => (
-                        <fieldset key={option.id} className="grid gap-2">
-                            <legend className="mb-2 text-sm font-medium">
-                                {option.name}
-                            </legend>
-                            <div className="flex flex-wrap gap-2">
-                                {option.values.map((value) => {
-                                    const active =
-                                        selected[option.id] === value.id;
-
-                                    return (
-                                        <Button
-                                            key={value.id}
-                                            type="button"
-                                            size="sm"
-                                            variant={
-                                                active ? 'default' : 'outline'
-                                            }
-                                            aria-pressed={active}
-                                            onClick={() =>
-                                                setSelected((s) => ({
-                                                    ...s,
-                                                    [option.id]: value.id,
-                                                }))
-                                            }
-                                        >
-                                            {value.value}
-                                        </Button>
-                                    );
-                                })}
-                            </div>
-                        </fieldset>
+                        <VariantSelector
+                            key={option.id}
+                            option={option}
+                            value={selected[option.id]}
+                            onChange={(value) => chooseOption(option.id, value)}
+                        />
                     ))}
 
                     <StickyAddToCart

@@ -12,7 +12,7 @@ final class CategoryTree
 {
     /**
      * @param  bool  $activeOnly  limit to active categories (storefront)
-     * @return list<array{id: int, parent_id: int|null, name: string, slug: string, depth: int, is_active: bool, position: int}>
+     * @return list<array{id: int, parent_id: int|null, name: string, slug: string, depth: int, is_active: bool, position: int, image_url: string|null}>
      */
     public static function flatten(bool $activeOnly = false): array
     {
@@ -20,7 +20,7 @@ final class CategoryTree
             ->when($activeOnly, fn ($q) => $q->where('is_active', true))
             ->orderBy('position')
             ->orderBy('name')
-            ->get(['id', 'parent_id', 'name', 'slug', 'is_active', 'position']);
+            ->get(['id', 'parent_id', 'name', 'slug', 'is_active', 'position', 'image_disk', 'image_path']);
 
         /** @var Collection<int, Collection<int, Category>> $byParent */
         $byParent = $all->groupBy(fn (Category $c) => $c->parent_id ?? 0);
@@ -36,6 +36,7 @@ final class CategoryTree
                     'depth' => $depth,
                     'is_active' => $category->is_active,
                     'position' => $category->position,
+                    'image_url' => $category->imageUrl(),
                 ];
 
                 if ($depth < Category::MAX_DEPTH) {

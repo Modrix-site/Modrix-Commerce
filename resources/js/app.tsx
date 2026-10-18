@@ -3,6 +3,8 @@ import type { ComponentType } from 'react';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { initializeTheme } from '@/hooks/use-appearance';
+import { initializeAdminAccent } from '@/hooks/use-admin-accent';
+import { initializeSidebarAppearance } from '@/hooks/use-sidebar-appearance';
 import AppLayout from '@/layouts/app-layout';
 import AuthLayout from '@/layouts/auth-layout';
 import SettingsLayout from '@/layouts/settings/layout';
@@ -65,3 +67,5 @@ void createInertiaApp({
 
 // This will set light / dark mode on load...
 initializeTheme();
+initializeAdminAccent();
+initializeSidebarAppearance();

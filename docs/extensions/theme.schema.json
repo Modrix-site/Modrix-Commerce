@@ -14,25 +14,49 @@
         "platform_version"
     ],
     "properties": {
-        "$schema": { "type": "string" },
+        "$schema": {
+            "type": "string"
+        },
         "name": {
             "type": "string",
             "pattern": "^[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?/[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?$"
         },
-        "display_name": { "type": "string", "minLength": 1, "maxLength": 120 },
-        "description": { "type": "string", "maxLength": 500 },
+        "display_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+        },
+        "description": {
+            "type": "string",
+            "maxLength": 500
+        },
         "version": {
             "type": "string",
             "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?$"
         },
-        "type": { "const": "theme" },
-        "theme_type": { "const": "storefront" },
-        "platform_version": { "type": "string", "maxLength": 100 },
-        "author": { "type": "string", "maxLength": 120 },
-        "license": { "type": "string", "maxLength": 60 },
+        "type": {
+            "const": "theme"
+        },
+        "theme_type": {
+            "const": "storefront"
+        },
+        "platform_version": {
+            "type": "string",
+            "maxLength": 100
+        },
+        "author": {
+            "type": "string",
+            "maxLength": 120
+        },
+        "license": {
+            "type": "string",
+            "maxLength": 60
+        },
         "requires": {
             "type": "object",
-            "additionalProperties": { "type": "string" }
+            "additionalProperties": {
+                "type": "string"
+            }
         },
         "capabilities": {
             "type": "array",
@@ -46,23 +70,49 @@
                 ]
             }
         },
-        "assets": { "$ref": "#/$defs/relativePath" },
-        "screenshot": { "$ref": "#/$defs/relativePath" },
+        "assets": {
+            "$ref": "#/$defs/relativePath"
+        },
+        "screenshot": {
+            "$ref": "#/$defs/relativePath"
+        },
         "design": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
-                "color.background": { "$ref": "#/$defs/color" },
-                "color.foreground": { "$ref": "#/$defs/color" },
-                "color.primary": { "$ref": "#/$defs/color" },
-                "color.primary_foreground": { "$ref": "#/$defs/color" },
-                "color.muted": { "$ref": "#/$defs/color" },
-                "color.muted_foreground": { "$ref": "#/$defs/color" },
-                "color.accent": { "$ref": "#/$defs/color" },
-                "color.accent_foreground": { "$ref": "#/$defs/color" },
-                "color.border": { "$ref": "#/$defs/color" },
-                "font_body": { "$ref": "#/$defs/font" },
-                "font_heading": { "$ref": "#/$defs/font" },
+                "color.background": {
+                    "$ref": "#/$defs/color"
+                },
+                "color.foreground": {
+                    "$ref": "#/$defs/color"
+                },
+                "color.primary": {
+                    "$ref": "#/$defs/color"
+                },
+                "color.primary_foreground": {
+                    "$ref": "#/$defs/color"
+                },
+                "color.muted": {
+                    "$ref": "#/$defs/color"
+                },
+                "color.muted_foreground": {
+                    "$ref": "#/$defs/color"
+                },
+                "color.accent": {
+                    "$ref": "#/$defs/color"
+                },
+                "color.accent_foreground": {
+                    "$ref": "#/$defs/color"
+                },
+                "color.border": {
+                    "$ref": "#/$defs/color"
+                },
+                "font_body": {
+                    "$ref": "#/$defs/font"
+                },
+                "font_heading": {
+                    "$ref": "#/$defs/font"
+                },
                 "radius": {
                     "enum": [
                         "0",
@@ -75,143 +125,934 @@
                         "1.5rem"
                     ]
                 },
-                "density": { "enum": ["compact", "comfortable", "spacious"] },
-                "container": { "enum": ["narrow", "default", "wide"] },
-                "layout.header": { "enum": ["classic", "centered", "minimal"] },
-                "layout.footer": { "enum": ["simple", "columns"] },
-                "layout.product_card": {
-                    "enum": ["standard", "minimal", "framed"]
+                "density": {
+                    "enum": [
+                        "compact",
+                        "comfortable",
+                        "spacious"
+                    ]
                 },
-                "layout.grid_columns": { "enum": ["3", "4"] },
-                "layout.product_page": { "enum": ["split", "stacked"] },
-                "logo": { "$ref": "#/$defs/image" },
-                "favicon": { "$ref": "#/$defs/image" },
-                "announcement": { "type": "string", "maxLength": 160 },
-                "footer_text": { "type": "string", "maxLength": 500 },
-                "style.general.heading_font": {"$ref": "#/$defs/font"},
-                "style.general.heading_size": {"enum": ["20", "24", "28", "32", "36", "40", "48", "56", "64"]},
-                "style.general.heading_weight": {"enum": ["400", "500", "600", "700", "800"]},
-                "style.general.heading_color": {"$ref": "#/$defs/color"},
-                "style.general.body_font": {"$ref": "#/$defs/font"},
-                "style.general.body_size": {"enum": ["13", "14", "15", "16", "17", "18"]},
-                "style.general.body_color": {"$ref": "#/$defs/color"},
-                "style.general.button_bg": {"$ref": "#/$defs/color"},
-                "style.general.button_text": {"$ref": "#/$defs/color"},
-                "style.general.button_hover_bg": {"$ref": "#/$defs/color"},
-                "style.general.button_font": {"$ref": "#/$defs/font"},
-                "style.general.button_size": {"enum": ["12", "13", "14", "15", "16", "18"]},
-                "style.general.button_radius": {"enum": ["0", "0.25rem", "0.375rem", "0.5rem", "0.625rem", "0.75rem", "1rem", "1.5rem"]},
-                "style.general.price_size": {"enum": ["14", "16", "18", "20", "24", "28"]},
-                "style.general.price_color": {"$ref": "#/$defs/color"},
-                "style.general.price_sale_color": {"$ref": "#/$defs/color"},
-                "style.home.heading_font": {"$ref": "#/$defs/font"},
-                "style.home.heading_size": {"enum": ["20", "24", "28", "32", "36", "40", "48", "56", "64"]},
-                "style.home.heading_weight": {"enum": ["400", "500", "600", "700", "800"]},
-                "style.home.heading_color": {"$ref": "#/$defs/color"},
-                "style.home.body_font": {"$ref": "#/$defs/font"},
-                "style.home.body_size": {"enum": ["13", "14", "15", "16", "17", "18"]},
-                "style.home.body_color": {"$ref": "#/$defs/color"},
-                "style.home.button_bg": {"$ref": "#/$defs/color"},
-                "style.home.button_text": {"$ref": "#/$defs/color"},
-                "style.home.button_hover_bg": {"$ref": "#/$defs/color"},
-                "style.home.button_font": {"$ref": "#/$defs/font"},
-                "style.home.button_size": {"enum": ["12", "13", "14", "15", "16", "18"]},
-                "style.home.button_radius": {"enum": ["0", "0.25rem", "0.375rem", "0.5rem", "0.625rem", "0.75rem", "1rem", "1.5rem"]},
-                "style.home.price_size": {"enum": ["14", "16", "18", "20", "24", "28"]},
-                "style.home.price_color": {"$ref": "#/$defs/color"},
-                "style.home.price_sale_color": {"$ref": "#/$defs/color"},
-                "style.catalog.heading_font": {"$ref": "#/$defs/font"},
-                "style.catalog.heading_size": {"enum": ["20", "24", "28", "32", "36", "40", "48", "56", "64"]},
-                "style.catalog.heading_weight": {"enum": ["400", "500", "600", "700", "800"]},
-                "style.catalog.heading_color": {"$ref": "#/$defs/color"},
-                "style.catalog.body_font": {"$ref": "#/$defs/font"},
-                "style.catalog.body_size": {"enum": ["13", "14", "15", "16", "17", "18"]},
-                "style.catalog.body_color": {"$ref": "#/$defs/color"},
-                "style.catalog.button_bg": {"$ref": "#/$defs/color"},
-                "style.catalog.button_text": {"$ref": "#/$defs/color"},
-                "style.catalog.button_hover_bg": {"$ref": "#/$defs/color"},
-                "style.catalog.button_font": {"$ref": "#/$defs/font"},
-                "style.catalog.button_size": {"enum": ["12", "13", "14", "15", "16", "18"]},
-                "style.catalog.button_radius": {"enum": ["0", "0.25rem", "0.375rem", "0.5rem", "0.625rem", "0.75rem", "1rem", "1.5rem"]},
-                "style.catalog.price_size": {"enum": ["14", "16", "18", "20", "24", "28"]},
-                "style.catalog.price_color": {"$ref": "#/$defs/color"},
-                "style.catalog.price_sale_color": {"$ref": "#/$defs/color"},
-                "style.product.heading_font": {"$ref": "#/$defs/font"},
-                "style.product.heading_size": {"enum": ["20", "24", "28", "32", "36", "40", "48", "56", "64"]},
-                "style.product.heading_weight": {"enum": ["400", "500", "600", "700", "800"]},
-                "style.product.heading_color": {"$ref": "#/$defs/color"},
-                "style.product.body_font": {"$ref": "#/$defs/font"},
-                "style.product.body_size": {"enum": ["13", "14", "15", "16", "17", "18"]},
-                "style.product.body_color": {"$ref": "#/$defs/color"},
-                "style.product.button_bg": {"$ref": "#/$defs/color"},
-                "style.product.button_text": {"$ref": "#/$defs/color"},
-                "style.product.button_hover_bg": {"$ref": "#/$defs/color"},
-                "style.product.button_font": {"$ref": "#/$defs/font"},
-                "style.product.button_size": {"enum": ["12", "13", "14", "15", "16", "18"]},
-                "style.product.button_radius": {"enum": ["0", "0.25rem", "0.375rem", "0.5rem", "0.625rem", "0.75rem", "1rem", "1.5rem"]},
-                "style.product.price_size": {"enum": ["14", "16", "18", "20", "24", "28"]},
-                "style.product.price_color": {"$ref": "#/$defs/color"},
-                "style.product.price_sale_color": {"$ref": "#/$defs/color"},
-                "style.cart.heading_font": {"$ref": "#/$defs/font"},
-                "style.cart.heading_size": {"enum": ["20", "24", "28", "32", "36", "40", "48", "56", "64"]},
-                "style.cart.heading_weight": {"enum": ["400", "500", "600", "700", "800"]},
-                "style.cart.heading_color": {"$ref": "#/$defs/color"},
-                "style.cart.body_font": {"$ref": "#/$defs/font"},
-                "style.cart.body_size": {"enum": ["13", "14", "15", "16", "17", "18"]},
-                "style.cart.body_color": {"$ref": "#/$defs/color"},
-                "style.cart.button_bg": {"$ref": "#/$defs/color"},
-                "style.cart.button_text": {"$ref": "#/$defs/color"},
-                "style.cart.button_hover_bg": {"$ref": "#/$defs/color"},
-                "style.cart.button_font": {"$ref": "#/$defs/font"},
-                "style.cart.button_size": {"enum": ["12", "13", "14", "15", "16", "18"]},
-                "style.cart.button_radius": {"enum": ["0", "0.25rem", "0.375rem", "0.5rem", "0.625rem", "0.75rem", "1rem", "1.5rem"]},
-                "style.cart.price_size": {"enum": ["14", "16", "18", "20", "24", "28"]},
-                "style.cart.price_color": {"$ref": "#/$defs/color"},
-                "style.cart.price_sale_color": {"$ref": "#/$defs/color"},
-                "header.logo_height": {"type": "integer", "minimum": 24, "maximum": 96},
-                "header.background": {"$ref": "#/$defs/color"},
-                "header.text": {"$ref": "#/$defs/color"},
-                "header.search": {"enum": ["bar", "icon"]},
-                "header.menu_align": {"enum": ["left", "center", "right"]},
-                "header.cart_icon": {"enum": ["bag", "cart"]},
-                "header.cart_count": {"type": "boolean"},
-                "header.account_link": {"type": "boolean"},
-                "catalog.columns_desktop": {"enum": ["2", "3", "4", "5"]},
-                "catalog.columns_mobile": {"enum": ["1", "2"]},
-                "catalog.per_page": {"type": "integer", "minimum": 12, "maximum": 48},
-                "catalog.default_sort": {"enum": ["newest", "price_asc", "price_desc", "name"]},
-                "catalog.filters": {"type": "boolean"},
-                "catalog.image_ratio": {"enum": ["square", "portrait", "landscape"]},
-                "catalog.hover_image": {"type": "boolean"},
-                "catalog.quick_add": {"type": "boolean"},
-                "catalog.badges": {"type": "boolean"},
-                "catalog.show_brand": {"type": "boolean"},
-                "product.thumbnails": {"enum": ["side", "bottom"]},
-                "product.zoom": {"type": "boolean"},
-                "product.show_sku": {"type": "boolean"},
-                "product.stock_note": {"enum": ["off", "low", "always"]},
-                "product.description": {"enum": ["open", "tabs", "accordion"]},
-                "product.related": {"type": "boolean"},
-                "product.related_count": {"type": "integer", "minimum": 2, "maximum": 12},
-                "product.upsells": {"type": "boolean"},
-                "product.quantity": {"type": "boolean"},
-                "cart.free_shipping_bar": {"type": "boolean"},
-                "cart.cross_sells": {"type": "boolean"},
-                "cart.coupon": {"type": "boolean"},
-                "cart.trust_badges": {"type": "boolean"},
-                "cart.continue_link": {"type": "boolean"},
-                "checkout.summary_side": {"enum": ["right", "left"]},
-                "checkout.sticky_summary": {"type": "boolean"},
-                "checkout.company": {"type": "boolean"},
-                "checkout.address_line2": {"type": "boolean"},
-                "checkout.phone": {"enum": ["hidden", "optional", "required"]},
-                "checkout.order_note": {"type": "boolean"},
-                "checkout.terms": {"type": "boolean"},
-                "checkout.trust_badges": {"type": "boolean"},
-                "checkout.heading": {"type": "string", "maxLength": 60},
-                "checkout.button_label": {"type": "string", "maxLength": 40},
-                "checkout.summary_images": {"type": "boolean"},
-                "checkout.coupon": {"type": "boolean"}
+                "container": {
+                    "enum": [
+                        "narrow",
+                        "default",
+                        "reference",
+                        "wide"
+                    ]
+                },
+                "layout.header": {
+                    "enum": [
+                        "classic",
+                        "centered",
+                        "minimal",
+                        "electronics",
+                        "atelier"
+                    ]
+                },
+                "layout.footer": {
+                    "enum": [
+                        "simple",
+                        "columns",
+                        "electronics",
+                        "atelier"
+                    ]
+                },
+                "layout.product_card": {
+                    "enum": [
+                        "standard",
+                        "minimal",
+                        "framed",
+                        "electronics",
+                        "atelier"
+                    ]
+                },
+                "layout.grid_columns": {
+                    "enum": [
+                        "3",
+                        "4"
+                    ]
+                },
+                "layout.product_page": {
+                    "enum": [
+                        "split",
+                        "stacked",
+                        "electronics",
+                        "atelier"
+                    ]
+                },
+                "logo": {
+                    "$ref": "#/$defs/image"
+                },
+                "favicon": {
+                    "$ref": "#/$defs/image"
+                },
+                "announcement": {
+                    "type": "string",
+                    "maxLength": 160
+                },
+                "footer_text": {
+                    "type": "string",
+                    "maxLength": 500
+                },
+                "color.search": {
+                    "$ref": "#/$defs/color"
+                },
+                "color.sale": {
+                    "$ref": "#/$defs/color"
+                },
+                "contact_email": {
+                    "type": "string"
+                },
+                "contact_phone": {
+                    "type": "string"
+                },
+                "help_link": {
+                    "type": "string"
+                },
+                "menu_1_label": {
+                    "type": "string"
+                },
+                "menu_1_link": {
+                    "type": "string"
+                },
+                "menu_2_label": {
+                    "type": "string"
+                },
+                "menu_2_link": {
+                    "type": "string"
+                },
+                "menu_3_label": {
+                    "type": "string"
+                },
+                "menu_3_link": {
+                    "type": "string"
+                },
+                "menu_4_label": {
+                    "type": "string"
+                },
+                "menu_4_link": {
+                    "type": "string"
+                },
+                "menu_5_label": {
+                    "type": "string"
+                },
+                "menu_5_link": {
+                    "type": "string"
+                },
+                "menu_6_label": {
+                    "type": "string"
+                },
+                "menu_6_link": {
+                    "type": "string"
+                },
+                "menu_7_label": {
+                    "type": "string"
+                },
+                "menu_7_link": {
+                    "type": "string"
+                },
+                "footer_1_title": {
+                    "type": "string"
+                },
+                "footer_1_1_label": {
+                    "type": "string"
+                },
+                "footer_1_1_link": {
+                    "type": "string"
+                },
+                "footer_1_2_label": {
+                    "type": "string"
+                },
+                "footer_1_2_link": {
+                    "type": "string"
+                },
+                "footer_1_3_label": {
+                    "type": "string"
+                },
+                "footer_1_3_link": {
+                    "type": "string"
+                },
+                "footer_1_4_label": {
+                    "type": "string"
+                },
+                "footer_1_4_link": {
+                    "type": "string"
+                },
+                "footer_1_5_label": {
+                    "type": "string"
+                },
+                "footer_1_5_link": {
+                    "type": "string"
+                },
+                "footer_1_6_label": {
+                    "type": "string"
+                },
+                "footer_1_6_link": {
+                    "type": "string"
+                },
+                "footer_2_title": {
+                    "type": "string"
+                },
+                "footer_2_1_label": {
+                    "type": "string"
+                },
+                "footer_2_1_link": {
+                    "type": "string"
+                },
+                "footer_2_2_label": {
+                    "type": "string"
+                },
+                "footer_2_2_link": {
+                    "type": "string"
+                },
+                "footer_2_3_label": {
+                    "type": "string"
+                },
+                "footer_2_3_link": {
+                    "type": "string"
+                },
+                "footer_2_4_label": {
+                    "type": "string"
+                },
+                "footer_2_4_link": {
+                    "type": "string"
+                },
+                "footer_2_5_label": {
+                    "type": "string"
+                },
+                "footer_2_5_link": {
+                    "type": "string"
+                },
+                "footer_2_6_label": {
+                    "type": "string"
+                },
+                "footer_2_6_link": {
+                    "type": "string"
+                },
+                "footer_3_title": {
+                    "type": "string"
+                },
+                "footer_3_1_label": {
+                    "type": "string"
+                },
+                "footer_3_1_link": {
+                    "type": "string"
+                },
+                "footer_3_2_label": {
+                    "type": "string"
+                },
+                "footer_3_2_link": {
+                    "type": "string"
+                },
+                "footer_3_3_label": {
+                    "type": "string"
+                },
+                "footer_3_3_link": {
+                    "type": "string"
+                },
+                "footer_3_4_label": {
+                    "type": "string"
+                },
+                "footer_3_4_link": {
+                    "type": "string"
+                },
+                "footer_3_5_label": {
+                    "type": "string"
+                },
+                "footer_3_5_link": {
+                    "type": "string"
+                },
+                "footer_3_6_label": {
+                    "type": "string"
+                },
+                "footer_3_6_link": {
+                    "type": "string"
+                },
+                "style.general.heading_font": {
+                    "$ref": "#/$defs/font"
+                },
+                "style.general.heading_size": {
+                    "enum": [
+                        "20",
+                        "24",
+                        "28",
+                        "32",
+                        "36",
+                        "40",
+                        "48",
+                        "56",
+                        "64"
+                    ]
+                },
+                "style.general.heading_weight": {
+                    "enum": [
+                        "400",
+                        "500",
+                        "600",
+                        "700",
+                        "800"
+                    ]
+                },
+                "style.general.heading_color": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.general.body_font": {
+                    "$ref": "#/$defs/font"
+                },
+                "style.general.body_size": {
+                    "enum": [
+                        "13",
+                        "14",
+                        "15",
+                        "16",
+                        "17",
+                        "18"
+                    ]
+                },
+                "style.general.body_color": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.general.button_bg": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.general.button_text": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.general.button_hover_bg": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.general.button_font": {
+                    "$ref": "#/$defs/font"
+                },
+                "style.general.button_size": {
+                    "enum": [
+                        "12",
+                        "13",
+                        "14",
+                        "15",
+                        "16",
+                        "18"
+                    ]
+                },
+                "style.general.button_radius": {
+                    "enum": [
+                        "0",
+                        "0.25rem",
+                        "0.375rem",
+                        "0.5rem",
+                        "0.625rem",
+                        "0.75rem",
+                        "1rem",
+                        "1.5rem"
+                    ]
+                },
+                "style.general.price_size": {
+                    "enum": [
+                        "14",
+                        "16",
+                        "18",
+                        "20",
+                        "24",
+                        "28"
+                    ]
+                },
+                "style.general.price_color": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.general.price_sale_color": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.home.heading_font": {
+                    "$ref": "#/$defs/font"
+                },
+                "style.home.heading_size": {
+                    "enum": [
+                        "20",
+                        "24",
+                        "28",
+                        "32",
+                        "36",
+                        "40",
+                        "48",
+                        "56",
+                        "64"
+                    ]
+                },
+                "style.home.heading_weight": {
+                    "enum": [
+                        "400",
+                        "500",
+                        "600",
+                        "700",
+                        "800"
+                    ]
+                },
+                "style.home.heading_color": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.home.body_font": {
+                    "$ref": "#/$defs/font"
+                },
+                "style.home.body_size": {
+                    "enum": [
+                        "13",
+                        "14",
+                        "15",
+                        "16",
+                        "17",
+                        "18"
+                    ]
+                },
+                "style.home.body_color": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.home.button_bg": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.home.button_text": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.home.button_hover_bg": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.home.button_font": {
+                    "$ref": "#/$defs/font"
+                },
+                "style.home.button_size": {
+                    "enum": [
+                        "12",
+                        "13",
+                        "14",
+                        "15",
+                        "16",
+                        "18"
+                    ]
+                },
+                "style.home.button_radius": {
+                    "enum": [
+                        "0",
+                        "0.25rem",
+                        "0.375rem",
+                        "0.5rem",
+                        "0.625rem",
+                        "0.75rem",
+                        "1rem",
+                        "1.5rem"
+                    ]
+                },
+                "style.home.price_size": {
+                    "enum": [
+                        "14",
+                        "16",
+                        "18",
+                        "20",
+                        "24",
+                        "28"
+                    ]
+                },
+                "style.home.price_color": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.home.price_sale_color": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.catalog.heading_font": {
+                    "$ref": "#/$defs/font"
+                },
+                "style.catalog.heading_size": {
+                    "enum": [
+                        "20",
+                        "24",
+                        "28",
+                        "32",
+                        "36",
+                        "40",
+                        "48",
+                        "56",
+                        "64"
+                    ]
+                },
+                "style.catalog.heading_weight": {
+                    "enum": [
+                        "400",
+                        "500",
+                        "600",
+                        "700",
+                        "800"
+                    ]
+                },
+                "style.catalog.heading_color": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.catalog.body_font": {
+                    "$ref": "#/$defs/font"
+                },
+                "style.catalog.body_size": {
+                    "enum": [
+                        "13",
+                        "14",
+                        "15",
+                        "16",
+                        "17",
+                        "18"
+                    ]
+                },
+                "style.catalog.body_color": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.catalog.button_bg": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.catalog.button_text": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.catalog.button_hover_bg": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.catalog.button_font": {
+                    "$ref": "#/$defs/font"
+                },
+                "style.catalog.button_size": {
+                    "enum": [
+                        "12",
+                        "13",
+                        "14",
+                        "15",
+                        "16",
+                        "18"
+                    ]
+                },
+                "style.catalog.button_radius": {
+                    "enum": [
+                        "0",
+                        "0.25rem",
+                        "0.375rem",
+                        "0.5rem",
+                        "0.625rem",
+                        "0.75rem",
+                        "1rem",
+                        "1.5rem"
+                    ]
+                },
+                "style.catalog.price_size": {
+                    "enum": [
+                        "14",
+                        "16",
+                        "18",
+                        "20",
+                        "24",
+                        "28"
+                    ]
+                },
+                "style.catalog.price_color": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.catalog.price_sale_color": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.product.heading_font": {
+                    "$ref": "#/$defs/font"
+                },
+                "style.product.heading_size": {
+                    "enum": [
+                        "20",
+                        "24",
+                        "28",
+                        "32",
+                        "36",
+                        "40",
+                        "48",
+                        "56",
+                        "64"
+                    ]
+                },
+                "style.product.heading_weight": {
+                    "enum": [
+                        "400",
+                        "500",
+                        "600",
+                        "700",
+                        "800"
+                    ]
+                },
+                "style.product.heading_color": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.product.body_font": {
+                    "$ref": "#/$defs/font"
+                },
+                "style.product.body_size": {
+                    "enum": [
+                        "13",
+                        "14",
+                        "15",
+                        "16",
+                        "17",
+                        "18"
+                    ]
+                },
+                "style.product.body_color": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.product.button_bg": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.product.button_text": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.product.button_hover_bg": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.product.button_font": {
+                    "$ref": "#/$defs/font"
+                },
+                "style.product.button_size": {
+                    "enum": [
+                        "12",
+                        "13",
+                        "14",
+                        "15",
+                        "16",
+                        "18"
+                    ]
+                },
+                "style.product.button_radius": {
+                    "enum": [
+                        "0",
+                        "0.25rem",
+                        "0.375rem",
+                        "0.5rem",
+                        "0.625rem",
+                        "0.75rem",
+                        "1rem",
+                        "1.5rem"
+                    ]
+                },
+                "style.product.price_size": {
+                    "enum": [
+                        "14",
+                        "16",
+                        "18",
+                        "20",
+                        "24",
+                        "28"
+                    ]
+                },
+                "style.product.price_color": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.product.price_sale_color": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.cart.heading_font": {
+                    "$ref": "#/$defs/font"
+                },
+                "style.cart.heading_size": {
+                    "enum": [
+                        "20",
+                        "24",
+                        "28",
+                        "32",
+                        "36",
+                        "40",
+                        "48",
+                        "56",
+                        "64"
+                    ]
+                },
+                "style.cart.heading_weight": {
+                    "enum": [
+                        "400",
+                        "500",
+                        "600",
+                        "700",
+                        "800"
+                    ]
+                },
+                "style.cart.heading_color": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.cart.body_font": {
+                    "$ref": "#/$defs/font"
+                },
+                "style.cart.body_size": {
+                    "enum": [
+                        "13",
+                        "14",
+                        "15",
+                        "16",
+                        "17",
+                        "18"
+                    ]
+                },
+                "style.cart.body_color": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.cart.button_bg": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.cart.button_text": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.cart.button_hover_bg": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.cart.button_font": {
+                    "$ref": "#/$defs/font"
+                },
+                "style.cart.button_size": {
+                    "enum": [
+                        "12",
+                        "13",
+                        "14",
+                        "15",
+                        "16",
+                        "18"
+                    ]
+                },
+                "style.cart.button_radius": {
+                    "enum": [
+                        "0",
+                        "0.25rem",
+                        "0.375rem",
+                        "0.5rem",
+                        "0.625rem",
+                        "0.75rem",
+                        "1rem",
+                        "1.5rem"
+                    ]
+                },
+                "style.cart.price_size": {
+                    "enum": [
+                        "14",
+                        "16",
+                        "18",
+                        "20",
+                        "24",
+                        "28"
+                    ]
+                },
+                "style.cart.price_color": {
+                    "$ref": "#/$defs/color"
+                },
+                "style.cart.price_sale_color": {
+                    "$ref": "#/$defs/color"
+                },
+                "header.logo_height": {
+                    "type": "integer",
+                    "minimum": 24,
+                    "maximum": 96
+                },
+                "header.background": {
+                    "$ref": "#/$defs/color"
+                },
+                "header.text": {
+                    "$ref": "#/$defs/color"
+                },
+                "header.search": {
+                    "enum": [
+                        "bar",
+                        "icon"
+                    ]
+                },
+                "header.menu_align": {
+                    "enum": [
+                        "left",
+                        "center",
+                        "right"
+                    ]
+                },
+                "header.cart_icon": {
+                    "enum": [
+                        "bag",
+                        "cart"
+                    ]
+                },
+                "header.cart_count": {
+                    "type": "boolean"
+                },
+                "header.account_link": {
+                    "type": "boolean"
+                },
+                "catalog.columns_desktop": {
+                    "enum": [
+                        "2",
+                        "3",
+                        "4",
+                        "5"
+                    ]
+                },
+                "catalog.columns_mobile": {
+                    "enum": [
+                        "1",
+                        "2"
+                    ]
+                },
+                "catalog.per_page": {
+                    "type": "integer",
+                    "minimum": 12,
+                    "maximum": 48
+                },
+                "catalog.default_sort": {
+                    "enum": [
+                        "newest",
+                        "price_asc",
+                        "price_desc",
+                        "name"
+                    ]
+                },
+                "catalog.filters": {
+                    "type": "boolean"
+                },
+                "catalog.image_ratio": {
+                    "enum": [
+                        "square",
+                        "portrait",
+                        "landscape"
+                    ]
+                },
+                "catalog.hover_image": {
+                    "type": "boolean"
+                },
+                "catalog.quick_add": {
+                    "type": "boolean"
+                },
+                "catalog.badges": {
+                    "type": "boolean"
+                },
+                "catalog.show_brand": {
+                    "type": "boolean"
+                },
+                "product.thumbnails": {
+                    "enum": [
+                        "side",
+                        "bottom"
+                    ]
+                },
+                "product.zoom": {
+                    "type": "boolean"
+                },
+                "product.show_sku": {
+                    "type": "boolean"
+                },
+                "product.stock_note": {
+                    "enum": [
+                        "off",
+                        "low",
+                        "always"
+                    ]
+                },
+                "product.description": {
+                    "enum": [
+                        "open",
+                        "tabs",
+                        "accordion"
+                    ]
+                },
+                "product.related": {
+                    "type": "boolean"
+                },
+                "product.related_count": {
+                    "type": "integer",
+                    "minimum": 2,
+                    "maximum": 12
+                },
+                "product.upsells": {
+                    "type": "boolean"
+                },
+                "product.quantity": {
+                    "type": "boolean"
+                },
+                "cart.free_shipping_bar": {
+                    "type": "boolean"
+                },
+                "cart.cross_sells": {
+                    "type": "boolean"
+                },
+                "cart.coupon": {
+                    "type": "boolean"
+                },
+                "cart.trust_badges": {
+                    "type": "boolean"
+                },
+                "cart.continue_link": {
+                    "type": "boolean"
+                },
+                "checkout.summary_side": {
+                    "enum": [
+                        "right",
+                        "left"
+                    ]
+                },
+                "checkout.sticky_summary": {
+                    "type": "boolean"
+                },
+                "checkout.company": {
+                    "type": "boolean"
+                },
+                "checkout.address_line2": {
+                    "type": "boolean"
+                },
+                "checkout.phone": {
+                    "enum": [
+                        "hidden",
+                        "optional",
+                        "required"
+                    ]
+                },
+                "checkout.order_note": {
+                    "type": "boolean"
+                },
+                "checkout.terms": {
+                    "type": "boolean"
+                },
+                "checkout.trust_badges": {
+                    "type": "boolean"
+                },
+                "checkout.heading": {
+                    "type": "string",
+                    "maxLength": 60
+                },
+                "checkout.button_label": {
+                    "type": "string",
+                    "maxLength": 40
+                },
+                "checkout.summary_images": {
+                    "type": "boolean"
+                },
+                "checkout.coupon": {
+                    "type": "boolean"
+                },
+                "menu_8_label": {
+                    "type": "string"
+                },
+                "menu_8_link": {
+                    "type": "string"
+                },
+                "menu_9_label": {
+                    "type": "string"
+                },
+                "menu_9_link": {
+                    "type": "string"
+                },
+                "menu_10_label": {
+                    "type": "string"
+                },
+                "menu_10_link": {
+                    "type": "string"
+                },
+                "menu_11_label": {
+                    "type": "string"
+                },
+                "menu_11_link": {
+                    "type": "string"
+                },
+                "menu_12_label": {
+                    "type": "string"
+                },
+                "menu_12_link": {
+                    "type": "string"
+                }
             }
         },
         "dark_colors": {
@@ -229,7 +1070,9 @@
                     "border"
                 ]
             },
-            "additionalProperties": { "$ref": "#/$defs/color" }
+            "additionalProperties": {
+                "$ref": "#/$defs/color"
+            }
         },
         "fonts": {
             "type": "array",
@@ -237,18 +1080,28 @@
             "items": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["family", "file"],
+                "required": [
+                    "family",
+                    "file"
+                ],
                 "properties": {
                     "family": {
                         "type": "string",
                         "pattern": "^[A-Za-z][A-Za-z0-9 ]{0,39}$"
                     },
-                    "file": { "$ref": "#/$defs/relativePath" },
+                    "file": {
+                        "$ref": "#/$defs/relativePath"
+                    },
                     "weight": {
                         "type": "string",
                         "pattern": "^\\d{3}( \\d{3})?$"
                     },
-                    "style": { "enum": ["normal", "italic"] }
+                    "style": {
+                        "enum": [
+                            "normal",
+                            "italic"
+                        ]
+                    }
                 }
             }
         },
@@ -258,10 +1111,12 @@
             "properties": {
                 "home": {
                     "type": "array",
-                    "maxItems": 12,
+                    "maxItems": 32,
                     "items": {
                         "type": "object",
-                        "required": ["type"],
+                        "required": [
+                            "type"
+                        ],
                         "properties": {
                             "type": {
                                 "enum": [
@@ -270,35 +1125,120 @@
                                     "category_grid",
                                     "image_with_text",
                                     "rich_text",
-                                    "promo_banner"
+                                    "promo_banner",
+                                    "campaign",
+                                    "promotion_grid"
                                 ]
                             },
-                            "settings": { "type": "object" }
+                            "settings": {
+                                "type": "object"
+                            }
                         }
                     }
                 }
             }
         },
-        "demo_content": { "$ref": "#/$defs/relativePath" },
+        "demo_content": {
+            "$ref": "#/$defs/relativePath"
+        },
         "changelog": {
             "type": "array",
             "maxItems": 50,
             "items": {
                 "type": "object",
-                "required": ["version", "date", "notes"],
+                "required": [
+                    "version",
+                    "date",
+                    "notes"
+                ],
                 "properties": {
-                    "version": { "type": "string" },
+                    "version": {
+                        "type": "string"
+                    },
                     "date": {
                         "type": "string",
                         "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
                     },
-                    "notes": { "type": "string", "maxLength": 500 }
+                    "notes": {
+                        "type": "string",
+                        "maxLength": 500
+                    }
                 }
             }
+        },
+        "customizer": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "maxLength": 120
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 500
+                },
+                "hide_core_fields": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "fields": {
+                    "type": "object",
+                    "maxProperties": 120,
+                    "additionalProperties": {
+                        "$ref": "#/$defs/customizerField"
+                    }
+                },
+                "presets": {
+                    "type": "object",
+                    "maxProperties": 12,
+                    "additionalProperties": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/$defs/designValue"
+                        }
+                    }
+                }
+            }
+        },
+        "frontend": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "index": {
+                    "const": "src/index.tsx"
+                },
+                "catalog": {
+                    "const": "src/catalog.tsx"
+                },
+                "stylesheet": {
+                    "const": "src/style.css"
+                },
+                "cart": {
+                    "const": "src/cart.tsx"
+                },
+                "header": {
+                    "const": "src/header.tsx"
+                },
+                "footer": {
+                    "const": "src/footer.tsx"
+                },
+                "product": {
+                    "const": "src/product.tsx"
+                }
+            }
+        },
+        "customizer_file": {
+            "$ref": "#/$defs/relativePath"
         }
     },
     "$defs": {
-        "color": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+        "color": {
+            "type": "string",
+            "pattern": "^#[0-9a-fA-F]{6}$"
+        },
         "font": {
             "anyOf": [
                 {
@@ -330,6 +1270,76 @@
             "not": {
                 "pattern": "(^[/\\\\])|(^[a-zA-Z]:)|(^|[/\\\\])\\.\\.([/\\\\]|$)"
             }
+        },
+        "customizerField": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "type",
+                "label",
+                "default"
+            ],
+            "properties": {
+                "type": {
+                    "enum": [
+                        "string",
+                        "text",
+                        "color",
+                        "boolean",
+                        "integer",
+                        "select",
+                        "link",
+                        "image",
+                        "font"
+                    ]
+                },
+                "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                },
+                "group": {
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "default": {
+                    "$ref": "#/$defs/designValue"
+                },
+                "options": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 30,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "min": {
+                    "type": "integer",
+                    "minimum": -100000,
+                    "maximum": 100000
+                },
+                "max": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000
+                },
+                "required": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "designValue": {
+            "anyOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "integer"
+                },
+                {
+                    "type": "boolean"
+                }
+            ]
         }
     }
 }

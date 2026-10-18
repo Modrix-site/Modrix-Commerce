@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Core\Extensions\ModuleContentSecurity;
 use App\Core\Settings\GeneralSettings;
 use Closure;
 use Illuminate\Http\Request;
@@ -53,26 +54,28 @@ class SecurityHeaders
 
     private function policy(?string $nonce): string
     {
-        $script = $nonce === null ? "'self'" : "'self' 'nonce-{$nonce}'";
+        // Origins declared by enabled modules (manifest content_security, ADR-047).
+        $modules = app(ModuleContentSecurity::class);
+        $directive = fn (string $name, array $base) => trim($name.' '.implode(' ', array_values(array_unique([...$base, ...$modules->sources($name)]))));
+        $script = $nonce === null ? ["'self'"] : ["'self'", "'nonce-{$nonce}'"];
+        $frames = $modules->sources('frame-src');
         // Hosts allowed for Settings → General → Custom code.
         $custom = rescue(fn () => app(GeneralSettings::class)->scriptHosts(), [], false);
-        $hosts = $custom === [] ? '' : ' '.implode(' ', $custom);
-        $images = implode(' ', ["'self'", 'data:', 'blob:', ...$this->mediaOrigins(), ...$custom]);
 
-        return implode('; ', [
+        return implode('; ', array_filter([
             "default-src 'self'",
-            "script-src {$script}{$hosts}",
+            $directive('script-src', [...$script, ...$custom]),
             "style-src 'self' 'unsafe-inline'",
-            "img-src {$images}",
+            $directive('img-src', ["'self'", 'data:', 'blob:', ...$this->mediaOrigins(), ...$custom]),
             "font-src 'self' data:",
-            "connect-src 'self'{$hosts}",
-            ...($custom === [] ? [] : ["frame-src 'self'{$hosts}"]),
+            $directive('connect-src', ["'self'", ...$custom]),
+            $frames === [] && $custom === [] ? null : $directive('frame-src', ["'self'", ...$custom]),
             "object-src 'none'",
             "base-uri 'self'",
             "frame-ancestors 'none'",
             // Hosted payment pages are reached by full-page redirects.
-            "form-action 'self' https://checkout.stripe.com",
-        ]);
+            $directive('form-action', ["'self'", 'https://checkout.stripe.com']),
+        ]));
     }
 
     /**

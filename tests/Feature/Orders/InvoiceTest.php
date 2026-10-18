@@ -136,12 +136,13 @@ class InvoiceTest extends TestCase
     {
         $owner = $this->owner();
 
-        $this->actingAs($owner)->get(route('admin.settings.documents.edit'))
+        $this->actingAs($owner)->get(route('admin.settings.documents.edit'))->assertRedirect('/admin/settings/store#documents');
+        $this->get(route('admin.settings.store.edit'))
             ->assertInertia(fn ($page) => $page
-                ->component('admin/settings/documents')
-                ->where('settings.invoice_prefix', 'INV-{year}-')
-                ->where('settings.next_invoice_number', 1)
-                ->where('preview', 'INV-2026-00001'));
+                ->component('admin/settings/store')
+                ->where('documents.settings.invoice_prefix', 'INV-{year}-')
+                ->where('documents.settings.next_invoice_number', 1)
+                ->where('documents.preview', 'INV-2026-00001'));
 
         $valid = [
             'invoice_prefix' => 'FAC/{year}/',

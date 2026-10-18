@@ -21,11 +21,25 @@ final class StorefrontSlots
     /** Slot name => context keys passed to the props closure. */
     public const SLOTS = [
         'home.after_featured' => [],
+        // Below catalog results on category, brand and search pages.
+        'catalog.after_products' => ['category', 'brand', 'query'],
         'product.after_details' => ['product'],
         // Admin: a panel in the product editor's sidebar (edit page). Context: the product.
         // Props are built for the signed-in staff member; return null to show nothing.
         'admin.product.sidebar' => ['product'],
         'order.confirmation' => ['order'],
+        // Under the cart total. Context: the priced cart.
+        'cart.after_totals' => ['cart'],
+        // Under one payment method at checkout, shown while it is selected. Props must
+        // include "method" (the payment method code); the page adds live "checkout" props.
+        'checkout.payment_method' => ['cart'],
+        // Below the order summary, refreshed with the same priced cart as payment slots.
+        'checkout.after_summary' => ['cart'],
+        // Rendered on every storefront page, outside the page content. For overlays such
+        // as a marketing popup or a cookie bar; the component positions itself.
+        'storefront.overlay' => [],
+        // Optional content rendered by theme-owned footer components.
+        'storefront.footer' => [],
     ];
 
     /**
@@ -37,6 +51,7 @@ final class StorefrontSlots
         'header.actions' => ['label' => 'Header icons', 'tab' => 'header', 'context' => []],
         'home.after_featured' => ['label' => 'After featured products', 'tab' => 'home', 'context' => []],
         'catalog.before_products' => ['label' => 'Above the products', 'tab' => 'catalog', 'context' => ['category', 'brand', 'query']],
+        'catalog.after_products' => ['label' => 'After the products', 'tab' => 'catalog', 'context' => ['category', 'brand', 'query']],
         // Rendered once per page; each product card adds its own product.
         'product.card' => ['label' => 'On product cards', 'tab' => 'catalog', 'context' => []],
         'product.after_title' => ['label' => 'Under the title', 'tab' => 'product', 'context' => ['product']],
@@ -45,7 +60,10 @@ final class StorefrontSlots
         'product.after_details' => ['label' => 'After the details', 'tab' => 'product', 'context' => ['product']],
         'product.after_description' => ['label' => 'Below the description', 'tab' => 'product', 'context' => ['product']],
         'cart.after_lines' => ['label' => 'Under the items', 'tab' => 'cart', 'context' => ['cart']],
+        'cart.after_totals' => ['label' => 'Under the total', 'tab' => 'cart', 'context' => ['cart']],
+        'checkout.after_summary' => ['label' => 'After the summary', 'tab' => 'checkout', 'context' => ['cart']],
         'checkout.before_place_order' => ['label' => 'Above "Place order"', 'tab' => 'checkout', 'context' => ['cart']],
+        'storefront.footer' => ['label' => 'Footer', 'tab' => 'footer', 'context' => []],
     ];
 
     /** @var array<string, list<array{module: string, component: string, props: Closure, order: int}>> fixed slots */

@@ -17,9 +17,12 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $free_over
  * @property list<string>|null $countries
  * @property bool $is_active
+ * @property list<array{country_code: string, region: string, rate: string, free_over: string|null}>|null $regional_rates
+ * @property bool $regions_only
+ * @property string|null $delivery_estimate
  * @property int $position
  */
-#[Fillable(['code', 'name', 'description', 'rate', 'currency', 'free_over', 'countries', 'is_active', 'position'])]
+#[Fillable(['code', 'name', 'description', 'rate', 'currency', 'free_over', 'countries', 'is_active', 'position', 'regional_rates', 'regions_only', 'delivery_estimate'])]
 class ShippingMethod extends Model
 {
     /**
@@ -31,6 +34,8 @@ class ShippingMethod extends Model
             'rate' => 'decimal:4',
             'free_over' => 'decimal:4',
             'countries' => 'array',
+            'regional_rates' => 'array',
+            'regions_only' => 'boolean',
             'is_active' => 'boolean',
             'position' => 'integer',
         ];

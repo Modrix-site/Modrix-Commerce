@@ -1,0 +1,611 @@
+{
+    "title": "Vellaro storefront",
+    "description": "Independent Vellaro settings. Upload an image for every campaign and collection tile. Menus, products, attributes, stock, payments and enabled extensions come from the platform.",
+    "hide_core_fields": [
+        "layout.header",
+        "layout.footer",
+        "layout.product_card",
+        "layout.product_page",
+        "layout.grid_columns",
+        "announcement",
+        "container",
+        "logo",
+        "footer_text"
+    ],
+    "fields": {
+        "custom.brand": {
+            "type": "string",
+            "label": "Wordmark",
+            "group": "Header",
+            "default": "VELLARO",
+            "max": 60
+        },
+        "custom.logo_image": {
+            "type": "image",
+            "label": "Brand logo",
+            "group": "Header",
+            "default": ""
+        },
+        "custom.notice": {
+            "type": "string",
+            "label": "Announcement text",
+            "group": "Header",
+            "default": "Discover everyday comfort. Explore the Vellaro collection.",
+            "max": 160
+        },
+        "custom.notice_color": {
+            "type": "color",
+            "label": "Announcement background",
+            "group": "Header",
+            "default": "#181616"
+        },
+        "custom.show_notice": {
+            "type": "boolean",
+            "label": "Show announcement",
+            "group": "Header",
+            "default": true
+        },
+        "custom.header_benefit_1": {
+            "type": "string",
+            "label": "Benefit 1",
+            "group": "Header",
+            "default": "Everyday essentials",
+            "max": 60
+        },
+        "custom.header_benefit_2": {
+            "type": "string",
+            "label": "Benefit 2",
+            "group": "Header",
+            "default": "Thoughtful collections",
+            "max": 60
+        },
+        "custom.header_benefit_3": {
+            "type": "string",
+            "label": "Benefit 3",
+            "group": "Header",
+            "default": "Home delivery",
+            "max": 60
+        },
+        "custom.search_placeholder": {
+            "type": "string",
+            "label": "Search placeholder",
+            "group": "Header",
+            "default": "Search products",
+            "max": 160
+        },
+        "custom.page_width": {
+            "type": "integer",
+            "label": "Content maximum width (px)",
+            "group": "Layout",
+            "default": 1800,
+            "min": 960,
+            "max": 2000
+        },
+        "custom.section_gap": {
+            "type": "integer",
+            "label": "Section spacing (px)",
+            "group": "Layout",
+            "default": 32,
+            "min": 16,
+            "max": 100
+        },
+        "custom.banner_1_show": {
+            "type": "boolean",
+            "label": "Show campaign",
+            "group": "Campaign 1",
+            "default": true
+        },
+        "custom.banner_1_title": {
+            "type": "string",
+            "label": "Heading",
+            "group": "Campaign 1",
+            "default": "Everyday, better.",
+            "max": 100
+        },
+        "custom.banner_1_text": {
+            "type": "string",
+            "label": "Description",
+            "group": "Campaign 1",
+            "default": "Comfort, confidence and considered details.",
+            "max": 240
+        },
+        "custom.banner_1_image": {
+            "type": "image",
+            "label": "Campaign image",
+            "group": "Campaign 1",
+            "default": "asset:assets/campaign.jpg"
+        },
+        "custom.banner_1_button": {
+            "type": "string",
+            "label": "Button label",
+            "group": "Campaign 1",
+            "default": "Explore collection",
+            "max": 60
+        },
+        "custom.banner_1_link": {
+            "type": "link",
+            "label": "Destination URL",
+            "group": "Campaign 1",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.banner_2_show": {
+            "type": "boolean",
+            "label": "Show campaign",
+            "group": "Campaign 2",
+            "default": true
+        },
+        "custom.banner_2_title": {
+            "type": "string",
+            "label": "Heading",
+            "group": "Campaign 2",
+            "default": "The linen collection",
+            "max": 100
+        },
+        "custom.banner_2_text": {
+            "type": "string",
+            "label": "Description",
+            "group": "Campaign 2",
+            "default": "Light, breezy and made for summer.",
+            "max": 240
+        },
+        "custom.banner_2_image": {
+            "type": "image",
+            "label": "Campaign image",
+            "group": "Campaign 2",
+            "default": "asset:assets/campaign.jpg"
+        },
+        "custom.banner_2_button": {
+            "type": "string",
+            "label": "Button label",
+            "group": "Campaign 2",
+            "default": "Explore collection",
+            "max": 60
+        },
+        "custom.banner_2_link": {
+            "type": "link",
+            "label": "Destination URL",
+            "group": "Campaign 2",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.banner_3_show": {
+            "type": "boolean",
+            "label": "Show campaign",
+            "group": "Campaign 3",
+            "default": true
+        },
+        "custom.banner_3_title": {
+            "type": "string",
+            "label": "Heading",
+            "group": "Campaign 3",
+            "default": "Online exclusive",
+            "max": 100
+        },
+        "custom.banner_3_text": {
+            "type": "string",
+            "label": "Description",
+            "group": "Campaign 3",
+            "default": "A fresh edit for your everyday wardrobe.",
+            "max": 240
+        },
+        "custom.banner_3_image": {
+            "type": "image",
+            "label": "Campaign image",
+            "group": "Campaign 3",
+            "default": "asset:assets/campaign.jpg"
+        },
+        "custom.banner_3_button": {
+            "type": "string",
+            "label": "Button label",
+            "group": "Campaign 3",
+            "default": "Explore collection",
+            "max": 60
+        },
+        "custom.banner_3_link": {
+            "type": "link",
+            "label": "Destination URL",
+            "group": "Campaign 3",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.banner_4_show": {
+            "type": "boolean",
+            "label": "Show campaign",
+            "group": "Campaign 4",
+            "default": true
+        },
+        "custom.banner_4_title": {
+            "type": "string",
+            "label": "Heading",
+            "group": "Campaign 4",
+            "default": "Loved by many. Made for you.",
+            "max": 100
+        },
+        "custom.banner_4_text": {
+            "type": "string",
+            "label": "Description",
+            "group": "Campaign 4",
+            "default": "Timeless styles. Everyday comfort.",
+            "max": 240
+        },
+        "custom.banner_4_image": {
+            "type": "image",
+            "label": "Campaign image",
+            "group": "Campaign 4",
+            "default": "asset:assets/campaign.jpg"
+        },
+        "custom.banner_4_button": {
+            "type": "string",
+            "label": "Button label",
+            "group": "Campaign 4",
+            "default": "Explore collection",
+            "max": 60
+        },
+        "custom.banner_4_link": {
+            "type": "link",
+            "label": "Destination URL",
+            "group": "Campaign 4",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.banner_5_show": {
+            "type": "boolean",
+            "label": "Show campaign",
+            "group": "Campaign 5",
+            "default": true
+        },
+        "custom.banner_5_title": {
+            "type": "string",
+            "label": "Heading",
+            "group": "Campaign 5",
+            "default": "Oxford shirts",
+            "max": 100
+        },
+        "custom.banner_5_text": {
+            "type": "string",
+            "label": "Description",
+            "group": "Campaign 5",
+            "default": "A classic, refreshed.",
+            "max": 240
+        },
+        "custom.banner_5_image": {
+            "type": "image",
+            "label": "Campaign image",
+            "group": "Campaign 5",
+            "default": "asset:assets/campaign.jpg"
+        },
+        "custom.banner_5_button": {
+            "type": "string",
+            "label": "Button label",
+            "group": "Campaign 5",
+            "default": "Explore collection",
+            "max": 60
+        },
+        "custom.banner_5_link": {
+            "type": "link",
+            "label": "Destination URL",
+            "group": "Campaign 5",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.banner_6_show": {
+            "type": "boolean",
+            "label": "Show campaign",
+            "group": "Campaign 6",
+            "default": true
+        },
+        "custom.banner_6_title": {
+            "type": "string",
+            "label": "Heading",
+            "group": "Campaign 6",
+            "default": "Daily essentials",
+            "max": 100
+        },
+        "custom.banner_6_text": {
+            "type": "string",
+            "label": "Description",
+            "group": "Campaign 6",
+            "default": "Comfort. Everyday. Essential.",
+            "max": 240
+        },
+        "custom.banner_6_image": {
+            "type": "image",
+            "label": "Campaign image",
+            "group": "Campaign 6",
+            "default": "asset:assets/campaign.jpg"
+        },
+        "custom.banner_6_button": {
+            "type": "string",
+            "label": "Button label",
+            "group": "Campaign 6",
+            "default": "Explore collection",
+            "max": 60
+        },
+        "custom.banner_6_link": {
+            "type": "link",
+            "label": "Destination URL",
+            "group": "Campaign 6",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.banner_height": {
+            "type": "integer",
+            "label": "Campaign height (px)",
+            "group": "Layout",
+            "default": 288,
+            "min": 220,
+            "max": 700
+        },
+        "custom.banner_overlay": {
+            "type": "integer",
+            "label": "White overlay (%)",
+            "group": "Layout",
+            "default": 95,
+            "min": 0,
+            "max": 100
+        },
+        "custom.show_collections": {
+            "type": "boolean",
+            "label": "Show collection tiles",
+            "group": "Collections",
+            "default": true
+        },
+        "custom.collections_heading": {
+            "type": "string",
+            "label": "Heading",
+            "group": "Collections",
+            "default": "Shop by collection",
+            "max": 160
+        },
+        "custom.collection_1_title": {
+            "type": "string",
+            "label": "Tile 1 title",
+            "group": "Collections",
+            "default": "Active essentials",
+            "max": 80
+        },
+        "custom.collection_1_link": {
+            "type": "link",
+            "label": "Tile 1 link",
+            "group": "Collections",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.collection_1_image": {
+            "type": "image",
+            "label": "Tile 1 image",
+            "group": "Collections",
+            "default": "asset:assets/shirt.jpg"
+        },
+        "custom.collection_2_title": {
+            "type": "string",
+            "label": "Tile 2 title",
+            "group": "Collections",
+            "default": "Liquid touch",
+            "max": 80
+        },
+        "custom.collection_2_link": {
+            "type": "link",
+            "label": "Tile 2 link",
+            "group": "Collections",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.collection_2_image": {
+            "type": "image",
+            "label": "Tile 2 image",
+            "group": "Collections",
+            "default": "asset:assets/chinos.jpg"
+        },
+        "custom.collection_3_title": {
+            "type": "string",
+            "label": "Tile 3 title",
+            "group": "Collections",
+            "default": "Online exclusive",
+            "max": 80
+        },
+        "custom.collection_3_link": {
+            "type": "link",
+            "label": "Tile 3 link",
+            "group": "Collections",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.collection_3_image": {
+            "type": "image",
+            "label": "Tile 3 image",
+            "group": "Collections",
+            "default": "asset:assets/top.jpg"
+        },
+        "custom.collection_4_title": {
+            "type": "string",
+            "label": "Tile 4 title",
+            "group": "Collections",
+            "default": "Signature staples",
+            "max": 80
+        },
+        "custom.collection_4_link": {
+            "type": "link",
+            "label": "Tile 4 link",
+            "group": "Collections",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.collection_4_image": {
+            "type": "image",
+            "label": "Tile 4 image",
+            "group": "Collections",
+            "default": "asset:assets/shirt.jpg"
+        },
+        "custom.show_buy_button": {
+            "type": "boolean",
+            "label": "Show Buy now button (product cards and product page)",
+            "group": "Catalog",
+            "default": true
+        },
+        "custom.sticky_add_to_cart": {
+            "type": "boolean",
+            "label": "Sticky add-to-cart bar on phones",
+            "group": "Product page",
+            "default": true
+        },
+        "custom.catalog_heading": {
+            "type": "string",
+            "label": "Catalog heading",
+            "group": "Catalog",
+            "default": "THE VELLARO COLLECTION",
+            "max": 100
+        },
+        "custom.catalog_banner": {
+            "type": "image",
+            "label": "Catalog banner",
+            "group": "Catalog",
+            "default": ""
+        },
+        "custom.catalog_columns": {
+            "type": "select",
+            "label": "Desktop product columns",
+            "group": "Catalog",
+            "default": "4",
+            "options": [
+                "3",
+                "4",
+                "5"
+            ]
+        },
+        "custom.catalog_image_height": {
+            "type": "integer",
+            "label": "Product image height (px)",
+            "group": "Catalog",
+            "default": 320,
+            "min": 180,
+            "max": 600
+        },
+        "custom.catalog_filters": {
+            "type": "boolean",
+            "label": "Show catalog filters",
+            "group": "Catalog",
+            "default": true
+        },
+        "custom.catalog_stock_filter": {
+            "type": "boolean",
+            "label": "Show stock filter",
+            "group": "Catalog",
+            "default": true
+        },
+        "custom.show_saved": {
+            "type": "boolean",
+            "label": "Show save-for-later hearts",
+            "group": "Catalog",
+            "default": true
+        },
+        "custom.show_sale_badge": {
+            "type": "boolean",
+            "label": "Show real sale badge",
+            "group": "Catalog",
+            "default": true
+        },
+        "custom.product_button": {
+            "type": "string",
+            "label": "Add-to-cart button",
+            "group": "Product",
+            "default": "Add to cart",
+            "max": 60
+        },
+        "custom.product_buy_now_button": {
+            "type": "string",
+            "label": "Buy now button label",
+            "group": "Product",
+            "default": "Buy now",
+            "max": 60
+        },
+        "custom.show_product_details": {
+            "type": "boolean",
+            "label": "Show product description",
+            "group": "Product",
+            "default": true
+        },
+        "custom.delivery_text": {
+            "type": "string",
+            "label": "Delivery information",
+            "group": "Product",
+            "default": "Shipping methods and delivery costs are calculated at checkout.",
+            "max": 500
+        },
+        "custom.payment_text": {
+            "type": "string",
+            "label": "Payment information",
+            "group": "Product",
+            "default": "Choose an available payment method at checkout.",
+            "max": 500
+        },
+        "custom.warranty_text": {
+            "type": "string",
+            "label": "Care and returns",
+            "group": "Product",
+            "default": "Contact our support team for product care and returns information.",
+            "max": 500
+        },
+        "custom.cart_heading": {
+            "type": "string",
+            "label": "Cart title",
+            "group": "Cart",
+            "default": "Your bag",
+            "max": 100
+        },
+        "custom.cart_checkout_label": {
+            "type": "string",
+            "label": "Checkout label",
+            "group": "Cart",
+            "default": "PROCEED TO CHECKOUT",
+            "max": 60
+        },
+        "custom.cart_show_coupon": {
+            "type": "boolean",
+            "label": "Show coupon field",
+            "group": "Cart",
+            "default": true
+        },
+        "custom.cart_image": {
+            "type": "image",
+            "label": "Empty-cart image",
+            "group": "Cart",
+            "default": "asset:assets/shirt.jpg"
+        },
+        "custom.cart_empty_heading": {
+            "type": "string",
+            "label": "Empty-cart heading",
+            "group": "Cart",
+            "default": "Your bag is waiting for something good",
+            "max": 120
+        },
+        "custom.newsletter_heading": {
+            "type": "string",
+            "label": "Newsletter heading",
+            "group": "Footer",
+            "default": "Subscribe to our awesome emails.",
+            "max": 160
+        },
+        "custom.footer_newsletter": {
+            "type": "boolean",
+            "label": "Show enabled newsletter extension",
+            "group": "Footer",
+            "default": true
+        },
+        "custom.footer_message": {
+            "type": "string",
+            "label": "Footer message",
+            "group": "Footer",
+            "default": "Everyday, better.",
+            "max": 160
+        },
+        "custom.footer_copyright": {
+            "type": "string",
+            "label": "Copyright",
+            "group": "Footer",
+            "default": "© 2026 Vellaro. All rights reserved.",
+            "max": 160
+        }
+    }
+}

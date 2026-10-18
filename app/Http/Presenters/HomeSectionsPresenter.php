@@ -25,12 +25,16 @@ final class HomeSectionsPresenter
         foreach ($theme->sections('home') as $i => $section) {
             $settings = $section['settings'];
             $data = match ($section['type']) {
-                'hero', 'image_with_text' => ['image' => $theme->imageUrl($settings['image'] ?? null)],
+                'hero', 'image_with_text', 'campaign' => ['image' => $theme->imageUrl($settings['image'] ?? null)],
+                'promotion_grid' => ['tiles' => array_values(array_filter(array_map(fn (int $i) => [
+                    'title' => $settings["tile_{$i}_title"] ?? '', 'text' => $settings["tile_{$i}_text"] ?? '',
+                    'image' => $theme->imageUrl($settings["tile_{$i}_image"] ?? null), 'link' => $settings["tile_{$i}_link"] ?? '',
+                ], range(1, 8)), fn (array $tile) => $tile['title'] !== '' || $tile['image'] !== null))],
                 'featured_products' => ['products' => $this->products($settings, $currency)],
                 'category_grid' => ['categories' => Category::query()->active()->withCurrentTranslation()->whereNull('parent_id')
                     ->orderBy('position')->orderBy('name')->limit((int) ($settings['limit'] ?? 6))
-                    ->get(['id', 'name', 'slug', 'description'])
-                    ->map(fn (Category $c) => ['id' => $c->id, 'name' => $c->localized('name'), 'slug' => $c->slug, 'description' => $c->localized('description')])
+                    ->get(['id', 'name', 'slug', 'description', 'image_disk', 'image_path'])
+                    ->map(fn (Category $c) => ['id' => $c->id, 'name' => $c->localized('name'), 'slug' => $c->slug, 'description' => $c->localized('description'), 'image_url' => $c->imageUrl()])
                     ->all()],
                 default => [],
             };

@@ -25,7 +25,7 @@ class CartController extends Controller
         private readonly CartPricer $pricer,
     ) {}
 
-    public function show(Request $request): Response
+    public function show(Request $request, StorefrontSlots $slots): Response
     {
         $cart = $this->carts->current($request->session(), $this->user($request));
         $priced = $cart ? $this->pricer->price($cart) : null;
@@ -40,8 +40,9 @@ class CartController extends Controller
             'cart' => $priced?->toArray(),
             'placeSlots' => $priced === null ? [] : app(StorefrontSlots::class)->renderMany(['cart.after_lines'], ['cart' => $priced]),
             // Cart page settings (customizer): free-shipping progress and cross-sells.
-            'freeShipping' => $priced !== null && $settings['free_shipping_bar'] ? FreeShippingProgress::for($priced, FreeShippingProgress::countryFor($this->user($request))) : null,
+            'freeShipping' => $priced !== null && $settings['free_shipping_bar'] ? FreeShippingProgress::for($priced, ...FreeShippingProgress::destinationFor($this->user($request))) : null,
             'crossSells' => $priced !== null && $settings['cross_sells'] ? app(CartCrossSells::class)->for($priced) : [],
+            'slots' => $priced === null ? [] : $slots->render('cart.after_totals', ['cart' => $priced]),
         ]);
     }
 

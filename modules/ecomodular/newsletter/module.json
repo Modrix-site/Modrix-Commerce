@@ -5,6 +5,8 @@
     "description": "Collects newsletter subscribers with recorded consent on the home page and the order confirmation, with one-click unsubscribe and a CSV export for your email tool.",
     "version": "1.0.0",
     "type": "module",
+    "icon": "mail",
+    "accent": "#0ea5e9",
     "platform_version": "^1.0",
     "author": "Eleydo",
     "license": "MIT",

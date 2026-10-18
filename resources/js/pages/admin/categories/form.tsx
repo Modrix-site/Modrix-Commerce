@@ -1,5 +1,6 @@
 import { Form, Head, Link } from '@inertiajs/react';
 import CategoryController from '@/actions/App/Http/Controllers/Admin/Catalog/CategoryController';
+import { CategoryImage } from '@/components/admin/category-image';
 import { FormField, NativeSelect } from '@/components/admin/form-field';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import InputError from '@/components/input-error';
@@ -30,6 +31,7 @@ type CategoryData = {
     is_active: boolean;
     meta_title: string | null;
     meta_description: string | null;
+    image_url: string | null;
 };
 
 export default function CategoryForm({
@@ -54,9 +56,24 @@ export default function CategoryForm({
                     }
                 />
 
-                <Form {...form} className="grid gap-6">
+                <Form
+                    {...form}
+                    encType="multipart/form-data"
+                    className="grid gap-6"
+                >
                     {({ processing, errors }) => (
                         <>
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Category image</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <CategoryImage
+                                        imageUrl={category?.image_url}
+                                        error={errors.image}
+                                    />
+                                </CardContent>
+                            </Card>
                             <Card>
                                 <CardHeader>
                                     <CardTitle>Details</CardTitle>
@@ -90,6 +107,7 @@ export default function CategoryForm({
                                         id="parent_id"
                                         label="Parent category"
                                         error={errors.parent_id}
+                                        hint="Choose a parent to create a subcategory, or leave empty for a top-level category."
                                     >
                                         <NativeSelect
                                             id="parent_id"

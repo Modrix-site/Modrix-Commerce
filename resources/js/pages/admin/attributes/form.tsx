@@ -1,3 +1,8 @@
+import {
+    VariantSelector,
+    type VariantOption,
+} from '@/components/storefront/variant-selector';
+import { useState } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { Plus, Trash2 } from 'lucide-react';
 import type { FormEvent } from 'react';
@@ -19,12 +24,14 @@ import { index } from '@/routes/admin/attributes';
 type AttributeData = {
     id: number;
     name: string;
-    values: { id: number; value: string }[];
+    display_type: VariantOption['display_type'];
+    values: { id: number; value: string; color: string | null }[];
 };
 
 type FormData = {
     name: string;
-    values: { id: number | null; value: string }[];
+    display_type: NonNullable<VariantOption['display_type']>;
+    values: { id: number | null; value: string; color: string | null }[];
 };
 
 export default function AttributeForm({
@@ -32,9 +39,13 @@ export default function AttributeForm({
 }: {
     attribute: AttributeData | null;
 }) {
+    const [previewValue, setPreviewValue] = useState<number>(1);
     const form = useForm<FormData>({
         name: attribute?.name ?? '',
-        values: attribute?.values ?? [{ id: null, value: '' }],
+        display_type: attribute?.display_type ?? 'buttons',
+        values: attribute?.values ?? [
+            { id: null, value: '', color: '#000000' },
+        ],
     });
     const errors = form.errors as Record<string, string | undefined>;
 
@@ -50,7 +61,7 @@ export default function AttributeForm({
     const remove = () => {
         if (
             attribute &&
-            window.confirm(`Delete the option “${attribute.name}”?`)
+            window.confirm(`Delete the attribute “${attribute.name}”?`)
         ) {
             form.submit(AttributeController.destroy(attribute.id));
         }
@@ -58,10 +69,12 @@ export default function AttributeForm({
 
     return (
         <>
-            <Head title={attribute ? `Edit ${attribute.name}` : 'Add option'} />
+            <Head
+                title={attribute ? `Edit ${attribute.name}` : 'Add attribute'}
+            />
             <AdminPage>
                 <PageHeader
-                    title={attribute ? attribute.name : 'Add option'}
+                    title={attribute ? attribute.name : 'Add attribute'}
                     actions={
                         attribute && (
                             <Button variant="destructive" onClick={remove}>
@@ -74,7 +87,7 @@ export default function AttributeForm({
                 <form onSubmit={submit} className="grid gap-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Option</CardTitle>
+                            <CardTitle>Attribute</CardTitle>
                             <CardDescription>
                                 Values that are used by product variants cannot
                                 be removed.
@@ -96,6 +109,48 @@ export default function AttributeForm({
                                     required
                                 />
                             </FormField>
+                            <FormField
+                                id="display_type"
+                                label="Storefront selection style"
+                                error={errors.display_type}
+                            >
+                                <select
+                                    id="display_type"
+                                    className="h-10 rounded-md border bg-background px-3 text-sm"
+                                    value={form.data.display_type}
+                                    onChange={(event) => {
+                                        const display_type = event.target
+                                            .value as FormData['display_type'];
+                                        form.setData((current) => ({
+                                            ...current,
+                                            display_type,
+                                            values: current.values.map(
+                                                (row) => ({
+                                                    ...row,
+                                                    color:
+                                                        display_type ===
+                                                        'swatches'
+                                                            ? row.color ||
+                                                              '#000000'
+                                                            : row.color,
+                                                }),
+                                            ),
+                                        }));
+                                    }}
+                                >
+                                    <option value="buttons">
+                                        Text buttons / pills
+                                    </option>
+                                    <option value="circles">
+                                        Circular choices
+                                    </option>
+                                    <option value="swatches">
+                                        Color swatches
+                                    </option>
+                                    <option value="dropdown">Dropdown</option>
+                                    <option value="radio">Radio list</option>
+                                </select>
+                            </FormField>
                             <div className="grid gap-2">
                                 <span className="text-sm font-medium">
                                     Values
@@ -103,7 +158,7 @@ export default function AttributeForm({
                                 {form.data.values.map((value, i) => (
                                     <div
                                         key={value.id ?? `new-${i}`}
-                                        className="flex gap-2"
+                                        className="flex flex-wrap items-start gap-2"
                                     >
                                         <Input
                                             aria-label={`Value ${i + 1}`}
@@ -125,6 +180,68 @@ export default function AttributeForm({
                                                 )
                                             }
                                             required
+                                        />
+                                        {form.data.display_type ===
+                                            'swatches' && (
+                                            <div className="flex items-start gap-2">
+                                                <input
+                                                    type="color"
+                                                    aria-label={`Color for value ${i + 1}`}
+                                                    value={
+                                                        /^#[0-9a-fA-F]{6}$/.test(
+                                                            value.color ?? '',
+                                                        )
+                                                            ? value.color!
+                                                            : '#000000'
+                                                    }
+                                                    onChange={(event) =>
+                                                        form.setData(
+                                                            'values',
+                                                            form.data.values.map(
+                                                                (row, j) =>
+                                                                    j === i
+                                                                        ? {
+                                                                              ...row,
+                                                                              color: event
+                                                                                  .target
+                                                                                  .value,
+                                                                          }
+                                                                        : row,
+                                                            ),
+                                                        )
+                                                    }
+                                                    className="h-9 w-12 cursor-pointer rounded border"
+                                                />
+                                                <Input
+                                                    aria-label={`Hex color for value ${i + 1}`}
+                                                    placeholder="#000000"
+                                                    value={value.color ?? ''}
+                                                    maxLength={7}
+                                                    className="w-28"
+                                                    onChange={(event) =>
+                                                        form.setData(
+                                                            'values',
+                                                            form.data.values.map(
+                                                                (row, j) =>
+                                                                    j === i
+                                                                        ? {
+                                                                              ...row,
+                                                                              color: event
+                                                                                  .target
+                                                                                  .value,
+                                                                          }
+                                                                        : row,
+                                                            ),
+                                                        )
+                                                    }
+                                                />
+                                            </div>
+                                        )}
+                                        <InputError
+                                            message={
+                                                errors[`values.${i}.value`] ??
+                                                errors[`values.${i}.color`]
+                                            }
                                         />
                                         <Button
                                             type="button"
@@ -155,7 +272,11 @@ export default function AttributeForm({
                                         onClick={() =>
                                             form.setData('values', [
                                                 ...form.data.values,
-                                                { id: null, value: '' },
+                                                {
+                                                    id: null,
+                                                    value: '',
+                                                    color: '#000000',
+                                                },
                                             ])
                                         }
                                     >
@@ -165,9 +286,34 @@ export default function AttributeForm({
                             </div>
                         </CardContent>
                     </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Live storefront preview</CardTitle>
+                            <CardDescription>
+                                Changes apply to all products using this
+                                attribute after saving.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <VariantSelector
+                                option={{
+                                    id: 0,
+                                    name: form.data.name || 'Attribute',
+                                    display_type: form.data.display_type,
+                                    values: form.data.values.map((row, i) => ({
+                                        ...row,
+                                        id: i + 1,
+                                        value: row.value || `Value ${i + 1}`,
+                                    })),
+                                }}
+                                value={previewValue}
+                                onChange={setPreviewValue}
+                            />
+                        </CardContent>
+                    </Card>
                     <div className="flex gap-2">
                         <Button type="submit" disabled={form.processing}>
-                            {attribute ? 'Save option' : 'Create option'}
+                            {attribute ? 'Save attribute' : 'Create attribute'}
                         </Button>
                         <Button variant="ghost" asChild>
                             <Link href={index()}>Cancel</Link>
@@ -180,5 +326,5 @@ export default function AttributeForm({
 }
 
 AttributeForm.layout = {
-    breadcrumbs: [{ title: 'Options', href: index() }],
+    breadcrumbs: [{ title: 'Variant attributes', href: index() }],
 };

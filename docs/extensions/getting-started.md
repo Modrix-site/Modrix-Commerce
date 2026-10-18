@@ -9,7 +9,7 @@ This guide takes you from an empty directory to a package the official marketpla
 | Change colors, fonts, layout variants or home sections     | Theme   |
 | Add admin pages, data, settings, checkout rules or widgets | Module  |
 
-Themes are data only and cannot run code. Modules are PHP and React code that runs inside the store, so merchants must trust them.
+Themes use validated design data and can optionally include compiled React pages and scoped CSS. Modules can also run PHP server code. Review executable code before deployment.
 
 ## 1. Scaffold
 
@@ -64,7 +64,19 @@ The command builds the zip in `storage/app/private/packages` and runs the same c
 
 Reviewers see the same report. Remove what you do not need, and explain the rest in your submission notes. A clean scan does not prove a package is safe: reviewers still read the code.
 
-## 4. Publish
+## 4. Upload directly to a store
+
+Any developer can build a theme or extension using these documented manifests and scaffold commands. Marketplace registration is not required for a direct ZIP upload.
+
+- **Appearance → Upload theme:** upload the generated theme ZIP, then preview, customize or activate it.
+- **Extensions → Upload extension:** upload the generated module ZIP, review its details, then install and enable it through the existing lifecycle controls. This requires installation permission and a recent password confirmation.
+- Put `theme.json` or `module.json` at the ZIP root, alongside its assets and source directories. Do not wrap the package in an additional vendor or project folder.
+- Maximum ZIP size is 50 MB; extracted size is capped at 200 MB. Unsafe paths, symlinks and invalid manifests are rejected. Themes may declare browser code under src/; PHP server code remains prohibited.
+- Uploads add new packages and never overwrite an existing package. Use the normal update workflow for existing packages.
+- Include a real PNG, JPG or WebP demo screenshot and set `"screenshot": "assets/screenshot.png"` in a theme manifest for its thumbnail card.
+- Modules with React pages must be included in an application `npm run build` deployment after upload. Uploading does not run Composer, npm, migrations, providers or activation automatically.
+
+## 5. Publish
 
 On the official marketplace, the platform owner uploads releases. Approved sellers upload from the vendor portal (see [licensing](../marketplace/licensing.md)). Every release is reviewed, signed with the marketplace key, and offered to license holders as an update.
 

@@ -20,7 +20,7 @@ final class ManifestValidator
     private const KEYS = [
         '$schema', 'name', 'display_name', 'description', 'version', 'type', 'platform_version', 'author', 'license',
         'autoload', 'provider', 'requires', 'permissions', 'capabilities', 'migrations', 'routes', 'assets',
-        'settings', 'admin_navigation',
+        'settings', 'admin_navigation', 'content_security', 'icon', 'accent', 'logo',
     ];
 
     private const NAME = '/^[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?\/[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?$/';
@@ -86,6 +86,8 @@ final class ManifestValidator
         $this->assets($packageDir, $data);
         $this->settings($data, $capabilities);
         $this->navigation($data, $capabilities, $permissions, $context);
+        $this->contentSecurity($data, $capabilities);
+        $this->branding($data, $packageDir);
 
         return $this->errors === [] ? ValidationResult::valid(Manifest::fromArray($data)) : ValidationResult::invalid($this->errors);
     }
@@ -440,7 +442,84 @@ final class ManifestValidator
                 && ModuleSettingsSchema::coerce($field, $field['default']) === null) {
                 $this->errors[] = "{$where}.default does not match its type.";
             }
+
+            if (isset($field['suggestions'])) {
+                $suggestions = $field['suggestions'];
+
+                if ($type !== 'string' || ! is_array($suggestions) || ! array_is_list($suggestions) || $suggestions === [] || count($suggestions) > 50
+                    || array_filter($suggestions, fn ($s) => ! is_string($s) || $s === '' || mb_strlen($s) > 200) !== []) {
+                    $this->errors[] = "{$where}.suggestions must list 1-50 strings and is only allowed on string settings.";
+                }
+            }
+
+            if (isset($field['visible_when'])) {
+                $conditions = $field['visible_when'];
+
+                if (! is_array($conditions) || $conditions === [] || array_is_list($conditions)
+                    || array_filter($conditions, fn ($v) => ! is_scalar($v) && ! (is_array($v) && $v !== [] && array_is_list($v) && array_filter($v, fn ($x) => ! is_scalar($x)) === [])) !== []) {
+                    $this->errors[] = "{$where}.visible_when must map setting keys to a value or a list of values.";
+                }
+            }
         }
+
+        foreach ($fields as $i => $field) {
+            foreach (is_array($field) && is_array($field['visible_when'] ?? null) ? array_keys($field['visible_when']) : [] as $key) {
+                if (! in_array($key, $keys, true) || $key === ($field['key'] ?? null)) {
+                    $this->errors[] = "settings[{$i}].visible_when refers to unknown setting {$key}.";
+                }
+            }
+        }
+    }
+
+    /**
+     * Extra Content-Security-Policy origins. Only exact https origins (no
+     * paths, wildcards or keywords) in a fixed set of directives.
+     *
+     * @param  array<string, mixed>  $data
+     * @param  list<string>  $capabilities
+     */
+    private function contentSecurity(array $data, array $capabilities): void
+    {
+        if (! array_key_exists('content_security', $data)) {
+            return;
+        }
+
+        $policy = $data['content_security'];
+
+        if (! in_array('content_security', $capabilities, true)) {
+            $this->errors[] = 'Declaring content_security requires the "content_security" capability.';
+        }
+
+        if (! is_array($policy) || $policy === [] || array_is_list($policy)) {
+            $this->errors[] = 'content_security must map directives to lists of origins.';
+
+            return;
+        }
+
+        foreach ($policy as $directive => $origins) {
+            if (! in_array($directive, Manifest::CONTENT_SECURITY_DIRECTIVES, true)) {
+                $this->errors[] = "content_security.{$directive} is not an allowed directive (".implode(', ', Manifest::CONTENT_SECURITY_DIRECTIVES).').';
+
+                continue;
+            }
+
+            if (! is_array($origins) || $origins === [] || ! array_is_list($origins) || count($origins) > 10) {
+                $this->errors[] = "content_security.{$directive} must list 1-10 origins.";
+
+                continue;
+            }
+
+            foreach ($origins as $origin) {
+                if (! is_string($origin) || ! self::isHttpsOrigin($origin)) {
+                    $this->errors[] = "content_security.{$directive} contains \"".(is_string($origin) ? mb_substr($origin, 0, 100) : gettype($origin)).'", which is not an exact https origin such as https://example.com.';
+                }
+            }
+        }
+    }
+
+    public static function isHttpsOrigin(string $origin): bool
+    {
+        return (bool) preg_match('/^https:\/\/(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}(?::\d{1,5})?$/', $origin);
     }
 
     /**
@@ -501,6 +580,31 @@ final class ManifestValidator
             } elseif (! is_string($permission) || (! in_array($permission, $permissions, true) && ($context->permissionOwners[$permission] ?? null) !== 'core')) {
                 $this->errors[] = "{$where}.permission must be one of the module's permissions or a core permission.";
             }
+        }
+    }
+
+    /**
+     * Optional storefront/admin branding: the icon shown for the module in the
+     * extensions list and this module's admin menu (a lucide icon name), and
+     * its accent colour (a 6-digit hex, e.g. the vendor's brand colour).
+     *
+     * @param  array<string, mixed>  $data
+     */
+    private function branding(array $data, string $packageDir): void
+    {
+        if (isset($data['logo'])) {
+            $file = is_string($data['logo']) ? self::resolvePath($packageDir, $data['logo'], directory: false) : null;
+            $info = $file !== null && filesize($file) <= 262144 ? @getimagesize($file) : false;
+            if ($info === false || ! in_array($info['mime'], ['image/png', 'image/jpeg', 'image/webp'], true)) {
+                $this->errors[] = 'logo must be a local PNG, JPEG or WebP image inside the package, at most 256 KB.';
+            }
+        }
+        if (isset($data['icon']) && (! is_string($data['icon']) || ! preg_match('/^[a-z0-9-]{1,40}$/', $data['icon']))) {
+            $this->errors[] = 'icon must be a lucide icon name such as puzzle or credit-card.';
+        }
+
+        if (array_key_exists('accent', $data) && (! is_string($data['accent']) || ! preg_match('/^#[0-9a-fA-F]{6}$/', $data['accent']))) {
+            $this->errors[] = 'accent must be a 6-digit hex colour such as #7c3aed.';
         }
     }
 

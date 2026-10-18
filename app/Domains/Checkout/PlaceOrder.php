@@ -23,6 +23,7 @@ use App\Domains\Orders\Models\Order;
 use App\Domains\Orders\Models\OrderAddress;
 use App\Domains\Orders\Models\OrderEvent;
 use App\Domains\Orders\Models\OrderItem;
+use App\Domains\Orders\OrderNumbers;
 use App\Domains\Payments\PaymentMethods;
 use App\Domains\Pricing\Money;
 use App\Models\User;
@@ -207,8 +208,7 @@ final class PlaceOrder
             'placed_at' => now(),
         ])->save();
 
-        $prefix = (string) config('ecomodular.order_number_prefix', 'EM-');
-        $order->forceFill(['number' => $prefix.str_pad((string) $order->id, 6, '0', STR_PAD_LEFT)])->save();
+        $order->forceFill(['number' => app(OrderNumbers::class)->take()])->save();
 
         foreach ($priced->purchasableLines() as $line) {
             $subtotal = $line->subtotal();

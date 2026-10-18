@@ -3,6 +3,7 @@
 namespace App\Domains\Pricing;
 
 use App\Core\Settings\Currencies;
+use App\Core\Settings\StorefrontCurrencies;
 use Brick\Math\BigDecimal;
 use Brick\Math\BigNumber;
 use Brick\Math\RoundingMode;
@@ -181,14 +182,24 @@ final class Money implements JsonSerializable
     }
 
     /**
-     * @return array{amount: string, currency: string, formatted: string}
+     * @return array{amount: string, currency: string, formatted: string, display_amount: string, display_currency: string}
      */
     public function jsonSerialize(): array
     {
+        $display = $this;
+        if (app()->bound('request')) {
+            $target = request()->attributes->get('storefront.display_currency');
+            if (is_string($target)) {
+                $display = app(StorefrontCurrencies::class)->display($this, $target);
+            }
+        }
+
         return [
+            'display_amount' => $display->toDisplayDecimal(),
+            'display_currency' => $display->currency(),
             'amount' => $this->toDisplayDecimal(),
             'currency' => $this->currency,
-            'formatted' => $this->format(),
+            'formatted' => $display->format(),
         ];
     }
 

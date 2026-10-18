@@ -1,0 +1,151 @@
+{
+    "categories": [
+        {
+            "name": "Laptops",
+            "slug": "marketplace-laptops",
+            "description": "Explore our laptops collection. Filter products by price and available options to find your next upgrade."
+        },
+        {
+            "name": "Phones",
+            "slug": "marketplace-phones",
+            "description": "Explore our phones collection. Filter products by price and available options to find your next upgrade."
+        },
+        {
+            "name": "Televisions",
+            "slug": "marketplace-televisions",
+            "description": "Explore our televisions collection. Filter products by price and available options to find your next upgrade."
+        },
+        {
+            "name": "Appliances",
+            "slug": "marketplace-appliances",
+            "description": "Explore our appliances collection. Filter products by price and available options to find your next upgrade."
+        },
+        {
+            "name": "Watches",
+            "slug": "marketplace-watches",
+            "description": "Explore our watches collection. Filter products by price and available options to find your next upgrade."
+        }
+    ],
+    "products": [
+        {
+            "name": "SlimBook 13 Laptop — Blush",
+            "slug": "marketplace-demo-1",
+            "sku": "MARKET-DEMO-01",
+            "price": "2499.00",
+            "compare_at_price": "2799.00",
+            "stock": 10,
+            "short_description": "Sample electronics product for theme preview. Replace this content with your catalog details.",
+            "description": "This is optional theme demonstration content. Confirm actual product specifications, warranty, availability and pricing before publishing to customers.",
+            "categories": ["marketplace-laptops"],
+            "image": "assets/images/laptop-blush.jpg"
+        },
+        {
+            "name": "AirBook 13 Laptop — Sky Blue",
+            "slug": "marketplace-demo-2",
+            "sku": "MARKET-DEMO-02",
+            "price": "3999.00",
+            "compare_at_price": "4299.00",
+            "stock": 10,
+            "short_description": "Sample electronics product for theme preview. Replace this content with your catalog details.",
+            "description": "This is optional theme demonstration content. Confirm actual product specifications, warranty, availability and pricing before publishing to customers.",
+            "categories": ["marketplace-laptops"],
+            "image": "assets/images/laptop-blue.jpg"
+        },
+        {
+            "name": "StudioBook 14 Laptop — Silver",
+            "slug": "marketplace-demo-3",
+            "sku": "MARKET-DEMO-03",
+            "price": "2899.00",
+            "compare_at_price": "2999.00",
+            "stock": 10,
+            "short_description": "Sample electronics product for theme preview. Replace this content with your catalog details.",
+            "description": "This is optional theme demonstration content. Confirm actual product specifications, warranty, availability and pricing before publishing to customers.",
+            "categories": ["marketplace-laptops"],
+            "image": "assets/images/laptop-silver.jpg"
+        },
+        {
+            "name": "Performance 15 Gaming Laptop",
+            "slug": "marketplace-demo-4",
+            "sku": "MARKET-DEMO-04",
+            "price": "4699.00",
+            "compare_at_price": "4999.00",
+            "stock": 10,
+            "short_description": "Sample electronics product for theme preview. Replace this content with your catalog details.",
+            "description": "This is optional theme demonstration content. Confirm actual product specifications, warranty, availability and pricing before publishing to customers.",
+            "categories": ["marketplace-laptops"],
+            "image": "assets/images/laptop-gaming.jpg"
+        },
+        {
+            "name": "Creative Pro 11 Tablet",
+            "slug": "marketplace-demo-5",
+            "sku": "MARKET-DEMO-05",
+            "price": "4649.00",
+            "compare_at_price": "4999.00",
+            "stock": 10,
+            "short_description": "Sample electronics product for theme preview. Replace this content with your catalog details.",
+            "description": "This is optional theme demonstration content. Confirm actual product specifications, warranty, availability and pricing before publishing to customers.",
+            "categories": ["marketplace-laptops"],
+            "image": "assets/images/tablet.jpg"
+        },
+        {
+            "name": "Ultra Smartphone — Titanium",
+            "slug": "marketplace-demo-6",
+            "sku": "MARKET-DEMO-06",
+            "price": "3999.00",
+            "compare_at_price": "4299.00",
+            "stock": 10,
+            "short_description": "Sample electronics product for theme preview. Replace this content with your catalog details.",
+            "description": "This is optional theme demonstration content. Confirm actual product specifications, warranty, availability and pricing before publishing to customers.",
+            "categories": ["marketplace-phones"],
+            "image": "assets/images/phone.jpg"
+        },
+        {
+            "name": "Everyday Smartphone — Ice Blue",
+            "slug": "marketplace-demo-7",
+            "sku": "MARKET-DEMO-07",
+            "price": "719.00",
+            "compare_at_price": "799.00",
+            "stock": 10,
+            "short_description": "Sample electronics product for theme preview. Replace this content with your catalog details.",
+            "description": "This is optional theme demonstration content. Confirm actual product specifications, warranty, availability and pricing before publishing to customers.",
+            "categories": ["marketplace-phones"],
+            "image": "assets/images/phone-blue.jpg"
+        },
+        {
+            "name": "Cinema 65 OLED Television",
+            "slug": "marketplace-demo-8",
+            "sku": "MARKET-DEMO-08",
+            "price": "7999.00",
+            "compare_at_price": "8099.00",
+            "stock": 10,
+            "short_description": "Sample electronics product for theme preview. Replace this content with your catalog details.",
+            "description": "This is optional theme demonstration content. Confirm actual product specifications, warranty, availability and pricing before publishing to customers.",
+            "categories": ["marketplace-televisions"],
+            "image": "assets/images/television.jpg"
+        },
+        {
+            "name": "SmartCare Front Load Washer",
+            "slug": "marketplace-demo-9",
+            "sku": "MARKET-DEMO-09",
+            "price": "1899.00",
+            "compare_at_price": "2499.00",
+            "stock": 10,
+            "short_description": "Sample electronics product for theme preview. Replace this content with your catalog details.",
+            "description": "This is optional theme demonstration content. Confirm actual product specifications, warranty, availability and pricing before publishing to customers.",
+            "categories": ["marketplace-appliances"],
+            "image": "assets/images/washer.jpg"
+        },
+        {
+            "name": "Everyday Fit Smart Watch",
+            "slug": "marketplace-demo-10",
+            "sku": "MARKET-DEMO-10",
+            "price": "398.00",
+            "compare_at_price": "479.00",
+            "stock": 10,
+            "short_description": "Sample electronics product for theme preview. Replace this content with your catalog details.",
+            "description": "This is optional theme demonstration content. Confirm actual product specifications, warranty, availability and pricing before publishing to customers.",
+            "categories": ["marketplace-watches"],
+            "image": "assets/images/watch.jpg"
+        }
+    ]
+}

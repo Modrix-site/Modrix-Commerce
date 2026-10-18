@@ -1,0 +1,547 @@
+{
+    "title": "Tempo design",
+    "description": "Reference-matched outlet theme. Edit every campaign and tile in Homepage sections; manage shared menu links in Navigation. Newsletter uses the optional Newsletter extension.",
+    "fields": {
+        "custom.brand": {
+            "type": "string",
+            "label": "Wordmark",
+            "group": "Header",
+            "tab": "header",
+            "default": "Tempo",
+            "max": 60
+        },
+        "custom.logo_image": {
+            "type": "image",
+            "label": "Logo image",
+            "group": "Header",
+            "tab": "header",
+            "default": ""
+        },
+        "custom.search_placeholder": {
+            "type": "string",
+            "label": "Search placeholder",
+            "group": "Header",
+            "tab": "header",
+            "default": "Search for items or brands",
+            "max": 160
+        },
+        "custom.sticky_header": {
+            "type": "boolean",
+            "label": "Sticky header (replaces Tempo's header on phones and tablets)",
+            "group": "Header",
+            "tab": "header",
+            "default": false
+        },
+        "custom.show_benefits": {
+            "type": "boolean",
+            "label": "Show benefits bar",
+            "group": "Header",
+            "tab": "header",
+            "default": true
+        },
+        "custom.benefits": {
+            "type": "string",
+            "label": "Benefits bar",
+            "group": "Header",
+            "tab": "header",
+            "default": "Discover new arrivals  |  Shop your favourites  |  Secure checkout",
+            "max": 160
+        },
+        "custom.featured_label": {
+            "type": "string",
+            "label": "Featured navigation label",
+            "group": "Header",
+            "tab": "header",
+            "default": "Special prices",
+            "max": 160
+        },
+        "custom.featured_link": {
+            "type": "link",
+            "label": "Featured navigation link",
+            "group": "Header",
+            "tab": "header",
+            "default": "/search?sort=price_asc"
+        },
+        "custom.nav_background": {
+            "type": "color",
+            "label": "Navigation background",
+            "group": "Header",
+            "tab": "header",
+            "default": "#050505"
+        },
+        "custom.nav_foreground": {
+            "type": "color",
+            "label": "Navigation text",
+            "group": "Header",
+            "tab": "header",
+            "default": "#ffffff"
+        },
+        "custom.feature_background": {
+            "type": "color",
+            "label": "Featured link background",
+            "group": "Header",
+            "tab": "header",
+            "default": "#ef1321"
+        },
+        "custom.feature_foreground": {
+            "type": "color",
+            "label": "Featured link text",
+            "group": "Header",
+            "tab": "header",
+            "default": "#ffffff"
+        },
+        "custom.page_width": {
+            "type": "integer",
+            "label": "Content width",
+            "group": "Homepage layout",
+            "tab": "home",
+            "default": 1280,
+            "min": 960,
+            "max": 1800
+        },
+        "custom.section_gap": {
+            "type": "integer",
+            "label": "Homepage spacing",
+            "group": "Homepage layout",
+            "tab": "home",
+            "default": 26,
+            "min": 12,
+            "max": 80
+        },
+        "custom.hero_height": {
+            "type": "integer",
+            "label": "Desktop hero height",
+            "group": "Homepage layout",
+            "tab": "home",
+            "default": 360,
+            "min": 280,
+            "max": 800
+        },
+        "custom.hero_mobile_height": {
+            "type": "integer",
+            "label": "Mobile hero height",
+            "group": "Homepage layout",
+            "tab": "home",
+            "default": 300,
+            "min": 260,
+            "max": 650
+        },
+        "custom.hero_title_size": {
+            "type": "integer",
+            "label": "Desktop title size",
+            "group": "Homepage layout",
+            "tab": "home",
+            "default": 56,
+            "min": 28,
+            "max": 90
+        },
+        "custom.hero_mobile_title_size": {
+            "type": "integer",
+            "label": "Mobile title size",
+            "group": "Homepage layout",
+            "tab": "home",
+            "default": 32,
+            "min": 24,
+            "max": 56
+        },
+        "custom.hero_overlay": {
+            "type": "integer",
+            "label": "Image shade (%)",
+            "group": "Homepage layout",
+            "tab": "home",
+            "default": 15,
+            "min": 0,
+            "max": 70
+        },
+        "custom.hero_eyebrow": {
+            "type": "string",
+            "label": "Carousel eyebrow",
+            "group": "Hero",
+            "tab": "home",
+            "default": "THE SEASONAL EDIT",
+            "max": 160
+        },
+        "custom.hero_position": {
+            "type": "select",
+            "label": "Carousel text position",
+            "group": "Hero",
+            "tab": "home",
+            "default": "left",
+            "options": [
+                "left",
+                "center",
+                "end"
+            ]
+        },
+        "custom.show_departments": {
+            "type": "boolean",
+            "label": "Show department shortcuts",
+            "group": "Homepage departments",
+            "tab": "home",
+            "default": true
+        },
+        "custom.department_1_label": {
+            "type": "string",
+            "label": "Department 1 label",
+            "group": "Homepage departments",
+            "tab": "home",
+            "default": "Men",
+            "max": 60
+        },
+        "custom.department_1_link": {
+            "type": "link",
+            "label": "Department 1 destination",
+            "group": "Homepage departments",
+            "tab": "home",
+            "default": "/search?q=Men"
+        },
+        "custom.department_2_label": {
+            "type": "string",
+            "label": "Department 2 label",
+            "group": "Homepage departments",
+            "tab": "home",
+            "default": "Women",
+            "max": 60
+        },
+        "custom.department_2_link": {
+            "type": "link",
+            "label": "Department 2 destination",
+            "group": "Homepage departments",
+            "tab": "home",
+            "default": "/search?q=Women"
+        },
+        "custom.department_3_label": {
+            "type": "string",
+            "label": "Department 3 label",
+            "group": "Homepage departments",
+            "tab": "home",
+            "default": "Kids",
+            "max": 60
+        },
+        "custom.department_3_link": {
+            "type": "link",
+            "label": "Department 3 destination",
+            "group": "Homepage departments",
+            "tab": "home",
+            "default": "/search?q=Kids"
+        },
+        "custom.department_4_label": {
+            "type": "string",
+            "label": "Department 4 label",
+            "group": "Homepage departments",
+            "tab": "home",
+            "default": "Home",
+            "max": 60
+        },
+        "custom.department_4_link": {
+            "type": "link",
+            "label": "Department 4 destination",
+            "group": "Homepage departments",
+            "tab": "home",
+            "default": "/search?q=Home"
+        },
+        "custom.department_5_label": {
+            "type": "string",
+            "label": "Department 5 label",
+            "group": "Homepage departments",
+            "tab": "home",
+            "default": "Beauty",
+            "max": 60
+        },
+        "custom.department_5_link": {
+            "type": "link",
+            "label": "Department 5 destination",
+            "group": "Homepage departments",
+            "tab": "home",
+            "default": "/search?q=Beauty"
+        },
+        "custom.department_6_label": {
+            "type": "string",
+            "label": "Department 6 label",
+            "group": "Homepage departments",
+            "tab": "home",
+            "default": "Premium",
+            "max": 60
+        },
+        "custom.department_6_link": {
+            "type": "link",
+            "label": "Department 6 destination",
+            "group": "Homepage departments",
+            "tab": "home",
+            "default": "/search?q=Premium"
+        },
+        "custom.department_background": {
+            "type": "color",
+            "label": "Strip background",
+            "group": "Homepage departments",
+            "tab": "home",
+            "default": "#f3e8c3"
+        },
+        "custom.campaign_background": {
+            "type": "color",
+            "label": "Campaign background",
+            "group": "Homepage campaigns",
+            "tab": "home",
+            "default": "#600e14"
+        },
+        "custom.campaign_foreground": {
+            "type": "color",
+            "label": "Campaign text",
+            "group": "Homepage campaigns",
+            "tab": "home",
+            "default": "#f3e8c3"
+        },
+        "custom.show_sizes": {
+            "type": "boolean",
+            "label": "Show size shortcuts",
+            "group": "Homepage size shopping",
+            "tab": "home",
+            "default": true
+        },
+        "custom.sizes_heading": {
+            "type": "string",
+            "label": "Size heading",
+            "group": "Homepage size shopping",
+            "tab": "home",
+            "default": "Shop your size!",
+            "max": 160
+        },
+        "custom.sizes_eyebrow": {
+            "type": "string",
+            "label": "Size eyebrow",
+            "group": "Homepage size shopping",
+            "tab": "home",
+            "default": "FIND YOUR FIT",
+            "max": 160
+        },
+        "custom.size_xxs_link": {
+            "type": "link",
+            "label": "XXS destination (select your size filter URL)",
+            "group": "Homepage size shopping",
+            "tab": "home",
+            "default": "/search?q=XXS"
+        },
+        "custom.size_xs_link": {
+            "type": "link",
+            "label": "XS destination (select your size filter URL)",
+            "group": "Homepage size shopping",
+            "tab": "home",
+            "default": "/search?q=XS"
+        },
+        "custom.size_s_link": {
+            "type": "link",
+            "label": "S destination (select your size filter URL)",
+            "group": "Homepage size shopping",
+            "tab": "home",
+            "default": "/search?q=S"
+        },
+        "custom.size_m_link": {
+            "type": "link",
+            "label": "M destination (select your size filter URL)",
+            "group": "Homepage size shopping",
+            "tab": "home",
+            "default": "/search?q=M"
+        },
+        "custom.size_l_link": {
+            "type": "link",
+            "label": "L destination (select your size filter URL)",
+            "group": "Homepage size shopping",
+            "tab": "home",
+            "default": "/search?q=L"
+        },
+        "custom.size_xl_link": {
+            "type": "link",
+            "label": "XL destination (select your size filter URL)",
+            "group": "Homepage size shopping",
+            "tab": "home",
+            "default": "/search?q=XL"
+        },
+        "custom.size_xxl_link": {
+            "type": "link",
+            "label": "XXL destination (select your size filter URL)",
+            "group": "Homepage size shopping",
+            "tab": "home",
+            "default": "/search?q=XXL"
+        },
+        "custom.show_saved": {
+            "type": "boolean",
+            "label": "Enable device-local save buttons",
+            "group": "Product cards",
+            "tab": "catalog",
+            "default": true
+        },
+        "custom.catalog_heading": {
+            "type": "string",
+            "label": "Catalog title",
+            "group": "Catalog",
+            "tab": "catalog",
+            "default": "All products",
+            "max": 160
+        },
+        "custom.catalog_text": {
+            "type": "string",
+            "label": "Catalog introduction",
+            "group": "Catalog",
+            "tab": "catalog",
+            "default": "Discover the seasonal collection.",
+            "max": 160
+        },
+        "custom.catalog_columns": {
+            "type": "select",
+            "label": "Desktop product columns",
+            "group": "Catalog",
+            "tab": "catalog",
+            "default": "4",
+            "options": [
+                "3",
+                "4",
+                "5",
+                "6"
+            ]
+        },
+        "custom.catalog_filters": {
+            "type": "boolean",
+            "label": "Show filters",
+            "group": "Catalog",
+            "tab": "catalog",
+            "default": true
+        },
+        "custom.product_button": {
+            "type": "string",
+            "label": "Add-to-cart label",
+            "group": "Product",
+            "tab": "product",
+            "default": "ADD TO CART",
+            "max": 60
+        },
+        "custom.related_heading": {
+            "type": "string",
+            "label": "Recommendations heading",
+            "group": "Product",
+            "tab": "product",
+            "default": "You may also like",
+            "max": 160
+        },
+        "custom.product_offer": {
+            "type": "string",
+            "label": "Product reassurance",
+            "group": "Product",
+            "tab": "product",
+            "default": "Find something you love.",
+            "max": 160
+        },
+        "custom.delivery_text": {
+            "type": "text",
+            "label": "Shipping and returns information",
+            "group": "Product",
+            "tab": "product",
+            "default": "Delivery options and rates are calculated at checkout. Contact the store for returns information.",
+            "max": 1000
+        },
+        "custom.cart_heading": {
+            "type": "string",
+            "label": "Cart heading",
+            "group": "Cart",
+            "tab": "cart",
+            "default": "My cart",
+            "max": 160
+        },
+        "custom.cart_empty_heading": {
+            "type": "string",
+            "label": "Empty cart heading",
+            "group": "Cart",
+            "tab": "cart",
+            "default": "Your cart is empty",
+            "max": 160
+        },
+        "custom.cart_summary_heading": {
+            "type": "string",
+            "label": "Summary heading",
+            "group": "Cart",
+            "tab": "cart",
+            "default": "Order summary",
+            "max": 160
+        },
+        "custom.cart_checkout_label": {
+            "type": "string",
+            "label": "Checkout label",
+            "group": "Cart",
+            "tab": "cart",
+            "default": "Checkout",
+            "max": 160
+        },
+        "custom.cart_continue_label": {
+            "type": "string",
+            "label": "Continue shopping label",
+            "group": "Cart",
+            "tab": "cart",
+            "default": "Continue shopping",
+            "max": 160
+        },
+        "custom.cart_show_coupon": {
+            "type": "boolean",
+            "label": "Show coupon field",
+            "group": "Cart",
+            "tab": "cart",
+            "default": true
+        },
+        "custom.footer_connect_heading": {
+            "type": "string",
+            "label": "Newsletter heading",
+            "group": "Footer",
+            "tab": "footer",
+            "default": "Let’s keep in touch",
+            "max": 160
+        },
+        "custom.footer_note": {
+            "type": "string",
+            "label": "Newsletter introduction",
+            "group": "Footer",
+            "tab": "footer",
+            "default": "Sign up for new arrivals and store updates.",
+            "max": 160
+        },
+        "custom.footer_background": {
+            "type": "color",
+            "label": "Footer background",
+            "group": "Footer",
+            "tab": "footer",
+            "default": "#eeeeee"
+        },
+        "custom.footer_foreground": {
+            "type": "color",
+            "label": "Footer text",
+            "group": "Footer",
+            "tab": "footer",
+            "default": "#333333"
+        },
+        "custom.privacy_link": {
+            "type": "link",
+            "label": "Privacy policy page",
+            "group": "Footer",
+            "tab": "footer",
+            "default": ""
+        },
+        "custom.terms_link": {
+            "type": "link",
+            "label": "Terms and conditions page",
+            "group": "Footer",
+            "tab": "footer",
+            "default": ""
+        }
+    },
+    "presets": {
+        "Tempo yellow": {
+            "color.primary": "#ffd000",
+            "color.primary_foreground": "#111111"
+        },
+        "Burgundy": {
+            "color.primary": "#600e14",
+            "color.primary_foreground": "#ffffff"
+        },
+        "Midnight": {
+            "color.primary": "#171717",
+            "color.primary_foreground": "#ffffff"
+        }
+    }
+}

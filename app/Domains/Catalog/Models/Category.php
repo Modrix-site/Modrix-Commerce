@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @property int $id
@@ -20,6 +21,8 @@ use Illuminate\Support\Carbon;
  * @property string $name
  * @property string $slug
  * @property string|null $description
+ * @property string|null $image_disk
+ * @property string|null $image_path
  * @property int $position
  * @property bool $is_active
  * @property string|null $meta_title
@@ -27,7 +30,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['parent_id', 'name', 'slug', 'description', 'position', 'is_active', 'meta_title', 'meta_description'])]
+#[Fillable(['parent_id', 'name', 'slug', 'description', 'position', 'is_active', 'meta_title', 'meta_description', 'image_disk', 'image_path'])]
 #[UseFactory(CategoryFactory::class)]
 class Category extends Model
 {
@@ -51,6 +54,11 @@ class Category extends Model
     }
 
     public const MAX_DEPTH = 5;
+
+    public function imageUrl(): ?string
+    {
+        return $this->image_path !== null ? Storage::disk($this->image_disk ?? 'public')->url($this->image_path) : null;
+    }
 
     /**
      * @return array<string, string>

@@ -8,6 +8,7 @@ use App\Core\Extensions\ModuleManager;
 use App\Core\Extensions\ModuleRepository;
 use App\Core\Extensions\ModuleState;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Support\ModuleFixtures;
 use Tests\TestCase;
@@ -43,6 +44,27 @@ class ManifestValidationTest extends TestCase
         $extension = Extension::query()->where('name', 'acme/hello')->firstOrFail();
         $this->assertSame(ModuleState::Discovered, $extension->state);
         $this->assertNull($extension->errors);
+    }
+
+    public function test_package_logo_round_trips_and_is_shared_with_admin(): void
+    {
+        $path = $this->makeHelloModule(overrides: ['logo' => 'brand.png']);
+        file_put_contents($path.'/brand.png', base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aSAAAAABJRU5ErkJggg=='));
+        app(ModuleRepository::class)->sync();
+        $extension = Extension::where('name', 'acme/hello')->firstOrFail();
+        $this->assertSame(ModuleState::Discovered, $extension->state);
+        $this->assertSame('brand.png', $extension->manifest()->toArray()['logo']);
+        $this->withoutVite();
+        $this->actingAs($this->userWithRole('administrator'))->get(route('admin.extensions.index'))
+            ->assertInertia(fn (AssertableInertia $page) => $page->where('extensions.0.logo', fn ($logo) => str_starts_with($logo, 'data:image/png;base64,')));
+    }
+
+    public function test_logo_cannot_escape_package_or_load_remote_or_active_content(): void
+    {
+        foreach (['../outside.png', 'https://example.com/logo.png', 'brand.svg', 'missing.png'] as $logo) {
+            $this->makeHelloModule(overrides: ['logo' => $logo]);
+            $this->assertStringContainsString('logo must be a local', implode(' ', $this->errorsFor('acme/hello')));
+        }
     }
 
     /**

@@ -3,9 +3,12 @@ import { Copy, ExternalLink, Languages } from 'lucide-react';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import ProductController from '@/actions/App/Http/Controllers/Admin/Catalog/ProductController';
+import { AiDraft } from '@/components/admin/ai-draft';
 import { FormField, NativeSelect } from '@/components/admin/form-field';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { ProductImages } from '@/components/admin/product-images';
+import { ProductImageUploader } from '@/components/admin/products/image-uploader';
+import { VariantBulkEditor } from '@/components/admin/products/variant-bulk-editor';
 import {
     SaveBar,
     useUnsavedChangesGuard,
@@ -87,6 +90,7 @@ function ProductForm({
     statuses,
     types,
     attributes,
+    inventoryReasons,
 }: ProductFormProps) {
     const can = useCan();
     // Panels added by modules (e.g. Flash Sales); they save on their own.
@@ -106,6 +110,13 @@ function ProductForm({
         brand_id: product?.brand_id ? String(product.brand_id) : '',
         is_featured: product?.is_featured ?? false,
         is_digital: product?.is_digital ?? false,
+        show_buy_button:
+            product?.show_buy_button === null ||
+            product?.show_buy_button === undefined
+                ? ''
+                : product.show_buy_button
+                  ? '1'
+                  : '0',
         tags: product?.tags ?? [],
         related_ids: (product?.related ?? []).map((p) => p.id),
         upsell_ids: (product?.upsells ?? []).map((p) => p.id),
@@ -126,15 +137,24 @@ function ProductForm({
     const selectedAttributes = attributes.filter((a) =>
         data.option_attribute_ids.includes(a.id),
     );
-    const rows = isVariable ? data.variants : data.variants.slice(0, 1);
+    const rows = (isVariable ? data.variants : data.variants.slice(0, 1)).map(
+        (variant) => ({
+            ...variant,
+            on_hand:
+                product?.variants.find((saved) => saved.id === variant.id)
+                    ?.on_hand ?? variant.on_hand,
+        }),
+    );
 
     useUnsavedChangesGuard(isDirty && !processing);
 
     const updateVariant = (i: number, patch: Partial<VariantRow>) =>
-        setData(
-            'variants',
-            data.variants.map((v, j) => (j === i ? { ...v, ...patch } : v)),
-        );
+        setData((current) => ({
+            ...current,
+            variants: current.variants.map((v, j) =>
+                j === i ? { ...v, ...patch } : v,
+            ),
+        }));
 
     const toggleAttribute = (attributeId: number, checked: boolean) =>
         setData(
@@ -151,6 +171,14 @@ function ProductForm({
             return;
         }
 
+        if (lists.reduce((count, values) => count * values.length, 1) > 100) {
+            form.setError(
+                'option_attribute_ids',
+                'This would exceed 100 variants. Add the combinations you sell individually instead.',
+            );
+            return;
+        }
+        form.clearErrors('option_attribute_ids');
         const combos = lists.reduce<number[][]>(
             (acc, values) => acc.flatMap((c) => values.map((v) => [...c, v])),
             [[]],
@@ -160,19 +188,23 @@ function ProductForm({
             data.variants.map((v) => key(v.option_value_ids)),
         );
         const base = data.variants[0];
+        const unconfigured = data.variants.filter(
+            (variant) => variant.option_value_ids.length === 0,
+        );
         const additions = combos
             .filter((c) => !existing.has(key(c)))
-            .map((c) => ({
-                ...emptyVariant(),
-                price: base?.price ?? '',
-                cost: base?.cost ?? '',
+            .map((c, i) => ({
+                ...(unconfigured[i] ?? emptyVariant()),
+                price: unconfigured[i]?.price ?? base?.price ?? '',
+                cost: unconfigured[i]?.cost ?? base?.cost ?? '',
                 option_value_ids: c,
             }));
         setData('variants', [
-            ...data.variants.filter(
-                (v) => v.option_value_ids.length > 0 || v.id !== null,
-            ),
+            ...data.variants.filter((v) => v.option_value_ids.length > 0),
             ...additions,
+            ...unconfigured
+                .slice(additions.length)
+                .filter((variant) => variant.id !== null),
         ]);
     };
 
@@ -185,7 +217,12 @@ function ProductForm({
                 (v) => ({
                     id: v.id,
                     sku: v.sku,
-                    name: v.name || null,
+                    name: isVariable ? v.name || null : null,
+                    image_id: product?.images.some(
+                        (image) => image.id === v.image_id,
+                    )
+                        ? v.image_id
+                        : null,
                     price: v.price,
                     compare_at_price: v.compare_at_price || null,
                     cost: v.cost || null,
@@ -224,7 +261,7 @@ function ProductForm({
     const sections = [
         { id: 'general', label: 'General' },
         { id: 'media', label: 'Media' },
-        ...(isVariable ? [{ id: 'options', label: 'Options' }] : []),
+        ...(isVariable ? [{ id: 'options', label: 'Attributes' }] : []),
         {
             id: 'pricing',
             label: isVariable ? 'Variants' : 'Pricing & inventory',
@@ -305,6 +342,22 @@ function ProductForm({
                     <div className="grid gap-6 lg:grid-cols-3">
                         <div className="grid min-w-0 content-start gap-6 lg:col-span-2">
                             <Section id="general" title="General">
+                                <div className="flex justify-end">
+                                    <AiDraft
+                                        source={{
+                                            name: data.name,
+                                            short_description:
+                                                data.short_description,
+                                            description: data.description,
+                                        }}
+                                        onApply={(draft) =>
+                                            setData((current) => ({
+                                                ...current,
+                                                ...draft,
+                                            }))
+                                        }
+                                    />
+                                </div>
                                 <FormField
                                     id="name"
                                     label="Name"
@@ -362,7 +415,7 @@ function ProductForm({
                                 title="Media"
                                 description={
                                     product
-                                        ? 'Use the arrows to reorder. The first image is the main one.'
+                                        ? 'Upload, organise and preview your product photography.'
                                         : undefined
                                 }
                             >
@@ -370,25 +423,32 @@ function ProductForm({
                                     <ProductImages
                                         productId={product.id}
                                         images={product.images}
+                                        variants={product.variants}
                                     />
                                 ) : (
-                                    <p className="text-sm text-muted-foreground">
-                                        Save the product first, then add images
-                                        here.
-                                    </p>
+                                    <ProductImageUploader />
                                 )}
                             </Section>
 
                             {isVariable && (
                                 <Section
                                     id="options"
-                                    title="Options"
-                                    description="Choose up to three options, such as Size and Color. Each variant needs one value per option."
+                                    title="Variant attributes"
+                                    description="Connect up to three attributes, such as Size and Color. Each SKU has one value per attribute, with its own price, stock and image."
                                 >
+                                    <a
+                                        href="/admin/attributes"
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="text-sm text-primary underline"
+                                    >
+                                        Manage variant attributes
+                                    </a>
                                     {attributes.length === 0 ? (
                                         <p className="text-sm text-muted-foreground">
-                                            No options defined yet. Create
-                                            options under Catalog → Options.
+                                            No attributes defined yet. Create
+                                            them under Catalog → Variant
+                                            attributes.
                                         </p>
                                     ) : (
                                         <div className="flex flex-wrap gap-4">
@@ -440,9 +500,23 @@ function ProductForm({
                                 }
                             >
                                 <InputError message={errors.variants} />
+                                {isVariable && (
+                                    <VariantBulkEditor
+                                        variants={data.variants}
+                                        attributes={selectedAttributes}
+                                        currency={currency}
+                                        productName={data.slug || data.name}
+                                        onChange={(variants) =>
+                                            setData('variants', variants)
+                                        }
+                                    />
+                                )}
                                 {isVariable ? (
                                     <VariantsTable
-                                        variants={data.variants}
+                                        variants={rows}
+                                        productId={product?.id}
+                                        images={product?.images ?? []}
+                                        inventoryReasons={inventoryReasons}
                                         attributes={selectedAttributes}
                                         currency={currency}
                                         errors={errors}
@@ -470,7 +544,8 @@ function ProductForm({
                                 ) : (
                                     <VariantFields
                                         index={0}
-                                        variant={data.variants[0]}
+                                        variant={rows[0]}
+                                        inventoryReasons={inventoryReasons}
                                         currency={currency}
                                         errors={errors}
                                         withBasics
@@ -638,34 +713,37 @@ function ProductForm({
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent className="grid gap-4">
-                                    {!product && (
-                                        <FormField
+                                    <FormField
+                                        id="type"
+                                        label="Product type"
+                                        error={errors.type}
+                                        hint={
+                                            data.variants.length > 1
+                                                ? 'Keep one variant before switching to a simple product.'
+                                                : 'Switch to a product with variants to add options such as size or color. Your existing SKU and stock are kept.'
+                                        }
+                                    >
+                                        <NativeSelect
                                             id="type"
-                                            label="Product type"
-                                            error={errors.type}
-                                            hint="Variable products have options such as size or color."
+                                            value={data.type}
+                                            onChange={(e) =>
+                                                setData('type', e.target.value)
+                                            }
                                         >
-                                            <NativeSelect
-                                                id="type"
-                                                value={data.type}
-                                                onChange={(e) =>
-                                                    setData(
-                                                        'type',
-                                                        e.target.value,
-                                                    )
-                                                }
-                                            >
-                                                {types.map((t) => (
-                                                    <option
-                                                        key={t.value}
-                                                        value={t.value}
-                                                    >
-                                                        {t.label}
-                                                    </option>
-                                                ))}
-                                            </NativeSelect>
-                                        </FormField>
-                                    )}
+                                            {types.map((t) => (
+                                                <option
+                                                    key={t.value}
+                                                    value={t.value}
+                                                    disabled={
+                                                        t.value === 'simple' &&
+                                                        data.variants.length > 1
+                                                    }
+                                                >
+                                                    {t.label}
+                                                </option>
+                                            ))}
+                                        </NativeSelect>
+                                    </FormField>
                                     <FormField
                                         id="status"
                                         label="Status"
@@ -747,6 +825,29 @@ function ProductForm({
                                             </span>
                                         </span>
                                     </label>
+                                    <FormField
+                                        id="show_buy_button"
+                                        label="Buy button"
+                                        error={errors.show_buy_button}
+                                        hint="Shows a Buy button on this product's card in listings. “Theme default” follows the theme setting."
+                                    >
+                                        <NativeSelect
+                                            id="show_buy_button"
+                                            value={data.show_buy_button}
+                                            onChange={(e) =>
+                                                setData(
+                                                    'show_buy_button',
+                                                    e.target.value,
+                                                )
+                                            }
+                                        >
+                                            <option value="">
+                                                Theme default
+                                            </option>
+                                            <option value="1">Show</option>
+                                            <option value="0">Hide</option>
+                                        </NativeSelect>
+                                    </FormField>
                                 </CardContent>
                             </Card>
 

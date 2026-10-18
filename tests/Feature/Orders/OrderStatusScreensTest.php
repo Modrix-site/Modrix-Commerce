@@ -70,6 +70,8 @@ class OrderStatusScreensTest extends TestCase
         $this->actingAs($this->manager)->get(route('admin.orders.index', ['display_status' => 'packing']))->assertInertia(fn (Assert $page) => $page
             ->has('orders.data', 1)
             ->where('orders.data.0.number', $packing->number)
+            ->where('orders.data.0.customer_name', $packing->customer?->fullName())
+            ->where('orders.data.0.product_names', $packing->items->pluck('product_name')->values()->all())
             ->where('orders.data.0.display_status', 'packing')
             ->where('statusCounts.packing', 1)
             ->where('statusCounts.confirmed', 1)

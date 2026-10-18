@@ -55,6 +55,7 @@ type Props = {
     products: Paginated<ProductRow>;
     filters: {
         search: string;
+        attribute: string;
         status: string;
         category: string;
         brand: string;
@@ -87,6 +88,7 @@ export default function ProductsIndex({
             on ? (s.includes(id) ? s : [...s, id]) : s.filter((x) => x !== id),
         );
     const filtered =
+        filters.attribute !== '' ||
         filters.search !== '' ||
         filters.status !== '' ||
         filters.category !== '' ||
@@ -141,6 +143,13 @@ export default function ProductsIndex({
                     {...index.form()}
                     className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5 lg:items-end"
                 >
+                    {filters.attribute && (
+                        <input
+                            type="hidden"
+                            name="attribute"
+                            value={filters.attribute}
+                        />
+                    )}
                     <div className="grid gap-2 lg:col-span-2">
                         <Label htmlFor="search">Search</Label>
                         <Input
