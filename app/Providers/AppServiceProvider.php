@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Core\Settings\GeneralSettings;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
@@ -42,14 +43,20 @@ class AppServiceProvider extends ServiceProvider
             app()->isProduction(),
         );
 
-        Password::defaults(fn (): ?Password => app()->isProduction()
-            ? Password::min(12)
-                ->mixedCase()
-                ->letters()
-                ->numbers()
-                ->symbols()
-                ->uncompromised()
-            : null,
-        );
+        // Settings → General → Security can set the minimum length.
+        Password::defaults(function (): ?Password {
+            $minimum = rescue(fn () => $this->app->make(GeneralSettings::class)->security()['password_min'], null, false);
+
+            if (app()->isProduction()) {
+                return Password::min($minimum ?? 12)
+                    ->mixedCase()
+                    ->letters()
+                    ->numbers()
+                    ->symbols()
+                    ->uncompromised();
+            }
+
+            return $minimum === null ? null : Password::min($minimum);
+        });
     }
 }

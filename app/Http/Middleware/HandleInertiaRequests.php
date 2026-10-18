@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use App\Core\Admin\AdminNavigation;
 use App\Core\Localization\InterfaceTranslations;
+use App\Core\Settings\GeneralSettings;
+use App\Core\Settings\StoreSettings;
 use App\Domains\Notifications\NotificationVisibility;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -44,6 +46,8 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            // Settings → General → Branding (admin logo, icon, favicon, sign-in page).
+            'branding' => fn () => rescue(fn () => app(GeneralSettings::class)->brandingProps(app(StoreSettings::class)->name()), null, false),
             'auth' => [
                 // Explicit shape so loaded relations (roles, permissions) never leak into page props.
                 'user' => $user instanceof User ? [

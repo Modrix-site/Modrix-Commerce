@@ -59,6 +59,7 @@ final class CorePermissions
             ],
             'Administration' => [
                 'settings.manage' => 'Manage store settings',
+                'settings.advanced' => 'Manage security settings and custom code',
                 'users.view' => 'View staff users',
                 'users.manage' => 'Manage staff users',
                 'roles.manage' => 'Manage roles',

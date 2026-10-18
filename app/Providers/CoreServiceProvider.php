@@ -69,6 +69,7 @@ class CoreServiceProvider extends ServiceProvider
         $navigation->add('dashboard', 'Dashboard', 'admin.dashboard', 'layout-grid', 'Overview', null, 0);
         $navigation->add('users', 'Users', 'admin.users.index', 'users', 'Administration', 'users.view', 900);
         $navigation->add('roles', 'Roles & permissions', 'admin.roles.index', 'shield-check', 'Administration', 'roles.manage', 910);
+        $navigation->add('general-settings', 'General settings', 'admin.settings.general.edit', 'sliders-horizontal', 'Administration', 'settings.manage', 919);
         $navigation->add('settings', 'Store settings', 'admin.settings.store.edit', 'settings', 'Administration', 'settings.manage', 920);
         $navigation->add('languages', 'Languages', 'admin.settings.languages.edit', 'languages', 'Administration', 'settings.manage', 921);
         $navigation->add('documents', 'Orders & documents', 'admin.settings.documents.edit', 'receipt', 'Administration', 'settings.manage', 922);

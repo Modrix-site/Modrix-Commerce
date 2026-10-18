@@ -9,8 +9,10 @@ use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\LogoutDisabledUsers;
 use App\Http\Middleware\RequireInstallation;
+use App\Http\Middleware\RequireStaffTwoFactor;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SetStorefrontLocale;
+use App\Http\Middleware\StorefrontMaintenance;
 use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -37,7 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->prefix('webhooks')
                 ->name('webhooks.')
                 ->group(base_path('routes/webhooks.php'));
-            Route::middleware(['web', 'installed', 'auth', 'verified', 'staff'])
+            Route::middleware(['web', 'installed', 'auth', 'verified', 'staff', 'staff.two-factor'])
                 ->prefix('admin')
                 ->name('admin.')
                 ->group(base_path('routes/admin.php'));
@@ -52,12 +54,14 @@ return Application::configure(basePath: dirname(__DIR__))
             SetStorefrontLocale::class,
             LogoutDisabledUsers::class,
             HandleAppearance::class,
+            StorefrontMaintenance::class,
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
         ]);
 
         $middleware->alias([
             'staff' => EnsureUserIsStaff::class,
+            'staff.two-factor' => RequireStaffTwoFactor::class,
             'installed' => RequireInstallation::class,
             'not-installed' => BlockAfterInstallation::class,
             'marketplace.server' => EnsureMarketplaceServer::class,

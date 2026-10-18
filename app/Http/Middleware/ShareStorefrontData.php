@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Core\Extensions\StorefrontSlots;
 use App\Core\Localization\Locales;
+use App\Core\Settings\GeneralSettings;
 use App\Core\Settings\StoreSettings;
 use App\Core\Themes\ResolvedTheme;
 use App\Core\Themes\ThemeResolver;
@@ -51,6 +52,8 @@ class ShareStorefrontData
             // Full category tree (with subcategories) for menus.
             'categoryTree' => fn () => app(CategoryMenu::class)->tree(),
             'cartCount' => $this->cartCount($request),
+            // Settings → General → Social links, for themes.
+            'social' => fn () => array_filter(app(GeneralSettings::class)->social()),
             'theme' => $this->themes->forRequest($request)->toProps(),
             // Extension blocks in the header, and on every product card (once per page)
             // on the pages that show product cards.

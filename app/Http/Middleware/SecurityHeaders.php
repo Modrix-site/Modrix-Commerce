@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Core\Settings\GeneralSettings;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Vite;
@@ -53,15 +54,19 @@ class SecurityHeaders
     private function policy(?string $nonce): string
     {
         $script = $nonce === null ? "'self'" : "'self' 'nonce-{$nonce}'";
-        $images = implode(' ', ["'self'", 'data:', 'blob:', ...$this->mediaOrigins()]);
+        // Hosts allowed for Settings → General → Custom code.
+        $custom = rescue(fn () => app(GeneralSettings::class)->scriptHosts(), [], false);
+        $hosts = $custom === [] ? '' : ' '.implode(' ', $custom);
+        $images = implode(' ', ["'self'", 'data:', 'blob:', ...$this->mediaOrigins(), ...$custom]);
 
         return implode('; ', [
             "default-src 'self'",
-            "script-src {$script}",
+            "script-src {$script}{$hosts}",
             "style-src 'self' 'unsafe-inline'",
             "img-src {$images}",
             "font-src 'self' data:",
-            "connect-src 'self'",
+            "connect-src 'self'{$hosts}",
+            ...($custom === [] ? [] : ["frame-src 'self'{$hosts}"]),
             "object-src 'none'",
             "base-uri 'self'",
             "frame-ancestors 'none'",

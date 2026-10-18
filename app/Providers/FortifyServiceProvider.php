@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
+use App\Core\Settings\GeneralSettings;
 use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -102,7 +103,10 @@ class FortifyServiceProvider extends ServiceProvider
         RateLimiter::for('login', function (Request $request) {
             $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
 
-            return Limit::perMinute(5)->by($throttleKey);
+            // Settings → General → Security: sign-in attempts per minute.
+            $attempts = rescue(fn () => app(GeneralSettings::class)->security()['login_attempts'], 5, false);
+
+            return Limit::perMinute($attempts)->by($throttleKey);
         });
 
         // Password reset, reset submission and registration: per IP, on top of the broker's per-email throttle.

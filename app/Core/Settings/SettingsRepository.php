@@ -90,6 +90,12 @@ final class SettingsRepository
         return $this->loaded = $values;
     }
 
+    /** Re-reads the shared cache on next access (long-running workers). */
+    public function reload(): void
+    {
+        $this->loaded = null;
+    }
+
     public function flush(): void
     {
         $this->loaded = null;

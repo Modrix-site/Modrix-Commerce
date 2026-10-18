@@ -25,6 +25,7 @@ use App\Http\Controllers\Admin\DownloadGrantController;
 use App\Http\Controllers\Admin\DownloadSettingsController;
 use App\Http\Controllers\Admin\ExtensionBlocksController;
 use App\Http\Controllers\Admin\ExtensionController;
+use App\Http\Controllers\Admin\GeneralSettingsController;
 use App\Http\Controllers\Admin\InterfaceTextController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\LanguageSettingsController;
@@ -95,6 +96,15 @@ Route::middleware('can:settings.manage')->group(function () {
     Route::put('settings/downloads', [DownloadSettingsController::class, 'update'])->name('settings.downloads.update');
     Route::get('settings/languages', [LanguageSettingsController::class, 'edit'])->name('settings.languages.edit');
     Route::put('settings/languages', [LanguageSettingsController::class, 'update'])->name('settings.languages.update');
+    // Settings → General (security and custom code need settings.advanced).
+    Route::get('settings/general', [GeneralSettingsController::class, 'edit'])->name('settings.general.edit');
+    Route::post('settings/general/branding', [GeneralSettingsController::class, 'branding'])->name('settings.general.branding');
+    Route::put('settings/general/mail', [GeneralSettingsController::class, 'mail'])->name('settings.general.mail');
+    Route::post('settings/general/mail/test', [GeneralSettingsController::class, 'testMail'])->middleware('throttle:5,1')->name('settings.general.mail.test');
+    Route::put('settings/general/maintenance', [GeneralSettingsController::class, 'maintenance'])->name('settings.general.maintenance');
+    Route::put('settings/general/social', [GeneralSettingsController::class, 'social'])->name('settings.general.social');
+    Route::put('settings/general/security', [GeneralSettingsController::class, 'security'])->middleware('can:settings.advanced')->name('settings.general.security');
+    Route::put('settings/general/scripts', [GeneralSettingsController::class, 'scripts'])->middleware('can:settings.advanced')->name('settings.general.scripts');
     Route::get('settings/languages/texts', [InterfaceTextController::class, 'index'])->name('settings.interface-text.index');
     Route::put('settings/languages/texts/{locale}', [InterfaceTextController::class, 'update'])->where('locale', '[a-z]{2}')->name('settings.interface-text.update');
 });
