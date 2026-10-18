@@ -58,4 +58,14 @@ class Review extends Model
     {
         $query->where('status', self::APPROVED);
     }
+
+    /**
+     * What shoppers see: approved reviews from a verified purchase.
+     *
+     * @param  Builder<Review>  $query
+     */
+    public function scopePublished(Builder $query): void
+    {
+        $query->where('status', self::APPROVED)->where('verified_purchase', true);
+    }
 }

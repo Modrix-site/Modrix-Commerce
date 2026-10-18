@@ -21,7 +21,7 @@ final class ReviewSummary
      */
     public function forProduct(Product $product): array
     {
-        $approved = Review::query()->approved()->where('product_id', $product->id);
+        $approved = Review::query()->published()->where('product_id', $product->id);
         $count = (clone $approved)->count();
         $user = auth()->user();
         $own = $user instanceof User ? Review::query()->where('product_id', $product->id)->where('user_id', $user->id)->first() : null;
@@ -55,22 +55,21 @@ final class ReviewSummary
      */
     public function rating(Product $product): array
     {
-        $approved = Review::query()->approved()->where('product_id', $product->id);
+        $approved = Review::query()->published()->where('product_id', $product->id);
         $count = (clone $approved)->count();
 
         return ['count' => $count, 'average' => $count > 0 ? number_format((float) $approved->avg('rating'), 1) : null];
     }
 
     /**
-     * @return string|null why the user cannot review ("login", "purchase"), or null when they can
+     * Only verified buyers review: a paid (or partly refunded) order of theirs
+     * includes the product.
+     *
+     * @return string|null why the user cannot review ("purchase"), or null when they can
      */
     public function eligibility(User $user, Product $product): ?string
     {
-        if ((bool) $this->settings->of(ProductReviewsServiceProvider::MODULE, 'require_purchase', false) && ! $this->hasBought($user, $product)) {
-            return 'purchase';
-        }
-
-        return null;
+        return $this->hasBought($user, $product) ? null : 'purchase';
     }
 
     public function hasBought(User $user, Product $product): bool

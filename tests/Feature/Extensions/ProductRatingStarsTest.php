@@ -38,7 +38,7 @@ class ProductRatingStarsTest extends TestCase
     private function review(int $productId, int $rating, string $status = Review::APPROVED): void
     {
         $review = new Review;
-        $review->forceFill(['product_id' => $productId, 'author_name' => 'Ana', 'rating' => $rating, 'body' => 'Lovely product overall.', 'status' => $status])->save();
+        $review->forceFill(['product_id' => $productId, 'author_name' => 'Ana', 'rating' => $rating, 'body' => 'Lovely product overall.', 'status' => $status, 'verified_purchase' => true])->save();
     }
 
     public function test_under_the_title_is_a_product_place()

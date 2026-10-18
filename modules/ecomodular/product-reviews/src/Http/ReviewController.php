@@ -36,7 +36,7 @@ class ReviewController extends Controller
         ]);
 
         if ($summary->eligibility($user, $product) === 'purchase') {
-            throw ValidationException::withMessages(['body' => 'Only customers who bought this product can review it.']);
+            throw ValidationException::withMessages(['body' => 'Only verified buyers can review this product.']);
         }
 
         if (Review::query()->where('product_id', $product->id)->where('user_id', $user->id)->exists()) {

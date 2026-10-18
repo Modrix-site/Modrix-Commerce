@@ -120,7 +120,7 @@ class SampleModulesTest extends TestCase
         $this->assertFalse(Schema::hasColumn('product_reviews', 'verified_purchase'));
 
         // Configure: moderation on, short minimum length.
-        $this->modules->configure('ecomodular/product-reviews', ['auto_approve' => '0', 'require_purchase' => '0', 'min_length' => '5'], $owner);
+        $this->modules->configure('ecomodular/product-reviews', ['auto_approve' => '0', 'min_length' => '5'], $owner);
 
         // A guest sees the slot asking to sign in.
         $this->get(route('storefront.product', $product->slug))
@@ -141,8 +141,6 @@ class SampleModulesTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page->component('module/ecomodular/product-reviews/admin/index', false)->has('reviews.data', 1));
         $this->actingAs($owner)->post(route('admin.ecomodular.product-reviews.approve', $earlierId))->assertRedirect();
-        $this->get(route('storefront.product', $product->slug))
-            ->assertInertia(fn (Assert $page) => $page->where('slots.0.props.count', 1));
 
         // Disable: the reviews stay in the database.
         $this->modules->disable('ecomodular/product-reviews', $owner);
@@ -154,7 +152,7 @@ class SampleModulesTest extends TestCase
         $this->assertSame(ModuleState::UpdatePending, $this->state('ecomodular/product-reviews'));
 
         $updated = $this->modules->update('ecomodular/product-reviews', $owner);
-        $this->assertSame('1.1.0', $updated->version);
+        $this->assertSame('1.2.0', $updated->version);
         $this->assertSame(ModuleState::Disabled, $updated->state);
         $this->assertTrue(Schema::hasColumn('product_reviews', 'verified_purchase'));
         $this->assertSame(1, DB::table('product_reviews')->count());
@@ -162,30 +160,40 @@ class SampleModulesTest extends TestCase
         $this->modules->enable('ecomodular/product-reviews', true, $owner);
         $this->assertSame(ModuleState::Enabled, $this->state('ecomodular/product-reviews'));
 
-        // v1.1.0 in use: a customer reviews; it waits for moderation; one review per customer.
+        // The review from 1.0.0 has no verified purchase: it stays in the admin but is not shown.
+        $this->get(route('storefront.product', $product->slug))
+            ->assertInertia(fn (Assert $page) => $page->where('slots.0.props.count', 0));
+
+        // A verified buyer reviews; it waits for moderation; one review per customer.
         $this->app['auth']->forgetGuards();
         $this->post('/m/ecomodular/product-reviews/products/'.$product->slug.'/reviews')->assertRedirect(route('login'));
+        $this->enableCheckout();
+        $this->actingAs($customer);
+        $this->addToCart($product->variants()->firstOrFail());
+        $this->post(route('checkout.store'), $this->checkoutPayload(['email' => $customer->email]))->assertRedirect();
+        app(OrderWorkflow::class)->recordManualPayment(Order::query()->where('user_id', $customer->id)->firstOrFail(), $owner);
         $this->actingAs($customer)->post(route('ecomodular.product-reviews.store', $product->slug), ['rating' => 4, 'title' => 'Lovely', 'body' => 'Pours well.'])
             ->assertSessionHasNoErrors();
         $this->actingAs($customer)->post(route('ecomodular.product-reviews.store', $product->slug), ['rating' => 1, 'body' => 'Second try'])
             ->assertSessionHasErrors('body');
         $this->actingAs($customer)->get(route('storefront.product', $product->slug))
-            ->assertInertia(fn (Assert $page) => $page->where('slots.0.props.count', 1)->where('slots.0.props.own.status', 'pending'));
+            ->assertInertia(fn (Assert $page) => $page->where('slots.0.props.count', 0)->where('slots.0.props.own.status', 'pending'));
 
         $newId = (int) DB::table('product_reviews')->where('user_id', $customer->id)->value('id');
         $this->actingAs($owner)->post(route('admin.ecomodular.product-reviews.approve', $newId))->assertRedirect();
         $this->get(route('storefront.product', $product->slug))
             ->assertInertia(fn (Assert $page) => $page
-                ->where('slots.0.props.count', 2)
-                ->where('slots.0.props.average', '3.0')
-                ->where('slots.0.props.reviews.0.author', 'Ana'));
+                ->where('slots.0.props.count', 1)
+                ->where('slots.0.props.average', '4.0')
+                ->where('slots.0.props.reviews.0.author', 'Ana')
+                ->where('slots.0.props.reviews.0.verified', true));
     }
 
-    public function test_reviews_can_be_limited_to_buyers_and_mark_verified_purchases()
+    public function test_only_buyers_can_review_and_reviews_are_marked_verified()
     {
         $this->modules->install('ecomodular/product-reviews');
         $this->modules->enable('ecomodular/product-reviews', true);
-        $this->modules->configure('ecomodular/product-reviews', ['auto_approve' => '1', 'require_purchase' => '1', 'min_length' => '5']);
+        $this->modules->configure('ecomodular/product-reviews', ['auto_approve' => '1', 'min_length' => '5']);
 
         $this->enableCheckout();
         $variant = $this->sellable('10.00', 5);

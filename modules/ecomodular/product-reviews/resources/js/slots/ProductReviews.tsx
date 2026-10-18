@@ -112,7 +112,8 @@ export default function ProductReviews({
             )}
             {reason === 'purchase' && (
                 <p className="text-sm text-muted-foreground">
-                    Only customers who bought this product can review it.
+                    Only verified buyers can review this product. Reviews open
+                    once your order with it has been paid.
                 </p>
             )}
             {canReview && (

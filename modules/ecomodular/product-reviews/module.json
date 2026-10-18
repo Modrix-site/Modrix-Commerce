@@ -2,8 +2,8 @@
     "$schema": "../../../docs/extensions/module.schema.json",
     "name": "ecomodular/product-reviews",
     "display_name": "Product Reviews",
-    "description": "Customers rate and review products; staff moderate reviews before they appear.",
-    "version": "1.1.0",
+    "description": "Verified buyers rate and review products; staff moderate reviews before they appear. Only reviews from a paid order are shown.",
+    "version": "1.2.0",
     "type": "module",
     "platform_version": "^0.4 || ^1.0",
     "author": "Eleydo",
@@ -45,12 +45,6 @@
             "type": "boolean",
             "label": "Publish reviews without moderation",
             "help": "When off, new reviews wait for a staff member to approve them.",
-            "default": false
-        },
-        {
-            "key": "require_purchase",
-            "type": "boolean",
-            "label": "Only customers who bought the product can review it",
             "default": false
         },
         {

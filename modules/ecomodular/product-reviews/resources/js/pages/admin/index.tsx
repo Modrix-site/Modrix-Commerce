@@ -112,6 +112,12 @@ export default function ReviewsAdmin({
                                                     Verified purchase
                                                 </span>
                                             )}
+                                            {!review.verified && (
+                                                <span className="text-xs text-muted-foreground">
+                                                    Not a verified purchase: not
+                                                    shown in the store
+                                                </span>
+                                            )}
                                         </div>
                                         {review.title && (
                                             <p className="font-medium">
