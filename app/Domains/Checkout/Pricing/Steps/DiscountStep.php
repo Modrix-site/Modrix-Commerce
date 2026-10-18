@@ -44,12 +44,15 @@ final class DiscountStep implements PricingStep
 
         $discount = $this->coupons->amount($coupon, $eligible, $priced->currency);
         $this->allocate($discount, $eligible);
-        $priced->discountTotal = $discount;
+        // Added to any offer discounts set by earlier steps.
+        $priced->couponDiscountTotal = $discount;
+        $priced->discountTotal = $priced->discountTotal->plus($discount);
     }
 
     /**
-     * Proportional split in minor units; the last line absorbs rounding so the
-     * parts always add up to the total exactly.
+     * Proportional split (of what is left of each line after offer discounts)
+     * in minor units; the last line absorbs rounding so the parts always add
+     * up to the total exactly.
      *
      * @param  list<PricedLine>  $lines
      */
@@ -58,7 +61,7 @@ final class DiscountStep implements PricingStep
         $base = BigDecimal::zero();
 
         foreach ($lines as $line) {
-            $base = $base->plus($line->subtotal()->amount());
+            $base = $base->plus($this->remaining($line)->amount());
         }
 
         if ($base->isZero()) {
@@ -70,17 +73,22 @@ final class DiscountStep implements PricingStep
 
         foreach ($lines as $i => $line) {
             if ($i === $last) {
-                $line->discount = $remaining;
+                $line->discount = $line->discount->plus($remaining);
                 break;
             }
 
             $share = Money::of(
-                $discount->amount()->multipliedBy($line->subtotal()->amount())->dividedBy($base, 4, RoundingMode::DOWN),
+                $discount->amount()->multipliedBy($this->remaining($line)->amount())->dividedBy($base, 4, RoundingMode::DOWN),
                 $discount->currency(),
             )->rounded();
 
-            $line->discount = $share;
+            $line->discount = $line->discount->plus($share);
             $remaining = $remaining->minus($share);
         }
+    }
+
+    private function remaining(PricedLine $line): Money
+    {
+        return $line->subtotal()->minus($line->discount)->nonNegative();
     }
 }

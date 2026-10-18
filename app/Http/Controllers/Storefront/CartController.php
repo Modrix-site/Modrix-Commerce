@@ -62,6 +62,8 @@ class CartController extends Controller
         $cart = $this->carts->current($request->session(), $this->user($request), create: true);
         abort_if($cart === null, 500);
         $this->carts->add($cart, $variant, (int) $data['quantity']);
+        // For "added to cart" pop-ups from modules on the next page.
+        $request->session()->flash('cart.just_added', ['variant_id' => $variant->id, 'quantity' => (int) $data['quantity']]);
 
         // "Buy now" on the product page: straight to checkout.
         if ($request->boolean('buy_now')) {

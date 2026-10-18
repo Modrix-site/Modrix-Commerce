@@ -18,6 +18,7 @@ use App\Domains\Inventory\InventoryService;
 use App\Domains\Orders\Enums\FulfillmentStatus;
 use App\Domains\Orders\Enums\OrderStatus;
 use App\Domains\Orders\Enums\PaymentStatus;
+use App\Domains\Orders\Events\CartCheckedOut;
 use App\Domains\Orders\Events\OrderPlaced;
 use App\Domains\Orders\Models\Order;
 use App\Domains\Orders\Models\OrderAddress;
@@ -126,6 +127,8 @@ final class PlaceOrder
                 $this->customers->saveAddress($customer, $data->shippingAddress);
             }
 
+            // Lets modules attribute the order to what they added to the cart.
+            CartCheckedOut::dispatch($cart->id, $order->id);
             $this->carts->empty($cart);
             $this->audit->record('order.placed', $order, ['number' => $order->number, 'total' => $order->grand_total], $user);
 
@@ -197,7 +200,7 @@ final class PlaceOrder
             'tax_total' => $priced->taxTotal->toDecimal(),
             'grand_total' => $priced->grandTotal()->toDecimal(),
             'prices_include_tax' => $priced->pricesIncludeTax,
-            'coupon_code' => $priced->discountTotal->isPositive() ? $priced->couponCode : null,
+            'coupon_code' => $priced->couponDiscountTotal->isPositive() ? $priced->couponCode : null,
             'shipping_method_code' => $priced->shipping['code'] ?? null,
             'shipping_method_name' => $priced->shipping['label'] ?? null,
             'payment_method_code' => $paymentCode,
@@ -264,7 +267,7 @@ final class PlaceOrder
 
     private function redeemCoupon(PricedCart $priced, Order $order, Customer $customer, string $email): void
     {
-        if ($order->coupon_code === null || ! $priced->discountTotal->isPositive()) {
+        if ($order->coupon_code === null || ! $priced->couponDiscountTotal->isPositive()) {
             return;
         }
 
@@ -284,7 +287,7 @@ final class PlaceOrder
             'order_id' => $order->id,
             'customer_id' => $customer->id,
             'email' => Str::lower($email),
-            'amount' => $priced->discountTotal->toDecimal(),
+            'amount' => $priced->couponDiscountTotal->toDecimal(),
             'currency' => $priced->currency,
         ])->save();
     }

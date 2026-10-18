@@ -15,12 +15,43 @@ use App\Domains\Pricing\Money;
  */
 final class CartPricer
 {
-    /** @var list<PricingStep> */
+    /** Steps that change line prices (e.g. a module's offer discounts) run first. */
+    public const LINE_ADJUSTMENTS = 10;
+
+    public const DISCOUNTS = 20;
+
+    public const SHIPPING = 30;
+
+    public const TAX = 40;
+
+    /** Steps that only read the final amounts. */
+    public const AFTER_TAX = 50;
+
+    /** @var list<array{PricingStep, int}> */
     private array $steps = [];
 
-    public function addStep(PricingStep $step): void
+    /**
+     * Steps run by priority (lowest first), then in the order they were added.
+     */
+    public function addStep(PricingStep $step, int $priority = self::AFTER_TAX): void
     {
-        $this->steps[] = $step;
+        $this->steps[] = [$step, $priority];
+        // usort is stable, so equal priorities keep their order.
+        usort($this->steps, fn (array $a, array $b) => $a[1] <=> $b[1]);
+    }
+
+    /**
+     * @param  class-string<PricingStep>  $class
+     */
+    public function hasStep(string $class): bool
+    {
+        foreach ($this->steps as [$step]) {
+            if ($step instanceof $class) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function price(Cart $cart, ?PricingContext $context = null): PricedCart
@@ -45,7 +76,7 @@ final class CartPricer
         $priced = new PricedCart($cart->currency, $lines);
         $priced->couponCode = $cart->coupon_code;
 
-        foreach ($this->steps as $step) {
+        foreach ($this->steps as [$step]) {
             $step->apply($priced, $cart, $context);
         }
 

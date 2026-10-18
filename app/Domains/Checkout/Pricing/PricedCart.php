@@ -13,7 +13,14 @@ final class PricedCart
     /** @var list<string> */
     public array $issues = [];
 
+    /** Offer discounts plus the coupon discount. */
     public Money $discountTotal;
+
+    /** Discounts from module offers (set on lines before the coupon). */
+    public Money $offerDiscountTotal;
+
+    /** The coupon's part of $discountTotal. */
+    public Money $couponDiscountTotal;
 
     public Money $shippingTotal;
 
@@ -41,6 +48,8 @@ final class PricedCart
         public readonly array $lines,
     ) {
         $this->discountTotal = Money::zero($currency);
+        $this->offerDiscountTotal = Money::zero($currency);
+        $this->couponDiscountTotal = Money::zero($currency);
         $this->shippingTotal = Money::zero($currency);
         $this->shippingTax = Money::zero($currency);
         $this->taxTotal = Money::zero($currency);
@@ -121,6 +130,8 @@ final class PricedCart
             'item_count' => $this->itemCount(),
             'subtotal' => $this->subtotal(),
             'discount_total' => $this->discountTotal,
+            'offer_discount_total' => $this->offerDiscountTotal,
+            'coupon_discount_total' => $this->couponDiscountTotal,
             'shipping_total' => $this->shippingTotal,
             'tax_total' => $this->taxTotal,
             'grand_total' => $this->grandTotal(),

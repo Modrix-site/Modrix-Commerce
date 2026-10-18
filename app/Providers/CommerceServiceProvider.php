@@ -70,9 +70,9 @@ class CommerceServiceProvider extends ServiceProvider
         $this->app->singleton(CartPricer::class, function ($app) {
             $pricer = new CartPricer;
             // Order matters: discounts reduce the taxable base and free-shipping thresholds.
-            $pricer->addStep($app->make(DiscountStep::class));
-            $pricer->addStep($app->make(ShippingStep::class));
-            $pricer->addStep($app->make(TaxStep::class));
+            $pricer->addStep($app->make(DiscountStep::class), CartPricer::DISCOUNTS);
+            $pricer->addStep($app->make(ShippingStep::class), CartPricer::SHIPPING);
+            $pricer->addStep($app->make(TaxStep::class), CartPricer::TAX);
 
             return $pricer;
         });

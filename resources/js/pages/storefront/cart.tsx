@@ -12,6 +12,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CartCrossSells } from '@/components/storefront/page-settings/cart-cross-sells';
+import { DiscountRows } from '@/components/storefront/order-totals';
 import { FreeShippingBar } from '@/components/storefront/page-settings/free-shipping-bar';
 import type { FreeShipping } from '@/components/storefront/page-settings/free-shipping-bar';
 import { TrustBadges } from '@/components/storefront/page-settings/trust-badges';
@@ -106,14 +107,7 @@ export function PlatformCartPage({
                             </dd>
                         </div>
                         {Number(cart.discount_total.amount) > 0 && (
-                            <div className="flex justify-between">
-                                <dt>
-                                    {t('Discount')} ({cart.coupon_code})
-                                </dt>
-                                <dd className="tabular-nums">
-                                    −{cart.discount_total.formatted}
-                                </dd>
-                            </div>
+                            <DiscountRows totals={cart} />
                         )}
                         <div className="flex justify-between text-muted-foreground">
                             <dt>{t('Shipping and taxes')}</dt>
@@ -125,9 +119,10 @@ export function PlatformCartPage({
 
                     <ExtensionSlot items={slots} className="grid gap-3" />
 
-                    {pageSettings.coupon && settings.cart_show_coupon !== false && (
-                        <CouponForm cart={cart} />
-                    )}
+                    {pageSettings.coupon &&
+                        settings.cart_show_coupon !== false && (
+                            <CouponForm cart={cart} />
+                        )}
 
                     {cart.issues.map((issue) => (
                         <Alert key={issue}>
@@ -260,6 +255,16 @@ function CartRow({ line }: { line: CartLine }) {
                             : '—',
                     })}
                 </span>
+                {line.offer_label &&
+                    line.offer_discount &&
+                    Number(line.offer_discount.amount) > 0 && (
+                        <span className="text-sm text-primary">
+                            {t(':label: −:amount', {
+                                label: line.offer_label,
+                                amount: line.offer_discount.formatted,
+                            })}
+                        </span>
+                    )}
                 {line.notices.map((notice) => (
                     <p key={notice} className="text-sm text-destructive">
                         {notice}

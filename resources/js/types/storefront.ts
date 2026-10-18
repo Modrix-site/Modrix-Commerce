@@ -138,6 +138,9 @@ export type CartLine = {
     unit_price: MoneyValue | null;
     subtotal: MoneyValue;
     discount: MoneyValue;
+    /** The part of `discount` from an offer (e.g. a cross-sell price). */
+    offer_discount?: MoneyValue;
+    offer_label?: string | null;
     purchasable: boolean;
     available: number | null;
     notices: string[];
@@ -149,6 +152,9 @@ export type PricedCart = {
     item_count: number;
     subtotal: MoneyValue;
     discount_total: MoneyValue;
+    /** Offer discounts and the coupon's part of `discount_total`. */
+    offer_discount_total?: MoneyValue;
+    coupon_discount_total?: MoneyValue;
     shipping_total: MoneyValue;
     tax_total: MoneyValue;
     grand_total: MoneyValue;

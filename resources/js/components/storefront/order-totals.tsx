@@ -4,6 +4,9 @@ import type { MoneyValue } from '@/types';
 type Totals = {
     subtotal: MoneyValue;
     discount_total: MoneyValue;
+    /** Carts split the discount into offer savings and the coupon. */
+    offer_discount_total?: MoneyValue;
+    coupon_discount_total?: MoneyValue;
     shipping_total: MoneyValue | null;
     tax_total: MoneyValue;
     grand_total: MoneyValue;
@@ -25,17 +28,7 @@ export function OrderTotals({ totals }: { totals: Totals }) {
                 <dt>{t('Subtotal')}</dt>
                 <dd className="tabular-nums">{totals.subtotal.formatted}</dd>
             </div>
-            {discount && (
-                <div className="flex justify-between">
-                    <dt>
-                        {t('Discount')}
-                        {totals.coupon_code ? ` (${totals.coupon_code})` : ''}
-                    </dt>
-                    <dd className="tabular-nums">
-                        −{totals.discount_total.formatted}
-                    </dd>
-                </div>
-            )}
+            {discount && <DiscountRows totals={totals} />}
             <div className="flex justify-between">
                 <dt>{t('Shipping')}</dt>
                 <dd className="tabular-nums">
@@ -59,5 +52,47 @@ export function OrderTotals({ totals }: { totals: Totals }) {
                 <dd className="tabular-nums">{totals.grand_total.formatted}</dd>
             </div>
         </dl>
+    );
+}
+
+/**
+ * "Offer savings" and "Discount (CODE)" as separate rows when the cart says
+ * how the discount splits; otherwise one "Discount" row (orders).
+ */
+export function DiscountRows({ totals }: { totals: Totals }) {
+    const t = useT();
+    const offer = totals.offer_discount_total;
+    const coupon = totals.coupon_discount_total;
+
+    if (!offer || !coupon || Number(offer.amount) <= 0) {
+        return (
+            <div className="flex justify-between">
+                <dt>
+                    {t('Discount')}
+                    {totals.coupon_code ? ` (${totals.coupon_code})` : ''}
+                </dt>
+                <dd className="tabular-nums">
+                    −{totals.discount_total.formatted}
+                </dd>
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <div className="flex justify-between">
+                <dt>{t('Offer savings')}</dt>
+                <dd className="tabular-nums">−{offer.formatted}</dd>
+            </div>
+            {Number(coupon.amount) > 0 && (
+                <div className="flex justify-between">
+                    <dt>
+                        {t('Discount')}
+                        {totals.coupon_code ? ` (${totals.coupon_code})` : ''}
+                    </dt>
+                    <dd className="tabular-nums">−{coupon.formatted}</dd>
+                </div>
+            )}
+        </>
     );
 }

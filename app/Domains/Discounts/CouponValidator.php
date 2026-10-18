@@ -69,7 +69,8 @@ final class CouponValidator
     }
 
     /**
-     * Discount for the eligible lines, never more than their subtotal.
+     * Discount for the eligible lines, never more than what is left of their
+     * subtotal after earlier (offer) discounts.
      *
      * @param  list<PricedLine>  $lines
      */
@@ -78,9 +79,10 @@ final class CouponValidator
         $base = Money::zero($currency);
 
         foreach ($lines as $line) {
-            $base = $base->plus($line->subtotal());
+            $base = $base->plus($line->subtotal()->minus($line->discount));
         }
 
+        $base = $base->nonNegative();
         $discount = $coupon->type === Coupon::TYPE_PERCENTAGE
             ? $base->percentage($coupon->value)->rounded()
             : Money::of($coupon->value, $currency)->rounded();

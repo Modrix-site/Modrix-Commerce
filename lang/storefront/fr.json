@@ -1,6 +1,7 @@
 {
     "1 product": "1 produit",
     ":count products": ":count produits",
+    ":label: −:amount": ":label: −:amount",
     ":left of :max downloads left": ":left sur :max téléchargements restants",
     ":price each": ":price l'unité",
     "A new verification link has been sent to the email address you provided during registration.": "Un nouveau lien de vérification a été envoyé à l'adresse e-mail indiquée lors de votre inscription.",
@@ -137,6 +138,7 @@
     "No products found.": "Aucun produit trouvé.",
     "No shipping needed — your downloads are available after payment.": "Aucune livraison requise : vos téléchargements sont disponibles après paiement.",
     "Notifications": "Notifications",
+    "Offer savings": "Économies de l'offre",
     "On hold": "En attente",
     "Only :count available.": "Seulement :count disponibles.",
     "Only :count available. Reduce the quantity to continue.": "Seulement :count disponibles. Réduisez la quantité pour continuer.",

@@ -15,7 +15,13 @@ final class PricedLine
     /** @var list<string> */
     public array $notices = [];
 
+    /** All discounts on the line: offer discounts plus its share of the coupon. */
     public Money $discount;
+
+    /** The part of $discount from a module's offer (e.g. a cross-sell price). */
+    public Money $offerDiscount;
+
+    public ?string $offerLabel = null;
 
     public Money $tax;
 
@@ -33,6 +39,7 @@ final class PricedLine
         string $currency,
     ) {
         $this->discount = Money::zero($currency);
+        $this->offerDiscount = Money::zero($currency);
         $this->tax = Money::zero($currency);
     }
 
@@ -49,6 +56,25 @@ final class PricedLine
         return $this->unitPrice === null
             ? Money::zero($this->discount->currency())
             : $this->unitPrice->multipliedBy($this->quantity)->rounded();
+    }
+
+    /**
+     * Lowers the line price by an offer discount (capped at what is left of the
+     * line), counted in the cart's offer and discount totals.
+     */
+    public function applyOfferDiscount(PricedCart $cart, Money $amount, string $label): void
+    {
+        $amount = $amount->min($this->subtotal()->minus($this->discount))->nonNegative();
+
+        if (! $amount->isPositive()) {
+            return;
+        }
+
+        $this->discount = $this->discount->plus($amount);
+        $this->offerDiscount = $this->offerDiscount->plus($amount);
+        $this->offerLabel = $label;
+        $cart->offerDiscountTotal = $cart->offerDiscountTotal->plus($amount);
+        $cart->discountTotal = $cart->discountTotal->plus($amount);
     }
 
     /**
@@ -71,6 +97,8 @@ final class PricedLine
             'unit_price' => $this->unitPrice,
             'subtotal' => $this->subtotal(),
             'discount' => $this->discount,
+            'offer_discount' => $this->offerDiscount,
+            'offer_label' => $this->offerLabel,
             'purchasable' => $this->isPurchasable(),
             'available' => $this->availability->available,
             'notices' => $this->notices,

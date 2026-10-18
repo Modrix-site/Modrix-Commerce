@@ -1,6 +1,7 @@
 {
     "1 product": "1 product",
     ":count products": ":count products",
+    ":label: −:amount": ":label: −:amount",
     ":left of :max downloads left": ":left of :max downloads left",
     ":price each": ":price each",
     "A new verification link has been sent to the email address you provided during registration.": "A new verification link has been sent to the email address you provided during registration.",
@@ -137,6 +138,7 @@
     "No products found.": "No products found.",
     "No shipping needed — your downloads are available after payment.": "No shipping needed — your downloads are available after payment.",
     "Notifications": "Notifications",
+    "Offer savings": "Offer savings",
     "On hold": "On hold",
     "Only :count available.": "Only :count available.",
     "Only :count available. Reduce the quantity to continue.": "Only :count available. Reduce the quantity to continue.",

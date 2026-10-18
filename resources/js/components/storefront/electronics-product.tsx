@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import CartController from '@/actions/App/Http/Controllers/Storefront/CartController';
 import { ElectronicsCard } from '@/components/storefront/electronics-card';
 import { ExtensionSlot } from '@/components/extensions/extension-slot';
+import { PlaceSlot } from '@/components/extensions/place-slot';
 import { rememberProduct } from '@/components/storefront/recent-products';
 import { BuyNowButton } from '@/components/storefront/buy-now-button';
 import { RelatedProducts } from '@/components/storefront/related-products';
@@ -113,6 +114,7 @@ export function ElectronicsProduct({
                         </Link>
                     )}
                     <h1>{product.name}</h1>
+                    <PlaceSlot place="product.after_title" />
                     {variant && (
                         <p className="text-muted-foreground">
                             SKU: {variant.sku}
@@ -176,6 +178,7 @@ export function ElectronicsProduct({
                         )}
                     </div>
                     <SaleNotice sale={product.sale} />
+                    <PlaceSlot place="product.after_price" />
                     <div className="electronics-purchase-notice">
                         <Truck size={19} />
                         Delivery options are shown at checkout.
@@ -260,6 +263,7 @@ export function ElectronicsProduct({
                             continue.
                         </p>
                     )}
+                    <PlaceSlot place="product.after_add_to_cart" />
                 </aside>
             </div>
             <section className="electronics-product-section">
@@ -268,6 +272,7 @@ export function ElectronicsProduct({
                     {product.description ?? product.short_description}
                 </p>
             </section>
+            <PlaceSlot place="product.after_description" />
             <ExtensionSlot items={slots} />
             <RelatedProducts productId={product.id} upsells={upsells} />
             {related.filter((item) => item.id !== product.id).length > 0 && (
