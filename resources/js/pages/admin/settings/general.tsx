@@ -249,7 +249,7 @@ function BrandingTab({ branding }: { branding: Props['branding'] }) {
                         id="panel_name"
                         label="Panel name"
                         error={errors.panel_name}
-                        hint="Next to the logo. Empty uses the store name."
+                        hint="Only in the admin, next to the logo; empty uses the store name. The shop's own name (storefront, emails, maintenance page) is set in Settings → Store."
                     >
                         <Input
                             id="panel_name"
