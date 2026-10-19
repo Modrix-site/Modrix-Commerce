@@ -271,6 +271,53 @@
 [data-theme='ecomodular/circuit'] .ci-menu-highlight {
     color: var(--ci-accent);
 }
+/* One line: the links that fit, the rest under "More" (menu-links.tsx). */
+[data-theme='ecomodular/circuit'] .ci-menu {
+    flex: 1;
+    min-width: 0;
+}
+[data-theme='ecomodular/circuit'] .ci-menu-links {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    gap: 30px;
+}
+[data-theme='ecomodular/circuit'] .ci-menu-links > .store-menu-tree {
+    flex-wrap: nowrap;
+    gap: 30px;
+    white-space: nowrap;
+}
+[data-theme='ecomodular/circuit']
+    .ci-menu-links
+    > .store-menu-tree
+    > .store-menu-item {
+    flex-shrink: 0;
+}
+[data-theme='ecomodular/circuit'] .ci-menu-highlight,
+[data-theme='ecomodular/circuit'] .ci-shop,
+[data-theme='ecomodular/circuit'] .ci-recent {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+[data-theme='ecomodular/circuit'] .ci-menu-more {
+    position: relative;
+    flex-shrink: 0;
+}
+[data-theme='ecomodular/circuit'] .ci-menu-more > button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding-block: 16px;
+    font-weight: 600;
+}
+[data-theme='ecomodular/circuit'] .ci-menu-more > button:hover {
+    color: var(--ci-accent);
+}
+[data-theme='ecomodular/circuit'] .ci-menu-more-list {
+    inset-inline-start: auto;
+    inset-inline-end: 0;
+}
 [data-theme='ecomodular/circuit'] .ci-shop {
     position: relative;
 }
@@ -1799,6 +1846,47 @@
 }
 [data-theme='ecomodular/circuit'] .ci-footer nav > a:hover {
     color: var(--ci-ink);
+}
+/* Footer menus from Store navigation (any number of columns). */
+[data-theme='ecomodular/circuit'] .ci-footer .store-menu-tree {
+    gap: 0;
+}
+[data-theme='ecomodular/circuit']
+    .ci-footer
+    .store-menu-row
+    > .store-menu-link {
+    padding: 6px 0;
+    color: var(--ci-muted);
+}
+[data-theme='ecomodular/circuit'] .ci-footer .store-menu-link:hover {
+    color: var(--ci-ink);
+    text-decoration: none;
+}
+@media (min-width: 1280px) {
+    /* About + one column per menu + newsletter, all on one row. */
+    [data-theme='ecomodular/circuit']
+        .ci-footer-grid:has(> nav:nth-of-type(3)) {
+        grid-template-columns: minmax(0, 1.3fr) repeat(
+                3,
+                minmax(0, 0.8fr)
+            ) minmax(0, 1.3fr);
+        gap: 32px;
+    }
+    [data-theme='ecomodular/circuit']
+        .ci-footer-grid:has(> nav:nth-of-type(4)) {
+        grid-template-columns: minmax(0, 1.2fr) repeat(
+                4,
+                minmax(0, 0.75fr)
+            ) minmax(0, 1.2fr);
+        gap: 28px;
+    }
+}
+@media (min-width: 1024px) and (max-width: 1279px) {
+    /* Three or more menus: two rows that fill the width. */
+    [data-theme='ecomodular/circuit']
+        .ci-footer-grid:has(> nav:nth-of-type(3)) {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
 }
 [data-theme='ecomodular/circuit'] .ci-footer-about {
     color: var(--ci-muted);
