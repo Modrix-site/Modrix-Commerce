@@ -4,6 +4,7 @@ namespace Tests\Feature\Settings;
 
 use App\Core\Audit\AuditLog;
 use App\Core\Settings\GeneralSettings;
+use App\Core\Settings\SettingsRepository;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -56,12 +57,23 @@ class GeneralSettingsBrandingTest extends TestCase
         $this->actingAs(User::factory()->create())->get(route('admin.settings.general.edit'))->assertForbidden();
     }
 
+    public function test_the_admin_uses_the_store_name_as_its_only_name()
+    {
+        // A panel name saved before there was one name only is ignored.
+        app(SettingsRepository::class)->set('general.branding', ['panel_name' => 'Old Admin Name']);
+        app(SettingsRepository::class)->set('store.name', 'Jhay Store');
+
+        $this->actingAs($this->owner())->post(route('admin.settings.general.branding'), ['panel_name' => 'Other Name'])->assertSessionHasNoErrors();
+
+        $this->actingAs($this->owner())->get(route('admin.dashboard'))->assertInertia(fn (Assert $page) => $page->where('branding.panel_name', 'Jhay Store'));
+        $this->assertArrayNotHasKey('panel_name', app(GeneralSettings::class)->branding());
+    }
+
     public function test_branding_saves_texts_and_images_and_shares_them()
     {
         $owner = $this->owner();
 
         $this->actingAs($owner)->post(route('admin.settings.general.branding'), [
-            'panel_name' => 'Acme Admin',
             'accent' => '#1d4ed8',
             'login_message' => 'Staff sign-in only',
             'logo' => UploadedFile::fake()->image('logo.png', 400, 120),
@@ -69,12 +81,10 @@ class GeneralSettingsBrandingTest extends TestCase
         ])->assertSessionHasNoErrors()->assertRedirect();
 
         $branding = app(GeneralSettings::class)->branding();
-        $this->assertSame('Acme Admin', $branding['panel_name']);
         $this->disk()->assertExists($branding['logo']);
         $this->disk()->assertExists($branding['favicon']);
 
         $this->actingAs($owner)->get(route('admin.dashboard'))->assertInertia(fn (Assert $page) => $page
-            ->where('branding.panel_name', 'Acme Admin')
             ->where('branding.accent', '#1d4ed8')
             ->where('branding.logo', fn ($url) => is_string($url) && str_contains($url, 'branding/')));
         $this->assertTrue(AuditLog::query()->where('action', 'settings.general_updated')->exists());

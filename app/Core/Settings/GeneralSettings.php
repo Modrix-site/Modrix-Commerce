@@ -23,14 +23,13 @@ final class GeneralSettings
     public function __construct(private readonly SettingsRepository $settings) {}
 
     /**
-     * @return array{panel_name: string, accent: string|null, login_message: string, logo: string|null, logo_dark: string|null, icon: string|null, favicon: string|null, login_logo: string|null}
+     * @return array{accent: string|null, login_message: string, logo: string|null, logo_dark: string|null, icon: string|null, favicon: string|null, login_logo: string|null}
      */
     public function branding(): array
     {
         $saved = (array) $this->settings->get('general.branding', []);
 
         return [
-            'panel_name' => (string) ($saved['panel_name'] ?? ''),
             'accent' => isset($saved['accent']) ? (string) $saved['accent'] : null,
             'login_message' => (string) ($saved['login_message'] ?? ''),
             ...array_combine(self::BRANDING_IMAGES, array_map(fn (string $key) => isset($saved[$key]) && $saved[$key] !== '' ? (string) $saved[$key] : null, self::BRANDING_IMAGES)),
@@ -47,7 +46,8 @@ final class GeneralSettings
         $branding = $this->branding();
         $disk = Storage::disk($this->disk());
         $props = [
-            'panel_name' => $branding['panel_name'] !== '' ? $branding['panel_name'] : $storeName,
+            // One name everywhere: the admin shows the store name (Settings → Store).
+            'panel_name' => $storeName,
             'accent' => $branding['accent'],
             'login_message' => $branding['login_message'],
         ];

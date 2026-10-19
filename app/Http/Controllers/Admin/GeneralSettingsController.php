@@ -55,7 +55,6 @@ class GeneralSettingsController extends Controller
     {
         $image = ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:1024'];
         $data = $request->validate([
-            'panel_name' => ['sometimes', 'nullable', 'string', 'max:60'],
             'accent' => ['sometimes', 'nullable', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
             'login_message' => ['sometimes', 'nullable', 'string', 'max:200'],
             'logo' => $image,
@@ -69,7 +68,7 @@ class GeneralSettingsController extends Controller
 
         $before = $this->general->branding();
         $after = $before;
-        foreach (['panel_name', 'accent', 'login_message'] as $key) {
+        foreach (['accent', 'login_message'] as $key) {
             if (array_key_exists($key, $data)) {
                 $after[$key] = $data[$key] === null ? ($key === 'accent' ? null : '') : (string) $data[$key];
             }

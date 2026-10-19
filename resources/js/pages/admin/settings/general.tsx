@@ -23,7 +23,6 @@ type ImageKey = 'logo' | 'logo_dark' | 'icon' | 'favicon' | 'login_logo';
 
 type Props = {
     branding: {
-        panel_name: string;
         accent: string | null;
         login_message: string;
         urls: Record<ImageKey, string | null> & { panel_name: string };
@@ -214,13 +213,11 @@ function ReadOnlyNote() {
 function BrandingTab({ branding }: { branding: Props['branding'] }) {
     const form = useForm<
         {
-            panel_name: string;
             accent: string;
             login_message: string;
             remove: ImageKey[];
         } & Partial<Record<ImageKey, File | null>>
     >({
-        panel_name: branding.panel_name,
         accent: branding.accent ?? '',
         login_message: branding.login_message,
         remove: [],
@@ -242,24 +239,9 @@ function BrandingTab({ branding }: { branding: Props['branding'] }) {
         <form onSubmit={submit} className="grid gap-6">
             <Section
                 title="Admin branding"
-                description="Your name and logo in the admin, on the sign-in page and as the browser icon."
+                description="Your logo in the admin, on the sign-in page and as the browser icon. The admin shows your store name (Settings → Store)."
             >
                 <div className="grid gap-4 sm:grid-cols-2">
-                    <FormField
-                        id="panel_name"
-                        label="Panel name"
-                        error={errors.panel_name}
-                        hint="Only in the admin, next to the logo; empty uses the store name. The shop's own name (storefront, emails, maintenance page) is set in Settings → Store."
-                    >
-                        <Input
-                            id="panel_name"
-                            value={form.data.panel_name}
-                            maxLength={60}
-                            onChange={(e) =>
-                                form.setData('panel_name', e.target.value)
-                            }
-                        />
-                    </FormField>
                     <FormField
                         id="accent"
                         label="Accent colour"
