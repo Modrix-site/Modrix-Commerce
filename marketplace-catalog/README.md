@@ -4,26 +4,27 @@ The marketplace for Modrix Commerce themes and extensions: a public catalog,
 customer accounts with license keys, Stripe checkout, publisher submissions,
 and the license and update API that merchant stores connect to.
 
-It is a standalone Laravel 13 application with its own database (MySQL,
-MariaDB or SQLite). It shares no database or login with any store, so it can
+It is a standalone Laravel 13 application with its own MySQL/MariaDB
+database. It shares no database or login with any store, so it can
 run on any PHP host. See [docs/DEPLOY.md](docs/DEPLOY.md) for shared hosting
 (cPanel), VPS and Stripe setup.
 
 ## Local setup
 
+Create an empty MySQL/MariaDB database, then:
+
 ```bash
 cd marketplace-catalog
-cp .env.example .env            # Windows: copy .env.example .env
 composer install
-php artisan key:generate
-php artisan migrate --seed      # SQLite: creates database/marketplace.sqlite
-php artisan marketplace:install # first administrator + signing key
 php artisan serve --port=8090
 ```
 
-Open `http://127.0.0.1:8090` for the catalog and `/admin` for the workspace.
-Without `marketplace:install`, `/admin/setup` creates the first administrator
-once.
+Open `http://127.0.0.1:8090`. The web installer at `/install` asks for the
+MySQL connection, creates the tables, and then creates the first
+administrator. After that it closes for good and `/admin` is the workspace.
+With a terminal you can instead fill `DB_*` in `.env` and run
+`php artisan key:generate`, `php artisan migrate --seed` and
+`php artisan marketplace:install`.
 
 Moving from the previous catalog app (`storage/catalog.sqlite`)? Run
 `php artisan marketplace:import-legacy storage/catalog.sqlite` after

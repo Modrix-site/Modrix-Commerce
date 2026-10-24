@@ -6,6 +6,7 @@ use Database\Seeders\CategorySeeder;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Validator;
 use Marketplace\Models\User;
+use Marketplace\Services\Installer;
 use Marketplace\Services\SigningKey;
 
 /**
@@ -18,7 +19,7 @@ class Install extends Command
 
     protected $description = 'Create the database tables, the signing key and the first administrator';
 
-    public function handle(SigningKey $key): int
+    public function handle(SigningKey $key, Installer $installer): int
     {
         $this->call('migrate', ['--force' => true]);
 
@@ -50,6 +51,7 @@ class Install extends Command
 
         $admin = User::query()->create($data);
         $admin->forceFill(['is_admin' => true])->save();
+        $installer->markInstalled();
 
         $this->info('Administrator created. Sign in at '.url('/admin/login').'.');
         $this->line('Public signing key for stores (ECOMODULAR_MARKETPLACE_TRUSTED_KEYS):');

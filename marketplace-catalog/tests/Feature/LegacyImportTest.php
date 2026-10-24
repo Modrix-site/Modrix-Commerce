@@ -202,6 +202,15 @@ class LegacyImportTest extends TestCase
         $this->get('/branding/logo')->assertOk();
     }
 
+    public function test_the_import_command_closes_the_installer_when_it_brings_an_admin()
+    {
+        unlink(config('marketplace.installed_file'));
+
+        $this->artisan('marketplace:import-legacy', ['path' => $this->dir.'/catalog.sqlite'])->assertSuccessful();
+
+        $this->assertFileExists(config('marketplace.installed_file'));
+    }
+
     public function test_install_creates_the_first_admin_and_refuses_a_second_time()
     {
         $this->artisan('marketplace:install', ['--name' => 'Owner', '--email' => 'owner@example.test', '--password' => 'Long-enough-pass-1'])->assertSuccessful();

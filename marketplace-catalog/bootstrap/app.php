@@ -5,6 +5,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Foundation\Console\ServeCommand;
 use Illuminate\Http\Request;
+use Marketplace\Http\Middleware\RequireInstallation;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -16,6 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withCommands([__DIR__.'/../app/Console/Commands'])
     ->withMiddleware(function (Middleware $middleware): void {
         // Laravel's default web (sessions, CSRF) and api groups.
+        // Before sessions and cookies: send everything to /install until setup is done.
+        $middleware->prepend(RequireInstallation::class);
         // Guests go to the sign-in page and come back to where they were.
         $middleware->redirectGuestsTo(fn (Request $request) => $request->is('admin', 'admin/*')
             ? '/admin/login'

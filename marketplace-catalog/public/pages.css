@@ -44,3 +44,11 @@ button.small, a.small { font-size:0.85rem; padding:0.3rem 0.7rem; }
     .admin-nav { position:static; display:flex; flex-wrap:wrap; }
     .form-grid { grid-template-columns:1fr; }
 }
+.install-card { max-width:30rem; }
+.install-steps { display:flex; gap:0.5rem; list-style:none; padding:0; margin:0.5rem 0 1rem; counter-reset:step; }
+.install-steps li { counter-increment:step; color:var(--muted); font-size:0.85rem; }
+.install-steps li::before { content:counter(step) ". "; }
+.install-steps li[aria-current="step"] { color:var(--ink); font-weight:600; }
+.requirements { list-style:none; padding:0; margin:0 0 1rem; display:grid; gap:0.2rem; font-size:0.9rem; }
+.requirements .ok { color:#166534; }
+.requirements .missing { color:#991b1b; font-weight:600; }

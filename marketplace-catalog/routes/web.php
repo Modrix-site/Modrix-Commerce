@@ -11,9 +11,15 @@ use Marketplace\Http\Controllers\Admin\SubmissionController;
 use Marketplace\Http\Controllers\AuthController;
 use Marketplace\Http\Controllers\CatalogController;
 use Marketplace\Http\Controllers\CheckoutController;
+use Marketplace\Http\Controllers\InstallController;
 use Marketplace\Http\Controllers\PublishController;
 use Marketplace\Http\Controllers\StripeWebhookController;
 use Marketplace\Http\Middleware\EnsureAdmin;
+
+// First-run setup; RequireInstallation closes it (404) once the app is installed.
+Route::get('install', [InstallController::class, 'show'])->name('install');
+Route::post('install/database', [InstallController::class, 'database'])->middleware('throttle:10,1');
+Route::post('install/admin', [InstallController::class, 'admin'])->middleware('throttle:10,1');
 
 // Public catalog. Addresses match the original catalog app.
 Route::get('/', [CatalogController::class, 'index'])->name('catalog.index');

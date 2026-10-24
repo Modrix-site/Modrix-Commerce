@@ -7,6 +7,9 @@ return [
     // Private files: package ZIPs, release archives, uploads. Never public.
     'storage' => env('MARKETPLACE_STORAGE', storage_path('app/private')),
 
+    // Written when setup finishes (web installer or marketplace:install); /install is closed while it exists.
+    'installed_file' => storage_path('app/installed'),
+
     // Source tree (modules/ and themes/) that `marketplace:publish` packages from.
     'source_root' => env('CATALOG_ROOT') ?: dirname(base_path()),
 
