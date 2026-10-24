@@ -80,6 +80,10 @@ class PublishController
             throw ValidationException::withMessages(['identifier' => 'Choose one of your published packages.']);
         }
 
+        if (Submission::query()->where('identifier', $package->identifier)->where('kind', 'update')->where('status', 'pending')->exists()) {
+            throw ValidationException::withMessages(['identifier' => 'An update for this package is already waiting for review.']);
+        }
+
         $current = $package->latestRelease()?->version ?? $package->version;
 
         if (! Comparator::greaterThan($data['version'], $current)) {

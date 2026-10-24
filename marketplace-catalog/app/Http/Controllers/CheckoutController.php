@@ -57,6 +57,9 @@ class CheckoutController
             ->where('user_id', $request->user()->id)
             ->firstOrFail();
 
-        return view('checkout.success', ['order' => $order]);
+        // Refresh every 4 s for about two minutes, then stop and explain.
+        $try = max(0, (int) $request->query('try', 0));
+
+        return view('checkout.success', ['order' => $order, 'try' => $try, 'refresh' => $order->status === 'pending' && $try < 30]);
     }
 }

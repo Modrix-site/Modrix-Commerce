@@ -108,8 +108,9 @@ Apache works too: point `DocumentRoot` at `public/`. The bundled
    and secret keys into Admin → Settings → Payments.
 2. Developers → Webhooks → Add endpoint:
    `https://marketplace.example.com/stripe/webhook`, events
-   `checkout.session.completed`, `checkout.session.expired` and
-   `charge.refunded`. Copy the signing secret (`whsec_…`) into the same
+   `checkout.session.completed`, `checkout.session.expired`,
+   `checkout.session.async_payment_succeeded`,
+   `checkout.session.async_payment_failed` and `charge.refunded`. Copy the signing secret (`whsec_…`) into the same
    settings page.
 
 A paid order is completed by the webhook, not by the browser returning from

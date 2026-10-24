@@ -44,7 +44,11 @@ class AccountController
             throw ValidationException::withMessages(['product' => 'Buy this package first; its license key is issued with the purchase.']);
         }
 
-        $licensing->issue($request->user(), $product['model'], $product['premium'] ? 'paid' : 'free');
+        $license = $licensing->issue($request->user(), $product['model'], $product['premium'] ? 'paid' : 'free');
+
+        if ($license->status !== 'active') {
+            throw ValidationException::withMessages(['product' => 'Your license for this package was '.$license->status.'. Contact support if you think this is a mistake.']);
+        }
 
         return redirect('/account')->with('notice', 'License ready for '.$product['name'].'.');
     }

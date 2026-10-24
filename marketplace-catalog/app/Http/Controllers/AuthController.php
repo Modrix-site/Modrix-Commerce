@@ -25,6 +25,7 @@ class AuthController
 
     public function authenticate(Request $request): RedirectResponse
     {
+        $request->merge(['email' => mb_strtolower(trim((string) $request->input('email')))]);
         $credentials = $request->validate(['email' => ['required', 'email'], 'password' => ['required', 'string']]);
 
         if (! Auth::attempt($credentials, $request->boolean('remember'))) {
@@ -38,6 +39,8 @@ class AuthController
 
     public function store(Request $request): RedirectResponse
     {
+        // Emails are stored lowercase, so sign-in and uniqueness ignore case on every database.
+        $request->merge(['email' => mb_strtolower(trim((string) $request->input('email')))]);
         $data = $request->validate([
             'name' => ['required', 'string', 'max:120'],
             'email' => ['required', 'email', 'max:191', 'unique:users,email'],

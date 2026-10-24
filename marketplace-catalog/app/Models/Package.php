@@ -57,7 +57,10 @@ class Package extends Model
     /** The highest version (semantic version order, not publish date). */
     public function latestRelease(): ?PackageRelease
     {
-        return $this->releases()->get()->reduce(
+        // Uses eager-loaded releases when present (catalog pages load them for every package).
+        $releases = $this->relationLoaded('releases') ? $this->releases : $this->releases()->get();
+
+        return $releases->reduce(
             fn (?PackageRelease $best, PackageRelease $r) => $best === null || Comparator::greaterThan($r->version, $best->version) ? $r : $best,
         );
     }

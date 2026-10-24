@@ -42,8 +42,9 @@ class StripeWebhookController
                 WebhookEvent::query()->create(['provider' => 'stripe', 'event_id' => $event['id'], 'type' => $event['type'], 'processed_at' => now()]);
 
                 match ($event['type']) {
-                    'checkout.session.completed' => $mail = $this->completed($object, $licensing),
-                    'checkout.session.expired' => Order::query()->where('stripe_session', $object['id'] ?? '')->where('status', 'pending')->update(['status' => 'expired']),
+                    // Delayed methods (bank debits) complete unpaid, then confirm later.
+                    'checkout.session.completed', 'checkout.session.async_payment_succeeded' => $mail = $this->completed($object, $licensing),
+                    'checkout.session.expired', 'checkout.session.async_payment_failed' =>Order::query()->where('stripe_session', $object['id'] ?? '')->where('status', 'pending')->update(['status' => 'expired']),
                     'charge.refunded' => $this->refunded($object),
                     default => null,
                 };

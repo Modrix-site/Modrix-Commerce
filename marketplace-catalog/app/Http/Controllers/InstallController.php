@@ -60,6 +60,7 @@ class InstallController
         }
 
         if (! User::query()->where('is_admin', true)->exists()) {
+            $request->merge(['email' => mb_strtolower(trim((string) $request->input('email')))]);
             $data = $request->validate([
                 'name' => ['required', 'string', 'max:120'],
                 'email' => ['required', 'email', 'max:191', 'unique:users,email'],

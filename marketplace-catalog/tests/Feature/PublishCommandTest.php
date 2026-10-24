@@ -54,6 +54,14 @@ class PublishCommandTest extends TestCase
         $this->assertSame(2, $package->releases()->count());
     }
 
+    public function test_a_malformed_manifest_version_fails()
+    {
+        File::put($this->root.'/modules/acme/reviews/module.json', json_encode(['name' => 'acme/reviews', 'version' => '1.0.0/../evil']));
+
+        $this->artisan('marketplace:publish', ['identifier' => 'acme/reviews', '--root' => $this->root])->assertFailed();
+        $this->assertSame(0, Package::query()->count());
+    }
+
     public function test_unknown_packages_fail()
     {
         $this->artisan('marketplace:publish', ['identifier' => 'acme/missing', '--root' => $this->root])->assertFailed();

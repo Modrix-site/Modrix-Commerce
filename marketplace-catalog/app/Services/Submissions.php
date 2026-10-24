@@ -2,8 +2,10 @@
 
 namespace Marketplace\Services;
 
+use Composer\Semver\Comparator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Marketplace\Models\Package;
 use Marketplace\Models\Submission;
 use Marketplace\Models\User;
@@ -16,17 +18,39 @@ class Submissions
 {
     public function __construct(private readonly Releases $releases, private readonly Uploads $uploads) {}
 
+    /**
+     * @throws ValidationException on `id` when the submission was already
+     *                             reviewed or no longer fits the catalog
+     */
     public function approve(Submission $submission, User $reviewer): Package
     {
         return DB::transaction(function () use ($submission, $reviewer) {
+            // Locked and re-read: a double-clicked approve sees the first decision.
+            $submission = Submission::query()->whereKey($submission->id)->lockForUpdate()->firstOrFail();
+            $fail = fn (string $message) => throw ValidationException::withMessages(['id' => $message]);
+
+            if ($submission->status !== 'pending') {
+                $fail('This submission was already reviewed.');
+            }
+
             $data = $submission->data;
             $zip = $this->uploads->path((string) $submission->zip_path);
 
             if ($submission->kind === 'update') {
                 $package = Package::query()->where('identifier', $submission->identifier)->lockForUpdate()->firstOrFail();
+                $current = $package->latestRelease()?->version ?? $package->version;
+
+                if (! Comparator::greaterThan((string) $data['version'], (string) $current)) {
+                    $fail("Version {$data['version']} is not newer than the published {$current}. Reject it and ask for a new version.");
+                }
+
                 $platform = (string) ($data['platform_version'] ?? $package->platform_version);
                 $package->fill(['version' => $data['version'], 'platform_version' => $platform, 'changelog' => $data['changelog'] ?? null])->save();
             } else {
+                if (Package::query()->where('identifier', $submission->identifier)->exists()) {
+                    $fail("{$submission->identifier} is already listed. Reject this submission or ask for an update instead.");
+                }
+
                 $premium = ($data['tier'] ?? 'free') === 'premium';
                 $platform = (string) $data['platform_version'];
                 $package = Package::query()->create([

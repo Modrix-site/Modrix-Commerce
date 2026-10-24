@@ -22,7 +22,7 @@
             <div class="wide"><button type="submit">Save settings</button></div>
         </form>
     @elseif ($tab === 'payments')
-        <p class="meta">Stripe status: <strong>{{ $stripe['configured'] ? 'Ready for checkout' : 'Not configured' }}</strong>. Add a webhook endpoint in Stripe for <code>{{ $stripe['webhook_url'] }}</code> with the events <code>checkout.session.completed</code>, <code>checkout.session.expired</code> and <code>charge.refunded</code>.</p>
+        <p class="meta">Stripe status: <strong>{{ $stripe['configured'] ? 'Ready for checkout' : 'Not configured' }}</strong>. Add a webhook endpoint in Stripe for <code>{{ $stripe['webhook_url'] }}</code> with the events <code>checkout.session.completed</code>, <code>checkout.session.expired</code>, <code>checkout.session.async_payment_succeeded</code>, <code>checkout.session.async_payment_failed</code> and <code>charge.refunded</code>.</p>
         <form method="post" action="{{ url('/admin/stripe') }}" class="form-grid">
             @csrf
             <label class="wide">Publishable key <input name="stripe_publishable" value="{{ old('stripe_publishable', $stripe['publishable']) }}" placeholder="pk_live_…" autocomplete="off"></label>

@@ -3,6 +3,7 @@
 namespace Marketplace\Models;
 
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -27,6 +28,12 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return ['password' => 'hashed', 'is_admin' => 'boolean'];
+    }
+
+    /** Stored lowercase so sign-in and uniqueness ignore case on every database. */
+    protected function email(): Attribute
+    {
+        return Attribute::make(set: fn (string $value) => mb_strtolower(trim($value)));
     }
 
     public function licenses(): HasMany

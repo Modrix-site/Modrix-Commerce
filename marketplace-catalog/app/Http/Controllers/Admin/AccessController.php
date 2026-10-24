@@ -25,6 +25,7 @@ class AccessController
             return redirect('/admin/login');
         }
 
+        $request->merge(['email' => mb_strtolower(trim((string) $request->input('email')))]);
         $data = $request->validate([
             'name' => ['required', 'string', 'max:120'],
             'email' => ['required', 'email', 'max:191', 'unique:users,email'],
@@ -60,6 +61,7 @@ class AccessController
 
     public function authenticate(Request $request): RedirectResponse
     {
+        $request->merge(['email' => mb_strtolower(trim((string) $request->input('email')))]);
         $credentials = $request->validate(['email' => ['required', 'email'], 'password' => ['required', 'string']]);
 
         if (! Auth::attempt($credentials) || ! Auth::user()->is_admin) {

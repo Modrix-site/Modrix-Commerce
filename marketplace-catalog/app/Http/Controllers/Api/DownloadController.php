@@ -71,12 +71,21 @@ class DownloadController
 
     public function download(string $token): Response
     {
-        // Claim the token atomically so it can only be used once.
-        $claimed = DB::transaction(function () use ($token) {
-            $row = DownloadToken::query()->with('release')->whereKey(hash('sha256', $token))->lockForUpdate()->first();
+        // Claim the token atomically so it can only be used once. A missing
+        // file or a license revoked since the link was made does not use it up.
+        $result = DB::transaction(function () use ($token) {
+            $row = DownloadToken::query()->with(['release.package', 'license'])->whereKey(hash('sha256', $token))->lockForUpdate()->first();
 
             if (! $row instanceof DownloadToken || $row->used_at !== null || $row->expires_at->isPast()) {
-                return null;
+                return ApiError::response(410, 'link_expired', 'This download link has expired or was already used.');
+            }
+
+            if ($row->license?->status !== 'active') {
+                return ApiError::response(403, 'license_inactive', 'This license is no longer active.');
+            }
+
+            if (! is_file($this->releases->path($row->release))) {
+                return ApiError::response(404, 'release_not_found', 'The release file is not available right now. Try again later.');
             }
 
             $row->forceFill(['used_at' => now()])->save();
@@ -84,10 +93,12 @@ class DownloadController
             return $row;
         });
 
-        if (! $claimed instanceof DownloadToken || ! is_file($path = $this->releases->path($claimed->release))) {
-            return ApiError::response(410, 'link_expired', 'This download link has expired or was already used.');
+        if (! $result instanceof DownloadToken) {
+            return $result;
         }
 
-        return response()->download($path, basename($path), ['Content-Type' => 'application/zip']);
+        $name = $result->release->package->slug.'-'.$result->release->version.'.zip';
+
+        return response()->download($this->releases->path($result->release), $name, ['Content-Type' => 'application/zip']);
     }
 }

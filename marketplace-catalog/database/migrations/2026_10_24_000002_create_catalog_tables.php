@@ -67,7 +67,7 @@ return new class extends Migration
             $table->string('platform_version', 64)->default('*');
             $table->json('signed_metadata');
             $table->text('signature');
-            $table->timestamp('published_at');
+            $table->timestamp('published_at')->useCurrent(); // Explicit default: MySQL 5.7/MariaDB 10.3 would otherwise add ON UPDATE.
             $table->timestamps();
             $table->unique(['package_id', 'version']);
         });

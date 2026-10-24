@@ -98,10 +98,13 @@ class CatalogController
     /** The newest release ZIP: free packages for everyone, paid ones for license holders. */
     public function download(Request $request, string $slug, Releases $releases): Response
     {
-        $product = $this->catalog->find($slug) ?? abort(404);
-        $package = $product['model'];
+        $package = Package::query()->where('slug', $slug)->where('status', '!=', 'draft')->first() ?? abort(404);
+        $owned = $this->catalog->owns($request->user(), $package);
 
-        if (! $package->is_free && ! $this->catalog->owns($request->user(), $package)) {
+        // Hidden packages stay downloadable for the customers who own them.
+        abort_if($package->status !== 'published' && ! $owned, 404);
+
+        if (! $package->is_free && ! $owned) {
             abort(403, 'This package is available to customers who own it.');
         }
 

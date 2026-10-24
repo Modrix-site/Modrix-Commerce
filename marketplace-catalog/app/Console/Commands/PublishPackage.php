@@ -4,6 +4,7 @@ namespace Marketplace\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Marketplace\Http\Controllers\PublishController;
 use Marketplace\Models\Package;
 use Marketplace\Services\Releases;
 use Marketplace\Services\Submissions;
@@ -46,7 +47,7 @@ class PublishPackage extends Command
         $manifest = json_decode((string) file_get_contents($dir.'/'.($type === 'theme' ? 'theme.json' : 'module.json')), true);
         $version = is_array($manifest) ? (string) ($manifest['version'] ?? '') : '';
 
-        if (! is_array($manifest) || ($manifest['name'] ?? null) !== $identifier || preg_match('/^\d+\.\d+\.\d+/', $version) !== 1) {
+        if (! is_array($manifest) || ($manifest['name'] ?? null) !== $identifier || preg_match(PublishController::VERSION, $version) !== 1) {
             $this->error('The manifest must name this package and have a version such as 1.0.0.');
 
             return self::FAILURE;
@@ -102,7 +103,9 @@ class PublishPackage extends Command
     /** The package directory as a ZIP with the manifest at its root. */
     private function zip(string $dir): string
     {
-        $path = tempnam(sys_get_temp_dir(), 'pkg').'.zip';
+        $base = tempnam(sys_get_temp_dir(), 'pkg');
+        @unlink($base); // Only the name is needed; the archive gets a .zip suffix.
+        $path = $base.'.zip';
         $zip = new ZipArchive;
         $zip->open($path, ZipArchive::CREATE | ZipArchive::OVERWRITE);
         $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS));

@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('instance_id', 128);
             $table->string('domain', 255)->nullable();
             $table->boolean('active')->default(true);
-            $table->timestamp('activated_at');
+            $table->timestamp('activated_at')->useCurrent(); // Explicit default: no implicit ON UPDATE on older MySQL.
             $table->timestamp('deactivated_at')->nullable();
             $table->timestamps();
             $table->unique(['license_id', 'instance_id']);
@@ -53,7 +53,7 @@ return new class extends Migration
             $table->foreignId('license_id')->constrained()->cascadeOnDelete();
             $table->foreignId('release_id')->constrained('package_releases')->cascadeOnDelete();
             $table->string('instance_id', 128);
-            $table->timestamp('expires_at')->index();
+            $table->timestamp('expires_at')->useCurrent()->index(); // Explicit default: no implicit ON UPDATE.
             $table->timestamp('used_at')->nullable();
             $table->timestamps();
         });

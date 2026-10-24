@@ -31,7 +31,7 @@ class Install extends Command
 
         $data = [
             'name' => $this->option('name') ?: $this->ask('Administrator name'),
-            'email' => $this->option('email') ?: $this->ask('Administrator email'),
+            'email' => mb_strtolower(trim((string) ($this->option('email') ?: $this->ask('Administrator email')))),
             'password' => $this->option('password') ?: $this->secret('Password (at least 12 characters)'),
         ];
 

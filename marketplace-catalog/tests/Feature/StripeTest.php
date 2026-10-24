@@ -156,6 +156,41 @@ class StripeTest extends TestCase
         $this->assertSame(1, License::query()->count());
     }
 
+    public function test_delayed_payments_complete_when_stripe_confirms_them()
+    {
+        $order = $this->order();
+        $session = ['id' => 'cs_test_1', 'payment_status' => 'unpaid', 'payment_intent' => 'pi_1'];
+
+        $this->deliver(['id' => 'evt_a', 'type' => 'checkout.session.completed', 'data' => ['object' => $session]])->assertOk();
+        $this->assertSame('pending', $order->fresh()->status);
+
+        $this->deliver(['id' => 'evt_b', 'type' => 'checkout.session.async_payment_succeeded', 'data' => ['object' => ['payment_status' => 'paid'] + $session]])->assertOk();
+
+        $this->assertSame('paid', $order->fresh()->status);
+        $this->assertSame(1, License::query()->count());
+    }
+
+    public function test_a_failed_delayed_payment_expires_the_order()
+    {
+        $order = $this->order();
+
+        $this->deliver(['id' => 'evt_c', 'type' => 'checkout.session.async_payment_failed', 'data' => ['object' => ['id' => 'cs_test_1', 'payment_status' => 'unpaid']]])->assertOk();
+
+        $this->assertSame('expired', $order->fresh()->status);
+    }
+
+    public function test_the_success_page_stops_refreshing_and_explains_refunds()
+    {
+        $order = $this->order();
+        $this->actingAs($this->buyer);
+
+        $this->get('/orders/success?order='.$order->id)->assertSee('http-equiv="refresh"', false);
+        $this->get('/orders/success?order='.$order->id.'&try=30')->assertDontSee('http-equiv="refresh"', false)->assertSee('taking longer');
+
+        $order->forceFill(['status' => 'refunded'])->save();
+        $this->get('/orders/success?order='.$order->id)->assertDontSee('http-equiv="refresh"', false)->assertSee('refunded');
+    }
+
     public function test_checkout_charges_in_the_catalog_currency_from_settings()
     {
         Setting::put('currency', 'EUR');

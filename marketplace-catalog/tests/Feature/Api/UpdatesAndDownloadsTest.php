@@ -107,6 +107,28 @@ class UpdatesAndDownloadsTest extends TestCase
         $this->get($path)->assertStatus(410);
     }
 
+    public function test_a_missing_file_does_not_use_up_the_link_and_names_the_package()
+    {
+        $release = $this->publish('1.1.0');
+        $url = $this->postJson(self::API.'downloads', ['key' => $this->license->key, 'instance_id' => 'store-a', 'release_id' => $release->id])->json('url');
+        $path = app(Releases::class)->path($release);
+        rename($path, $path.'.away');
+
+        $this->get($url)->assertNotFound();
+
+        rename($path.'.away', $path);
+        $this->get($url)->assertOk()->assertDownload('acme-reviews-1.1.0.zip');
+    }
+
+    public function test_a_license_revoked_after_the_link_was_made_cannot_download()
+    {
+        $release = $this->publish('1.1.0');
+        $url = $this->postJson(self::API.'downloads', ['key' => $this->license->key, 'instance_id' => 'store-a', 'release_id' => $release->id])->json('url');
+        $this->license->forceFill(['status' => 'revoked'])->save();
+
+        $this->get($url)->assertStatus(403);
+    }
+
     public function test_expired_links_are_refused()
     {
         $release = $this->publish('1.4.0');
