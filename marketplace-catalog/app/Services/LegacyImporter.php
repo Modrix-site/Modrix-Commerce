@@ -29,6 +29,9 @@ class LegacyImporter
     /** Settings whose values are secrets (stored encrypted here). */
     private const SECRET_SETTINGS = ['stripe_secret', 'stripe_webhook_secret', 'smtp_password'];
 
+    /** Set after the first import; later runs keep settings changed in the new admin. */
+    private const IMPORTED_MARKER = 'legacy_imported_at';
+
     private PDO $db;
 
     private string $dir;
@@ -62,18 +65,25 @@ class LegacyImporter
         $this->db = new PDO('sqlite:'.$path, options: [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
         $this->dir = dirname($path);
         $this->warnings = [];
-        $counts = ['settings' => $this->settings(), 'users' => $this->users(), 'categories' => $this->categories()];
+        $first = Setting::get(self::IMPORTED_MARKER) === null;
+        $counts = ['settings' => $this->settings($first),'users' => $this->users(), 'categories' => $this->categories()];
         $counts['packages'] = $this->packages();
         $counts['licenses'] = $this->licenses();
         $counts['activations'] = $this->activations();
         $counts['orders'] = $this->orders();
         $counts['submissions'] = $this->submissions();
         $counts['releases'] = $this->releaseFiles();
+        Setting::put(self::IMPORTED_MARKER, now()->toIso8601String());
 
         return $counts;
     }
 
-    private function settings(): int
+    /**
+     * The first import copies every setting (including the signing key, so
+     * stores keep trusting this server). Later runs only add settings that do
+     * not exist yet, so values changed in the new admin are kept.
+     */
+    private function settings(bool $first): int
     {
         $n = 0;
 
@@ -85,15 +95,24 @@ class LegacyImporter
                 continue;
             }
 
-            if ($key === 'license_signing_secret') {
+            $n++;
+            $target = $key === 'license_signing_secret' ? SigningKey::SETTING : $key;
+
+            if (! $first && Setting::query()->whereKey($target)->exists()) {
+                continue;
+            }
+
+            if ($key === 'logo') {
+                // A public path in the old app; copied into private storage, served at /branding/logo.
+                $logo = $this->copyPrivate($value, 'branding');
+                $logo === null ? $this->warnings[] = "Logo {$value} skipped: the file was not found." : Setting::put('logo', $logo);
+            } elseif ($key === 'license_signing_secret') {
                 // The same key, so stores keep trusting every answer and release.
                 Setting::put(SigningKey::SETTING, $value, secret: true);
                 app()->forgetScopedInstances();
             } else {
                 Setting::put($key, $value, secret: in_array($key, self::SECRET_SETTINGS, true) || str_contains($key, 'password') || str_contains($key, 'secret'));
             }
-
-            $n++;
         }
 
         return $n;
@@ -116,13 +135,30 @@ class LegacyImporter
         return $n;
     }
 
-    /** Keeps the existing password hash (bcrypt), so people sign in as before. */
-    private function user(string $email, string $name, string $hash, string $created, bool $admin): int
+    /**
+     * Keeps the existing password hash (bcrypt), so people sign in as before.
+     * An account created here with a different password (someone registering
+     * the email before the import) is left alone: no merge, no promotion.
+     */
+    private function user(string $email, string $name, string $hash, string $created, bool $admin): ?int
     {
         $email = Str::lower($email);
+
+        if (strlen($email) > 191) {
+            $this->warnings[] = "Account {$email} skipped: emails longer than 191 characters are not supported.";
+
+            return null;
+        }
+
         $existing = User::query()->where('email', $email)->first();
 
         if ($existing instanceof User) {
+            if (! hash_equals((string) $existing->getAuthPassword(), $hash)) {
+                $this->warnings[] = "Account {$email} skipped: an account with this email was created here with a different password. Its licenses and orders were not attached; check it before merging by hand.";
+
+                return null;
+            }
+
             if ($admin && ! $existing->is_admin) {
                 $existing->forceFill(['is_admin' => true])->save();
             }
@@ -145,9 +181,15 @@ class LegacyImporter
         $n = 0;
 
         foreach ($this->rows('SELECT * FROM categories') as $row) {
-            Category::query()->firstOrCreate(['slug' => (string) $row['slug']], [
-                'name' => (string) $row['name'],
-                'description' => (string) $row['description'],
+            $slug = self::categorySlug((string) $row['slug']);
+
+            if ($slug !== (string) $row['slug']) {
+                $this->warnings[] = "Category {$row['slug']} renamed to {$slug}: slugs are limited to 64 characters.";
+            }
+
+            Category::query()->firstOrCreate(['slug' => $slug], [
+                'name' => Str::limit((string) $row['name'], 120, ''),
+                'description' => Str::limit((string) $row['description'], 255, ''),
                 'type' => (string) $row['type'],
                 'position' => (int) $row['position'],
                 'enabled' => (bool) $row['enabled'],
@@ -196,7 +238,7 @@ class LegacyImporter
             $package = Package::query()->firstOrCreate(['identifier' => $identifier], [
                 'type' => in_array($type, ['theme', 'module'], true) ? $type : 'module',
                 'slug' => $this->uniqueSlug((string) ($listing['slug'] ?? $sources['license']['product_slug'] ?? str_replace('/', '-', $identifier))),
-                'name' => (string) ($listing['name'] ?? $sources['license']['product_name'] ?? $sources['order']['product_name'] ?? $identifier),
+                'name' => Str::limit((string) ($listing['name'] ?? $sources['license']['product_name'] ?? $sources['order']['product_name'] ?? $identifier), 160, ''),
                 'summary' => Str::limit((string) ($listing['summary'] ?? ''), 250, ''),
                 'description' => $listing['description'] ?? null,
                 'price' => $paid ? number_format((float) $offer['price'], 2, '.', '') : '0.00',
@@ -204,8 +246,8 @@ class LegacyImporter
                 'is_free' => ! $paid,
                 'status' => in_array($listing['status'] ?? null, ['published', 'hidden', 'draft'], true) ? $listing['status'] : (isset($sources['release']) ? 'published' : 'draft'),
                 'featured' => (bool) ($listing['featured'] ?? false),
-                'demo_url' => ($listing['demo_url'] ?? '') ?: null,
-                'repository_url' => ($listing['repository_url'] ?? '') ?: null,
+                'demo_url' => $this->url($identifier, 'demo URL', (string) ($listing['demo_url'] ?? '')),
+                'repository_url' => $this->url($identifier, 'repository URL', (string) ($listing['repository_url'] ?? '')),
                 'thumbnail_path' => $this->copyUpload((string) ($listing['thumbnail'] ?? '')),
                 'features' => array_values(array_filter((array) ($listing['features'] ?? []), 'is_string')),
                 'author' => Str::limit((string) ($listing['author'] ?? ''), 120, ''),
@@ -216,7 +258,8 @@ class LegacyImporter
             ]);
 
             if (! empty($listing['categories'])) {
-                $ids = Category::query()->whereIn('slug', (array) $listing['categories'])->pluck('id');
+                $slugs = array_map(fn ($s) => self::categorySlug((string) $s), (array) $listing['categories']);
+                $ids = Category::query()->whereIn('slug', $slugs)->pluck('id');
                 $package->categories()->syncWithoutDetaching($ids);
             }
 
@@ -417,6 +460,24 @@ class LegacyImporter
         }
 
         return $relative;
+    }
+
+    /** Category slugs are 64 characters here (the old app allowed 80). */
+    private static function categorySlug(string $slug): string
+    {
+        return rtrim(substr($slug, 0, 64), '-');
+    }
+
+    /** URLs longer than the 500-character column are dropped with a warning. */
+    private function url(string $identifier, string $label, string $url): ?string
+    {
+        if (strlen($url) > 500) {
+            $this->warnings[] = "{$identifier}: {$label} dropped, it is longer than 500 characters.";
+
+            return null;
+        }
+
+        return $url !== '' ? $url : null;
     }
 
     private function typeFromPath(string $path): ?string

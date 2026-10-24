@@ -23,7 +23,7 @@
                 @else
                     <div><dt>Type</dt><dd>{{ ($d['type'] ?? '') === 'theme' ? 'Theme' : 'Extension' }}</dd></div>
                     <div><dt>Summary</dt><dd>{{ $d['summary'] ?? '' }}</dd></div>
-                    <div><dt>Price</dt><dd>{{ ($d['tier'] ?? 'free') === 'premium' ? config('marketplace.currency').' '.($d['price'] ?? '') : 'Free' }}</dd></div>
+                    <div><dt>Price</dt><dd>{{ ($d['tier'] ?? 'free') === 'premium' ? app(\Marketplace\Services\Catalog::class)->currency().' '.($d['price'] ?? '') : 'Free' }}</dd></div>
                     <div><dt>Author / license</dt><dd>{{ $d['author'] ?? '' }} · {{ $d['license_name'] ?? '' }}</dd></div>
                     @if (! empty($d['demo_url']))<div><dt>Demo</dt><dd><a href="{{ $d['demo_url'] }}" target="_blank" rel="noopener noreferrer">{{ $d['demo_url'] }}</a></dd></div>@endif
                 @endif

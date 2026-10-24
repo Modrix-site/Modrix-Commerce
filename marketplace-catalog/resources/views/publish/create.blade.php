@@ -26,7 +26,7 @@
                     <option value="premium" @selected(old('tier') === 'premium')>Paid</option>
                 </select>
             </label>
-            <label>Price ({{ config('marketplace.currency') }}) <input name="price" type="number" min="0" step="0.01" value="{{ old('price', '0') }}"></label>
+            <label>Price ({{ app(\Marketplace\Services\Catalog::class)->currency() }}) <input name="price" type="number" min="0" step="0.01" value="{{ old('price', '0') }}"></label>
             <label class="wide">Live demo URL (optional) <input name="demo_url" type="url" value="{{ old('demo_url') }}" placeholder="https://"></label>
             <label class="wide">Package ZIP <input type="file" name="package" accept=".zip,application/zip" required></label>
             <div class="wide"><button type="submit">Submit for review</button></div>

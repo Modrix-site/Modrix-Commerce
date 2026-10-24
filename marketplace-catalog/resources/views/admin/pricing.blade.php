@@ -2,7 +2,7 @@
 
 @section('admin')
     <h1>Pricing</h1>
-    <p class="meta">Set every package's price in one place. Prices are in {{ \Marketplace\Models\Setting::get('currency') ?: config('marketplace.currency') }}.</p>
+    <p class="meta">Set every package's price in one place. Prices are in {{ app(\Marketplace\Services\Catalog::class)->currency() }}.</p>
     <form method="post" action="{{ url('/admin/catalog') }}">
         @csrf
         <div class="table-wrap">

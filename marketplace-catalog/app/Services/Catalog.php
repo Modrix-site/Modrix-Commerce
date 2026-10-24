@@ -20,6 +20,8 @@ class Catalog
     /** @var Collection<int, array<string, mixed>>|null */
     private ?Collection $published = null;
 
+    private ?string $currency = null;
+
     /**
      * @return Collection<int, array<string, mixed>>
      */
@@ -45,7 +47,7 @@ class Catalog
     public function present(Package $package): array
     {
         $release = $package->latestRelease();
-        $currency = (string) (Setting::get('currency') ?: $package->currency);
+        $currency = $this->currency();
 
         return [
             'model' => $package,
@@ -123,6 +125,15 @@ class Catalog
     public function owns(?User $user, Package $package): bool
     {
         return $user !== null && License::query()->where('user_id', $user->id)->where('package_id', $package->id)->where('status', 'active')->exists();
+    }
+
+    /**
+     * The one currency for labels, the API and Stripe charges: the admin
+     * setting, else MARKETPLACE_CURRENCY. Package rows do not carry their own.
+     */
+    public function currency(): string
+    {
+        return $this->currency ??= strtoupper((string) (Setting::get('currency') ?: config('marketplace.currency', 'USD')));
     }
 
     public function catalogName(): string

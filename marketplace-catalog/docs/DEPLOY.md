@@ -133,17 +133,31 @@ in the store's Admin → Marketplace page.
 
 The previous catalog app kept everything in `storage/catalog.sqlite`. Copy
 that file (and its `storage/` folder, which holds release ZIPs and uploads)
-to the server, then run once, after `migrate`:
+to the server. Import **before the site is public**: until then anyone
+could register an old customer's email or open `/admin/setup`. Keep the
+app in maintenance mode while you do it:
 
 ```bash
+php artisan down
+php artisan migrate --force --seed
 php artisan marketplace:import-legacy /path/to/old/storage/catalog.sqlite
+php artisan up
 ```
 
 It copies accounts (passwords keep working), packages, categories, licenses,
-store activations, orders, submissions, uploads and release ZIPs. The
-signing key is kept, so stores connected before keep working without a new
-trusted key. Running it again skips what was already imported. Skip
-`marketplace:install` when importing; the old administrators come along.
+store activations, orders, submissions, the logo, uploads and release ZIPs.
+The signing key is kept, so stores connected before keep working without a
+new trusted key. Skip `marketplace:install` when importing; the old
+administrators come along.
+
+The command prints warnings for anything it could not copy. An email that
+already has an account here with a different password is not merged (its
+licenses and orders are skipped), and values longer than the new columns are
+shortened or dropped.
+
+Running it again adds only what is new. Settings changed in the new admin
+(Stripe keys, SMTP, currency, ...) are kept; only settings that do not exist
+yet are copied.
 
 ## Publishing from the platform repository
 

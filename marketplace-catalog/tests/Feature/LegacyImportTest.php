@@ -146,6 +146,62 @@ class LegacyImportTest extends TestCase
         $this->assertSame(1, PackageRelease::query()->count());
     }
 
+    public function test_accounts_registered_here_before_the_import_are_not_merged_or_promoted()
+    {
+        $squatter = User::factory()->create(['email' => 'admin@example.test', 'password' => 'Squatter-pass-1']);
+        $other = User::factory()->create(['email' => 'ana@example.test', 'password' => 'Squatter-pass-1']);
+
+        $importer = app(LegacyImporter::class);
+        $importer->import($this->dir.'/catalog.sqlite');
+
+        $this->assertFalse($squatter->fresh()->is_admin);
+        $this->assertSame(0, License::query()->where('user_id', $other->id)->count());
+        $this->assertSame(0, Order::query()->where('user_id', $other->id)->count());
+        $this->assertNotEmpty(array_filter($importer->warnings, fn ($w) => str_contains($w, 'ana@example.test')));
+    }
+
+    public function test_values_longer_than_the_new_columns_are_shortened_or_skipped()
+    {
+        $db = new PDO('sqlite:'.$this->dir.'/catalog.sqlite');
+        $db->prepare('INSERT INTO categories VALUES (?, ?, ?, ?, ?, ?)')->execute([str_repeat('s', 80), 'Long', str_repeat('d', 500), 'all', 9, 1]);
+        $db->prepare('INSERT INTO listings VALUES (?, ?, ?)')->execute(['acme/long', json_encode(['name' => 'Long', 'type' => 'module', 'status' => 'published',
+            'demo_url' => 'https://demo.example.com/'.str_repeat('a', 600), 'repository_url' => 'https://git.example.com/'.str_repeat('r', 600)]), '2026-10-03T00:00:00+00:00']);
+        $db->prepare('INSERT INTO customers VALUES (7, ?, ?, ?, ?)')->execute(['Long', str_repeat('e', 200).'@example.test', 'x', '2026-10-02T00:00:00+00:00']);
+
+        $this->import();
+
+        $category = \Marketplace\Models\Category::query()->where('name', 'Long')->firstOrFail();
+        $this->assertLessThanOrEqual(64, strlen($category->slug));
+        $this->assertLessThanOrEqual(255, strlen($category->description));
+        $long = Package::query()->where('identifier', 'acme/long')->firstOrFail();
+        $this->assertNull($long->demo_url);
+        $this->assertNull($long->repository_url);
+        $this->assertSame(0, User::query()->where('email', 'like', 'eeee%')->count());
+    }
+
+    public function test_running_again_keeps_settings_changed_here()
+    {
+        $this->import();
+        Setting::put('stripe_secret', 'sk_test_rotated', secret: true);
+        Setting::put('currency', 'EUR');
+
+        $this->import();
+
+        $this->assertSame('sk_test_rotated', Setting::get('stripe_secret'));
+        $this->assertSame('EUR', Setting::get('currency'));
+    }
+
+    public function test_the_logo_file_is_copied_and_served()
+    {
+        file_put_contents($this->dir.'/uploads/logo.png', base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='));
+        (new PDO('sqlite:'.$this->dir.'/catalog.sqlite'))->prepare('INSERT INTO settings VALUES (?, ?)')->execute(['logo', '/uploads/logo.png']);
+
+        $this->import();
+
+        $this->assertSame('branding/logo.png', Setting::get('logo'));
+        $this->get('/branding/logo')->assertOk();
+    }
+
     public function test_install_creates_the_first_admin_and_refuses_a_second_time()
     {
         $this->artisan('marketplace:install', ['--name' => 'Owner', '--email' => 'owner@example.test', '--password' => 'Long-enough-pass-1'])->assertSuccessful();

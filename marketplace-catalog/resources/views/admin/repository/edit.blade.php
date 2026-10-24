@@ -36,7 +36,7 @@
                 <option value="premium" @selected(old('tier', $package->is_free ? 'free' : 'premium') === 'premium')>Paid</option>
             </select>
         </label>
-        <label>Price ({{ $package->currency ?: config('marketplace.currency') }}) <input name="price" type="number" min="0" step="0.01" value="{{ old('price', $package->price ?? '0') }}"></label>
+        <label>Price ({{ app(\Marketplace\Services\Catalog::class)->currency() }}) <input name="price" type="number" min="0" step="0.01" value="{{ old('price', $package->price ?? '0') }}"></label>
         <label>Version <input name="version" value="{{ old('version', $package->version) }}" required></label>
         <label>Platform version <input name="platform_version" value="{{ old('platform_version', $package->platform_version) }}"></label>
         <label>Author <input name="author" value="{{ old('author', $package->author) }}" maxlength="120"></label>

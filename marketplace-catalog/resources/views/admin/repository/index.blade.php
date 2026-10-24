@@ -19,7 +19,7 @@
                     <td><a href="{{ url('/admin/repository/'.$package->slug) }}">{{ $package->name }}</a><br><span class="meta">{{ $package->identifier }}</span></td>
                     <td>{{ $package->type === 'theme' ? 'Theme' : 'Extension' }}</td>
                     <td><span class="status status-{{ $package->status }}">{{ ucfirst($package->status) }}</span></td>
-                    <td>{{ $package->is_free ? 'Free' : $package->currency.' '.$package->price }}</td>
+                    <td>{{ $package->is_free ? 'Free' : app(\Marketplace\Services\Catalog::class)->currency().' '.$package->price }}</td>
                     <td>{{ $package->version }}</td>
                 </tr>
             @empty

@@ -4,6 +4,7 @@ namespace Marketplace\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Marketplace\Models\Package;
+use Marketplace\Services\Catalog;
 
 /**
  * GET /api/marketplace/v1/catalog — published packages for the store's
@@ -37,7 +38,7 @@ class CatalogController
             'slug' => $package->slug,
             'summary' => $package->summary,
             'price' => $package->price,
-            'currency' => $package->currency,
+            'currency' => app(Catalog::class)->currency(),
             'is_free' => $package->is_free,
             'featured' => $package->featured,
             'thumbnail_url' => $package->thumbnail_path ? url('/media/'.$package->slug) : null,

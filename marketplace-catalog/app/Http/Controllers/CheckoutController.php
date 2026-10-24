@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Marketplace\Models\Order;
 use Marketplace\Models\Package;
+use Marketplace\Services\Catalog;
 use Marketplace\Services\StripeGateway;
 use RuntimeException;
 
@@ -16,9 +17,13 @@ use RuntimeException;
  */
 class CheckoutController
 {
-    public function store(Request $request, Package $package, StripeGateway $stripe): RedirectResponse
+    public function store(Request $request, Package $package, StripeGateway $stripe, Catalog $catalog): RedirectResponse
     {
         abort_if($package->status !== 'published' || $package->is_free, 404);
+
+        if ($catalog->owns($request->user(), $package)) {
+            return back()->withErrors(['checkout' => 'You already own this package. Its license key is in your account.']);
+        }
 
         if (! $stripe->configured()) {
             return back()->withErrors(['checkout' => 'Payments are not available yet. Please try again later.']);
@@ -28,7 +33,7 @@ class CheckoutController
             'user_id' => $request->user()->id,
             'package_id' => $package->id,
             'amount' => $package->price,
-            'currency' => $package->currency,
+            'currency' => $catalog->currency(),
             'status' => 'pending',
         ]);
 

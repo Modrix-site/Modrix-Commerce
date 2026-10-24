@@ -28,25 +28,35 @@ class StripeWebhookController
             return response()->json(['error' => 'invalid_signature', 'message' => $e->getMessage()], 400);
         }
 
-        try {
-            $record = WebhookEvent::query()->create(['provider' => 'stripe', 'event_id' => $event['id'], 'type' => $event['type']]);
-        } catch (UniqueConstraintViolationException) {
-            return response()->json(['received' => true, 'duplicate' => true]);
-        }
-
         $object = (array) ($event['data']['object'] ?? []);
         $mail = null;
 
-        DB::transaction(function () use ($event, $object, $licensing, &$mail) {
-            match ($event['type']) {
-                'checkout.session.completed' => $mail = $this->completed($object, $licensing),
-                'checkout.session.expired' => Order::query()->where('stripe_session', $object['id'] ?? '')->where('status', 'pending')->update(['status' => 'expired']),
-                'charge.refunded' => $this->refunded($object),
-                default => null,
-            };
-        });
+        // The event is recorded in the same transaction as its effects: if
+        // handling fails, nothing is recorded and Stripe's retry runs it again.
+        try {
+            $duplicate = DB::transaction(function () use ($event, $object, $licensing, &$mail) {
+                if (WebhookEvent::query()->where('provider', 'stripe')->where('event_id', $event['id'])->exists()) {
+                    return true;
+                }
 
-        $record->forceFill(['processed_at' => now()])->save();
+                WebhookEvent::query()->create(['provider' => 'stripe', 'event_id' => $event['id'], 'type' => $event['type'], 'processed_at' => now()]);
+
+                match ($event['type']) {
+                    'checkout.session.completed' => $mail = $this->completed($object, $licensing),
+                    'checkout.session.expired' => Order::query()->where('stripe_session', $object['id'] ?? '')->where('status', 'pending')->update(['status' => 'expired']),
+                    'charge.refunded' => $this->refunded($object),
+                    default => null,
+                };
+
+                return false;
+            });
+        } catch (UniqueConstraintViolationException) {
+            $duplicate = true; // A concurrent delivery of the same event recorded it first.
+        }
+
+        if ($duplicate) {
+            return response()->json(['received' => true, 'duplicate' => true]);
+        }
 
         if ($mail instanceof Order) {
             Mail::to($mail->user->email)->queue(new LicenseIssued($mail));
@@ -96,6 +106,12 @@ class StripeWebhookController
         }
 
         $order->forceFill(['status' => 'refunded'])->save();
-        $order->license?->forceFill(['status' => 'refunded'])->save();
+
+        // A license still covered by another paid order (a repeat purchase) stays active.
+        $stillPaid = $order->license_id !== null && Order::query()->where('license_id', $order->license_id)->where('status', 'paid')->exists();
+
+        if (! $stillPaid) {
+            $order->license?->forceFill(['status' => 'refunded'])->save();
+        }
     }
 }
