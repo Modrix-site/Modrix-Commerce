@@ -50,7 +50,7 @@
         </form>
         <form method="post" action="{{ url('/admin/smtp/test') }}">@csrf<button class="secondary" type="submit">Send a test email to {{ auth()->user()->email }}</button></form>
     @else
-        <p>Stores verify license tokens and release files with this Ed25519 public key. Paste it into the platform's marketplace settings (or <code>MARKETPLACE_PUBLIC_KEY</code>).</p>
+        <p>Stores verify license tokens and release files with this Ed25519 public key. In each store's <code>.env</code>, set <code>ECOMODULAR_MARKETPLACE_URL={{ url('/') }}</code> and add this key to <code>ECOMODULAR_MARKETPLACE_TRUSTED_KEYS</code> (keep any keys already there), then run <code>php artisan config:clear</code>.</p>
         <dl class="package-specs">
             <div><dt>Key ID</dt><dd><code>{{ $signing['key_id'] }}</code></dd></div>
             <div><dt>Public key</dt><dd><code class="license-key">{{ $signing['public_key'] }}</code></dd></div>
