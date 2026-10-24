@@ -1,0 +1,15 @@
+{
+    "categories": ["payments"],
+    "features": [
+        "Server-created Razorpay Orders and Standard Checkout",
+        "Separate encrypted test and live API credentials",
+        "Core checkout, payments, orders, invoices and inventory integration",
+        "Signed browser returns and raw-body webhook verification",
+        "Confirm orders only after funds are captured",
+        "Optional automatic capture of verified authorizations",
+        "Configurable payment methods, customer prefill and checkout behavior",
+        "Full and partial refunds with provider idempotency and persistent retry protection",
+        "Refund status reconciliation and dashboard refund import",
+        "Signed ZIP downloads and core marketplace license activation"
+    ]
+}

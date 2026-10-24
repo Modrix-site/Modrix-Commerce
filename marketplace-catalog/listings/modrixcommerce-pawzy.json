@@ -1,0 +1,13 @@
+{
+    "categories": ["pets"],
+    "features": [
+        "Pawzy pet storefront with navy navigation and yellow accents",
+        "Theme-owned customizer, typography, colors and page controls",
+        "Editable hero, circular collections and editorial home sections",
+        "Category sidebar and core navigation integration",
+        "Collection filters, sorting and responsive product grids",
+        "Variants, stock, gallery, buy now and related products",
+        "Core checkout and extension block compatibility",
+        "Bundled unbranded demo imagery, products and information pages"
+    ]
+}

@@ -1,0 +1,32 @@
+{
+    "name": "modrix/marketplace",
+    "type": "project",
+    "description": "Modrix Commerce marketplace. Its own Laravel application, environment, and database, deployed separately from merchant stores.",
+    "license": "MIT",
+    "require": {
+        "php": "^8.3",
+        "composer/semver": "^3.4",
+        "laravel/framework": "^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Marketplace\\": "app/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
