@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Foundation\Console\ServeCommand;
 use Illuminate\Support\Facades\Route;
 
@@ -16,11 +17,17 @@ return Application::configure(basePath: dirname(__DIR__))
             // served by the legacy front controller (no session middleware,
             // so that controller owns the response).
             Route::fallback(function () {
+                // The legacy controller ends the process, which would end a test run.
+                abort_if(app()->runningUnitTests(), 404);
                 require base_path('src/front.php');
                 exit;
             });
         },
     )
+    ->withMiddleware(function (Middleware $middleware): void {
+        // Laravel's default web (sessions, CSRF) and api groups.
+        $middleware->redirectGuestsTo('/login');
+    })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->dontFlash([
             'current_password', 'password', 'password_confirmation', 'token',

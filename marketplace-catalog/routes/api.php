@@ -5,6 +5,12 @@
 */
 
 use Illuminate\Support\Facades\Route;
+use Marketplace\Http\Controllers\Api\CatalogController;
+use Marketplace\Http\Controllers\Api\LicenseController;
 
 Route::prefix('marketplace/v1')->middleware('throttle:60,1')->name('api.')->group(function () {
+    Route::get('catalog', CatalogController::class)->name('catalog');
+    Route::post('licenses/activate', [LicenseController::class, 'activate'])->name('licenses.activate');
+    Route::post('licenses/check', [LicenseController::class, 'check'])->name('licenses.check');
+    Route::post('licenses/deactivate', [LicenseController::class, 'deactivate'])->name('licenses.deactivate');
 });
