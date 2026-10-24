@@ -28,6 +28,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Laravel's default web (sessions, CSRF) and api groups.
         $middleware->redirectGuestsTo('/login');
+        // Stripe signs its webhook instead of sending a CSRF token.
+        $middleware->validateCsrfTokens(except: ['stripe/webhook']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->dontFlash([
