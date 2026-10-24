@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
             });
         },
     )
+    ->withCommands([__DIR__.'/../app/Console/Commands'])
     ->withMiddleware(function (Middleware $middleware): void {
         // Laravel's default web (sessions, CSRF) and api groups.
         $middleware->redirectGuestsTo('/login');
