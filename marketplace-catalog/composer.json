@@ -5,19 +5,33 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "paragonie/sodium_compat": "^2.1",
         "composer/semver": "^3.4",
         "laravel/framework": "^13.0"
     },
+    "require-dev": {
+        "fakerphp/faker": "^1.23",
+        "mockery/mockery": "^1.6",
+        "phpunit/phpunit": "^12.0"
+    },
     "autoload": {
         "psr-4": {
-            "Marketplace\\": "app/"
+            "Marketplace\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
         }
     },
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
-        ]
+        ],
+        "test": "@php vendor/bin/phpunit"
     },
     "config": {
         "optimize-autoloader": true,

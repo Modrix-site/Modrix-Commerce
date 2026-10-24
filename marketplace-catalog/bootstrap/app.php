@@ -8,15 +8,17 @@ use Illuminate\Support\Facades\Route;
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
         then: function () {
-            // The catalog UI and license API live in the front controller.
-            // This route has no session middleware so that controller owns the response.
-            Route::any('{path?}', function () {
+            // Until the cut-over, anything without a Laravel route is still
+            // served by the legacy front controller (no session middleware,
+            // so that controller owns the response).
+            Route::fallback(function () {
                 require base_path('src/front.php');
                 exit;
-            })->where('path', '.*');
+            });
         },
     )
     ->withExceptions(function (Exceptions $exceptions): void {

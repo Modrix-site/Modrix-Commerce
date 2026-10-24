@@ -1,3 +1,5 @@
 <?php
 
-return [];
+return [
+    Marketplace\Providers\AppServiceProvider::class,
+];
