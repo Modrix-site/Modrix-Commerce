@@ -208,6 +208,11 @@ class LegacyImporter
                 'repository_url' => ($listing['repository_url'] ?? '') ?: null,
                 'thumbnail_path' => $this->copyUpload((string) ($listing['thumbnail'] ?? '')),
                 'features' => array_values(array_filter((array) ($listing['features'] ?? []), 'is_string')),
+                'author' => Str::limit((string) ($listing['author'] ?? ''), 120, ''),
+                'license_name' => Str::limit((string) (($listing['license'] ?? '') ?: 'MIT'), 64, ''),
+                'version' => Str::limit((string) (($listing['version'] ?? '') ?: '1.0.0'), 32, ''),
+                'platform_version' => Str::limit((string) (($listing['platform_version'] ?? '') ?: '^1.0'), 64, ''),
+                'changelog' => ($listing['changelog'] ?? '') ?: null,
             ]);
 
             if (! empty($listing['categories'])) {

@@ -59,7 +59,7 @@ class StripeTest extends TestCase
     {
         Http::fake(['api.stripe.com/v1/checkout/sessions' => Http::response(['id' => 'cs_test_9', 'url' => 'https://checkout.stripe.com/c/pay/cs_test_9'])]);
 
-        $this->actingAs($this->buyer)->post('/checkout/acme-theme')->assertRedirect('https://checkout.stripe.com/c/pay/cs_test_9');
+        $this->actingAs($this->buyer)->post('/buy/acme-theme')->assertRedirect('https://checkout.stripe.com/c/pay/cs_test_9');
 
         $order = Order::query()->firstOrFail();
         $this->assertSame('pending', $order->status);
@@ -73,7 +73,7 @@ class StripeTest extends TestCase
     {
         $this->package->update(['is_free' => true, 'price' => '0']);
 
-        $this->actingAs($this->buyer)->post('/checkout/acme-theme')->assertNotFound();
+        $this->actingAs($this->buyer)->post('/buy/acme-theme')->assertNotFound();
     }
 
     public function test_a_bad_or_old_signature_changes_nothing()

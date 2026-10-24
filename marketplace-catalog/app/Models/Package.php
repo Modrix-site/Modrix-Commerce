@@ -31,6 +31,7 @@ class Package extends Model
     protected $fillable = [
         'identifier', 'type', 'slug', 'name', 'summary', 'description', 'publisher_id', 'price', 'currency',
         'is_free', 'status', 'featured', 'demo_url', 'repository_url', 'thumbnail_path', 'features',
+        'author', 'license_name', 'version', 'platform_version', 'changelog',
     ];
 
     protected function casts(): array

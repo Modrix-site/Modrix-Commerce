@@ -78,6 +78,7 @@ class LegacyImportTest extends TestCase
             'extension' => 'acme/reviews', 'slug' => 'acme-reviews', 'name' => 'Acme Reviews', 'summary' => 'Ratings', 'type' => 'module',
             'categories' => ['marketing'], 'features' => ['Stars'], 'featured' => true, 'demo_url' => 'https://demo.example.com',
             'thumbnail' => '/uploads/thumb.png', 'status' => 'published', 'repository_url' => '',
+            'author' => 'Acme Labs', 'license' => 'GPL-3.0', 'version' => '1.1.0', 'platform_version' => '^1.2',
         ]), '2026-10-03T00:00:00+00:00']);
         $db->exec("INSERT INTO categories VALUES ('marketing', 'Marketing & sales', '', 'module', 4, 1)");
         $db->exec("INSERT INTO licenses VALUES (9, 5, 'acme/reviews', 'Acme Reviews', 'acme-reviews', 'paid', 'LEG-KEY-0001', 'active', '2026-10-04T00:00:00+00:00')");
@@ -103,6 +104,7 @@ class LegacyImportTest extends TestCase
         $package = Package::query()->where('identifier', 'acme/reviews')->firstOrFail();
         $this->assertSame('Acme Reviews', $package->name);
         $this->assertSame('29.00', $package->price);
+        $this->assertSame(['Acme Labs', 'GPL-3.0', '1.1.0', '^1.2'], [$package->author, $package->license_name, $package->version, $package->platform_version]);
         $this->assertFalse($package->is_free);
         $this->assertTrue($package->featured);
         $this->assertSame(['marketing'], $package->categories->pluck('slug')->all());

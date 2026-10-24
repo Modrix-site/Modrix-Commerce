@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Foundation\Console\ServeCommand;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -27,7 +28,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withCommands([__DIR__.'/../app/Console/Commands'])
     ->withMiddleware(function (Middleware $middleware): void {
         // Laravel's default web (sessions, CSRF) and api groups.
-        $middleware->redirectGuestsTo('/login');
+        // Guests go to the sign-in page and come back to where they were.
+        $middleware->redirectGuestsTo(fn (Request $request) => $request->is('admin', 'admin/*')
+            ? '/admin/login'
+            : '/account/login?next='.rawurlencode($request->getRequestUri()));
+        $middleware->redirectUsersTo(fn (Request $request) => $request->is('admin/*') ? '/admin' : '/account');
         // Stripe signs its webhook instead of sending a CSRF token.
         $middleware->validateCsrfTokens(except: ['stripe/webhook']);
     })

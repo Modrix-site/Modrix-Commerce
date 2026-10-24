@@ -33,7 +33,7 @@ class CheckoutController
         ]);
 
         try {
-            $url = $stripe->createSession($order, route('checkout.success', ['order' => $order->id]), url('/p/'.$package->slug));
+            $url = $stripe->createSession($order, route('checkout.success', ['order' => $order->id]), url('/item/'.$package->slug));
         } catch (RuntimeException $e) {
             report($e);
             $order->forceFill(['status' => 'expired'])->save();

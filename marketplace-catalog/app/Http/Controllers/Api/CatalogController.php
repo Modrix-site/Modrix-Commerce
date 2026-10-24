@@ -43,7 +43,7 @@ class CatalogController
             'thumbnail_url' => $package->thumbnail_path ? url('/media/'.$package->slug) : null,
             'demo_url' => $package->demo_url,
             'repository_url' => $package->repository_url,
-            'url' => url('/p/'.$package->slug),
+            'url' => url('/item/'.$package->slug),
             'latest_version' => $package->latestRelease()?->version,
             // Free packages download directly; paid ones through a license.
             'download_url' => $package->is_free ? url('/download/'.$package->slug) : null,

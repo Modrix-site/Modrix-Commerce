@@ -19,7 +19,7 @@
             <p><code style="font-size: 18px;">{{ $order->license->key }}</code></p>
             <p>Enter it in your store under Admin → Marketplace. It is also in your <a href="{{ url('/account') }}">account</a> and your email.</p>
         @elseif ($order->status === 'expired')
-            <p>This checkout expired. <a href="{{ url('/p/'.$order->package->slug) }}">Try again</a>.</p>
+            <p>This checkout expired. <a href="{{ url('/item/'.$order->package->slug) }}">Try again</a>.</p>
         @else
             <p>This page refreshes by itself. It usually takes a few seconds.</p>
         @endif
