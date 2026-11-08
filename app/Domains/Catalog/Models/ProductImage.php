@@ -2,6 +2,7 @@
 
 namespace App\Domains\Catalog\Models;
 
+use App\Core\Media\ProductImageUrls;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,6 +32,6 @@ class ProductImage extends Model
 
     public function url(): string
     {
-        return Storage::disk($this->disk)->url($this->path);
+        return app(ProductImageUrls::class)->resolve($this) ?? Storage::disk($this->disk)->url($this->path);
     }
 }

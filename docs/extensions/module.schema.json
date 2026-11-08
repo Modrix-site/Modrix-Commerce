@@ -119,6 +119,7 @@
                     "checkout.validators",
                     "pricing.steps",
                     "catalog.sale_prices",
+                    "catalog.image_urls",
                     "payment.gateway",
                     "shipping.rates",
                     "tax.provider",

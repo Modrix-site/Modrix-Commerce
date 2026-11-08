@@ -1,0 +1,123 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/image-studio",
+    "display_name": "Image Studio",
+    "description": "Turns product images into transparent-background WebP variants served on the storefront, leaving the originals untouched.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "image",
+    "accent": "#0ea5e9",
+    "platform_version": "^0.4 || ^1.0",
+    "author": "Modrix Commerce",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\ImageStudio\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\ImageStudio\\ImageStudioServiceProvider",
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "database.migrations",
+        "settings",
+        "permissions",
+        "events.listen",
+        "console.commands",
+        "catalog.image_urls"
+    ],
+    "permissions": [
+        {
+            "name": "image_studio.manage",
+            "label": "Manage product image processing",
+            "group": "Catalog"
+        }
+    ],
+    "assets": {
+        "pages": "resources/js/pages"
+    },
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php"
+    },
+    "settings": [
+        {
+            "key": "enabled",
+            "type": "boolean",
+            "label": "Enable Image Studio",
+            "help": "Serve processed variants on the storefront and process new uploads. Existing variants are kept when off.",
+            "default": true
+        },
+        {
+            "key": "process_on_upload",
+            "type": "boolean",
+            "label": "Process new product images automatically",
+            "default": true
+        },
+        {
+            "key": "remove_background",
+            "type": "boolean",
+            "label": "Remove the background",
+            "help": "Off converts to WebP only.",
+            "default": true
+        },
+        {
+            "key": "driver",
+            "type": "select",
+            "label": "Background removal engine",
+            "default": "gd-edge",
+            "options": [
+                {
+                    "value": "gd-edge",
+                    "label": "Built-in (plain backgrounds)"
+                },
+                {
+                    "value": "removebg",
+                    "label": "remove.bg API"
+                }
+            ]
+        },
+        {
+            "key": "tolerance",
+            "type": "integer",
+            "label": "Background colour tolerance",
+            "help": "Higher removes more of colours close to the background.",
+            "default": 18,
+            "min": 1,
+            "max": 100,
+            "visible_when": {
+                "driver": "gd-edge"
+            }
+        },
+        {
+            "key": "feather_px",
+            "type": "integer",
+            "label": "Edge softening (pixels)",
+            "default": 1,
+            "min": 0,
+            "max": 4,
+            "visible_when": {
+                "driver": "gd-edge"
+            }
+        },
+        {
+            "key": "webp_quality",
+            "type": "integer",
+            "label": "WebP quality",
+            "default": 82,
+            "min": 40,
+            "max": 100
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "image-studio",
+            "title": "Image Studio",
+            "route": "index",
+            "icon": "image",
+            "group": "Catalog",
+            "permission": "image_studio.manage",
+            "order": 230
+        }
+    ]
+}

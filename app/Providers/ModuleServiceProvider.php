@@ -29,7 +29,8 @@ class ModuleServiceProvider extends ServiceProvider
     {
         $this->app->singleton(ModuleRepository::class);
         $this->app->singleton(ModuleLoader::class);
-        $this->app->singleton(ModuleSettingsSchema::class);
+        // Scoped: it holds the scoped SettingsRepository, which queue workers reload per job.
+        $this->app->scoped(ModuleSettingsSchema::class);
 
         // Extension points modules register into from their providers.
         $this->app->singleton(StorefrontSlots::class);

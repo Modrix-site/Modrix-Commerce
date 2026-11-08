@@ -35,6 +35,7 @@ final class Manifest
         'checkout.validators' => 'Can block checkout',
         'pricing.steps' => 'Changes cart pricing',
         'catalog.sale_prices' => 'Sets temporary sale prices on products',
+        'catalog.image_urls' => 'Replaces product image files on the storefront',
         'payment.gateway' => 'Adds a payment method',
         'shipping.rates' => 'Adds shipping rates',
         'tax.provider' => 'Replaces tax calculation',

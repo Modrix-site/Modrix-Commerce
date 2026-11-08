@@ -77,6 +77,7 @@ Every path must be relative and stay inside the package. Absolute paths, `..` se
 | `checkout.validators` | Can block checkout                    |
 | `pricing.steps`       | Changes cart pricing                  |
 | `catalog.sale_prices` | Sets temporary sale prices            |
+| `catalog.image_urls`  | Replaces product image files          |
 | `payment.gateway`     | Adds a payment method                 |
 | `shipping.rates`      | Adds shipping rates                   |
 | `tax.provider`        | Replaces tax calculation              |
@@ -178,6 +179,7 @@ Typed contracts for critical operations; events for reactions. **Stable** means 
 | Tax                                 | bind `App\Domains\Tax\Contracts\TaxRateProvider`                                                                                                                                                                                                    | Stable            |
 | Pricing                             | implement `App\Domains\Checkout\Pricing\PricingStep`, `CartPricer::addStep()`                                                                                                                                                                       | Stable            |
 | Sale prices                         | implement `App\Domains\Catalog\Pricing\SalePriceProvider`, `SalePrices::addProvider()`; lowest offer wins, cart charges it                                                                                                                          | Stable            |
+| Product image URLs                  | `App\Core\Media\ProductImageUrls::register($module, fn (ProductImage $i): ?string => ...)`; first non-null URL replaces the image on the storefront, `forget($module)` removes it                                                                                                                           | Stable            |
 | Checkout validation                 | implement `App\Domains\Checkout\Contracts\CheckoutValidator`, `CheckoutValidators::register()`. Fails closed.                                                                                                                                       | Stable            |
 | Search                              | bind `App\Domains\Catalog\Contracts\SearchProvider`; may only narrow the visible-product query                                                                                                                                                      | Stable            |
 | Storefront slots                    | `App\Core\Extensions\StorefrontSlots::register()`: `home.after_featured`, `catalog.after_products`, `product.after_details`, `cart.after_totals`, `checkout.payment_method`, `checkout.after_summary`, `order.confirmation`, `storefront.footer`, `storefront.overlay` | Stable            |
