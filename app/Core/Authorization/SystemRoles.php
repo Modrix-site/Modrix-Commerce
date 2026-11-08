@@ -31,7 +31,8 @@ final class SystemRoles
             'administrator' => [
                 'display_name' => 'Administrator',
                 'description' => 'Manages the store, staff, settings and extensions.',
-                'permissions' => $allPermissions,
+                // Replacing the platform's own code is for owners only.
+                'permissions' => array_values(array_diff($allPermissions, ['system.update'])),
             ],
             'store-manager' => [
                 'display_name' => 'Store manager',

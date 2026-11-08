@@ -5,6 +5,10 @@ namespace App\Core\Operations;
 use App\Core\Installation\RequirementChecker;
 use App\Core\Marketplace\Client\StoreLicense;
 use App\Core\Marketplace\Client\StoreLicenses;
+use App\Core\Platform;
+use App\Core\Settings\SettingsRepository;
+use App\Core\Updates\CoreReleaseVerifier;
+use App\Core\Updates\CoreUpdateRun;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -50,6 +54,7 @@ final class HealthCheck
             'backups' => fn () => $this->backupAge(),
             'webhooks' => fn () => $this->webhooks(),
             'advisories' => fn () => $this->advisories(),
+            'core_updates' => fn () => $this->coreUpdates(),
             'configuration' => fn () => $this->configuration(),
         ] as $key => $check) {
             try {
@@ -240,6 +245,44 @@ final class HealthCheck
         return $affected === []
             ? ['Extension advisories', self::OK, 'No installed marketplace package is affected']
             : ['Extension advisories', self::WARNING, 'Security advisory for '.implode(', ', $affected).': update under Admin → Extensions → Marketplace'];
+    }
+
+    /** @return array{string, string, string} */
+    private function coreUpdates(): array
+    {
+        if (Schema::hasTable('core_update_runs')) {
+            $completed = (int) CoreUpdateRun::query()->where('status', CoreUpdateRun::COMPLETED)->max('id');
+            $broken = CoreUpdateRun::query()->where('needs_attention', true)->where('id', '>', $completed)->latest('id')->first();
+
+            if ($broken !== null) {
+                return ['Core updates', self::FAILED, "Core update #{$broken->id} failed and could not be fully undone: recover from code backup "
+                    .($broken->code_backup_path ?? '-').' and database backup '.($broken->backup_name ?? '-').' (docs/operations/core-updates.md, Manual recovery)'];
+            }
+
+            $stuck = CoreUpdateRun::query()->whereNotIn('status', CoreUpdateRun::TERMINAL)
+                ->where('updated_at', '<', now()->subMinutes(CoreUpdateRun::STUCK_MINUTES))->latest('id')->first();
+
+            if ($stuck !== null) {
+                $minutes = (int) $stuck->updated_at->diffInMinutes(now());
+
+                return ['Core updates', self::WARNING, "Core update #{$stuck->id} has been {$stuck->status} for {$minutes} minutes without progress: see Stuck runs in docs/operations/core-updates.md"];
+            }
+
+            if (CoreUpdateRun::query()->latest('id')->value('status') === CoreUpdateRun::ROLLED_BACK) {
+                return ['Core updates', self::WARNING, 'The last core update was rolled back'];
+            }
+        }
+
+        $settings = app(SettingsRepository::class);
+        $available = $settings->get('core_update.available');
+
+        if (is_array($available) && is_string($available['version'] ?? null) && app(CoreReleaseVerifier::class)->newer($available['version'], Platform::VERSION)) {
+            return ['Core updates', self::WARNING, "Modrix Commerce {$available['version']} is available"];
+        }
+
+        $checked = $settings->get('core_update.checked_at');
+
+        return ['Core updates', self::OK, is_string($checked) ? 'Up to date (checked '.$checked.')' : 'Up to date (not checked yet)'];
     }
 
     /** @return array{string, string, string} */

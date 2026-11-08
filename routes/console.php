@@ -25,3 +25,6 @@ Schedule::command('ecomodular:marketplace:check')->daily()->withoutOverlapping()
 
 // Old read notifications (staff and customer bells).
 Schedule::command('notifications:prune')->daily()->withoutOverlapping();
+
+// Looks for a newer signed platform release on Modrix Cloud.
+Schedule::command('ecomodular:core-check')->daily()->withoutOverlapping()->onOneServer();

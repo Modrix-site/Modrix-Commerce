@@ -7,6 +7,7 @@ use App\Core\Audit\AuditLogger;
 use App\Core\Authorization\CorePermissions;
 use App\Core\Authorization\PermissionRegistry;
 use App\Core\Settings\SettingsRepository;
+use App\Core\Updates\CoreUpdateLauncher;
 use App\Models\User;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Lockout;
@@ -33,6 +34,8 @@ class CoreServiceProvider extends ServiceProvider
         });
 
         $this->app->scoped(SettingsRepository::class);
+
+        $this->app->singleton(CoreUpdateLauncher::class);
 
         $this->app->singleton(AdminNavigation::class, function () {
             $navigation = new AdminNavigation;

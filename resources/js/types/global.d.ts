@@ -12,6 +12,7 @@ declare module '@inertiajs/core' {
     export interface InertiaConfig {
         sharedPageProps: {
             name: string;
+            platform: { version: string };
             auth: Auth;
             adminNavigation: AdminNavGroup[];
             /** Present on storefront pages only. */

@@ -6,6 +6,7 @@ use App\Core\Platform;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -61,6 +62,7 @@ final class Backups
 
         try {
             $dump = $work.'/database.'.$this->dumpExtension();
+            $schema = $this->schemaListing();
             $this->dumpDatabase($dump);
 
             $entries = ['database/'.basename($dump) => $dump];
@@ -83,6 +85,8 @@ final class Backups
                 'created_at' => now()->utc()->toIso8601String(),
                 'database_driver' => DB::connection()->getDriverName(),
                 'includes_files' => $withFiles,
+                // What the dump contains, so a database-only restore can drop objects created later.
+                ...($schema === null ? [] : ['database_tables' => $schema['tables'], 'database_views' => $schema['views']]),
                 'files' => array_map(fn (string $file) => hash_file('sha256', $file), $entries),
             ];
 
@@ -211,6 +215,113 @@ final class Backups
         } finally {
             File::deleteDirectory($work);
         }
+    }
+
+    /**
+     * Replace only the database with the archive's dump: no file sets, no
+     * migrations (core update rollbacks, where the old code is back in place).
+     */
+    public function restoreDatabase(string $path): void
+    {
+        $work = storage_path('framework/restore-'.Str::random(12));
+
+        try {
+            $manifest = $this->extract($path, $work);
+
+            if (($manifest['database_driver'] ?? null) !== DB::connection()->getDriverName()) {
+                throw new RuntimeException('The backup was made with the '.($manifest['database_driver'] ?? '?').' driver; this store uses '.DB::connection()->getDriverName().'.');
+            }
+
+            $dump = glob($work.'/database/database.*')[0] ?? null;
+            if ($dump === null) {
+                throw new RuntimeException('The archive contains no database dump.');
+            }
+
+            $this->importDatabase($dump);
+
+            // SQLite imports replace the whole database. MySQL/PostgreSQL dumps are
+            // replayed into the existing one and only recreate their own objects, so
+            // tables created after the backup (e.g. by a failed update's migrations)
+            // would survive while the migrations table forgets them. Dropped after the
+            // import, so a failed import never leaves an emptied database behind.
+            if (DB::connection()->getDriverName() !== 'sqlite') {
+                $this->dropObjectsNotIn($manifest);
+            }
+        } finally {
+            File::deleteDirectory($work);
+        }
+    }
+
+    /**
+     * Drops the tables and views that are not listed in a backup manifest
+     * (`database_tables` / `database_views`). Does nothing for manifests
+     * that predate the listing.
+     *
+     * @param  array<string, mixed>  $manifest
+     * @return list<string> the dropped objects (schema-qualified)
+     */
+    public function dropObjectsNotIn(array $manifest): array
+    {
+        if (! is_array($manifest['database_tables'] ?? null) || ! is_array($manifest['database_views'] ?? null)) {
+            logger()->warning('Backup manifest has no table listing; objects created after the backup were not dropped.');
+
+            return [];
+        }
+
+        $current = $this->schemaListing() ?? throw new RuntimeException('The database schema could not be listed.');
+        $views = array_values(array_diff($current['views'], $manifest['database_views']));
+        $tables = array_values(array_diff($current['tables'], $manifest['database_tables']));
+
+        if ($views === [] && $tables === []) {
+            return [];
+        }
+
+        $connection = DB::connection();
+        $cascade = $connection->getDriverName() === 'pgsql' ? ' cascade' : '';
+        Schema::disableForeignKeyConstraints();
+
+        try {
+            foreach ($views as $view) {
+                $connection->statement('drop view if exists '.$this->quoteIdentifier($view).$cascade);
+            }
+            foreach ($tables as $table) {
+                $connection->statement('drop table if exists '.$this->quoteIdentifier($table).$cascade);
+            }
+        } finally {
+            Schema::enableForeignKeyConstraints();
+        }
+
+        return [...$views, ...$tables];
+    }
+
+    /**
+     * Schema-qualified tables and views of the connection's own schemas
+     * (not other databases on the same server), or null when unavailable.
+     *
+     * @return array{tables: list<string>, views: list<string>}|null
+     */
+    private function schemaListing(): ?array
+    {
+        try {
+            $schemas = Schema::getCurrentSchemaListing();
+
+            return [
+                'tables' => array_values(array_column(Schema::getTables($schemas), 'schema_qualified_name')),
+                'views' => array_values(array_column(Schema::getViews($schemas), 'schema_qualified_name')),
+            ];
+        } catch (\Throwable $e) {
+            report($e);
+
+            return null;
+        }
+    }
+
+    /** Quotes `schema.name` as-is (names from the catalog already carry any table prefix). */
+    private function quoteIdentifier(string $name): string
+    {
+        $quote = in_array(DB::connection()->getDriverName(), ['mysql', 'mariadb'], true) ? '`' : '"';
+
+        return implode('.', array_map(fn (string $part) => $quote.str_replace($quote, $quote.$quote, $part).$quote, explode('.', $name, 2)));
     }
 
     private function password(): ?string

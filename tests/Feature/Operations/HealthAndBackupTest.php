@@ -91,7 +91,7 @@ class HealthAndBackupTest extends TestCase
     public function test_status_page_lists_health_checks()
     {
         $this->actingAs($this->owner())->get(route('admin.system.status'))->assertOk()
-            ->assertInertia(fn (Assert $page) => $page->has('health', 11)->where('health.0.key', 'database'));
+            ->assertInertia(fn (Assert $page) => $page->has('health', 12)->where('health.0.key', 'database'));
     }
 
     public function test_backup_and_restore_round_trip()

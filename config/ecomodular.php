@@ -108,6 +108,21 @@ return [
         ],
     ],
 
+    // Core platform updates: `paths` are the only paths an update replaces.
+    'updates' => [
+        'root' => env('ECOMODULAR_UPDATES_ROOT', base_path()),
+        // PHP CLI for the install process; empty = this PHP, or the CLI found next to PHP-FPM.
+        'php' => env('ECOMODULAR_UPDATES_PHP'),
+        'paths' => [
+            'app', 'bootstrap/app.php', 'bootstrap/providers.php', 'config',
+            // Never `database` as a whole: it holds the live SQLite file.
+            'database/migrations', 'database/seeders', 'database/factories', 'lang',
+            'public/build', 'public/index.php', 'resources', 'routes', 'vendor', 'artisan',
+            'composer.json', 'composer.lock', 'package.json',
+        ],
+        'max_mb' => 300,
+    ],
+
     'themes' => [
         'path' => env('ECOMODULAR_THEMES_PATH', base_path('themes')),
         'default' => env('ECOMODULAR_DEFAULT_THEME', 'ecomodular/essence'),

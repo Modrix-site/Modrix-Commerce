@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Core\Admin\AdminNavigation;
 use App\Core\Localization\InterfaceTranslations;
+use App\Core\Platform;
 use App\Core\Settings\GeneralSettings;
 use App\Core\Settings\StoreSettings;
 use App\Domains\Notifications\NotificationVisibility;
@@ -46,6 +47,7 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'platform' => ['version' => Platform::VERSION],
             // Settings → General → Branding (admin logo, icon, favicon, sign-in page).
             'branding' => fn () => rescue(fn () => app(GeneralSettings::class)->brandingProps(app(StoreSettings::class)->name()), null, false),
             'auth' => [

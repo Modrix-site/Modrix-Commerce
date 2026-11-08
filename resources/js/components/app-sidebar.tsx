@@ -26,7 +26,7 @@ import { show as accountShow } from '@/routes/account';
 import type { AdminNavGroup } from '@/types';
 
 export function AppSidebar() {
-    const { adminNavigation } = usePage().props;
+    const { adminNavigation, platform } = usePage().props;
     const { isCurrentUrl, isCurrentOrParentUrl } = useCurrentUrl();
     const { toggleSidebar, state, setOpenMobile } = useSidebar();
 
@@ -141,6 +141,7 @@ export function AppSidebar() {
 
             <SidebarFooter className="border-t border-sidebar-border p-3">
                 <NavUser />
+                <p className="px-2 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">v{platform.version}</p>
             </SidebarFooter>
         </Sidebar>
     );

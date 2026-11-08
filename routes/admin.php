@@ -47,6 +47,7 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\ShippingMethodController;
 use App\Http\Controllers\Admin\StoreSettingsController;
 use App\Http\Controllers\Admin\StripeSettingsController;
+use App\Http\Controllers\Admin\CoreUpdateController;
 use App\Http\Controllers\Admin\SystemStatusController;
 use App\Http\Controllers\Admin\TaxController;
 use App\Http\Controllers\Admin\ThemeController;
@@ -354,3 +355,6 @@ Route::middleware('throttle:30,1')->group(function () {
 
 Route::get('audit-logs', AuditLogController::class)->middleware('can:audit.view')->name('audit-logs.index');
 Route::get('system', SystemStatusController::class)->middleware('can:system.view')->name('system.status');
+Route::post('system/core-update/check', [CoreUpdateController::class, 'check'])->middleware(['can:system.view', 'throttle:10,1'])->name('system.core-update.check');
+Route::post('system/core-update', [CoreUpdateController::class, 'start'])->middleware(['can:system.update', 'password.confirm', 'throttle:10,1'])->name('system.core-update.start');
+Route::get('system/core-update/{run}', [CoreUpdateController::class, 'show'])->middleware('can:system.view')->whereNumber('run')->name('system.core-update.show');
