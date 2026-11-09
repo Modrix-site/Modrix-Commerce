@@ -13,6 +13,26 @@ use Laravel\Fortify\Features;
 
 abstract class TestCase extends BaseTestCase
 {
+    private ?string $installLockFile = null;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Tests share storage/ with the dev server: never create the real install lock.
+        $this->installLockFile = sys_get_temp_dir().'/ecomodular-installed-'.bin2hex(random_bytes(6));
+        config(['ecomodular.installer.lock_file' => $this->installLockFile]);
+    }
+
+    protected function tearDown(): void
+    {
+        if ($this->installLockFile !== null && is_file($this->installLockFile)) {
+            @unlink($this->installLockFile);
+        }
+
+        parent::tearDown();
+    }
+
     protected function skipUnlessFortifyHas(string $feature, ?string $message = null): void
     {
         if (! Features::enabled($feature)) {

@@ -8,6 +8,7 @@ use App\Http\Middleware\EnsureUserIsStaff;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\LogoutDisabledUsers;
+use App\Http\Middleware\PrepareInstallEnvironment;
 use App\Http\Middleware\RequireInstallation;
 use App\Http\Middleware\RequireStaffTwoFactor;
 use App\Http\Middleware\SecurityHeaders;
@@ -50,6 +51,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
+        // Before installation: .env/APP_KEY and file sessions, ahead of cookies and sessions.
+        $middleware->web(prepend: [PrepareInstallEnvironment::class]);
+
         $middleware->web(append: [
             SetStorefrontLocale::class,
             LogoutDisabledUsers::class,
@@ -80,7 +84,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Never write credentials or tokens from request input into logs.
         $exceptions->dontFlash([
-            'current_password', 'password', 'password_confirmation', 'token', 'setup_token',
+            'current_password', 'password', 'password_confirmation', 'token', 'setup_token', 'db_password', 'database_password',
             'api_key',
         ]);
     })->create();

@@ -56,6 +56,11 @@ return [
         'web' => (bool) env('ECOMODULAR_WEB_INSTALLER', true),
         // Hours a web installer setup token stays valid (0: no expiry).
         'token_hours' => (int) env('ECOMODULAR_INSTALLER_TOKEN_HOURS', 24),
+        // detect: auto-deploy when the database is configured and migrated, else the full
+        // manual wizard (database step). auto / manual force one of them.
+        'mode' => env('ECOMODULAR_INSTALL_MODE', 'detect'),
+        // Written on install so "installed" is known without a database.
+        'lock_file' => env('ECOMODULAR_INSTALL_LOCK') ?: storage_path('app/installed'),
     ],
 
     'health' => [

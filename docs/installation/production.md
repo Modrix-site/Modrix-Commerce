@@ -47,6 +47,7 @@ php artisan key:generate
 | `ECOMODULAR_CSP`                                    | `enforce`                        | `report-only` while testing a custom CDN or integration                      |
 | `ECOMODULAR_CSP_IMG_SOURCES`                        | empty                            | Extra image origins, comma-separated                                         |
 | `ECOMODULAR_WEB_INSTALLER`                          | `false` after installing via CLI | The `/install` pages return 404                                              |
+| `ECOMODULAR_INSTALL_MODE`                           | `detect`                         | `auto` or `manual` force the installer mode; see [deployment modes](deployment-modes.md) |
 | `ECOMODULAR_HEALTH_TOKEN`                           | long random string               | Unlocks per-check details on `/health`                                       |
 | `ECOMODULAR_BACKUP_PASSWORD`                        | long random string               | AES-256 for backup archives; store it in the secret manager too              |
 | `ECOMODULAR_BACKUP_SCHEDULE`, `_KEEP`               | `02:30`, `7`                     | Daily backup time and retention                                              |
@@ -67,7 +68,7 @@ php artisan optimize               # config, route, event and view caches
 
 `ecomodular:install` checks requirements, creates the owner and locks the installer; it cannot run twice. Run it interactively instead to be prompted. Never pass the password as an argument, because it would end up in shell history.
 
-The web installer (`/install`) is an alternative for hosts without shell access. It requires the one-time token from `storage/app/private/installer.token`, which expires after 24 hours. Set `ECOMODULAR_WEB_INSTALLER=false` when you install from the CLI.
+The web installer (`/install`) is an alternative for hosts without shell access; [deployment modes](deployment-modes.md) covers Git auto-deploy platforms and cPanel-style shared hosting. It requires the one-time token from `storage/app/private/installer.token`, which expires after 24 hours. Set `ECOMODULAR_WEB_INSTALLER=false` when you install from the CLI.
 
 ## 4. File ownership and permissions
 

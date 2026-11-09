@@ -26,6 +26,20 @@ final class RequirementChecker
      */
     public function check(): array
     {
+        $checks = $this->serverChecks();
+        $checks[] = $this->databaseCheck();
+        $checks[] = $this->migrationCheck();
+
+        return $checks;
+    }
+
+    /**
+     * PHP version, extensions and writable directories.
+     *
+     * @return list<array{key: string, label: string, passed: bool, detail: string}>
+     */
+    private function serverChecks(): array
+    {
         $checks = [
             [
                 'key' => 'php',
@@ -53,8 +67,41 @@ final class RequirementChecker
             ];
         }
 
-        $checks[] = $this->databaseCheck();
-        $checks[] = $this->migrationCheck();
+        return $checks;
+    }
+
+    /**
+     * Checks before the manual installer's database step: the server checks
+     * plus what the step itself needs.
+     *
+     * @return list<array{key: string, label: string, passed: bool, detail: string}>
+     */
+    public function manualInstallChecks(bool $servedFromPublic): array
+    {
+        $checks = $this->serverChecks();
+
+        $checks[] = [
+            'key' => 'ext.pdo_mysql',
+            'label' => 'PHP extension: pdo_mysql',
+            'passed' => extension_loaded('pdo_mysql'),
+            'detail' => extension_loaded('pdo_mysql') ? 'Loaded' : 'Missing. Enable it in your hosting control panel.',
+        ];
+
+        $env = app()->environmentFilePath();
+        $envWritable = is_file($env) ? is_writable($env) : is_writable(dirname($env));
+        $checks[] = [
+            'key' => 'writable.env',
+            'label' => 'Writable file: .env',
+            'passed' => $envWritable,
+            'detail' => $envWritable ? 'Writable' : 'Not writable by the web server user',
+        ];
+
+        $checks[] = [
+            'key' => 'docroot',
+            'label' => 'Document root is the public/ folder',
+            'passed' => $servedFromPublic,
+            'detail' => $servedFromPublic ? 'OK' : 'The site is served from the project folder. Point the document root at public/.',
+        ];
 
         return $checks;
     }

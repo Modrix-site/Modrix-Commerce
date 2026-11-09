@@ -69,6 +69,17 @@ export type RequirementCheck = {
     detail: string;
 };
 
+export type InstallMode = 'auto' | 'manual';
+
+export type InstallStep = 'requirements' | 'database' | 'owner';
+
+export type InstallProof = 'session' | 'database_password' | 'setup_token';
+
+export type ConnectionTestResult = {
+    ok: boolean;
+    message: string;
+};
+
 export type CurrencyOption = {
     code: string;
     name: string;

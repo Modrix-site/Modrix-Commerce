@@ -1,244 +1,193 @@
-import { Form, Head } from '@inertiajs/react';
-import InstallController from '@/actions/App/Http/Controllers/Install/InstallController';
-import { ChecksList } from '@/components/admin/checks-list';
-import { FormField, NativeSelect } from '@/components/admin/form-field';
-import PasswordInput from '@/components/password-input';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import type { CurrencyOption, RequirementCheck } from '@/types';
+import { Head } from "@inertiajs/react";
+import { ChecksList } from "@/components/admin/checks-list";
+import { DatabaseStep } from "@/components/install/database-step";
+import { OwnerStep } from "@/components/install/owner-step";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
+    ConnectionTestResult,
+    CurrencyOption,
+    InstallMode,
+    InstallProof,
+    InstallStep,
+    RequirementCheck,
+} from "@/types";
 
 type Props = {
+    mode: InstallMode;
+    step: InstallStep;
     checks: RequirementCheck[];
     ready: boolean;
+    databaseProblem: "not_configured" | "unreachable" | "not_migrated" | null;
+    servedFromPublic: boolean;
+    proof: InstallProof;
+    connectionTest: ConnectionTestResult | null;
+    storageLinked: boolean | null;
     currencies: CurrencyOption[];
     timezones: string[];
     defaultTimezone: string;
     tokenLocation: string;
 };
 
-export default function Install({
-    checks,
-    ready,
-    currencies,
-    timezones,
-    defaultTimezone,
-    tokenLocation,
-}: Props) {
+const PROBLEMS: Record<NonNullable<Props["databaseProblem"]>, string> = {
+    not_configured: "No database is configured. Set the DB_* variables.",
+    unreachable: "The configured database cannot be reached.",
+    not_migrated:
+        "Migrations have not run. Add php artisan migrate --force to your deploy script.",
+};
+
+function StepIndicator({
+    mode,
+    step,
+}: {
+    mode: InstallMode;
+    step: InstallStep;
+}) {
+    const steps: { key: InstallStep; label: string }[] =
+        mode === "manual"
+            ? [
+                  { key: "requirements", label: "Requirements" },
+                  { key: "database", label: "Database" },
+                  { key: "owner", label: "Owner" },
+              ]
+            : [
+                  { key: "requirements", label: "Requirements" },
+                  { key: "owner", label: "Owner" },
+              ];
+    const current = steps.findIndex((s) => s.key === step);
+
+    return (
+        <ol className="flex flex-wrap items-center gap-2 text-sm">
+            {steps.map((s, index) => (
+                <li
+                    key={s.key}
+                    aria-current={index === current ? "step" : undefined}
+                    className={
+                        index === current
+                            ? "font-medium text-foreground"
+                            : index < current
+                              ? "text-muted-foreground line-through"
+                              : "text-muted-foreground"
+                    }
+                >
+                    {index + 1}. {s.label}
+                    {index < steps.length - 1 && (
+                        <span
+                            aria-hidden
+                            className="ms-2 text-muted-foreground"
+                        >
+                            →
+                        </span>
+                    )}
+                </li>
+            ))}
+        </ol>
+    );
+}
+
+export default function Install(props: Props) {
+    const { mode, step, checks, ready, databaseProblem, servedFromPublic } =
+        props;
+
     return (
         <>
             <Head title="Install" />
             <main className="mx-auto grid w-full max-w-3xl gap-6 px-4 py-10">
-                <header className="space-y-1">
+                <header className="space-y-2">
                     <h1 className="text-2xl font-semibold tracking-tight">
                         Install EcoModular
                     </h1>
                     <p className="text-sm text-muted-foreground">
-                        Verify the server, then create the owner account. You
-                        can also install from the command line with{' '}
+                        {mode === "auto"
+                            ? "Your hosting platform provides the database. Create the owner account to finish."
+                            : "Check the server, connect your database, then create the owner account."}{" "}
+                        You can also install from the command line with{" "}
                         <code className="rounded bg-muted px-1">
                             php artisan ecomodular:install
                         </code>
                         .
                     </p>
+                    <StepIndicator mode={mode} step={step} />
                 </header>
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>1. Server requirements</CardTitle>
+                        <CardTitle>Server requirements</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <ChecksList checks={checks} />
                     </CardContent>
                 </Card>
 
-                {!ready ? (
+                {mode === "manual" && !servedFromPublic && (
                     <Alert variant="destructive">
-                        <AlertTitle>Installation blocked</AlertTitle>
+                        <AlertTitle>Wrong document root</AlertTitle>
                         <AlertDescription>
-                            Fix the failing requirements above and reload this
-                            page. Database credentials are configured in the{' '}
-                            <code>.env</code> file, never from the browser.
+                            This site is served from the project folder. Point
+                            your domain's document root at the public/ folder in
+                            your control panel, then reload.
                         </AlertDescription>
                     </Alert>
-                ) : (
-                    <Form
-                        {...InstallController.store.form()}
-                        className="grid gap-6"
-                        resetOnError={['password', 'password_confirmation']}
-                    >
-                        {({ processing, errors }) => (
-                            <>
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>2. Setup token</CardTitle>
-                                        <CardDescription>
-                                            To prove you control this server,
-                                            paste the token from{' '}
-                                            <code className="rounded bg-muted px-1">
-                                                {tokenLocation}
-                                            </code>{' '}
-                                            or run{' '}
-                                            <code className="rounded bg-muted px-1">
-                                                php artisan
-                                                ecomodular:installer-token
-                                            </code>
-                                            .
-                                        </CardDescription>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <FormField
-                                            id="setup_token"
-                                            label="Setup token"
-                                            error={errors.setup_token}
-                                        >
-                                            <Input
-                                                id="setup_token"
-                                                name="setup_token"
-                                                autoComplete="off"
-                                                required
-                                            />
-                                        </FormField>
-                                    </CardContent>
-                                </Card>
-
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>3. Store</CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="grid gap-4 sm:grid-cols-3">
-                                        <FormField
-                                            id="store_name"
-                                            label="Store name"
-                                            error={errors.store_name}
-                                        >
-                                            <Input
-                                                id="store_name"
-                                                name="store_name"
-                                                required
-                                            />
-                                        </FormField>
-                                        <FormField
-                                            id="default_currency"
-                                            label="Currency"
-                                            error={errors.default_currency}
-                                        >
-                                            <NativeSelect
-                                                id="default_currency"
-                                                name="default_currency"
-                                                defaultValue="USD"
-                                                required
-                                            >
-                                                {currencies.map((c) => (
-                                                    <option
-                                                        key={c.code}
-                                                        value={c.code}
-                                                    >
-                                                        {c.code} — {c.name}
-                                                    </option>
-                                                ))}
-                                            </NativeSelect>
-                                        </FormField>
-                                        <FormField
-                                            id="timezone"
-                                            label="Timezone"
-                                            error={errors.timezone}
-                                        >
-                                            <NativeSelect
-                                                id="timezone"
-                                                name="timezone"
-                                                defaultValue={defaultTimezone}
-                                                required
-                                            >
-                                                {timezones.map((tz) => (
-                                                    <option key={tz} value={tz}>
-                                                        {tz}
-                                                    </option>
-                                                ))}
-                                            </NativeSelect>
-                                        </FormField>
-                                    </CardContent>
-                                </Card>
-
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>4. Owner account</CardTitle>
-                                        <CardDescription>
-                                            The owner has full access, including
-                                            granting the owner role. Enable
-                                            two-factor authentication after
-                                            signing in.
-                                        </CardDescription>
-                                    </CardHeader>
-                                    <CardContent className="grid gap-4 sm:grid-cols-2">
-                                        <FormField
-                                            id="name"
-                                            label="Full name"
-                                            error={errors.name}
-                                        >
-                                            <Input
-                                                id="name"
-                                                name="name"
-                                                autoComplete="name"
-                                                required
-                                            />
-                                        </FormField>
-                                        <FormField
-                                            id="email"
-                                            label="Email address"
-                                            error={errors.email}
-                                        >
-                                            <Input
-                                                id="email"
-                                                name="email"
-                                                type="email"
-                                                autoComplete="username"
-                                                required
-                                            />
-                                        </FormField>
-                                        <FormField
-                                            id="password"
-                                            label="Password"
-                                            error={errors.password}
-                                        >
-                                            <PasswordInput
-                                                id="password"
-                                                name="password"
-                                                autoComplete="new-password"
-                                                required
-                                            />
-                                        </FormField>
-                                        <FormField
-                                            id="password_confirmation"
-                                            label="Confirm password"
-                                            error={errors.password_confirmation}
-                                        >
-                                            <PasswordInput
-                                                id="password_confirmation"
-                                                name="password_confirmation"
-                                                autoComplete="new-password"
-                                                required
-                                            />
-                                        </FormField>
-                                    </CardContent>
-                                </Card>
-
-                                <div>
-                                    <Button type="submit" disabled={processing}>
-                                        Install
-                                    </Button>
-                                </div>
-                            </>
-                        )}
-                    </Form>
                 )}
+
+                {mode === "auto" && databaseProblem && (
+                    <Alert variant="destructive">
+                        <AlertTitle>Database not ready</AlertTitle>
+                        <AlertDescription>
+                            {PROBLEMS[databaseProblem]}
+                        </AlertDescription>
+                    </Alert>
+                )}
+
+                {props.storageLinked === false && (
+                    <Alert>
+                        <AlertTitle>Media link not created</AlertTitle>
+                        <AlertDescription>
+                            This host does not allow symbolic links, so
+                            public/storage could not be created. Create it in
+                            your control panel or ask your host; uploaded images
+                            will not display until it exists.
+                        </AlertDescription>
+                    </Alert>
+                )}
+
+                {step === "requirements" &&
+                    mode === "manual" &&
+                    servedFromPublic && (
+                        <Alert variant="destructive">
+                            <AlertTitle>Installation blocked</AlertTitle>
+                            <AlertDescription>
+                                Fix the failing requirements above and reload
+                                this page.
+                            </AlertDescription>
+                        </Alert>
+                    )}
+
+                {step === "database" && (
+                    <DatabaseStep
+                        tokenLocation={props.tokenLocation}
+                        connectionTest={props.connectionTest}
+                    />
+                )}
+
+                {step === "owner" &&
+                    (ready ? (
+                        <OwnerStep
+                            proof={props.proof}
+                            tokenLocation={props.tokenLocation}
+                            currencies={props.currencies}
+                            timezones={props.timezones}
+                            defaultTimezone={props.defaultTimezone}
+                        />
+                    ) : (
+                        <Alert variant="destructive">
+                            <AlertTitle>Installation blocked</AlertTitle>
+                            <AlertDescription>
+                                Fix the failing requirements above and reload
+                                this page.
+                            </AlertDescription>
+                        </Alert>
+                    ))}
             </main>
         </>
     );
