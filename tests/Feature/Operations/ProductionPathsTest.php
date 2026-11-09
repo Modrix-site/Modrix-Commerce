@@ -55,6 +55,8 @@ class ProductionPathsTest extends TestCase
                 'ECOMODULAR_BACKUP_FILES_ROOT' => $this->dir.'/root',
                 'ECOMODULAR_BACKUP_PASSWORD' => 'drill-password-123',
                 'ECOMODULAR_OWNER_PASSWORD' => 'Drill-Owner-Password-1!',
+                // The drill store's own install lock, not the checkout's storage/app/installed.
+                'ECOMODULAR_INSTALL_LOCK' => $this->dir.'/installed',
             ])
             ->timeout(180)
             ->run([PHP_BINARY, 'artisan', ...$arguments]);
