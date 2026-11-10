@@ -10,6 +10,7 @@ use App\Domains\Catalog\Models\Category;
 use App\Domains\Catalog\Models\Product;
 use App\Domains\Catalog\Models\ProductAttributeValue;
 use App\Domains\Catalog\Models\ProductImage;
+use App\Domains\Catalog\Models\ProductTag;
 use App\Domains\Catalog\Models\ProductVariant;
 use App\Domains\Catalog\Pricing\SalePrices;
 use App\Domains\Pricing\Money;
@@ -61,6 +62,10 @@ final class StorefrontCatalog
 
         if (filled($filters['brand_id'] ?? null)) {
             $query->where('products.brand_id', (int) $filters['brand_id']);
+        }
+        if (is_string($filters['tag'] ?? null) && ProductTag::normalise($filters['tag']) !== '') {
+            // Exact (normalised) match: % and _ in a tag are literal.
+            $query->whereHas('tags', fn ($t) => $t->where('tag', ProductTag::normalise($filters['tag'])));
         }
         if (filled($filters['min_price'] ?? null) || filled($filters['max_price'] ?? null)) {
             $query->whereHas('variants', fn ($variant) => $variant->where('is_active', true)->whereHas('prices', function ($prices) use ($currency, $filters) {
@@ -142,6 +147,61 @@ final class StorefrontCatalog
         app(SalePrices::class)->preload($products->pluck('id'));
 
         return array_values(array_map(fn (Product $p) => $this->card($p, $currency), $products->all()));
+    }
+
+    /**
+     * Tags on visible products, with how many visible products carry each:
+     * the most used first, or in the given order when $only names tags.
+     * Tags with no visible products are left out.
+     *
+     * @param  list<string>|null  $only  normalised tags to keep, in display order
+     * @return list<array{name: string, label: string, slug: string, url: string, count: int}>
+     */
+    public function tags(int $limit = 50, ?array $only = null): array
+    {
+        if ($only === []) {
+            return [];
+        }
+
+        $rows = ProductTag::query()
+            ->whereIn('product_tags.product_id', Product::query()->visible()->select('products.id'))
+            ->when($only !== null, fn ($q) => $q->whereIn('product_tags.tag', $only))
+            ->groupBy('product_tags.tag')
+            ->selectRaw('product_tags.tag as tag, count(*) as uses')
+            ->orderByDesc('uses')
+            ->orderBy('product_tags.tag')
+            ->limit($only === null ? max(1, min(200, $limit)) : count($only))
+            ->toBase()
+            ->get()
+            ->mapWithKeys(fn (object $row) => [(string) $row->tag => (int) $row->uses]);
+
+        $order = $only ?? $rows->keys()->all();
+        $tags = [];
+
+        foreach ($order as $tag) {
+            if ($rows->has($tag) && count($tags) < $limit) {
+                $tags[] = self::tag($tag, $rows[$tag]);
+            }
+        }
+
+        return $tags;
+    }
+
+    /**
+     * How a tag is shown to themes: the stored (lowercase) tag, a title-cased
+     * label, a slug for keys and anchors, and the tag-filtered catalog URL.
+     *
+     * @return array{name: string, label: string, slug: string, url: string, count: int}
+     */
+    public static function tag(string $tag, int $count = 0): array
+    {
+        return [
+            'name' => $tag,
+            'label' => mb_convert_case($tag, MB_CASE_TITLE, 'UTF-8'),
+            'slug' => \Illuminate\Support\Str::slug($tag) ?: md5($tag),
+            'url' => '/search?'.http_build_query(['tag' => $tag], '', '&', PHP_QUERY_RFC3986),
+            'count' => $count,
+        ];
     }
 
     public function findVisible(string $slug): ?Product

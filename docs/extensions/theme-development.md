@@ -302,7 +302,7 @@ groups/footer.json           footer section group
 - **`presets`:** what **Add section** offers. A preset may set settings and starting blocks.
 - **Setting types:**
     - `header` is a label only.
-    - Value types are `text`, `textarea`, `richtext` (plain paragraphs), `number`, `range` (`min`, `max`, `step`), `checkbox`, `select` and `radio` (`options: [{value, label}]`), `color`, `image`, `url`, `collection` and `product`.
+    - Value types are `text`, `textarea`, `richtext` (plain paragraphs), `number`, `range` (`min`, `max`, `step`), `checkbox`, `select` and `radio` (`options: [{value, label}]`), `color`, `image`, `url`, `collection`, `product` and `tags` (`limit`, `products`, `fallback: "popular"`).
     - `info` adds help text under a control.
     - Values are validated by type and never evaluated.
 
@@ -358,6 +358,7 @@ Values arrive resolved for display:
 - **`url`:** a link, or `""` when it points to a page that no longer exists.
 - **`collection`:** `{handle, title, url, image_url, products}`, with up to `products` product cards. An empty value uses `fallback` (`latest` or `featured`).
 - **`product`:** a product card, or `null`.
+- **`tags`:** a list of `{name, label, slug, url, count, products}` for the chosen product tags, in order, at most `limit` (default 8). Tags with no visible products are left out. `url` is the tag-filtered catalog (`/search?tag=…`), `count` the number of visible products and `products` up to `products` cards (default 0). An empty value with `fallback: "popular"` uses the store's most-used tags.
 - **Text:** translated into the shopper's language.
 
 `page` holds the page's own props:

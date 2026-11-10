@@ -6,6 +6,32 @@
             "id": "heading",
             "label": "Heading",
             "default": "Search trending"
+        },
+        {
+            "type": "select",
+            "id": "tab_source",
+            "label": "Tabs show",
+            "options": [
+                {
+                    "value": "tags",
+                    "label": "Product tags"
+                },
+                {
+                    "value": "collections",
+                    "label": "Collection tab blocks"
+                }
+            ],
+            "default": "tags",
+            "info": "Each tag tab shows that tag's products. If the store has no tags yet, the collection tab blocks are shown."
+        },
+        {
+            "type": "tags",
+            "id": "tab_tags",
+            "label": "Tab tags",
+            "limit": 8,
+            "products": 16,
+            "fallback": "popular",
+            "info": "Leave empty to show the most-used tags."
         }
     ],
     "blocks": [
@@ -80,6 +106,8 @@
         }
     ],
     "enabled_on": {
-        "templates": ["*"]
+        "templates": [
+            "*"
+        ]
     }
 }

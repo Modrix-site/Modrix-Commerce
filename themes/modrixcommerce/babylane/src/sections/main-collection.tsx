@@ -95,6 +95,7 @@ function Catalog({ section, page }: Props) {
                         </span>
                     ))}
                     {query && <span> / Search: {query}</span>}
+                    {page.tag && <span> / {page.tag.label}</span>}
                 </div>
             </nav>
             <div className="bl-frame bl-catalog">
@@ -271,7 +272,7 @@ function Catalog({ section, page }: Props) {
                 </aside>
                 <div>
                     <h1>
-                        {query || page.breadcrumbs.length
+                        {query || page.tag || page.breadcrumbs.length
                             ? title
                             : str(s.heading) || title}
                     </h1>

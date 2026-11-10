@@ -15,7 +15,7 @@ import {
     blockAttributes,
     type ThemeSectionProps,
 } from '@/components/storefront/theme-sections';
-import { str, collection } from '../components';
+import { str, collection, tagIcon, tagList } from '../components';
 const icons = {
     bath: Bath,
     baby: Baby,
@@ -29,8 +29,31 @@ const icons = {
 };
 export default function Trends({ section }: ThemeSectionProps) {
     const [active, setActive] = useState(0);
-    const selected = section.blocks[active] ?? section.blocks[0];
-    const c = collection(selected?.settings.collection);
+    // Product tags by default; the collection blocks when chosen, or while
+    // the store has no tagged products yet.
+    const tags =
+        str(section.settings.tab_source) === 'collections'
+            ? []
+            : tagList(section.settings.tab_tags);
+    const tabs =
+        tags.length > 0
+            ? tags.map((tag) => ({
+                  key: tag.slug,
+                  label: tag.label,
+                  icon: tagIcon(tag.name),
+                  products: tag.products,
+                  url: tag.url,
+                  attributes: {},
+              }))
+            : section.blocks.map((b) => ({
+                  key: b.id,
+                  label: str(b.settings.label),
+                  icon: str(b.settings.icon),
+                  products: collection(b.settings.collection)?.products ?? [],
+                  url: '',
+                  attributes: blockAttributes(b),
+              }));
+    const selected = tabs[active] ?? tabs[0];
     return (
         <section className="bl-frame bl-section bl-trends">
             <h2>{str(section.settings.heading)}</h2>
@@ -39,26 +62,25 @@ export default function Trends({ section }: ThemeSectionProps) {
                     className="bl-category-tabs"
                     aria-label="Trending collections"
                 >
-                    {section.blocks.map((b, i) => {
+                    {tabs.map((tab, i) => {
                         const Icon =
-                            icons[str(b.settings.icon) as keyof typeof icons] ??
-                            Baby;
+                            icons[tab.icon as keyof typeof icons] ?? Baby;
                         return (
                             <button
-                                key={b.id}
+                                key={tab.key}
                                 type="button"
                                 aria-pressed={i === active}
                                 onClick={() => setActive(i)}
-                                {...blockAttributes(b)}
+                                {...tab.attributes}
                             >
                                 <Icon size={24} strokeWidth={1.3} />
-                                {str(b.settings.label)}
+                                {tab.label}
                             </button>
                         );
                     })}
                 </div>
                 <div className="bl-trending-grid">
-                    {(c?.products ?? []).slice(0, 16).map((p) => (
+                    {(selected?.products ?? []).slice(0, 16).map((p) => (
                         <Link key={p.id} href={'/p/' + p.slug}>
                             {p.image && (
                                 <img src={p.image.url} alt="" loading="lazy" />
@@ -67,6 +89,11 @@ export default function Trends({ section }: ThemeSectionProps) {
                         </Link>
                     ))}
                 </div>
+                {selected?.url && (
+                    <Link className="bl-trends-all" href={selected.url}>
+                        View all {selected.label}
+                    </Link>
+                )}
             </div>
         </section>
     );

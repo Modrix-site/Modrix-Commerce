@@ -16,6 +16,14 @@ import type { Paginated, ProductCard } from '@/types';
 import { ExtensionSlot } from '@/components/extensions/extension-slot';
 import type { SlotItem } from '@/components/extensions/extension-slot';
 
+export type StoreTagSummary = {
+    name: string;
+    label: string;
+    slug: string;
+    url: string;
+    count: number;
+};
+
 export type ListingProps = {
     slots?: SlotItem[];
     title: string;
@@ -32,8 +40,11 @@ export type ListingProps = {
     products: Paginated<ProductCard>;
     sort: string;
     query: string | null;
+    /** The tag filtered by on "/search?tag=…", or null. */
+    tag?: StoreTagSummary | null;
     filters?: {
         brand_id?: number | string;
+        tag?: string;
         in_stock?: boolean | number | string;
         on_sale?: boolean | number | string;
         min_price?: string;
@@ -41,6 +52,8 @@ export type ListingProps = {
         options?: number[];
     };
     filterBrands?: { id: number; name: string }[];
+    /** Tags on visible products, most used first. */
+    filterTags?: StoreTagSummary[];
     filterOptions?: {
         id: number;
         name: string;

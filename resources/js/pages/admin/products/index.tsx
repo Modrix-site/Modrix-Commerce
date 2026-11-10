@@ -49,6 +49,7 @@ type ProductRow = {
     price_from: MoneyValue | null;
     stock: number | null;
     image: string | null;
+    tags: string[];
 };
 
 type Props = {
@@ -66,6 +67,7 @@ type Props = {
     categories: CategoryOption[];
     brands: { id: number; name: string }[];
     statuses: Option[];
+    tagSuggestions: string[];
     importErrors: string[];
 };
 
@@ -75,6 +77,7 @@ export default function ProductsIndex({
     categories,
     brands,
     statuses,
+    tagSuggestions,
     importErrors,
 }: Props) {
     const can = useCan();
@@ -213,7 +216,13 @@ export default function ProductsIndex({
                             name="tag"
                             defaultValue={filters.tag}
                             placeholder="Exact tag"
+                            list="product-tag-options"
                         />
+                        <datalist id="product-tag-options">
+                            {tagSuggestions.map((t) => (
+                                <option key={t} value={t} />
+                            ))}
+                        </datalist>
                     </div>
                     <label className="flex items-center gap-2 self-end pb-2 text-sm">
                         <input type="hidden" name="featured" value="" />
@@ -335,6 +344,31 @@ export default function ProductsIndex({
                                                 ? `${product.variants_count} variants`
                                                 : product.sku}
                                         </div>
+                                        {product.tags.length > 0 && (
+                                            <ul
+                                                className="mt-1 flex flex-wrap gap-1"
+                                                aria-label="Tags"
+                                            >
+                                                {product.tags.map((t) => (
+                                                    <li key={t}>
+                                                        <Link
+                                                            href={index({
+                                                                query: {
+                                                                    tag: t,
+                                                                },
+                                                            })}
+                                                        >
+                                                            <Badge
+                                                                variant="outline"
+                                                                className="font-normal"
+                                                            >
+                                                                {t}
+                                                            </Badge>
+                                                        </Link>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
                                     </TableCell>
                                     <TableCell className="text-muted-foreground">
                                         {product.brand ?? '—'}

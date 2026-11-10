@@ -33,6 +33,36 @@ export type Collection = {
 };
 export const collection = (v: unknown) =>
     v && typeof v === 'object' && 'products' in v ? (v as Collection) : null;
+/** A product tag resolved by a "tags" section setting. */
+export type StoreTag = {
+    name: string;
+    label: string;
+    slug: string;
+    url: string;
+    count: number;
+    products: ProductCard[];
+};
+export const tagList = (v: unknown): StoreTag[] =>
+    Array.isArray(v)
+        ? v.filter(
+              (t): t is StoreTag =>
+                  !!t && typeof t === 'object' && 'name' in t && 'url' in t,
+          )
+        : [];
+/** An icon key for a tag, guessed from its words (Baby when nothing fits). */
+export const tagIcon = (tag: string) => {
+    const rules: [RegExp, string][] = [
+        [/hot|trend|best|new|star|top/, 'star'],
+        [/bath|hygien|wash|care|clean/, 'bath'],
+        [/sleep|night|bed|dream/, 'moon'],
+        [/apparel|cloth|shirt|wear|dress|wardrobe/, 'shirt'],
+        [/eat|drink|milk|feed|food|meal|bottle/, 'milk'],
+        [/toy|play|game/, 'toy'],
+        [/home|ware|nursery|room|furniture/, 'home'],
+        [/pregnan|mom|mum|mother|parent|love/, 'heart'],
+    ];
+    return rules.find(([re]) => re.test(tag.toLowerCase()))?.[1] ?? 'baby';
+};
 export const columns = (n: unknown, fallback = 6) =>
     ({ '--bl-columns': Number(n) || fallback }) as CSSProperties;
 export type Saved = {

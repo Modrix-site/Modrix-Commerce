@@ -7,13 +7,14 @@ import {
     ToyBrick,
     House,
     Heart,
+    Star,
 } from 'lucide-react';
 import { StoreMenuLink as Link } from '@/components/storefront/store-menu-link';
 import {
     blockAttributes,
     type ThemeSectionProps,
 } from '@/components/storefront/theme-sections';
-import { str } from '../components';
+import { str, tagIcon, tagList } from '../components';
 const icons = {
     bath: Bath,
     baby: Baby,
@@ -23,14 +24,30 @@ const icons = {
     toy: ToyBrick,
     home: House,
     heart: Heart,
+    star: Star,
 };
 export default function Hero({ section }: ThemeSectionProps) {
     const s = section.settings;
+    // Product tags by default; the category blocks when chosen, or while the
+    // store has no tagged products yet.
+    const tags =
+        str(s.sidebar_source) === 'links' ? [] : tagList(s.sidebar_tags);
     return (
         <section className="bl-frame bl-baby-hero">
             <aside className="bl-hero-departments">
                 <nav aria-label="Baby departments">
-                    {section.blocks
+                    {tags.map((tag) => {
+                        const Icon =
+                            icons[tagIcon(tag.name) as keyof typeof icons] ??
+                            Baby;
+                        return (
+                            <Link key={tag.slug} href={tag.url}>
+                                <Icon size={16} />
+                                {tag.label}
+                            </Link>
+                        );
+                    })}
+                    {tags.length === 0 && section.blocks
                         .filter((b) => b.type === 'category')
                         .map((b) => {
                             const Icon =

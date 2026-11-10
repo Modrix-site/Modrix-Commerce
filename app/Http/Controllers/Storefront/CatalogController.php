@@ -10,6 +10,7 @@ use App\Core\Themes\ThemeResolver;
 use App\Domains\Catalog\Models\Brand;
 use App\Domains\Catalog\Models\Category;
 use App\Domains\Catalog\Models\ProductAttribute;
+use App\Domains\Catalog\Models\ProductTag;
 use App\Domains\Catalog\StorefrontCatalog;
 use App\Http\Controllers\Controller;
 use App\Http\Presenters\HomeSectionsPresenter;
@@ -89,11 +90,19 @@ class CatalogController extends Controller
         $data = $request->validate(['q' => ['nullable', 'string', 'max:120']]);
         $query = trim((string) ($data['q'] ?? ''));
         $sort = $this->sort($request);
+        $tag = ProductTag::normalise((string) ($this->filters($request)['tag'] ?? ''));
+        // "/search?tag=sleeping" is the tag page themes link to.
+        $title = match (true) {
+            $query !== '' => st('Search results for “:query”', ['query' => $query]),
+            $tag !== '' => StorefrontCatalog::tag($tag)['label'],
+            default => st('All products'),
+        };
 
         return Inertia::render('storefront/listing', [
-            'title' => $query === '' ? st('All products') : st('Search results for “:query”', ['query' => $query]),
+            'title' => $title,
             'description' => null,
-            'meta' => ['title' => $query === '' ? st('All products') : st('Search: :query', ['query' => $query]), 'description' => null],
+            'meta' => ['title' => $query === '' ? $title : st('Search: :query', ['query' => $query]), 'description' => null],
+            'tag' => $tag === '' ? null : StorefrontCatalog::tag($tag),
             'breadcrumbs' => [],
             'subcategories' => [],
             ...$this->filterProps($request),
@@ -127,6 +136,7 @@ class CatalogController extends Controller
     {
         return $request->validate([
             'brand_id' => ['nullable', 'integer', 'exists:brands,id'],
+            'tag' => ['nullable', 'string', 'max:'.ProductTag::MAX_LENGTH],
             'in_stock' => ['nullable', 'boolean'],
             'on_sale' => ['nullable', 'boolean'],
             'min_price' => ['nullable', 'numeric', 'min:0', 'max:999999999'],
@@ -141,6 +151,8 @@ class CatalogController extends Controller
         return [
             'filters' => $this->filters($request),
             'filterBrands' => Brand::query()->orderBy('name')->get(['id', 'name']),
+            // Tags on visible products, most used first (name, label, slug, url, count).
+            'filterTags' => app(StorefrontCatalog::class)->tags(50),
             'filterOptions' => ProductAttribute::query()->with('values')->orderBy('position')->get()->map(fn (ProductAttribute $attribute) => [
                 'id' => $attribute->id, 'name' => $attribute->name,
                 'values' => $attribute->values->map(fn ($value) => ['id' => $value->id, 'value' => $value->value]),

@@ -15,6 +15,7 @@ use App\Core\Themes\ThemeResolver;
 use App\Core\Themes\ThemeSchema;
 use App\Domains\Catalog\Models\Category;
 use App\Domains\Catalog\Models\Product;
+use App\Domains\Catalog\Models\ProductTag;
 use App\Domains\Content\Models\Page;
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -78,6 +79,8 @@ class ThemeEditorController extends Controller
             'defaults' => collect(ThemeTemplates::keys())->mapWithKeys(fn (string $key) => [$key => $this->templates->default($manifest, $key)])->all(),
             'settings' => ['fields' => $fields, 'values' => $design],
             'images' => $themes->imageOptions($manifest),
+            // Suggestions for "tags" settings: tags in use, most used first.
+            'tagSuggestions' => ProductTag::query()->selectRaw('tag, count(*) as uses')->groupBy('tag')->orderByDesc('uses')->orderBy('tag')->limit(200)->pluck('tag')->all(),
             'previews' => $this->previewUrls(),
             'urls' => [
                 'draft' => route('admin.themes.editor.draft', $theme),

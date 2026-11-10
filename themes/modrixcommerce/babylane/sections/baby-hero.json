@@ -2,6 +2,35 @@
     "name": "Baby campaign and categories",
     "settings": [
         {
+            "type": "header",
+            "content": "Sidebar"
+        },
+        {
+            "type": "select",
+            "id": "sidebar_source",
+            "label": "Sidebar list shows",
+            "options": [
+                {
+                    "value": "tags",
+                    "label": "Product tags"
+                },
+                {
+                    "value": "links",
+                    "label": "Sidebar category blocks"
+                }
+            ],
+            "default": "tags",
+            "info": "Product tags link to the tag's products. If the store has no tags yet, the sidebar category blocks are shown."
+        },
+        {
+            "type": "tags",
+            "id": "sidebar_tags",
+            "label": "Sidebar tags",
+            "limit": 10,
+            "fallback": "popular",
+            "info": "Leave empty to show the most-used tags."
+        },
+        {
             "type": "text",
             "id": "eyebrow",
             "label": "Eyebrow",
@@ -208,6 +237,8 @@
         }
     ],
     "enabled_on": {
-        "templates": ["*"]
+        "templates": [
+            "*"
+        ]
     }
 }

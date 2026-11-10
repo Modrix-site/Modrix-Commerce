@@ -21,6 +21,11 @@ use App\Domains\Catalog\StorefrontCatalog;
  *   or a category that no longer exists, uses the setting's "fallback"
  *   ("latest" or "featured") products
  * - product: the product card, or null
+ * - tags: a list of {name, label, slug, url, count, products}, the chosen
+ *   tags in order (tags with no visible products are left out), at most the
+ *   setting's "limit" (default 8); "products" holds up to the setting's
+ *   "products" count per tag (default 0). An empty value with
+ *   "fallback": "popular" uses the store's most-used tags
  * - text / textarea / richtext: translated into the shopper's language
  */
 final class SectionPresenter
@@ -126,6 +131,7 @@ final class SectionPresenter
                 'url' => is_string($value) && $value !== '' ? ($this->links->resolve($value) ?? '') : '',
                 'collection' => $this->collection($definition, is_string($value) ? $value : ''),
                 'product' => $this->product(is_string($value) ? $value : ''),
+                'tags' => $this->tags($definition, $value),
                 'text', 'textarea', 'richtext' => is_string($value) && $value !== '' && ! $this->translations->skipKey($id) ? $this->translations->translate($value) : $value,
                 default => $value,
             };
@@ -165,6 +171,32 @@ final class SectionPresenter
             'image_url' => $category->imageUrl(),
             'products' => $this->products("category:{$category->id}|{$count}|{$currency}", fn () => $count === 0 ? [] : array_values($this->catalog->listing($currency, $category, null, 'newest', $count)->items())),
         ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $definition
+     * @return list<array<string, mixed>>
+     */
+    private function tags(array $definition, mixed $value): array
+    {
+        [$chosen] = SectionSettings::check($definition, $value, fn () => true);
+        $chosen ??= [];
+        $limit = max(1, min(24, (int) ($definition['limit'] ?? 8)));
+        $count = max(0, min(24, (int) ($definition['products'] ?? 0)));
+        $currency = $this->store->currency();
+
+        if ($chosen === [] && ($definition['fallback'] ?? null) !== 'popular') {
+            return [];
+        }
+
+        $tags = $this->catalog->tags($limit, $chosen === [] ? null : $chosen);
+
+        return array_map(fn (array $tag) => [
+            ...$tag,
+            'products' => $this->products("tag:{$tag['name']}|{$count}|{$currency}", fn () => $count === 0 ? [] : array_values(
+                $this->catalog->listing($currency, null, null, 'newest', $count, filters: ['tag' => $tag['name']])->items()
+            )),
+        ], $tags);
     }
 
     private function category(string $handle): ?Category

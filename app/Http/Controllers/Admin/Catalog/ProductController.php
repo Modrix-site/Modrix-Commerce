@@ -56,7 +56,7 @@ class ProductController extends Controller
         $currency = $store->currency();
 
         $products = Product::query()
-            ->with(['variants.prices', 'variants.stocks', 'brand:id,name', 'images' => fn ($q) => $q->limit(1)])
+            ->with(['variants.prices', 'variants.stocks', 'brand:id,name', 'tags', 'images' => fn ($q) => $q->limit(1)])
             ->withCount('variants')
             ->when($filters['search'] ?? null, function ($query, string $search) {
                 $query->where(function ($q) use ($search) {
@@ -92,6 +92,7 @@ class ProductController extends Controller
                     'price_from' => $prices->sortBy(fn ($m) => (string) $m->amount())->first(),
                     'stock' => $tracked->isEmpty() ? null : $tracked->sum(fn (ProductVariant $v) => (int) $v->onHand()),
                     'image' => $image instanceof ProductImage ? $image->url() : null,
+                    'tags' => $product->tags->pluck('tag')->sort()->values()->all(),
                     'updated_at' => $product->updated_at?->toIso8601String(),
                 ];
             });
@@ -111,6 +112,7 @@ class ProductController extends Controller
             'brands' => Brand::query()->orderBy('name')->get(['id', 'name'])->map(fn (Brand $b) => ['id' => $b->id, 'name' => $b->name])->all(),
             'categories' => $this->categoryOptions(),
             'statuses' => $this->statusOptions(),
+            'tagSuggestions' => $this->tagSuggestions(),
             'importErrors' => session(ProductCsvController::SESSION_ERRORS, []),
         ]);
     }
@@ -278,7 +280,7 @@ class ProductController extends Controller
             'weightUnit' => $store->toArray()['weight_unit'],
             'dimensionUnit' => $store->toArray()['dimension_unit'],
             'brands' => Brand::query()->orderBy('name')->get(['id', 'name'])->map(fn (Brand $b) => ['id' => $b->id, 'name' => $b->name])->all(),
-            'tagSuggestions' => ProductTag::query()->selectRaw('tag, count(*) as uses')->groupBy('tag')->orderByDesc('uses')->orderBy('tag')->limit(200)->pluck('tag')->all(),
+            'tagSuggestions' => $this->tagSuggestions(),
             'categories' => $this->categoryOptions(),
             'statuses' => $this->statusOptions(),
             'types' => collect(ProductType::cases())->map(fn (ProductType $t) => ['value' => $t->value, 'label' => $t->label()])->all(),
@@ -305,5 +307,15 @@ class ProductController extends Controller
     private function statusOptions(): array
     {
         return array_map(fn (ProductStatus $s) => ['value' => $s->value, 'label' => $s->label()], ProductStatus::cases());
+    }
+
+    /**
+     * Tags already used in the catalog, most used first.
+     *
+     * @return list<string>
+     */
+    private function tagSuggestions(): array
+    {
+        return ProductTag::query()->selectRaw('tag, count(*) as uses')->groupBy('tag')->orderByDesc('uses')->orderBy('tag')->limit(200)->pluck('tag')->all();
     }
 }

@@ -2694,6 +2694,15 @@
     line-height: 1.4;
     margin-top: 8px;
 }
+.bl-trends-all {
+    display: inline-block;
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--bl-blue, #0068ad);
+}
+.bl-trends-all:hover {
+    text-decoration: underline;
+}
 .bl-department-section {
     display: grid;
     grid-template-columns: 190px minmax(240px, 340px) minmax(0, 1fr);

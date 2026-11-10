@@ -1,6 +1,8 @@
 import { ImagePlus, Trash2, Upload } from 'lucide-react';
+import { usePage } from '@inertiajs/react';
 import { useRef, useState } from 'react';
 import { NativeSelect } from '@/components/admin/form-field';
+import { TagsInput } from '@/components/admin/products/tags-input';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -251,6 +253,19 @@ export function SettingField({
                     {problem}
                 </div>
             );
+        case 'tags':
+            return (
+                <div className="grid gap-1.5">
+                    {label}
+                    <TagSetting id={id} value={value} onChange={onChange} />
+                    {info ?? (
+                        <p className="text-xs text-muted-foreground">
+                            Leave empty to show the most-used tags.
+                        </p>
+                    )}
+                    {problem}
+                </div>
+            );
         case 'collection':
         case 'product':
             return (
@@ -287,6 +302,33 @@ export function SettingField({
                 </div>
             );
     }
+}
+
+function TagSetting({
+    id,
+    value,
+    onChange,
+}: {
+    id: string;
+    value: unknown;
+    onChange: (value: unknown) => void;
+}) {
+    const { tagSuggestions } = usePage<{ tagSuggestions?: string[] }>().props;
+    const tags = Array.isArray(value)
+        ? value.filter((t): t is string => typeof t === 'string')
+        : typeof value === 'string' && value !== ''
+          ? value.split(',').map((t) => t.trim().toLowerCase())
+          : [];
+
+    return (
+        <TagsInput
+            id={id}
+            value={tags}
+            onChange={onChange}
+            suggestions={tagSuggestions ?? []}
+            max={24}
+        />
+    );
 }
 
 function ImageSetting({

@@ -3,6 +3,7 @@
 namespace App\Core\Themes\Sections;
 
 use App\Core\Themes\ThemeSchema;
+use App\Domains\Catalog\Models\ProductTag;
 
 /**
  * Setting types of section and block schemas (sections v2) and how values
@@ -13,7 +14,7 @@ use App\Core\Themes\ThemeSchema;
 final class SectionSettings
 {
     /** Types that hold a value. "header" is a label in the editor only. */
-    public const VALUE_TYPES = ['text', 'textarea', 'richtext', 'number', 'range', 'checkbox', 'select', 'radio', 'color', 'image', 'url', 'collection', 'product'];
+    public const VALUE_TYPES = ['text', 'textarea', 'richtext', 'number', 'range', 'checkbox', 'select', 'radio', 'color', 'image', 'url', 'collection', 'product', 'tags'];
 
     public const TYPES = [...self::VALUE_TYPES, 'header'];
 
@@ -89,6 +90,10 @@ final class SectionSettings
     {
         $type = (string) $setting['type'];
 
+        if ($type === 'tags') {
+            return self::checkTags($value);
+        }
+
         if (in_array($type, ['collection', 'product'], true)) {
             if ($value === null || $value === '') {
                 return ['', null];
@@ -115,6 +120,33 @@ final class SectionSettings
     }
 
     /**
+     * Product tags: a list (or a comma-separated string) of up to 24 tags,
+     * normalised like product tags. Empty means the setting's fallback.
+     *
+     * @return array{0: list<string>|null, 1: string|null}
+     */
+    private static function checkTags(mixed $value): array
+    {
+        if ($value === null || $value === '') {
+            return [[], null];
+        }
+
+        $items = is_string($value) ? explode(',', $value) : $value;
+
+        if (! is_array($items) || array_filter($items, fn ($t) => ! is_string($t)) !== []) {
+            return [null, 'must be a list of tags'];
+        }
+
+        $tags = array_values(array_unique(array_filter(array_map(ProductTag::normalise(...), $items), fn (string $t) => $t !== '')));
+
+        if (count($tags) > 24 || array_filter($tags, fn (string $t) => mb_strlen($t) > ProductTag::MAX_LENGTH) !== []) {
+            return [null, 'must list at most 24 tags of up to '.ProductTag::MAX_LENGTH.' characters'];
+        }
+
+        return [$tags, null];
+    }
+
+    /**
      * The default value of a setting (Shopify's: the schema default, or empty).
      *
      * @param  array<string, mixed>  $setting
@@ -127,6 +159,7 @@ final class SectionSettings
 
         return match ($setting['type']) {
             'checkbox' => false,
+            'tags' => [],
             'number', 'range' => $setting['min'] ?? 0,
             'select', 'radio' => is_array($setting['options'][0] ?? null) ? (string) ($setting['options'][0]['value'] ?? '') : '',
             default => '',

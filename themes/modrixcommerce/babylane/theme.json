@@ -3,7 +3,7 @@
     "name": "modrixcommerce/babylane",
     "display_name": "Baby Lane",
     "description": "Baby-store theme matching the reference layout: blue scalloped header, yellow promotion strip, editable campaign mosaic, trending categories, department product panels, detailed shop filters and a complete customer storefront. All pages use the current live section customizer.",
-    "version": "1.0.3",
+    "version": "1.1.0",
     "type": "theme",
     "theme_type": "storefront",
     "platform_version": "^1.0",
@@ -53,6 +53,11 @@
     },
     "demo_content": "demo.json",
     "changelog": [
+        {
+            "version": "1.1.0",
+            "date": "2026-11-10",
+            "notes": "The home sidebar list and the Search trending tabs now show product tags (the most-used tags, or the tags you choose in the live editor), linking to the tag's products. Switch either back to its blocks in the section settings."
+        },
         {
             "version": "1.0.3",
             "date": "2026-11-08",

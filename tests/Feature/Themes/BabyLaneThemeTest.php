@@ -115,4 +115,55 @@ class BabyLaneThemeTest extends TestCase
             $this->get('/')->assertInertia(fn (Assert $page) => $page->where('storefront.themeSections.header.1.settings.sticky', $sticky));
         }
     }
+
+    public function test_sidebar_and_trending_tabs_use_product_tags(): void
+    {
+        // No tags yet: the sections fall back to their blocks (empty tag lists).
+        $this->get('/')->assertInertia(fn (Assert $page) => $page
+            ->where('storefront.themeSections.main.0.settings.sidebar_source', 'tags')
+            ->where('storefront.themeSections.main.0.settings.sidebar_tags', []));
+
+        foreach ([['Sleep suit', ['sleeping', 'apparels']], ['Night light', ['sleeping']], ['Bib', ['eat & drink']]] as [$name, $tags]) {
+            $product = $this->sellable('20.00', 5, [], ['name' => $name])->product;
+            foreach ($tags as $tag) {
+                $product->tags()->create(['tag' => $tag]);
+            }
+        }
+
+        $theme = app(ThemeRepository::class)->find('modrixcommerce/babylane');
+        $manifest = ThemeManifest::fromArray($theme->manifest);
+        $index = app(ThemeTemplates::class)->saved($manifest, 'template:index');
+        $tabs = collect($index['order'])->search(fn ($id) => $index['sections'][$id]['type'] === 'category-tabs');
+        $this->assertIsInt($tabs);
+
+        // Default: the most-used tags, linking to the tag-filtered catalog.
+        $this->get('/')->assertInertia(fn (Assert $page) => $page
+            ->where('storefront.themeSections.main.0.settings.sidebar_tags.0.name', 'sleeping')
+            ->where('storefront.themeSections.main.0.settings.sidebar_tags.0.label', 'Sleeping')
+            ->where('storefront.themeSections.main.0.settings.sidebar_tags.0.url', '/search?tag=sleeping')
+            ->where('storefront.themeSections.main.0.settings.sidebar_tags.0.count', 2)
+            ->has('storefront.themeSections.main.0.settings.sidebar_tags', 3)
+            ->where("storefront.themeSections.main.{$tabs}.settings.tab_tags.0.name", 'sleeping')
+            ->has("storefront.themeSections.main.{$tabs}.settings.tab_tags.0.products", 2)
+            ->where("storefront.themeSections.main.{$tabs}.settings.tab_tags.0.products.0.name", 'Night light'));
+
+        // The merchant picks tags in the live editor; order is kept.
+        $id = $index['order'][$tabs];
+        $index['sections'][$id]['settings']['tab_tags'] = ['Eat & Drink', 'sleeping', 'nothing tagged'];
+        $index['sections']['hero']['settings']['sidebar_source'] = 'links';
+        $this->actingAs($this->owner())->get(route('admin.themes.editor', $theme))
+            ->assertInertia(fn (Assert $page) => $page->where('tagSuggestions', fn ($tags) => collect($tags)->contains('eat & drink')));
+        $this->putJson(route('admin.themes.editor.save', $theme), ['templates' => ['template:index' => $index]])->assertOk();
+
+        $this->get('/')->assertInertia(fn (Assert $page) => $page
+            ->where('storefront.themeSections.main.0.settings.sidebar_source', 'links')
+            ->where("storefront.themeSections.main.{$tabs}.settings.tab_tags.0.name", 'eat & drink')
+            ->where("storefront.themeSections.main.{$tabs}.settings.tab_tags.0.products.0.name", 'Bib')
+            ->where("storefront.themeSections.main.{$tabs}.settings.tab_tags.1.name", 'sleeping')
+            ->has("storefront.themeSections.main.{$tabs}.settings.tab_tags", 2));
+
+        $this->get('/search?tag=sleeping')->assertInertia(fn (Assert $page) => $page
+            ->has('products.data', 2)
+            ->where('storefront.themeSections.main.0.type', 'main-collection'));
+    }
 }
