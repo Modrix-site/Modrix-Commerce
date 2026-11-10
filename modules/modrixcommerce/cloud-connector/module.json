@@ -18,8 +18,12 @@
         "admin.routes",
         "admin.navigation",
         "console.commands",
-        "scheduled.tasks"
+        "scheduled.tasks",
+        "content_security"
     ],
+    "content_security": {
+        "img-src": ["https://cloud-apps.modrixcommerce.com"]
+    },
     "routes": {
         "admin": "routes/admin.php"
     },

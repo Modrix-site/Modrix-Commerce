@@ -2,6 +2,7 @@
 
 namespace EcoModular\CloudConnector\Http;
 
+use App\Core\Extensions\Models\Extension;
 use App\Core\Extensions\ModuleRepository;
 use App\Core\Marketplace\Client\StoreLicense;
 use App\Core\Marketplace\Client\UpdateHistory;
@@ -39,6 +40,7 @@ class CloudController extends Controller
     public function __construct(
         private readonly CloudClient $client,
         private readonly StoreLicenses $licenses,
+        private readonly ModuleRepository $modules,
     ) {}
 
     public function index(): Response
@@ -54,6 +56,9 @@ class CloudController extends Controller
 
         $local = StoreLicense::query()->orderBy('product_name')->get();
         $licensed = $local->pluck('id', 'extension_name');
+        // Installed means what Admin → Extensions says (ModuleState), not merely "files on disk".
+        $this->modules->sync(request()->user());
+        $this->moduleRecords = $this->modules->all()->keyBy('name')->all();
 
         $route = fn (string $name, mixed $parameters = []) => route("admin.modrixcommerce.cloud-connector.{$name}", $parameters);
 
@@ -274,6 +279,9 @@ class CloudController extends Controller
         return $this->run(fn () => $installer->rollback($entry, $this->actor($request)), 'Previous files restored.');
     }
 
+    /** @var array<string, Extension> module records by name, for the catalog rows */
+    private array $moduleRecords = [];
+
     /**
      * A catalog row with this store's state: installed version, update, licensed here.
      *
@@ -293,14 +301,20 @@ class CloudController extends Controller
             is_scalar($price) => trim((is_string($item['currency'] ?? null) ? $item['currency'].' ' : '').$price),
             default => null,
         };
-        $installed = null;
+        $theme = ($item['type'] ?? null) === 'theme';
+        $onDisk = null;
 
         if (preg_match('/^[a-z0-9-]+\/[a-z0-9-]+$/', $identifier)) {
-            $dir = ($item['type'] ?? null) === 'theme' ? ThemeRepository::packageDir($identifier) : ModuleRepository::packageDir($identifier);
-            $file = $dir.'/'.(($item['type'] ?? null) === 'theme' ? 'theme.json' : 'module.json');
+            $dir = $theme ? ThemeRepository::packageDir($identifier) : ModuleRepository::packageDir($identifier);
+            $file = $dir.'/'.($theme ? 'theme.json' : 'module.json');
             $manifest = is_file($file) ? json_decode((string) file_get_contents($file), true) : null;
-            $installed = is_array($manifest) && is_string($manifest['version'] ?? null) ? $manifest['version'] : null;
+            $onDisk = is_array($manifest) && is_string($manifest['version'] ?? null) ? $manifest['version'] : null;
         }
+
+        // Themes have no install step: files in place are ready to activate in Appearance.
+        // Modules are installed only once Extensions has run their install (Extension::isInstalled()).
+        $record = $theme || $onDisk === null ? null : ($this->moduleRecords[$identifier] ?? null);
+        $installed = $theme ? $onDisk : ($record?->isInstalled() ? $record->version : null);
 
         $latest = is_string($item['latest_version'] ?? null) ? $item['latest_version'] : null;
 
@@ -317,7 +331,14 @@ class CloudController extends Controller
             'url' => $this->safeUrl($item['url'] ?? null),
             'latest_version' => $latest,
             'installed_version' => $installed,
-            'update_available' => $installed !== null && $latest !== null && Comparator::greaterThan($latest, $installed),
+            // Package files are in this store (bundled or uploaded), installed or not.
+            'on_disk' => $onDisk !== null,
+            // Core lifecycle state for modules (null for themes and packages not on disk).
+            'state' => $record?->state->value,
+            'state_label' => $record?->state->label(),
+            'manage_url' => $theme ? route('admin.themes.index') : ($record === null ? null : route('admin.extensions.show', $record)),
+            // A newer release than the files in place; downloading it is Modrix Cloud's job.
+            'update_available' => $onDisk !== null && $latest !== null && Comparator::greaterThan($latest, $onDisk),
             'licensed_here' => isset($licensed[$identifier]),
             // Updating a licensed package uses its license; others update through the account.
             'license_update_url' => isset($licensed[$identifier]) ? route('admin.modrixcommerce.cloud-connector.install', $licensed[$identifier]) : null,

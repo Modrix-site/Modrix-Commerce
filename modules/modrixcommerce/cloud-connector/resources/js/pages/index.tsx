@@ -58,6 +58,10 @@ type CatalogItem = {
     url: string | null;
     latest_version: string | null;
     installed_version: string | null;
+    on_disk: boolean;
+    state: string | null;
+    state_label: string | null;
+    manage_url: string | null;
     update_available: boolean;
     licensed_here: boolean;
     license_update_url: string | null;
@@ -526,16 +530,20 @@ function CatalogCard({
     canInstall: boolean;
 }) {
     const available = p.is_free || p.owned;
+    // Falls back to the placeholder if the image cannot load (offline, or a
+    // development cloud whose host the Content-Security-Policy does not allow).
+    const [thumbnailFailed, setThumbnailFailed] = useState(false);
 
     return (
         <Card className="h-full gap-0 overflow-hidden py-0">
             <div className="aspect-[16/9] bg-muted">
-                {p.thumbnail_url ? (
+                {p.thumbnail_url && !thumbnailFailed ? (
                     <img
                         src={p.thumbnail_url}
-                        alt=""
+                        alt={`${p.name} preview`}
                         className="size-full object-cover"
                         loading="lazy"
+                        onError={() => setThumbnailFailed(true)}
                     />
                 ) : (
                     <span className="flex size-full items-center justify-center text-muted-foreground">
@@ -573,11 +581,19 @@ function CatalogCard({
                     </p>
                 )}
                 <div className="mt-auto flex flex-wrap items-center gap-2 pt-2">
-                    {p.installed_version && (
+                    {p.installed_version ? (
                         <Badge variant="secondary">
                             Installed v{p.installed_version}
+                            {p.state &&
+                                p.state !== 'enabled' &&
+                                ` · ${p.state_label}`}
                             {p.update_available && ' · update available'}
                         </Badge>
+                    ) : (
+                        p.on_disk &&
+                        p.state_label && (
+                            <Badge variant="outline">{p.state_label}</Badge>
+                        )
                     )}
                     {p.update_available &&
                     canInstall &&
@@ -602,13 +618,29 @@ function CatalogCard({
                                 Manage
                             </a>
                         </Button>
-                    ) : p.installed_version ? (
-                        // Already in this store (bundled or uploaded): manage it there, nothing to install.
-                        <Button size="sm" variant="outline" asChild>
+                    ) : p.on_disk ? (
+                        // Files already in this store (bundled or uploaded): install, enable or
+                        // manage it in Extensions/Appearance, nothing to download.
+                        <Button
+                            size="sm"
+                            variant={
+                                p.type === 'theme' || p.state === 'enabled'
+                                    ? 'outline'
+                                    : 'default'
+                            }
+                            asChild
+                        >
                             <Link
-                                href={`${p.type === 'theme' ? urls.appearance : urls.extensions}#${p.type === 'theme' ? 'theme' : 'extension'}-${p.identifier.replaceAll('/', '-')}`}
+                                href={
+                                    p.manage_url ??
+                                    `${p.type === 'theme' ? urls.appearance : urls.extensions}#${p.type === 'theme' ? 'theme' : 'extension'}-${p.identifier.replaceAll('/', '-')}`
+                                }
                             >
-                                Manage
+                                {p.type === 'theme' || p.state === 'enabled'
+                                    ? 'Manage'
+                                    : p.installed_version
+                                      ? 'Enable'
+                                      : 'Install'}
                             </Link>
                         </Button>
                     ) : connected && available && canInstall ? (
