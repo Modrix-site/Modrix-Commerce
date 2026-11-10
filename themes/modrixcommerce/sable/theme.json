@@ -1,0 +1,66 @@
+{
+    "$schema": "../../../docs/extensions/theme.schema.json",
+    "name": "modrixcommerce/sable",
+    "display_name": "Sable Atelier",
+    "description": "Editorial travel theme with reference-proportioned product details, portrait product grids, compact catalog filters and a split collection campaign, all editable in the live section editor.",
+    "version": "1.1.1",
+    "type": "theme",
+    "theme_type": "storefront",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "capabilities": [
+        "custom_fonts",
+        "demo_content",
+        "sections"
+    ],
+    "assets": "assets",
+    "screenshot": "assets/demo-preview.webp",
+    "fonts": [
+        {
+            "family": "Instrument Sans",
+            "file": "assets/instrument-sans.woff2",
+            "weight": "400 700",
+            "style": "normal"
+        }
+    ],
+    "design": {
+        "color.background": "#ffffff",
+        "color.foreground": "#292821",
+        "color.primary": "#292821",
+        "color.primary_foreground": "#ffffff",
+        "color.muted": "#f3f2ef",
+        "color.muted_foreground": "#6b6b76",
+        "color.accent": "#e7e5df",
+        "color.accent_foreground": "#414141",
+        "color.border": "#e4e1da",
+        "font_body": "custom:Instrument Sans",
+        "font_heading": "custom:Instrument Sans",
+        "radius": "0",
+        "density": "compact",
+        "container": "wide",
+        "layout.header": "minimal",
+        "layout.footer": "columns",
+        "layout.product_card": "minimal",
+        "layout.grid_columns": "4",
+        "layout.product_page": "split"
+    },
+    "customizer_file": "settings.json",
+    "frontend": {
+        "stylesheet": "src/style.css",
+        "layout": "src/layout.tsx"
+    },
+    "demo_content": "demo.json",
+    "changelog": [
+        {
+            "version": "1.1.1",
+            "date": "2026-11-05",
+            "notes": "Replaces the raw campaign thumbnail with an optimized storefront screenshot; adds transparent original product cutouts for uniform product panels."
+        },
+        {
+            "version": "1.1.0",
+            "date": "2026-11-05",
+            "notes": "Reference-proportioned product gallery and purchase panel; portrait catalog cards and compact filters; editable split collection campaign; expanded footer and real gift service integration."
+        }
+    ]
+}

@@ -1,0 +1,73 @@
+{
+    "categories": [
+        {
+            "name": "Bags",
+            "slug": "atelier-bags",
+            "description": "Considered companions crafted from durable leather and canvas."
+        },
+        {
+            "name": "Stationery",
+            "slug": "atelier-stationery",
+            "description": "Fine journals, archival notebooks and precision writing instruments."
+        },
+        {
+            "name": "Accessories",
+            "slug": "atelier-accessories",
+            "description": "Minimal dial timepieces and small leather goods designed for everyday intention."
+        }
+    ],
+    "products": [
+        {
+            "name": "Everyday leather satchel",
+            "slug": "atelier-satchel",
+            "sku": "ATELIER-DEMO-1",
+            "price": "480.00",
+            "stock": 15,
+            "short_description": "Handcrafted full-grain leather satchel with adjustable shoulder strap and dedicated compartment.",
+            "description": "Original Atelier demonstration product. Crafted with consideration and timeless minimalism.",
+            "categories": [
+                "atelier-bags"
+            ],
+            "image": "assets/hero.jpg"
+        },
+        {
+            "name": "The writing journal",
+            "slug": "atelier-journal",
+            "sku": "ATELIER-DEMO-2",
+            "price": "65.00",
+            "stock": 25,
+            "short_description": "Hardcover linen-bound archival notebook with 120gsm fountain pen friendly paper.",
+            "description": "Original Atelier demonstration product. Designed to accompany quiet thought and everyday note-taking.",
+            "categories": [
+                "atelier-stationery"
+            ],
+            "image": "assets/journal.jpg"
+        },
+        {
+            "name": "Minimal dial watch",
+            "slug": "atelier-watch",
+            "sku": "ATELIER-DEMO-3",
+            "price": "240.00",
+            "stock": 12,
+            "short_description": "38mm brushed steel case with sapphire crystal and vegetable-tanned leather strap.",
+            "description": "Original Atelier demonstration timepiece. Precision quartz movement with uncluttered indices.",
+            "categories": [
+                "atelier-accessories"
+            ],
+            "image": "assets/watch.jpg"
+        },
+        {
+            "name": "Writing essentials",
+            "slug": "atelier-writing",
+            "sku": "ATELIER-DEMO-4",
+            "price": "90.00",
+            "stock": 18,
+            "short_description": "Curated set of solid brass fountain pen and pigmented archival ink cartridges.",
+            "description": "Original Atelier demonstration writing instrument edit.",
+            "categories": [
+                "atelier-stationery"
+            ],
+            "image": "assets/writing.jpg"
+        }
+    ]
+}

@@ -1,0 +1,56 @@
+{
+    "name": "Product deals",
+    "enabled_on": {
+        "templates": ["*"]
+    },
+    "settings": [
+        {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Today's Best Deals"
+        },
+        {
+            "type": "collection",
+            "id": "collection",
+            "label": "Products from",
+            "info": "Empty: the newest products.",
+            "products": 8,
+            "fallback": "latest"
+        },
+        {
+            "type": "text",
+            "id": "view_all_label",
+            "label": "\"View all\" link label",
+            "default": "View All"
+        },
+        {
+            "type": "header",
+            "content": "Countdown"
+        },
+        {
+            "type": "checkbox",
+            "id": "countdown",
+            "label": "Show the deal countdown",
+            "default": false
+        },
+        {
+            "type": "text",
+            "id": "deals_end",
+            "label": "Countdown ends",
+            "default": "2026-12-31 23:59",
+            "info": "YYYY-MM-DD HH:MM"
+        },
+        {
+            "type": "text",
+            "id": "deals_label",
+            "label": "Countdown label",
+            "default": "Hurry up! Offer ends in:"
+        }
+    ],
+    "presets": [
+        {
+            "name": "Product deals"
+        }
+    ]
+}

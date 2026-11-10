@@ -42,6 +42,8 @@ class StripeSettingsController extends Controller
         $data = $request->validate([
             'enabled' => ['boolean'],
             'label' => ['required', 'string', 'max:120'],
+            'apple_pay' => ['boolean'],
+            'google_pay' => ['boolean'],
             'secret_key' => ['nullable', 'string', 'max:255', 'regex:'.StripeSettings::KEY_PATTERN],
             'webhook_secret' => ['nullable', 'string', 'max:255', 'regex:'.StripeSettings::WEBHOOK_SECRET_PATTERN],
         ], [
@@ -63,10 +65,12 @@ class StripeSettingsController extends Controller
             ]);
         }
 
-        $settings->update($enabled, $data['label'], $newKey, $newWebhookSecret);
+        $settings->update($enabled, $data['label'], $newKey, $newWebhookSecret, $request->boolean('apple_pay'), $request->boolean('google_pay'));
 
         $audit->record('payments.stripe_updated', null, [
             'enabled' => $enabled,
+            'apple_pay' => $settings->applePay(),
+            'google_pay' => $settings->googlePay(),
             'mode' => $settings->mode(),
             'changed' => array_values(array_filter([
                 $newKey !== null ? 'api key' : null,

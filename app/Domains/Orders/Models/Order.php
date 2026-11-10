@@ -35,6 +35,7 @@ use Illuminate\Support\Carbon;
  * @property string $shipping_total
  * @property string $shipping_tax_total
  * @property string $tax_total
+ * @property string $payment_fee_total
  * @property string $grand_total
  * @property string $paid_total
  * @property string $refunded_total
@@ -83,6 +84,7 @@ class Order extends Model
             'shipping_total' => 'decimal:4',
             'shipping_tax_total' => 'decimal:4',
             'tax_total' => 'decimal:4',
+            'payment_fee_total' => 'decimal:4',
             'grand_total' => 'decimal:4',
             'paid_total' => 'decimal:4',
             'refunded_total' => 'decimal:4',

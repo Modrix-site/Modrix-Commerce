@@ -10,15 +10,49 @@ import AuthLayout from '@/layouts/auth-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import StorefrontLayout from '@/layouts/storefront-layout';
 import { isModulePage, modulePagePath, resolveModulePage } from '@/lib/modules';
+import { withThemePage } from '@/lib/theme-runtime';
 
-const appName = import.meta.env.VITE_APP_NAME || 'EcoModular';
+const appName = import.meta.env.VITE_APP_NAME || 'Modrix Commerce';
+
+type TitlePage = {
+    props?: {
+        branding?: { panel_name?: string | null } | null;
+        storefront?: { storeName?: string | null } | null;
+        [key: string]: unknown;
+    };
+};
+
+function storeTitleName(page?: TitlePage): string {
+    const store =
+        page?.props?.branding?.panel_name?.trim() ||
+        page?.props?.storefront?.storeName?.trim() ||
+        '';
+
+    return store !== '' ? store : appName;
+}
+
+function documentTitle(title: string, page?: TitlePage): string {
+    const store = storeTitleName(page);
+    const pageTitle = title.trim();
+
+    if (pageTitle === '') {
+        return store;
+    }
+
+    // Advanced SEO titles already include the store ("Name | Store", "{store} …").
+    if (pageTitle.includes(store)) {
+        return pageTitle;
+    }
+
+    return `${pageTitle} - ${store}`;
+}
 
 const corePages = import.meta.glob<{ default: ComponentType }>(
     './pages/**/*.tsx',
 );
 
 void createInertiaApp({
-    title: (title) => (title ? `${title} - ${appName}` : appName),
+    title: (title, page) => documentTitle(title, page),
     resolve: (name) => {
         if (isModulePage(name)) {
             return resolveModulePage(name).then((module) => module.default);
@@ -30,7 +64,7 @@ void createInertiaApp({
             throw new Error(`Page not found: ${name}`);
         }
 
-        return page().then((module) => module.default);
+        return page().then((module) => withThemePage(name, module.default));
     },
     layout: (pageName) => {
         // Module pages pick their layout from their path inside the module.
@@ -40,6 +74,8 @@ void createInertiaApp({
 
         switch (true) {
             case name.startsWith('install/'):
+            // The theme editor is a full-screen workspace, like Shopify's.
+            case name === 'admin/themes/editor':
                 return null;
             case name.startsWith('storefront/'):
                 return StorefrontLayout;

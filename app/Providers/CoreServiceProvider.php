@@ -6,7 +6,9 @@ use App\Core\Admin\AdminNavigation;
 use App\Core\Audit\AuditLogger;
 use App\Core\Authorization\CorePermissions;
 use App\Core\Authorization\PermissionRegistry;
+use App\Core\Settings\DisplayRateSources;
 use App\Core\Settings\SettingsRepository;
+use App\Core\Storefront\AccountMenu;
 use App\Core\Updates\CoreUpdateLauncher;
 use App\Models\User;
 use Illuminate\Auth\Events\Failed;
@@ -34,8 +36,15 @@ class CoreServiceProvider extends ServiceProvider
         });
 
         $this->app->scoped(SettingsRepository::class);
+        // Storefront texts are looked up many times per page: load them once per request.
+        $this->app->scoped(\App\Core\Localization\InterfaceTranslations::class);
+        // Thin readers over the settings above, used by every product card and translated field.
+        $this->app->scoped(\App\Core\Settings\StoreSettings::class);
+        $this->app->scoped(\App\Core\Localization\Locales::class);
 
         $this->app->singleton(CoreUpdateLauncher::class);
+        $this->app->singleton(AccountMenu::class);
+        $this->app->singleton(DisplayRateSources::class);
 
         $this->app->singleton(AdminNavigation::class, function () {
             $navigation = new AdminNavigation;
@@ -75,11 +84,11 @@ class CoreServiceProvider extends ServiceProvider
         $navigation->add('general-settings', 'General settings', 'admin.settings.general.edit', 'sliders-horizontal', 'Administration', 'settings.manage', 919);
         $navigation->add('settings', 'Store settings', 'admin.settings.store.edit', 'settings', 'Administration', 'settings.manage', 920);
         $navigation->add('languages', 'Languages', 'admin.settings.languages.edit', 'languages', 'Administration', 'settings.manage', 921);
+        $navigation->add('backups', 'Backups', 'admin.settings.backups.index', 'archive', 'Administration', 'backups.manage', 922);
         $navigation->add('appearance', 'Appearance', 'admin.themes.index', 'palette', 'Configuration', 'themes.manage', 790);
         $navigation->add('pages', 'Pages', 'admin.pages.index', 'file-text', 'Configuration', 'themes.manage', 792);
         $navigation->add('navigation', 'Navigation', 'admin.navigation.index', 'list', 'Configuration', 'themes.manage', 791);
         $navigation->add('extensions', 'Extensions', 'admin.extensions.index', 'puzzle', 'Administration', 'extensions.view', 925);
-        $navigation->add('marketplace-client', 'Marketplace', 'admin.marketplace-client.index', 'store', 'Administration', 'extensions.view', 926);
 
         // Server-side marketplace administration exists only on the platform owner's marketplace instance.
         if ((bool) config('ecomodular.marketplace.server.enabled')) {

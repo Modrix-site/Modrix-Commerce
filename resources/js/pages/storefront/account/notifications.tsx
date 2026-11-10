@@ -1,8 +1,13 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
+import { Bell, CheckCheck } from 'lucide-react';
 import AccountNotificationController from '@/actions/App/Http/Controllers/Storefront/AccountNotificationController';
 import { NotificationIcon } from '@/components/notifications/notification-bell';
 import type { NotificationItem } from '@/components/notifications/notification-bell';
-import { AccountNav } from '@/components/storefront/account-nav';
+import {
+    AccountEmpty,
+    AccountLayout,
+    AccountPager,
+} from '@/components/storefront/account-nav';
 import { formatDate } from '@/components/storefront/order-view';
 import { Button } from '@/components/ui/button';
 import { useT } from '@/lib/i18n';
@@ -22,35 +27,35 @@ export default function AccountNotifications({
     return (
         <>
             <Head title={t('Notifications')} />
-            <div className="grid gap-8 md:grid-cols-[12rem_1fr]">
-                <AccountNav />
-                <div className="grid content-start gap-6">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                        <h1 className="text-2xl font-semibold tracking-tight">
-                            {t('Notifications')}
-                        </h1>
-                        {unread && (
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() =>
-                                    router.post(
-                                        AccountNotificationController.markAllRead.url(),
-                                        {},
-                                        { preserveScroll: true },
-                                    )
-                                }
-                            >
-                                {t('Mark all as read')}
-                            </Button>
-                        )}
-                    </div>
+            <AccountLayout
+                title={t('Notifications')}
+                description={t('Updates about your orders, payments and returns.')}
+                actions={
+                    unread && (
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                                router.post(
+                                    AccountNotificationController.markAllRead.url(),
+                                    {},
+                                    { preserveScroll: true },
+                                )
+                            }
+                        >
+                            <CheckCheck aria-hidden />
+                            {t('Mark all as read')}
+                        </Button>
+                    )
+                }
+            >
                     {notifications.data.length === 0 ? (
-                        <p className="text-muted-foreground">
-                            {t('No notifications yet.')}
-                        </p>
+                        <AccountEmpty
+                            icon={Bell}
+                            title={t('No notifications yet.')}
+                        />
                     ) : (
-                        <ul className="grid divide-y rounded-lg border">
+                        <ul className="grid divide-y overflow-hidden rounded-xl border bg-card">
                             {notifications.data.map((raw) => {
                                 const item = translate(raw);
 
@@ -101,26 +106,8 @@ export default function AccountNotifications({
                             })}
                         </ul>
                     )}
-                    {notifications.last_page > 1 && (
-                        <div className="flex gap-2">
-                            {notifications.prev_page_url && (
-                                <Button variant="outline" size="sm" asChild>
-                                    <Link href={notifications.prev_page_url}>
-                                        {t('Previous')}
-                                    </Link>
-                                </Button>
-                            )}
-                            {notifications.next_page_url && (
-                                <Button variant="outline" size="sm" asChild>
-                                    <Link href={notifications.next_page_url}>
-                                        {t('Next')}
-                                    </Link>
-                                </Button>
-                            )}
-                        </div>
-                    )}
-                </div>
-            </div>
+                    <AccountPager page={notifications} />
+            </AccountLayout>
         </>
     );
 }

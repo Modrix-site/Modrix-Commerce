@@ -1,0 +1,88 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/product-addons",
+    "display_name": "Product Addons & Warranties",
+    "description": "Offer customizable extended warranties, extra features, and service add-ons assigned to specific products, categories, or your entire catalog, with automatic cart and checkout pricing.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "shield-check",
+    "accent": "#10b981",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\ProductAddons\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\ProductAddons\\ProductAddonsServiceProvider",
+    "permissions": [
+        {
+            "name": "product_addons.manage",
+            "label": "Manage product addons, warranties, and extra features",
+            "group": "Catalog"
+        }
+    ],
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "storefront.slots",
+        "database.migrations",
+        "pricing.steps",
+        "events.listen",
+        "settings",
+        "permissions"
+    ],
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages",
+        "slots": "resources/js/slots"
+    },
+    "settings": [
+        {
+            "key": "enabled",
+            "type": "boolean",
+            "label": "Show addons & warranties on product pages",
+            "default": true
+        },
+        {
+            "key": "heading",
+            "type": "string",
+            "label": "Section heading",
+            "default": "Protection Plans & Extra Features"
+        },
+        {
+            "key": "subtext",
+            "type": "string",
+            "label": "Section subtext",
+            "default": "Customize your order with extended warranty coverage or optional upgrades."
+        },
+        {
+            "key": "position",
+            "type": "select",
+            "label": "Position on product page",
+            "default": "product.after_add_to_cart",
+            "options": [
+                { "value": "product.after_price", "label": "Right below the price" },
+                { "value": "product.after_add_to_cart", "label": "Below Add to Cart button" },
+                { "value": "product.after_details", "label": "Below product description" }
+            ]
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "product-addons",
+            "title": "Product Addons",
+            "route": "index",
+            "icon": "shield-check",
+            "group": "Catalog",
+            "permission": "product_addons.manage",
+            "order": 245
+        }
+    ]
+}

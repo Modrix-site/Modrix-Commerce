@@ -1,0 +1,55 @@
+{
+    "name": "Category grid",
+    "settings": [
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "Top categories"
+        },
+        {
+            "type": "range",
+            "id": "columns",
+            "label": "Desktop columns",
+            "min": 4,
+            "max": 8,
+            "step": 1,
+            "default": 8
+        }
+    ],
+    "blocks": [
+        {
+            "type": "category",
+            "name": "Category tile",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Label",
+                    "default": "Audio"
+                },
+                {
+                    "type": "image",
+                    "id": "image",
+                    "label": "Image",
+                    "default": "asset:assets/product-headphones.jpg"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Destination",
+                    "default": "/search"
+                }
+            ]
+        }
+    ],
+    "max_blocks": 50,
+    "presets": [
+        {
+            "name": "Category grid"
+        }
+    ],
+    "enabled_on": {
+        "templates": ["*"]
+    }
+}

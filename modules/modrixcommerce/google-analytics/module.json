@@ -1,0 +1,98 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/google-analytics",
+    "display_name": "Google Analytics",
+    "description": "Connects your storefront to Google Analytics 4. Loads the Google tag on every storefront page, records a page view on each visit and navigation, and adds the tag's hosts to the Content-Security-Policy.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "chart-column",
+    "accent": "#4285f4",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\GoogleAnalytics\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\GoogleAnalytics\\GoogleAnalyticsServiceProvider",
+    "permissions": [
+        {
+            "name": "analytics.manage",
+            "label": "Manage analytics settings",
+            "group": "Marketing"
+        }
+    ],
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "storefront.slots",
+        "settings",
+        "permissions",
+        "content_security"
+    ],
+    "routes": {
+        "admin": "routes/admin.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages",
+        "slots": "resources/js/slots"
+    },
+    "content_security": {
+        "script-src": ["https://www.googletagmanager.com"],
+        "img-src": [
+            "https://www.google-analytics.com",
+            "https://www.googletagmanager.com"
+        ],
+        "connect-src": [
+            "https://www.google-analytics.com",
+            "https://analytics.google.com",
+            "https://www.googletagmanager.com"
+        ]
+    },
+    "settings": [
+        {
+            "key": "enabled",
+            "type": "boolean",
+            "label": "Load Google Analytics on the storefront",
+            "default": true
+        },
+        {
+            "key": "measurement_id",
+            "type": "string",
+            "label": "Measurement ID",
+            "help": "From Google Analytics → Admin → Data streams. Looks like G-XXXXXXXXXX."
+        },
+        {
+            "key": "track_page_views",
+            "type": "boolean",
+            "label": "Record a page view on every visit and navigation",
+            "default": true
+        },
+        {
+            "key": "anonymize_ip",
+            "type": "boolean",
+            "label": "Anonymise IP addresses",
+            "help": "Sends anonymize_ip so the last octet of the visitor's address is not stored.",
+            "default": true
+        },
+        {
+            "key": "debug_mode",
+            "type": "boolean",
+            "label": "Debug mode",
+            "help": "Sends debug_mode so events appear in Google Analytics DebugView. Turn off in production.",
+            "default": false
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "google-analytics",
+            "title": "Google Analytics",
+            "route": "index",
+            "icon": "chart-column",
+            "group": "Marketing",
+            "permission": "analytics.manage",
+            "order": 330
+        }
+    ]
+}

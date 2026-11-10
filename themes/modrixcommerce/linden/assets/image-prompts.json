@@ -1,0 +1,210 @@
+{
+    "mode": "Built-in image generation",
+    "transparent_background": false,
+    "prompts": [
+        {
+            "key": "hero",
+            "prompt": "Wide 3:1 luxury botanical beauty campaign photograph. A soft sculptural sea of blush, ivory and muted mauve balloons and glossy baubles, with a few deep evergreen cosmetic bottles, cream jars and elegantly wrapped evergreen gift boxes with coral botanical ribbon on the RIGHT HALF only. Leave the LEFT HALF as calm softly defocused mauve balloons and generous negative space for HTML headline. Photorealistic polished studio lighting, sophisticated seasonal beauty editorial, no people, no letters, no logos, no readable text, no watermark. Independent generic packaging with small cream labels and simple abstract botanical linework, no recognizable brand or trade dress."
+        },
+        {
+            "key": "moringa",
+            "prompt": "Portrait-oriented square ecommerce studio photograph of a single tall dark forest-green translucent shower gel bottle with rounded shoulders and a dark green flat flip cap. A refined small ivory paper label with minimalist olive botanical linework, completely blank of letters. Bottle fully visible, centered, occupies 78 percent height, soft contact shadow, off-white #f8f8f8 seamless background, pristine beauty catalog lighting. Original generic packaging, no logos, no recognizable brand, no text, no watermark."
+        },
+        {
+            "key": "rollon",
+            "prompt": "Square ecommerce beauty product studio photograph of one white roll-on deodorant bottle, rounded tall white cap and gently tapered white body. Small understated pale sage abstract botanical label without any letters. Product fully visible centered with 12 percent margins on off-white #f8f8f8 seamless background, subtle ground shadow, elegant crisp neutral lighting. Original generic packaging, no brand, no logo, no text, no watermark."
+        },
+        {
+            "key": "shea-butter",
+            "prompt": "Square ecommerce studio beauty photograph of a round shallow ivory body butter tub viewed nearly straight on with lid angled slightly upright, a warm cream and tan minimalist botanical paper disc label without letters. Thick luxurious packaging, entire tub fully visible centered with 12 percent margins, off-white #f8f8f8 seamless background, soft contact shadow, premium neutral lighting. Original generic packaging, no identifiable branding, no words, no logo, no watermark."
+        },
+        {
+            "key": "serum",
+            "subject": "a small amber glass facial serum bottle with a dark evergreen dropper top and an ivory minimalist label with delicate golden botanical linework",
+            "prompt": "Square high-end ecommerce beauty studio photograph of a small amber glass facial serum bottle with a dark evergreen dropper top and an ivory minimalist label with delicate golden botanical linework. Original generic cosmetics packaging, fully visible centered with 12 percent margins, #f8f8f8 seamless background, subtle soft contact shadow, neutral premium lighting, no letters or words on labels, no logos, no watermark, no recognizable brand."
+        },
+        {
+            "key": "ginger-shampoo",
+            "subject": "a tall deep evergreen translucent shampoo bottle with rounded shoulders, dark green flip cap, ivory label with a small ginger root botanical line drawing",
+            "prompt": "Square high-end ecommerce beauty studio photograph of a tall deep evergreen translucent shampoo bottle with rounded shoulders, dark green flip cap, ivory label with a small ginger root botanical line drawing. Original generic cosmetics packaging, fully visible centered with 12 percent margins, #f8f8f8 seamless background, subtle soft contact shadow, neutral premium lighting, no letters or words on labels, no logos, no watermark, no recognizable brand."
+        },
+        {
+            "key": "rose-gel",
+            "subject": "a tall dark forest-green translucent shower gel bottle with a green flip cap, cream label with delicate soft rose botanical linework",
+            "prompt": "Square high-end ecommerce beauty studio photograph of a tall dark forest-green translucent shower gel bottle with a green flip cap, cream label with delicate soft rose botanical linework. Original generic cosmetics packaging, fully visible centered with 12 percent margins, #f8f8f8 seamless background, subtle soft contact shadow, neutral premium lighting, no letters or words on labels, no logos, no watermark, no recognizable brand."
+        },
+        {
+            "key": "argan-butter",
+            "subject": "a round shallow ivory body butter tub nearly front-facing with its lid upright, cream label with restrained sage-green and warm ochre botanical linework",
+            "prompt": "Square high-end ecommerce beauty studio photograph of a round shallow ivory body butter tub nearly front-facing with its lid upright, cream label with restrained sage-green and warm ochre botanical linework. Original generic cosmetics packaging, fully visible centered with 12 percent margins, #f8f8f8 seamless background, subtle soft contact shadow, neutral premium lighting, no letters or words on labels, no logos, no watermark, no recognizable brand."
+        },
+        {
+            "key": "vanilla-butter",
+            "subject": "a round pale cream body butter tub with its lid upright, ivory label with dark green abstract leaves and pale vanilla flowers",
+            "prompt": "Square high-end ecommerce beauty studio photograph of a round pale cream body butter tub with its lid upright, ivory label with dark green abstract leaves and pale vanilla flowers. Original generic cosmetics packaging, fully visible centered with 12 percent margins, #f8f8f8 seamless background, subtle soft contact shadow, neutral premium lighting, no letters or words on labels, no logos, no watermark, no recognizable brand."
+        },
+        {
+            "key": "aloe-rollon",
+            "subject": "one white roll-on deodorant bottle with a white rounded cap, understated pale mint-green abstract leaf label",
+            "prompt": "Square high-end ecommerce beauty studio photograph of one white roll-on deodorant bottle with a white rounded cap, understated pale mint-green abstract leaf label. Original generic cosmetics packaging, fully visible centered with 12 percent margins, #f8f8f8 seamless background, subtle soft contact shadow, neutral premium lighting, no letters or words on labels, no logos, no watermark, no recognizable brand."
+        },
+        {
+            "key": "musk-gel",
+            "subject": "one tall slim translucent frosted pale-ivory shower gel bottle with a cream flip cap, minimal deep sage linework on a blank cream label",
+            "prompt": "Square high-end ecommerce beauty studio photograph of one tall slim translucent frosted pale-ivory shower gel bottle with a cream flip cap, minimal deep sage linework on a blank cream label. Original generic cosmetics packaging, fully visible centered with 12 percent margins, #f8f8f8 seamless background, subtle soft contact shadow, neutral premium lighting, no letters or words on labels, no logos, no watermark, no recognizable brand."
+        },
+        {
+            "key": "black-gel",
+            "subject": "one tall elegant translucent charcoal-black body wash bottle with a black flip cap, small dark gray label with tiny cream botanical linework",
+            "prompt": "Square high-end ecommerce beauty studio photograph of one tall elegant translucent charcoal-black body wash bottle with a black flip cap, small dark gray label with tiny cream botanical linework. Original generic cosmetics packaging, fully visible centered with 12 percent margins, #f8f8f8 seamless background, subtle soft contact shadow, neutral premium lighting, no letters or words on labels, no logos, no watermark, no recognizable brand."
+        },
+        {
+            "key": "bronze-drops",
+            "subject": "a small red-brown glass cosmetic dropper bottle with a warm terracotta pipette cap, minimalist cream abstract botanical label",
+            "prompt": "Square high-end ecommerce beauty studio photograph of a small red-brown glass cosmetic dropper bottle with a warm terracotta pipette cap, minimalist cream abstract botanical label. Original generic cosmetics packaging, fully visible centered with 12 percent margins, #f8f8f8 seamless background, subtle soft contact shadow, neutral premium lighting, no letters or words on labels, no logos, no watermark, no recognizable brand."
+        },
+        {
+            "key": "lip-oil",
+            "subject": "a blush-pink glossy squeeze tube of lip oil with a small soft pink cap and a completely blank minimalist cream label",
+            "prompt": "Square high-end ecommerce beauty studio photograph of a blush-pink glossy squeeze tube of lip oil with a small soft pink cap and a completely blank minimalist cream label. Original generic cosmetics packaging, fully visible centered with 12 percent margins, #f8f8f8 seamless background, subtle soft contact shadow, neutral premium lighting, no letters or words on labels, no logos, no watermark, no recognizable brand."
+        },
+        {
+            "key": "lip-tint",
+            "subject": "a slender deep burgundy cosmetic squeeze tube with a dark maroon cap and a small plain cream label",
+            "prompt": "Square high-end ecommerce beauty studio photograph of a slender deep burgundy cosmetic squeeze tube with a dark maroon cap and a small plain cream label. Original generic cosmetics packaging, fully visible centered with 12 percent margins, #f8f8f8 seamless background, subtle soft contact shadow, neutral premium lighting, no letters or words on labels, no logos, no watermark, no recognizable brand."
+        },
+        {
+            "key": "body-mist",
+            "subject": "a small rounded translucent honey-brown body mist bottle with a frosted ivory spray cap and minimal cream label",
+            "prompt": "Square high-end ecommerce beauty studio photograph of a small rounded translucent honey-brown body mist bottle with a frosted ivory spray cap and minimal cream label. Original generic cosmetics packaging, fully visible centered with 12 percent margins, #f8f8f8 seamless background, subtle soft contact shadow, neutral premium lighting, no letters or words on labels, no logos, no watermark, no recognizable brand."
+        },
+        {
+            "key": "gloves",
+            "subject": "a pair of soft pale ivory woven exfoliating bath gloves laid together, no packaging",
+            "prompt": "Square high-end ecommerce beauty studio photograph of a pair of soft pale ivory woven exfoliating bath gloves laid together, no packaging. Fully visible centered with 12 percent margins, #f8f8f8 seamless background, subtle soft contact shadow, neutral premium lighting, no letters or words, no logos, no watermark, no recognizable brand."
+        },
+        {
+            "key": "brush",
+            "subject": "a natural beechwood long handled body brush with cream bristles, shown diagonally whole brush fully visible",
+            "prompt": "Square high-end ecommerce beauty studio photograph of a natural beechwood long handled body brush with cream bristles, shown diagonally whole brush fully visible. Fully visible centered with 12 percent margins, #f8f8f8 seamless background, subtle soft contact shadow, neutral premium lighting, no letters or words, no logos, no watermark, no recognizable brand."
+        },
+        {
+            "key": "bath-lily",
+            "subject": "one soft coral-pink mesh bath puff with an ivory hanging loop, no packaging",
+            "prompt": "Square high-end ecommerce beauty studio photograph of one soft coral-pink mesh bath puff with an ivory hanging loop, no packaging. Fully visible centered with 12 percent margins, #f8f8f8 seamless background, subtle soft contact shadow, neutral premium lighting, no letters or words, no logos, no watermark, no recognizable brand."
+        },
+        {
+            "key": "strawberry-butter",
+            "subject": "a round ivory body butter tub with lid upright, minimal cream label with abstract coral strawberry botanical artwork",
+            "prompt": "Square high-end ecommerce beauty studio photograph of a round ivory body butter tub with lid upright, minimal cream label with abstract coral strawberry botanical artwork. Fully visible centered with 12 percent margins, #f8f8f8 seamless background, subtle soft contact shadow, neutral premium lighting, no letters or words, no logos, no watermark, no recognizable brand."
+        },
+        {
+            "key": "gift-berry",
+            "color": "dusty berry and deep green",
+            "scent": "plum abstract leaves",
+            "prompt": "Square premium ecommerce beauty photograph of a small original botanical gift set: one shallow round cream body butter jar and one small evergreen shower gel bottle arranged in a compact open dusty berry and deep green rectangular cardboard gift presentation tray decorated with plum abstract leaves. Blank cream minimalist labels, entire gift pack visible centered with 12 percent breathing room, off-white #f8f8f8 seamless studio background, subtle soft shadow. No letters, words, logos, brand names, watermark or recognizable branding."
+        },
+        {
+            "key": "gift-shea",
+            "color": "warm sand and evergreen",
+            "scent": "tan abstract leaves",
+            "prompt": "Square premium ecommerce beauty photograph of a small original botanical gift set: one shallow round cream body butter jar and one small evergreen shower gel bottle arranged in a compact open warm sand and evergreen rectangular cardboard gift presentation tray decorated with tan abstract leaves. Blank cream minimalist labels, entire gift pack visible centered with 12 percent breathing room, off-white #f8f8f8 seamless studio background, subtle soft shadow. No letters, words, logos, brand names, watermark or recognizable branding."
+        },
+        {
+            "key": "gift-rose",
+            "color": "blush pink and cream",
+            "scent": "coral abstract flower shapes",
+            "prompt": "Square premium ecommerce beauty photograph of a small original botanical gift set: one shallow round cream body butter jar and one small evergreen shower gel bottle arranged in a compact open blush pink and cream rectangular cardboard gift presentation tray decorated with coral abstract flower shapes. Blank cream minimalist labels, entire gift pack visible centered with 12 percent breathing room, off-white #f8f8f8 seamless studio background, subtle soft shadow. No letters, words, logos, brand names, watermark or recognizable branding."
+        },
+        {
+            "key": "gift-citrus",
+            "color": "terracotta and pale peach",
+            "scent": "orange abstract botanical shapes",
+            "prompt": "Square premium ecommerce beauty photograph of a small original botanical gift set: one shallow round cream body butter jar and one small evergreen shower gel bottle arranged in a compact open terracotta and pale peach rectangular cardboard gift presentation tray decorated with orange abstract botanical shapes. Blank cream minimalist labels, entire gift pack visible centered with 12 percent breathing room, off-white #f8f8f8 seamless studio background, subtle soft shadow. No letters, words, logos, brand names, watermark or recognizable branding."
+        },
+        {
+            "key": "body-oil",
+            "subject": "a tall slim translucent golden amber body oil bottle with a dark evergreen screw cap and a small ivory label with delicate botanical linework",
+            "prompt": "Square high-end ecommerce beauty studio photograph of a tall slim translucent golden amber body oil bottle with a dark evergreen screw cap and a small ivory label with delicate botanical linework. Original generic cosmetics packaging, fully visible centered with 12 percent margins, #f8f8f8 seamless background, subtle soft contact shadow, neutral premium lighting, no letters or words on labels, no logos, no watermark, no recognizable brand."
+        },
+        {
+            "key": "coconut-gel",
+            "subject": "a tall frosted ivory shower gel bottle with rounded shoulders, cream flip cap and small minimalist cream label with muted tan coconut botanical linework",
+            "prompt": "Square high-end ecommerce beauty studio photograph of a tall frosted ivory shower gel bottle with rounded shoulders, cream flip cap and small minimalist cream label with muted tan coconut botanical linework. Original generic cosmetics packaging, fully visible centered with 12 percent margins, #f8f8f8 seamless background, subtle soft contact shadow, neutral premium lighting, no letters or words on labels, no logos, no watermark, no recognizable brand."
+        },
+        {
+            "key": "aloe-cream",
+            "subject": "a round wide frosted pale mint glass body cream jar with an ivory flat lid, minimal cream label with sage abstract botanical linework",
+            "prompt": "Square high-end ecommerce beauty studio photograph of a round wide frosted pale mint glass body cream jar with an ivory flat lid, minimal cream label with sage abstract botanical linework. Original generic cosmetics packaging, fully visible centered with 12 percent margins, #f8f8f8 seamless background, subtle soft contact shadow, neutral premium lighting, no letters or words on labels, no logos, no watermark, no recognizable brand."
+        },
+        {
+            "key": "hand-cream",
+            "subject": "a small soft pale sage aluminum hand cream tube with a cream screw cap, minimal ivory abstract botanical label, standing vertically",
+            "prompt": "Square high-end ecommerce beauty studio photograph of a small soft pale sage aluminum hand cream tube with a cream screw cap, minimal ivory abstract botanical label, standing vertically. Original generic cosmetics packaging, fully visible centered with 12 percent margins, #f8f8f8 seamless background, subtle soft contact shadow, neutral premium lighting, no letters or words on labels, no logos, no watermark, no recognizable brand."
+        },
+        {
+            "key": "range-vanilla",
+            "prompt": "Portrait 3:4 premium botanical beauty campaign photo. A cream round body butter jar and one small green bottle with blank ivory labels on a pale ochre cylindrical pedestal, soft orange and butter-yellow studio background, a few vanilla flowers at the base, sophisticated sunlit still life, whole products visible. Original generic packaging, no text, no brand, no logo, no watermark."
+        },
+        {
+            "key": "range-glow",
+            "prompt": "Portrait 3:4 beauty editorial still life of a tall honey-colored body oil bottle and small frosted lavender lip oil tube, both with completely blank minimal ivory labels, on soft lilac satin and lavender blocks, gentle luminous highlights, refined premium cosmetics lighting. Whole products visible. No words, logos, branding, people or watermark."
+        },
+        {
+            "key": "range-vitamin",
+            "prompt": "Portrait 3:4 premium beauty campaign still life of one small amber serum bottle with a deep green dropper, two pale cream cosmetic jars on coral-orange geometric pedestals, warm peach gradient backdrop, elegant bright studio light. Small ivory labels without any letters. Whole products visible. Original generic packaging, no text, logo, brand or watermark."
+        },
+        {
+            "key": "range-ginger",
+            "prompt": "Portrait 3:4 premium botanical beauty campaign still life of one deep evergreen shampoo bottle with rounded shoulders and a dark green flip cap, blank ivory minimalist label, surrounded by soft olive leaves and a subtle golden ginger root on a green and yellow sunlit background. Whole bottle visible, elegant editorial lighting, no text, no logos, no brand or watermark."
+        },
+        {
+            "key": "story-ritual",
+            "prompt": "Square fresh summer botanical beauty editorial photograph: two unbranded pale sage skincare tubes hanging from a natural cotton clothesline against a clear azure sky, a wide straw hat and pale yellow towel at the edges, warm sunshine and soft shadows, bright refined cosmetics campaign. Labels entirely blank, no words, no logos, no recognizable brand, no watermark."
+        },
+        {
+            "key": "story-lips",
+            "prompt": "Square playful premium beauty campaign photograph of several small coral, pale pink and terracotta lip-care tubes and little cream pots arranged diagonally on an abstract pale blush and evergreen checkerboard paper background, sunny crisp studio shadows, flat lay with strong graphic composition. Original generic packaging, labels completely blank, no letters, words, logos, brand or watermark."
+        }
+    ],
+    "sources": {
+        "hero": "exec-e561da72-83ee-4396-b6fb-424be4542ada.png",
+        "moringa": "exec-8eb40ce4-dfd7-4cec-b5d3-9d5d3a6ba804.png",
+        "rollon": "exec-caf8d010-21ff-4779-8797-08c9d03df58b.png",
+        "shea-butter": "exec-760a94e2-804b-4dc0-a9c7-15da02bcbe57.png",
+        "serum": "exec-90d26d68-f30c-49a1-af3b-7e725ce5d6d4.png",
+        "ginger-shampoo": "exec-8bb18e86-a67d-4f08-99f3-1baffcdc7d80.png",
+        "rose-gel": "exec-82f11aae-895f-4f10-b938-47e4329987b3.png",
+        "argan-butter": "exec-c874274f-27ec-4d62-882e-92475df56fe2.png",
+        "vanilla-butter": "exec-642a1f44-75b0-4e0a-a739-d949770d3b1e.png",
+        "aloe-rollon": "exec-11b795a0-5f5d-42c8-a3e3-5857e05fa573.png",
+        "musk-gel": "exec-06e4220d-4239-4e98-9db4-2f40b02bc21f.png",
+        "black-gel": "exec-fc03659d-2e45-4546-ac03-7134b9410954.png",
+        "bronze-drops": "exec-eeab1aeb-88ba-4fda-83f1-507bee0f7bb1.png",
+        "lip-oil": "exec-5da67d4e-8a09-4aa3-9977-21a29d35b54c.png",
+        "lip-tint": "exec-2bf49cda-f1a9-451b-84dd-28dd835ea20d.png",
+        "body-mist": "exec-59fe15d2-da70-44df-9ec7-4ae3ac83ad92.png",
+        "gloves": "exec-10849bd5-8cb8-47f9-a424-d9ae7deeb6b5.png",
+        "brush": "exec-6b5c44fb-37d0-43df-8853-09208559fedc.png",
+        "bath-lily": "exec-54072e63-c590-4f45-a511-2a447fb55523.png",
+        "strawberry-butter": "exec-60b87f5f-963a-4e99-8751-e24c41e1abd6.png",
+        "gift-shea": "exec-42c06d2e-a7d7-4c87-9972-15385c4bce33.png",
+        "gift-berry": "exec-eaaffd25-5ae3-4f3e-8259-57b1a9feb017.png",
+        "gift-rose": "exec-90fcdacd-bb6b-4bb7-829d-61f4aefbcc02.png",
+        "gift-citrus": "exec-0d512e76-d8be-4600-8f0a-3d1d3eb66eb6.png",
+        "body-oil": "exec-6842cbff-8ef7-4c2a-be95-94038cafdfae.png",
+        "coconut-gel": "exec-e82b7e2e-7dfc-4726-a627-a7d85a9b9d57.png",
+        "aloe-cream": "exec-c4cd8654-6559-47ff-8b46-df5a5fac6516.png",
+        "hand-cream": "exec-3893cb78-24ea-4807-9a62-d0ec3a170cf1.png",
+        "range-vanilla": "exec-d966a4da-86d1-49e0-bbfc-b64101c3653f.png",
+        "range-glow": "exec-622966f2-c94a-4d09-aec1-36b3ecd517f0.png",
+        "range-vitamin": "exec-5519d490-8ee7-4398-8d37-30045e7dc37e.png",
+        "range-ginger": "exec-283e931b-3d91-4064-af60-d99e6e367971.png",
+        "story-ritual": "exec-08691ae4-0b87-4806-82ea-8aa8bc1d187e.png",
+        "story-lips": "exec-3c251974-180c-4ec0-9fea-538d08e8e9ed.png",
+        "range-musk": "exec-1069e368-6102-49e8-8dc3-5badfb656d95.png",
+        "gift-campaign": "exec-e1a2d94c-7a22-4cb1-a135-54a700e68bf1.png",
+        "gift-editorial": "exec-85dc67c8-2dec-4e6d-a89d-991429235468.png",
+        "story-butter": "exec-082a8e0e-4dd9-4ab7-876d-0843bbf45612.png"
+    }
+}

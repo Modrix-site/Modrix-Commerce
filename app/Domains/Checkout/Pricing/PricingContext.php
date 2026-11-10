@@ -15,5 +15,7 @@ final class PricingContext
         public readonly ?string $region = null,
         public readonly ?string $postalCode = null,
         public readonly ?string $shippingMethod = null,
+        public readonly ?string $paymentMethod = null,
+        public readonly ?string $city = null,
     ) {}
 }

@@ -45,13 +45,13 @@ class ThemeCompatibilityTest extends TestCase
     public static function bundledThemes(): array
     {
         return [
-            'Essence' => ['ecomodular/essence'],
-            'Noir' => ['ecomodular/noir'],
-            'Bloom' => ['ecomodular/bloom'],
-            'Harvest' => ['ecomodular/harvest'],
-            'Aurora' => ['ecomodular/aurora'],
-            'Prism' => ['ecomodular/prism'],
-            'Nord' => ['ecomodular/nord'],
+            'Essence' => ['modrixcommerce/essence'],
+            'Noir' => ['modrixcommerce/noir'],
+            'Bloom' => ['modrixcommerce/bloom'],
+            'Harvest' => ['modrixcommerce/harvest'],
+            'Aurora' => ['modrixcommerce/aurora'],
+            'Prism' => ['modrixcommerce/prism'],
+            'Nord' => ['modrixcommerce/nord'],
         ];
     }
 
@@ -114,7 +114,7 @@ class ThemeCompatibilityTest extends TestCase
         $owner = $this->owner();
         // Existing content with a colliding slug and SKU must be left alone.
         $existing = $this->sellable('99.00', 1, ['sku' => 'NOIR-RING-01'], ['name' => 'My own ring', 'slug' => 'my-ring']);
-        $manifest = app(ThemeManager::class)->renderedManifest(tap(app(ThemeRepository::class))->sync()->find('ecomodular/noir'));
+        $manifest = app(ThemeManager::class)->renderedManifest(tap(app(ThemeRepository::class))->sync()->find('modrixcommerce/noir'));
 
         $first = app(ThemeDemoImporter::class)->import($manifest, $owner);
         $second = app(ThemeDemoImporter::class)->import($manifest, $owner);
@@ -130,7 +130,7 @@ class ThemeCompatibilityTest extends TestCase
     public function test_demo_import_through_the_admin_requires_confirmation()
     {
         app(ThemeRepository::class)->sync();
-        $bloom = Extension::query()->where('type', 'theme')->where('name', 'ecomodular/bloom')->firstOrFail();
+        $bloom = Extension::query()->where('type', 'theme')->where('name', 'modrixcommerce/bloom')->firstOrFail();
 
         $this->actingAs($this->owner())->post(route('admin.themes.demo', $bloom))->assertSessionHasErrors('confirmed');
         $this->assertSame(0, Product::query()->count());

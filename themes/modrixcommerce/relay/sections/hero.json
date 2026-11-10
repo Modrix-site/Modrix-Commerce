@@ -1,0 +1,72 @@
+{
+    "name": "Technology hero",
+    "settings": [
+        {
+            "type": "text",
+            "id": "eyebrow",
+            "label": "Eyebrow",
+            "default": "Weekend promotions"
+        },
+        {
+            "type": "textarea",
+            "id": "heading",
+            "label": "Heading",
+            "default": "Ultra Slim\nPocket-Sized Speaker"
+        },
+        {
+            "type": "text",
+            "id": "highlight",
+            "label": "Highlight",
+            "default": "Discover better sound"
+        },
+        {
+            "type": "color",
+            "id": "highlight_color",
+            "label": "Highlight color",
+            "default": "#6b980d"
+        },
+        {
+            "type": "range",
+            "id": "heading_size",
+            "label": "Heading size",
+            "default": 44,
+            "min": 24,
+            "max": 64,
+            "step": 2
+        },
+        {
+            "type": "image",
+            "id": "image",
+            "label": "Hero photograph",
+            "default": "asset:assets/hero.webp"
+        },
+        {
+            "type": "text",
+            "id": "button",
+            "label": "Button label",
+            "default": "Shop now"
+        },
+        {
+            "type": "url",
+            "id": "link",
+            "label": "Button destination",
+            "default": "/c/relay-audio"
+        },
+        {
+            "type": "color",
+            "id": "background",
+            "label": "Background",
+            "default": "#f5f6f6"
+        }
+    ],
+    "blocks": [],
+    "max_blocks": 30,
+    "presets": [
+        {
+            "name": "Technology hero"
+        }
+    ],
+    "enabled_on": {
+        "templates": ["*"]
+    }
+}

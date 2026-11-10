@@ -16,7 +16,7 @@ use Inertia\Response;
 /**
  * Admin → Languages → Storefront text: the storefront's own wording per
  * language. Shipped translations can be changed; texts without a shipped
- * translation (any language EcoModular does not ship) can be written here.
+ * translation (any language Modrix Commerce does not ship) can be written here.
  */
 class InterfaceTextController extends Controller
 {

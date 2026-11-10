@@ -4,7 +4,7 @@ Date: 2026-10-18. Status: approved by the user ("go ahead and build").
 
 ## Goal
 
-A bundled extension (`ecomodular/cross-sell-upsell`) that lets the merchant
+A bundled extension (`modrixcommerce/cross-sell-upsell`) that lets the merchant
 create **offers** — rules that suggest products — shown on the product page,
 in an add-to-cart popup, in the cart and as a checkout add-on ("order bump"),
 optionally at a discounted price, with per-offer stats. It works in every

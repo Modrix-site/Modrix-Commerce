@@ -1,6 +1,6 @@
 # Circuit theme: design
 
-**Status:** draft for review · **Date:** 2026-10-18 · **Theme:** `ecomodular/circuit` ("Circuit Market")
+**Status:** draft for review · **Date:** 2026-10-18 · **Theme:** `modrixcommerce/circuit` ("Circuit Market")
 
 ## Goal
 
@@ -14,7 +14,7 @@ text, image, color, menu and section is editable in the customizer, on desktop a
   or scripts are taken from the reference store (it is a paid theme). Brand logos (Microsoft, Samsung, Sony, Dell,
   ASUS) and Apple product photos are not shipped.
 - **Images:** free stock photos under a licence that allows redistribution (Unsplash or Pexels licence), one per
-  demo slot, credited in `themes/ecomodular/circuit/assets/CREDITS.md` (photographer, source URL, licence).
+  demo slot, credited in `themes/modrixcommerce/circuit/assets/CREDITS.md` (photographer, source URL, licence).
   Downloads are listed for approval before they happen. The store's own products always show their own images.
 - **Fonts:** an open-licensed (OFL) font that matches the reference's geometric sans as closely as possible,
   bundled as woff2 with its licence file (like Voltora's Nunito Sans). Candidate: *Instrument Sans*. If the
@@ -103,7 +103,7 @@ badges, hover image, quick add, gallery, stock note, …) are honoured. Defaults
 
 ## Files
 
-`themes/ecomodular/circuit/`: `theme.json`, `settings.json`, `demo.json` (categories and demo products using the
+`themes/modrixcommerce/circuit/`: `theme.json`, `settings.json`, `demo.json` (categories and demo products using the
 stock photos), `README.md`, `LICENSE`, `assets/` (photos, font + licence, `CREDITS.md`, screenshot),
 `src/` (`header.tsx`, `footer.tsx`, `index.tsx`, `catalog.tsx`, `product.tsx`, `cart.tsx`, `components.tsx`,
 `style.css`). New platform section types (`brand_strip`, countdown fields) only if an existing type cannot carry

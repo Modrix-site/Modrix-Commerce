@@ -1,0 +1,67 @@
+{
+    "sections": {
+        "header": {
+            "type": "header",
+            "settings": {
+                "sticky": true,
+                "compact_on_scroll": true,
+                "brand": "ATELIER",
+                "announcement_enabled": true,
+                "announcement_text": "Discover considered design, made for everyday life",
+                "announcement_link": "/search",
+                "search_placeholder": "Search the collection",
+                "show_language": true,
+                "show_search": true,
+                "show_account": true,
+                "show_wishlist": true
+            },
+            "blocks": {
+                "block_0": {
+                    "type": "link",
+                    "settings": {
+                        "label": "New arrivals",
+                        "link": "/search"
+                    }
+                },
+                "block_1": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Bags",
+                        "link": "/search?q=Bags"
+                    }
+                },
+                "block_2": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Writing instruments",
+                        "link": "/search?q=Writing"
+                    }
+                },
+                "block_3": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Accessories",
+                        "link": "/search?q=Accessories"
+                    }
+                },
+                "block_4": {
+                    "type": "link",
+                    "settings": {
+                        "label": "The gift edit",
+                        "link": "/search"
+                    }
+                }
+            },
+            "block_order": [
+                "block_0",
+                "block_1",
+                "block_2",
+                "block_3",
+                "block_4"
+            ]
+        }
+    },
+    "order": [
+        "header"
+    ]
+}

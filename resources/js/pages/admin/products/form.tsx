@@ -7,6 +7,7 @@ import { AiDraft } from '@/components/admin/ai-draft';
 import { FormField, NativeSelect } from '@/components/admin/form-field';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { ProductImages } from '@/components/admin/product-images';
+import { RichTextEditor } from '@/components/admin/rich-text-editor';
 import { ProductImageUploader } from '@/components/admin/products/image-uploader';
 import { VariantBulkEditor } from '@/components/admin/products/variant-bulk-editor';
 import {
@@ -394,17 +395,14 @@ function ProductForm({
                                     id="description"
                                     label="Description"
                                     error={errors.description}
-                                    hint="Plain text. Line breaks are preserved on the storefront."
+                                    hint="Use the toolbar for headings, bold text, lists and links. Pasted styles and images are removed."
                                 >
-                                    <Textarea
+                                    <RichTextEditor
                                         id="description"
-                                        rows={8}
-                                        value={data.description}
-                                        onChange={(e) =>
-                                            setData(
-                                                'description',
-                                                e.target.value,
-                                            )
+                                        value={data.description ?? ''}
+                                        invalid={!!errors.description}
+                                        onChange={(html) =>
+                                            setData('description', html)
                                         }
                                     />
                                 </FormField>

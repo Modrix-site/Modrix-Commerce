@@ -1,0 +1,58 @@
+{
+    "sections": {
+        "header_9dpmrc": {
+            "type": "header",
+            "settings": {},
+            "blocks": {
+                "announcement_g629be": {
+                    "type": "announcement",
+                    "settings": {
+                        "text": "Gadgets - every Friday 75% Off. Shop Sale"
+                    }
+                },
+                "announcement_2u66mr": {
+                    "type": "announcement",
+                    "settings": {
+                        "text": "Summer sale: discount off 50%. Shop Sale"
+                    }
+                },
+                "announcement_26846p": {
+                    "type": "announcement",
+                    "settings": {
+                        "text": "Free delivery on orders over $150"
+                    }
+                },
+                "top-link_7q9m2i": {
+                    "type": "top_link",
+                    "settings": {
+                        "label": "Help Center",
+                        "link": "/account"
+                    }
+                },
+                "top-link_0hz2ue": {
+                    "type": "top_link",
+                    "settings": {
+                        "label": "About Us",
+                        "link": "/search"
+                    }
+                },
+                "top-link_p1enth": {
+                    "type": "top_link",
+                    "settings": {
+                        "label": "Our Store",
+                        "link": "/search"
+                    }
+                }
+            },
+            "block_order": [
+                "announcement_g629be",
+                "announcement_2u66mr",
+                "announcement_26846p",
+                "top-link_7q9m2i",
+                "top-link_0hz2ue",
+                "top-link_p1enth"
+            ]
+        }
+    },
+    "order": ["header_9dpmrc"]
+}

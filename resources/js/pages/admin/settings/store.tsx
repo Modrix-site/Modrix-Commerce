@@ -6,6 +6,10 @@ import {
 import { Tabs } from '@/components/admin/tabs';
 import { useState } from 'react';
 import { StoreExtraSettings } from '@/components/admin/store-extra-settings';
+import {
+    StoreLocationFields,
+    type DeliveryAreaSettings,
+} from '@/components/admin/store-location-fields';
 import { Form, Head, Link } from '@inertiajs/react';
 import StoreSettingsController from '@/actions/App/Http/Controllers/Admin/StoreSettingsController';
 import { DownloadSettingsCard } from '@/components/admin/download-settings-card';
@@ -26,6 +30,7 @@ import type { CurrencyOption } from '@/types';
 type Props = {
     documents: DocumentSettingsProps;
     profile: Record<string, string | null>;
+    delivery: DeliveryAreaSettings;
     displayCurrencies: { code: string; rate: string }[];
     countries: { code: string; name: string }[];
     settings: {
@@ -45,6 +50,7 @@ type Props = {
 export default function StoreSettings({
     documents,
     profile,
+    delivery,
     displayCurrencies,
     countries,
     settings,
@@ -55,6 +61,7 @@ export default function StoreSettings({
 }: Props) {
     const [rates, setRates] = useState(displayCurrencies);
     const [baseCurrency, setBaseCurrency] = useState(settings.default_currency);
+    const [section, setSection] = useState('general');
     return (
         <>
             <Head title="Store settings" />
@@ -85,6 +92,7 @@ export default function StoreSettings({
                         <>
                             <Tabs
                                 label="Store settings sections"
+                                onChange={setSection}
                                 items={[
                                     {
                                         id: 'general',
@@ -146,7 +154,22 @@ export default function StoreSettings({
                                             errors.default_currency ||
                                             errors.timezone ||
                                             errors.weight_unit ||
-                                            errors.dimension_unit,
+                                            errors.dimension_unit ||
+                                            errors.display_currencies ||
+                                            Object.keys(errors).some(
+                                                (key) =>
+                                                    key.startsWith(
+                                                        'delivery.',
+                                                    ) ||
+                                                    key.startsWith(
+                                                        'display_currencies',
+                                                    ) ||
+                                                    [
+                                                        'profile.country',
+                                                        'profile.region',
+                                                        'profile.city',
+                                                    ].includes(key),
+                                            ),
                                         ),
                                         content: (
                                             <Card>
@@ -287,6 +310,28 @@ export default function StoreSettings({
                                                             )}
                                                         </NativeSelect>
                                                     </FormField>
+                                                    <div className="sm:col-span-2 border-t pt-4">
+                                                        <StoreExtraSettings
+                                                            section="currencies"
+                                                            profile={profile}
+                                                            countries={countries}
+                                                            currencies={
+                                                                currencies
+                                                            }
+                                                            rates={rates}
+                                                            setRates={setRates}
+                                                            baseCurrency={
+                                                                baseCurrency
+                                                            }
+                                                            errors={errors}
+                                                        />
+                                                    </div>
+                                                    <StoreLocationFields
+                                                        profile={profile}
+                                                        delivery={delivery}
+                                                        countries={countries}
+                                                        errors={errors}
+                                                    />
                                                 </CardContent>
                                             </Card>
                                         ),
@@ -303,6 +348,11 @@ export default function StoreSettings({
                                                     'footer',
                                                 ].includes(key) ||
                                                 (key.startsWith('profile.') &&
+                                                    ![
+                                                        'profile.country',
+                                                        'profile.region',
+                                                        'profile.city',
+                                                    ].includes(key) &&
                                                     !key.startsWith(
                                                         'profile.meta_',
                                                     )),
@@ -372,28 +422,6 @@ export default function StoreSettings({
                                             />
                                         ),
                                     },
-                                    {
-                                        id: 'currencies',
-                                        label: 'Currencies',
-                                        hasError: Object.keys(errors).some(
-                                            (key) =>
-                                                key.startsWith(
-                                                    'display_currencies',
-                                                ),
-                                        ),
-                                        content: (
-                                            <StoreExtraSettings
-                                                section="currencies"
-                                                profile={profile}
-                                                countries={countries}
-                                                currencies={currencies}
-                                                rates={rates}
-                                                setRates={setRates}
-                                                baseCurrency={baseCurrency}
-                                                errors={errors}
-                                            />
-                                        ),
-                                    },
                                 ]}
                             />
                             <div className="sticky bottom-0 z-10 flex items-center justify-between gap-3 border-t bg-background/95 py-4 backdrop-blur">
@@ -407,7 +435,9 @@ export default function StoreSettings({
                         </>
                     )}
                 </Form>
-                <DownloadSettingsCard />
+                <div hidden={section !== 'general'}>
+                    <DownloadSettingsCard />
+                </div>
             </AdminPage>
         </>
     );

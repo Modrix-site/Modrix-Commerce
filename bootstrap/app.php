@@ -4,6 +4,7 @@ use App\Http\Controllers\HealthController;
 use App\Http\Controllers\ThemeAssetController;
 use App\Http\Middleware\BlockAfterInstallation;
 use App\Http\Middleware\EnsureMarketplaceServer;
+use App\Http\Middleware\EnsureRegistrationEnabled;
 use App\Http\Middleware\EnsureUserIsStaff;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -55,6 +56,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(prepend: [PrepareInstallEnvironment::class]);
 
         $middleware->web(append: [
+            EnsureRegistrationEnabled::class,
             SetStorefrontLocale::class,
             LogoutDisabledUsers::class,
             HandleAppearance::class,
@@ -70,6 +72,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'not-installed' => BlockAfterInstallation::class,
             'marketplace.server' => EnsureMarketplaceServer::class,
         ]);
+
+        $middleware->redirectGuestsTo(fn (Request $request) => $request->is('admin', 'admin/*')
+            ? route('admin.login')
+            : route('login'));
 
         // Before installation there are no accounts, so send visitors to the installer, not the login page.
         $middleware->prependToPriorityList(

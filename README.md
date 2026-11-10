@@ -1,4 +1,4 @@
-# EcoModular
+# Modrix Commerce
 
 A self-hosted, modular, open-source eCommerce platform built on **Laravel 13**, **React 19**, **TypeScript**, **Inertia 3** and **Vite**.
 
@@ -38,10 +38,10 @@ php artisan migrate
 npm install
 npm run build
 php artisan ecomodular:install
-php artisan serve
+npm run serve
 ```
 
-Then open http://127.0.0.1:8000 and sign in with the owner account you created.
+Set `APP_URL=http://127.0.0.1:8017` in your local `.env`, then open http://127.0.0.1:8017 and sign in with the owner account you created. For frontend hot reload, run `npm run dev` in a separate terminal (Vite listens on port 5187).
 
 To use the web installer instead, skip `ecomodular:install`, visit `/install`, and paste the setup token printed by `php artisan ecomodular:installer-token`.
 
@@ -97,4 +97,4 @@ CI runs these on PHP 8.3 and 8.4, runs the full suite against MySQL 8.4, and run
 
 ## License
 
-The EcoModular core is released under the [MIT License](LICENSE), Copyright (c) 2026 Eleydo. Third-party components keep their own licenses; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Commercial themes and modules sold through the official marketplace may carry separate license terms. Those terms never apply to this core.
+The Modrix Commerce core is released under the [MIT License](LICENSE), Copyright (c) 2026 Orlando Eleydo. Third-party components keep their own licenses; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Commercial themes and modules sold through the official marketplace may carry separate license terms. Those terms never apply to this core.

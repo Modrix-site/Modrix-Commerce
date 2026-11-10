@@ -54,25 +54,10 @@ export function StoreExtraSettings(p: Props) {
                                 />
                             </FormField>
                         ))}
-                        <FormField
-                            id="profile-country"
-                            label="Business country"
-                            error={p.errors['profile.country']}
-                        >
-                            <select
-                                id="profile-country"
-                                name="profile[country]"
-                                defaultValue={p.profile.country ?? ''}
-                                className={selectClass}
-                            >
-                                <option value="">Select country</option>
-                                {p.countries.map((c) => (
-                                    <option key={c.code} value={c.code}>
-                                        {c.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </FormField>
+                        <p className="text-sm text-muted-foreground sm:col-span-2">
+                            Store country and location are managed in Regional
+                            settings.
+                        </p>
                     </CardContent>
                 </Card>
             )}
@@ -115,11 +100,12 @@ export function StoreExtraSettings(p: Props) {
                     <CardHeader>
                         <CardTitle>Storefront currencies</CardTitle>
                         <CardDescription>
-                            Let shoppers browse in additional currencies. Set
-                            how many units equal 1 {p.baseCurrency}. Rates are
-                            maintained manually; checkout and payments remain in{' '}
-                            {p.baseCurrency}. Changing the base currency clears
-                            these rates so you can configure them again.
+                            Optional currencies shoppers can browse in, on top
+                            of {p.baseCurrency}. Leave this empty and the
+                            storefront shows only {p.baseCurrency}. Set how many
+                            units equal 1 {p.baseCurrency}. Checkout and
+                            payments stay in {p.baseCurrency}. Changing the
+                            default currency clears these rates.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-4">

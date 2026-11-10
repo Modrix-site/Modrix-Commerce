@@ -4,6 +4,7 @@ namespace App\Domains\Catalog\Pricing;
 
 use App\Domains\Catalog\Models\ProductVariant;
 use App\Domains\Pricing\Money;
+use Closure;
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -22,6 +23,9 @@ final class SalePrices
     /** @var list<SalePriceProvider> */
     private array $providers = [];
 
+    /** @var list<Closure(ProductVariant, Money): Money> */
+    private array $variantAdjusters = [];
+
     /** @var array<int, list<SaleOffer>> product id => offers */
     private array $offers = [];
 
@@ -36,6 +40,33 @@ final class SalePrices
     {
         $this->providers[] = $provider;
         $this->offers = [];
+    }
+
+    /**
+     * Register a callback that adjusts a variant's storefront price (e.g. selected product addons).
+     *
+     * @param  Closure(ProductVariant, Money): Money  $adjuster
+     */
+    public function addVariantAdjuster(Closure $adjuster): void
+    {
+        $this->variantAdjusters[] = $adjuster;
+    }
+
+    public function adjustVariantPrice(ProductVariant $variant, ?Money $price): ?Money
+    {
+        if ($price === null || $this->variantAdjusters === []) {
+            return $price;
+        }
+
+        foreach ($this->variantAdjusters as $adjuster) {
+            try {
+                $price = $adjuster($variant, $price);
+            } catch (Throwable $e) {
+                Log::warning('A variant price adjuster failed; its adjustment is ignored.', ['error' => $e->getMessage()]);
+            }
+        }
+
+        return $price;
     }
 
     public function hasProviders(): bool

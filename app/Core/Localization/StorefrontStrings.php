@@ -20,6 +20,7 @@ final class StorefrontStrings
         'resources/js/pages/storefront/checkout.tsx',
         'resources/js/pages/storefront/order-complete.tsx',
         'resources/js/pages/storefront/account',
+        'resources/js/pages/storefront/auth',
         'resources/js/pages/auth',
         'resources/js/components/storefront',
         'resources/js/components/admin/status-badge.tsx',

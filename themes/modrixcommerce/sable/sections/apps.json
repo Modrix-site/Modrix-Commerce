@@ -1,0 +1,15 @@
+{
+    "name": "App extensions",
+    "settings": [],
+    "blocks": [],
+    "presets": [
+        {
+            "name": "App extensions"
+        }
+    ],
+    "enabled_on": {
+        "templates": [
+            "*"
+        ]
+    }
+}

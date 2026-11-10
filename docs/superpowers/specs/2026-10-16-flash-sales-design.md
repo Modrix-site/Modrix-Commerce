@@ -32,7 +32,7 @@ Merchants run time-limited sales:
     - **Capability:** `catalog.sale_prices` in `Manifest::CAPABILITIES`.
 2. **Admin product-editor slot** `admin.product.sidebar` (context: product). The editor renders module panels in its sidebar (edit page only).
 
-## Module `modules/ecomodular/flash-sales`
+## Module `modules/modrixcommerce/flash-sales`
 
 - **Tables:**
     - `flash_sales`: name, discount_type (percent|fixed), discount_value, starts_at, ends_at, is_active, show_banner, timestamps;

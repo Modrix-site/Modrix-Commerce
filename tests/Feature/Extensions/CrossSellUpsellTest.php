@@ -25,9 +25,9 @@ class CrossSellUpsellTest extends TestCase
 {
     use CommerceFixtures, ModuleFixtures, RefreshDatabase;
 
-    private const MODULE = 'ecomodular/cross-sell-upsell';
+    private const MODULE = 'modrixcommerce/cross-sell-upsell';
 
-    private const SLOT = 'ecomodular/cross-sell-upsell/';
+    private const SLOT = 'modrixcommerce/cross-sell-upsell/';
 
     protected function setUp(): void
     {
@@ -62,7 +62,7 @@ class CrossSellUpsellTest extends TestCase
 
     private function add(Offer $offer, ProductVariant $variant, string $place = 'cart', int $quantity = 1)
     {
-        return $this->post(route('ecomodular.cross-sell-upsell.add'), ['offer_id' => $offer->id, 'variant_id' => $variant->id, 'place' => $place, 'quantity' => $quantity]);
+        return $this->post(route('modrixcommerce.cross-sell-upsell.add'), ['offer_id' => $offer->id, 'variant_id' => $variant->id, 'place' => $place, 'quantity' => $quantity]);
     }
 
     /** @return array<string, mixed> the cart page's cart */
@@ -272,7 +272,7 @@ class CrossSellUpsellTest extends TestCase
         $this->assertEquals(9.0, (float) $row->revenue);
         $this->assertSame(0, DB::table('cross_sell_cart_lines')->count());
 
-        $this->actingAs($this->owner())->get(route('admin.ecomodular.cross-sell-upsell.index'))->assertOk()
+        $this->actingAs($this->owner())->get(route('admin.modrixcommerce.cross-sell-upsell.index'))->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->where('offers.0.views', 1)
                 ->where('offers.0.adds', 1)
@@ -320,11 +320,11 @@ class CrossSellUpsellTest extends TestCase
             $this->assertTrue($bump['props']['items'][0]['added']);
         });
 
-        $this->post(route('ecomodular.cross-sell-upsell.remove'), ['offer_id' => $offer->id, 'variant_id' => $b->id])->assertSessionHasNoErrors();
+        $this->post(route('modrixcommerce.cross-sell-upsell.remove'), ['offer_id' => $offer->id, 'variant_id' => $b->id])->assertSessionHasNoErrors();
         $this->assertNull($this->line($this->cart(), $b));
 
         // Only lines added from the offer can be removed this way.
-        $this->post(route('ecomodular.cross-sell-upsell.remove'), ['offer_id' => $offer->id, 'variant_id' => $a->id])->assertNotFound();
+        $this->post(route('modrixcommerce.cross-sell-upsell.remove'), ['offer_id' => $offer->id, 'variant_id' => $a->id])->assertNotFound();
     }
 
     public function test_the_cart_block_suggests_from_offers_matching_cart_products()
@@ -351,26 +351,26 @@ class CrossSellUpsellTest extends TestCase
             'priority' => 3, 'starts_at' => null, 'ends_at' => null, 'is_active' => true,
         ];
 
-        $this->actingAs($owner)->post(route('admin.ecomodular.cross-sell-upsell.store'), ['discount_value' => '95', 'product_ids' => [], 'trigger_type' => 'products'] + $base)
+        $this->actingAs($owner)->post(route('admin.modrixcommerce.cross-sell-upsell.store'), ['discount_value' => '95', 'product_ids' => [], 'trigger_type' => 'products'] + $base)
             ->assertSessionHasErrors(['discount_value', 'product_ids', 'trigger_ids']);
-        $this->actingAs($owner)->post(route('admin.ecomodular.cross-sell-upsell.store'), ['show_on_product' => false, 'show_in_popup' => false] + $base)
+        $this->actingAs($owner)->post(route('admin.modrixcommerce.cross-sell-upsell.store'), ['show_on_product' => false, 'show_in_popup' => false] + $base)
             ->assertSessionHasErrors('show_on_product');
 
-        $this->actingAs($owner)->post(route('admin.ecomodular.cross-sell-upsell.store'), $base)->assertSessionHasNoErrors();
+        $this->actingAs($owner)->post(route('admin.modrixcommerce.cross-sell-upsell.store'), $base)->assertSessionHasNoErrors();
         $offer = Offer::query()->firstOrFail();
         $this->assertSame([$b->product_id], $offer->product_ids);
         $this->assertSame('15.0000', $offer->discount_value);
 
-        $this->actingAs($owner)->put(route('admin.ecomodular.cross-sell-upsell.update', $offer), ['name' => 'Renamed', 'discount_type' => null, 'discount_value' => null] + $base)->assertSessionHasNoErrors();
+        $this->actingAs($owner)->put(route('admin.modrixcommerce.cross-sell-upsell.update', $offer), ['name' => 'Renamed', 'discount_type' => null, 'discount_value' => null] + $base)->assertSessionHasNoErrors();
         $this->assertSame('Renamed', $offer->fresh()->name);
         $this->assertNull($offer->fresh()->discount_type);
 
-        $this->actingAs($owner)->delete(route('admin.ecomodular.cross-sell-upsell.destroy', $offer))->assertRedirect();
+        $this->actingAs($owner)->delete(route('admin.modrixcommerce.cross-sell-upsell.destroy', $offer))->assertRedirect();
         $this->assertSame(0, Offer::query()->count());
     }
 
     public function test_staff_without_the_permission_cannot_manage_offers()
     {
-        $this->actingAs($this->userWithRole('support-agent'))->get(route('admin.ecomodular.cross-sell-upsell.index'))->assertForbidden();
+        $this->actingAs($this->userWithRole('support-agent'))->get(route('admin.modrixcommerce.cross-sell-upsell.index'))->assertForbidden();
     }
 }

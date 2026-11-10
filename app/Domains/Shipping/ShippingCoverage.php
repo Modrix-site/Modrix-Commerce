@@ -9,10 +9,9 @@ use App\Domains\Shipping\Models\ShippingMethod;
  * Works out which countries the store currently sells and ships to, so the
  * checkout only offers destinations it can actually fulfil.
  *
- * Coverage is the union of the active shipping methods' country lists. When a
- * method ships worldwide (no country list) the whole world is covered. When the
- * coverage narrows to a single country, the checkout shows that country as a
- * fixed value instead of a list.
+ * Coverage is the union of active methods' countries, limited by the store's
+ * delivery area. A method without a country list inherits that delivery area.
+ * When only one country is covered, checkout fixes the country to that value.
  */
 final class ShippingCoverage
 {
@@ -59,8 +58,10 @@ final class ShippingCoverage
 
         $methods = $query->get();
 
+        $allowed = app(DeliveryArea::class)->countries();
+
         if ($methods->isEmpty()) {
-            return null;
+            return $allowed;
         }
 
         $covered = [];
@@ -68,9 +69,17 @@ final class ShippingCoverage
         foreach ($methods as $method) {
             $countries = $method->countries;
 
+            if ($method->regions_only) {
+                $regionalCountries = array_column($method->regional_rates ?? [], 'country_code');
+                $countries = empty($countries) ? $regionalCountries : array_intersect($countries, $regionalCountries);
+                if ($countries === []) {
+                    continue;
+                }
+            }
+
             // A method with no country list ships everywhere: coverage is worldwide.
             if ($countries === null || $countries === []) {
-                return null;
+                return $allowed;
             }
 
             foreach ($countries as $code) {
@@ -82,7 +91,9 @@ final class ShippingCoverage
             }
         }
 
-        return array_keys($covered);
+        $codes = array_keys($covered);
+
+        return $allowed === null ? $codes : array_values(array_intersect($codes, $allowed));
     }
 
     /**

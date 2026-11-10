@@ -1,0 +1,281 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/fraud-detection",
+    "display_name": "Fraud Detection",
+    "description": "Real-time fraud risk analysis engine that scores every order, detects suspicious patterns, manages blacklists, and provides merchant review workflows with comprehensive reporting dashboards.",
+    "version": "1.0.1",
+    "type": "module",
+    "icon": "shield-alert",
+    "accent": "#ef4444",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\FraudDetection\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\FraudDetection\\FraudDetectionServiceProvider",
+    "permissions": [
+        {
+            "name": "fraud_detection.view_dashboard",
+            "label": "View fraud detection dashboard and analytics",
+            "group": "Fraud Detection"
+        },
+        {
+            "name": "fraud_detection.manage_queue",
+            "label": "Review, approve, reject, and manage flagged orders",
+            "group": "Fraud Detection"
+        },
+        {
+            "name": "fraud_detection.manage_rules",
+            "label": "Create, edit, and delete custom fraud rules",
+            "group": "Fraud Detection"
+        },
+        {
+            "name": "fraud_detection.manage_blacklists",
+            "label": "Manage IP and email domain blacklists",
+            "group": "Fraud Detection"
+        },
+        {
+            "name": "fraud_detection.manage_settings",
+            "label": "Configure fraud detection thresholds and notifications",
+            "group": "Fraud Detection"
+        },
+        {
+            "name": "fraud_detection.export_reports",
+            "label": "Export fraud reports as CSV and Excel",
+            "group": "Fraud Detection"
+        }
+    ],
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "database.migrations",
+        "events.listen",
+        "scheduled.tasks",
+        "console.commands",
+        "settings",
+        "permissions"
+    ],
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages"
+    },
+    "settings": [
+        {
+            "key": "enabled",
+            "type": "boolean",
+            "label": "Enable real-time fraud detection",
+            "help": "Automatically analyze every incoming order and assign a fraud risk score.",
+            "default": true
+        },
+        {
+            "key": "auto_flag_enabled",
+            "type": "boolean",
+            "label": "Auto-flag high-risk orders",
+            "help": "Automatically hold suspicious orders for manual review before fulfillment.",
+            "default": true
+        },
+        {
+            "key": "low_risk_threshold",
+            "type": "integer",
+            "label": "Low risk ceiling (score 0–100)",
+            "help": "Orders scoring at or below this value are considered low risk.",
+            "min": 0,
+            "max": 100,
+            "default": 30
+        },
+        {
+            "key": "medium_risk_threshold",
+            "type": "integer",
+            "label": "Medium risk ceiling (score 0–100)",
+            "help": "Orders scoring above low risk but at or below this value are considered medium risk. Scores above this are high risk.",
+            "min": 1,
+            "max": 100,
+            "default": 65
+        },
+        {
+            "key": "auto_reject_threshold",
+            "type": "integer",
+            "label": "Auto-reject threshold (score 0–100)",
+            "help": "Orders scoring at or above this value are automatically rejected. Set to 100 to disable auto-rejection.",
+            "min": 50,
+            "max": 100,
+            "default": 95
+        },
+        {
+            "key": "weight_high_order_value",
+            "type": "integer",
+            "label": "Weight: High order value",
+            "min": 0,
+            "max": 30,
+            "default": 15
+        },
+        {
+            "key": "high_order_value_threshold",
+            "type": "integer",
+            "label": "High order value threshold (store currency)",
+            "help": "Orders above this amount trigger the high-value indicator.",
+            "min": 1,
+            "default": 500
+        },
+        {
+            "key": "weight_failed_payments",
+            "type": "integer",
+            "label": "Weight: Multiple failed payment attempts",
+            "min": 0,
+            "max": 30,
+            "default": 20
+        },
+        {
+            "key": "weight_address_mismatch",
+            "type": "integer",
+            "label": "Weight: Billing/shipping address mismatch",
+            "min": 0,
+            "max": 30,
+            "default": 15
+        },
+        {
+            "key": "weight_country_mismatch",
+            "type": "integer",
+            "label": "Weight: Country mismatch (customer vs. payment)",
+            "min": 0,
+            "max": 30,
+            "default": 20
+        },
+        {
+            "key": "weight_disposable_email",
+            "type": "integer",
+            "label": "Weight: Disposable email address",
+            "min": 0,
+            "max": 30,
+            "default": 15
+        },
+        {
+            "key": "weight_vpn_proxy",
+            "type": "integer",
+            "label": "Weight: VPN/Proxy detection",
+            "min": 0,
+            "max": 30,
+            "default": 10
+        },
+        {
+            "key": "weight_multiple_ip_orders",
+            "type": "integer",
+            "label": "Weight: Multiple orders from same IP",
+            "min": 0,
+            "max": 30,
+            "default": 10
+        },
+        {
+            "key": "weight_suspicious_behavior",
+            "type": "integer",
+            "label": "Weight: Suspicious purchasing behavior",
+            "min": 0,
+            "max": 30,
+            "default": 15
+        },
+        {
+            "key": "ip_orders_window_hours",
+            "type": "integer",
+            "label": "IP rate-limit window (hours)",
+            "help": "Time window to check for multiple orders from the same IP address.",
+            "min": 1,
+            "max": 168,
+            "default": 24
+        },
+        {
+            "key": "ip_orders_limit",
+            "type": "integer",
+            "label": "IP order limit (within window)",
+            "help": "Number of orders from the same IP before triggering the indicator.",
+            "min": 2,
+            "max": 50,
+            "default": 5
+        },
+        {
+            "key": "email_alerts_enabled",
+            "type": "boolean",
+            "label": "Email alerts for high-risk orders",
+            "help": "Send email notifications to admin when a high-risk order is detected.",
+            "default": true
+        },
+        {
+            "key": "alert_email_recipients",
+            "type": "string",
+            "label": "Alert email recipients (comma-separated)",
+            "help": "Email addresses to receive fraud alerts."
+        },
+        {
+            "key": "slack_webhook_enabled",
+            "type": "boolean",
+            "label": "Enable Slack webhook notifications",
+            "default": false
+        },
+        {
+            "key": "slack_webhook_url",
+            "type": "string",
+            "label": "Slack webhook URL",
+            "help": "Your Slack incoming webhook URL for fraud alert messages."
+        },
+        {
+            "key": "daily_report_enabled",
+            "type": "boolean",
+            "label": "Send daily fraud summary email",
+            "default": true
+        },
+        {
+            "key": "daily_report_time",
+            "type": "string",
+            "label": "Daily report time (24h format, e.g. 09:00)",
+            "default": "09:00"
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "fraud-detection",
+            "title": "Fraud Detection",
+            "route": "dashboard",
+            "icon": "shield-alert",
+            "group": "Security",
+            "permission": "fraud_detection.view_dashboard",
+            "order": 270,
+            "children": [
+                {
+                    "key": "fraud-dashboard",
+                    "title": "Dashboard",
+                    "route": "dashboard",
+                    "permission": "fraud_detection.view_dashboard"
+                },
+                {
+                    "key": "fraud-queue",
+                    "title": "Fraud Queue",
+                    "route": "queue.index",
+                    "permission": "fraud_detection.manage_queue"
+                },
+                {
+                    "key": "fraud-rules",
+                    "title": "Rules",
+                    "route": "rules.index",
+                    "permission": "fraud_detection.manage_rules"
+                },
+                {
+                    "key": "fraud-reports",
+                    "title": "Reports",
+                    "route": "reports",
+                    "permission": "fraud_detection.view_dashboard"
+                },
+                {
+                    "key": "fraud-settings",
+                    "title": "Settings",
+                    "route": "settings",
+                    "permission": "fraud_detection.manage_settings"
+                }
+            ]
+        }
+    ]
+}

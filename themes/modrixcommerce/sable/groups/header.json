@@ -1,0 +1,63 @@
+{
+    "sections": {
+        "header": {
+            "type": "header",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "link",
+                    "settings": {
+                        "label": "New arrivals",
+                        "link": "/search?sort=newest"
+                    }
+                },
+                "block_1": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Carryalls",
+                        "link": "/search?q=tote"
+                    }
+                },
+                "block_2": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Weekenders",
+                        "link": "/search?q=weekender"
+                    }
+                },
+                "block_3": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Travel",
+                        "link": "/search?q=carry"
+                    }
+                },
+                "block_4": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Small essentials",
+                        "link": "/search?q=pouch"
+                    }
+                },
+                "shop": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Shop all",
+                        "link": "/search"
+                    }
+                }
+            },
+            "block_order": [
+                "shop",
+                "block_0",
+                "block_1",
+                "block_2",
+                "block_3",
+                "block_4"
+            ]
+        }
+    },
+    "order": [
+        "header"
+    ]
+}

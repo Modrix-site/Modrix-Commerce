@@ -21,7 +21,7 @@ use LogicException;
  * @property array{name: string, email: string|null, address: string|null, tax_id: string|null} $seller
  * @property array{name: string, email: string, address: array<string, mixed>|null} $buyer
  * @property list<array{name: string, variant: string|null, sku: string, quantity: int, unit_price: string, tax_rate: string, tax: string, discount: string, total: string}> $lines
- * @property array{subtotal: string, discount_total: string, shipping_total: string, tax_total: string, grand_total: string, prices_include_tax: bool, shipping_method: string|null, payment_method: string} $totals
+ * @property array{subtotal: string, discount_total: string, shipping_total: string, tax_total: string, payment_fee_total?: string, grand_total: string, prices_include_tax: bool, shipping_method: string|null, payment_method: string} $totals
  * @property string|null $notes
  * @property int|null $issued_by
  * @property-read Order $order

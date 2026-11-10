@@ -1,0 +1,128 @@
+{
+    "name": "Product information",
+    "settings": [
+        {
+            "type": "text",
+            "id": "add_label",
+            "label": "Add to cart label",
+            "default": "Add to cart"
+        },
+        {
+            "type": "text",
+            "id": "buy_label",
+            "label": "Buy now label",
+            "default": "Buy now"
+        },
+        {
+            "type": "text",
+            "id": "description_label",
+            "label": "Description tab label",
+            "default": "Description"
+        },
+        {
+            "type": "text",
+            "id": "specifications_label",
+            "label": "Specifications tab label",
+            "default": "Specifications"
+        },
+        {
+            "type": "text",
+            "id": "delivery_label",
+            "label": "Delivery tab label",
+            "default": "Delivery & returns"
+        },
+        {
+            "type": "textarea",
+            "id": "delivery_text",
+            "label": "Delivery and returns information",
+            "default": "Delivery charges and available services are shown at checkout. Review the store’s published return policy before placing an order."
+        },
+        {
+            "type": "text",
+            "id": "related_heading",
+            "label": "Related product heading",
+            "default": "Related products"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_service_rail",
+            "label": "Show service rail",
+            "default": true
+        },
+        {
+            "type": "image",
+            "id": "promo_image",
+            "label": "Sidebar campaign image",
+            "default": "asset:assets/headphones.webp"
+        },
+        {
+            "type": "text",
+            "id": "promo_heading",
+            "label": "Sidebar campaign heading",
+            "default": "Discover wireless audio"
+        },
+        {
+            "type": "url",
+            "id": "promo_link",
+            "label": "Sidebar campaign destination",
+            "default": "/c/relay-audio"
+        },
+        {
+            "type": "text",
+            "id": "extensions_label",
+            "label": "Module tab label",
+            "default": "Reviews & details"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "benefit",
+            "name": "Service",
+            "settings": [
+                {
+                    "type": "select",
+                    "id": "icon",
+                    "label": "Icon",
+                    "options": [
+                        {
+                            "value": "delivery",
+                            "label": "delivery"
+                        },
+                        {
+                            "value": "returns",
+                            "label": "returns"
+                        },
+                        {
+                            "value": "payment",
+                            "label": "payment"
+                        },
+                        {
+                            "value": "support",
+                            "label": "support"
+                        },
+                        {
+                            "value": "gift",
+                            "label": "gift"
+                        }
+                    ],
+                    "default": "delivery"
+                },
+                {
+                    "type": "text",
+                    "id": "heading",
+                    "label": "Text",
+                    "default": "Delivery options at checkout"
+                }
+            ]
+        }
+    ],
+    "max_blocks": 50,
+    "presets": [
+        {
+            "name": "Product information"
+        }
+    ],
+    "enabled_on": {
+        "templates": ["*"]
+    }
+}

@@ -158,33 +158,33 @@ class StorefrontBlocksTest extends TestCase
         app(ModuleRepository::class)->sync();
 
         // Payment and bundle packages may not be present in every checkout.
-        $optional = array_values(array_filter(['ecomodular/tabby', 'ecomodular/tamara', 'ecomodular/frequently-bought-together'], fn (string $name) => is_dir(base_path("modules/{$name}"))));
+        $optional = array_values(array_filter(['modrixcommerce/tabby', 'modrixcommerce/tamara', 'modrixcommerce/frequently-bought-together'], fn (string $name) => is_dir(base_path("modules/{$name}"))));
 
-        foreach (['ecomodular/product-reviews', 'ecomodular/newsletter', 'ecomodular/flash-sales', ...$optional] as $name) {
+        foreach (['modrixcommerce/product-reviews', 'modrixcommerce/newsletter', 'modrixcommerce/flash-sales', ...$optional] as $name) {
             $modules->install($name);
             $modules->enable($name, true);
         }
 
         $blocks = collect(app(StorefrontSlots::class)->blocks())->keyBy('id');
 
-        $this->assertSame(['product.after_details', 'product.after_description'], $blocks['ecomodular/product-reviews:reviews']['places']);
-        $this->assertContains('home.after_featured', $blocks['ecomodular/newsletter:signup-home']['places']);
-        $this->assertContains('catalog.before_products', $blocks['ecomodular/flash-sales:banner']['places']);
+        $this->assertSame(['product.after_details', 'product.after_description'], $blocks['modrixcommerce/product-reviews:reviews']['places']);
+        $this->assertContains('home.after_featured', $blocks['modrixcommerce/newsletter:signup-home']['places']);
+        $this->assertContains('catalog.before_products', $blocks['modrixcommerce/flash-sales:banner']['places']);
         $homeTab = collect(app(TabSettings::class)->forTab('home'))->keyBy('module');
-        $this->assertContains('heading', array_column($homeTab['ecomodular/newsletter']['fields'], 'key'));
-        $this->assertContains('banner_products', array_column($homeTab['ecomodular/flash-sales']['fields'], 'key'));
+        $this->assertContains('heading', array_column($homeTab['modrixcommerce/newsletter']['fields'], 'key'));
+        $this->assertContains('banner_products', array_column($homeTab['modrixcommerce/flash-sales']['fields'], 'key'));
         // Sign-ups record where the form was.
         $this->assertSame('home', app(StorefrontSlots::class)->render('home.after_featured', [])[0]['props']['source']);
-        $this->post(route('ecomodular.newsletter.subscribe'), ['email' => 'ana@example.com', 'consent' => '1', 'source' => 'footer'])->assertSessionHasNoErrors();
+        $this->post(route('modrixcommerce.newsletter.subscribe'), ['email' => 'ana@example.com', 'consent' => '1', 'source' => 'footer'])->assertSessionHasNoErrors();
 
         if ($optional !== []) {
             $productTab = collect(app(TabSettings::class)->forTab('product'))->keyBy('module');
-            $this->assertSame('product.after_details', $blocks['ecomodular/tabby:promo']['default']);
-            $this->assertContains('product.after_price', $blocks['ecomodular/tamara:promo']['places']);
-            $this->assertContains('product.after_add_to_cart', $blocks['ecomodular/frequently-bought-together:bundle']['places']);
-            $this->assertSame('storefront.footer', $blocks['ecomodular/newsletter:signup-footer']['default']);
-            $this->assertContains('product_snippet', array_column($productTab['ecomodular/tabby']['fields'], 'key'));
-            $this->assertContains('max_products', array_column($productTab['ecomodular/frequently-bought-together']['fields'], 'key'));
+            $this->assertSame('product.after_details', $blocks['modrixcommerce/tabby:promo']['default']);
+            $this->assertContains('product.after_price', $blocks['modrixcommerce/tamara:promo']['places']);
+            $this->assertContains('product.after_add_to_cart', $blocks['modrixcommerce/frequently-bought-together:bundle']['places']);
+            $this->assertSame('storefront.footer', $blocks['modrixcommerce/newsletter:signup-footer']['default']);
+            $this->assertContains('product_snippet', array_column($productTab['modrixcommerce/tabby']['fields'], 'key'));
+            $this->assertContains('max_products', array_column($productTab['modrixcommerce/frequently-bought-together']['fields'], 'key'));
         }
     }
 }

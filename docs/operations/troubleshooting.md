@@ -50,7 +50,7 @@ Start with `php artisan ecomodular:health` and `storage/logs/`. Each entry below
 ## "The archive has no readable manifest"
 
 - **Encrypted archive:** it was encrypted with a different `ECOMODULAR_BACKUP_PASSWORD`. Use the password from your secret manager.
-- **Other causes:** the file is incomplete or not an EcoModular backup.
+- **Other causes:** the file is incomplete or not an Modrix Commerce backup.
 
 ## Locked out of the owner account
 

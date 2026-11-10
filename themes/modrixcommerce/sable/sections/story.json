@@ -1,0 +1,74 @@
+{
+    "name": "Image with story",
+    "settings": [
+        {
+            "type": "image",
+            "id": "image",
+            "label": "Image",
+            "default": "asset:assets/editorial.jpg"
+        },
+        {
+            "type": "text",
+            "id": "alt",
+            "label": "Image description",
+            "default": "A journey through the mountains"
+        },
+        {
+            "type": "text",
+            "id": "eyebrow",
+            "label": "Eyebrow",
+            "default": "OUR POINT OF VIEW"
+        },
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "Made for the way you move."
+        },
+        {
+            "type": "textarea",
+            "id": "body",
+            "label": "Story",
+            "default": "From unhurried mornings to unfamiliar horizons. Sable Atelier creates considered companions for a life in motion, balancing natural textures with enduring shapes."
+        },
+        {
+            "type": "text",
+            "id": "button_label",
+            "label": "Button label",
+            "default": "Discover Sable"
+        },
+        {
+            "type": "url",
+            "id": "link",
+            "label": "Destination",
+            "default": "/search"
+        },
+        {
+            "type": "select",
+            "id": "image_position",
+            "label": "Image placement",
+            "default": "right",
+            "options": [
+                {
+                    "value": "left",
+                    "label": "left"
+                },
+                {
+                    "value": "right",
+                    "label": "right"
+                }
+            ]
+        }
+    ],
+    "blocks": [],
+    "presets": [
+        {
+            "name": "Image with story"
+        }
+    ],
+    "enabled_on": {
+        "templates": [
+            "*"
+        ]
+    }
+}

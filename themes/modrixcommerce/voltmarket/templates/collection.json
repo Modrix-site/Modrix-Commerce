@@ -1,0 +1,17 @@
+{
+    "sections": {
+        "catalog": {
+            "type": "main-collection",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        },
+        "apps": {
+            "type": "apps",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        }
+    },
+    "order": ["catalog", "apps"]
+}

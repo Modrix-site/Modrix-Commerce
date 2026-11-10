@@ -1,0 +1,130 @@
+{
+    "name": "Campaign image",
+    "settings": [
+        {
+            "type": "image",
+            "id": "image",
+            "label": "Desktop image",
+            "default": "asset:assets/hero.jpg"
+        },
+        {
+            "type": "image",
+            "id": "mobile_image",
+            "label": "Mobile image"
+        },
+        {
+            "type": "text",
+            "id": "alt",
+            "label": "Image description",
+            "default": "Traveler in a sandstone canyon"
+        },
+        {
+            "type": "text",
+            "id": "eyebrow",
+            "label": "Eyebrow",
+            "default": "THE ART OF GOING"
+        },
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "A world beyond the everyday."
+        },
+        {
+            "type": "textarea",
+            "id": "body",
+            "label": "Description",
+            "default": "Thoughtfully made companions, wherever life takes you."
+        },
+        {
+            "type": "text",
+            "id": "button_label",
+            "label": "Button label",
+            "default": "Explore the collection"
+        },
+        {
+            "type": "url",
+            "id": "link",
+            "label": "Button destination",
+            "default": "/search"
+        },
+        {
+            "type": "select",
+            "id": "height",
+            "label": "Height",
+            "default": "large",
+            "options": [
+                {
+                    "value": "small",
+                    "label": "small"
+                },
+                {
+                    "value": "medium",
+                    "label": "medium"
+                },
+                {
+                    "value": "large",
+                    "label": "large"
+                }
+            ]
+        },
+        {
+            "type": "select",
+            "id": "alignment",
+            "label": "Copy alignment",
+            "default": "left",
+            "options": [
+                {
+                    "value": "left",
+                    "label": "left"
+                },
+                {
+                    "value": "center",
+                    "label": "center"
+                },
+                {
+                    "value": "right",
+                    "label": "right"
+                }
+            ]
+        },
+        {
+            "type": "color",
+            "id": "foreground",
+            "label": "Text color",
+            "default": "#ffffff"
+        },
+        {
+            "type": "range",
+            "id": "overlay",
+            "label": "Image shading",
+            "default": 15,
+            "min": 0,
+            "max": 70,
+            "step": 5
+        },
+        {
+            "type": "checkbox",
+            "id": "inset",
+            "label": "Inset banner",
+            "default": false
+        },
+        {
+            "type": "checkbox",
+            "id": "primary_heading",
+            "label": "Primary page heading",
+            "default": false
+        }
+    ],
+    "blocks": [],
+    "presets": [
+        {
+            "name": "Campaign image"
+        }
+    ],
+    "enabled_on": {
+        "templates": [
+            "*"
+        ]
+    }
+}

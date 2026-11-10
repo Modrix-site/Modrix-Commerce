@@ -23,6 +23,11 @@ import { show as checkout } from '@/routes/checkout';
 import { product as productRoute } from '@/routes/storefront';
 import type { CartLine, PricedCart, ProductCard } from '@/types';
 
+import {
+    ThemeTemplate,
+    useThemeSections,
+} from '@/components/storefront/theme-sections';
+
 export type CartProps = {
     cart: PricedCart | null;
     slots?: SlotItem[];
@@ -33,7 +38,17 @@ export type CartProps = {
 };
 export default function CartPage(props: CartProps) {
     const { theme } = useStoreTheme();
-    const CustomCart = themeCart(theme?.name);
+    const sections = useThemeSections();
+    if (sections)
+        return (
+            <>
+                <Head title="Cart" />
+                <ThemeTemplate page={props} />
+            </>
+        );
+    const CustomCart = theme?.frontend?.cart
+        ? themeCart(theme.name)
+        : undefined;
     return CustomCart ? (
         <Suspense fallback={<p role="status">Loading cart…</p>}>
             <CustomCart {...props} />
@@ -100,6 +115,24 @@ export function PlatformCartPage({
                         {String(settings.cart_summary_heading ?? t('Summary'))}
                     </h2>
                     <dl className="grid gap-2 text-sm">
+                        {cart.addons_total &&
+                            Number(cart.addons_total.amount) > 0 &&
+                            cart.items_subtotal && (
+                                <>
+                                    <div className="flex justify-between text-muted-foreground">
+                                        <dt>{t('Items')}</dt>
+                                        <dd className="tabular-nums">
+                                            {cart.items_subtotal.formatted}
+                                        </dd>
+                                    </div>
+                                    <div className="flex justify-between text-muted-foreground">
+                                        <dt>{t('Add-ons & Warranties')}</dt>
+                                        <dd className="tabular-nums">
+                                            +{cart.addons_total.formatted}
+                                        </dd>
+                                    </div>
+                                </>
+                            )}
                         <div className="flex justify-between">
                             <dt>{t('Subtotal')}</dt>
                             <dd className="tabular-nums">
@@ -243,18 +276,53 @@ function CartRow({ line }: { line: CartLine }) {
                 >
                     {line.product_name}
                 </Link>
-                {line.variant_name && (
-                    <span className="text-sm text-muted-foreground">
-                        {line.variant_name}
-                    </span>
+                {line.addons && line.addons.length > 0 ? (
+                    <>
+                        <span className="text-sm text-muted-foreground tabular-nums">
+                            {t('Base price: :price each', {
+                                price:
+                                    line.base_unit_price?.formatted ??
+                                    line.unit_price?.formatted ??
+                                    '—',
+                            })}
+                        </span>
+                        <ul className="grid gap-0.5 text-xs text-muted-foreground">
+                            {line.addons.map((addon) => (
+                                <li
+                                    key={addon.id}
+                                    className="flex items-center gap-1.5"
+                                >
+                                    <span>+ {addon.name}</span>
+                                    <span className="font-medium text-foreground tabular-nums">
+                                        (+{addon.unit_price.formatted})
+                                    </span>
+                                </li>
+                            ))}
+                        </ul>
+                        <span className="text-sm font-medium tabular-nums">
+                            {t(':price each (with add-ons)', {
+                                price: line.unit_price
+                                    ? line.unit_price.formatted
+                                    : '—',
+                            })}
+                        </span>
+                    </>
+                ) : (
+                    <>
+                        {line.variant_name && (
+                            <span className="text-sm text-muted-foreground">
+                                {line.variant_name}
+                            </span>
+                        )}
+                        <span className="text-sm tabular-nums">
+                            {t(':price each', {
+                                price: line.unit_price
+                                    ? line.unit_price.formatted
+                                    : '—',
+                            })}
+                        </span>
+                    </>
                 )}
-                <span className="text-sm tabular-nums">
-                    {t(':price each', {
-                        price: line.unit_price
-                            ? line.unit_price.formatted
-                            : '—',
-                    })}
-                </span>
                 {line.offer_label &&
                     line.offer_discount &&
                     Number(line.offer_discount.amount) > 0 && (

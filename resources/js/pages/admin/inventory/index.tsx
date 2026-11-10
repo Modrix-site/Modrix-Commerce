@@ -1,20 +1,13 @@
 import { Form, Head, Link } from '@inertiajs/react';
-import InventoryController from '@/actions/App/Http/Controllers/Admin/InventoryController';
+import { ChevronDown, ChevronRight, ImageOff } from 'lucide-react';
+import { Fragment, useState } from 'react';
 import { EmptyState } from '@/components/admin/empty-state';
-import { FormField, NativeSelect } from '@/components/admin/form-field';
+import { NativeSelect } from '@/components/admin/form-field';
+import { AdjustStockDialog } from '@/components/admin/inventory/adjust-stock-dialog';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Pagination } from '@/components/admin/pagination';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogTitle,
-    DialogTrigger,
-} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -25,33 +18,73 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { cn } from '@/lib/utils';
 import { index, movements } from '@/routes/admin/inventory';
 import type { Option, Paginated } from '@/types';
 
-type StockRow = {
+type VariantStock = {
     id: number;
     sku: string;
-    product_id: number;
-    name: string;
-    on_hand: number;
+    name: string | null;
+    available: number;
+    committed: number;
     threshold: number;
+    state: 'ok' | 'low' | 'out';
     allow_backorder: boolean;
+    match: boolean;
+    url: string;
+};
+
+type ProductStock = {
+    id: number;
+    name: string;
+    image_url: string | null;
+    available: number;
+    committed: number;
+    low: number;
+    out: number;
+    untracked: number;
+    variants: VariantStock[];
 };
 
 type Props = {
-    variants: Paginated<StockRow>;
+    products: Paginated<ProductStock>;
     filters: { search: string; stock: string };
     reasons: Option[];
     canManage: boolean;
 };
 
 export default function InventoryIndex({
-    variants,
+    products,
     filters,
     reasons,
     canManage,
 }: Props) {
     const filtered = filters.search !== '' || filters.stock !== '';
+    // Products found through one of their variants open to show it.
+    const [open, setOpen] = useState<Set<number>>(
+        () =>
+            new Set(
+                products.data
+                    .filter(
+                        (p) =>
+                            p.variants.length > 1 &&
+                            p.variants.some((v) => v.match),
+                    )
+                    .map((p) => p.id),
+            ),
+    );
+    const toggle = (id: number) =>
+        setOpen((current) => {
+            const next = new Set(current);
+            if (next.has(id)) {
+                next.delete(id);
+            } else {
+                next.add(id);
+            }
+
+            return next;
+        });
 
     return (
         <>
@@ -59,7 +92,7 @@ export default function InventoryIndex({
             <AdminPage>
                 <PageHeader
                     title="Inventory"
-                    description="Stock levels for tracked variants. Every change is recorded in the stock history."
+                    description="Stock per product and variant. Available is what can be sold; committed is sold but not shipped yet. Every change is recorded in the stock history."
                     actions={
                         <Button variant="outline" asChild>
                             <Link href={movements()}>Stock history</Link>
@@ -78,7 +111,7 @@ export default function InventoryIndex({
                             name="search"
                             type="search"
                             defaultValue={filters.search}
-                            placeholder="Product or SKU"
+                            placeholder="Product or variant SKU"
                         />
                     </div>
                     <div className="grid gap-2 sm:w-44">
@@ -105,14 +138,14 @@ export default function InventoryIndex({
                     </div>
                 </Form>
 
-                {variants.data.length === 0 ? (
+                {products.data.length === 0 ? (
                     <EmptyState
                         title={
                             filtered
                                 ? 'Nothing matches these filters'
-                                : 'No tracked variants yet'
+                                : 'No tracked products yet'
                         }
-                        description="Variants with inventory tracking appear here."
+                        description="Products whose variants track inventory appear here."
                     />
                 ) : (
                     <Table>
@@ -120,7 +153,12 @@ export default function InventoryIndex({
                             <TableRow>
                                 <TableHead>Product</TableHead>
                                 <TableHead>SKU</TableHead>
-                                <TableHead>On hand</TableHead>
+                                <TableHead className="text-right">
+                                    Committed
+                                </TableHead>
+                                <TableHead className="text-right">
+                                    Available
+                                </TableHead>
                                 {canManage && (
                                     <TableHead>
                                         <span className="sr-only">Actions</span>
@@ -129,156 +167,266 @@ export default function InventoryIndex({
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {variants.data.map((row) => (
-                                <TableRow key={row.id}>
-                                    <TableCell className="font-medium">
-                                        {row.name}
-                                    </TableCell>
-                                    <TableCell className="text-muted-foreground">
-                                        {row.sku}
-                                    </TableCell>
-                                    <TableCell>
-                                        <span className="flex items-center gap-2 tabular-nums">
-                                            {row.on_hand}
-                                            {row.on_hand <= 0 ? (
-                                                <Badge variant="destructive">
-                                                    Out of stock
-                                                </Badge>
-                                            ) : row.on_hand <= row.threshold ? (
-                                                <Badge variant="outline">
-                                                    Low
-                                                </Badge>
-                                            ) : null}
-                                            {row.allow_backorder && (
-                                                <Badge variant="secondary">
-                                                    Backorders allowed
-                                                </Badge>
+                            {products.data.map((product) => {
+                                const single =
+                                    product.variants.length === 1
+                                        ? product.variants[0]
+                                        : null;
+                                const expanded = open.has(product.id);
+
+                                return (
+                                    <Fragment key={product.id}>
+                                        <TableRow
+                                            className={cn(
+                                                !single && 'cursor-pointer',
                                             )}
-                                        </span>
-                                    </TableCell>
-                                    {canManage && (
-                                        <TableCell className="text-right">
-                                            <AdjustDialog
-                                                row={row}
-                                                reasons={reasons}
-                                            />
-                                        </TableCell>
-                                    )}
-                                </TableRow>
-                            ))}
+                                            onClick={
+                                                single
+                                                    ? undefined
+                                                    : () => toggle(product.id)
+                                            }
+                                        >
+                                            <TableCell>
+                                                <div className="flex items-center gap-3">
+                                                    {single ? (
+                                                        <span className="w-4" />
+                                                    ) : (
+                                                        <button
+                                                            type="button"
+                                                            aria-expanded={
+                                                                expanded
+                                                            }
+                                                            aria-label={`${expanded ? 'Hide' : 'Show'} variants of ${product.name}`}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                toggle(
+                                                                    product.id,
+                                                                );
+                                                            }}
+                                                            className="rounded p-0.5 hover:bg-muted"
+                                                        >
+                                                            {expanded ? (
+                                                                <ChevronDown className="size-4" />
+                                                            ) : (
+                                                                <ChevronRight className="size-4" />
+                                                            )}
+                                                        </button>
+                                                    )}
+                                                    <Thumb
+                                                        url={product.image_url}
+                                                    />
+                                                    <div className="grid">
+                                                        {single ? (
+                                                            <Link
+                                                                href={
+                                                                    single.url
+                                                                }
+                                                                className="font-medium hover:underline"
+                                                            >
+                                                                {product.name}
+                                                            </Link>
+                                                        ) : (
+                                                            <span className="font-medium">
+                                                                {product.name}
+                                                            </span>
+                                                        )}
+                                                        <span className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+                                                            {!single &&
+                                                                `${product.variants.length} variants`}
+                                                            {product.untracked >
+                                                                0 &&
+                                                                ` · ${product.untracked} not tracked`}
+                                                            <StockBadges
+                                                                low={
+                                                                    product.low
+                                                                }
+                                                                out={
+                                                                    product.out
+                                                                }
+                                                                single={
+                                                                    single !==
+                                                                    null
+                                                                }
+                                                            />
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="text-muted-foreground">
+                                                {single?.sku ?? '—'}
+                                            </TableCell>
+                                            <TableCell className="text-right text-muted-foreground tabular-nums">
+                                                {product.committed}
+                                            </TableCell>
+                                            <TableCell className="text-right font-medium tabular-nums">
+                                                {product.available}
+                                            </TableCell>
+                                            {canManage && (
+                                                <TableCell
+                                                    className="text-right"
+                                                    onClick={(e) =>
+                                                        e.stopPropagation()
+                                                    }
+                                                >
+                                                    {single && (
+                                                        <Adjust
+                                                            variant={single}
+                                                            productName={
+                                                                product.name
+                                                            }
+                                                            reasons={reasons}
+                                                        />
+                                                    )}
+                                                </TableCell>
+                                            )}
+                                        </TableRow>
+                                        {expanded &&
+                                            product.variants.map((variant) => (
+                                                <TableRow
+                                                    key={variant.id}
+                                                    className={cn(
+                                                        'bg-muted/30',
+                                                        variant.match &&
+                                                            filtered &&
+                                                            'bg-primary/5',
+                                                    )}
+                                                >
+                                                    <TableCell className="pl-16">
+                                                        <Link
+                                                            href={variant.url}
+                                                            className="hover:underline"
+                                                        >
+                                                            {variant.name ??
+                                                                'Default'}
+                                                        </Link>
+                                                        <span className="ml-2 inline-flex gap-1.5">
+                                                            <StockBadges
+                                                                low={
+                                                                    variant.state ===
+                                                                    'low'
+                                                                        ? 1
+                                                                        : 0
+                                                                }
+                                                                out={
+                                                                    variant.state ===
+                                                                    'out'
+                                                                        ? 1
+                                                                        : 0
+                                                                }
+                                                                single
+                                                            />
+                                                            {variant.allow_backorder && (
+                                                                <Badge variant="secondary">
+                                                                    Backorders
+                                                                    allowed
+                                                                </Badge>
+                                                            )}
+                                                        </span>
+                                                    </TableCell>
+                                                    <TableCell className="text-muted-foreground">
+                                                        {variant.sku}
+                                                    </TableCell>
+                                                    <TableCell className="text-right text-muted-foreground tabular-nums">
+                                                        {variant.committed}
+                                                    </TableCell>
+                                                    <TableCell className="text-right tabular-nums">
+                                                        {variant.available}
+                                                    </TableCell>
+                                                    {canManage && (
+                                                        <TableCell className="text-right">
+                                                            <Adjust
+                                                                variant={
+                                                                    variant
+                                                                }
+                                                                productName={
+                                                                    product.name
+                                                                }
+                                                                reasons={
+                                                                    reasons
+                                                                }
+                                                            />
+                                                        </TableCell>
+                                                    )}
+                                                </TableRow>
+                                            ))}
+                                    </Fragment>
+                                );
+                            })}
                         </TableBody>
                     </Table>
                 )}
 
                 <Pagination
-                    from={variants.from}
-                    to={variants.to}
-                    total={variants.total}
-                    prevUrl={variants.prev_page_url}
-                    nextUrl={variants.next_page_url}
+                    from={products.from}
+                    to={products.to}
+                    total={products.total}
+                    prevUrl={products.prev_page_url}
+                    nextUrl={products.next_page_url}
                 />
             </AdminPage>
         </>
     );
 }
 
-function AdjustDialog({ row, reasons }: { row: StockRow; reasons: Option[] }) {
+function Adjust({
+    variant,
+    productName,
+    reasons,
+}: {
+    variant: VariantStock;
+    productName: string;
+    reasons: Option[];
+}) {
     return (
-        <Dialog>
-            <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                    Adjust
-                </Button>
-            </DialogTrigger>
-            <DialogContent>
-                <DialogTitle>Adjust stock</DialogTitle>
-                <DialogDescription>
-                    {row.name} ({row.sku}): currently {row.on_hand} on hand.
-                </DialogDescription>
-                <Form
-                    {...InventoryController.adjust.form(row.id)}
-                    options={{ preserveScroll: true }}
-                    className="grid gap-4"
-                >
-                    {({ processing, errors }) => (
-                        <>
-                            <div className="grid gap-4 sm:grid-cols-2">
-                                <FormField
-                                    id={`mode-${row.id}`}
-                                    label="Action"
-                                    error={errors.mode}
-                                >
-                                    <NativeSelect
-                                        id={`mode-${row.id}`}
-                                        name="mode"
-                                        defaultValue="add"
-                                    >
-                                        <option value="add">
-                                            Add to stock
-                                        </option>
-                                        <option value="remove">
-                                            Remove from stock
-                                        </option>
-                                        <option value="set">
-                                            Set stock count to
-                                        </option>
-                                    </NativeSelect>
-                                </FormField>
-                                <FormField
-                                    id={`qty-${row.id}`}
-                                    label="Quantity"
-                                    error={errors.quantity}
-                                >
-                                    <Input
-                                        id={`qty-${row.id}`}
-                                        name="quantity"
-                                        type="number"
-                                        min={0}
-                                        required
-                                    />
-                                </FormField>
-                            </div>
-                            <FormField
-                                id={`reason-${row.id}`}
-                                label="Reason"
-                                error={errors.reason}
-                            >
-                                <NativeSelect
-                                    id={`reason-${row.id}`}
-                                    name="reason"
-                                    defaultValue={reasons[0]?.value}
-                                >
-                                    {reasons.map((r) => (
-                                        <option key={r.value} value={r.value}>
-                                            {r.label}
-                                        </option>
-                                    ))}
-                                </NativeSelect>
-                            </FormField>
-                            <FormField
-                                id={`note-${row.id}`}
-                                label="Note"
-                                error={errors.note}
-                            >
-                                <Input
-                                    id={`note-${row.id}`}
-                                    name="note"
-                                    placeholder="Optional"
-                                />
-                            </FormField>
-                            <DialogFooter className="gap-2">
-                                <DialogClose asChild>
-                                    <Button variant="secondary">Cancel</Button>
-                                </DialogClose>
-                                <Button type="submit" disabled={processing}>
-                                    Save adjustment
-                                </Button>
-                            </DialogFooter>
-                        </>
-                    )}
-                </Form>
-            </DialogContent>
-        </Dialog>
+        <AdjustStockDialog
+            row={{
+                id: variant.id,
+                name: variant.name
+                    ? `${productName} — ${variant.name}`
+                    : productName,
+                sku: variant.sku,
+                on_hand: variant.available,
+            }}
+            reasons={reasons}
+        />
+    );
+}
+
+function StockBadges({
+    low,
+    out,
+    single,
+}: {
+    low: number;
+    out: number;
+    single: boolean;
+}) {
+    return (
+        <>
+            {out > 0 && (
+                <Badge variant="destructive">
+                    {single ? 'Out of stock' : `${out} out of stock`}
+                </Badge>
+            )}
+            {low > 0 && (
+                <Badge variant="outline">{single ? 'Low' : `${low} low`}</Badge>
+            )}
+        </>
+    );
+}
+
+function Thumb({ url }: { url: string | null }) {
+    return url ? (
+        <img
+            src={url}
+            alt=""
+            className="size-9 shrink-0 rounded-md border object-cover"
+            loading="lazy"
+        />
+    ) : (
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-md border bg-muted text-muted-foreground">
+            <ImageOff className="size-4" />
+        </span>
     );
 }
 

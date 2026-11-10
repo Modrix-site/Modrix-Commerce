@@ -1,0 +1,21 @@
+{
+    "name": "Shopping cart",
+    "settings": [
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "Your shopping cart"
+        }
+    ],
+    "blocks": [],
+    "max_blocks": 50,
+    "presets": [
+        {
+            "name": "Shopping cart"
+        }
+    ],
+    "enabled_on": {
+        "templates": ["*"]
+    }
+}

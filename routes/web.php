@@ -1,7 +1,10 @@
 <?php
 
 use App\Domains\Content\Models\Page;
+use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\DashboardRedirectController;
+use App\Http\Controllers\Settings\ProfileController;
+use App\Http\Controllers\Settings\SecurityController;
 use App\Http\Controllers\Storefront\AccountController;
 use App\Http\Controllers\Storefront\AccountNotificationController;
 use App\Http\Controllers\Storefront\AccountOrderController;
@@ -13,15 +16,19 @@ use App\Http\Controllers\Storefront\DownloadController;
 use App\Http\Controllers\Storefront\ProductController;
 use App\Http\Controllers\Storefront\SitemapController;
 use App\Http\Middleware\ShareStorefrontData;
+use Illuminate\Auth\Middleware\RequirePassword;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Laravel\Fortify\Features;
+use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
+use Laravel\Fortify\Http\Controllers\ConfirmablePasswordController;
 use Laravel\Fortify\Http\Controllers\NewPasswordController;
 use Laravel\Fortify\Http\Controllers\PasswordResetLinkController;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 
 Route::middleware(['installed', ShareStorefrontData::class])->group(function () {
     Route::get('pages/{slug}', function (string $slug) {
-        return Inertia::render('storefront/page', ['page' => Page::query()->where('slug', $slug)->where('status', 'published')->firstOrFail()]);
+        return Inertia::render('storefront/page', ['page' => Page::query()->where('slug', $slug)->where('status', 'published')->firstOrFail()->forStorefront()]);
     })->name('storefront.page');
     Route::get('/', [CatalogController::class, 'home'])->name('home');
     Route::get('search', [CatalogController::class, 'search'])->name('storefront.search');
@@ -38,6 +45,16 @@ Route::middleware(['installed', ShareStorefrontData::class])->group(function () 
         Route::delete('cart/coupon', [CartController::class, 'removeCoupon'])->name('cart.coupon.remove');
     });
 
+    // Shopper sign-in and sign-up, inside the theme's header and footer (same names as Fortify's).
+    Route::middleware('guest:'.config('fortify.guard'))->group(function () {
+        Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
+        Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
+        if (Features::enabled(Features::resetPasswords())) {
+            Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
+            Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
+        }
+    });
+
     Route::get('checkout', [CheckoutController::class, 'show'])->name('checkout.show');
     Route::post('checkout', [CheckoutController::class, 'store'])->middleware('throttle:checkout')->name('checkout.store');
     Route::get('checkout/complete/{order}', [CheckoutController::class, 'complete'])->name('checkout.complete');
@@ -51,7 +68,7 @@ Route::middleware(['installed', ShareStorefrontData::class])->group(function () 
 
     Route::middleware('auth')->prefix('account')->name('account.')->group(function () {
         Route::get('pages/{slug}', function (string $slug) {
-            return Inertia::render('storefront/page', ['page' => Page::query()->where('slug', $slug)->where('status', 'published')->firstOrFail()]);
+            return Inertia::render('storefront/page', ['page' => Page::query()->where('slug', $slug)->where('status', 'published')->firstOrFail()->forStorefront()]);
         })->name('storefront.page');
         Route::get('/', [AccountController::class, 'show'])->name('show');
         Route::get('addresses', [AccountController::class, 'addresses'])->name('addresses');
@@ -59,6 +76,12 @@ Route::middleware(['installed', ShareStorefrontData::class])->group(function () 
         Route::post('addresses', [AccountController::class, 'storeAddress'])->name('addresses.store');
         Route::put('addresses/{address}', [AccountController::class, 'updateAddress'])->name('addresses.update');
         Route::delete('addresses/{address}', [AccountController::class, 'destroyAddress'])->name('addresses.destroy');
+        Route::get('profile', [ProfileController::class, 'edit'])->name('profile');
+        Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::get('security', [SecurityController::class, 'edit'])->middleware(['verified', RequirePassword::using('account.password.confirm')])->name('security');
+        Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])->name('password.confirm');
+        Route::get('password', [SecurityController::class, 'password'])->middleware('verified')->name('password');
+        Route::put('password', [SecurityController::class, 'update'])->middleware(['verified', 'throttle:6,1'])->name('password.update');
         Route::get('orders', [AccountOrderController::class, 'index'])->name('orders');
         Route::get('orders/{order}', [AccountOrderController::class, 'show'])->name('orders.show');
         Route::get('notifications', [AccountNotificationController::class, 'index'])->name('notifications');
@@ -75,6 +98,18 @@ Route::middleware(['installed', ShareStorefrontData::class])->group(function () 
 Route::middleware(['installed', 'auth', 'verified'])->group(function () {
     Route::get('dashboard', DashboardRedirectController::class)->name('dashboard');
 });
+
+// Staff sign-in; posts to the shared Fortify login.
+Route::middleware(['installed', 'guest:'.config('fortify.guard')])
+    ->get('admin/login', AdminLoginController::class)
+    ->name('admin.login');
+
+if (Features::enabled(Features::resetPasswords())) {
+    Route::middleware(['installed', 'guest:'.config('fortify.guard')])->prefix('admin')->name('admin.')->group(function () {
+        Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
+        Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
+    });
+}
 
 // XML sitemap, contributed by modules with the "sitemap.provider" capability.
 Route::middleware('installed')->get('sitemap.xml', SitemapController::class)->name('sitemap');

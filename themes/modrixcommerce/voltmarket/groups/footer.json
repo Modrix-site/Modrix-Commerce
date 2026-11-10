@@ -1,0 +1,100 @@
+{
+    "sections": {
+        "newsletter": {
+            "type": "newsletter",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        },
+        "footer": {
+            "type": "footer",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Quick links",
+                        "label": "Shop all",
+                        "link": "/search"
+                    }
+                },
+                "block_1": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Quick links",
+                        "label": "New arrivals",
+                        "link": "/search?sort=newest"
+                    }
+                },
+                "block_2": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Quick links",
+                        "label": "Your account",
+                        "link": "/account"
+                    }
+                },
+                "block_3": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Discover",
+                        "label": "Audio",
+                        "link": "/search?q=headphones"
+                    }
+                },
+                "block_4": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Discover",
+                        "label": "Computers",
+                        "link": "/search?q=laptop"
+                    }
+                },
+                "block_5": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Discover",
+                        "label": "Smart home",
+                        "link": "/search?q=home"
+                    }
+                },
+                "block_6": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Your order",
+                        "label": "Shopping cart",
+                        "link": "/cart"
+                    }
+                },
+                "block_7": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Your order",
+                        "label": "Track your order",
+                        "link": "/account/orders"
+                    }
+                },
+                "block_8": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Your order",
+                        "label": "Change password",
+                        "link": "/account/password"
+                    }
+                }
+            },
+            "block_order": [
+                "block_0",
+                "block_1",
+                "block_2",
+                "block_3",
+                "block_4",
+                "block_5",
+                "block_6",
+                "block_7",
+                "block_8"
+            ]
+        }
+    },
+    "order": ["newsletter", "footer"]
+}

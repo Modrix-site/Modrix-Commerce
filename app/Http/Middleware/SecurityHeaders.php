@@ -34,7 +34,9 @@ class SecurityHeaders
 
         $headers->set('X-Content-Type-Options', 'nosniff', false);
         $headers->set('Referrer-Policy', 'strict-origin-when-cross-origin', false);
-        $headers->set('X-Frame-Options', 'DENY', false);
+        // The theme editor frames the storefront preview from the same origin.
+        $framed = $request->attributes->get('theme.editor') === true;
+        $headers->set('X-Frame-Options', $framed ? 'SAMEORIGIN' : 'DENY', false);
         $headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=()', false);
         $headers->set('Cross-Origin-Opener-Policy', 'same-origin', false);
 
@@ -46,13 +48,13 @@ class SecurityHeaders
 
         if ($csp && ! $hasPolicy) {
             $name = $mode === 'report-only' ? 'Content-Security-Policy-Report-Only' : 'Content-Security-Policy';
-            $headers->set($name, $this->policy(Vite::cspNonce()));
+            $headers->set($name, $this->policy(Vite::cspNonce(), $framed));
         }
 
         return $response;
     }
 
-    private function policy(?string $nonce): string
+    private function policy(?string $nonce, bool $framed = false): string
     {
         // Origins declared by enabled modules (manifest content_security, ADR-047).
         $modules = app(ModuleContentSecurity::class);
@@ -72,7 +74,7 @@ class SecurityHeaders
             $frames === [] && $custom === [] ? null : $directive('frame-src', ["'self'", ...$custom]),
             "object-src 'none'",
             "base-uri 'self'",
-            "frame-ancestors 'none'",
+            $framed ? "frame-ancestors 'self'" : "frame-ancestors 'none'",
             // Hosted payment pages are reached by full-page redirects.
             $directive('form-action', ["'self'", 'https://checkout.stripe.com']),
         ]));

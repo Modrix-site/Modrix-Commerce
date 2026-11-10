@@ -1,0 +1,59 @@
+{
+    "name": "The gift edit",
+    "settings": [
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "The gift edit"
+        },
+        {
+            "type": "select",
+            "id": "columns",
+            "label": "Desktop columns",
+            "default": "4",
+            "options": [
+                {
+                    "value": "3",
+                    "label": "3 columns"
+                },
+                {
+                    "value": "4",
+                    "label": "4 columns"
+                }
+            ]
+        }
+    ],
+    "blocks": [
+        {
+            "type": "gift_tile",
+            "name": "Gift edit tile",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Label",
+                    "default": "Personal touches"
+                },
+                {
+                    "type": "image",
+                    "id": "image",
+                    "label": "Image",
+                    "default": "asset:assets/writing.jpg"
+                },
+                {
+                    "type": "text",
+                    "id": "alt",
+                    "label": "Image description",
+                    "default": "Gift edit inspiration"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Link destination",
+                    "default": "/search"
+                }
+            ]
+        }
+    ]
+}

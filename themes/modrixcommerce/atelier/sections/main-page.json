@@ -1,0 +1,34 @@
+{
+    "name": "Editorial page content",
+    "enabled_on": {
+        "templates": ["page"]
+    },
+    "settings": [
+        {
+            "type": "checkbox",
+            "id": "show_title",
+            "label": "Show page title",
+            "default": true
+        },
+        {
+            "type": "select",
+            "id": "content_width",
+            "label": "Page width",
+            "default": "medium",
+            "options": [
+                {
+                    "value": "narrow",
+                    "label": "Narrow (Article)"
+                },
+                {
+                    "value": "medium",
+                    "label": "Medium (Standard)"
+                },
+                {
+                    "value": "wide",
+                    "label": "Wide (Expanded)"
+                }
+            ]
+        }
+    ]
+}

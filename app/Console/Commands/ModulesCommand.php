@@ -18,7 +18,7 @@ use Illuminate\Console\Command;
  */
 #[Signature('ecomodular:modules
     {action=list : list, discover, install, enable, disable, update or uninstall}
-    {name? : Module name, e.g. ecomodular/product-reviews}
+    {name? : Module name, e.g. modrixcommerce/product-reviews}
     {--trust : Confirm that you trust the module code (required to enable)}
     {--confirm= : Repeat the module name to confirm uninstalling (deletes its data)}')]
 #[Description('List, discover, install, enable, disable, update or uninstall modules')]

@@ -2,11 +2,15 @@
 
 namespace App\Domains\Checkout\Pricing\Steps;
 
+use App\Core\Settings\SettingsRepository;
+use App\Core\Settings\StoreSettings;
 use App\Domains\Cart\Models\Cart;
 use App\Domains\Checkout\Pricing\PricedCart;
 use App\Domains\Checkout\Pricing\PricingContext;
 use App\Domains\Checkout\Pricing\PricingStep;
 use App\Domains\Pricing\Money;
+use App\Domains\Shipping\DeliveryArea;
+use App\Domains\Shipping\Models\ShippingMethod;
 use App\Domains\Shipping\ShippingRate;
 use App\Domains\Shipping\ShippingRates;
 use App\Domains\Shipping\ShippingRequest;
@@ -59,12 +63,15 @@ final class ShippingStep implements PricingStep
             merchandiseTotal: $priced->subtotal()->minus($priced->discountTotal),
             totalWeight: (string) $weight,
             itemCount: $items,
+            city: $context->city,
         ));
 
         $priced->shippingOptions = array_map(fn (ShippingRate $r) => $r->toArray(), $options);
 
         if ($options === []) {
-            $priced->issues[] = 'We do not ship to the selected destination.';
+            $priced->issues[] = $this->awaitingPlace($priced->currency, $context)
+                ? st('Add your state or city to see the shipping method and amount.')
+                : 'We do not ship to the selected destination.';
 
             return;
         }
@@ -81,5 +88,39 @@ final class ShippingStep implements PricingStep
             $priced->shipping = $selected->toArray();
             $priced->shippingTotal = $selected->amount;
         }
+    }
+
+    /**
+     * The country is already chosen, and a rate exists only after a state or city.
+     */
+    private function awaitingPlace(string $currency, PricingContext $context): bool
+    {
+        $area = app(DeliveryArea::class);
+        $country = strtoupper((string) $context->countryCode);
+        $covered = $area->countries() === null || in_array($country, $area->countries(), true);
+        if (! $covered) {
+            return false;
+        }
+
+        $region = trim((string) $context->region);
+        $city = trim((string) $context->city);
+        $mode = $area->toArray()['mode'];
+        if ($mode === 'store_city' && $city === '') {
+            return true;
+        }
+        if (in_array($mode, ['store_region', 'store_city'], true) && $region === '' && (string) app(SettingsRepository::class)->get('store.region', '') !== '') {
+            return true;
+        }
+        if ($region !== '') {
+            return false;
+        }
+
+        $methods = ShippingMethod::query()->where('is_active', true)->get();
+        $matched = $methods->where('currency', $currency);
+        if ($matched->isEmpty()) {
+            $matched = $methods->where('currency', app(StoreSettings::class)->currency());
+        }
+
+        return $matched->contains(fn (ShippingMethod $method) => $method->regions_only && $method->shipsTo($country));
     }
 }

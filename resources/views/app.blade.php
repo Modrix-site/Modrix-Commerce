@@ -48,7 +48,7 @@
         @viteReactRefresh
         @vite(['resources/css/app.css', 'resources/js/app.tsx', \App\Support\PageEntry::for($page['component'])])
         <x-inertia::head>
-            <title>{{ config('app.name', 'Laravel') }}</title>
+            <title>{{ ! empty($branding['panel_name']) ? $branding['panel_name'] : config('app.name', 'Laravel') }}</title>
         </x-inertia::head>
         {{ \App\Support\CustomCode::for($page['component'], 'head') }}
     </head>

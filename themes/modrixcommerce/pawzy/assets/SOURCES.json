@@ -1,0 +1,134 @@
+[
+  {
+    "file": "assets/images/food.jpg",
+    "url": "https://images.pexels.com/photos/8434633/pexels-photo-8434633.jpeg?auto=compress&cs=tinysrgb&w=1400",
+    "source": "Pexels",
+    "bytes": 75557
+  },
+  {
+    "file": "assets/images/care.jpg",
+    "url": "https://images.pexels.com/photos/6864016/pexels-photo-6864016.jpeg?auto=compress&cs=tinysrgb&w=1400",
+    "source": "Pexels",
+    "bytes": 154933
+  },
+  {
+    "file": "assets/images/fashion.jpg",
+    "url": "https://images.pexels.com/photos/10720034/pexels-photo-10720034.jpeg?auto=compress&cs=tinysrgb&w=1400",
+    "source": "Pexels",
+    "bytes": 264814
+  },
+  {
+    "file": "assets/images/pets.jpg",
+    "url": "https://images.pexels.com/photos/26925454/pexels-photo-26925454.jpeg?auto=compress&cs=tinysrgb&w=1400",
+    "source": "Pexels",
+    "bytes": 386750
+  },
+  {
+    "file": "assets/images/toy.jpg",
+    "url": "https://nov-pawzy.myshopify.com/cdn/shop/files/08_e6dd53d8-0ae1-4682-975c-30e72d603544.jpg?width=1000",
+    "source": "User-provided Pawzy reference demo",
+    "bytes": 81573
+  },
+  {
+    "file": "assets/images/hero.jpg",
+    "url": "https://images.pexels.com/photos/16764535/pexels-photo-16764535.jpeg?auto=compress&cs=tinysrgb&w=1400",
+    "source": "Pexels",
+    "bytes": 533915
+  },
+  {
+    "file": "assets/images/dog.jpg",
+    "url": "https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=1400",
+    "source": "Pexels",
+    "bytes": 196108
+  },
+  {
+    "file": "assets/images/fish.jpg",
+    "url": "https://images.pexels.com/photos/128756/pexels-photo-128756.jpeg?auto=compress&cs=tinysrgb&w=1400",
+    "source": "Pexels",
+    "bytes": 76633
+  },
+  {
+    "file": "assets/images/cat.jpg",
+    "url": "https://images.pexels.com/photos/1170986/pexels-photo-1170986.jpeg?auto=compress&cs=tinysrgb&w=1400",
+    "source": "Pexels",
+    "bytes": 197837
+  },
+  {
+    "file": "assets/images/rabbit.jpg",
+    "url": "https://images.pexels.com/photos/326012/pexels-photo-326012.jpeg?auto=compress&cs=tinysrgb&w=1400",
+    "source": "Pexels",
+    "bytes": 273355
+  },
+  {
+    "file": "assets/images/hamster.jpg",
+    "url": "https://images.pexels.com/photos/4520482/pexels-photo-4520482.jpeg?auto=compress&cs=tinysrgb&w=1400",
+    "source": "Pexels",
+    "bytes": 130715
+  },
+  {
+    "file": "assets/images/bed-heart.jpg",
+    "url": "https://nov-pawzy.myshopify.com/cdn/shop/files/13_d6d5661d-fa89-422a-a5c6-bcbf175014be.jpg?width=1000",
+    "source": "User-provided Pawzy reference demo",
+    "bytes": 110483
+  },
+  {
+    "file": "assets/images/ball.jpg",
+    "url": "https://nov-pawzy.myshopify.com/cdn/shop/files/08_e6dd53d8-0ae1-4682-975c-30e72d603544.jpg?width=1000",
+    "source": "User-provided Pawzy reference demo",
+    "bytes": 81573
+  },
+  {
+    "file": "assets/images/bed-brown.jpg",
+    "url": "https://nov-pawzy.myshopify.com/cdn/shop/files/5_8961e7f9-3a54-487a-ba75-98f48fa8c3ae.jpg?width=1000",
+    "source": "User-provided Pawzy reference demo",
+    "bytes": 87957
+  },
+  {
+    "file": "assets/images/plush.jpg",
+    "url": "https://nov-pawzy.myshopify.com/cdn/shop/files/8_5835d51a-26b4-4e50-8eae-d700fa9ae6a3.jpg?width=1000",
+    "source": "User-provided Pawzy reference demo",
+    "bytes": 78487
+  },
+  {
+    "file": "assets/images/house.jpg",
+    "url": "https://nov-pawzy.myshopify.com/cdn/shop/files/18_f05e402e-073f-4286-b567-77c29f384044.jpg?width=1000",
+    "source": "User-provided Pawzy reference demo",
+    "bytes": 164377
+  },
+  {
+    "file": "assets/images/bird.jpg",
+    "url": "https://images.pexels.com/photos/5705040/pexels-photo-5705040.jpeg?auto=compress&cs=tinysrgb&w=1400",
+    "source": "Pexels",
+    "bytes": 300596
+  },
+  {
+    "file": "assets/images/costume.jpg",
+    "url": "https://nov-pawzy.myshopify.com/cdn/shop/files/15_11c11cfe-9e5b-4b11-8b4f-e4ba1d8f33b2.jpg?width=1000",
+    "source": "User-provided Pawzy reference demo",
+    "bytes": 96941
+  },
+  {
+    "file": "assets/images/sweater.jpg",
+    "url": "https://nov-pawzy.myshopify.com/cdn/shop/files/18_6c7016d6-b7f2-4799-af8e-0b2b575c6efe.jpg?width=1000",
+    "source": "User-provided Pawzy reference demo",
+    "bytes": 152753
+  },
+  {
+    "file": "assets/images/shirt.jpg",
+    "url": "https://nov-pawzy.myshopify.com/cdn/shop/files/19_b05ea15c-ae5d-4b1d-bbc2-ce96c94b42d2.jpg?width=1000",
+    "source": "User-provided Pawzy reference demo",
+    "bytes": 142371
+  },
+  {
+    "file": "assets/images/reindeer.jpg",
+    "url": "https://nov-pawzy.myshopify.com/cdn/shop/files/16_fc694d15-4586-4d39-99b1-6752fb8d73ae.jpg?width=1000",
+    "source": "User-provided Pawzy reference demo",
+    "bytes": 153287
+  },
+  {
+    "file": "assets/images/pirate.jpg",
+    "url": "https://nov-pawzy.myshopify.com/cdn/shop/files/13_ae3f1819-8eda-4c24-98d8-9baf95ebf89a.jpg?width=1000",
+    "source": "User-provided Pawzy reference demo",
+    "bytes": 101654
+  }
+]

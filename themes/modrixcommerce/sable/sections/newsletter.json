@@ -1,0 +1,28 @@
+{
+    "name": "Newsletter",
+    "settings": [
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "Letters from Sable"
+        },
+        {
+            "type": "textarea",
+            "id": "body",
+            "label": "Description",
+            "default": "New collections, places and stories. A little inspiration for your next chapter."
+        }
+    ],
+    "blocks": [],
+    "presets": [
+        {
+            "name": "Newsletter"
+        }
+    ],
+    "enabled_on": {
+        "templates": [
+            "*"
+        ]
+    }
+}

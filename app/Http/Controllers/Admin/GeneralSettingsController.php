@@ -181,6 +181,7 @@ class GeneralSettingsController extends Controller
     public function security(Request $request): RedirectResponse
     {
         $data = $request->validate([
+            'registration_enabled' => ['required', 'boolean'],
             'require_two_factor' => ['required', 'boolean'],
             'session_lifetime' => ['nullable', 'integer', 'between:15,1440'],
             'login_attempts' => ['required', 'integer', 'between:3,20'],
@@ -195,6 +196,7 @@ class GeneralSettingsController extends Controller
 
         $before = $this->general->security();
         $after = [
+            'registration_enabled' => (bool) $data['registration_enabled'],
             'require_two_factor' => (bool) $data['require_two_factor'],
             'session_lifetime' => isset($data['session_lifetime']) ? (int) $data['session_lifetime'] : null,
             'login_attempts' => (int) $data['login_attempts'],

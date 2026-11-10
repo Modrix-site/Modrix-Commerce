@@ -48,6 +48,7 @@ type Props = {
         allowed_ips: string[];
     };
     security: {
+        registration_enabled: boolean;
         require_two_factor: boolean;
         session_lifetime: number | null;
         login_attempts: number;
@@ -757,6 +758,7 @@ function SecurityTab({
     'security' | 'canAdvanced' | 'hasTwoFactor' | 'defaultSessionLifetime'
 >) {
     const form = useForm({
+        registration_enabled: security.registration_enabled,
         require_two_factor: security.require_two_factor,
         session_lifetime:
             security.session_lifetime === null
@@ -794,6 +796,15 @@ function SecurityTab({
                 description="Sign-in and session rules for everyone who uses the store."
             >
                 <fieldset disabled={!canAdvanced} className="grid gap-5">
+                    <Toggle
+                        id="registration_enabled"
+                        label="Allow customer sign up"
+                        checked={form.data.registration_enabled}
+                        onChange={(value) =>
+                            form.setData('registration_enabled', value)
+                        }
+                        hint="When this is off, the sign-up page and the sign-up link are hidden. Existing customers can still sign in."
+                    />
                     <Toggle
                         id="require_two_factor"
                         label="Require two-factor authentication for staff"

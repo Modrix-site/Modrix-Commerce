@@ -1,0 +1,88 @@
+{
+    "name": "Categories grid",
+    "settings": [
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "Discover our categories"
+        },
+        {
+            "type": "select",
+            "id": "mode",
+            "label": "Categories source",
+            "default": "store",
+            "options": [
+                {
+                    "value": "store",
+                    "label": "Store catalog categories"
+                },
+                {
+                    "value": "custom",
+                    "label": "Custom section blocks"
+                }
+            ]
+        },
+        {
+            "type": "select",
+            "id": "columns",
+            "label": "Desktop columns",
+            "default": "4",
+            "options": [
+                {
+                    "value": "3",
+                    "label": "3 columns"
+                },
+                {
+                    "value": "4",
+                    "label": "4 columns"
+                },
+                {
+                    "value": "5",
+                    "label": "5 columns"
+                }
+            ]
+        },
+        {
+            "type": "range",
+            "id": "image_height",
+            "label": "Tile image height (px)",
+            "default": 280,
+            "min": 180,
+            "max": 450,
+            "step": 10
+        }
+    ],
+    "blocks": [
+        {
+            "type": "category_tile",
+            "name": "Category tile",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Title",
+                    "default": "Writing instruments"
+                },
+                {
+                    "type": "image",
+                    "id": "image",
+                    "label": "Image",
+                    "default": "asset:assets/writing.jpg"
+                },
+                {
+                    "type": "text",
+                    "id": "alt",
+                    "label": "Image description",
+                    "default": "Writing instruments"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Link destination",
+                    "default": "/search"
+                }
+            ]
+        }
+    ]
+}

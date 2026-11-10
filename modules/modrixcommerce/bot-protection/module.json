@@ -1,0 +1,286 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/bot-protection",
+    "display_name": "Bot Protection",
+    "description": "Enterprise bot mitigation and traffic defense engine protecting against scrapers, credential stuffing, fake registrations, checkout abuse, and inventory hoarding.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "shield-check",
+    "accent": "#2563eb",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\BotProtection\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\BotProtection\\BotProtectionServiceProvider",
+    "permissions": [
+        {
+            "name": "bot_protection.view_dashboard",
+            "label": "View bot protection dashboard and live traffic",
+            "group": "Bot Protection"
+        },
+        {
+            "name": "bot_protection.manage_security",
+            "label": "Manage active security posture, mitigations, and queue",
+            "group": "Bot Protection"
+        },
+        {
+            "name": "bot_protection.manage_rules",
+            "label": "Create, edit, and configure bot defense rules",
+            "group": "Bot Protection"
+        },
+        {
+            "name": "bot_protection.manage_ips",
+            "label": "Manage IP blacklists, whitelists, and country blocking",
+            "group": "Bot Protection"
+        },
+        {
+            "name": "bot_protection.manage_settings",
+            "label": "Configure bot sensitivity, CAPTCHA, and alert integrations",
+            "group": "Bot Protection"
+        },
+        {
+            "name": "bot_protection.export_reports",
+            "label": "Export bot attack reports as CSV and Excel",
+            "group": "Bot Protection"
+        }
+    ],
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "database.migrations",
+        "events.listen",
+        "scheduled.tasks",
+        "console.commands",
+        "settings",
+        "permissions"
+    ],
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages"
+    },
+    "settings": [
+        {
+            "key": "enabled",
+            "type": "boolean",
+            "label": "Enable real-time bot protection",
+            "help": "Analyze incoming requests and apply threat mitigations.",
+            "default": true
+        },
+        {
+            "key": "sensitivity_level",
+            "type": "select",
+            "label": "Risk sensitivity level",
+            "help": "Controls how aggressively the heuristic engine scores suspicious behavior.",
+            "default": "medium",
+            "options": [
+                { "value": "low", "label": "Low (Standard shop protection)" },
+                { "value": "medium", "label": "Medium (Balanced detection, recommended)" },
+                { "value": "high", "label": "High (Strict, flash sales & high threat)" },
+                { "value": "paranoid", "label": "Paranoid (Lockdown, challenge all unrecognized)" }
+            ]
+        },
+        {
+            "key": "challenge_threshold",
+            "type": "integer",
+            "label": "Challenge threshold (score 0–100)",
+            "help": "Requests scoring at or above this threshold will trigger a CAPTCHA challenge.",
+            "min": 10,
+            "max": 99,
+            "default": 45
+        },
+        {
+            "key": "block_threshold",
+            "type": "integer",
+            "label": "Automatic block threshold (score 0–100)",
+            "help": "Requests scoring at or above this threshold will be immediately blocked with HTTP 403.",
+            "min": 50,
+            "max": 100,
+            "default": 80
+        },
+        {
+            "key": "captcha_provider",
+            "type": "select",
+            "label": "CAPTCHA provider",
+            "help": "Select which challenge mechanism to use when visitors need verification.",
+            "default": "custom_interactive",
+            "options": [
+                { "value": "custom_interactive", "label": "Interactive Security Verification (Built-in, No external keys needed)" },
+                { "value": "turnstile", "label": "Cloudflare Turnstile (Recommended)" },
+                { "value": "recaptcha_v2", "label": "Google reCAPTCHA v2 (Checkbox)" },
+                { "value": "recaptcha_v3", "label": "Google reCAPTCHA v3 (Invisible)" },
+                { "value": "hcaptcha", "label": "hCaptcha" }
+            ]
+        },
+        {
+            "key": "captcha_site_key",
+            "type": "string",
+            "label": "CAPTCHA Site Key",
+            "help": "Public site key for external CAPTCHA provider."
+        },
+        {
+            "key": "captcha_secret_key",
+            "type": "string",
+            "label": "CAPTCHA Secret Key",
+            "help": "Private secret key for external CAPTCHA provider."
+        },
+        {
+            "key": "rate_limit_per_minute",
+            "type": "integer",
+            "label": "Storefront rate limit (requests/min)",
+            "help": "Max requests allowed per IP address per minute before throttling.",
+            "min": 10,
+            "max": 600,
+            "default": 120
+        },
+        {
+            "key": "api_rate_limit_per_minute",
+            "type": "integer",
+            "label": "API rate limit (requests/min)",
+            "help": "Max API endpoint requests per minute.",
+            "min": 10,
+            "max": 300,
+            "default": 60
+        },
+        {
+            "key": "login_rate_limit_per_minute",
+            "type": "integer",
+            "label": "Login attempt limit (per 15 min)",
+            "help": "Maximum failed login attempts before locking out IP.",
+            "min": 3,
+            "max": 20,
+            "default": 5
+        },
+        {
+            "key": "prevent_rapid_checkout",
+            "type": "boolean",
+            "label": "Prevent rapid automated checkouts",
+            "help": "Block bots that attempt checkout in under the human speed threshold.",
+            "default": true
+        },
+        {
+            "key": "min_checkout_seconds",
+            "type": "integer",
+            "label": "Minimum human checkout duration (seconds)",
+            "help": "Checkouts completed faster than this time are held for bot review.",
+            "min": 2,
+            "max": 30,
+            "default": 4
+        },
+        {
+            "key": "prevent_inventory_hoarding",
+            "type": "boolean",
+            "label": "Prevent inventory hoarding",
+            "help": "Limit rapid add-to-cart operations across sessions from the same IP.",
+            "default": true
+        },
+        {
+            "key": "anti_scraping_enabled",
+            "type": "boolean",
+            "label": "Enable web scraping defense",
+            "help": "Detect and throttle scrapers harvesting catalog prices and product content.",
+            "default": true
+        },
+        {
+            "key": "block_cloud_hosting_asn",
+            "type": "boolean",
+            "label": "Block commercial cloud/datacenter traffic",
+            "help": "Challenge or block traffic originating from AWS, DigitalOcean, Hetzner, etc.",
+            "default": false
+        },
+        {
+            "key": "email_alerts_enabled",
+            "type": "boolean",
+            "label": "Email alerts for attack spikes",
+            "help": "Send instant email notifications when an attack spike is detected.",
+            "default": true
+        },
+        {
+            "key": "alert_emails",
+            "type": "string",
+            "label": "Alert email recipients (comma-separated)",
+            "help": "Email addresses to notify during security attacks."
+        },
+        {
+            "key": "slack_webhook_url",
+            "type": "string",
+            "label": "Slack Webhook URL",
+            "help": "Incoming webhook for real-time attack alerts."
+        },
+        {
+            "key": "custom_webhook_url",
+            "type": "string",
+            "label": "Custom Incident Webhook URL",
+            "help": "Send JSON payloads to your SIEM or custom monitoring endpoint."
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "bot-protection",
+            "title": "Bot Protection",
+            "route": "dashboard",
+            "icon": "shield-check",
+            "group": "Security",
+            "permission": "bot_protection.view_dashboard",
+            "order": 260,
+            "children": [
+                {
+                    "key": "bot-dashboard",
+                    "title": "Dashboard",
+                    "route": "dashboard",
+                    "permission": "bot_protection.view_dashboard"
+                },
+                {
+                    "key": "bot-security-center",
+                    "title": "Security Center",
+                    "route": "security.index",
+                    "permission": "bot_protection.manage_security"
+                },
+                {
+                    "key": "bot-traffic-analytics",
+                    "title": "Traffic Analytics",
+                    "route": "traffic.index",
+                    "permission": "bot_protection.view_dashboard"
+                },
+                {
+                    "key": "bot-detection-queue",
+                    "title": "Detection Queue",
+                    "route": "queue.index",
+                    "permission": "bot_protection.manage_security"
+                },
+                {
+                    "key": "bot-ip-management",
+                    "title": "IP Management",
+                    "route": "ips.index",
+                    "permission": "bot_protection.manage_ips"
+                },
+                {
+                    "key": "bot-rules-engine",
+                    "title": "Rules Engine",
+                    "route": "rules.index",
+                    "permission": "bot_protection.manage_rules"
+                },
+                {
+                    "key": "bot-reports",
+                    "title": "Reports",
+                    "route": "reports.index",
+                    "permission": "bot_protection.view_dashboard"
+                },
+                {
+                    "key": "bot-settings",
+                    "title": "Settings",
+                    "route": "settings.index",
+                    "permission": "bot_protection.manage_settings"
+                }
+            ]
+        }
+    ]
+}

@@ -1,6 +1,6 @@
 import { Head, usePage } from '@inertiajs/react';
-import { Suspense } from 'react';
 import { themeIndex } from '@/lib/theme-pages';
+import { ThemeTemplate } from '@/components/storefront/theme-sections';
 import { ExtensionSlot } from '@/components/extensions/extension-slot';
 import type { SlotItem } from '@/components/extensions/extension-slot';
 import { HomeSections } from '@/components/storefront/home-sections';
@@ -19,13 +19,21 @@ export type HomeProps = {
 export default function Home({ sections, slots }: HomeProps) {
     const { storefront } = usePage().props;
     const t = useT();
-    const CustomIndex = themeIndex(storefront?.theme.name);
-    if (CustomIndex)
+    const CustomIndex = storefront?.theme.frontend?.index
+        ? themeIndex(storefront.theme.name)
+        : undefined;
+    if (storefront?.themeSections)
         return (
-            <Suspense fallback={<p role="status">Loading storefront…</p>}>
-                <CustomIndex sections={sections} slots={slots} />
-            </Suspense>
+            <>
+                <Head
+                    title={
+                        storefront.seoTitle || storefront.storeName || t('Home')
+                    }
+                />
+                <ThemeTemplate page={{ slots }} />
+            </>
         );
+    if (CustomIndex) return <CustomIndex sections={sections} slots={slots} />;
 
     return (
         <>

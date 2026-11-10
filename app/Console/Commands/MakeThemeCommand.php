@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
-#[Signature('ecomodular:make:theme {name : vendor/theme} {--from=ecomodular/essence : Theme to start from} {--display-name= : Name shown to merchants} {--author= : Author or company}')]
+#[Signature('ecomodular:make:theme {name : vendor/theme} {--from=modrixcommerce/essence : Theme to start from} {--display-name= : Name shown to merchants} {--author= : Author or company}')]
 #[Description('Create a new theme package from an existing theme')]
 class MakeThemeCommand extends Command
 {

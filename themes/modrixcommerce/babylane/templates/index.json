@@ -1,0 +1,520 @@
+{
+    "sections": {
+        "hero": {
+            "type": "baby-hero",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Baby Hygiene",
+                        "link": "/c/babylane-hygiene",
+                        "icon": "bath"
+                    }
+                },
+                "block_1": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Sleeping",
+                        "link": "/c/babylane-sleeping",
+                        "icon": "moon"
+                    }
+                },
+                "block_2": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Baby Out",
+                        "link": "/c/babylane-out",
+                        "icon": "baby"
+                    }
+                },
+                "block_3": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Apparels",
+                        "link": "/c/babylane-apparel",
+                        "icon": "shirt"
+                    }
+                },
+                "block_4": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Eat & Drink",
+                        "link": "/c/babylane-feeding",
+                        "icon": "milk"
+                    }
+                },
+                "block_5": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Toys",
+                        "link": "/c/babylane-toys",
+                        "icon": "toy"
+                    }
+                },
+                "block_6": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Home Wares",
+                        "link": "/c/babylane-home",
+                        "icon": "home"
+                    }
+                },
+                "block_7": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Pregnancy",
+                        "link": "/c/babylane-maternity",
+                        "icon": "heart"
+                    }
+                },
+                "block_8": {
+                    "type": "promotion",
+                    "settings": {
+                        "eyebrow": "EVERYDAY BABY CARE",
+                        "heading": "Little bathtime favourites",
+                        "body": "Gentle little routines",
+                        "image": "asset:assets/wash.webp",
+                        "button": "Explore care",
+                        "link": "/c/babylane-hygiene",
+                        "background": "#f8f6ee"
+                    }
+                },
+                "block_9": {
+                    "type": "promotion",
+                    "settings": {
+                        "eyebrow": "OUT & ABOUT",
+                        "heading": "Ready for your next outing",
+                        "body": "Discover travel essentials",
+                        "image": "asset:assets/stroller.webp",
+                        "button": "Explore baby out",
+                        "link": "/c/babylane-out",
+                        "background": "#f1f4f5"
+                    }
+                }
+            },
+            "block_order": [
+                "block_0",
+                "block_1",
+                "block_2",
+                "block_3",
+                "block_4",
+                "block_5",
+                "block_6",
+                "block_7",
+                "block_8",
+                "block_9"
+            ]
+        },
+        "promotions": {
+            "type": "promotions",
+            "settings": {
+                "columns": 3
+            },
+            "blocks": {
+                "block_0": {
+                    "type": "promotion",
+                    "settings": {
+                        "heading": "Little essentials, delivered",
+                        "body": "Discover your next favourite",
+                        "image": "asset:assets/diapers.webp",
+                        "button": "Shop now",
+                        "link": "/c/babylane-hygiene",
+                        "background": "#f8f8f8"
+                    }
+                },
+                "block_1": {
+                    "type": "promotion",
+                    "settings": {
+                        "heading": "Everyday comfort",
+                        "body": "Discover your next favourite",
+                        "image": "asset:assets/carrier.webp",
+                        "button": "Shop now",
+                        "link": "/c/babylane-out",
+                        "background": "#f8f8f8"
+                    }
+                },
+                "block_2": {
+                    "type": "promotion",
+                    "settings": {
+                        "heading": "Pack for little adventures",
+                        "body": "Discover your next favourite",
+                        "image": "asset:assets/bag.webp",
+                        "button": "Shop now",
+                        "link": "/c/babylane-maternity",
+                        "background": "#f8f8f8"
+                    }
+                }
+            },
+            "block_order": ["block_0", "block_1", "block_2"]
+        },
+        "collections": {
+            "type": "collection-logos",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "collection",
+                    "settings": {
+                        "label": "Baby care",
+                        "link": "/c/babylane-hygiene",
+                        "color": "#78ac5b"
+                    }
+                },
+                "block_1": {
+                    "type": "collection",
+                    "settings": {
+                        "label": "Little wardrobes",
+                        "link": "/c/babylane-apparel",
+                        "color": "#888888"
+                    }
+                },
+                "block_2": {
+                    "type": "collection",
+                    "settings": {
+                        "label": "Nursery days",
+                        "link": "/c/babylane-sleeping",
+                        "color": "#b5935b"
+                    }
+                },
+                "block_3": {
+                    "type": "collection",
+                    "settings": {
+                        "label": "Out & about",
+                        "link": "/c/babylane-out",
+                        "color": "#4067a4"
+                    }
+                },
+                "block_4": {
+                    "type": "collection",
+                    "settings": {
+                        "label": "Bathtime",
+                        "link": "/c/babylane-hygiene",
+                        "color": "#c68a56"
+                    }
+                },
+                "block_5": {
+                    "type": "collection",
+                    "settings": {
+                        "label": "Playtime",
+                        "link": "/c/babylane-toys",
+                        "color": "#3e9bb2"
+                    }
+                },
+                "block_6": {
+                    "type": "collection",
+                    "settings": {
+                        "label": "Little mealtimes",
+                        "link": "/c/babylane-feeding",
+                        "color": "#e9a525"
+                    }
+                },
+                "block_7": {
+                    "type": "collection",
+                    "settings": {
+                        "label": "First favourites",
+                        "link": "/c/babylane-home",
+                        "color": "#8ba86e"
+                    }
+                },
+                "block_8": {
+                    "type": "collection",
+                    "settings": {
+                        "label": "For parents",
+                        "link": "/c/babylane-maternity",
+                        "color": "#bf7896"
+                    }
+                },
+                "block_9": {
+                    "type": "collection",
+                    "settings": {
+                        "label": "Baby Lane",
+                        "link": "/c/babylane-hygiene",
+                        "color": "#3078a6"
+                    }
+                }
+            },
+            "block_order": [
+                "block_0",
+                "block_1",
+                "block_2",
+                "block_3",
+                "block_4",
+                "block_5",
+                "block_6",
+                "block_7",
+                "block_8",
+                "block_9"
+            ]
+        },
+        "trending": {
+            "type": "category-tabs",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "collection",
+                    "settings": {
+                        "label": "Hot trending",
+                        "icon": "star"
+                    }
+                },
+                "block_1": {
+                    "type": "collection",
+                    "settings": {
+                        "label": "Baby Hygiene",
+                        "icon": "bath",
+                        "collection": "babylane-hygiene"
+                    }
+                },
+                "block_2": {
+                    "type": "collection",
+                    "settings": {
+                        "label": "Sleeping",
+                        "icon": "moon",
+                        "collection": "babylane-sleeping"
+                    }
+                },
+                "block_3": {
+                    "type": "collection",
+                    "settings": {
+                        "label": "Baby Out",
+                        "icon": "baby",
+                        "collection": "babylane-out"
+                    }
+                },
+                "block_4": {
+                    "type": "collection",
+                    "settings": {
+                        "label": "Apparels",
+                        "icon": "shirt",
+                        "collection": "babylane-apparel"
+                    }
+                },
+                "block_5": {
+                    "type": "collection",
+                    "settings": {
+                        "label": "Eat & Drink",
+                        "icon": "milk",
+                        "collection": "babylane-feeding"
+                    }
+                },
+                "block_6": {
+                    "type": "collection",
+                    "settings": {
+                        "label": "Toys",
+                        "icon": "toy",
+                        "collection": "babylane-toys"
+                    }
+                },
+                "block_7": {
+                    "type": "collection",
+                    "settings": {
+                        "label": "Home Wares",
+                        "icon": "home",
+                        "collection": "babylane-home"
+                    }
+                }
+            },
+            "block_order": [
+                "block_0",
+                "block_1",
+                "block_2",
+                "block_3",
+                "block_4",
+                "block_5",
+                "block_6",
+                "block_7"
+            ]
+        },
+        "feeding": {
+            "type": "department-products",
+            "settings": {
+                "heading": "Eat & Drink for Baby",
+                "collection": "babylane-feeding",
+                "banner_heading": "Little mealtime moments",
+                "image": "asset:assets/bottles.webp",
+                "link": "/c/babylane-feeding"
+            },
+            "blocks": {
+                "block_0": {
+                    "type": "link",
+                    "settings": {
+                        "label": "New arrivals",
+                        "link": "/search?sort=newest"
+                    }
+                },
+                "block_1": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Feeding bottles",
+                        "link": "/c/babylane-feeding"
+                    }
+                },
+                "block_2": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Bibs & bowls",
+                        "link": "/c/babylane-feeding"
+                    }
+                },
+                "block_3": {
+                    "type": "link",
+                    "settings": {
+                        "label": "High chairs",
+                        "link": "/c/babylane-feeding"
+                    }
+                }
+            },
+            "block_order": ["block_0", "block_1", "block_2", "block_3"]
+        },
+        "apparel": {
+            "type": "department-products",
+            "settings": {
+                "heading": "Apparels for Baby",
+                "collection": "babylane-apparel",
+                "banner_heading": "Soft little layers",
+                "image": "asset:assets/onesie.webp",
+                "link": "/c/babylane-apparel",
+                "background": "#f1f2ed"
+            },
+            "blocks": {
+                "block_0": {
+                    "type": "link",
+                    "settings": {
+                        "label": "New arrivals",
+                        "link": "/search?sort=newest"
+                    }
+                },
+                "block_1": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Bodysuits",
+                        "link": "/c/babylane-apparel"
+                    }
+                },
+                "block_2": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Knitwear",
+                        "link": "/c/babylane-apparel"
+                    }
+                },
+                "block_3": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Hats & booties",
+                        "link": "/c/babylane-apparel"
+                    }
+                }
+            },
+            "block_order": ["block_0", "block_1", "block_2", "block_3"]
+        },
+        "out": {
+            "type": "department-products",
+            "settings": {
+                "heading": "Baby Out",
+                "collection": "babylane-out",
+                "banner_heading": "Made for days together",
+                "image": "asset:assets/stroller.webp",
+                "link": "/c/babylane-out",
+                "background": "#f4f1ed"
+            },
+            "blocks": {
+                "block_0": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Strollers",
+                        "link": "/c/babylane-out"
+                    }
+                },
+                "block_1": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Baby carriers",
+                        "link": "/c/babylane-out"
+                    }
+                },
+                "block_2": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Travel essentials",
+                        "link": "/c/babylane-out"
+                    }
+                },
+                "block_3": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Changing bags",
+                        "link": "/c/babylane-out"
+                    }
+                }
+            },
+            "block_order": ["block_0", "block_1", "block_2", "block_3"]
+        },
+        "maternity": {
+            "type": "department-products",
+            "settings": {
+                "heading": "Pregnancy & Maternity",
+                "collection": "babylane-maternity",
+                "banner_heading": "A little comfort for you",
+                "image": "asset:assets/pillow.webp",
+                "link": "/c/babylane-maternity",
+                "background": "#f2eeed"
+            },
+            "blocks": {
+                "block_0": {
+                    "type": "link",
+                    "settings": {
+                        "label": "For parents",
+                        "link": "/c/babylane-maternity"
+                    }
+                },
+                "block_1": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Nursing essentials",
+                        "link": "/c/babylane-maternity"
+                    }
+                },
+                "block_2": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Everyday comfort",
+                        "link": "/c/babylane-maternity"
+                    }
+                },
+                "block_3": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Out & about",
+                        "link": "/c/babylane-out"
+                    }
+                }
+            },
+            "block_order": ["block_0", "block_1", "block_2", "block_3"]
+        },
+        "recent": {
+            "type": "recent-products",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        },
+        "apps": {
+            "type": "apps",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        }
+    },
+    "order": [
+        "hero",
+        "promotions",
+        "collections",
+        "trending",
+        "feeding",
+        "apparel",
+        "out",
+        "maternity",
+        "recent",
+        "apps"
+    ]
+}

@@ -1,0 +1,64 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/phonepe",
+    "display_name": "PhonePe Payment Gateway",
+    "description": "PhonePe payment gateway for India supporting UPI (Intent, QR, Collect), Net Banking, Cards, and Wallets with secure hosted checkout and X-VERIFY checksum authentication.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "credit-card",
+    "accent": "#5f259f",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\PhonePe\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\PhonePe\\PhonePeServiceProvider",
+    "capabilities": [
+        "payment.gateway",
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "content_security"
+    ],
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages"
+    },
+    "content_security": {
+        "connect-src": [
+            "https://api.phonepe.com",
+            "https://api-preprod.phonepe.com",
+            "https://mercury-uat.phonepe.com",
+            "https://mercury.phonepe.com"
+        ],
+        "frame-src": [
+            "https://api.phonepe.com",
+            "https://api-preprod.phonepe.com",
+            "https://mercury-uat.phonepe.com",
+            "https://mercury.phonepe.com"
+        ],
+        "form-action": [
+            "https://api.phonepe.com",
+            "https://api-preprod.phonepe.com",
+            "https://mercury-uat.phonepe.com",
+            "https://mercury.phonepe.com"
+        ]
+    },
+    "admin_navigation": [
+        {
+            "key": "phonepe",
+            "title": "PhonePe",
+            "route": "index",
+            "icon": "credit-card",
+            "group": "Configuration",
+            "permission": "payments.manage",
+            "order": 872
+        }
+    ]
+}

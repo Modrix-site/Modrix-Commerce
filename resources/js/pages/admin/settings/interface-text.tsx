@@ -43,7 +43,7 @@ export default function InterfaceText({
             <AdminPage>
                 <PageHeader
                     title="Storefront text"
-                    description="The storefront's own wording (buttons, labels, messages) in each language. EcoModular ships Spanish, French and German; change any text here, or translate other languages. Leave a field empty to use the shipped translation, or English."
+                    description="The storefront's own wording (buttons, labels, messages) in each language. Modrix Commerce ships Spanish, French and German; change any text here, or translate other languages. Leave a field empty to use the shipped translation, or English."
                     actions={
                         <Button variant="outline" asChild>
                             <Link href={languagesEdit()}>Languages</Link>

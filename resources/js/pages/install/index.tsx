@@ -95,7 +95,7 @@ export default function Install(props: Props) {
             <main className="mx-auto grid w-full max-w-3xl gap-6 px-4 py-10">
                 <header className="space-y-2">
                     <h1 className="text-2xl font-semibold tracking-tight">
-                        Install EcoModular
+                        Install Modrix Commerce
                     </h1>
                     <p className="text-sm text-muted-foreground">
                         {mode === "auto"

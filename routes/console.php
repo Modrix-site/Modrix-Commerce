@@ -1,6 +1,7 @@
 <?php
 
 use App\Core\Operations\HealthCheck;
+use App\Core\Settings\BackupSettings;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
@@ -15,13 +16,13 @@ Schedule::command('ecomodular:payments:reconcile')->everyFiveMinutes()->withoutO
 // Heartbeat for the health check: proves the scheduler (cron) is running.
 Schedule::call(fn () => HealthCheck::beat())->everyMinute()->name('ecomodular:heartbeat');
 
-// Daily backup with retention (ECOMODULAR_BACKUP_SCHEDULE, empty to disable).
-if ((string) config('ecomodular.backup.schedule') !== '') {
-    Schedule::command('ecomodular:backup')->dailyAt((string) config('ecomodular.backup.schedule'))->withoutOverlapping()->onOneServer();
+// Daily backup with retention: Settings → Backups, defaulting to
+// ECOMODULAR_BACKUP_SCHEDULE / ECOMODULAR_BACKUP_KEEP (empty schedule disables it).
+$backupSettings = app(BackupSettings::class);
+if ($backupSettings->schedule() !== '') {
+    Schedule::command('ecomodular:backup', $backupSettings->withFiles() ? [] : ['--database-only'])
+        ->dailyAt($backupSettings->schedule())->withoutOverlapping()->onOneServer();
 }
-
-// Marketplace license status and update availability (never disables anything).
-Schedule::command('ecomodular:marketplace:check')->daily()->withoutOverlapping();
 
 // Old read notifications (staff and customer bells).
 Schedule::command('notifications:prune')->daily()->withoutOverlapping();

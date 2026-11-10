@@ -7,6 +7,7 @@ use App\Core\Settings\SettingsRepository;
 use App\Domains\Cart\Listeners\MergeGuestCartOnLogin;
 use App\Domains\Checkout\Pricing\CartPricer;
 use App\Domains\Checkout\Pricing\Steps\DiscountStep;
+use App\Domains\Checkout\Pricing\Steps\PaymentFeeStep;
 use App\Domains\Checkout\Pricing\Steps\ShippingStep;
 use App\Domains\Checkout\Pricing\Steps\TaxStep;
 use App\Domains\Customers\Listeners\CreateCustomerProfile;
@@ -73,6 +74,7 @@ class CommerceServiceProvider extends ServiceProvider
             $pricer->addStep($app->make(DiscountStep::class), CartPricer::DISCOUNTS);
             $pricer->addStep($app->make(ShippingStep::class), CartPricer::SHIPPING);
             $pricer->addStep($app->make(TaxStep::class), CartPricer::TAX);
+            $pricer->addStep($app->make(PaymentFeeStep::class), CartPricer::PAYMENT_FEE);
 
             return $pricer;
         });
@@ -80,6 +82,9 @@ class CommerceServiceProvider extends ServiceProvider
         // Commerce contributes its admin pages the same way a module would.
         $this->app->extend(AdminNavigation::class, function (AdminNavigation $navigation) {
             $navigation->add('orders', 'Orders', 'admin.orders.index', 'receipt', 'Sales', 'orders.view', 50);
+            // Shown under Orders in the sidebar.
+            $navigation->add('invoices', 'Invoices', 'admin.invoices.index', 'receipt', 'Sales', 'orders.view', 51);
+            $navigation->add('customer-carts', 'Customer carts', 'admin.carts.index', 'shopping-cart', 'Sales', 'orders.view', 57);
             $navigation->add('customers', 'Customers', 'admin.customers.index', 'users', 'Sales', 'customers.view', 60);
             $navigation->add('discounts', 'Discounts', 'admin.coupons.index', 'percent', 'Sales', 'discounts.view', 70);
             $navigation->add('reports', 'Reports', 'admin.reports.index', 'chart-column', 'Sales', 'reports.view', 80);

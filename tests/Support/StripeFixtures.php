@@ -34,6 +34,7 @@ trait StripeFixtures
         Http::fake([
             ...$extra,
             'api.stripe.com/v1/checkout/sessions/*/expire' => Http::response(['id' => 'cs_x', 'status' => 'expired']),
+            'api.stripe.com/v1/payment_method_configurations*' => Http::response(['id' => 'pmc_test_wallets']),
             'api.stripe.com/v1/checkout/sessions' => fn () => Http::response([
                 'id' => 'cs_test_'.Str::random(24),
                 'url' => 'https://checkout.stripe.com/c/pay/cs_test_fake',

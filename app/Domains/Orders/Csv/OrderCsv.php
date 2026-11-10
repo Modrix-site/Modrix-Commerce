@@ -19,7 +19,7 @@ final class OrderCsv
         'number', 'placed_at', 'customer', 'email', 'phone', 'country',
         'status', 'payment_status', 'fulfillment_status', 'currency',
         'subtotal', 'discount', 'shipping', 'tax', 'total', 'paid', 'refunded', 'balance_due',
-        'payment_method', 'shipping_method', 'carrier', 'tracking_number', 'coupon',
+        'payment_method', 'shipping_method', 'carrier', 'tracking_number', 'coupon', 'payment_fee',
     ];
 
     /**
@@ -83,6 +83,7 @@ final class OrderCsv
             (string) $shipment?->carrier,
             (string) $shipment?->tracking_number,
             (string) $order->coupon_code,
+            $money('payment_fee_total'),
         ];
     }
 

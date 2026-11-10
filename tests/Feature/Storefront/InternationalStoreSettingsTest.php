@@ -41,7 +41,7 @@ class InternationalStoreSettingsTest extends TestCase
         $this->get('/?lang=ar')->assertInertia(fn (Assert $p) => $p->where('storefront.direction', 'rtl')->where('storefront.locale', 'ar')->where('storefront.seoTitle', 'Global shop'));
     }
 
-    public function test_display_currency_changes_without_changing_checkout_or_order_currency(): void
+    public function test_display_currency_changes_checkout_prices_without_changing_the_order_currency(): void
     {
         $this->enableCheckout();
         app(SettingsRepository::class)->set('store.display_currencies', [['code' => 'EUR', 'rate' => '0.9']]);
@@ -50,7 +50,7 @@ class InternationalStoreSettingsTest extends TestCase
         $this->get('/p/'.$variant->product->slug.'?currency=EUR')->assertInertia(fn (Assert $p) => $p->where('product.variants.0.price.amount', '10.00')->where('product.variants.0.price.currency', 'USD')->where('product.variants.0.price.display_currency', 'EUR')->where('product.variants.0.price.display_amount', '9.00')->where('storefront.displayCurrency', 'EUR'));
         $this->get('/search?currency=EUR&max_price=9')->assertInertia(fn (Assert $p) => $p->has('products.data', 1));
         $this->get('/cart')->assertInertia(fn (Assert $p) => $p->where('storefront.displayCurrency', 'EUR'));
-        $this->get('/checkout')->assertInertia(fn (Assert $p) => $p->where('storefront.displayCurrency', 'USD'));
+        $this->get('/checkout')->assertInertia(fn (Assert $p) => $p->where('storefront.displayCurrency', 'EUR')->where('storefront.canSwitchCurrency', true));
         $this->assertSame('KWD', Money::of('3', 'KWD')->jsonSerialize()['display_currency']);
         $this->post(route('checkout.store'), $this->checkoutPayload())->assertSessionHasNoErrors();
         $this->assertSame('USD', Order::firstOrFail()->currency);

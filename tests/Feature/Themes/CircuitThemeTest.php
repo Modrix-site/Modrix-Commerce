@@ -35,7 +35,7 @@ class CircuitThemeTest extends TestCase
     {
         app(ThemeRepository::class)->sync();
 
-        return Extension::where('name', 'ecomodular/circuit')->firstOrFail();
+        return Extension::where('name', 'modrixcommerce/circuit')->firstOrFail();
     }
 
     public function test_package_is_valid_and_every_setting_is_on_a_tab(): void
@@ -54,7 +54,7 @@ class CircuitThemeTest extends TestCase
 
     public function test_homepage_resolves_campaigns_tiles_and_assets(): void
     {
-        app(ThemeManager::class)->activate('ecomodular/circuit');
+        app(ThemeManager::class)->activate('modrixcommerce/circuit');
         $this->sellable('20.00', 5);
 
         $this->get('/')->assertInertia(fn (Assert $page) => $page
@@ -62,7 +62,7 @@ class CircuitThemeTest extends TestCase
             ->where('storefront.theme.settings.sticky_header', false)
             ->where('sections.0.type', 'campaign')
             ->where('sections.0.settings.height', 'large')
-            ->where('sections.0.data.image', fn ($url) => str_contains($url, '/theme-assets/ecomodular/circuit/assets/hero-watch.jpg'))
+            ->where('sections.0.data.image', fn ($url) => str_contains($url, '/theme-assets/modrixcommerce/circuit/assets/hero-watch.jpg'))
             ->where('sections.5.settings.style', 'circle')
             ->has('sections.5.data.tiles', 8)
             ->where('sections.6.settings.title', "Today's Best Deals")
@@ -70,8 +70,8 @@ class CircuitThemeTest extends TestCase
             ->where('sections.9.settings.style', 'editorial')
             ->has('sections.9.data.tiles', 4));
 
-        $this->get('/theme-assets/ecomodular/circuit/assets/hero-watch.jpg')->assertOk();
-        $this->get('/theme-assets/ecomodular/circuit/assets/instrument-sans.woff2')->assertOk();
+        $this->get('/theme-assets/modrixcommerce/circuit/assets/hero-watch.jpg')->assertOk();
+        $this->get('/theme-assets/modrixcommerce/circuit/assets/instrument-sans.woff2')->assertOk();
     }
 
     public function test_demo_import_adds_products_with_sale_prices_once(): void
@@ -94,13 +94,13 @@ class CircuitThemeTest extends TestCase
 
     public function test_catalog_product_and_cart_render_with_their_places(): void
     {
-        app(ThemeManager::class)->activate('ecomodular/circuit');
+        app(ThemeManager::class)->activate('modrixcommerce/circuit');
         $category = Category::factory()->create(['slug' => 'circuit-test']);
         $variant = $this->sellable('12.50', 5, product: ['name' => 'Circuit speaker']);
         $variant->product->categories()->attach($category);
 
         $this->get('/c/circuit-test')->assertInertia(fn (Assert $page) => $page
-            ->where('storefront.theme.name', 'ecomodular/circuit')
+            ->where('storefront.theme.name', 'modrixcommerce/circuit')
             ->where('products.data.0.id', $variant->product_id));
         $this->get('/p/'.$variant->product->slug)->assertInertia(fn (Assert $page) => $page
             ->where('product.id', $variant->product_id)

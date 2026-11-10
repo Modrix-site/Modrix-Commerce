@@ -1,17 +1,35 @@
 import type { MoneyValue } from './admin';
+export type StoreMenuItem = {
+    label: string;
+    url: string;
+    type?: 'link' | 'page' | 'category';
+    page_id?: number | null;
+    category_id?: number | null;
+    children?: StoreMenuItem[];
+};
 export type StoreMenu = {
     title: string;
-    links: {
-        label: string;
-        url: string;
-        type?: 'link' | 'page' | 'category';
-        page_id?: number | null;
-        category_id?: number | null;
-    }[];
+    layout?: 'horizontal' | 'vertical';
+    enabled?: boolean;
+    inherit_header?: boolean;
+    links: StoreMenuItem[];
 };
-export type StoreMenus = { header: StoreMenu; footer: StoreMenu[] };
+export type StoreMenus = {
+    header: StoreMenu;
+    sidebar?: StoreMenu;
+    mobile?: StoreMenu;
+    footer: StoreMenu[];
+    /** True once the merchant saved menus in Admin → Navigation. */
+    custom?: boolean;
+};
 
 export type StorefrontShared = {
+    /** Header, footer and page sections, for themes built from sections (theme editor). */
+    themeSections?:
+        | import('@/components/storefront/theme-sections').ThemeSectionsPayload
+        | null;
+    /** The page is rendering inside the theme editor's preview. */
+    themeEditor?: boolean;
     seoTitle?: string | null;
     seoDescription?: string | null;
     direction?: 'rtl' | 'ltr';
@@ -27,6 +45,13 @@ export type StorefrontShared = {
     locales: { code: string; name: string }[];
     categories: { id: number; name: string; slug: string }[];
     cartCount: number;
+    /** Extra account-menu items contributed by enabled modules. */
+    accountLinks?: {
+        key: string;
+        title: string;
+        href: string;
+        after: string;
+    }[];
     theme: StorefrontTheme;
     /** Global overlays (marketing popups, cookie bars) rendered on every page. */
     overlays?: {
@@ -55,10 +80,11 @@ export type StorefrontTheme = {
             | 'header'
             | 'footer'
             | 'product'
+            | 'layout'
             | 'stylesheet',
             string
         >
-    >;
+    > & { pages?: Record<string, string> };
     source: 'active' | 'preview' | 'default' | 'builtin';
     settings?: Record<string, string | number | boolean | null>;
     css: string;
@@ -84,6 +110,7 @@ export type StorefrontTheme = {
 };
 
 export type ProductCard = {
+    swatches?: { id: number; value: string; color: string }[];
     variant_id?: number | null;
     id: number;
     name: string;
@@ -126,6 +153,13 @@ export type ProductLabel = {
     style: 'solid' | 'soft' | 'outline';
 };
 
+export type CartLineAddon = {
+    id: number;
+    name: string;
+    unit_price: MoneyValue;
+    subtotal: MoneyValue;
+};
+
 export type CartLine = {
     id: number;
     variant_id: number;
@@ -136,7 +170,11 @@ export type CartLine = {
     image: { url: string; alt: string | null } | null;
     quantity: number;
     unit_price: MoneyValue | null;
+    base_unit_price?: MoneyValue | null;
     subtotal: MoneyValue;
+    base_subtotal?: MoneyValue;
+    addons_subtotal?: MoneyValue;
+    addons?: CartLineAddon[];
     discount: MoneyValue;
     /** The part of `discount` from an offer (e.g. a cross-sell price). */
     offer_discount?: MoneyValue;
@@ -151,12 +189,16 @@ export type PricedCart = {
     lines: CartLine[];
     item_count: number;
     subtotal: MoneyValue;
+    items_subtotal?: MoneyValue;
+    addons_total?: MoneyValue;
     discount_total: MoneyValue;
     /** Offer discounts and the coupon's part of `discount_total`. */
     offer_discount_total?: MoneyValue;
     coupon_discount_total?: MoneyValue;
     shipping_total: MoneyValue;
     tax_total: MoneyValue;
+    payment_fee_total: MoneyValue;
+    payment_method: string | null;
     grand_total: MoneyValue;
     prices_include_tax: boolean;
     coupon_code: string | null;
@@ -251,6 +293,7 @@ export type OrderDetail = OrderSummary & {
     discount_total: MoneyValue;
     shipping_total: MoneyValue;
     tax_total: MoneyValue;
+    payment_fee_total: MoneyValue;
     prices_include_tax: boolean;
     payment_method: string;
     shipping_method: string | null;

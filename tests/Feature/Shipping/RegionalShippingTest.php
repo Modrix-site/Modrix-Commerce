@@ -28,9 +28,9 @@ class RegionalShippingTest extends TestCase
             ['country_code' => 'AE', 'region' => 'Dubai', 'rate' => '10', 'free_over' => '100'], ['country_code' => 'AE', 'region' => 'Abu Dhabi', 'rate' => '20', 'free_over' => null], ['country_code' => 'AE', 'region' => 'Sharjah', 'rate' => '15', 'free_over' => null]]];
     }
 
-    private function quote(?string $region, string $total = '50', string $country = 'AE'): array
+    private function quote(?string $region, string $total = '50', string $country = 'AE', string $currency = 'AED'): array
     {
-        return app(TableShippingRateProvider::class)->rates(new ShippingRequest('AED', $country, $region, null, Money::of($total, 'AED'), '0', 1));
+        return app(TableShippingRateProvider::class)->rates(new ShippingRequest($currency, $country, $region, null, Money::of($total, $currency), '0', 1));
     }
 
     public function test_destination_rates_aliases_fallback_and_free_shipping(): void
@@ -51,6 +51,38 @@ class RegionalShippingTest extends TestCase
         $this->assertCount(1, $this->quote('Dubai'));
         $method->update(['is_active' => false]);
         $this->assertSame([], $this->quote('Dubai'));
+    }
+
+    public function test_a_store_currency_method_is_quoted_in_the_cart_currency(): void
+    {
+        app(SettingsRepository::class)->set('store.display_currencies', [
+            ['code' => 'USD', 'rate' => '0.25'],
+        ]);
+        ShippingMethod::query()->create([
+            'code' => 'standard-delivery',
+            'name' => 'Standard delivery',
+            'rate' => '15',
+            'currency' => 'AED',
+            'countries' => ['AE'],
+            'regions_only' => true,
+            'is_active' => true,
+            'regional_rates' => [
+                ['country_code' => 'AE', 'region' => 'Dubai', 'rate' => '15', 'free_over' => null],
+            ],
+        ]);
+
+        $usd = $this->quote('Dubai', '1199', 'AE', 'USD');
+        $this->assertCount(1, $usd);
+        $this->assertSame('USD', $usd[0]->amount->currency());
+        $this->assertSame('3.75', $usd[0]->amount->toDisplayDecimal());
+
+        $aed = $this->quote('Dubai', '50', 'AE', 'AED');
+        $this->assertCount(1, $aed);
+        $this->assertSame('AED', $aed[0]->amount->currency());
+        $this->assertSame('15.00', $aed[0]->amount->toDisplayDecimal());
+
+        app(SettingsRepository::class)->set('store.display_currencies', []);
+        $this->assertSame([], $this->quote('Dubai', '1199', 'AE', 'USD'));
     }
 
     public function test_invalid_duplicate_and_empty_restrictions_are_rejected(): void

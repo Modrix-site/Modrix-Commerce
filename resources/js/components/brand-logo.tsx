@@ -14,7 +14,31 @@ export type Branding = {
 };
 
 export function useBranding(): Branding | null {
-    return usePage<{ branding?: Branding | null }>().props.branding ?? null;
+    const branding = usePage<{
+        branding?: (Branding & { urls?: Partial<Branding> }) | null;
+    }>().props.branding;
+
+    if (!branding) {
+        return null;
+    }
+
+    // General settings sends the saved file paths on `branding` and the public
+    // addresses on `branding.urls`. The sidebar has to keep the public ones.
+    if (branding.urls) {
+        return {
+            panel_name: branding.urls.panel_name ?? branding.panel_name ?? '',
+            accent: branding.urls.accent ?? branding.accent ?? null,
+            login_message:
+                branding.urls.login_message ?? branding.login_message ?? '',
+            logo: branding.urls.logo ?? null,
+            logo_dark: branding.urls.logo_dark ?? null,
+            icon: branding.urls.icon ?? null,
+            favicon: branding.urls.favicon ?? null,
+            login_logo: branding.urls.login_logo ?? null,
+        };
+    }
+
+    return branding;
 }
 
 /** The admin sidebar logo when the store uploaded one. */
@@ -30,17 +54,17 @@ export function BrandedAppLogo({ branding }: { branding: Branding }) {
                 />
             )}
             {branding.logo ? (
-                <span className="flex min-w-0 items-center group-data-[collapsible=icon]:hidden">
+                <span className="flex w-full min-w-0 items-center justify-center group-data-[collapsible=icon]:hidden">
                     <img
                         src={branding.logo}
                         alt={branding.panel_name}
-                        className={`h-8 max-w-44 object-contain object-left ${branding.logo_dark ? 'dark:hidden' : ''}`}
+                        className={`h-8 w-auto max-w-44 shrink-0 object-contain ${branding.logo_dark ? 'dark:hidden' : ''}`}
                     />
                     {branding.logo_dark && (
                         <img
                             src={branding.logo_dark}
                             alt={branding.panel_name}
-                            className="hidden h-8 max-w-44 object-contain object-left dark:block"
+                            className="hidden h-8 w-auto max-w-44 shrink-0 object-contain dark:block"
                         />
                     )}
                 </span>

@@ -3,11 +3,16 @@ import {
     type VariantOption,
 } from '@/components/storefront/variant-selector';
 import { Form, Head, Link } from '@inertiajs/react';
-import { Suspense, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import { themeProduct } from '@/lib/theme-pages';
+import {
+    ThemeTemplate,
+    useThemeSections,
+} from '@/components/storefront/theme-sections';
 import CartController from '@/actions/App/Http/Controllers/Storefront/CartController';
 import { ElectronicsProduct } from '@/components/storefront/electronics-product';
 import { ProductLabels } from '@/components/storefront/product-labels';
+import { ProductDescription } from '@/components/storefront/product-description';
 import { BuyNowButton } from '@/components/storefront/buy-now-button';
 import { StickyAddToCart } from '@/components/storefront/sticky-add-to-cart';
 import { PlaceSlot } from '@/components/extensions/place-slot';
@@ -38,6 +43,7 @@ export type Variant = {
     sku: string;
     image_id: number | null;
     price: MoneyValue | null;
+    base_price?: MoneyValue | null;
     compare_at_price: MoneyValue | null;
     option_value_ids: number[];
     purchasable: boolean;
@@ -54,6 +60,8 @@ export type ProductPageProps = {
         slug: string;
         short_description: string | null;
         description: string | null;
+        /** Cleaned HTML of the description; null when there is none. */
+        description_html?: string | null;
         meta_title: string;
         meta_description: string | null;
         images: { id: number; url: string; alt: string | null }[];
@@ -76,8 +84,10 @@ export default function ProductPage({
     slots,
     related = [],
     upsells = [],
-}: ProductPageProps) {
+    renderThemeTemplate = true,
+}: ProductPageProps & { renderThemeTemplate?: boolean }) {
     const { productPage, theme } = useStoreTheme();
+    const sectionsTemplate = useThemeSections() !== null;
     const CustomProduct = theme?.frontend?.product
         ? themeProduct(theme.name)
         : undefined;
@@ -115,19 +125,74 @@ export default function ProductPage({
         );
     };
 
+    const [optimisticAddonTotal, setOptimisticAddonTotal] = useState<
+        number | null
+    >(null);
+
+    useEffect(() => {
+        setOptimisticAddonTotal(null);
+    }, [product.variants]);
+
+    useEffect(() => {
+        const handler = (event: Event) => {
+            const detail = (
+                event as CustomEvent<{ productId: number; addonTotal: number }>
+            ).detail;
+            if (detail && detail.productId === product.id) {
+                setOptimisticAddonTotal(detail.addonTotal);
+            }
+        };
+        window.addEventListener('product-addons:optimistic', handler);
+        return () =>
+            window.removeEventListener('product-addons:optimistic', handler);
+    }, [product.id]);
+
     const variant = useMemo(() => {
-        if (product.options.length === 0) {
-            return firstPurchasable;
+        const rawVariant =
+            product.options.length === 0
+                ? (product.variants.find((v) => v.purchasable) ??
+                  product.variants[0])
+                : (() => {
+                      const chosen = Object.values(selected);
+                      return product.variants.find(
+                          (v) =>
+                              chosen.length === product.options.length &&
+                              chosen.every((id) =>
+                                  v.option_value_ids.includes(id),
+                              ),
+                      );
+                  })();
+
+        if (!rawVariant || optimisticAddonTotal === null || !rawVariant.price) {
+            return rawVariant;
         }
 
-        const chosen = Object.values(selected);
+        const base = rawVariant.base_price ?? rawVariant.price;
+        const baseAmount = Number(base.display_amount ?? base.amount ?? 0);
+        const nextAmount = baseAmount + optimisticAddonTotal;
+        const currency = base.display_currency ?? base.currency ?? 'USD';
+        let formatted = `${currency} ${nextAmount.toFixed(2)}`;
+        try {
+            formatted = new Intl.NumberFormat(undefined, {
+                style: 'currency',
+                currency,
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(nextAmount);
+        } catch {
+            // Keep fallback format
+        }
 
-        return product.variants.find(
-            (v) =>
-                chosen.length === product.options.length &&
-                chosen.every((id) => v.option_value_ids.includes(id)),
-        );
-    }, [selected, product]);
+        return {
+            ...rawVariant,
+            price: {
+                ...rawVariant.price,
+                amount: nextAmount.toFixed(2),
+                display_amount: nextAmount.toFixed(2),
+                formatted,
+            },
+        };
+    }, [selected, product, optimisticAddonTotal]);
 
     // Product tab settings (customizer).
     const pageSettings = useStoreSettings().product;
@@ -141,11 +206,7 @@ export default function ProductPage({
                   {
                       id: 'description',
                       title: t('Description'),
-                      content: (
-                          <p className="whitespace-pre-line">
-                              {product.description}
-                          </p>
-                      ),
+                      content: <ProductDescription product={product} />,
                   },
               ]
             : []),
@@ -186,7 +247,27 @@ export default function ProductPage({
             : []),
     ];
 
-    if (CustomProduct)
+    if (sectionsTemplate && renderThemeTemplate)
+        return (
+            <>
+                <Head title={product.meta_title || product.name} />
+                <ThemeTemplate
+                    page={{
+                        product,
+                        breadcrumbs,
+                        slots,
+                        related: shownRelated,
+                        upsells: shownUpsells,
+                        variant,
+                        imageIndex,
+                        onImage: setImageIndex,
+                        selected,
+                        onOption: chooseOption,
+                    }}
+                />
+            </>
+        );
+    if (CustomProduct && renderThemeTemplate)
         return (
             <Suspense fallback={<p role="status">Loading product…</p>}>
                 <CustomProduct
@@ -334,6 +415,9 @@ export default function ProductPage({
                         name={product.name}
                         image={product.images[0]?.url}
                         variant={variant}
+                        options={product.options}
+                        selected={selected}
+                        onOption={chooseOption}
                         hasOptions={product.options.length > 0}
                         showBuyButton={product.show_buy_button}
                     />
@@ -355,7 +439,8 @@ export default function ProductPage({
                                         <div
                                             className={cn(
                                                 'grid w-24 gap-2',
-                                                !pageSettings.quantity && 'hidden',
+                                                !pageSettings.quantity &&
+                                                    'hidden',
                                             )}
                                         >
                                             <Label htmlFor="quantity">
@@ -412,7 +497,9 @@ export default function ProductPage({
                                     />
                                     {pageSettings.show_sku && (
                                         <p className="text-xs text-muted-foreground">
-                                            {t('SKU :sku', { sku: variant.sku })}
+                                            {t('SKU :sku', {
+                                                sku: variant.sku,
+                                            })}
                                         </p>
                                     )}
                                 </>

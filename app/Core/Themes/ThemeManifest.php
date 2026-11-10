@@ -3,7 +3,7 @@
 namespace App\Core\Themes;
 
 /**
- * A validated `theme.json`. Pure data; a theme contains no executable code.
+ * A validated `theme.json`, including optional compiled browser entry points.
  */
 final class ThemeManifest
 {
@@ -20,7 +20,7 @@ final class ThemeManifest
      * @param  array<string, list<array{type: string, settings: array<string, mixed>}>>  $sections
      * @param  list<array{version: string, date: string, notes: string}>  $changelog
      * @param  array<string, mixed>  $customizer
-     * @param  array<string, string>  $frontend
+     * @param  array<string, string|array<string, string>>  $frontend
      */
     public function __construct(
         public readonly string $name,
@@ -126,6 +126,18 @@ final class ThemeManifest
     public function designFields(): array
     {
         return ThemeSchema::designFields() + $this->customFields();
+    }
+
+    /** Fields exposed by this theme's editor; storage and defaults stay intact.
+     * @return array<string, array<string, mixed>>
+     */
+    public function customizerFields(): array
+    {
+        $fields = ($this->customizer['mode'] ?? 'extend') === 'replace'
+            ? array_intersect_key(ThemeSchema::designFields(), array_flip($this->customizer['core_fields'] ?? [])) + $this->customFields()
+            : $this->designFields();
+
+        return array_diff_key($fields, array_flip($this->customizer['hide_core_fields'] ?? []));
     }
 
     /**

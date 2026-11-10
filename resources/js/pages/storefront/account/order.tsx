@@ -1,37 +1,43 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import { Download, FileText, Receipt } from 'lucide-react';
+import {
+    ExtensionSlot,
+    type SlotItem,
+} from '@/components/extensions/extension-slot';
+import { AccountLayout } from '@/components/storefront/account-nav';
 import { DownloadList } from '@/components/storefront/download-list';
 import { formatDate, OrderView } from '@/components/storefront/order-view';
 import { useT } from '@/lib/i18n';
 import { orders } from '@/routes/account';
 import type { OrderDetail } from '@/types';
 
-export default function AccountOrder({ order }: { order: OrderDetail }) {
+export default function AccountOrder({
+    order,
+    returnSlots = [],
+}: {
+    order: OrderDetail;
+    returnSlots?: SlotItem[];
+}) {
     const t = useT();
 
     return (
         <>
             <Head title={t('Order :number', { number: order.number })} />
-            <Link
-                href={orders()}
-                className="text-sm text-muted-foreground hover:text-foreground"
+            <AccountLayout
+                back={{ href: orders(), label: t('All orders') }}
+                title={t('Order :number', { number: order.number })}
+                description={t('Placed :date', {
+                    date: formatDate(order.placed_at),
+                })}
             >
-                ← {t('All orders')}
-            </Link>
-            <div className="my-4 grid gap-1">
-                <h1 className="text-2xl font-semibold tracking-tight">
-                    {t('Order :number', { number: order.number })}
-                </h1>
-                <p className="text-sm text-muted-foreground">
-                    {t('Placed :date', { date: formatDate(order.placed_at) })}
-                </p>
-            </div>
+            <div className="grid gap-8">
             <DownloadList downloads={order.downloads} />
             <OrderView order={order} />
+            <ExtensionSlot items={returnSlots} />
             {order.documents &&
                 (order.documents.invoice ||
                     order.documents.receipts.length > 0) && (
-                    <section className="mt-8 grid gap-3">
+                    <section className="grid gap-3">
                         <h2 className="text-lg font-semibold">
                             {t('Documents')}
                         </h2>
@@ -67,6 +73,8 @@ export default function AccountOrder({ order }: { order: OrderDetail }) {
                         </ul>
                     </section>
                 )}
+            </div>
+            </AccountLayout>
         </>
     );
 }

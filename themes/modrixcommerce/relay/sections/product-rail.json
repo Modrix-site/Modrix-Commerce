@@ -1,0 +1,109 @@
+{
+    "name": "Product shelf",
+    "settings": [
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "Popular products"
+        },
+        {
+            "type": "range",
+            "id": "heading_size",
+            "label": "Heading size",
+            "default": 20,
+            "min": 14,
+            "max": 32,
+            "step": 1
+        },
+        {
+            "type": "collection",
+            "id": "collection",
+            "label": "Product collection",
+            "products": 24,
+            "fallback": "latest"
+        },
+        {
+            "type": "range",
+            "id": "limit",
+            "label": "Product limit",
+            "default": 10,
+            "min": 1,
+            "max": 24,
+            "step": 1
+        },
+        {
+            "type": "checkbox",
+            "id": "deals",
+            "label": "Deal shelf style",
+            "default": false
+        },
+        {
+            "type": "text",
+            "id": "ends_at",
+            "label": "Offer end (ISO date and timezone)",
+            "default": ""
+        },
+        {
+            "type": "text",
+            "id": "countdown_label",
+            "label": "Countdown label",
+            "default": "Ends in:"
+        },
+        {
+            "type": "checkbox",
+            "id": "compact",
+            "label": "Compact accessory rows",
+            "default": false
+        },
+        {
+            "type": "checkbox",
+            "id": "quick_add",
+            "label": "Show card purchase button",
+            "default": false
+        },
+        {
+            "type": "text",
+            "id": "view_label",
+            "label": "View all label",
+            "default": "View all"
+        },
+        {
+            "type": "url",
+            "id": "link",
+            "label": "View all destination",
+            "default": "/search"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "link",
+            "name": "Category tab",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Label",
+                    "default": "Smartphones"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Destination",
+                    "default": "/search"
+                }
+            ]
+        }
+    ],
+    "max_blocks": 30,
+    "presets": [
+        {
+            "name": "Product shelf"
+        }
+    ],
+    "enabled_on": {
+        "templates": [
+            "*"
+        ]
+    }
+}

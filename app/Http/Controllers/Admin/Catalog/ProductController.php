@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Catalog;
 
+use App\Core\Content\RichText;
 use App\Core\Extensions\StorefrontSlots;
 use App\Core\Settings\StoreSettings;
 use App\Domains\Catalog\Actions\DeleteProduct;
@@ -163,7 +164,7 @@ class ProductController extends Controller
                 'status' => $product->status->value,
                 'published_at' => $product->published_at?->format('Y-m-d\TH:i'),
                 'short_description' => $product->short_description,
-                'description' => $product->description,
+                'description' => RichText::toHtml($product->description),
                 'meta_title' => $product->meta_title,
                 'meta_description' => $product->meta_description,
                 'category_ids' => $product->categories->pluck('id')->all(),

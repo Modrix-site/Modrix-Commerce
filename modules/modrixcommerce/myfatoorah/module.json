@@ -1,0 +1,64 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/myfatoorah",
+    "display_name": "MyFatoorah Payments",
+    "description": "MyFatoorah payment gateway for UAE & GCC supporting Cards, Apple Pay, Google Pay, Mada, KNET, Benefit, and automated server reconciliation.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "credit-card",
+    "accent": "#0284c7",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\MyFatoorah\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\MyFatoorah\\MyFatoorahServiceProvider",
+    "capabilities": [
+        "payment.gateway",
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "content_security"
+    ],
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages"
+    },
+    "content_security": {
+        "connect-src": [
+            "https://api.myfatoorah.com",
+            "https://apitest.myfatoorah.com",
+            "https://portal.myfatoorah.com",
+            "https://portaltest.myfatoorah.com"
+        ],
+        "frame-src": [
+            "https://api.myfatoorah.com",
+            "https://apitest.myfatoorah.com",
+            "https://portal.myfatoorah.com",
+            "https://portaltest.myfatoorah.com"
+        ],
+        "form-action": [
+            "https://api.myfatoorah.com",
+            "https://apitest.myfatoorah.com",
+            "https://portal.myfatoorah.com",
+            "https://portaltest.myfatoorah.com"
+        ]
+    },
+    "admin_navigation": [
+        {
+            "key": "myfatoorah",
+            "title": "MyFatoorah",
+            "route": "index",
+            "icon": "credit-card",
+            "group": "Configuration",
+            "permission": "payments.manage",
+            "order": 895
+        }
+    ]
+}

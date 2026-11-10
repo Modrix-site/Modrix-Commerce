@@ -2,8 +2,10 @@ import { Form, Head } from '@inertiajs/react';
 import { useState } from 'react';
 import AccountController from '@/actions/App/Http/Controllers/Storefront/AccountController';
 import { FormField, NativeSelect } from '@/components/admin/form-field';
-import { AccountNav } from '@/components/storefront/account-nav';
+import { MapPin, Plus } from 'lucide-react';
+import { AccountLayout } from '@/components/storefront/account-nav';
 import RegionCombobox from '@/components/storefront/region-combobox';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -26,19 +28,20 @@ export default function Addresses({
     return (
         <>
             <Head title={t('Addresses')} />
-            <div className="grid gap-8 md:grid-cols-[12rem_1fr]">
-                <AccountNav />
-                <div className="grid content-start gap-6">
-                    <div className="flex items-center justify-between">
-                        <h1 className="text-2xl font-semibold tracking-tight">
-                            {t('Addresses')}
-                        </h1>
-                        {editing === null && (
-                            <Button onClick={() => setEditing('new')}>
-                                {t('Add address')}
-                            </Button>
-                        )}
-                    </div>
+            <AccountLayout
+                title={t('Addresses')}
+                description={t(
+                    'Saved addresses are filled in for you at checkout.',
+                )}
+                actions={
+                    editing === null && (
+                        <Button onClick={() => setEditing('new')}>
+                            <Plus aria-hidden />
+                            {t('Add address')}
+                        </Button>
+                    )
+                }
+            >
 
                     {editing === 'new' && (
                         <AddressForm
@@ -60,14 +63,32 @@ export default function Addresses({
                             ) : (
                                 <li
                                     key={address.id}
-                                    className="grid gap-3 rounded-lg border p-4"
+                                    className="grid content-between gap-4 rounded-xl border bg-card p-5"
                                 >
-                                    <address className="text-sm not-italic">
-                                        <span className="font-medium">
+                                    <div className="grid gap-3">
+                                    <div className="flex items-start justify-between gap-3">
+                                        <span className="flex items-center gap-2 font-medium">
+                                            <MapPin
+                                                className="size-4 text-muted-foreground"
+                                                aria-hidden
+                                            />
                                             {address.first_name}{' '}
                                             {address.last_name}
                                         </span>
-                                        <br />
+                                        <span className="flex flex-wrap justify-end gap-1">
+                                            {address.is_default_shipping && (
+                                                <Badge variant="secondary">
+                                                    {t('Default shipping')}
+                                                </Badge>
+                                            )}
+                                            {address.is_default_billing && (
+                                                <Badge variant="secondary">
+                                                    {t('Default billing')}
+                                                </Badge>
+                                            )}
+                                        </span>
+                                    </div>
+                                    <address className="text-sm leading-relaxed text-muted-foreground not-italic">
                                         {address.company && (
                                             <>
                                                 {address.company}
@@ -83,18 +104,15 @@ export default function Addresses({
                                         {address.postal_code}
                                         <br />
                                         {address.country_name}
+                                        {address.phone && (
+                                            <>
+                                                <br />
+                                                {address.phone}
+                                            </>
+                                        )}
                                     </address>
-                                    <p className="text-xs text-muted-foreground">
-                                        {[
-                                            address.is_default_shipping &&
-                                                t('Default shipping'),
-                                            address.is_default_billing &&
-                                                t('Default billing'),
-                                        ]
-                                            .filter(Boolean)
-                                            .join(' · ')}
-                                    </p>
-                                    <div className="flex gap-2">
+                                    </div>
+                                    <div className="flex gap-2 border-t pt-4">
                                         <Button
                                             variant="outline"
                                             size="sm"
@@ -127,8 +145,7 @@ export default function Addresses({
                             ),
                         )}
                     </ul>
-                </div>
-            </div>
+            </AccountLayout>
         </>
     );
 }
@@ -157,10 +174,13 @@ function AddressForm({
             {...form}
             options={{ preserveScroll: true }}
             onSuccess={onCancel}
-            className="grid gap-4 rounded-lg border p-4"
+            className="grid gap-5 rounded-xl border bg-card p-5 sm:p-6"
         >
             {({ processing, errors }) => (
                 <>
+                    <h2 className="font-semibold">
+                        {address ? t('Edit address') : t('New address')}
+                    </h2>
                     <div className="grid gap-4 sm:grid-cols-2">
                         <FormField
                             id={id('first_name')}

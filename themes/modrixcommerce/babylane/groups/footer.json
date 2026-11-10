@@ -1,0 +1,133 @@
+{
+    "sections": {
+        "benefits": {
+            "type": "benefits",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "benefit",
+                    "settings": {
+                        "icon": "delivery",
+                        "heading": "Delivery options",
+                        "body": "Available at checkout"
+                    }
+                },
+                "block_1": {
+                    "type": "benefit",
+                    "settings": {
+                        "icon": "returns",
+                        "heading": "Easy returns",
+                        "body": "Read our returns policy"
+                    }
+                },
+                "block_2": {
+                    "type": "benefit",
+                    "settings": {
+                        "icon": "payment",
+                        "heading": "Secure checkout",
+                        "body": "Shop with confidence"
+                    }
+                },
+                "block_3": {
+                    "type": "benefit",
+                    "settings": {
+                        "icon": "support",
+                        "heading": "Here to help",
+                        "body": "Customer care"
+                    }
+                }
+            },
+            "block_order": ["block_0", "block_1", "block_2", "block_3"]
+        },
+        "footer": {
+            "type": "footer",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Quick links",
+                        "label": "Shop all",
+                        "link": "/search"
+                    }
+                },
+                "block_1": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Quick links",
+                        "label": "New arrivals",
+                        "link": "/search?sort=newest"
+                    }
+                },
+                "block_2": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Quick links",
+                        "label": "Categories",
+                        "link": "/search"
+                    }
+                },
+                "block_3": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Company",
+                        "label": "Our store",
+                        "link": "/"
+                    }
+                },
+                "block_4": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Company",
+                        "label": "My account",
+                        "link": "/account"
+                    }
+                },
+                "block_5": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Company",
+                        "label": "Your orders",
+                        "link": "/account/orders"
+                    }
+                },
+                "block_6": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Business",
+                        "label": "Shop",
+                        "link": "/search"
+                    }
+                },
+                "block_7": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Business",
+                        "label": "Cart",
+                        "link": "/cart"
+                    }
+                },
+                "block_8": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Business",
+                        "label": "Account settings",
+                        "link": "/account/profile"
+                    }
+                }
+            },
+            "block_order": [
+                "block_0",
+                "block_1",
+                "block_2",
+                "block_3",
+                "block_4",
+                "block_5",
+                "block_6",
+                "block_7",
+                "block_8"
+            ]
+        }
+    },
+    "order": ["benefits", "footer"]
+}

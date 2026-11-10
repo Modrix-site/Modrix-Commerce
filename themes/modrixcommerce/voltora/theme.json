@@ -1,0 +1,119 @@
+{
+    "$schema": "../../../docs/extensions/theme.schema.json",
+    "name": "modrixcommerce/voltora",
+    "display_name": "Voltora",
+    "description": "Voltora electronics storefront from MagicPath merrily-hour-1817. Yellow search header, blue actions, centered 1140px canvas, campaign carousel, collection tiles, four-column catalog and three-column product detail.",
+    "version": "1.0.2",
+    "type": "theme",
+    "theme_type": "storefront",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "capabilities": [
+        "home.sections",
+        "demo_content",
+        "custom_fonts"
+    ],
+    "assets": "assets",
+    "screenshot": "assets/demo-preview.png",
+    "design": {
+        "color.background": "#ffffff",
+        "color.foreground": "#333333",
+        "color.primary": "#007fbe",
+        "color.primary_foreground": "#ffffff",
+        "color.muted": "#f7f7f7",
+        "color.muted_foreground": "#777777",
+        "color.accent": "#ffb312",
+        "color.accent_foreground": "#007fbe",
+        "color.border": "#dddddd",
+        "font_body": "custom:Nunito Sans",
+        "font_heading": "custom:Nunito Sans",
+        "radius": "0.25rem",
+        "density": "compact",
+        "container": "wide",
+        "layout.header": "centered",
+        "layout.footer": "columns",
+        "layout.product_card": "minimal",
+        "layout.grid_columns": "4",
+        "layout.product_page": "split",
+        "footer_text": "© 2026 Voltora. All rights reserved.",
+        "menu_1_label": "Home",
+        "menu_1_link": "/",
+        "menu_2_label": "Catalog",
+        "menu_2_link": "/search",
+        "menu_3_label": "Renewed tech",
+        "menu_3_link": "/search?q=renewed",
+        "menu_4_label": "Gift cards",
+        "menu_4_link": "/search?q=gift",
+        "menu_5_label": "Bestsellers",
+        "menu_5_link": "/search?sort=newest",
+        "menu_6_label": "Cart",
+        "menu_6_link": "/cart",
+        "footer_1_title": "Company",
+        "footer_1_1_label": "New",
+        "footer_1_1_link": "/search?sort=newest",
+        "footer_1_2_label": "Products",
+        "footer_1_2_link": "/search",
+        "footer_1_3_label": "Rooms",
+        "footer_1_3_link": "/search",
+        "footer_1_4_label": "Collections",
+        "footer_1_4_link": "/search",
+        "footer_2_title": "Assistance",
+        "footer_2_1_label": "Payment",
+        "footer_2_1_link": "/account/orders",
+        "footer_2_2_label": "Delivery",
+        "footer_2_2_link": "/account/orders",
+        "footer_2_3_label": "Returns and exchanges",
+        "footer_2_3_link": "/account/orders",
+        "footer_2_4_label": "Warranty and service",
+        "footer_2_4_link": "/account",
+        "footer_3_title": "Explore",
+        "footer_3_1_label": "About company",
+        "footer_3_1_link": "/",
+        "footer_3_2_label": "Contacts",
+        "footer_3_2_link": "/account",
+        "footer_3_3_label": "B2B",
+        "footer_3_3_link": "/account",
+        "menu_7_label": "Help",
+        "menu_7_link": "/account"
+    },
+    "customizer_file": "settings.json",
+    "frontend": {
+        "header": "src/header.tsx",
+        "footer": "src/footer.tsx",
+        "index": "src/index.tsx",
+        "catalog": "src/catalog.tsx",
+        "product": "src/product.tsx",
+        "cart": "src/cart.tsx",
+        "stylesheet": "src/style.css"
+    },
+    "sections": {
+        "home": [
+            {
+                "type": "featured_products",
+                "settings": {
+                    "title": "Power picks",
+                    "source": "latest",
+                    "limit": 6
+                }
+            },
+            {
+                "type": "featured_products",
+                "settings": {
+                    "title": "Featured products",
+                    "source": "featured",
+                    "limit": 6
+                }
+            }
+        ]
+    },
+    "demo_content": "demo.json",
+    "fonts": [
+        {
+            "family": "Nunito Sans",
+            "file": "assets/nunito-sans.woff2",
+            "weight": "400 800",
+            "style": "normal"
+        }
+    ]
+}

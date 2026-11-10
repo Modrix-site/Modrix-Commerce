@@ -1,0 +1,86 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/order-returns",
+    "display_name": "Order Returns",
+    "description": "Customers request a return for items from a delivered order. Staff approve or reject each request with a comment. Approving a request does not refund the payment or restock the items.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "package",
+    "accent": "#0f766e",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\OrderReturns\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\OrderReturns\\OrderReturnsServiceProvider",
+    "permissions": [
+        {
+            "name": "returns.manage",
+            "label": "Review return requests",
+            "group": "Orders"
+        }
+    ],
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "storefront.slots",
+        "database.migrations",
+        "settings",
+        "permissions"
+    ],
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages",
+        "slots": "resources/js/slots"
+    },
+    "settings": [
+        {
+            "key": "window_days",
+            "type": "integer",
+            "label": "Return window (days)",
+            "help": "Customers can request a return for this many days after the order is delivered, or after it ships when that option is selected.",
+            "default": 30,
+            "min": 1,
+            "max": 365
+        },
+        {
+            "key": "eligible_after",
+            "type": "select",
+            "label": "Orders can be returned after",
+            "help": "Delivered waits until the order is marked delivered. Shipped also allows orders that are still with the carrier.",
+            "default": "delivered",
+            "options": [
+                { "value": "delivered", "label": "Delivered" },
+                { "value": "shipped", "label": "Shipped" }
+            ]
+        },
+        {
+            "key": "comment_min",
+            "type": "integer",
+            "label": "Minimum comment length",
+            "help": "Applies to the customer's reason and to the comment staff write when they approve or reject.",
+            "default": 10,
+            "min": 1,
+            "max": 500
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "returns",
+            "title": "Returns",
+            "route": "index",
+            "icon": "package",
+            "group": "Sales",
+            "permission": "returns.manage",
+            "order": 55
+        }
+    ]
+}

@@ -1,0 +1,180 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/advanced-seo",
+    "display_name": "Advanced SEO",
+    "description": "Sets the storefront title and description on the home page, products, categories, brands and content pages for every theme. Adds canonical, Open Graph and product structured data, and submits the sitemap and updated URLs to Google Search Console.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "search",
+    "accent": "#0f766e",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\AdvancedSeo\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\AdvancedSeo\\AdvancedSeoServiceProvider",
+    "permissions": [
+        {
+            "name": "seo.manage",
+            "label": "Manage search SEO",
+            "group": "Marketing"
+        }
+    ],
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "storefront.slots",
+        "settings",
+        "permissions"
+    ],
+    "routes": {
+        "admin": "routes/admin.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages",
+        "slots": "resources/js/slots"
+    },
+    "settings": [
+        {
+            "key": "enabled",
+            "type": "boolean",
+            "label": "Apply SEO titles and descriptions on the storefront",
+            "default": true
+        },
+        {
+            "key": "prefer_written",
+            "type": "boolean",
+            "label": "Prefer a title or description already written on the product, category or page",
+            "default": true
+        },
+        {
+            "key": "home_title",
+            "type": "string",
+            "label": "Home page title",
+            "help": "Tokens: {store} and {tagline}.",
+            "default": "{store}"
+        },
+        {
+            "key": "home_description",
+            "type": "text",
+            "label": "Home page description",
+            "help": "Tokens: {store} and {tagline}. Blank uses the store meta description."
+        },
+        {
+            "key": "product_title",
+            "type": "string",
+            "label": "Product title",
+            "help": "Tokens: {name} {store} {brand} {category} {sku} {price}.",
+            "default": "{name} | {store}"
+        },
+        {
+            "key": "product_description",
+            "type": "text",
+            "label": "Product description",
+            "help": "Tokens: {name} {store} {brand} {category} {description} {price}.",
+            "default": "{description}"
+        },
+        {
+            "key": "category_title",
+            "type": "string",
+            "label": "Category title",
+            "help": "Tokens: {name} {store} {description}.",
+            "default": "{name} | {store}"
+        },
+        {
+            "key": "category_description",
+            "type": "text",
+            "label": "Category description",
+            "help": "Tokens: {name} {store} {description}.",
+            "default": "{description}"
+        },
+        {
+            "key": "brand_title",
+            "type": "string",
+            "label": "Brand title",
+            "help": "Tokens: {name} {store} {description}.",
+            "default": "{name} | {store}"
+        },
+        {
+            "key": "page_title",
+            "type": "string",
+            "label": "Content page title",
+            "help": "Tokens: {name} {store} {description}.",
+            "default": "{name} | {store}"
+        },
+        {
+            "key": "search_title",
+            "type": "string",
+            "label": "Search results title",
+            "help": "Tokens: {query} and {store}.",
+            "default": "{query} | {store}"
+        },
+        {
+            "key": "title_max",
+            "type": "integer",
+            "label": "Maximum title length",
+            "default": 60,
+            "min": 30,
+            "max": 120
+        },
+        {
+            "key": "description_max",
+            "type": "integer",
+            "label": "Maximum description length",
+            "default": 160,
+            "min": 50,
+            "max": 320
+        },
+        {
+            "key": "open_graph",
+            "type": "boolean",
+            "label": "Add Open Graph and Twitter card tags",
+            "default": true
+        },
+        {
+            "key": "json_ld",
+            "type": "boolean",
+            "label": "Add structured data for the home page and products",
+            "default": true
+        },
+        {
+            "key": "noindex_private",
+            "type": "boolean",
+            "label": "Ask Google not to index search, cart, checkout and account pages",
+            "default": true
+        },
+        {
+            "key": "google_verification",
+            "type": "string",
+            "label": "Google site verification code",
+            "help": "The content value from the Search Console HTML tag method, not the whole tag."
+        },
+        {
+            "key": "search_console_site",
+            "type": "string",
+            "label": "Search Console property",
+            "help": "Exactly as listed in Search Console, such as https://example.com/ or sc-domain:example.com."
+        },
+        {
+            "key": "google_credentials",
+            "type": "text",
+            "label": "Google service account JSON",
+            "help": "Add this account as an owner of the Search Console property. It is used only to submit the sitemap and request crawls.",
+            "max_length": 10000
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "advanced-seo",
+            "title": "Search SEO",
+            "route": "index",
+            "icon": "search",
+            "group": "Marketing",
+            "permission": "seo.manage",
+            "order": 335
+        }
+    ]
+}

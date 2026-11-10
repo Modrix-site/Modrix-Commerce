@@ -1,0 +1,115 @@
+{
+    "name": "Beauty product information",
+    "settings": [
+        {
+            "type": "text",
+            "id": "add_label",
+            "label": "Add to cart label",
+            "default": "Add to cart"
+        },
+        {
+            "type": "text",
+            "id": "adding_label",
+            "label": "Adding label",
+            "default": "Adding…"
+        },
+        {
+            "type": "text",
+            "id": "sold_label",
+            "label": "Sold out label",
+            "default": "Sold out"
+        },
+        {
+            "type": "text",
+            "id": "choose_label",
+            "label": "Choose variant label",
+            "default": "Choose your options"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_buy_now",
+            "label": "Show Buy now",
+            "default": false
+        },
+        {
+            "type": "text",
+            "id": "buy_label",
+            "label": "Buy now label",
+            "default": "Buy now"
+        },
+        {
+            "type": "text",
+            "id": "description_label",
+            "label": "Description accordion label",
+            "default": "What does it do for you?"
+        },
+        {
+            "type": "checkbox",
+            "id": "description_open",
+            "label": "Open description initially",
+            "default": false
+        },
+        {
+            "type": "text",
+            "id": "service_one",
+            "label": "First service note",
+            "default": "Everyday beauty essentials"
+        },
+        {
+            "type": "text",
+            "id": "service_two",
+            "label": "Second service note",
+            "default": "Delivery options at checkout"
+        },
+        {
+            "type": "text",
+            "id": "related_heading",
+            "label": "Related products heading",
+            "default": "Usually purchased with"
+        },
+        {
+            "type": "range",
+            "id": "related_limit",
+            "label": "Related product limit",
+            "default": 4,
+            "min": 1,
+            "max": 8,
+            "step": 1
+        },
+        {
+            "type": "checkbox",
+            "id": "show_save",
+            "label": "Show save, compare and share",
+            "default": true
+        }
+    ],
+    "blocks": [
+        {
+            "type": "accordion",
+            "name": "Information accordion",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "heading",
+                    "label": "Heading",
+                    "default": "How to use"
+                },
+                {
+                    "type": "textarea",
+                    "id": "body",
+                    "label": "Text",
+                    "default": "Read the product packaging for verified instructions. For product-specific ingredients and usage, add the Product Fields module."
+                }
+            ]
+        }
+    ],
+    "max_blocks": 40,
+    "presets": [
+        {
+            "name": "Beauty product information"
+        }
+    ],
+    "enabled_on": {
+        "templates": ["*"]
+    }
+}

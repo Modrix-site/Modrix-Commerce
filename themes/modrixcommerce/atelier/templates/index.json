@@ -1,0 +1,211 @@
+{
+    "sections": {
+        "hero": {
+            "type": "hero",
+            "settings": {
+                "eyebrow": "OBJECTS OF INTENTION",
+                "heading": "The art of everyday.",
+                "text": "Discover essentials with a lasting point of view.",
+                "button": "Discover the collection",
+                "link": "/search",
+                "image": "asset:assets/hero.jpg",
+                "alt": "Brown leather satchel with dark straps",
+                "background": "#eeece7",
+                "photo_background": "#dcdada",
+                "heading_size": 56,
+                "height": 640
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "rail_one": {
+            "type": "product-rail",
+            "settings": {
+                "heading": "Considered essentials",
+                "link_label": "Explore all",
+                "link_url": "/search",
+                "source": "latest",
+                "limit": 8,
+                "columns": "4",
+                "background": "#f7f6f3"
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "editorial": {
+            "type": "editorial",
+            "settings": {
+                "card_1_image": "asset:assets/writing.jpg",
+                "card_1_alt": "Writing at a desk",
+                "card_1_heading": "THE WRITING EDIT",
+                "card_1_text": "An invitation to put pen to paper.",
+                "card_1_button": "Discover now",
+                "card_1_link": "/search",
+                "card_2_image": "asset:assets/hero.jpg",
+                "card_2_alt": "Leather accessories",
+                "card_2_heading": "EVERYDAY COMPANIONS",
+                "card_2_text": "Timeless pieces for a life in motion.",
+                "card_2_button": "Discover now",
+                "card_2_link": "/search",
+                "image_height": 420
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "categories": {
+            "type": "categories-grid",
+            "settings": {
+                "heading": "Discover our categories",
+                "mode": "custom",
+                "columns": "4",
+                "image_height": 280
+            },
+            "blocks": {
+                "cat_0": {
+                    "type": "category_tile",
+                    "settings": {
+                        "label": "Writing instruments",
+                        "image": "asset:assets/writing.jpg",
+                        "alt": "Writing instruments",
+                        "link": "/search?q=Writing"
+                    }
+                },
+                "cat_1": {
+                    "type": "category_tile",
+                    "settings": {
+                        "label": "Bags",
+                        "image": "asset:assets/hero.jpg",
+                        "alt": "Bags",
+                        "link": "/search?q=Bags"
+                    }
+                },
+                "cat_2": {
+                    "type": "category_tile",
+                    "settings": {
+                        "label": "Small leather goods",
+                        "image": "asset:assets/hero.jpg",
+                        "alt": "Small leather goods",
+                        "link": "/search?q=Leather"
+                    }
+                },
+                "cat_3": {
+                    "type": "category_tile",
+                    "settings": {
+                        "label": "Accessories",
+                        "image": "asset:assets/watch.jpg",
+                        "alt": "Accessories",
+                        "link": "/search?q=Accessories"
+                    }
+                }
+            },
+            "block_order": [
+                "cat_0",
+                "cat_1",
+                "cat_2",
+                "cat_3"
+            ]
+        },
+        "campaign": {
+            "type": "campaign-banner",
+            "settings": {
+                "eyebrow": "NEW ARRIVALS",
+                "heading": "THE WRITING COLLECTION",
+                "text": "Objects that turn everyday moments into lasting stories.",
+                "button": "Discover the collection",
+                "link": "/search",
+                "image": "asset:assets/writing.jpg",
+                "alt": "The writing collection",
+                "height": 540,
+                "text_color": "#ffffff",
+                "overlay_opacity": 35
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "story": {
+            "type": "story",
+            "settings": {
+                "eyebrow": "THE ART OF TRAVEL",
+                "heading": "Companions for every journey",
+                "text": "Considered essentials, designed to go wherever life takes you.",
+                "button": "Discover more",
+                "link": "/search",
+                "image": "asset:assets/hero.jpg",
+                "alt": "Everyday travel accessories",
+                "image_position": "left",
+                "background": "#f3f3f3"
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "gifts": {
+            "type": "curated-gifts",
+            "settings": {
+                "heading": "The gift edit",
+                "columns": "4"
+            },
+            "blocks": {
+                "gift_0": {
+                    "type": "gift_tile",
+                    "settings": {
+                        "label": "Personal touches",
+                        "image": "asset:assets/writing.jpg",
+                        "alt": "Personal touches",
+                        "link": "/search"
+                    }
+                },
+                "gift_1": {
+                    "type": "gift_tile",
+                    "settings": {
+                        "label": "Gifts for her",
+                        "image": "asset:assets/hero.jpg",
+                        "alt": "Gifts for her",
+                        "link": "/search"
+                    }
+                },
+                "gift_2": {
+                    "type": "gift_tile",
+                    "settings": {
+                        "label": "Gifts for him",
+                        "image": "asset:assets/watch.jpg",
+                        "alt": "Gifts for him",
+                        "link": "/search"
+                    }
+                },
+                "gift_3": {
+                    "type": "gift_tile",
+                    "settings": {
+                        "label": "The art of gifting",
+                        "image": "asset:assets/journal.jpg",
+                        "alt": "The art of gifting",
+                        "link": "/search"
+                    }
+                }
+            },
+            "block_order": [
+                "gift_0",
+                "gift_1",
+                "gift_2",
+                "gift_3"
+            ]
+        },
+        "apps": {
+            "type": "apps",
+            "settings": {
+                "heading": ""
+            },
+            "blocks": {},
+            "block_order": []
+        }
+    },
+    "order": [
+        "hero",
+        "rail_one",
+        "editorial",
+        "categories",
+        "campaign",
+        "story",
+        "gifts",
+        "apps"
+    ]
+}

@@ -143,6 +143,6 @@ class InventoryTest extends TestCase
 
         $this->actingAs($this->owner())
             ->get(route('admin.inventory.index', ['stock' => 'low']))
-            ->assertInertia(fn ($page) => $page->has('variants.data', 1)->where('variants.data.0.on_hand', 2));
+            ->assertInertia(fn ($page) => $page->has('products.data', 1)->where('products.data.0.available', 2));
     }
 }

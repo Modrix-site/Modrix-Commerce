@@ -1,0 +1,101 @@
+{
+    "sections": {
+        "header": {
+            "type": "header",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Offers",
+                        "link": "/search?on_sale=1"
+                    }
+                },
+                "block_1": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Bestsellers",
+                        "link": "/c/linden-body"
+                    }
+                },
+                "block_2": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Bath & Body",
+                        "link": "/c/linden-body"
+                    }
+                },
+                "block_3": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Face & Skincare",
+                        "link": "/c/linden-skincare"
+                    }
+                },
+                "block_4": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Haircare",
+                        "link": "/c/linden-haircare"
+                    }
+                },
+                "block_5": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Makeup",
+                        "link": "/c/linden-makeup"
+                    }
+                },
+                "block_6": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Fragrance",
+                        "link": "/c/linden-fragrance"
+                    }
+                },
+                "block_7": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Gifts",
+                        "link": "/c/linden-gifts"
+                    }
+                },
+                "block_8": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Ranges",
+                        "link": "/search"
+                    }
+                },
+                "block_9": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Tips & rituals",
+                        "link": "/pages/linden-rituals"
+                    }
+                },
+                "block_10": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Our story",
+                        "link": "/pages/about-linden"
+                    }
+                }
+            },
+            "block_order": [
+                "block_0",
+                "block_1",
+                "block_2",
+                "block_3",
+                "block_4",
+                "block_5",
+                "block_6",
+                "block_7",
+                "block_8",
+                "block_9",
+                "block_10"
+            ]
+        }
+    },
+    "order": ["header"]
+}

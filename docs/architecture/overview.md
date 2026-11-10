@@ -1,6 +1,6 @@
 # Architecture Overview
 
-EcoModular is a self-hosted, MIT-licensed eCommerce platform built as a **modular monolith** on Laravel 13, with a React + TypeScript + Inertia admin and storefront.
+Modrix Commerce is a self-hosted, MIT-licensed eCommerce platform built as a **modular monolith** on Laravel 13, with a React + TypeScript + Inertia admin and storefront.
 
 ## 1. Repository assessment (Phase 0, 2026-10-12)
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Core\Catalog\ProductLabels;
+use App\Core\Content\RichText;
 use App\Core\Extensions\StorefrontSlots;
 use App\Core\Settings\StoreSettings;
 use App\Domains\Catalog\Models\Category;
@@ -41,16 +42,35 @@ class ProductController extends Controller
      */
     private static function variantPrices(ProductVariant $variant, string $currency): array
     {
+        $salePrices = app(SalePrices::class);
         $compareAt = $variant->compareAtPriceIn($currency);
-        $sale = app(SalePrices::class)->forVariant($variant, $currency);
+        $sale = $salePrices->forVariant($variant, $currency);
 
         if ($sale === null) {
-            return ['price' => $variant->priceIn($currency), 'compare_at_price' => $compareAt];
+            $basePrice = $variant->priceIn($currency);
+            $adjustedPrice = $salePrices->adjustVariantPrice($variant, $basePrice);
+            $addonDelta = ($basePrice !== null && $adjustedPrice !== null)
+                ? $adjustedPrice->minus($basePrice)
+                : null;
+
+            return [
+                'price' => $adjustedPrice,
+                'base_price' => $basePrice,
+                'compare_at_price' => ($compareAt !== null && $addonDelta !== null && $addonDelta->isPositive())
+                    ? $compareAt->plus($addonDelta)
+                    : $compareAt,
+            ];
         }
 
+        $baseSalePrice = $sale['price'];
+        $rawCompareAt = $compareAt !== null && $compareAt->greaterThan($sale['original']) ? $compareAt : $sale['original'];
+        $adjustedSalePrice = $salePrices->adjustVariantPrice($variant, $baseSalePrice) ?? $baseSalePrice;
+        $addonDelta = $adjustedSalePrice->minus($baseSalePrice);
+
         return [
-            'price' => $sale['price'],
-            'compare_at_price' => $compareAt !== null && $compareAt->greaterThan($sale['original']) ? $compareAt : $sale['original'],
+            'price' => $adjustedSalePrice,
+            'base_price' => $baseSalePrice,
+            'compare_at_price' => $addonDelta->isPositive() ? $rawCompareAt->plus($addonDelta) : $rawCompareAt,
         ];
     }
 
@@ -101,7 +121,8 @@ class ProductController extends Controller
                 'name' => $product->localized('name'),
                 'slug' => $product->slug,
                 'short_description' => $product->localized('short_description'),
-                'description' => $product->localized('description'),
+                'description' => RichText::toText($product->localized('description')),
+                'description_html' => RichText::toHtml($product->localized('description')),
                 'meta_title' => $product->localized('meta_title') ?: $product->localized('name'),
                 'meta_description' => $product->localized('meta_description') ?: $product->localized('short_description'),
                 'images' => $product->images->map(fn (ProductImage $i) => ['id' => $i->id, 'url' => $i->url(), 'alt' => $i->alt])->values(),

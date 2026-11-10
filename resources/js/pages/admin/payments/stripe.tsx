@@ -22,6 +22,8 @@ type StripeSettings = {
     enabled: boolean;
     label: string;
     mode: 'test' | 'live' | null;
+    apple_pay: boolean;
+    google_pay: boolean;
     secret_key_hint: string | null;
     webhook_secret_hint: string | null;
 };
@@ -171,6 +173,30 @@ export default function StripeSettingsPage({
                                     />
                                     Offer card payments at checkout
                                 </label>
+                                <label className="flex items-center gap-2 text-sm">
+                                    <Checkbox
+                                        name="apple_pay"
+                                        value="1"
+                                        defaultChecked={stripe.apple_pay}
+                                    />
+                                    Accept Apple Pay
+                                </label>
+                                <label className="flex items-center gap-2 text-sm">
+                                    <Checkbox
+                                        name="google_pay"
+                                        value="1"
+                                        defaultChecked={stripe.google_pay}
+                                    />
+                                    Accept Google Pay
+                                </label>
+                                <p className="text-sm text-muted-foreground">
+                                    Apple Pay and Google Pay appear on Stripe
+                                    Checkout only while the matching switch is
+                                    on. Also enable each wallet in the Stripe
+                                    Dashboard and register this store&apos;s
+                                    domain. A restricted key needs permission
+                                    to manage payment method configurations.
+                                </p>
                                 <div className="flex flex-wrap gap-2">
                                     <Button type="submit" disabled={processing}>
                                         Save

@@ -1,15 +1,6 @@
-import { Link, usePage } from '@inertiajs/react';
-import type { ComponentProps } from 'react';
-export function StoreMenuLink(props: ComponentProps<typeof Link>) {
-    return typeof props.href === 'string' &&
-        props.href.startsWith('https://') ? (
-        <a href={props.href} className={props.className}>
-            {props.children}
-        </a>
-    ) : (
-        <Link {...props} />
-    );
-}
+import { usePage } from '@inertiajs/react';
+import { StoreMenuTree } from './store-menu';
+export { StoreMenuLink } from './store-menu-link';
 export function StoreFooterMenus() {
     const { storefront } = usePage().props;
     return (
@@ -21,15 +12,10 @@ export function StoreFooterMenus() {
                     className="grid content-start gap-2"
                 >
                     <h3 className="font-semibold">{menu.title}</h3>
-                    {menu.links.map((link, i) => (
-                        <StoreMenuLink
-                            key={i}
-                            href={link.url}
-                            className="text-muted-foreground hover:text-foreground"
-                        >
-                            {link.label}
-                        </StoreMenuLink>
-                    ))}
+                    <StoreMenuTree
+                        menu={menu}
+                        orientation={menu.layout ?? 'vertical'}
+                    />
                 </nav>
             ))}
         </div>

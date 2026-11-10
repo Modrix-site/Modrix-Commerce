@@ -35,7 +35,9 @@ final class CartManager
     public function current(Session $session, ?User $user, bool $create = false): ?Cart
     {
         if ($user !== null) {
-            return $create ? $this->forUser($user) : Cart::query()->where('user_id', $user->id)->latest('id')->first();
+            $cart = $create ? $this->forUser($user) : Cart::query()->where('user_id', $user->id)->latest('id')->first();
+
+            return $cart === null ? null : $this->alignCurrency($cart);
         }
 
         $token = $session->get(self::SESSION_KEY);
@@ -48,7 +50,7 @@ final class CartManager
             $session->put(self::SESSION_KEY, $cart->token);
         }
 
-        return $cart;
+        return $cart === null ? null : $this->alignCurrency($cart);
     }
 
     public function add(Cart $cart, ProductVariant $variant, int $quantity): CartItem
@@ -132,6 +134,8 @@ final class CartManager
             return;
         }
 
+        $this->alignCurrency($guest);
+
         DB::transaction(function () use ($guest, $user) {
             $target = $this->forUser($user);
 
@@ -170,7 +174,32 @@ final class CartManager
 
     public function forUser(User $user): Cart
     {
-        return Cart::query()->where('user_id', $user->id)->latest('id')->first() ?? $this->newCart($user);
+        return $this->alignCurrency(Cart::query()->where('user_id', $user->id)->latest('id')->first() ?? $this->newCart($user));
+    }
+
+    /**
+     * Carts are priced in the store currency. A cart left behind after that
+     * currency changes keeps its old currency, so it would show the old price.
+     */
+    private function alignCurrency(Cart $cart): Cart
+    {
+        $currency = $this->store->currency();
+        if ($cart->currency === $currency) {
+            return $cart;
+        }
+
+        $cart->load('items.variant.product', 'items.variant.prices');
+        foreach ($cart->items as $item) {
+            if ($item->variant === null) {
+                continue;
+            }
+            $item->forceFill([
+                'seen_unit_price' => $this->shownPrice($item->variant, $currency)?->toDecimal(),
+            ])->save();
+        }
+        $cart->forceFill(['currency' => $currency])->save();
+
+        return $cart;
     }
 
     private function newCart(?User $user): Cart

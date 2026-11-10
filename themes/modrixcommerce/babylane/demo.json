@@ -1,0 +1,344 @@
+{
+    "categories": [
+        {
+            "name": "Baby Hygiene",
+            "slug": "babylane-hygiene",
+            "description": "Baby Lane demonstration collection. Replace with your own collection details."
+        },
+        {
+            "name": "Sleeping",
+            "slug": "babylane-sleeping",
+            "description": "Baby Lane demonstration collection. Replace with your own collection details."
+        },
+        {
+            "name": "Baby Out",
+            "slug": "babylane-out",
+            "description": "Baby Lane demonstration collection. Replace with your own collection details."
+        },
+        {
+            "name": "Apparels",
+            "slug": "babylane-apparel",
+            "description": "Baby Lane demonstration collection. Replace with your own collection details."
+        },
+        {
+            "name": "Eat & Drink",
+            "slug": "babylane-feeding",
+            "description": "Baby Lane demonstration collection. Replace with your own collection details."
+        },
+        {
+            "name": "Toys",
+            "slug": "babylane-toys",
+            "description": "Baby Lane demonstration collection. Replace with your own collection details."
+        },
+        {
+            "name": "Home Wares",
+            "slug": "babylane-home",
+            "description": "Baby Lane demonstration collection. Replace with your own collection details."
+        },
+        {
+            "name": "Pregnancy & Maternity",
+            "slug": "babylane-maternity",
+            "description": "Baby Lane demonstration collection. Replace with your own collection details."
+        }
+    ],
+    "products": [
+        {
+            "name": "Gentle Baby Wipes, 6 Flip-Top Packs",
+            "slug": "babylane-demo-1",
+            "sku": "BABYLANE-DEMO-1",
+            "price": "14.99",
+            "compare_at_price": "17.49",
+            "stock": 20,
+            "description": "<p>Gentle Baby Wipes, 6 Flip-Top Packs. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": ["babylane-hygiene", "babylane-feeding"],
+            "image": "assets/wipes.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        },
+        {
+            "name": "Baby Care Cream, 400 g",
+            "slug": "babylane-demo-2",
+            "sku": "BABYLANE-DEMO-2",
+            "price": "18.49",
+            "compare_at_price": "21.99",
+            "stock": 20,
+            "description": "<p>Baby Care Cream, 400 g. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": ["babylane-hygiene"],
+            "image": "assets/cream.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        },
+        {
+            "name": "Gentle Baby Wash, Twin Pack",
+            "slug": "babylane-demo-3",
+            "sku": "BABYLANE-DEMO-3",
+            "price": "13.99",
+            "compare_at_price": "16.99",
+            "stock": 20,
+            "description": "<p>Gentle Baby Wash, Twin Pack. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": ["babylane-hygiene"],
+            "image": "assets/wash.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        },
+        {
+            "name": "Reusable Swim Diapers, Aqua Pack of 2",
+            "slug": "babylane-demo-4",
+            "sku": "BABYLANE-DEMO-4",
+            "price": "16.99",
+            "compare_at_price": "19.99",
+            "stock": 20,
+            "description": "<p>Reusable Swim Diapers, Aqua Pack of 2. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": ["babylane-hygiene", "babylane-apparel"],
+            "image": "assets/swim.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        },
+        {
+            "name": "Silicone Pacifiers Set, Midnight and Ivory",
+            "slug": "babylane-demo-5",
+            "sku": "BABYLANE-DEMO-5",
+            "price": "9.99",
+            "compare_at_price": "12.99",
+            "stock": 20,
+            "description": "<p>Silicone Pacifiers Set, Midnight and Ivory. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": ["babylane-hygiene"],
+            "image": "assets/pacifiers.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        },
+        {
+            "name": "Hooded Bunny Bath Towel, Sand",
+            "slug": "babylane-demo-6",
+            "sku": "BABYLANE-DEMO-6",
+            "price": "24.99",
+            "compare_at_price": "29.99",
+            "stock": 20,
+            "description": "<p>Hooded Bunny Bath Towel, Sand. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": ["babylane-hygiene", "babylane-home", "babylane-out"],
+            "image": "assets/towel.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        },
+        {
+            "name": "Newborn Diapers, Size 1",
+            "slug": "babylane-demo-7",
+            "sku": "BABYLANE-DEMO-7",
+            "price": "39.99",
+            "compare_at_price": "44.99",
+            "stock": 20,
+            "description": "<p>Newborn Diapers, Size 1. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": ["babylane-hygiene"],
+            "image": "assets/diapers.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        },
+        {
+            "name": "Baby Brush and Comb Set, Natural",
+            "slug": "babylane-demo-8",
+            "sku": "BABYLANE-DEMO-8",
+            "price": "12.99",
+            "compare_at_price": null,
+            "stock": 20,
+            "description": "<p>Baby Brush and Comb Set, Natural. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": ["babylane-hygiene"],
+            "image": "assets/brush.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        },
+        {
+            "name": "Silicone Catch-All Baby Bib, Mint and Cream",
+            "slug": "babylane-demo-9",
+            "sku": "BABYLANE-DEMO-9",
+            "price": "11.99",
+            "compare_at_price": "14.99",
+            "stock": 20,
+            "description": "<p>Silicone Catch-All Baby Bib, Mint and Cream. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": ["babylane-feeding"],
+            "image": "assets/bib.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        },
+        {
+            "name": "Wide-Neck Baby Bottles, Pack of 2",
+            "slug": "babylane-demo-10",
+            "sku": "BABYLANE-DEMO-10",
+            "price": "18.99",
+            "compare_at_price": "22.99",
+            "stock": 20,
+            "description": "<p>Wide-Neck Baby Bottles, Pack of 2. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": ["babylane-feeding"],
+            "image": "assets/bottles.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        },
+        {
+            "name": "Slim Folding High Chair, Grey",
+            "slug": "babylane-demo-11",
+            "sku": "BABYLANE-DEMO-11",
+            "price": "74.99",
+            "compare_at_price": "89.99",
+            "stock": 20,
+            "description": "<p>Slim Folding High Chair, Grey. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": ["babylane-feeding", "babylane-home"],
+            "image": "assets/highchair.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        },
+        {
+            "name": "First Meals Suction Bowl and Spoon",
+            "slug": "babylane-demo-12",
+            "sku": "BABYLANE-DEMO-12",
+            "price": "15.99",
+            "compare_at_price": null,
+            "stock": 20,
+            "description": "<p>First Meals Suction Bowl and Spoon. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": ["babylane-feeding", "babylane-home"],
+            "image": "assets/bowl.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        },
+        {
+            "name": "Printed Cotton Bodysuit, Sage",
+            "slug": "babylane-demo-13",
+            "sku": "BABYLANE-DEMO-13",
+            "price": "16.99",
+            "compare_at_price": "19.99",
+            "stock": 20,
+            "description": "<p>Printed Cotton Bodysuit, Sage. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": ["babylane-apparel"],
+            "image": "assets/onesie.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        },
+        {
+            "name": "Long-Sleeve Cotton Romper, Cinnamon",
+            "slug": "babylane-demo-14",
+            "sku": "BABYLANE-DEMO-14",
+            "price": "14.99",
+            "compare_at_price": "19.99",
+            "stock": 20,
+            "description": "<p>Long-Sleeve Cotton Romper, Cinnamon. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": ["babylane-apparel", "babylane-maternity"],
+            "image": "assets/romper.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        },
+        {
+            "name": "Cable-Knit Pom-Pom Winter Beanie, White",
+            "slug": "babylane-demo-15",
+            "sku": "BABYLANE-DEMO-15",
+            "price": "12.99",
+            "compare_at_price": "15.99",
+            "stock": 20,
+            "description": "<p>Cable-Knit Pom-Pom Winter Beanie, White. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": ["babylane-apparel"],
+            "image": "assets/beanie.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        },
+        {
+            "name": "Soft Baby Booties, Forest Green",
+            "slug": "babylane-demo-16",
+            "sku": "BABYLANE-DEMO-16",
+            "price": "19.99",
+            "compare_at_price": "24.99",
+            "stock": 20,
+            "description": "<p>Soft Baby Booties, Forest Green. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": ["babylane-apparel"],
+            "image": "assets/booties.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        },
+        {
+            "name": "Lightweight Compact Stroller, Grey",
+            "slug": "babylane-demo-17",
+            "sku": "BABYLANE-DEMO-17",
+            "price": "199.99",
+            "compare_at_price": "249.99",
+            "stock": 20,
+            "description": "<p>Lightweight Compact Stroller, Grey. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": ["babylane-out"],
+            "image": "assets/stroller.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        },
+        {
+            "name": "Everyday Baby Carrier, Navy",
+            "slug": "babylane-demo-18",
+            "sku": "BABYLANE-DEMO-18",
+            "price": "54.99",
+            "compare_at_price": "69.99",
+            "stock": 20,
+            "description": "<p>Everyday Baby Carrier, Navy. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": ["babylane-out", "babylane-maternity"],
+            "image": "assets/carrier.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        },
+        {
+            "name": "Full Body Pregnancy Pillow, Pebble",
+            "slug": "babylane-demo-19",
+            "sku": "BABYLANE-DEMO-19",
+            "price": "49.99",
+            "compare_at_price": "59.99",
+            "stock": 20,
+            "description": "<p>Full Body Pregnancy Pillow, Pebble. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": ["babylane-maternity", "babylane-sleeping"],
+            "image": "assets/pillow.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        },
+        {
+            "name": "Baby Rocking Wood Chair",
+            "slug": "babylane-demo-20",
+            "sku": "BABYLANE-DEMO-20",
+            "price": "159.99",
+            "compare_at_price": "179.99",
+            "stock": 20,
+            "description": "<p>Baby Rocking Wood Chair. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": ["babylane-out", "babylane-home"],
+            "image": "assets/rocker.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        },
+        {
+            "name": "Large Diaper Bag Backpack, Grey",
+            "slug": "babylane-demo-21",
+            "sku": "BABYLANE-DEMO-21",
+            "price": "34.99",
+            "compare_at_price": "41.99",
+            "stock": 20,
+            "description": "<p>Large Diaper Bag Backpack, Grey. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": ["babylane-out", "babylane-maternity"],
+            "image": "assets/bag.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        },
+        {
+            "name": "Owl Light and Sound Sleep Aid",
+            "slug": "babylane-demo-22",
+            "sku": "BABYLANE-DEMO-22",
+            "price": "24.99",
+            "compare_at_price": "29.99",
+            "stock": 20,
+            "description": "<p>Owl Light and Sound Sleep Aid. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": ["babylane-toys", "babylane-sleeping"],
+            "image": "assets/owl.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        },
+        {
+            "name": "Cotton Muslin Blankets, Set of 3",
+            "slug": "babylane-demo-23",
+            "sku": "BABYLANE-DEMO-23",
+            "price": "27.99",
+            "compare_at_price": null,
+            "stock": 20,
+            "description": "<p>Cotton Muslin Blankets, Set of 3. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": [
+                "babylane-sleeping",
+                "babylane-home",
+                "babylane-maternity",
+                "babylane-feeding",
+                "babylane-out"
+            ],
+            "image": "assets/blankets.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        },
+        {
+            "name": "Cotton Zip-Up Sleepsuit, Cloud",
+            "slug": "babylane-demo-24",
+            "sku": "BABYLANE-DEMO-24",
+            "price": "22.99",
+            "compare_at_price": "27.99",
+            "stock": 20,
+            "description": "<p>Cotton Zip-Up Sleepsuit, Cloud. A demonstration product for the Baby Lane theme.</p><p>Replace this sample description, pricing, photography and product specifications with your own verified catalog information before publishing.</p>",
+            "categories": [
+                "babylane-apparel",
+                "babylane-sleeping",
+                "babylane-maternity"
+            ],
+            "image": "assets/sleepsuit.webp",
+            "short_description": "Everyday family essentials from the Baby Lane demonstration catalog."
+        }
+    ]
+}

@@ -350,7 +350,7 @@ final class ModuleScaffolder
     private const README = <<<'MD'
         # __DISPLAY__
 
-        An EcoModular module (`__NAME__`), generated with `php artisan ecomodular:make:module`.
+        A Modrix Commerce module (`__NAME__`), generated with `php artisan ecomodular:make:module`.
 
         ## Develop
 
@@ -363,7 +363,7 @@ final class ModuleScaffolder
 
         `php artisan ecomodular:package __NAME__` validates the manifest, scans the code and writes the zip the marketplace accepts.
 
-        See `docs/extensions/getting-started.md` and `docs/extensions/module-development.md` in the EcoModular repository.
+        See `docs/extensions/getting-started.md` and `docs/extensions/module-development.md` in the Modrix Commerce repository.
 
         MD;
 

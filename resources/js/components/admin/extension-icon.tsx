@@ -21,9 +21,9 @@ export function ExtensionIcon({
 }) {
     const brandLogo =
         logo ||
-        (name?.startsWith('ecomodular/tabby:')
+        (name?.startsWith('modrixcommerce/tabby:')
             ? '/images/extensions/tabby.svg'
-            : name?.startsWith('ecomodular/tamara:')
+            : name?.startsWith('modrixcommerce/tamara:')
               ? '/images/extensions/tamara.svg'
               : null);
     const Icon = navIcon(icon || 'puzzle');

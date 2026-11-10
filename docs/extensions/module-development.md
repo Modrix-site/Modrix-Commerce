@@ -1,12 +1,12 @@
 # Module Development
 
-Modules add features to EcoModular without editing core files. A module is a directory with a data-only manifest (`module.json`), PHP code under its own namespace, and optionally migrations, routes, settings, permissions and React components. The three bundled modules in `modules/ecomodular/` are working examples:
+Modules add features to Modrix Commerce without editing core files. A module is a directory with a data-only manifest (`module.json`), PHP code under its own namespace, and optionally migrations, routes, settings, permissions and React components. The three bundled modules in `modules/modrixcommerce/` are working examples:
 
 | Module                       | Shows how to                                                                                                                               |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `ecomodular/product-reviews` | migrations (and a schema change in an update), settings, a permission, admin pages and navigation, storefront routes and a storefront slot |
-| `ecomodular/sales-widget`    | a dashboard widget built on core reports, a setting                                                                                        |
-| `ecomodular/order-alerts`    | a queued, idempotent event listener, a module table, settings                                                                              |
+| `modrixcommerce/product-reviews` | migrations (and a schema change in an update), settings, a permission, admin pages and navigation, storefront routes and a storefront slot |
+| `modrixcommerce/sales-widget`    | a dashboard widget built on core reports, a setting                                                                                        |
+| `modrixcommerce/order-alerts`    | a queued, idempotent event listener, a module table, settings                                                                              |
 
 ## Security model: read this first
 

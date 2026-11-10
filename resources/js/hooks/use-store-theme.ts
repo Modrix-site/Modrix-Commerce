@@ -13,7 +13,7 @@ const FALLBACK_LAYOUT: StorefrontTheme['layout'] = {
 
 /**
  * The theme the current storefront page renders with. Values were validated
- * on the server; components only choose between core-defined variants.
+ * on the server; themes may provide their own browser components.
  */
 export function useStoreTheme(): StorefrontTheme['layout'] & {
     theme: StorefrontTheme | null;

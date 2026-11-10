@@ -1,0 +1,106 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/cross-sell-upsell",
+    "display_name": "Cross-sell & Upsell",
+    "description": "Rule-based offers that suggest add-ons and upgrades on the product page, in an add-to-cart pop-up, in the cart and as a one-click checkout add-on. Offers can carry a discount and show views, adds, orders and revenue.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "trending-up",
+    "accent": "#0ea5e9",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\CrossSellUpsell\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\CrossSellUpsell\\CrossSellUpsellServiceProvider",
+    "permissions": [
+        {
+            "name": "cross_sell.manage",
+            "label": "Manage cross-sell and upsell offers",
+            "group": "Marketing"
+        }
+    ],
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "storefront.slots",
+        "database.migrations",
+        "pricing.steps",
+        "events.listen",
+        "settings",
+        "permissions"
+    ],
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages",
+        "slots": "resources/js/slots"
+    },
+    "settings": [
+        {
+            "key": "popup_enabled",
+            "type": "boolean",
+            "label": "Show the add-to-cart pop-up",
+            "help": "After a shopper adds a product, a pop-up confirms it and suggests the matching offer's products.",
+            "default": true
+        },
+        {
+            "key": "popup_max",
+            "type": "integer",
+            "label": "Products in the pop-up",
+            "min": 1,
+            "max": 4,
+            "default": 3
+        },
+        {
+            "key": "product_max",
+            "tab": "product",
+            "type": "integer",
+            "label": "Offer products on the product page",
+            "min": 1,
+            "max": 8,
+            "default": 4
+        },
+        {
+            "key": "cart_heading",
+            "tab": "cart",
+            "type": "string",
+            "label": "Cart offers heading",
+            "default": "Complete your order"
+        },
+        {
+            "key": "cart_max",
+            "tab": "cart",
+            "type": "integer",
+            "label": "Offer products in the cart",
+            "min": 1,
+            "max": 8,
+            "default": 4
+        },
+        {
+            "key": "bump_heading",
+            "tab": "checkout",
+            "type": "string",
+            "label": "Checkout add-on heading",
+            "default": "Add to your order"
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "cross-sell-upsell",
+            "title": "Cross-sell & Upsell",
+            "route": "index",
+            "icon": "trending-up",
+            "group": "Marketing",
+            "permission": "cross_sell.manage",
+            "order": 335
+        }
+    ]
+}

@@ -1,0 +1,360 @@
+{
+    "categories": [
+        {
+            "name": "Smartphones",
+            "slug": "relay-smartphones",
+            "description": "Relay Electronics demonstration collection. Replace this content with your own catalog information."
+        },
+        {
+            "name": "Tablets",
+            "slug": "relay-tablets",
+            "description": "Relay Electronics demonstration collection. Replace this content with your own catalog information."
+        },
+        {
+            "name": "Laptops",
+            "slug": "relay-laptops",
+            "description": "Relay Electronics demonstration collection. Replace this content with your own catalog information."
+        },
+        {
+            "name": "Audio",
+            "slug": "relay-audio",
+            "description": "Relay Electronics demonstration collection. Replace this content with your own catalog information."
+        },
+        {
+            "name": "Technology Toys",
+            "slug": "relay-technology",
+            "description": "Relay Electronics demonstration collection. Replace this content with your own catalog information."
+        },
+        {
+            "name": "Accessories",
+            "slug": "relay-accessories",
+            "description": "Relay Electronics demonstration collection. Replace this content with your own catalog information."
+        }
+    ],
+    "products": [
+        {
+            "name": "Edge Smartphone, Coral",
+            "slug": "relay-demo-1",
+            "sku": "RELAY-DEMO-1",
+            "price": "549.00",
+            "compare_at_price": "699.00",
+            "stock": 20,
+            "description": "<p>Edge Smartphone, Coral. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-smartphones"],
+            "image": "assets/phone-coral.webp"
+        },
+        {
+            "name": "Core Smartphone, Red",
+            "slug": "relay-demo-2",
+            "sku": "RELAY-DEMO-2",
+            "price": "399.00",
+            "compare_at_price": "449.00",
+            "stock": 20,
+            "description": "<p>Core Smartphone, Red. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-smartphones"],
+            "image": "assets/phone-red.webp"
+        },
+        {
+            "name": "Lite Smartphone, Silver",
+            "slug": "relay-demo-3",
+            "sku": "RELAY-DEMO-3",
+            "price": "329.00",
+            "compare_at_price": "379.00",
+            "stock": 20,
+            "description": "<p>Lite Smartphone, Silver. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-smartphones"],
+            "image": "assets/phone-silver.webp"
+        },
+        {
+            "name": "Everyday Smartphone, Mint",
+            "slug": "relay-demo-4",
+            "sku": "RELAY-DEMO-4",
+            "price": "219.00",
+            "compare_at_price": "249.00",
+            "stock": 20,
+            "description": "<p>Everyday Smartphone, Mint. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-smartphones"],
+            "image": "assets/phone-mint.webp"
+        },
+        {
+            "name": "Pro Smartphone, Graphite",
+            "slug": "relay-demo-5",
+            "sku": "RELAY-DEMO-5",
+            "price": "1149.00",
+            "compare_at_price": "1199.00",
+            "stock": 20,
+            "description": "<p>Pro Smartphone, Graphite. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-smartphones"],
+            "image": "assets/phone-graphite.webp"
+        },
+        {
+            "name": "Edge Smartphone Plus, Coral",
+            "slug": "relay-demo-6",
+            "sku": "RELAY-DEMO-6",
+            "price": "649.00",
+            "compare_at_price": "749.00",
+            "stock": 20,
+            "description": "<p>Edge Smartphone Plus, Coral. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-smartphones"],
+            "image": "assets/phone-coral.webp"
+        },
+        {
+            "name": "Lite Smartphone Plus, Silver",
+            "slug": "relay-demo-7",
+            "sku": "RELAY-DEMO-7",
+            "price": "379.00",
+            "compare_at_price": "429.00",
+            "stock": 20,
+            "description": "<p>Lite Smartphone Plus, Silver. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-smartphones"],
+            "image": "assets/phone-silver.webp"
+        },
+        {
+            "name": "Everyday Tablet",
+            "slug": "relay-demo-8",
+            "sku": "RELAY-DEMO-8",
+            "price": "379.00",
+            "compare_at_price": "429.00",
+            "stock": 20,
+            "description": "<p>Everyday Tablet. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-tablets"],
+            "image": "assets/tablet.webp"
+        },
+        {
+            "name": "Air Notebook, Silver",
+            "slug": "relay-demo-9",
+            "sku": "RELAY-DEMO-9",
+            "price": "1199.00",
+            "compare_at_price": "1399.00",
+            "stock": 20,
+            "description": "<p>Air Notebook, Silver. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-laptops"],
+            "image": "assets/laptop.webp"
+        },
+        {
+            "name": "Compact Desktop Computer",
+            "slug": "relay-demo-10",
+            "sku": "RELAY-DEMO-10",
+            "price": "149.00",
+            "compare_at_price": "179.00",
+            "stock": 20,
+            "description": "<p>Compact Desktop Computer. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-laptops"],
+            "image": "assets/mini-pc.webp"
+        },
+        {
+            "name": "Pocket Wireless Speaker, Teal",
+            "slug": "relay-demo-11",
+            "sku": "RELAY-DEMO-11",
+            "price": "105.78",
+            "compare_at_price": "129.00",
+            "stock": 20,
+            "description": "<p>Pocket Wireless Speaker, Teal. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-audio"],
+            "image": "assets/speaker-teal.webp"
+        },
+        {
+            "name": "Studio Portable Speaker",
+            "slug": "relay-demo-12",
+            "sku": "RELAY-DEMO-12",
+            "price": "269.00",
+            "compare_at_price": "299.00",
+            "stock": 20,
+            "description": "<p>Studio Portable Speaker. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-audio"],
+            "image": "assets/speaker-retro.webp"
+        },
+        {
+            "name": "Round Wireless Speaker, Silver",
+            "slug": "relay-demo-13",
+            "sku": "RELAY-DEMO-13",
+            "price": "229.00",
+            "compare_at_price": "249.00",
+            "stock": 20,
+            "description": "<p>Round Wireless Speaker, Silver. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-audio"],
+            "image": "assets/speaker-round.webp"
+        },
+        {
+            "name": "Trail Portable Speaker",
+            "slug": "relay-demo-14",
+            "sku": "RELAY-DEMO-14",
+            "price": "89.00",
+            "compare_at_price": "99.00",
+            "stock": 20,
+            "description": "<p>Trail Portable Speaker. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-audio"],
+            "image": "assets/speaker-waterproof.webp"
+        },
+        {
+            "name": "Quiet Wireless Headphones",
+            "slug": "relay-demo-15",
+            "sku": "RELAY-DEMO-15",
+            "price": "299.00",
+            "compare_at_price": "349.00",
+            "stock": 20,
+            "description": "<p>Quiet Wireless Headphones. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-audio"],
+            "image": "assets/headphones.webp"
+        },
+        {
+            "name": "Standalone VR Headset with Touch Controllers — 128GB",
+            "slug": "relay-vr-headset",
+            "sku": "RELAY-DEMO-16",
+            "price": "349.00",
+            "compare_at_price": "399.00",
+            "stock": 20,
+            "description": "<p>Standalone VR Headset with Touch Controllers — 128GB. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p><h3>Sample specifications</h3><ul><li>Storage: 128GB</li><li>Includes headset and two controllers</li><li>Wireless connectivity</li></ul>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-technology"],
+            "image": "assets/vr.webp",
+            "images": ["assets/vr-side.webp", "assets/vr-back.webp"]
+        },
+        {
+            "name": "Aerial Camera Drone",
+            "slug": "relay-demo-17",
+            "sku": "RELAY-DEMO-17",
+            "price": "942.99",
+            "compare_at_price": "1099.00",
+            "stock": 20,
+            "description": "<p>Aerial Camera Drone. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-technology"],
+            "image": "assets/drone.webp"
+        },
+        {
+            "name": "Folding Quadcopter Drone",
+            "slug": "relay-demo-18",
+            "sku": "RELAY-DEMO-18",
+            "price": "699.00",
+            "compare_at_price": "799.00",
+            "stock": 20,
+            "description": "<p>Folding Quadcopter Drone. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-technology"],
+            "image": "assets/drone-folding.webp"
+        },
+        {
+            "name": "Compact Virtual Reality Headset",
+            "slug": "relay-demo-19",
+            "sku": "RELAY-DEMO-19",
+            "price": "64.00",
+            "compare_at_price": "80.00",
+            "stock": 20,
+            "description": "<p>Compact Virtual Reality Headset. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-technology"],
+            "image": "assets/vr-black.webp"
+        },
+        {
+            "name": "Wireless Game Controller",
+            "slug": "relay-demo-20",
+            "sku": "RELAY-DEMO-20",
+            "price": "54.99",
+            "compare_at_price": "59.99",
+            "stock": 20,
+            "description": "<p>Wireless Game Controller. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-technology"],
+            "image": "assets/controller.webp"
+        },
+        {
+            "name": "Sport Smartwatch, Silver",
+            "slug": "relay-demo-21",
+            "sku": "RELAY-DEMO-21",
+            "price": "379.00",
+            "stock": 20,
+            "description": "<p>Sport Smartwatch, Silver. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-accessories"],
+            "image": "assets/watch.webp"
+        },
+        {
+            "name": "Compact Wireless Keyboard",
+            "slug": "relay-demo-22",
+            "sku": "RELAY-DEMO-22",
+            "price": "79.00",
+            "compare_at_price": "99.00",
+            "stock": 20,
+            "description": "<p>Compact Wireless Keyboard. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-accessories"],
+            "image": "assets/keyboard.webp"
+        },
+        {
+            "name": "Wireless Charging Pad, Black",
+            "slug": "relay-demo-23",
+            "sku": "RELAY-DEMO-23",
+            "price": "24.99",
+            "compare_at_price": "29.99",
+            "stock": 20,
+            "description": "<p>Wireless Charging Pad, Black. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-accessories"],
+            "image": "assets/charging-pad.webp"
+        },
+        {
+            "name": "Memory Card and Adapter",
+            "slug": "relay-demo-24",
+            "sku": "RELAY-DEMO-24",
+            "price": "19.99",
+            "compare_at_price": "25.00",
+            "stock": 20,
+            "description": "<p>Memory Card and Adapter. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-accessories"],
+            "image": "assets/memory-card.webp"
+        },
+        {
+            "name": "Clear Protective Phone Case",
+            "slug": "relay-demo-25",
+            "sku": "RELAY-DEMO-25",
+            "price": "12.99",
+            "compare_at_price": "19.99",
+            "stock": 20,
+            "description": "<p>Clear Protective Phone Case. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-accessories"],
+            "image": "assets/phone-case.webp"
+        },
+        {
+            "name": "Dashboard Phone Mount",
+            "slug": "relay-demo-26",
+            "sku": "RELAY-DEMO-26",
+            "price": "17.99",
+            "compare_at_price": "24.99",
+            "stock": 20,
+            "description": "<p>Dashboard Phone Mount. A demonstration product for the Relay Electronics theme.</p><p>Replace sample prices, images, specifications and descriptions with verified product information before publishing.</p>",
+            "short_description": "Explore the Relay Electronics demonstration catalog. Product specifications and prices are illustrative.",
+            "categories": ["relay-accessories"],
+            "image": "assets/phone-mount.webp"
+        }
+    ],
+    "pages": [
+        {
+            "title": "About Relay",
+            "slug": "about-relay",
+            "content": "<h2>Welcome to Relay Electronics</h2><p>Discover technology for everyday life. Replace this demonstration story with your own store history, team and values.</p>"
+        },
+        {
+            "title": "Help & contact",
+            "slug": "relay-support",
+            "content": "<h2>How can we help?</h2><p>Add your verified customer support contact details, opening hours and shipping and returns policies here.</p>"
+        }
+    ]
+}

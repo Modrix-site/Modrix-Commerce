@@ -48,7 +48,7 @@ final class StripeGateway implements PaymentGateway
 
     public function instructions(): string
     {
-        return 'You will be redirected to Stripe to pay securely. Your card details are never shared with us.';
+        return 'You will be redirected to Stripe to pay securely. Your card details are never shared with us.'.$this->walletNote();
     }
 
     public function isConfigured(): bool
@@ -76,7 +76,7 @@ final class StripeGateway implements PaymentGateway
         $metadata = ['order_number' => (string) $order->number, 'payment_id' => (string) $payment->id];
         $expiresAt = now()->addMinutes($this->settings->sessionTtlMinutes());
 
-        $session = $this->send('post', 'v1/checkout/sessions', [
+        $body = [
             'mode' => 'payment',
             'client_reference_id' => $order->number,
             'customer_email' => $order->email,
@@ -93,7 +93,14 @@ final class StripeGateway implements PaymentGateway
             'success_url' => $returnUrl,
             'cancel_url' => $cancelUrl,
             'expires_at' => $expiresAt->getTimestamp(),
-        ], idempotencyKey: "ecomodular-payment-{$payment->id}");
+        ];
+        $configuration = $this->paymentMethodConfiguration();
+
+        if ($configuration !== '') {
+            $body['payment_method_configuration'] = $configuration;
+        }
+
+        $session = $this->send('post', 'v1/checkout/sessions', $body, idempotencyKey: "ecomodular-payment-{$payment->id}");
 
         if (! is_string($session['id'] ?? null) || ! is_string($session['url'] ?? null)) {
             throw new GatewayException('Stripe returned an unexpected response when creating the payment page.');
@@ -245,5 +252,69 @@ final class StripeGateway implements PaymentGateway
         $key = $this->settings->secretKey() ?? throw new GatewayException('Stripe is not configured.');
 
         return StripeApi::request($key, $method, $path, $params, $idempotencyKey);
+    }
+
+    /**
+     * Applies the Apple Pay and Google Pay switches to a Stripe payment method
+     * configuration, then reuses it for later checkouts with the same switches.
+     *
+     * @throws GatewayException
+     */
+    private function paymentMethodConfiguration(): string
+    {
+        $current = $this->settings->walletConfigurationId();
+
+        if ($current !== null && $this->settings->rememberedWalletStamp() === $this->settings->walletStamp()) {
+            return $current;
+        }
+
+        $params = [
+            'name' => 'Modrix Commerce checkout',
+            'apple_pay' => ['display_preference' => ['preference' => $this->settings->applePay() ? 'on' : 'off']],
+            'google_pay' => ['display_preference' => ['preference' => $this->settings->googlePay() ? 'on' : 'off']],
+        ];
+
+        if ($current !== null) {
+            try {
+                $updated = $this->send('post', 'v1/payment_method_configurations/'.rawurlencode($current), $params);
+                if (is_string($updated['id'] ?? null) && str_starts_with($updated['id'], 'pmc_')) {
+                    $this->settings->rememberWalletConfiguration($updated['id']);
+
+                    return $updated['id'];
+                }
+            } catch (GatewayException) {
+                // The saved configuration is gone. Create a new one below.
+            }
+        }
+
+        try {
+            $created = $this->send('post', 'v1/payment_method_configurations', $params);
+        } catch (GatewayException) {
+            if (! $this->settings->applePay() && ! $this->settings->googlePay()) {
+                return '';
+            }
+
+            throw new GatewayException('Stripe could not enable Apple Pay or Google Pay. Use a secret key that can manage payment method configurations, and enable the wallets in the Stripe Dashboard.');
+        }
+
+        $id = $created['id'] ?? null;
+
+        if (! is_string($id) || ! str_starts_with($id, 'pmc_')) {
+            throw new GatewayException('Stripe did not return a payment method configuration for Apple Pay and Google Pay.');
+        }
+
+        $this->settings->rememberWalletConfiguration($id);
+
+        return $id;
+    }
+
+    private function walletNote(): string
+    {
+        $wallets = array_values(array_filter([
+            $this->settings->applePay() ? 'Apple Pay' : null,
+            $this->settings->googlePay() ? 'Google Pay' : null,
+        ]));
+
+        return $wallets === [] ? '' : ' '.implode(' and ', $wallets).' can be used when this device supports it.';
     }
 }

@@ -1,0 +1,71 @@
+{
+    "sections": {
+        "main": {
+            "type": "main-collection",
+            "settings": {
+                "show_heading": false
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "apps": {
+            "type": "apps",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        },
+        "campaign": {
+            "type": "collection-banner",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "tile",
+                    "settings": {
+                        "title": "Travel companions",
+                        "subtitle": "Explore",
+                        "image": "asset:assets/product-2.png",
+                        "link": "/search?q=weekender"
+                    }
+                },
+                "block_1": {
+                    "type": "tile",
+                    "settings": {
+                        "title": "Small essentials",
+                        "subtitle": "Explore",
+                        "image": "asset:assets/product-4.png",
+                        "link": "/search?q=pouch"
+                    }
+                },
+                "block_2": {
+                    "type": "tile",
+                    "settings": {
+                        "title": "Everyday carry",
+                        "subtitle": "Explore",
+                        "image": "asset:assets/product-3.png",
+                        "link": "/search?q=tote"
+                    }
+                },
+                "block_3": {
+                    "type": "tile",
+                    "settings": {
+                        "title": "On the move",
+                        "subtitle": "Explore",
+                        "image": "asset:assets/product-8.png",
+                        "link": "/search?q=backpack"
+                    }
+                }
+            },
+            "block_order": [
+                "block_0",
+                "block_1",
+                "block_2",
+                "block_3"
+            ]
+        }
+    },
+    "order": [
+        "campaign",
+        "main",
+        "apps"
+    ]
+}

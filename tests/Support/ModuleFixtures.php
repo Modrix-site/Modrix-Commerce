@@ -2,6 +2,7 @@
 
 namespace Tests\Support;
 
+use App\Core\Extensions\ModuleManager;
 use App\Core\Extensions\ModuleRepository;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -14,6 +15,18 @@ use Illuminate\Support\Str;
 trait ModuleFixtures
 {
     protected string $modulesPath;
+
+    /**
+     * Copies a module bundled in modules/ into the test modules path, then installs and enables it.
+     */
+    protected function enableBundledModule(string $name): void
+    {
+        File::copyDirectory(base_path('modules/'.$name), $this->modulesPath.'/'.$name);
+        ModuleRepository::flushBootCache();
+        app(ModuleRepository::class)->sync();
+        app(ModuleManager::class)->install($name);
+        app(ModuleManager::class)->enable($name, true);
+    }
 
     protected function setUpModules(): void
     {

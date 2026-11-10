@@ -1,0 +1,153 @@
+{
+    "name": "Editorial product details",
+    "enabled_on": {
+        "templates": ["product"]
+    },
+    "settings": [
+        {
+            "type": "select",
+            "id": "gallery_width",
+            "label": "Gallery width on desktop",
+            "default": "56",
+            "options": [
+                {
+                    "value": "50",
+                    "label": "50% (Split half)"
+                },
+                {
+                    "value": "56",
+                    "label": "56% (Atelier reference)"
+                },
+                {
+                    "value": "60",
+                    "label": "60% (Large gallery)"
+                }
+            ]
+        },
+        {
+            "type": "checkbox",
+            "id": "show_sku",
+            "label": "Show SKU",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_quantity",
+            "label": "Show quantity selector",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_wishlist",
+            "label": "Show favourites heart",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_stock",
+            "label": "Show stock status indicator",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "add_label",
+            "label": "Add to bag label",
+            "default": "Add to bag"
+        },
+        {
+            "type": "text",
+            "id": "adding_label",
+            "label": "Adding to bag label",
+            "default": "Adding…"
+        },
+        {
+            "type": "text",
+            "id": "sold_label",
+            "label": "Sold out label",
+            "default": "Currently unavailable"
+        },
+        {
+            "type": "text",
+            "id": "choose_label",
+            "label": "Choose options label",
+            "default": "Choose options"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_buy_now",
+            "label": "Show Buy now button",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "buy_label",
+            "label": "Buy now label",
+            "default": "Buy now"
+        },
+        {
+            "type": "text",
+            "id": "details_heading",
+            "label": "Details accordion title",
+            "default": "Details"
+        },
+        {
+            "type": "text",
+            "id": "delivery_heading",
+            "label": "Delivery accordion title",
+            "default": "Delivery & returns"
+        },
+        {
+            "type": "textarea",
+            "id": "delivery_text",
+            "label": "Delivery accordion text",
+            "default": "Complimentary signature packaging and insured express delivery on all orders."
+        },
+        {
+            "type": "text",
+            "id": "services_heading",
+            "label": "Services accordion title",
+            "default": "Care & services"
+        },
+        {
+            "type": "textarea",
+            "id": "services_text",
+            "label": "Services accordion text",
+            "default": "Lifetime warranty against manufacturing defects and dedicated customer care."
+        },
+        {
+            "type": "text",
+            "id": "related_heading",
+            "label": "Related products heading",
+            "default": "You may also like"
+        },
+        {
+            "type": "range",
+            "id": "related_limit",
+            "label": "Number of related products",
+            "default": 4,
+            "min": 2,
+            "max": 12,
+            "step": 1
+        }
+    ],
+    "blocks": [
+        {
+            "type": "accordion",
+            "name": "Custom detail tab",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "heading",
+                    "label": "Heading",
+                    "default": "Specifications"
+                },
+                {
+                    "type": "textarea",
+                    "id": "body",
+                    "label": "Content",
+                    "default": "Handcrafted with full-grain leather and precision stitching."
+                }
+            ]
+        }
+    ]
+}

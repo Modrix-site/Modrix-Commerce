@@ -1,0 +1,485 @@
+/*
+ * Admin theme: compact dark sidebar, content on a rounded light panel,
+ * near-black primary buttons, white cards with soft borders and pill
+ * statuses. Loaded after the base admin tokens in app.css; the selectors
+ * carry `html` (and :is() for the accent variants) so they win over them.
+ * The accent chosen in Settings → General only tints small highlights.
+ */
+
+html:root:is([data-admin-accent], :not([data-admin-accent])):has(.admin-shell) {
+    --font-sans:
+        'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+        'Helvetica Neue', Arial, sans-serif;
+    --background: #f1f1f1;
+    --foreground: #303030;
+    --card: #ffffff;
+    --card-foreground: #303030;
+    --popover: #ffffff;
+    --popover-foreground: #303030;
+    --primary: #303030;
+    --primary-foreground: #ffffff;
+    --secondary: #e3e3e3;
+    --secondary-foreground: #303030;
+    --muted: #f1f1f1;
+    --muted-foreground: #616161;
+    --accent: #f1f1f1;
+    --accent-foreground: #303030;
+    --destructive: #c70a24;
+    --destructive-foreground: #8e0b21;
+    --border: #e3e3e3;
+    --input: #c9c9c9;
+    --ring: #005bd3;
+    --radius: 0.75rem;
+    --admin-link: #005bd3;
+    --admin-row-hover: #f7f7f7;
+    --admin-card-shadow:
+        0 0 0 1px rgb(0 0 0 / 7%), 0 1px 0 0 rgb(26 26 26 / 7%);
+
+    /* Sidebar (dark unless the user picked the light sidebar). */
+    --sidebar: #1a1a1a;
+    --sidebar-foreground: #e3e3e3;
+    --sidebar-primary: #3d3d3d;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #2b2b2b;
+    --sidebar-accent-foreground: #ffffff;
+    --sidebar-border: #2b2b2b;
+    --sidebar-ring: #8a8a8a;
+    --sidebar-brand: #ffffff;
+    --sidebar-muted: #8a8a8a;
+    --sidebar-icon: #b5b5b5;
+    --sidebar-scrollbar: #3a3a3a;
+    --sidebar-light-active: #303030;
+}
+
+html:root.dark:is([data-admin-accent], :not([data-admin-accent])):has(
+        .admin-shell
+    ) {
+    --background: #1a1a1a;
+    --foreground: #e3e3e3;
+    --card: #262626;
+    --card-foreground: #e3e3e3;
+    --popover: #262626;
+    --popover-foreground: #e3e3e3;
+    --primary: #f1f1f1;
+    --primary-foreground: #1a1a1a;
+    --secondary: #333333;
+    --secondary-foreground: #e3e3e3;
+    --muted: #2b2b2b;
+    --muted-foreground: #a8a8a8;
+    --accent: #303030;
+    --accent-foreground: #f1f1f1;
+    --border: #383838;
+    --input: #4a4a4a;
+    --ring: #4b9bff;
+    --admin-link: #73b2ff;
+    --admin-row-hover: #2b2b2b;
+    --admin-card-shadow: 0 0 0 1px rgb(255 255 255 / 6%);
+    --sidebar: #0f0f0f;
+    --sidebar-accent: #262626;
+    --sidebar-border: #262626;
+}
+
+html:root[data-sidebar-appearance='light']:has(.admin-shell) {
+    --sidebar: #ebebeb;
+    --sidebar-foreground: #303030;
+    --sidebar-primary: #303030;
+    --sidebar-accent: #fafafa;
+    --sidebar-accent-foreground: #303030;
+    --sidebar-border: #e3e3e3;
+    --sidebar-brand: #303030;
+    --sidebar-muted: #616161;
+    --sidebar-icon: #4a4a4a;
+    --sidebar-scrollbar: #cfcfcf;
+}
+
+body:has(.admin-shell) {
+    font-size: 0.8125rem;
+    letter-spacing: -0.003em;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Shell ---------- */
+
+/* The sidebar colour fills the window; pages sit on a rounded panel. */
+html .admin-shell[data-slot='sidebar-wrapper'],
+html body .admin-shell[data-slot='sidebar-wrapper'] {
+    background: var(--sidebar);
+}
+
+html .admin-shell [data-slot='sidebar-inset'] {
+    background: var(--background);
+}
+
+@media (min-width: 768px) {
+    html .admin-shell [data-slot='sidebar-inset'] {
+        margin: 0.5rem 0.5rem 0.5rem 0;
+        border-radius: 0.75rem;
+        box-shadow: none;
+        min-height: calc(100svh - 1rem);
+        overflow: hidden;
+    }
+}
+
+html .admin-shell .admin-toolbar {
+    background: var(--background);
+}
+
+/* ---------- Sidebar ---------- */
+
+html .admin-sidebar [data-slot='sidebar-header'] {
+    border: 0;
+}
+
+html .admin-sidebar [data-sidebar='menu-button'] {
+    color: var(--sidebar-foreground);
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+html .admin-sidebar [data-sidebar='menu-button']:hover {
+    background: var(--sidebar-accent);
+    color: var(--sidebar-accent-foreground);
+}
+
+html .admin-sidebar [data-sidebar='menu-button'][data-active='true'],
+html .admin-sidebar [data-sidebar='menu-button'][data-open='true'] {
+    background: var(--sidebar-accent);
+    color: var(--sidebar-accent-foreground);
+}
+
+html .admin-sidebar [data-sidebar='menu-button'] > svg {
+    color: var(--sidebar-icon);
+    stroke-width: 1.8;
+}
+
+html .admin-sidebar [data-sidebar='menu-button'][data-active='true'] > svg,
+html .admin-sidebar [data-sidebar='menu-button'][data-open='true'] > svg {
+    color: var(--sidebar-accent-foreground);
+}
+
+/* Sub-menus sit under their parent, indented, without a guide line. */
+html .admin-sidebar .admin-nav-sub {
+    margin: 0.125rem 0 0.375rem;
+    padding: 0 0 0 1.75rem;
+    border: 0;
+    gap: 0;
+}
+
+html .admin-sidebar [data-sidebar='menu-sub-button'] {
+    height: 1.75rem;
+    color: var(--sidebar-muted);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    border-radius: 0.5rem;
+}
+
+html .admin-sidebar [data-sidebar='menu-sub-button']:hover {
+    background: transparent;
+    color: var(--sidebar-accent-foreground);
+}
+
+html .admin-sidebar [data-sidebar='menu-sub-button'][data-active='true'] {
+    background: var(--sidebar-accent);
+    color: var(--sidebar-accent-foreground);
+    font-weight: 600;
+}
+
+/* ---------- Cards ---------- */
+
+html .admin-shell [data-slot='card'] {
+    gap: 1rem;
+    border: 0;
+    border-radius: 0.75rem;
+    padding-block: 1rem;
+    box-shadow: var(--admin-card-shadow);
+}
+
+html
+    .admin-shell
+    :is(
+        [data-slot='card-header'],
+        [data-slot='card-content'],
+        [data-slot='card-footer']
+    ) {
+    padding-inline: 1rem;
+}
+
+html .admin-shell [data-slot='card-title']:not([class*='text-']) {
+    font-size: 0.875rem;
+    font-weight: 650;
+    line-height: 1.4;
+}
+
+html .admin-shell [data-slot='card-description'] {
+    color: var(--muted-foreground);
+    font-size: 0.8125rem;
+}
+
+html .admin-shell :is(h1, h2, h3) {
+    letter-spacing: -0.01em;
+}
+
+/* ---------- Buttons ---------- */
+
+html .admin-shell [data-slot='button'] {
+    border-radius: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+html .admin-shell [data-slot='button']:not([data-size]):not([class*='size-']) {
+    min-height: 1.75rem;
+}
+
+html .admin-shell :is(button, a)[data-variant='default'] {
+    background: linear-gradient(180deg, #3a3a3a 0%, #262626 100%);
+    color: #ffffff;
+    box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 20%),
+        inset 0 -1px 0 rgb(0 0 0 / 40%),
+        0 1px 1px rgb(0 0 0 / 20%);
+}
+
+html .admin-shell :is(button, a)[data-variant='default']:hover {
+    background: linear-gradient(180deg, #2f2f2f 0%, #1a1a1a 100%);
+}
+
+:root.dark .admin-shell :is(button, a)[data-variant='default'] {
+    background: #f1f1f1;
+    color: #1a1a1a;
+    box-shadow: inset 0 -1px 0 rgb(0 0 0 / 25%);
+}
+
+html
+    .admin-shell
+    :is(button, a):is([data-variant='outline'], [data-variant='secondary']) {
+    border: 0;
+    background: var(--card);
+    color: var(--foreground);
+    box-shadow:
+        0 0 0 1px rgb(0 0 0 / 8%),
+        0 1px 0 0 rgb(0 0 0 / 12%);
+}
+
+html
+    .admin-shell
+    :is(button, a):is(
+        [data-variant='outline'],
+        [data-variant='secondary']
+    ):hover {
+    background: #f7f7f7;
+}
+
+:root.dark
+    html
+    .admin-shell
+    :is(button, a):is(
+        [data-variant='outline'],
+        [data-variant='secondary']
+    ):hover {
+    background: #303030;
+}
+
+html .admin-shell :is(button, a)[data-variant='ghost']:hover {
+    background: var(--accent);
+}
+
+html .admin-shell :is(button, a)[data-variant='link'] {
+    color: var(--admin-link);
+}
+
+/* ---------- Fields ---------- */
+
+html
+    .admin-shell
+    :is(
+        [data-slot='input'],
+        [data-slot='textarea'],
+        [data-slot='select-trigger'],
+        select
+    ) {
+    border-color: var(--input);
+    border-radius: 0.5rem;
+    background: var(--card);
+    font-size: 0.8125rem;
+    box-shadow: none;
+}
+
+html
+    .admin-shell
+    :is([data-slot='input'], [data-slot='select-trigger'], select) {
+    min-height: 2rem;
+}
+
+html
+    .admin-shell
+    :is(
+        [data-slot='input'],
+        [data-slot='textarea'],
+        [data-slot='select-trigger'],
+        select
+    ):hover {
+    border-color: #8a8a8a;
+}
+
+html
+    .admin-shell
+    :is(
+        [data-slot='input'],
+        [data-slot='textarea'],
+        [data-slot='select-trigger'],
+        select
+    ):focus-visible {
+    border-color: var(--ring);
+    box-shadow: 0 0 0 1px var(--ring);
+}
+
+html .admin-shell [data-slot='label'] {
+    font-size: 0.8125rem;
+    font-weight: 500;
+}
+
+html .admin-shell [data-slot='checkbox'] {
+    border-color: #8a8a8a;
+    border-radius: 0.25rem;
+}
+
+html .admin-shell [data-slot='checkbox'][data-state='checked'] {
+    background: #303030;
+    border-color: #303030;
+}
+
+/* ---------- Tables ---------- */
+
+html .admin-shell [data-slot='table-container'] {
+    border-radius: 0.75rem;
+}
+
+html .admin-shell [data-slot='table-header'] {
+    background: #f7f7f7;
+}
+
+:root.dark .admin-shell [data-slot='table-header'] {
+    background: #2b2b2b;
+}
+
+html .admin-shell [data-slot='table-head'] {
+    height: 2.25rem;
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+html .admin-shell [data-slot='table-cell'] {
+    height: auto;
+    padding-block: 0.5rem;
+    font-size: 0.8125rem;
+}
+
+html .admin-shell [data-slot='table-row'] {
+    border-color: #ebebeb;
+}
+
+:root.dark .admin-shell [data-slot='table-row'] {
+    border-color: #333333;
+}
+
+html .admin-shell [data-slot='table-body'] [data-slot='table-row']:hover {
+    background: var(--admin-row-hover);
+}
+
+html .admin-shell [data-slot='table-row'][data-state='selected'] {
+    background: #f1f1f1;
+}
+
+/* ---------- Status pills ---------- */
+
+html .admin-shell .status-badge {
+    border: 0;
+    border-radius: 0.5rem;
+    padding: 0.125rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 550;
+    line-height: 1.33;
+    box-shadow: none;
+}
+
+html .admin-shell .status-badge[data-tone='success'] {
+    background: #affebf;
+    color: #014b40;
+}
+
+html .admin-shell .status-badge[data-tone='progress'],
+html .admin-shell .status-badge[data-status='draft'] {
+    background: #e0f0ff;
+    color: #00527c;
+}
+
+html .admin-shell .status-badge[data-tone='warning'] {
+    background: #e3e3e3;
+    color: #303030;
+}
+
+html .admin-shell .status-badge[data-tone='danger'] {
+    background: #fed1d7;
+    color: #8e0b21;
+}
+
+html
+    .admin-shell
+    .status-badge[data-tone='neutral']:not([data-status='draft']) {
+    background: #e3e3e3;
+    color: #616161;
+}
+
+:root.dark .admin-shell .status-badge[data-tone='success'] {
+    background: #0c5132;
+    color: #b4fed2;
+}
+
+:root.dark
+    html
+    .admin-shell
+    .status-badge:is([data-tone='progress'], [data-status='draft']) {
+    background: #003a5a;
+    color: #c2e3ff;
+}
+
+:root.dark .admin-shell .status-badge[data-tone='warning'] {
+    background: #3a3a3a;
+    color: #e3e3e3;
+}
+
+:root.dark .admin-shell .status-badge[data-tone='danger'] {
+    background: #5f0f1d;
+    color: #ffd6dc;
+}
+
+:root.dark
+    html
+    .admin-shell
+    .status-badge[data-tone='neutral']:not([data-status='draft']) {
+    background: #3a3a3a;
+    color: #d4d4d4;
+}
+
+/* ---------- Tabs and menus ---------- */
+
+html .admin-shell [role='tablist'] {
+    border-radius: 0.625rem;
+}
+
+:root:has(.admin-shell) [data-slot='dropdown-menu-content'],
+:root:has(.admin-shell) [data-slot='popover-content'] {
+    border-radius: 0.75rem;
+    box-shadow:
+        0 0 0 1px rgb(0 0 0 / 8%),
+        0 8px 20px -4px rgb(0 0 0 / 18%);
+}
+
+/* Order numbers and other IDs in tables read as text, not code. */
+html .admin-shell [data-slot='table-cell'] .font-mono {
+    font-family: inherit;
+    font-size: 0.8125rem;
+    font-weight: 600;
+}

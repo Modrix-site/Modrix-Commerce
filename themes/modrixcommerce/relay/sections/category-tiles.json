@@ -1,0 +1,54 @@
+{
+    "name": "Category tiles",
+    "settings": [
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "Top Categories Of The Month"
+        },
+        {
+            "type": "range",
+            "id": "heading_size",
+            "label": "Heading size",
+            "default": 18,
+            "min": 14,
+            "max": 32,
+            "step": 1
+        }
+    ],
+    "blocks": [
+        {
+            "type": "category",
+            "name": "Category",
+            "settings": [
+                {
+                    "type": "image",
+                    "id": "image",
+                    "label": "Image"
+                },
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Label",
+                    "default": "Smartphones"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Destination",
+                    "default": "/search"
+                }
+            ]
+        }
+    ],
+    "max_blocks": 30,
+    "presets": [
+        {
+            "name": "Category tiles"
+        }
+    ],
+    "enabled_on": {
+        "templates": ["*"]
+    }
+}

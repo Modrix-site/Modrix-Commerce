@@ -1,0 +1,270 @@
+{
+    "sections": {
+        "hero": {
+            "type": "hero",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        },
+        "benefits": {
+            "type": "benefits",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "benefit",
+                    "settings": {
+                        "icon": "delivery",
+                        "heading": "Delivery options",
+                        "body": "Available at checkout"
+                    }
+                },
+                "block_1": {
+                    "type": "benefit",
+                    "settings": {
+                        "icon": "returns",
+                        "heading": "Returns & exchanges",
+                        "body": "Read our store policy"
+                    }
+                },
+                "block_2": {
+                    "type": "benefit",
+                    "settings": {
+                        "icon": "payment",
+                        "heading": "Secure payment",
+                        "body": "Protected checkout"
+                    }
+                },
+                "block_3": {
+                    "type": "benefit",
+                    "settings": {
+                        "icon": "support",
+                        "heading": "Customer support",
+                        "body": "We are here to help"
+                    }
+                }
+            },
+            "block_order": ["block_0", "block_1", "block_2", "block_3"]
+        },
+        "deals": {
+            "type": "product-rail",
+            "settings": {
+                "heading": "Deal of the day",
+                "collection": "relay-smartphones",
+                "deals": true,
+                "view_label": "",
+                "limit": 10
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "promotions": {
+            "type": "promotions",
+            "settings": {
+                "columns": 2
+            },
+            "blocks": {
+                "block_0": {
+                    "type": "promotion",
+                    "settings": {
+                        "heading": "Explore from a new angle",
+                        "body": "Discover our drone collection",
+                        "image": "asset:assets/drone.webp",
+                        "button": "Shop now",
+                        "link": "/c/relay-technology",
+                        "background": "#f5f5f5"
+                    }
+                },
+                "block_1": {
+                    "type": "promotion",
+                    "settings": {
+                        "heading": "Make room for better sound",
+                        "body": "Wireless headphones for every day",
+                        "image": "asset:assets/headphones.webp",
+                        "button": "Shop now",
+                        "link": "/c/relay-audio",
+                        "background": "#f5f5f5"
+                    }
+                }
+            },
+            "block_order": ["block_0", "block_1"]
+        },
+        "categories": {
+            "type": "category-tiles",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Smartphones",
+                        "link": "/c/relay-smartphones",
+                        "image": "asset:assets/phone-coral.webp"
+                    }
+                },
+                "block_1": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Tablets",
+                        "link": "/c/relay-tablets",
+                        "image": "asset:assets/tablet.webp"
+                    }
+                },
+                "block_2": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Laptops",
+                        "link": "/c/relay-laptops",
+                        "image": "asset:assets/laptop.webp"
+                    }
+                },
+                "block_3": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Audio",
+                        "link": "/c/relay-audio",
+                        "image": "asset:assets/speaker-teal.webp"
+                    }
+                },
+                "block_4": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Technology Toys",
+                        "link": "/c/relay-technology",
+                        "image": "asset:assets/drone.webp"
+                    }
+                },
+                "block_5": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Accessories",
+                        "link": "/c/relay-accessories",
+                        "image": "asset:assets/headphones.webp"
+                    }
+                }
+            },
+            "block_order": [
+                "block_0",
+                "block_1",
+                "block_2",
+                "block_3",
+                "block_4",
+                "block_5"
+            ]
+        },
+        "smartphones": {
+            "type": "product-rail",
+            "settings": {
+                "heading": "Popular Smartphones & Tablets",
+                "collection": "relay-smartphones"
+            },
+            "blocks": {
+                "block_0": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Smartphones",
+                        "link": "/c/relay-smartphones"
+                    }
+                },
+                "block_1": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Tablets",
+                        "link": "/c/relay-tablets"
+                    }
+                }
+            },
+            "block_order": ["block_0", "block_1"]
+        },
+        "audio": {
+            "type": "product-rail",
+            "settings": {
+                "heading": "Best Selling Laptops & Audio",
+                "collection": "relay-audio"
+            },
+            "blocks": {
+                "block_0": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Laptops",
+                        "link": "/c/relay-laptops"
+                    }
+                },
+                "block_1": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Audio",
+                        "link": "/c/relay-audio"
+                    }
+                }
+            },
+            "block_order": ["block_0", "block_1"]
+        },
+        "technology": {
+            "type": "product-rail",
+            "settings": {
+                "heading": "Technology Toys Recommended For You",
+                "collection": "relay-technology"
+            },
+            "blocks": {
+                "block_0": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Drones",
+                        "link": "/c/relay-technology"
+                    }
+                },
+                "block_1": {
+                    "type": "link",
+                    "settings": {
+                        "label": "VR & Gaming",
+                        "link": "/c/relay-technology"
+                    }
+                }
+            },
+            "block_order": ["block_0", "block_1"]
+        },
+        "accessories": {
+            "type": "product-rail",
+            "settings": {
+                "heading": "Accessories At Great Prices",
+                "collection": "relay-accessories",
+                "compact": true,
+                "limit": 6
+            },
+            "blocks": {
+                "block_0": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Cases & Chargers",
+                        "link": "/c/relay-accessories"
+                    }
+                },
+                "block_1": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Keyboards & Mice",
+                        "link": "/c/relay-accessories"
+                    }
+                }
+            },
+            "block_order": ["block_0", "block_1"]
+        },
+        "apps": {
+            "type": "apps",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        }
+    },
+    "order": [
+        "hero",
+        "benefits",
+        "deals",
+        "promotions",
+        "categories",
+        "smartphones",
+        "audio",
+        "technology",
+        "accessories",
+        "apps"
+    ]
+}

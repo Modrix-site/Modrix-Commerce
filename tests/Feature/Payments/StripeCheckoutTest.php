@@ -7,6 +7,7 @@ use App\Domains\Orders\Enums\OrderStatus;
 use App\Domains\Orders\Enums\PaymentStatus;
 use App\Domains\Orders\Mail\OrderMail;
 use App\Domains\Orders\Models\Order;
+use App\Domains\Payments\Gateways\Stripe\StripeSettings;
 use App\Domains\Payments\Models\Payment;
 use App\Domains\Payments\Models\PaymentWebhookEvent;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -77,6 +78,27 @@ class StripeCheckoutTest extends TestCase
         // Stock is held while the customer pays; the confirmation email waits for the payment.
         $this->assertSame(8, $variant->fresh()->onHand());
         Mail::assertNothingSent();
+    }
+
+    public function test_apple_pay_and_google_pay_switches_are_sent_to_stripe()
+    {
+        $this->configureStripe();
+        app(StripeSettings::class)->update(true, 'Card', null, null, true, false);
+        $this->fakeStripeApi();
+        $this->addToCart($this->sellable());
+
+        $this->post(route('checkout.store'), $this->checkoutPayload(['payment_method' => 'stripe']))
+            ->assertRedirect('https://checkout.stripe.com/c/pay/cs_test_fake');
+
+        Http::assertSent(function (HttpRequest $request) {
+            return str_contains($request->url(), '/v1/payment_method_configurations')
+                && ($request['apple_pay']['display_preference']['preference'] ?? null) === 'on'
+                && ($request['google_pay']['display_preference']['preference'] ?? null) === 'off';
+        });
+        Http::assertSent(function (HttpRequest $request) {
+            return $request->url() === 'https://api.stripe.com/v1/checkout/sessions'
+                && $request['payment_method_configuration'] === 'pmc_test_wallets';
+        });
     }
 
     public function test_an_inertia_checkout_gets_an_external_location_response()

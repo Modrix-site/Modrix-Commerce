@@ -3,6 +3,7 @@
 namespace Tests\Feature\Themes;
 
 use App\Core\Extensions\Models\Extension;
+use App\Core\Extensions\ModuleManager;
 use App\Core\Extensions\ModuleState;
 use App\Core\Extensions\StorefrontSlots;
 use App\Core\Themes\ThemeManager;
@@ -35,10 +36,11 @@ class TempoThemeTest extends TestCase
         $file = new UploadedFile(base_path('dist/ecomodular-tempo-1.0.0.zip'), 'tempo.zip', 'application/zip', null, true);
         $this->actingAs($this->userWithRole('administrator'))
             ->post(route('admin.themes.packages.store'), ['package' => $file])->assertSessionHasNoErrors();
-        $theme = Extension::where('name', 'ecomodular/tempo')->firstOrFail();
+        $theme = Extension::where('name', 'modrixcommerce/tempo')->firstOrFail();
         $this->assertSame(ModuleState::Discovered, $theme->state);
         $this->assertNull($theme->applied_manifest);
-        $this->assertCount(67, $theme->manifest['customizer']['fields']);
+        $this->assertSame('Tempo', $theme->manifest['customizer']['fields']['custom.brand']['default']);
+        $this->assertSame('boolean', $theme->manifest['customizer']['fields']['custom.show_saved']['type']);
         $this->assertCount(12, $theme->manifest['sections']['home']);
         $this->assertSame('src/product.tsx', $theme->manifest['frontend']['product']);
         $this->assertDatabaseMissing('products', ['slug' => 'tempo-demo-1']);
@@ -46,17 +48,17 @@ class TempoThemeTest extends TestCase
 
     public function test_campaign_assets_and_tile_customizations_resolve_and_demo_is_additive(): void
     {
-        app(ThemeManager::class)->activate('ecomodular/tempo');
+        app(ThemeManager::class)->activate('modrixcommerce/tempo');
         $this->get('/')->assertInertia(fn (Assert $page) => $page
             ->has('storefront.navigation.header.links', 9)
             ->where('storefront.theme.settings.brand', 'Tempo')
             ->where('sections.0.settings.heading', 'New season. New discoveries.')
-            ->where('sections.0.data.image', fn ($url) => str_contains($url, '/theme-assets/ecomodular/tempo/assets/season.png'))
+            ->where('sections.0.data.image', fn ($url) => str_contains($url, '/theme-assets/modrixcommerce/tempo/assets/season.png'))
             ->where('sections.3.settings.style', 'card')
             ->where('sections.3.settings.columns', '7')
             ->has('sections.3.data.tiles', 7));
-        $this->get('/theme-assets/ecomodular/tempo/assets/season.png')->assertOk();
-        $extension = Extension::where('name', 'ecomodular/tempo')->firstOrFail();
+        $this->get('/theme-assets/modrixcommerce/tempo/assets/season.png')->assertOk();
+        $extension = Extension::where('name', 'modrixcommerce/tempo')->firstOrFail();
         $manifest = ThemeManifest::fromArray($extension->manifest);
         $importer = app(ThemeDemoImporter::class);
         $this->assertSame(['categories' => 1, 'products' => 5], $importer->import($manifest, $this->owner()));
@@ -65,7 +67,7 @@ class TempoThemeTest extends TestCase
 
     public function test_filters_and_extension_slots_use_platform_context_and_live_totals(): void
     {
-        app(ThemeManager::class)->activate('ecomodular/tempo');
+        app(ThemeManager::class)->activate('modrixcommerce/tempo');
         $category = Category::factory()->create(['slug' => 'tempo-test-category']);
         $variant = $this->sellable('12.50', 5, product: ['name' => 'Tempo sweater']);
         $variant->product->categories()->attach($category);
@@ -90,5 +92,38 @@ class TempoThemeTest extends TestCase
             $props = $page->toArray()['props'];
             $this->assertSame($props['summary']['grand_total'], $props['slots'][0]['props']['total']);
         });
+    }
+
+    public function test_customizer_saves_campaigns_and_tile_layout_without_changing_commerce(): void
+    {
+        $manager = app(ThemeManager::class);
+        $manager->activate('modrixcommerce/tempo');
+        $manager->customizeDesign('modrixcommerce/tempo', ['custom.brand' => 'My Tempo', 'custom.catalog_filters' => false, 'catalog.columns_desktop' => '3']);
+        $manager->customizeSections('modrixcommerce/tempo', 'home', [
+            ['type' => 'hero', 'settings' => ['heading' => 'My seasonal edit', 'image' => 'asset:assets/living.webp', 'button_link' => '/search']],
+            ['type' => 'promotion_grid', 'settings' => ['title' => 'My collections', 'columns' => '5', 'style' => 'editorial', 'image_height' => 280, 'mobile_image_height' => 160, 'wrap' => true, 'tile_1_title' => 'Living', 'tile_1_link' => '/search?q=living', 'tile_1_image' => 'asset:assets/living.webp']],
+        ]);
+        $this->get('/')->assertInertia(fn (Assert $page) => $page
+            ->where('storefront.theme.settings.brand', 'My Tempo')
+            ->where('storefront.theme.settings.catalog_filters', false)
+            ->where('storefront.theme.pages.catalog.columns_desktop', 3)
+            ->where('sections.0.settings.heading', 'My seasonal edit')
+            ->where('sections.1.settings.style', 'editorial')
+            ->where('sections.1.settings.image_height', 280)
+            ->where('sections.1.settings.wrap', true)
+            ->where('sections.1.data.tiles.0.link', '/search?q=living'));
+    }
+
+    public function test_newsletter_extension_renders_in_tempo_and_accepts_real_subscription(): void
+    {
+        app(ThemeManager::class)->activate('modrixcommerce/tempo');
+        $modules = app(ModuleManager::class);
+        $modules->install('modrixcommerce/newsletter', $this->owner());
+        $modules->enable('modrixcommerce/newsletter', true, $this->owner());
+        $this->get('/')->assertInertia(fn (Assert $page) => $page
+            ->where('storefront.footerSlots.0.component', 'modrixcommerce/newsletter/SignupForm')
+            ->where('storefront.footerSlots.0.props.source', 'footer'));
+        $this->post(route('modrixcommerce.newsletter.subscribe'), ['email' => 'tempo@example.test', 'consent' => '1', 'source' => 'footer'])->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('newsletter_subscribers', ['email' => 'tempo@example.test']);
     }
 }

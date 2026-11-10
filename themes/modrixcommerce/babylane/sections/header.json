@@ -1,0 +1,172 @@
+{
+    "name": "Baby store header",
+    "settings": [
+        {
+            "type": "checkbox",
+            "id": "sticky",
+            "label": "Sticky header",
+            "info": "Keep the logo, search and navigation at the top while scrolling. Announcement banners scroll away.",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "compact_on_scroll",
+            "label": "Compact header while scrolling",
+            "info": "Once the shopper scrolls, the sticky header shrinks to the logo, search and icons, so it covers less of the page.",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "brand",
+            "label": "Wordmark",
+            "default": "Baby Lane"
+        },
+        {
+            "type": "image",
+            "id": "logo",
+            "label": "Logo"
+        },
+        {
+            "type": "text",
+            "id": "search_placeholder",
+            "label": "Search placeholder",
+            "default": "I’m shopping for…"
+        },
+        {
+            "type": "text",
+            "id": "search_button",
+            "label": "Search button",
+            "default": "Search"
+        },
+        {
+            "type": "text",
+            "id": "department_label",
+            "label": "Department menu label",
+            "default": "Shop by Department"
+        },
+        {
+            "type": "text",
+            "id": "account_label",
+            "label": "Account label",
+            "default": "My account"
+        },
+        {
+            "type": "select",
+            "id": "menu_source",
+            "label": "Menus (top, departments, mobile)",
+            "options": [
+                {
+                    "value": "auto",
+                    "label": "Admin → Navigation once saved, else theme links"
+                },
+                {
+                    "value": "store",
+                    "label": "Always Admin → Navigation"
+                },
+                {
+                    "value": "theme",
+                    "label": "Theme links only"
+                }
+            ],
+            "default": "auto"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_compare",
+            "label": "Show product comparison",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_wishlist",
+            "label": "Show wishlist",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_localization",
+            "label": "Show currency and language",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_mobile_bar",
+            "label": "Show mobile bottom navigation",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "mobile_menu_label",
+            "label": "Mobile menu label",
+            "default": "Menu"
+        },
+        {
+            "type": "text",
+            "id": "mobile_categories_label",
+            "label": "Mobile categories label",
+            "default": "Categories"
+        },
+        {
+            "type": "text",
+            "id": "mobile_search_label",
+            "label": "Mobile search label",
+            "default": "Search"
+        },
+        {
+            "type": "text",
+            "id": "mobile_cart_label",
+            "label": "Mobile cart label",
+            "default": "Cart"
+        },
+        {
+            "type": "color",
+            "id": "mobile_active_color",
+            "label": "Mobile active navigation color",
+            "default": "#0068ad"
+        },
+        {
+            "type": "text",
+            "id": "recent_label",
+            "label": "Recently viewed label",
+            "default": "Your recently viewed"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_main_menu",
+            "label": "Show main menu instead of recently viewed",
+            "default": false
+        }
+    ],
+    "blocks": [
+        {
+            "type": "link",
+            "name": "Navigation link",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Label",
+                    "default": "Shop all"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Destination",
+                    "default": "/search"
+                }
+            ]
+        }
+    ],
+    "max_blocks": 8,
+    "presets": [
+        {
+            "name": "Header"
+        }
+    ],
+    "enabled_on": {
+        "groups": [
+            "header"
+        ]
+    },
+    "limit": 1
+}

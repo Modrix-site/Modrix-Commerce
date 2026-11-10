@@ -1,0 +1,83 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/wishlist",
+    "display_name": "Wishlist & Save For Later",
+    "description": "Cross-device customer wishlist, 1-click save for later, guest-to-customer account sync, shareable lists, and admin restock demand analytics.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "heart",
+    "accent": "#e11d48",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\Wishlist\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\Wishlist\\WishlistServiceProvider",
+    "permissions": [
+        {
+            "name": "wishlist.manage",
+            "label": "View wishlist analytics and manage wishlist settings",
+            "group": "Marketing"
+        }
+    ],
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "storefront.slots",
+        "database.migrations",
+        "settings",
+        "permissions",
+        "events.listen"
+    ],
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages",
+        "slots": "resources/js/slots"
+    },
+    "settings": [
+        {
+            "key": "enabled",
+            "type": "boolean",
+            "label": "Enable wishlist on storefront",
+            "default": true
+        },
+        {
+            "key": "require_login",
+            "type": "boolean",
+            "label": "Require customers to sign in to save items",
+            "default": false
+        },
+        {
+            "key": "allow_sharing",
+            "type": "boolean",
+            "label": "Allow customers to share their wishlist via public link",
+            "default": true
+        },
+        {
+            "key": "button_label",
+            "type": "string",
+            "label": "Add to Wishlist Button Label",
+            "default": "Save to Wishlist",
+            "max_length": 60
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "wishlist",
+            "title": "Wishlist Analytics",
+            "route": "index",
+            "icon": "heart",
+            "group": "Marketing",
+            "permission": "wishlist.manage",
+            "order": 350
+        }
+    ]
+}

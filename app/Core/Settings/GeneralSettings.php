@@ -137,18 +137,24 @@ final class GeneralSettings
     }
 
     /**
-     * @return array{require_two_factor: bool, session_lifetime: int|null, login_attempts: int, password_min: int|null}
+     * @return array{registration_enabled: bool, require_two_factor: bool, session_lifetime: int|null, login_attempts: int, password_min: int|null}
      */
     public function security(): array
     {
         $saved = (array) $this->settings->get('general.security', []);
 
         return [
+            'registration_enabled' => (bool) ($saved['registration_enabled'] ?? true),
             'require_two_factor' => (bool) ($saved['require_two_factor'] ?? false),
             'session_lifetime' => isset($saved['session_lifetime']) ? (int) $saved['session_lifetime'] : null,
             'login_attempts' => (int) ($saved['login_attempts'] ?? 5),
             'password_min' => isset($saved['password_min']) ? (int) $saved['password_min'] : null,
         ];
+    }
+
+    public function registrationEnabled(): bool
+    {
+        return $this->security()['registration_enabled'];
     }
 
     /** @return array<string, string> */

@@ -1,0 +1,137 @@
+{
+    "name": "Department with campaign",
+    "settings": [
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Department heading",
+            "default": "Eat & Drink for Baby"
+        },
+        {
+            "type": "range",
+            "id": "heading_size",
+            "label": "Department heading size",
+            "min": 14,
+            "max": 28,
+            "step": 1,
+            "default": 18
+        },
+        {
+            "type": "collection",
+            "id": "collection",
+            "label": "Product collection",
+            "products": 12,
+            "fallback": "latest"
+        },
+        {
+            "type": "range",
+            "id": "limit",
+            "label": "Product count",
+            "min": 3,
+            "max": 12,
+            "step": 1,
+            "default": 6
+        },
+        {
+            "type": "range",
+            "id": "offset",
+            "label": "Skip first products",
+            "min": 0,
+            "max": 18,
+            "step": 1,
+            "default": 0
+        },
+        {
+            "type": "checkbox",
+            "id": "quick_add",
+            "label": "Show quick add buttons",
+            "default": false
+        },
+        {
+            "type": "text",
+            "id": "eyebrow",
+            "label": "Campaign eyebrow",
+            "default": "LITTLE EVERYDAY FAVOURITES"
+        },
+        {
+            "type": "text",
+            "id": "banner_heading",
+            "label": "Campaign heading",
+            "default": "Ready for little adventures"
+        },
+        {
+            "type": "range",
+            "id": "banner_heading_size",
+            "label": "Campaign heading size",
+            "min": 20,
+            "max": 42,
+            "step": 1,
+            "default": 28
+        },
+        {
+            "type": "image",
+            "id": "image",
+            "label": "Campaign image",
+            "default": "asset:assets/bottles.webp"
+        },
+        {
+            "type": "textarea",
+            "id": "body",
+            "label": "Campaign text",
+            "default": "Thoughtful essentials for your little one."
+        },
+        {
+            "type": "color",
+            "id": "background",
+            "label": "Campaign background",
+            "default": "#f1f4f5"
+        },
+        {
+            "type": "text",
+            "id": "button",
+            "label": "Button label",
+            "default": "Shop now"
+        },
+        {
+            "type": "url",
+            "id": "link",
+            "label": "Department destination",
+            "default": "/search"
+        },
+        {
+            "type": "text",
+            "id": "view_label",
+            "label": "View all label",
+            "default": "View all"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "link",
+            "name": "Department link",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Label",
+                    "default": ""
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Destination",
+                    "default": "/search"
+                }
+            ]
+        }
+    ],
+    "max_blocks": 50,
+    "presets": [
+        {
+            "name": "Department with campaign"
+        }
+    ],
+    "enabled_on": {
+        "templates": ["*"]
+    }
+}

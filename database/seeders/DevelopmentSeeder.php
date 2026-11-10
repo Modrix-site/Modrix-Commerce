@@ -44,7 +44,7 @@ class DevelopmentSeeder extends Seeder
 
         if (! $installation->isInstalled()) {
             $store->update([
-                'store_name' => 'EcoModular Demo Store',
+                'store_name' => 'Modrix Commerce Demo Store',
                 'store_email' => 'owner@example.test',
                 'default_currency' => 'USD',
                 'timezone' => 'UTC',

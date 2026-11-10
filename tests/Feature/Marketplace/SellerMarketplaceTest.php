@@ -105,7 +105,7 @@ class SellerMarketplaceTest extends TestCase
         $this->actingAs($seller)->get(route('vendor.index'))->assertInertia(fn (Assert $page) => $page->component('storefront/vendor/dashboard')->where('publisher.slug', 'acme'));
 
         // Packages must use the seller's vendor name; sellers cannot list products themselves.
-        $this->actingAs($seller)->post(route('vendor.products.store'), $this->productInput(['extension_name' => 'ecomodular/hello']))->assertSessionHasErrors('extension_name');
+        $this->actingAs($seller)->post(route('vendor.products.store'), $this->productInput(['extension_name' => 'modrixcommerce/hello']))->assertSessionHasErrors('extension_name');
         $product = $this->listedSellerProduct($seller);
         $this->actingAs($seller)->put(route('vendor.products.update', $product), [...$this->productInput(), 'status' => 'published'])->assertSessionHasNoErrors();
         $this->actingAs($seller)->put(route('vendor.products.update', $product), [...$this->productInput(), 'status' => 'draft'])->assertSessionHasNoErrors();

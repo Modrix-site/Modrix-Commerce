@@ -1,0 +1,151 @@
+{
+    "categories": [
+        {
+            "name": "Smart Watches",
+            "slug": "voltmarket-watches"
+        },
+        {
+            "name": "Audio",
+            "slug": "voltmarket-audio"
+        },
+        {
+            "name": "Laptops",
+            "slug": "voltmarket-laptops"
+        },
+        {
+            "name": "Phones",
+            "slug": "voltmarket-phones"
+        },
+        {
+            "name": "Tablets",
+            "slug": "voltmarket-tablets"
+        },
+        {
+            "name": "Cameras",
+            "slug": "voltmarket-cameras"
+        },
+        {
+            "name": "Home & kitchen",
+            "slug": "voltmarket-home"
+        }
+    ],
+    "products": [
+        {
+            "name": "Wireless Smart Watch Series 5",
+            "slug": "voltmarket-demo-1",
+            "sku": "VOLT-DEMO-1",
+            "price": "129.00",
+            "stock": 15,
+            "short_description": "Always-on display, heart-rate tracking and seven-day battery.",
+            "description": "Always-on display, heart-rate tracking and seven-day battery. Optional demonstration product: replace the details and confirm stock before selling.",
+            "categories": ["voltmarket-watches"],
+            "image": "assets/hero-watch.jpg",
+            "compare_at_price": "149.00"
+        },
+        {
+            "name": "Studio Wireless Headphones",
+            "slug": "voltmarket-demo-2",
+            "sku": "VOLT-DEMO-2",
+            "price": "95.00",
+            "stock": 15,
+            "short_description": "Over-ear headphones with active noise cancelling and 30-hour playback.",
+            "description": "Over-ear headphones with active noise cancelling and 30-hour playback. Optional demonstration product: replace the details and confirm stock before selling.",
+            "categories": ["voltmarket-audio"],
+            "image": "assets/product-headphones.jpg",
+            "compare_at_price": "120.00"
+        },
+        {
+            "name": "True Wireless Earbuds Pro",
+            "slug": "voltmarket-demo-3",
+            "sku": "VOLT-DEMO-3",
+            "price": "79.00",
+            "stock": 4,
+            "short_description": "Compact earbuds with a pocket charging case and touch controls.",
+            "description": "Compact earbuds with a pocket charging case and touch controls. Optional demonstration product: replace the details and confirm stock before selling.",
+            "categories": ["voltmarket-audio"],
+            "image": "assets/product-earbuds.jpg"
+        },
+        {
+            "name": "Portable Bluetooth Speaker",
+            "slug": "voltmarket-demo-4",
+            "sku": "VOLT-DEMO-4",
+            "price": "59.00",
+            "stock": 15,
+            "short_description": "Water-resistant speaker with rich bass and 12-hour battery.",
+            "description": "Water-resistant speaker with rich bass and 12-hour battery. Optional demonstration product: replace the details and confirm stock before selling.",
+            "categories": ["voltmarket-audio"],
+            "image": "assets/product-speaker.jpg",
+            "compare_at_price": "69.00"
+        },
+        {
+            "name": "Vivid 14 Laptop",
+            "slug": "voltmarket-demo-5",
+            "sku": "VOLT-DEMO-5",
+            "price": "899.00",
+            "stock": 15,
+            "short_description": "Thin 14-inch laptop with a bright, colourful display.",
+            "description": "Thin 14-inch laptop with a bright, colourful display. Optional demonstration product: replace the details and confirm stock before selling.",
+            "categories": ["voltmarket-laptops"],
+            "image": "assets/cat-laptop.jpg",
+            "compare_at_price": "999.00"
+        },
+        {
+            "name": "Everyday Smartphone 128GB",
+            "slug": "voltmarket-demo-6",
+            "sku": "VOLT-DEMO-6",
+            "price": "399.00",
+            "stock": 4,
+            "short_description": "6.1-inch smartphone with a dual camera and all-day battery.",
+            "description": "6.1-inch smartphone with a dual camera and all-day battery. Optional demonstration product: replace the details and confirm stock before selling.",
+            "categories": ["voltmarket-phones"],
+            "image": "assets/product-phone.jpg"
+        },
+        {
+            "name": "Creator Tablet 11",
+            "slug": "voltmarket-demo-7",
+            "sku": "VOLT-DEMO-7",
+            "price": "449.00",
+            "stock": 15,
+            "short_description": "11-inch tablet for drawing, notes and streaming.",
+            "description": "11-inch tablet for drawing, notes and streaming. Optional demonstration product: replace the details and confirm stock before selling.",
+            "categories": ["voltmarket-tablets"],
+            "image": "assets/cat-tablet.jpg",
+            "compare_at_price": "499.00"
+        },
+        {
+            "name": "Mirrorless Video Camera Kit",
+            "slug": "voltmarket-demo-8",
+            "sku": "VOLT-DEMO-8",
+            "price": "1199.00",
+            "stock": 15,
+            "short_description": "Video-ready camera kit with a fast lens and cage.",
+            "description": "Video-ready camera kit with a fast lens and cage. Optional demonstration product: replace the details and confirm stock before selling.",
+            "categories": ["voltmarket-cameras"],
+            "image": "assets/cat-camera.jpg"
+        },
+        {
+            "name": "Compact Home Washer",
+            "slug": "voltmarket-demo-9",
+            "sku": "VOLT-DEMO-9",
+            "price": "459.00",
+            "compare_at_price": "549.00",
+            "stock": 8,
+            "image": "assets/cat-home.jpg",
+            "categories": ["voltmarket-home"],
+            "short_description": "A practical home essential for your everyday routine.",
+            "description": "Optional demonstration product for the Volt Market theme. Replace this text with accurate specifications, warranty and delivery details, and confirm stock and prices before selling."
+        },
+        {
+            "name": "Home Barista Coffee Maker",
+            "slug": "voltmarket-demo-10",
+            "sku": "VOLT-DEMO-10",
+            "price": "89.00",
+            "compare_at_price": "109.00",
+            "stock": 12,
+            "image": "assets/promo-appliance.jpg",
+            "categories": ["voltmarket-home"],
+            "short_description": "A practical home essential for your everyday routine.",
+            "description": "Optional demonstration product for the Volt Market theme. Replace this text with accurate specifications, warranty and delivery details, and confirm stock and prices before selling."
+        }
+    ]
+}

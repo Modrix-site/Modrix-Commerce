@@ -446,7 +446,7 @@ class ModuleLifecycleTest extends TestCase
         $this->modules->install('acme/hello');
         $this->modules->enable('acme/hello', true);
 
-        $this->get('/admin/m/acme/hello')->assertRedirect(route('login'));
+        $this->get('/admin/m/acme/hello')->assertRedirect(route('admin.login'));
         $this->actingAs($this->userWithRole('analyst'))->get('/admin/m/acme/hello')->assertForbidden();
         // A module route without a can: middleware is refused even for owners.
         $this->actingAs($this->owner())->get('/admin/m/acme/hello/open')->assertForbidden();

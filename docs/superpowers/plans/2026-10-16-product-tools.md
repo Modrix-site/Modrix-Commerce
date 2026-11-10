@@ -32,7 +32,7 @@
     - New files: `git add`.
     - Shared tracked files: record edits as old→new pairs with `scratchpad/pairs.py . apply <pairfile>`, then `python scratchpad/pairs.py . stage`.
     - Start a fresh `pairs-ledger.json` per commit: move the old one aside after committing.
-    - Untracked files from the other developer (e.g. `themes/ecomodular/hearth/src/*`, `electronics-*.tsx`, `atelier-card.tsx`) cannot be committed. Only edit them if needed, and report it.
+    - Untracked files from the other developer (e.g. `themes/modrixcommerce/hearth/src/*`, `electronics-*.tsx`, `atelier-card.tsx`) cannot be committed. Only edit them if needed, and report it.
 - **Private files:** use the `local` disk (root `storage/app/private`) under `downloads/{product_id}/`, never `public`.
 - **Limits from the spec:**
     - at most 200 products per bulk action;

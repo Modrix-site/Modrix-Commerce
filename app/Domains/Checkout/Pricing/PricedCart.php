@@ -28,6 +28,10 @@ final class PricedCart
 
     public Money $taxTotal;
 
+    public Money $paymentFeeTotal;
+
+    public ?string $paymentMethod = null;
+
     public ?string $couponCode = null;
 
     public ?string $couponError = null;
@@ -53,6 +57,7 @@ final class PricedCart
         $this->shippingTotal = Money::zero($currency);
         $this->shippingTax = Money::zero($currency);
         $this->taxTotal = Money::zero($currency);
+        $this->paymentFeeTotal = Money::zero($currency);
     }
 
     public function subtotal(): Money
@@ -66,12 +71,34 @@ final class PricedCart
         return $total;
     }
 
+    public function itemsSubtotal(): Money
+    {
+        $total = Money::zero($this->currency);
+
+        foreach ($this->purchasableLines() as $line) {
+            $total = $total->plus($line->baseSubtotal());
+        }
+
+        return $total;
+    }
+
+    public function addonsTotal(): Money
+    {
+        $total = Money::zero($this->currency);
+
+        foreach ($this->purchasableLines() as $line) {
+            $total = $total->plus($line->addonsSubtotal());
+        }
+
+        return $total;
+    }
+
     /**
-     * Subtotal − discounts + shipping (+ tax when prices exclude tax).
+     * Subtotal − discounts + shipping + courier fee (+ tax when prices exclude tax).
      */
     public function grandTotal(): Money
     {
-        $total = $this->subtotal()->minus($this->discountTotal)->plus($this->shippingTotal);
+        $total = $this->subtotal()->minus($this->discountTotal)->plus($this->shippingTotal)->plus($this->paymentFeeTotal);
 
         return ($this->pricesIncludeTax ? $total : $total->plus($this->taxTotal))->nonNegative();
     }
@@ -129,11 +156,15 @@ final class PricedCart
             'lines' => array_map(fn (PricedLine $l) => $l->toArray(), $this->lines),
             'item_count' => $this->itemCount(),
             'subtotal' => $this->subtotal(),
+            'items_subtotal' => $this->itemsSubtotal(),
+            'addons_total' => $this->addonsTotal(),
             'discount_total' => $this->discountTotal,
             'offer_discount_total' => $this->offerDiscountTotal,
             'coupon_discount_total' => $this->couponDiscountTotal,
             'shipping_total' => $this->shippingTotal,
             'tax_total' => $this->taxTotal,
+            'payment_fee_total' => $this->paymentFeeTotal,
+            'payment_method' => $this->paymentMethod,
             'grand_total' => $this->grandTotal(),
             'prices_include_tax' => $this->pricesIncludeTax,
             'coupon_code' => $this->couponCode,

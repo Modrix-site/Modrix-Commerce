@@ -4,7 +4,6 @@ namespace App\Core\Operations;
 
 use App\Core\Installation\RequirementChecker;
 use App\Core\Marketplace\Client\StoreLicense;
-use App\Core\Marketplace\Client\StoreLicenses;
 use App\Core\Platform;
 use App\Core\Settings\SettingsRepository;
 use App\Core\Updates\CoreReleaseVerifier;
@@ -33,7 +32,6 @@ final class HealthCheck
     public function __construct(
         private readonly RequirementChecker $requirements,
         private readonly Backups $backups,
-        private readonly StoreLicenses $licenses,
     ) {}
 
     /**
@@ -236,15 +234,15 @@ final class HealthCheck
 
         $affected = [];
         foreach (StoreLicense::query()->get() as $license) {
-            $installed = $this->licenses->installedVersion($license);
+            $installed = $license->installedVersion();
             if ($installed !== null && $license->advisoriesFor($installed) !== []) {
                 $affected[] = $license->extension_name.' '.$installed;
             }
         }
 
         return $affected === []
-            ? ['Extension advisories', self::OK, 'No installed marketplace package is affected']
-            : ['Extension advisories', self::WARNING, 'Security advisory for '.implode(', ', $affected).': update under Admin → Extensions → Marketplace'];
+            ? ['Extension advisories', self::OK, 'No installed Modrix Cloud package is affected']
+            : ['Extension advisories', self::WARNING, 'Security advisory for '.implode(', ', $affected).': update under Admin → Modrix Cloud'];
     }
 
     /** @return array{string, string, string} */

@@ -29,10 +29,10 @@ class ProductRatingStarsTest extends TestCase
         $this->installPlatform();
         config(['inertia.ssr.enabled' => false]);
         $this->setUpModules();
-        File::copyDirectory(base_path('modules/ecomodular/product-reviews'), $this->modulesPath.'/ecomodular/product-reviews');
+        File::copyDirectory(base_path('modules/modrixcommerce/product-reviews'), $this->modulesPath.'/modrixcommerce/product-reviews');
         app(ModuleRepository::class)->sync();
-        app(ModuleManager::class)->install('ecomodular/product-reviews');
-        app(ModuleManager::class)->enable('ecomodular/product-reviews', true);
+        app(ModuleManager::class)->install('modrixcommerce/product-reviews');
+        app(ModuleManager::class)->enable('modrixcommerce/product-reviews', true);
     }
 
     private function review(int $productId, int $rating, string $status = Review::APPROVED): void
@@ -59,7 +59,7 @@ class ProductRatingStarsTest extends TestCase
                 $stars = collect($places)->toArray()['product.after_title'][0] ?? null;
 
                 return $stars !== null
-                    && $stars['component'] === 'ecomodular/product-reviews/RatingStars'
+                    && $stars['component'] === 'modrixcommerce/product-reviews/RatingStars'
                     && $stars['props']['count'] === 2
                     && $stars['props']['average'] === '4.5';
             }));
@@ -78,13 +78,13 @@ class ProductRatingStarsTest extends TestCase
         $variant = $this->sellable('20.00', 5);
         $settings = app(SettingsRepository::class);
 
-        $settings->set(BlockPlacements::KEY, ['ecomodular/product-reviews:rating' => ['place' => 'product.after_title', 'order' => 1, 'enabled' => false]]);
+        $settings->set(BlockPlacements::KEY, ['modrixcommerce/product-reviews:rating' => ['place' => 'product.after_title', 'order' => 1, 'enabled' => false]]);
         $this->get(route('storefront.product', $variant->product->slug))->assertInertia(fn (Assert $page) => $page
             ->where('placeSlots', fn ($places) => (collect($places)->toArray()['product.after_title'] ?? []) === []));
 
-        $settings->set(BlockPlacements::KEY, ['ecomodular/product-reviews:rating' => ['place' => 'product.after_price', 'order' => 1, 'enabled' => true]]);
+        $settings->set(BlockPlacements::KEY, ['modrixcommerce/product-reviews:rating' => ['place' => 'product.after_price', 'order' => 1, 'enabled' => true]]);
         $this->get(route('storefront.product', $variant->product->slug))->assertInertia(fn (Assert $page) => $page
             ->where('placeSlots', fn ($places) => (collect($places)->toArray()['product.after_title'] ?? []) === []
-                && collect($places)->toArray()['product.after_price'][0]['component'] === 'ecomodular/product-reviews/RatingStars'));
+                && collect($places)->toArray()['product.after_price'][0]['component'] === 'modrixcommerce/product-reviews/RatingStars'));
     }
 }

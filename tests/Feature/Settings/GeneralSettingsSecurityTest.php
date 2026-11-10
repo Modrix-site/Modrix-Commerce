@@ -27,7 +27,7 @@ class GeneralSettingsSecurityTest extends TestCase
     private function security(User $actor, array $values)
     {
         return $this->actingAs($actor)->put(route('admin.settings.general.security'), $values + [
-            'require_two_factor' => false, 'session_lifetime' => null, 'login_attempts' => 5, 'password_min' => null,
+            'registration_enabled' => true, 'require_two_factor' => false, 'session_lifetime' => null, 'login_attempts' => 5, 'password_min' => null,
         ]);
     }
 
@@ -77,6 +77,27 @@ class GeneralSettingsSecurityTest extends TestCase
             $this->post(route('login.store'), ['email' => $user->email, 'password' => 'wrong'])->assertStatus(302);
         }
         $this->post(route('login.store'), ['email' => $user->email, 'password' => 'wrong'])->assertStatus(429);
+    }
+
+    public function test_sign_up_can_be_turned_off(): void
+    {
+        $this->get(route('login'))->assertInertia(fn (Assert $page) => $page->where('canRegister', true));
+        $this->get(route('register'))->assertOk();
+
+        $this->security($this->ownerWithTwoFactor(), ['registration_enabled' => false])->assertSessionHasNoErrors();
+
+        auth()->logout();
+
+        $this->get(route('login'))->assertInertia(fn (Assert $page) => $page->where('canRegister', false));
+        $this->get(route('register'))->assertNotFound();
+        $this->post(route('register.store'), [
+            'name' => 'New Customer',
+            'email' => 'new-customer@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ])->assertNotFound();
+        $this->assertGuest();
+        $this->assertDatabaseMissing('users', ['email' => 'new-customer@example.com']);
     }
 
     public function test_values_are_validated()

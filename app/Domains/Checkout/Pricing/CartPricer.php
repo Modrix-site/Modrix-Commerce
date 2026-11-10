@@ -24,6 +24,8 @@ final class CartPricer
 
     public const TAX = 40;
 
+    public const PAYMENT_FEE = 45;
+
     /** Steps that only read the final amounts. */
     public const AFTER_TAX = 50;
 

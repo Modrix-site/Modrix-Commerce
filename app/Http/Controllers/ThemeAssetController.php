@@ -33,7 +33,7 @@ class ThemeAssetController extends Controller
             : $record?->manifest;
 
         // Before discovery, the bundled default theme is still served.
-        if ($record === null && $name === config('ecomodular.themes.default', 'ecomodular/essence')) {
+        if ($record === null && $name === config('ecomodular.themes.default', 'modrixcommerce/essence')) {
             $data = ['assets' => 'assets'];
         }
 

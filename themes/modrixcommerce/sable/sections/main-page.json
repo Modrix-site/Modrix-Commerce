@@ -1,0 +1,16 @@
+{
+    "name": "Page content",
+    "settings": [],
+    "blocks": [],
+    "presets": [
+        {
+            "name": "Page content"
+        }
+    ],
+    "enabled_on": {
+        "templates": [
+            "page"
+        ]
+    },
+    "limit": 1
+}

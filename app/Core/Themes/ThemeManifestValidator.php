@@ -50,17 +50,13 @@ final class ThemeManifestValidator
         }
 
         $frontend = $data['frontend'] ?? [];
-        if (! is_array($frontend) || array_diff(array_keys($frontend), ['index', 'catalog', 'cart', 'header', 'footer', 'product', 'stylesheet']) !== []) {
-            $this->errors[] = 'frontend must contain only index, catalog, cart, header, footer, product and stylesheet paths.';
+        $this->errors = [...$this->errors, ...ThemeFrontend::errors($packageDir, $frontend)];
+        if (! is_array($frontend)) {
             $frontend = [];
         }
-        foreach ($frontend as $entry => $path) {
-            $expected = ['index' => 'src/index.tsx', 'catalog' => 'src/catalog.tsx', 'cart' => 'src/cart.tsx', 'header' => 'src/header.tsx', 'footer' => 'src/footer.tsx', 'product' => 'src/product.tsx', 'stylesheet' => 'src/style.css'][$entry];
-            if ($path !== $expected || ManifestValidator::resolvePath($packageDir, $expected, directory: false) === null) {
-                $this->errors[] = "frontend.{$entry} must point to the existing {$expected}.";
-            }
-        }
-        $this->packageFiles($packageDir, $frontend !== []);
+        // Section components (capability "sections") are browser source under src/ too.
+        $sectionsCapability = is_array($data['capabilities'] ?? null) && in_array('sections', $data['capabilities'], true);
+        $this->packageFiles($packageDir, $frontend !== [] || $sectionsCapability);
 
         $name = $this->string($data, 'name', 100, true);
         if ($name !== null && ! preg_match('/^[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?\/[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?$/', $name)) {
@@ -123,6 +119,9 @@ final class ThemeManifestValidator
         $this->design($data, $assetExists, $fonts);
         $this->darkColors($data, $capabilities);
         $this->sections($data, $capabilities, $assetExists);
+        if (in_array('sections', $capabilities, true)) {
+            $this->errors = [...$this->errors, ...Sections\SectionPackage::errors($packageDir, $assetExists)];
+        }
         $this->demoContent($data, $capabilities, $packageDir);
         $this->changelog($data);
 

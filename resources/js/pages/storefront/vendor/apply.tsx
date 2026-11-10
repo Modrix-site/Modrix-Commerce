@@ -30,7 +30,7 @@ export default function VendorApply({ application, countries }: Props) {
                         Sell on the marketplace
                     </h1>
                     <p className="text-muted-foreground">
-                        Publish modules and themes for EcoModular stores. Every
+                        Publish modules and themes for Modrix Commerce stores. Every
                         seller is verified, every release is reviewed and signed
                         before it is offered, and you are paid your share of
                         each sale.

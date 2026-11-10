@@ -1,0 +1,44 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/ccavenue",
+    "display_name": "CCAvenue",
+    "description": "CCAvenue payment gateway with hosted checkout, encrypted credentials, server-verified payments, callbacks, reconciliation and optional partial or full refunds.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "credit-card",
+    "accent": "#1856a5",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": { "psr-4": { "ModrixCommerce\\CCAvenue\\": "src/" } },
+    "provider": "ModrixCommerce\\CCAvenue\\CCAvenueServiceProvider",
+    "capabilities": [
+        "payment.gateway",
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "content_security"
+    ],
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": { "pages": "resources/js/pages" },
+    "content_security": {
+        "form-action": [
+            "https://test.ccavenue.com",
+            "https://secure.ccavenue.com"
+        ]
+    },
+    "admin_navigation": [
+        {
+            "key": "ccavenue",
+            "title": "CCAvenue",
+            "route": "index",
+            "icon": "credit-card",
+            "group": "Configuration",
+            "permission": "payments.manage",
+            "order": 866
+        }
+    ]
+}

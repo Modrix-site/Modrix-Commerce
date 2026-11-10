@@ -16,7 +16,7 @@ class InstallerTokenCommand extends Command
     {
         if ($state->isInstalled()) {
             $token->delete();
-            $this->components->error('EcoModular is already installed; the web installer is disabled.');
+            $this->components->error('Modrix Commerce is already installed; the web installer is disabled.');
 
             return self::FAILURE;
         }

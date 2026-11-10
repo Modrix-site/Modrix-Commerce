@@ -29,7 +29,7 @@ class FlashSalesTest extends TestCase
 {
     use CommerceFixtures, ModuleFixtures, RefreshDatabase;
 
-    private const ROUTE = 'admin.ecomodular.flash-sales.';
+    private const ROUTE = 'admin.modrixcommerce.flash-sales.';
 
     private User $marketer;
 
@@ -41,8 +41,8 @@ class FlashSalesTest extends TestCase
         $this->setUpModules();
         File::copyDirectory(base_path('modules'), $this->modulesPath);
         $modules = app(ModuleManager::class);
-        $modules->install('ecomodular/flash-sales');
-        $modules->enable('ecomodular/flash-sales', true);
+        $modules->install('modrixcommerce/flash-sales');
+        $modules->enable('modrixcommerce/flash-sales', true);
         $this->marketer = $this->owner();
     }
 
@@ -88,7 +88,7 @@ class FlashSalesTest extends TestCase
         $this->post(route(self::ROUTE.'store'), [...$payload, 'ends_at' => '2026-10-31T09:00'])->assertSessionHasErrors('ends_at');
 
         $this->get(route(self::ROUTE.'index'))->assertInertia(fn (Assert $page) => $page
-            ->component('module/ecomodular/flash-sales/admin/index', false)
+            ->component('module/modrixcommerce/flash-sales/admin/index', false)
             ->where('sales.0.name', 'Summer')
             ->where('sales.0.state', 'scheduled'));
     }
@@ -145,7 +145,7 @@ class FlashSalesTest extends TestCase
         $this->actingAs($this->marketer);
 
         $panel = app(StorefrontSlots::class)->render('admin.product.sidebar', ['product' => $product]);
-        $this->assertSame('ecomodular/flash-sales/ProductFlashSalePanel', $panel[0]['component'] ?? null);
+        $this->assertSame('modrixcommerce/flash-sales/ProductFlashSalePanel', $panel[0]['component'] ?? null);
         $this->assertSame($sale->id, $panel[0]['props']['sales'][0]['id']);
 
         $this->put(route(self::ROUTE.'product.update', $product), ['sale_id' => $sale->id, 'include' => true, 'discount_type' => 'percent', 'discount_value' => '30'])->assertSessionHasNoErrors();
@@ -156,7 +156,7 @@ class FlashSalesTest extends TestCase
         $this->assertNull(app(SalePrices::class)->forVariant($product->variants()->firstOrFail(), app(StoreSettings::class)->currency()));
 
         // The edit page shows the panel.
-        $this->get(route('admin.products.edit', $product))->assertInertia(fn (Assert $page) => $page->where('extensionPanels.0.component', 'ecomodular/flash-sales/ProductFlashSalePanel'));
+        $this->get(route('admin.products.edit', $product))->assertInertia(fn (Assert $page) => $page->where('extensionPanels.0.component', 'modrixcommerce/flash-sales/ProductFlashSalePanel'));
     }
 
     public function test_the_panel_changes_only_the_chosen_sale()
@@ -210,7 +210,7 @@ class FlashSalesTest extends TestCase
     {
         $product = $this->product('50.00');
         FlashSaleProduct::query()->create(['flash_sale_id' => $this->sale()->id, 'product_id' => $product->id]);
-        $manifest = app(ModuleRepository::class)->find('ecomodular/flash-sales')->manifest();
+        $manifest = app(ModuleRepository::class)->find('modrixcommerce/flash-sales')->manifest();
         $schema = app(ModuleSettingsSchema::class);
         $schema->save($manifest, [...$schema->values($manifest), 'show_countdown' => false]);
 
@@ -233,13 +233,13 @@ class FlashSalesTest extends TestCase
             ->where('product.sale.label', 'Flash sale')
             ->where('product.sale.countdown', true)
             // The notice under the price replaces a separate countdown block.
-            ->where('slots', fn ($slots) => ! collect($slots)->contains('component', 'ecomodular/flash-sales/FlashSaleCountdown')));
+            ->where('slots', fn ($slots) => ! collect($slots)->contains('component', 'modrixcommerce/flash-sales/FlashSaleCountdown')));
 
         $this->get(route('storefront.search'))->assertInertia(fn (Assert $page) => $page
             ->where('products.data.0.sale.label', 'Flash sale'));
 
         $this->get('/')->assertInertia(fn (Assert $page) => $page->where('slots', fn ($slots) => collect($slots)->contains(
-            fn ($s) => $s['component'] === 'ecomodular/flash-sales/FlashSaleBanner' && $s['props']['products'][0]['price']['amount'] === '40.00'
+            fn ($s) => $s['component'] === 'modrixcommerce/flash-sales/FlashSaleBanner' && $s['props']['products'][0]['price']['amount'] === '40.00'
         )));
 
         $this->addToCart($product->variants()->firstOrFail(), 1);

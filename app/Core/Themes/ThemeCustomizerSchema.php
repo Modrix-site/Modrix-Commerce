@@ -7,10 +7,28 @@ final class ThemeCustomizerSchema
     /** @return list<string> */
     public static function errors(mixed $schema, callable $assetExists): array
     {
-        if (! is_array($schema) || array_diff(array_keys($schema), ['title', 'description', 'hide_core_fields', 'fields', 'presets']) !== []) {
-            return ['customizer must contain only title, description, hide_core_fields, fields and presets.'];
+        if (! is_array($schema) || array_diff(array_keys($schema), ['title', 'description', 'mode', 'core_fields', 'sections', 'hide_core_fields', 'fields', 'presets']) !== []) {
+            return ['customizer must contain only title, description, mode, core_fields, sections, hide_core_fields, fields and presets.'];
         }
         $errors = [];
+        if (! in_array($schema['mode'] ?? 'extend', ['extend', 'replace'], true)) {
+            $errors[] = 'customizer.mode must be extend or replace.';
+        }
+        if (array_key_exists('sections', $schema) && ! is_bool($schema['sections'])) {
+            $errors[] = 'customizer.sections must be a boolean.';
+        }
+        if (array_key_exists('core_fields', $schema)) {
+            $core = $schema['core_fields'];
+            if (! is_array($core) || ! array_is_list($core)) {
+                $errors[] = 'customizer.core_fields must be a list of core field names.';
+            } else {
+                foreach ($core as $key) {
+                    if (! is_string($key) || ! array_key_exists($key, ThemeSchema::designFields())) {
+                        $errors[] = 'customizer.core_fields contains an unknown core field.';
+                    }
+                }
+            }
+        }
         foreach (['title' => 120, 'description' => 500] as $key => $max) {
             if (isset($schema[$key]) && (! is_string($schema[$key]) || mb_strlen($schema[$key]) > $max)) {
                 $errors[] = "customizer.{$key} must be text of at most {$max} characters.";
@@ -27,8 +45,8 @@ final class ThemeCustomizerSchema
             }
         }
         $fields = $schema['fields'] ?? [];
-        if (! is_array($fields) || count($fields) > 120 || ($fields !== [] && array_is_list($fields))) {
-            return [...$errors, 'customizer.fields must be an object with at most 120 fields.'];
+        if (! is_array($fields) || count($fields) > 160 || ($fields !== [] && array_is_list($fields))) {
+            return [...$errors, 'customizer.fields must be an object with at most 160 fields.'];
         }
         foreach ($fields as $key => $field) {
             if (! preg_match('/^custom\.[a-z][a-z0-9_]{0,49}$/', (string) $key) || ! is_array($field)

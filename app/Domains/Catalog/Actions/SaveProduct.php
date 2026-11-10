@@ -3,6 +3,7 @@
 namespace App\Domains\Catalog\Actions;
 
 use App\Core\Audit\AuditLogger;
+use App\Core\Content\RichText;
 use App\Domains\Catalog\Enums\ProductStatus;
 use App\Domains\Catalog\Enums\ProductType;
 use App\Domains\Catalog\Events\ProductCreated;
@@ -70,7 +71,7 @@ final class SaveProduct
                     default => $product->published_at,
                 },
                 'short_description' => $data['short_description'] ?? null,
-                'description' => $data['description'] ?? null,
+                'description' => RichText::clean($data['description'] ?? null),
                 'meta_title' => $data['meta_title'] ?? null,
                 'meta_description' => $data['meta_description'] ?? null,
                 'brand_id' => isset($data['brand_id']) ? (int) $data['brand_id'] : null,

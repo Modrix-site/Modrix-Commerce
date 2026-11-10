@@ -26,7 +26,7 @@
     - new files with `git add`;
     - shared tracked files as recorded pairs (`scratchpad/pairs.py`), with separate HEAD pairs when HEAD text differs;
     - integration that cannot exist on HEAD (the anchor code is only in the working tree) stays in the working tree and is listed in the final report;
-    - files of the 4 own-page themes (`themes/ecomodular/{nord,voltora,vellaro,hearth}`) and `atelier-chrome.tsx` / `electronics-chrome.tsx` are untracked other-developer files: working tree only.
+    - files of the 4 own-page themes (`themes/modrixcommerce/{nord,voltora,vellaro,hearth}`) and `atelier-chrome.tsx` / `electronics-chrome.tsx` are untracked other-developer files: working tree only.
 - **Gates:**
     - `export PATH="/c/php84:$PATH"`;
     - `vendor/bin/pint` (own files);
@@ -266,7 +266,7 @@ Expected: PASS.
 ### Task 6: Own-page themes (working tree only)
 
 **Files (working tree only):**
-- `themes/ecomodular/{nord,voltora,vellaro,hearth}/src/{header,catalog,product,cart}.tsx` and `style.css`;
+- `themes/modrixcommerce/{nord,voltora,vellaro,hearth}/src/{header,catalog,product,cart}.tsx` and `style.css`;
 - `resources/js/components/storefront/atelier-chrome.tsx` and `electronics-chrome.tsx`.
 
 **Interfaces:**

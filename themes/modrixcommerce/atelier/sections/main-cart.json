@@ -1,0 +1,50 @@
+{
+    "name": "Editorial shopping bag",
+    "enabled_on": {
+        "templates": ["cart"]
+    },
+    "settings": [
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Bag heading",
+            "default": "Shopping bag"
+        },
+        {
+            "type": "text",
+            "id": "summary_heading",
+            "label": "Summary heading",
+            "default": "Order summary"
+        },
+        {
+            "type": "text",
+            "id": "checkout_label",
+            "label": "Checkout button label",
+            "default": "Proceed to checkout"
+        },
+        {
+            "type": "text",
+            "id": "continue_label",
+            "label": "Continue shopping label",
+            "default": "Continue shopping"
+        },
+        {
+            "type": "text",
+            "id": "empty_heading",
+            "label": "Empty bag heading",
+            "default": "Your bag is empty"
+        },
+        {
+            "type": "text",
+            "id": "empty_button",
+            "label": "Empty bag button",
+            "default": "Explore the collection"
+        },
+        {
+            "type": "text",
+            "id": "shipping_note",
+            "label": "Shipping note",
+            "default": "Shipping and taxes calculated at checkout."
+        }
+    ]
+}

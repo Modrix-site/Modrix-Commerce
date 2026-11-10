@@ -1,0 +1,134 @@
+{
+    "name": "Footer",
+    "settings": [
+        {
+            "type": "select",
+            "id": "menu_source",
+            "label": "Footer menus",
+            "options": [
+                {
+                    "value": "auto",
+                    "label": "Admin → Navigation once saved, else theme links"
+                },
+                {
+                    "value": "store",
+                    "label": "Always Admin → Navigation"
+                },
+                {
+                    "value": "theme",
+                    "label": "Theme links only"
+                }
+            ],
+            "default": "auto"
+        },
+        {
+            "type": "text",
+            "id": "newsletter_heading",
+            "label": "Newsletter heading",
+            "default": "Newsletter"
+        },
+        {
+            "type": "text",
+            "id": "newsletter_body",
+            "label": "Newsletter text",
+            "default": "Register now for product updates, promotions and store news."
+        },
+        {
+            "type": "text",
+            "id": "copyright",
+            "label": "Copyright",
+            "default": "Relay Electronics. All rights reserved."
+        },
+        {
+            "type": "color",
+            "id": "background",
+            "label": "Background",
+            "default": "#f8f8f8"
+        },
+        {
+            "type": "color",
+            "id": "foreground",
+            "label": "Headings and text",
+            "default": "#222222"
+        },
+        {
+            "type": "color",
+            "id": "muted",
+            "label": "Secondary text",
+            "default": "#777777"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "link",
+            "name": "Footer link",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "group",
+                    "label": "Column heading",
+                    "default": "Quick links"
+                },
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Label",
+                    "default": ""
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Destination",
+                    "default": "/search"
+                }
+            ]
+        },
+        {
+            "type": "social",
+            "name": "Social link",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Network name",
+                    "default": ""
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Profile URL",
+                    "default": "https://www.instagram.com/"
+                }
+            ]
+        },
+        {
+            "type": "payment",
+            "name": "Payment label",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Label",
+                    "default": ""
+                },
+                {
+                    "type": "image",
+                    "id": "image",
+                    "label": "Payment logo"
+                }
+            ]
+        }
+    ],
+    "max_blocks": 50,
+    "presets": [
+        {
+            "name": "Footer"
+        }
+    ],
+    "enabled_on": {
+        "groups": [
+            "footer"
+        ]
+    },
+    "limit": 1
+}

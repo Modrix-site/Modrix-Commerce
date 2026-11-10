@@ -1,0 +1,1838 @@
+@import './mobile.css';
+.lv-shell {
+    --lv-green: var(--primary, #004236);
+    --lv-muted: var(--muted-foreground, #777);
+    --lv-yellow: var(--primary, #004236);
+    --lv-ink: var(--foreground, #373737);
+    --lv-line: var(--border, #e6e6e6);
+    --lv-panel: var(--muted, #f8f8f8);
+    --lv-blue: var(--primary, #004236);
+    color: var(--foreground, #373737);
+    background: var(--background, #fafafa);
+    font-family: var(--font-sans, 'Work Sans', sans-serif);
+    font-size: var(--lv-body-size, 14px);
+    line-height: 1.5;
+    min-width: 0;
+}
+.lv-shell * {
+    box-sizing: border-box;
+}
+.lv-shell a {
+    text-decoration: none;
+    color: inherit;
+}
+.lv-shell button,
+.lv-shell input,
+.lv-shell select {
+    font: inherit;
+}
+.lv-shell button {
+    cursor: pointer;
+}
+.lv-shell button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+.lv-shell :focus-visible {
+    outline: 2px solid var(--lv-green);
+    outline-offset: 4px;
+}
+.lv-shell h1,
+.lv-shell h2,
+.lv-shell h3 {
+    font-family: var(--font-heading, 'Fraunces', Georgia, serif);
+    font-weight: 500;
+    line-height: 1.3;
+}
+.lv-frame {
+    width: min(var(--lv-width, 1840px), calc(100% - 72px));
+    margin-inline: auto;
+    min-width: 0;
+}
+.lv-section {
+    margin-block: 70px;
+}
+.lv-section > h2,
+.lv-shelf h2,
+.lv-journal h2 {
+    font-size: var(--lv-heading-size, 28px);
+    text-align: center;
+    margin: 0 0 40px;
+    color: var(--lv-green);
+}
+.lv-shell
+    .theme-section[data-theme-area='header']:has(
+        > .lv-header[data-sticky='true']
+    ) {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    box-shadow: 0 2px 5px #00000008;
+}
+.lv-header {
+    background: var(--background, #fff);
+    border-bottom: 1px solid var(--lv-line);
+}
+.lv-header-main {
+    height: 74px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    gap: 28px;
+}
+.lv-wordmark {
+    justify-self: center;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    color: var(--lv-green) !important;
+    white-space: nowrap;
+}
+.lv-wordmark span {
+    font-family: var(--font-heading, Georgia, serif);
+    text-transform: uppercase;
+    font-size: 22px;
+    letter-spacing: 1.7px;
+}
+.lv-wordmark img {
+    width: 210px;
+    max-height: 52px;
+    object-fit: contain;
+}
+.lv-search {
+    border: 1px solid var(--lv-green);
+    border-radius: 40px;
+    width: 290px;
+    max-width: 100%;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+.lv-search input {
+    border: 0;
+    background: transparent;
+    padding: 9px 15px;
+    width: 100%;
+    min-width: 0;
+    outline: none;
+    font-size: 12px;
+}
+.lv-search button {
+    padding: 6px 12px;
+    border: 0;
+    background: transparent;
+    color: var(--lv-muted);
+}
+.lv-header-actions {
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+.lv-header-actions select {
+    border: 0;
+    background: transparent;
+    font-size: 11px;
+    max-width: 100px;
+}
+.lv-icon {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 3px;
+}
+.lv-count {
+    position: absolute;
+    top: -4px;
+    right: -6px;
+    min-width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--lv-green);
+    color: white;
+    font-size: 9px;
+    display: grid;
+    place-items: center;
+}
+.lv-header-menu {
+    display: none;
+}
+.lv-nav {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 25px;
+    min-height: 42px;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.lv-nav > a:nth-last-child(2) {
+    margin-inline-start: auto;
+}
+.lv-nav .store-menu-tree {
+    width: 100%;
+    gap: 25px;
+}
+.lv-nav > a:hover {
+    color: var(--lv-green);
+    text-decoration: underline;
+    text-underline-offset: 5px;
+}
+.lv-btn {
+    border: 1px solid var(--lv-green);
+    color: var(--lv-green) !important;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 13px 22px;
+    min-height: 43px;
+    border-radius: 2px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    line-height: 1.4;
+    transition:
+        background 0.2s,
+        color 0.2s;
+}
+.lv-shell .lv-btn-solid {
+    background: var(--lv-green);
+    color: var(--primary-foreground, #fff) !important;
+}
+.lv-shell .lv-btn-light {
+    background: #fff;
+    color: var(--lv-green) !important;
+    border-color: white;
+}
+.lv-btn:hover {
+    background: var(--lv-green);
+    color: white !important;
+}
+.lv-btn-light:hover {
+    background: #f4f3ed;
+    color: var(--lv-green) !important;
+}
+.lv-text-link {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 5px;
+}
+.lv-hero {
+    position: relative;
+    min-height: var(--lv-hero-height, 600px);
+    isolation: isolate;
+}
+.lv-hero > img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+.lv-hero > .lv-frame {
+    min-height: inherit;
+    display: flex;
+    align-items: center;
+}
+.lv-hero > .lv-frame > div {
+    width: 60%;
+    padding-block: 60px;
+}
+.lv-hero h1 {
+    font-size: var(--lv-hero-title, 56px);
+    margin: 8px 0 0;
+    white-space: pre-line;
+    max-width: 850px;
+}
+.lv-hero p {
+    margin: 0 0 10px;
+    font-size: 18px;
+    max-width: 620px;
+}
+.lv-hero .lv-btn {
+    margin-top: 22px;
+}
+.lv-ranges {
+    max-width: 1530px;
+}
+.lv-ranges > div {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 16px;
+}
+.lv-ranges a {
+    display: block;
+    text-align: center;
+    background: var(--muted, #f5f5f5);
+}
+.lv-ranges img {
+    width: 100%;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    border-radius: 5px 5px 0 0;
+}
+.lv-ranges h3 {
+    font-size: 19px;
+    margin: 13px 5px 15px;
+}
+.lv-shelf {
+    padding-block: 60px;
+}
+.lv-shelf h2 {
+    margin-bottom: 34px;
+}
+.lv-rail-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 35px;
+    margin: -10px 0 32px;
+    flex-wrap: wrap;
+}
+.lv-rail-tabs button {
+    background: transparent;
+    border: 0;
+    color: var(--lv-muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    padding: 8px 0;
+}
+.lv-rail-tabs button[aria-selected='true'] {
+    color: var(--foreground, #373737);
+    border-bottom: 1px solid var(--lv-green);
+}
+.lv-shelf-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+}
+.lv-shelf-campaign {
+    grid-template-columns: 22% minmax(0, 1fr);
+}
+.lv-rail-wrap {
+    min-width: 0;
+    position: relative;
+}
+.lv-product-carousel {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - 48px) /4.2);
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    min-width: 0;
+}
+.lv-product-carousel::-webkit-scrollbar {
+    display: none;
+}
+.lv-product-carousel > .lv-card {
+    scroll-snap-align: start;
+}
+.lv-rail-arrows {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 15px;
+}
+.lv-rail-arrows button {
+    padding: 5px;
+    border: 0;
+    background: none;
+    color: #888;
+}
+.lv-campaign-tile {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    text-align: center;
+    min-height: 100%;
+}
+.lv-campaign-tile > img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+.lv-campaign-tile > div {
+    padding: 24px 20px;
+    color: white;
+}
+.lv-campaign-tile h3 {
+    font-size: 27px;
+    margin: 0 0 25px;
+}
+.lv-campaign-tile .lv-btn {
+    font-size: 10px;
+    padding: 10px 20px;
+}
+.lv-card {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.lv-card-image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1/1.12;
+    position: relative;
+    background: var(--muted, #f8f8f8);
+    overflow: hidden;
+}
+.lv-card-image > img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.4s;
+}
+.lv-card:hover .lv-card-image > img {
+    transform: scale(1.025);
+}
+.lv-card-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: var(--lv-sale);
+    color: white;
+    padding: 3px 7px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+.lv-card-brand {
+    display: none;
+}
+.lv-card-name {
+    display: block;
+    font-size: var(--lv-card-size, 14px);
+    font-weight: 500;
+    line-height: 1.4;
+    margin: 12px 0 4px;
+    min-height: 39px;
+}
+.lv-card-price {
+    font-size: 12px;
+    margin: 0 0 8px;
+    line-height: 1.5;
+}
+.lv-card-price s {
+    font-size: 11px;
+    color: #999;
+    margin-inline-start: 6px;
+}
+.lv-card-sale {
+    font-size: 11px;
+    color: var(--lv-sale);
+    font-weight: 600;
+    margin-block: 3px;
+}
+.lv-card-stock {
+    display: none;
+}
+.lv-card-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: auto;
+    align-items: center;
+    padding-top: 8px;
+}
+.lv-card-actions > form {
+    flex: 1;
+    min-width: 0;
+}
+.lv-card-actions .lv-btn {
+    width: 100%;
+    padding: 10px 8px;
+    min-height: 40px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    background: transparent;
+    color: var(--lv-green) !important;
+}
+.lv-card-actions > .lv-btn {
+    flex: 1;
+}
+.lv-card-save {
+    display: none;
+    width: 28px;
+    height: 28px;
+    padding: 6px;
+    border: 1px solid var(--lv-line);
+    background: var(--background, #fff);
+}
+.lv-card:hover .lv-card-save,
+.lv-card:focus-within .lv-card-save {
+    display: inline-flex;
+}
+.lv-card-save[aria-pressed='true'] {
+    background: var(--lv-green);
+    color: white;
+}
+.lv-product-summary .lv-card-save {
+    display: inline-flex;
+}
+.lv-card .store-product-labels {
+    z-index: 1;
+}
+.lv-card-discount {
+    color: var(--lv-sale);
+}
+.lv-editorial {
+    padding: 40px 0;
+}
+.lv-editorial > .lv-frame {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 55px;
+}
+.lv-editorial > .lv-frame > img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    border-radius: 5px;
+}
+.lv-editorial h2 {
+    font-size: clamp(28px, 2.6vw, 44px);
+    margin: 0 0 12px;
+}
+.lv-editorial p {
+    max-width: 680px;
+    margin: 0 0 28px;
+    line-height: 1.8;
+}
+.lv-journal {
+    padding: 65px 0;
+    background: var(--muted, #f8f8f8);
+}
+.lv-journal > .lv-frame > div {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 55px;
+}
+.lv-journal article {
+    text-align: center;
+}
+.lv-journal img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    border-radius: 5px;
+}
+.lv-journal h3 {
+    font-size: 24px;
+    margin: 20px 0 9px;
+}
+.lv-journal p {
+    font-size: 13px;
+    max-width: 340px;
+    margin: 0 auto 24px;
+}
+.lv-values {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-block: 45px 100px;
+}
+.lv-values > div {
+    text-align: center;
+    padding: 35px 20px;
+    background: #e9ebce;
+    border-radius: 5px;
+}
+.lv-values svg {
+    margin: 0 auto 17px;
+    color: #849e8a;
+}
+.lv-values h3 {
+    font-size: 21px;
+    margin: 0 0 10px;
+}
+.lv-values p {
+    font-size: 12px;
+    margin: 0;
+}
+.lv-breadcrumb {
+    margin: 25px 0;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--lv-muted);
+    line-height: 1.8;
+}
+.lv-breadcrumb a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.lv-catalog-intro {
+    text-align: center;
+    padding: 20px 0 55px;
+    max-width: 780px;
+    margin-inline: auto;
+}
+.lv-catalog-intro h1 {
+    font-size: 36px;
+    margin: 0 0 20px;
+}
+.lv-catalog-intro p {
+    font-size: 14px;
+    line-height: 1.6;
+}
+.lv-catalog {
+    display: grid;
+    grid-template-columns: 270px minmax(0, 1fr);
+    gap: 45px;
+    margin-top: 40px;
+    margin-bottom: 100px;
+}
+.lv-catalog main {
+    min-width: 0;
+}
+.lv-catalog main > h1 {
+    font-size: 36px;
+    margin: 0 0 20px;
+}
+.lv-filter {
+    padding-block: 20px 25px;
+    border-top: 1px solid var(--lv-line);
+}
+.lv-filter h3,
+.lv-filter h4 {
+    font-family: var(--font-sans, sans-serif);
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 0 15px;
+}
+.lv-filter label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    letter-spacing: 0.4px;
+    color: var(--lv-muted);
+    margin: 7px 0;
+}
+.lv-filter input[type='checkbox'] {
+    accent-color: var(--lv-green);
+    width: 13px;
+    height: 13px;
+}
+.lv-filter ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.lv-filter li a {
+    display: inline-flex;
+    font-size: 13px;
+    padding-block: 5px;
+}
+.lv-filter li[aria-current] a {
+    color: var(--lv-green);
+}
+.lv-filter li ul {
+    padding-inline-start: 15px;
+}
+.lv-filter .lv-category-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+}
+.lv-category-row button {
+    border: 0;
+    background: none;
+    padding: 3px;
+}
+.lv-price-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.lv-price-inputs label {
+    display: grid;
+    gap: 4px;
+}
+.lv-price-inputs input {
+    width: 100%;
+    border: 1px solid var(--lv-line);
+    padding: 8px;
+    background: var(--background, #fff);
+}
+.lv-filter .lv-btn {
+    width: 100%;
+    margin-top: 12px;
+}
+.lv-filter-toggle {
+    display: none;
+}
+.lv-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--lv-line);
+    padding-bottom: 24px;
+    margin-bottom: 30px;
+    gap: 15px;
+    font-size: 12px;
+}
+.lv-toolbar select {
+    padding: 12px 18px;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--lv-green);
+    font-size: 12px;
+    min-width: 140px;
+}
+.lv-toolbar label {
+    font-size: 0;
+}
+.lv-toolbar .lv-icon {
+    display: none;
+}
+.lv-active-filters {
+    font-size: 12px;
+    padding: 10px 15px;
+    border: 1px solid var(--lv-line);
+    background: transparent;
+    margin-bottom: 20px;
+}
+.lv-product-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--lv-columns, 4), minmax(0, 1fr));
+    gap: 40px 16px;
+}
+.lv-list-view {
+    grid-template-columns: 1fr;
+}
+.lv-list-view .lv-card {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 5px 25px;
+}
+.lv-list-view .lv-card-image {
+    grid-row: 1/8;
+}
+.lv-list-view .lv-card-actions {
+    justify-content: start;
+}
+.lv-list-view .lv-card-actions form {
+    max-width: 240px;
+}
+.lv-pagination {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    margin: 60px 0 0;
+}
+.lv-pagination > a {
+    padding: 8px;
+    font-size: 13px;
+    border-bottom: 1px solid transparent;
+}
+.lv-pagination > a[aria-current='page'] {
+    border-color: var(--lv-green);
+}
+.lv-product {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 55px;
+    align-items: start;
+    margin-top: 15px;
+}
+.lv-gallery {
+    min-width: 0;
+}
+.lv-main-image {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 720px;
+    background: var(--muted, #f8f8f8);
+}
+.lv-main-image > img {
+    width: 100%;
+    height: 780px;
+    object-fit: contain;
+}
+.lv-image-zoom {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    border: 0;
+    background: var(--background, #fff);
+    padding: 10px;
+}
+.lv-thumbs {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+}
+.lv-thumbs button {
+    border: 1px solid var(--lv-line);
+    background: transparent;
+    padding: 0;
+    width: 72px;
+    height: 80px;
+}
+.lv-thumbs img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.lv-thumbs button[aria-pressed='true'] {
+    border-color: var(--lv-green);
+}
+.lv-product-summary {
+    min-width: 0;
+}
+.lv-product-summary > h1 {
+    font-size: var(--lv-product-title, 36px);
+    margin: 12px 0 20px;
+}
+.lv-product-intro {
+    margin: 0 0 24px;
+    color: var(--lv-muted);
+    font-size: 14px;
+}
+.lv-product-price {
+    font-family: var(--font-heading, Georgia, serif);
+    font-weight: 500;
+    font-size: 28px;
+    margin-bottom: 25px;
+}
+.lv-product-price s {
+    font-family: var(--font-sans, sans-serif);
+    font-size: 14px;
+    color: #999;
+    margin-inline-start: 15px;
+}
+.lv-product-summary .store-place {
+    margin-block: 20px;
+}
+.lv-options {
+    padding: 25px 0;
+    border-top: 1px solid var(--lv-line);
+}
+.lv-options fieldset {
+    margin-bottom: 18px;
+}
+.lv-options legend {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+.lv-options label span {
+    border-radius: 2px;
+    min-height: 40px;
+}
+.lv-purchase-row {
+    display: flex;
+    gap: 16px;
+    align-items: stretch;
+    margin: 12px 0 25px;
+}
+.lv-quantity {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--lv-line);
+    width: 190px;
+    flex-shrink: 0;
+    min-height: 52px;
+}
+.lv-quantity input {
+    width: 100%;
+    min-width: 0;
+    text-align: center;
+    border: 0;
+    background: transparent;
+    font-size: 13px;
+    appearance: textfield;
+}
+.lv-quantity input::-webkit-inner-spin-button {
+    appearance: none;
+}
+.lv-quantity button {
+    border: 0;
+    background: none;
+    padding: 15px;
+    color: #888;
+}
+.lv-purchase-row > .lv-btn {
+    flex: 1;
+    min-height: 52px;
+    font-size: 12px;
+}
+.lv-product-services {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 35px 0 20px;
+}
+.lv-product-services > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 20px 12px;
+    border: 1px solid var(--lv-line);
+    border-radius: 6px;
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+.lv-product-services svg {
+    color: #94ada5;
+    flex-shrink: 0;
+}
+.lv-product-accordions details {
+    border-bottom: 1px solid var(--lv-line);
+}
+.lv-product-accordions summary {
+    list-style: none;
+    position: relative;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 26px 30px 26px 0;
+}
+.lv-product-accordions summary:after {
+    content: '⌄';
+    position: absolute;
+    right: 5px;
+    color: #888;
+}
+.lv-product-accordions details[open] summary:after {
+    content: '−';
+}
+.lv-product-accordions details > div,
+.lv-product-accordions details > p {
+    padding-bottom: 24px;
+    font-size: 13px;
+    line-height: 1.8;
+}
+.lv-product-save {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 25px 0;
+}
+.lv-product-share {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--lv-muted);
+}
+.lv-product-share button {
+    border: 1px solid var(--lv-line);
+    background: transparent;
+    padding: 7px;
+}
+.lv-product-recommendations {
+    margin-top: 70px;
+}
+.lv-product-recommendations h2 {
+    text-align: center;
+    font-size: 23px;
+    margin-bottom: 35px;
+}
+.lv-product-recommendations .lv-product-carousel {
+    grid-auto-columns: calc((100% - 42px) /4);
+    gap: 14px;
+}
+.lv-product-recommendations .lv-card-image {
+    aspect-ratio: 1/1.2;
+}
+.lv-product-recommendations .lv-card-name {
+    font-size: 12px;
+}
+.lv-product-recommendations .lv-card-actions .lv-btn {
+    font-size: 9px;
+    letter-spacing: 1px;
+    padding: 9px 5px;
+}
+.lv-recent {
+    margin-top: 100px;
+}
+.lv-recent > h2 {
+    text-align: start;
+    color: var(--foreground, #373737);
+}
+.lv-zoom {
+    position: fixed;
+    inset: 0;
+    background: #ffffffef;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 50px;
+}
+.lv-zoom > img {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+}
+.lv-zoom > button {
+    position: absolute;
+    right: 25px;
+    top: 25px;
+    border: 0;
+    background: transparent;
+    padding: 10px;
+}
+.lv-footer {
+    margin-top: 70px;
+    border-top: 1px solid var(--lv-line);
+    background: var(--background, #fff);
+}
+.lv-footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 55px;
+    padding: 75px 0 60px;
+}
+.lv-footer h3 {
+    font-family: var(--font-sans, sans-serif);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    margin: 0 0 22px;
+    color: var(--lv-muted);
+}
+.lv-footer nav > a {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin: 9px 0;
+}
+.lv-footer-newsletter {
+    max-width: 480px;
+}
+.lv-footer-newsletter form {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.lv-footer-newsletter input[type='email'] {
+    padding: 12px 15px;
+    min-width: 0;
+    border: 1px solid var(--lv-line);
+    border-radius: 3px;
+    font-size: 12px;
+    flex: 1;
+}
+.lv-footer-newsletter form button[type='submit'] {
+    font-size: 10px;
+    letter-spacing: 1.7px;
+    text-transform: uppercase;
+    background: transparent;
+    border: 1px solid var(--lv-line);
+    color: var(--foreground, #333);
+}
+.lv-footer-newsletter form > label {
+    width: 100%;
+    font-size: 10px;
+    color: var(--lv-muted);
+}
+.lv-socials {
+    display: flex;
+    gap: 18px;
+    margin-top: 50px;
+    color: #666;
+}
+.lv-footer-qr {
+    grid-column: 2;
+}
+.lv-footer-qr img {
+    width: 100px;
+}
+.lv-footer-app {
+    grid-column: 3/5;
+}
+.lv-footer-app a {
+    display: inline-flex;
+    background: #111;
+    color: white;
+    font-size: 12px;
+    padding: 7px 12px;
+    margin-inline-end: 8px;
+}
+.lv-footer-bottom {
+    border-top: 1px solid var(--lv-line);
+    padding: 25px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #999;
+    gap: 20px;
+}
+.lv-footer-bottom > div {
+    display: flex;
+    gap: 12px;
+}
+.lv-footer-bottom img {
+    height: 20px;
+    max-width: 60px;
+    object-fit: contain;
+}
+.lv-footer-bottom > button {
+    border: 0;
+    background: var(--lv-green);
+    color: white;
+    padding: 10px;
+    border-radius: 3px;
+}
+.lv-empty {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--lv-muted);
+}
+.lv-empty h3 {
+    font-size: 25px;
+}
+.lv-empty .lv-btn {
+    margin-top: 20px;
+}
+.lv-muted {
+    color: var(--lv-muted);
+}
+.lv-page {
+    max-width: 1100px;
+    margin-block: 60px 100px;
+}
+.lv-page h1 {
+    font-size: 36px;
+    margin-bottom: 30px;
+}
+.lv-page h2 {
+    font-size: 25px;
+    margin-block: 25px 15px;
+}
+.lv-page p {
+    margin-block: 15px;
+}
+.lv-drawer {
+    position: fixed;
+    inset: 0 0 0 auto;
+    margin: 0;
+    width: min(650px, 95vw);
+    height: 100dvh;
+    max-height: 100dvh;
+    border: 0;
+    padding: 0;
+    background: var(--background, #fff);
+    color: var(--foreground, #333);
+}
+.lv-drawer::backdrop {
+    background: #0006;
+}
+.lv-drawer-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px;
+    border-bottom: 1px solid var(--lv-line);
+}
+.lv-drawer-head h2 {
+    font-size: 24px;
+}
+.lv-drawer-body {
+    padding: 25px;
+    overflow: auto;
+    height: calc(100% - 90px);
+}
+.lv-saved-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 1px solid var(--lv-line);
+    padding: 20px 0;
+}
+.lv-saved-item img {
+    width: 90px;
+    height: 100px;
+    object-fit: contain;
+}
+.lv-saved-item > div {
+    flex: 1;
+}
+.lv-saved-item h3 {
+    font-size: 17px;
+}
+.lv-saved-item .lv-btn {
+    margin-top: 12px;
+    font-size: 10px;
+}
+.lv-compare-table {
+    font-size: 12px;
+    width: 100%;
+    border-collapse: collapse;
+}
+.lv-compare-table td,
+.lv-compare-table th {
+    padding: 10px;
+    text-align: start;
+    border-bottom: 1px solid var(--lv-line);
+}
+.lv-compare-table img {
+    width: 70px;
+    height: 80px;
+    object-fit: contain;
+}
+.lv-countdown {
+    font-size: 12px;
+    background: var(--lv-green);
+    color: white;
+    padding: 5px 12px;
+}
+.lv-product-summary [aria-labelledby='fbt-heading'],
+.lv-product-summary .cross-sell-offers {
+    border: 1px solid var(--lv-line);
+    border-radius: 5px;
+    padding: 20px;
+    margin-block: 25px;
+}
+.lv-product-summary [aria-labelledby='fbt-heading'] h2,
+.lv-product-summary .cross-sell-offers h2 {
+    font-size: 21px;
+}
+.lv-product-summary [aria-labelledby='fbt-heading'] > ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.lv-product-summary [aria-labelledby='fbt-heading'] > ul > li {
+    min-width: 0;
+    flex-wrap: wrap;
+}
+.lv-shell .storefront {
+    min-width: 0;
+}
+.lv-shell .store-sticky-add-to-cart {
+    border-radius: 0;
+}
+@media (max-width: 1400px) {
+    .lv-frame {
+        width: calc(100% - 48px);
+    }
+    .lv-nav {
+        gap: 18px;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+    }
+    .lv-nav .store-menu-tree {
+        gap: 18px;
+    }
+    .lv-hero {
+        --lv-hero-height: 500px;
+    }
+    .lv-hero h1 {
+        font-size: clamp(35px, 3.5vw, var(--lv-hero-title, 56px));
+    }
+    .lv-catalog {
+        grid-template-columns: 220px minmax(0, 1fr);
+        gap: 30px;
+    }
+    .lv-product {
+        gap: 35px;
+    }
+    .lv-main-image {
+        min-height: 600px;
+    }
+    .lv-main-image > img {
+        height: 650px;
+    }
+    .lv-purchase-row {
+        flex-wrap: wrap;
+    }
+    .lv-quantity {
+        width: 150px;
+    }
+    .lv-footer-grid {
+        gap: 30px;
+    }
+    .lv-wordmark span {
+        font-size: 19px;
+    }
+    .lv-journal > .lv-frame > div {
+        gap: 35px;
+    }
+}
+@media (max-width: 1000px) {
+    .lv-header-main {
+        gap: 15px;
+    }
+    .lv-header-actions {
+        gap: 14px;
+    }
+    .lv-nav {
+        flex-wrap: wrap;
+        gap: 12px 18px;
+        justify-content: center;
+        padding-bottom: 12px;
+    }
+    .lv-nav > a:nth-last-child(2) {
+        margin-inline-start: 0;
+    }
+    .lv-wordmark span {
+        font-size: 16px;
+    }
+    .lv-wordmark svg {
+        width: 22px;
+    }
+    .lv-search {
+        width: 230px;
+    }
+    .lv-hero p {
+        font-size: 15px;
+    }
+    .lv-hero > .lv-frame > div {
+        width: 65%;
+    }
+    .lv-shelf-campaign {
+        grid-template-columns: 25% minmax(0, 1fr);
+    }
+    .lv-product-carousel {
+        grid-auto-columns: calc((100% - 32px) /3.2);
+    }
+    .lv-ranges h3 {
+        font-size: 15px;
+    }
+    .lv-product-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .lv-main-image > img {
+        height: 500px;
+    }
+    .lv-main-image {
+        min-height: 500px;
+    }
+    .lv-product-summary > h1 {
+        font-size: 30px;
+    }
+    .lv-product-recommendations .lv-product-carousel {
+        grid-auto-columns: calc((100% - 14px) /2.2);
+    }
+    .lv-product-services {
+        grid-template-columns: 1fr;
+    }
+    .lv-footer-grid {
+        grid-template-columns: 1.5fr 1fr 1fr;
+    }
+    .lv-footer-newsletter {
+        grid-column: 1/-1;
+        max-width: 500px;
+    }
+    .lv-footer-qr {
+        grid-column: auto;
+    }
+    .lv-values {
+        margin-bottom: 60px;
+    }
+    .lv-editorial > .lv-frame {
+        gap: 30px;
+    }
+}
+@media (max-width: 767px) {
+    .lv-frame {
+        width: calc(100% - 32px);
+    }
+    .lv-header-main {
+        height: 65px;
+        grid-template-columns: auto 1fr auto;
+        gap: 10px;
+    }
+    .lv-header-menu {
+        display: inline-flex;
+    }
+    .lv-header-main > .lv-search {
+        display: none;
+    }
+    .lv-wordmark span {
+        font-size: 16px;
+        letter-spacing: 0.8px;
+    }
+    .lv-wordmark svg {
+        width: 21px;
+    }
+    .lv-header-actions {
+        gap: 14px;
+    }
+    .lv-header-actions select,
+    .lv-header-actions > a[aria-label='My account'] {
+        display: none;
+    }
+    .lv-header-actions svg {
+        width: 21px;
+    }
+    .lv-nav {
+        display: none;
+    }
+    .lv-nav-open {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        padding-block: 15px;
+        max-height: 60vh;
+        overflow: auto;
+    }
+    .lv-nav > a {
+        padding: 10px;
+        border-bottom: 1px solid var(--lv-line);
+    }
+    .lv-hero,
+    .lv-hero > .lv-frame {
+        min-height: 470px;
+    }
+    .lv-hero > img {
+        object-position: 64% center;
+    }
+    .lv-hero:before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, #40323a80, transparent);
+        z-index: -1;
+    }
+    .lv-hero > .lv-frame > div {
+        width: 85%;
+        padding-block: 40px;
+    }
+    .lv-hero h1 {
+        font-size: 37px;
+    }
+    .lv-hero p {
+        font-size: 14px;
+        max-width: 280px;
+    }
+    .lv-hero .lv-btn {
+        font-size: 10px;
+        padding: 12px 16px;
+    }
+    .lv-section {
+        margin-block: 40px;
+    }
+    .lv-section > h2,
+    .lv-shelf h2,
+    .lv-journal h2 {
+        font-size: 24px;
+        margin-bottom: 25px;
+    }
+    .lv-ranges > div {
+        display: grid;
+        grid-auto-flow: column;
+        grid-template-columns: none;
+        grid-auto-columns: 42%;
+        gap: 12px;
+        overflow: auto;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+    }
+    .lv-ranges a {
+        scroll-snap-align: start;
+    }
+    .lv-ranges h3 {
+        font-size: 17px;
+    }
+    .lv-shelf {
+        padding-block: 35px;
+    }
+    .lv-product-carousel {
+        grid-auto-columns: calc((100% - 12px) /2.15);
+        gap: 12px;
+    }
+    .lv-card-name {
+        font-size: 12px;
+        min-height: 35px;
+    }
+    .lv-card-price {
+        font-size: 11px;
+    }
+    .lv-card-badge {
+        font-size: 9px;
+        padding: 2px 5px;
+        top: 7px;
+        left: 7px;
+    }
+    .lv-card-actions .lv-btn {
+        font-size: 8px;
+        padding: 9px 4px;
+        letter-spacing: 1.2px;
+        min-height: 36px;
+    }
+    .lv-card-save {
+        display: none !important;
+    }
+    .lv-card-stock {
+        display: none;
+    }
+    .lv-shelf-campaign {
+        grid-template-columns: 1fr;
+    }
+    .lv-campaign-tile {
+        min-height: 220px;
+    }
+    .lv-campaign-tile > img {
+        object-position: center 60%;
+    }
+    .lv-campaign-tile > div {
+        max-width: 70%;
+        margin-inline-start: auto;
+        align-self: center;
+    }
+    .lv-campaign-tile h3 {
+        font-size: 25px;
+    }
+    .lv-editorial {
+        padding: 25px 0;
+    }
+    .lv-editorial > .lv-frame {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    .lv-editorial > .lv-frame > div {
+        padding: 5px 0 20px;
+    }
+    .lv-editorial h2 {
+        font-size: 30px;
+    }
+    .lv-editorial p {
+        font-size: 13px;
+    }
+    .lv-journal {
+        padding: 40px 0;
+    }
+    .lv-journal > .lv-frame > div {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    .lv-journal h3 {
+        font-size: 24px;
+    }
+    .lv-values {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-block: 30px 50px;
+    }
+    .lv-values > div {
+        padding: 25px;
+    }
+    .lv-values h3 {
+        font-size: 21px;
+    }
+    .lv-breadcrumb {
+        font-size: 9px;
+        margin: 18px 0;
+    }
+    .lv-catalog-intro {
+        padding: 15px 16px 25px;
+    }
+    .lv-catalog-intro h1 {
+        font-size: 30px;
+    }
+    .lv-catalog-intro p {
+        font-size: 12px;
+    }
+    .lv-catalog {
+        display: block;
+        margin-top: 20px;
+        margin-bottom: 50px;
+    }
+    .lv-catalog main > h1 {
+        font-size: 30px;
+    }
+    .lv-filter-toggle {
+        display: flex;
+        margin-bottom: 20px;
+        gap: 10px;
+        min-height: 40px;
+    }
+    .lv-catalog > aside {
+        display: none;
+    }
+    .lv-catalog > aside.lv-filters-open {
+        display: block;
+        margin-bottom: 25px;
+        border: 1px solid var(--lv-line);
+        padding: 20px;
+    }
+    .lv-toolbar {
+        font-size: 10px;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+    .lv-toolbar select {
+        min-width: 120px;
+        padding: 10px 8px;
+        font-size: 11px;
+    }
+    .lv-product-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 28px 12px;
+    }
+    .lv-list-view {
+        grid-template-columns: 1fr;
+    }
+    .lv-list-view .lv-card {
+        grid-template-columns: 100px 1fr;
+        gap: 5px 15px;
+    }
+    .lv-product {
+        grid-template-columns: 1fr;
+        gap: 25px;
+        margin-top: 0;
+    }
+    .lv-main-image {
+        min-height: 350px;
+    }
+    .lv-main-image > img {
+        height: 400px;
+    }
+    .lv-thumbs {
+        gap: 8px;
+    }
+    .lv-thumbs button {
+        width: 58px;
+        height: 65px;
+    }
+    .lv-product-summary > h1 {
+        font-size: 29px;
+        margin-bottom: 15px;
+    }
+    .lv-product-intro {
+        font-size: 13px;
+    }
+    .lv-product-price {
+        font-size: 25px;
+    }
+    .lv-purchase-row {
+        gap: 10px;
+    }
+    .lv-quantity {
+        width: 120px;
+    }
+    .lv-purchase-row > .lv-btn {
+        font-size: 10px;
+        padding: 12px 10px;
+        letter-spacing: 1.3px;
+    }
+    .lv-product-services {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+    .lv-product-services > div {
+        font-size: 8px;
+        padding: 16px 7px;
+        gap: 8px;
+    }
+    .lv-product-services svg {
+        width: 20px;
+    }
+    .lv-product-accordions summary {
+        padding-block: 22px;
+    }
+    .lv-product-recommendations {
+        margin-top: 40px;
+    }
+    .lv-product-recommendations .lv-product-carousel {
+        grid-auto-columns: calc((100% - 12px) /2.1);
+    }
+    .lv-recent {
+        margin-top: 50px;
+    }
+    .lv-footer {
+        margin-top: 45px;
+    }
+    .lv-footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        padding-block: 40px;
+    }
+    .lv-footer h3 {
+        font-size: 9px;
+        letter-spacing: 1px;
+        margin-bottom: 15px;
+    }
+    .lv-footer nav > a {
+        font-size: 11px;
+    }
+    .lv-footer-app {
+        grid-column: 1/-1;
+    }
+    .lv-footer-qr {
+        grid-column: auto;
+    }
+    .lv-footer-qr img {
+        width: 80px;
+    }
+    .lv-footer-bottom {
+        font-size: 9px;
+        flex-wrap: wrap;
+        padding-bottom: 25px;
+    }
+    .lv-footer-bottom > div {
+        flex-wrap: wrap;
+    }
+    .lv-socials {
+        margin-top: 30px;
+    }
+    .lv-zoom {
+        padding: 15px;
+    }
+    .lv-shell .lv-product-save .lv-card-save {
+        display: inline-flex !important;
+    }
+    .lv-shell .storefront {
+        padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+    }
+    .lv-page {
+        margin-block: 30px 60px;
+    }
+    .lv-page h1 {
+        font-size: 30px;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .lv-card-image > img,
+    .lv-btn {
+        transition: none;
+    }
+    .lv-product-carousel {
+        scroll-behavior: auto;
+    }
+}
+
+.lv-header-main {
+    height: 64px;
+}
+.lv-nav {
+    min-height: 33px;
+}
+.lv-card-actions .lv-btn svg {
+    display: none;
+}
+@media (max-width: 767px) {
+    .lv-header-main {
+        height: 65px;
+    }
+}
+
+.lv-card-badge {
+    left: auto;
+    right: 10px;
+}
+
+.lv-filter h2 {
+    font-family: var(--font-sans, sans-serif);
+    font-size: 14px;
+    font-weight: 400;
+    margin: 0 0 15px;
+}
+.lv-zoom {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    border: 0;
+}
+.lv-zoom:not([open]) {
+    display: none;
+}
+
+.lv-catalog>div{min-width:0}
+
+.lv-footer nav>a{color:inherit;font-size:var(--lv-footer-size,12px)}.lv-footer h3{font-size:calc(var(--lv-footer-size,12px) - 2px)}.lv-nav{font-size:var(--lv-nav-size,13px)}.lv-btn{font-size:var(--lv-button-size,11px)}.lv-catalog-intro h1{font-size:var(--lv-catalog-title,36px)}.lv-card-image{aspect-ratio:var(--lv-card-ratio,1/1.12)}
+
+/* Compact sticky header while scrolling: slimmer logo, search and icon row;
+   the menu stays, tightened onto one line. */
+.lv-header-main,
+.lv-wordmark span,
+.lv-wordmark img,
+.lv-search,
+.lv-nav {
+    transition:
+        height 0.2s ease,
+        min-height 0.2s ease,
+        font-size 0.2s ease,
+        width 0.2s ease;
+}
+@media (min-width: 768px) {
+    .lv-header[data-compact='true'] .lv-header-main {
+        height: 52px;
+    }
+    .lv-header[data-compact='true'] .lv-wordmark span {
+        font-size: 17px;
+    }
+    .lv-header[data-compact='true'] .lv-wordmark svg {
+        width: 20px;
+        height: 20px;
+    }
+    .lv-header[data-compact='true'] .lv-wordmark img {
+        max-height: 34px;
+    }
+    .lv-header[data-compact='true'] .lv-search {
+        height: 32px;
+        width: 240px;
+    }
+    .lv-header[data-compact='true'] .lv-header-actions {
+        gap: 16px;
+    }
+    .lv-header[data-compact='true'] .lv-header-actions select {
+        display: none;
+    }
+    .lv-header[data-compact='true'] .lv-nav {
+        min-height: 34px;
+        font-size: 11px;
+        letter-spacing: 0.6px;
+        gap: 16px;
+    }
+    .lv-header[data-compact='true'] .lv-nav .store-menu-tree {
+        gap: 4px 16px;
+    }
+    .lv-header[data-compact='true']
+        .lv-nav
+        .store-menu-tree
+        > .store-menu-item
+        > .store-menu-row
+        > .store-menu-link {
+        padding-block: 6px;
+    }
+}
+
+/* Full-width module area under the product (bundles, reviews, recommendations). */
+.lv-product-modules {
+    display: grid;
+    gap: 40px;
+    margin-top: 50px;
+}
+.lv-product-modules:empty {
+    display: none;
+}
+.lv-product-modules .lv-product-recommendations {
+    margin-top: 0;
+}
+@media (max-width: 767px) {
+    .lv-product-modules {
+        gap: 28px;
+        margin-top: 30px;
+    }
+}

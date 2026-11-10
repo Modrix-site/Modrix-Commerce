@@ -1,0 +1,27 @@
+{
+    "title": "Volt Market design",
+    "description": "Colors and fonts apply across the store. Use the live section editor to add, reorder and edit campaigns, navigation and footer blocks.",
+    "fields": {
+        "custom.product_link_color": {
+            "type": "color",
+            "label": "Product links",
+            "group": "Colors",
+            "tab": "general",
+            "default": "#0068ad"
+        },
+        "custom.sale_color": {
+            "type": "color",
+            "label": "Sale prices",
+            "group": "Colors",
+            "tab": "general",
+            "default": "#df3b00"
+        },
+        "custom.show_buy_button": {
+            "type": "boolean",
+            "label": "Show Buy now button",
+            "group": "Product",
+            "tab": "product",
+            "default": true
+        }
+    }
+}

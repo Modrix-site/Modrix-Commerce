@@ -43,7 +43,7 @@ final class InstallPlatform
 
         try {
             if ($this->state->isInstalled()) {
-                throw new RuntimeException('EcoModular is already installed.');
+                throw new RuntimeException('Modrix Commerce is already installed.');
             }
 
             $owner = DB::transaction(function () use ($data) {
@@ -94,7 +94,7 @@ final class InstallPlatform
     private function activateDefaultTheme(User $owner): void
     {
         try {
-            app(ThemeManager::class)->activate((string) config('ecomodular.themes.default', 'ecomodular/essence'), $owner);
+            app(ThemeManager::class)->activate((string) config('ecomodular.themes.default', 'modrixcommerce/essence'), $owner);
         } catch (Throwable $e) {
             report($e);
         }

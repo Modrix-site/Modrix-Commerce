@@ -24,12 +24,12 @@ class NewsletterFooterPlaceTest extends TestCase
     {
         $this->installPlatform();
         $this->setUpModules();
-        File::copyDirectory(base_path('modules/ecomodular/newsletter'), $this->modulesPath.'/ecomodular/newsletter');
+        File::copyDirectory(base_path('modules/modrixcommerce/newsletter'), $this->modulesPath.'/modrixcommerce/newsletter');
         app(ModuleRepository::class)->sync();
-        app(ModuleManager::class)->install('ecomodular/newsletter');
-        app(ModuleManager::class)->enable('ecomodular/newsletter', true);
+        app(ModuleManager::class)->install('modrixcommerce/newsletter');
+        app(ModuleManager::class)->enable('modrixcommerce/newsletter', true);
 
-        app(SettingsRepository::class)->set(BlockPlacements::KEY, ['ecomodular/newsletter:signup-home' => ['place' => 'storefront.footer', 'order' => 1, 'enabled' => true]]);
+        app(SettingsRepository::class)->set(BlockPlacements::KEY, ['modrixcommerce/newsletter:signup-home' => ['place' => 'storefront.footer', 'order' => 1, 'enabled' => true]]);
         $footer = app(StorefrontSlots::class)->render('storefront.footer', []);
 
         $this->assertNotEmpty($footer);

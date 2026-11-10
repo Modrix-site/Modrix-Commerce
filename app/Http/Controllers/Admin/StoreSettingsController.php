@@ -10,6 +10,7 @@ use App\Core\Settings\SettingsRepository;
 use App\Core\Settings\StoreSettings;
 use App\Domains\Downloads\DownloadSettings;
 use App\Domains\Orders\Documents\DocumentPreferences;
+use App\Domains\Shipping\DeliveryArea;
 use App\Http\Controllers\Controller;
 use DateTimeZone;
 use Illuminate\Http\RedirectResponse;
@@ -27,7 +28,8 @@ class StoreSettingsController extends Controller
             'settings' => $store->toArray(),
             'downloads' => ['limit' => app(DownloadSettings::class)->limit(), 'expiry_days' => app(DownloadSettings::class)->expiryDays()],
             'documents' => app(DocumentPreferences::class)->props(),
-            'profile' => array_combine(['phone', 'address', 'country', 'business_hours', 'tagline', 'meta_title', 'meta_description'], array_map(fn ($key) => $repository->get('store.'.$key, ''), ['phone', 'address', 'country', 'business_hours', 'tagline', 'meta_title', 'meta_description'])),
+            'profile' => array_combine(['phone', 'address', 'country', 'region', 'city', 'business_hours', 'tagline', 'meta_title', 'meta_description'], array_map(fn ($key) => $repository->get('store.'.$key, ''), ['phone', 'address', 'country', 'region', 'city', 'business_hours', 'tagline', 'meta_title', 'meta_description'])),
+            'delivery' => app(DeliveryArea::class)->toArray(),
             'displayCurrencies' => $repository->get('store.display_currencies', []),
             'countries' => Countries::options(),
             'currencies' => collect(Currencies::ALL)->map(fn ($c, $code) => ['code' => $code, 'name' => $c['name']])->values(),
@@ -39,12 +41,18 @@ class StoreSettingsController extends Controller
 
     public function update(Request $request, StoreSettings $store, AuditLogger $audit, SettingsRepository $repository, Locales $locales): RedirectResponse
     {
-        /** @var array{store_name: string, store_email: string|null, default_currency: string, timezone: string, weight_unit: string, dimension_unit: string, profile?: array<string, string|null>, display_currencies?: list<array{code: string, rate: string}>, language_default?: string, language_additional?: list<string>} $data */
+        /** @var array{store_name: string, store_email: string|null, default_currency: string, timezone: string, weight_unit: string, dimension_unit: string, profile?: array<string, string|null>, delivery?: array{mode: string, countries?: list<string>}, display_currencies?: list<array{code: string, rate: string}>, language_default?: string, language_additional?: list<string>} $data */
         $data = $request->validate([
-            'profile' => ['sometimes', 'array:phone,address,country,business_hours,tagline,meta_title,meta_description'],
+            'profile' => ['sometimes', 'array:phone,address,country,region,city,business_hours,tagline,meta_title,meta_description'],
             'profile.phone' => ['nullable', 'string', 'max:50'],
             'profile.address' => ['nullable', 'string', 'max:1500'],
-            'profile.country' => ['nullable', Rule::in(Countries::codes())],
+            'profile.country' => [Rule::requiredIf(in_array($request->input('delivery.mode'), ['store_country', 'store_region', 'store_city'], true)), 'nullable', Rule::in(Countries::codes())],
+            'profile.region' => ['required_if:delivery.mode,store_region', 'nullable', 'string', 'max:120'],
+            'profile.city' => ['required_if:delivery.mode,store_city', 'nullable', 'string', 'max:120'],
+            'delivery' => ['sometimes', 'array:mode,countries'],
+            'delivery.mode' => ['required_with:delivery', Rule::in(DeliveryArea::MODES)],
+            'delivery.countries' => ['required_if:delivery.mode,selected_countries', 'array', 'list', 'max:250'],
+            'delivery.countries.*' => ['required', 'string', 'distinct', Rule::in(Countries::codes())],
             'profile.business_hours' => ['nullable', 'string', 'max:500'],
             'profile.tagline' => ['nullable', 'string', 'max:180'],
             'profile.meta_title' => ['nullable', 'string', 'max:180'],
@@ -81,6 +89,12 @@ class StoreSettingsController extends Controller
                     if ($beforeValue !== $value) {
                         $extraChanges[$key] = ['from' => $beforeValue, 'to' => $value];
                     }
+                }
+                if (isset($data['delivery'])) {
+                    $delivery = $data['delivery'];
+                    $countries = $delivery['mode'] === 'selected_countries' ? ($delivery['countries'] ?? []) : [];
+                    $extraChanges['delivery'] = ['from' => app(DeliveryArea::class)->toArray(), 'to' => ['mode' => $delivery['mode'], 'countries' => $countries]];
+                    $repository->setMany(['store.delivery_mode' => $delivery['mode'], 'store.delivery_countries' => $countries]);
                 }
                 if (array_key_exists('display_currencies', $data)) {
                     $extraChanges['display_currencies'] = ['from' => $repository->get('store.display_currencies', []), 'to' => $data['display_currencies']];

@@ -1,0 +1,42 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/currency-converter",
+    "display_name": "Live Currency Converter",
+    "description": "Keeps storefront exchange rates up to date. When a shopper switches currency, prices convert from the store currency automatically. Checkout and payments stay in the store currency.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "coins",
+    "accent": "#b45309",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\CurrencyConverter\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\CurrencyConverter\\CurrencyConverterServiceProvider",
+    "capabilities": [
+        "settings",
+        "scheduled.tasks"
+    ],
+    "settings": [
+        {
+            "key": "currencies",
+            "type": "string",
+            "label": "Currencies shoppers can choose",
+            "help": "Comma-separated codes, such as AED, EUR, GBP. Rates are units of that currency for 1 unit of the store currency.",
+            "default": "USD,AED,EUR,GBP,SAR",
+            "max_length": 200
+        },
+        {
+            "key": "refresh_hours",
+            "type": "integer",
+            "label": "Refresh rates every (hours)",
+            "help": "How long a fetched rate is reused before the next lookup. A failed lookup keeps the last good rate.",
+            "default": 6,
+            "min": 1,
+            "max": 24
+        }
+    ]
+}

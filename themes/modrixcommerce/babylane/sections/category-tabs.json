@@ -1,0 +1,85 @@
+{
+    "name": "Trending category tabs",
+    "settings": [
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "Search trending"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "collection",
+            "name": "Collection tab",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Label",
+                    "default": ""
+                },
+                {
+                    "type": "select",
+                    "id": "icon",
+                    "label": "Icon",
+                    "options": [
+                        {
+                            "value": "bath",
+                            "label": "bath"
+                        },
+                        {
+                            "value": "baby",
+                            "label": "baby"
+                        },
+                        {
+                            "value": "moon",
+                            "label": "moon"
+                        },
+                        {
+                            "value": "shirt",
+                            "label": "shirt"
+                        },
+                        {
+                            "value": "milk",
+                            "label": "milk"
+                        },
+                        {
+                            "value": "toy",
+                            "label": "toy"
+                        },
+                        {
+                            "value": "home",
+                            "label": "home"
+                        },
+                        {
+                            "value": "heart",
+                            "label": "heart"
+                        },
+                        {
+                            "value": "star",
+                            "label": "star"
+                        }
+                    ],
+                    "default": "baby"
+                },
+                {
+                    "type": "collection",
+                    "id": "collection",
+                    "label": "Product collection",
+                    "products": 16,
+                    "fallback": "latest"
+                }
+            ]
+        }
+    ],
+    "max_blocks": 8,
+    "presets": [
+        {
+            "name": "Trending category tabs"
+        }
+    ],
+    "enabled_on": {
+        "templates": ["*"]
+    }
+}

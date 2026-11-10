@@ -343,4 +343,33 @@ class CheckoutTest extends TestCase
                 ->where('countries.0.code', 'PH')
                 ->where('soleCountry', 'PH'));
     }
+
+    public function test_checkout_asks_for_a_state_or_city_when_the_country_is_already_selected(): void
+    {
+        ShippingMethod::query()->update([
+            'countries' => ['AE'],
+            'regions_only' => true,
+            'regional_rates' => [
+                ['country_code' => 'AE', 'region' => 'Dubai', 'rate' => '15', 'free_over' => null],
+            ],
+        ]);
+        $this->addToCart($this->sellable());
+
+        $this->get(route('checkout.show', ['country' => 'AE']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('summary.shipping_options', [])
+                ->where('summary.issues.0', 'Add your state or city to see the shipping method and amount.'));
+
+        $this->get(route('checkout.show', ['country' => 'AE', 'region' => 'Dubai']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('summary.issues', [])
+                ->has('summary.shipping_options', 1));
+
+        $this->get(route('checkout.show', ['country' => 'AE', 'region' => 'Ajman']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('summary.issues.0', 'We do not ship to the selected destination.'));
+    }
 }

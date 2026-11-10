@@ -112,7 +112,7 @@ class BulkOrderActionsTest extends TestCase
         $selected = $this->actingAs($this->userWithRole('support-agent'))->get(route('admin.orders.export', ['numbers' => [$a->number]]));
         $selected->assertOk()->assertHeader('Content-Type', 'text/csv; charset=UTF-8');
         $rows = array_map('str_getcsv', array_filter(explode("\n", ltrim((string) $selected->streamedContent(), "\u{FEFF}"))));
-        $this->assertSame(['number', 'placed_at', 'customer', 'email', 'phone', 'country', 'status', 'payment_status', 'fulfillment_status', 'currency', 'subtotal', 'discount', 'shipping', 'tax', 'total', 'paid', 'refunded', 'balance_due', 'payment_method', 'shipping_method', 'carrier', 'tracking_number', 'coupon'], $rows[0]);
+        $this->assertSame(['number', 'placed_at', 'customer', 'email', 'phone', 'country', 'status', 'payment_status', 'fulfillment_status', 'currency', 'subtotal', 'discount', 'shipping', 'tax', 'total', 'paid', 'refunded', 'balance_due', 'payment_method', 'shipping_method', 'carrier', 'tracking_number', 'coupon', 'payment_fee'], $rows[0]);
         $this->assertCount(2, $rows);
         $this->assertSame($a->number, $rows[1][0]);
         $this->assertStringStartsWith("'=HYPERLINK", $rows[1][2]);

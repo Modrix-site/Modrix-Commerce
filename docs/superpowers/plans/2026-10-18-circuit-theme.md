@@ -1,13 +1,13 @@
 # Circuit theme implementation plan
 
-**Goal:** the `ecomodular/circuit` theme from the spec, editable in the customizer, desktop and phone.
+**Goal:** the `modrixcommerce/circuit` theme from the spec, editable in the customizer, desktop and phone.
 **Spec:** `docs/superpowers/specs/2026-10-18-circuit-theme-design.md` (approved 2026-10-18).
 **Execution:** native (in-session), screenshots compared with the reference after each page.
 
 ## Global constraints
 
-- Theme files live in `themes/ecomodular/circuit/`; class prefix `ci-`; all CSS scoped under
-  `[data-theme="ecomodular/circuit"]`.
+- Theme files live in `themes/modrixcommerce/circuit/`; class prefix `ci-`; all CSS scoped under
+  `[data-theme="modrixcommerce/circuit"]`.
 - No files from the reference store. Photos: Unsplash licence (non-premium) or Pexels licence, listed with source,
   photographer and size, downloaded only after the merchant approves the list; credits in `assets/CREDITS.md`.
 - Font: OFL, bundled woff2 + licence file.

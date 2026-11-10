@@ -1,0 +1,52 @@
+{
+    "name": "Service and value tiles",
+    "settings": [],
+    "blocks": [
+        {
+            "type": "value",
+            "name": "Value tile",
+            "settings": [
+                {
+                    "type": "select",
+                    "id": "icon",
+                    "label": "Icon",
+                    "default": "leaf",
+                    "options": [
+                        { "value": "leaf", "label": "Leaf" },
+                        { "value": "delivery", "label": "Delivery" },
+                        { "value": "heart", "label": "Heart" },
+                        { "value": "recycle", "label": "Recycle" },
+                        { "value": "care", "label": "Care" }
+                    ]
+                },
+                {
+                    "type": "text",
+                    "id": "heading",
+                    "label": "Heading",
+                    "default": "Thoughtful everyday care"
+                },
+                {
+                    "type": "textarea",
+                    "id": "body",
+                    "label": "Text",
+                    "default": "Discover your next favourite ritual."
+                },
+                {
+                    "type": "color",
+                    "id": "background",
+                    "label": "Background",
+                    "default": "#e9ebce"
+                }
+            ]
+        }
+    ],
+    "max_blocks": 40,
+    "presets": [
+        {
+            "name": "Service and value tiles"
+        }
+    ],
+    "enabled_on": {
+        "templates": ["*"]
+    }
+}

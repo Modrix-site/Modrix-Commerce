@@ -126,7 +126,7 @@ export type ExtensionSummary = {
 
 export type ExtensionSettingField = {
     key: string;
-    type: "boolean" | "string" | "text" | "integer" | "select" | "email";
+    type: 'boolean' | 'string' | 'text' | 'integer' | 'select' | 'email';
     label: string;
     help?: string;
     default?: unknown;
@@ -148,7 +148,7 @@ export type ThemeSummary = {
     display_name: string;
     description: string | null;
     author: string | null;
-    state: "active" | "available" | "disabled" | "invalid" | "failed";
+    state: 'active' | 'available' | 'disabled' | 'invalid' | 'failed';
     version: string | null;
     available_version: string | null;
     update_available: boolean;
@@ -161,20 +161,23 @@ export type ThemeSummary = {
     capabilities: string[];
     has_demo: boolean;
     customized: boolean;
+    /** Built from sections: edited in the full-screen theme editor. */
+    has_sections?: boolean;
 };
 
 export type ThemeField = {
+    translatable?: boolean;
     key: string;
     type:
-        | "color"
-        | "select"
-        | "boolean"
-        | "integer"
-        | "string"
-        | "text"
-        | "link"
-        | "image"
-        | "font";
+        | 'color'
+        | 'select'
+        | 'boolean'
+        | 'integer'
+        | 'string'
+        | 'text'
+        | 'link'
+        | 'image'
+        | 'font';
     label: string;
     group?: string;
     /** Customizer tab (general, header, home, catalog, product, cart, footer). */
@@ -196,7 +199,7 @@ export type ThemeImageOption = { value: string; label: string; url: string };
 /** A marketplace security advisory (signed into license tokens). */
 export type Advisory = {
     id: number;
-    severity: "low" | "medium" | "high" | "critical";
+    severity: 'low' | 'medium' | 'high' | 'critical';
     title: string;
     body: string;
     affected_versions: string;

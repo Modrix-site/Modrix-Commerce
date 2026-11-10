@@ -1,0 +1,49 @@
+{
+    "sections": {
+        "main": {
+            "type": "main-product",
+            "settings": {
+                "promo_heading": "Discover wireless audio",
+                "promo_link": "/c/relay-audio"
+            },
+            "blocks": {
+                "block_0": {
+                    "type": "benefit",
+                    "settings": {
+                        "heading": "Delivery options are shown at checkout",
+                        "icon": "delivery"
+                    }
+                },
+                "block_1": {
+                    "type": "benefit",
+                    "settings": {
+                        "heading": "Return eligibility follows store policy",
+                        "icon": "returns"
+                    }
+                },
+                "block_2": {
+                    "type": "benefit",
+                    "settings": {
+                        "heading": "Secure checkout with available payment methods",
+                        "icon": "payment"
+                    }
+                },
+                "block_3": {
+                    "type": "benefit",
+                    "settings": {
+                        "heading": "Contact our team for product support",
+                        "icon": "support"
+                    }
+                }
+            },
+            "block_order": ["block_0", "block_1", "block_2", "block_3"]
+        },
+        "apps": {
+            "type": "apps",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        }
+    },
+    "order": ["main", "apps"]
+}

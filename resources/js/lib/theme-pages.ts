@@ -12,20 +12,20 @@ const cartPages = Object.fromEntries(
 export function themeCart(name: string | undefined) {
     return cartPages[`../../../themes/${name}/src/cart.tsx`];
 }
+// Home, header, and footer paint with the first render. A lazy chunk left
+// the page on "Loading storefront…" while the rest of the shell appeared.
 const indexes = import.meta.glob<{ default: ComponentType<HomeProps> }>(
     '../../../themes/*/*/src/index.tsx',
+    { eager: true },
 );
 const catalogs = import.meta.glob<{ default: ComponentType<ListingProps> }>(
     '../../../themes/*/*/src/catalog.tsx',
-);
-const homePages = Object.fromEntries(
-    Object.entries(indexes).map(([key, loader]) => [key, lazy(loader)]),
 );
 const catalogPages = Object.fromEntries(
     Object.entries(catalogs).map(([key, loader]) => [key, lazy(loader)]),
 );
 export function themeIndex(name: string | undefined) {
-    return homePages[`../../../themes/${name}/src/index.tsx`];
+    return indexes[`../../../themes/${name}/src/index.tsx`]?.default;
 }
 export function themeCatalog(name: string | undefined) {
     return catalogPages[`../../../themes/${name}/src/catalog.tsx`];
@@ -41,27 +41,23 @@ export type ThemeProductProps =
     };
 const headers = import.meta.glob<{ default: ComponentType }>(
     '../../../themes/*/*/src/header.tsx',
+    { eager: true },
 );
 const footers = import.meta.glob<{ default: ComponentType }>(
     '../../../themes/*/*/src/footer.tsx',
+    { eager: true },
 );
 const products = import.meta.glob<{
     default: ComponentType<ThemeProductProps>;
 }>('../../../themes/*/*/src/product.tsx');
-const headerParts = Object.fromEntries(
-    Object.entries(headers).map(([key, loader]) => [key, lazy(loader)]),
-);
-const footerParts = Object.fromEntries(
-    Object.entries(footers).map(([key, loader]) => [key, lazy(loader)]),
-);
 const productParts = Object.fromEntries(
     Object.entries(products).map(([key, loader]) => [key, lazy(loader)]),
 );
 export function themeHeader(name: string | undefined) {
-    return headerParts[`../../../themes/${name}/src/header.tsx`];
+    return headers[`../../../themes/${name}/src/header.tsx`]?.default;
 }
 export function themeFooter(name: string | undefined) {
-    return footerParts[`../../../themes/${name}/src/footer.tsx`];
+    return footers[`../../../themes/${name}/src/footer.tsx`]?.default;
 }
 export function themeProduct(name: string | undefined) {
     return productParts[`../../../themes/${name}/src/product.tsx`];

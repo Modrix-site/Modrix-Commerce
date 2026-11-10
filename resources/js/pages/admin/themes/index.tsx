@@ -19,7 +19,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { customize, index } from '@/routes/admin/themes';
+import { customize, editor, index } from '@/routes/admin/themes';
 import type { ThemeSummary } from '@/types';
 
 const FONT_SAMPLE: Record<string, string> = {
@@ -32,10 +32,12 @@ const FONT_SAMPLE: Record<string, string> = {
 export default function ThemesIndex({
     themes,
     previewing,
+    licensedThemes = [],
 }: {
     themes: ThemeSummary[];
     previewing: string | null;
     defaultTheme: string;
+    licensedThemes?: string[];
 }) {
     return (
         <>
@@ -71,7 +73,12 @@ export default function ThemesIndex({
                     <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         {themes.map((theme) => (
                             <li key={theme.id}>
-                                <ThemeCard theme={theme} />
+                                <ThemeCard
+                                    theme={theme}
+                                    licensed={licensedThemes.includes(
+                                        theme.name,
+                                    )}
+                                />
                             </li>
                         ))}
                     </ul>
@@ -81,17 +88,29 @@ export default function ThemesIndex({
     );
 }
 
-function ThemeCard({ theme }: { theme: ThemeSummary }) {
+function ThemeCard({
+    theme,
+    licensed,
+}: {
+    theme: ThemeSummary;
+    licensed: boolean;
+}) {
     const usable = theme.state === 'active' || theme.state === 'available';
 
     return (
-        <Card className="h-full gap-0 overflow-hidden py-0">
+        <Card
+            id={`theme-${theme.name.replaceAll('/', '-')}`}
+            className="h-full scroll-mt-6 gap-0 overflow-hidden py-0 target:ring-2 target:ring-primary"
+        >
             <ThemeThumbnail theme={theme} />
             <CardContent className="grid gap-3 py-4">
                 <div className="flex flex-wrap items-center gap-2">
                     <span className="font-medium">{theme.display_name}</span>
+                    {licensed && (
+                        <Badge variant="outline">Modrix Cloud licensed</Badge>
+                    )}
                     {theme.state === 'active' && (
-                        <Badge>
+                        <Badge className="status-badge" data-tone="success">
                             <Check /> Active
                         </Badge>
                     )}
@@ -167,7 +186,13 @@ function ThemeCard({ theme }: { theme: ThemeSummary }) {
                     )}
                     {usable && (
                         <Button size="sm" variant="outline" asChild>
-                            <Link href={customize(theme.id)}>
+                            <Link
+                                href={
+                                    theme.has_sections
+                                        ? editor(theme.id)
+                                        : customize(theme.id)
+                                }
+                            >
                                 <Palette /> Customize
                             </Link>
                         </Button>

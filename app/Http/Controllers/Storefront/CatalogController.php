@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Storefront;
 use App\Core\Extensions\StorefrontSlots;
 use App\Core\Settings\StoreSettings;
 use App\Core\Themes\PageSettingFields;
+use App\Core\Themes\Sections\ThemeTemplates;
 use App\Core\Themes\ThemeResolver;
 use App\Domains\Catalog\Models\Brand;
 use App\Domains\Catalog\Models\Category;
@@ -24,8 +25,12 @@ class CatalogController extends Controller
      */
     public function home(Request $request, StoreSettings $store, StorefrontSlots $slots, ThemeResolver $themes, HomeSectionsPresenter $sections): Response
     {
+        $theme = $themes->forRequest($request);
+
         return Inertia::render('storefront/home', [
-            'sections' => $sections->present($themes->forRequest($request), $store->currency()),
+            // Themes built from sections render the index template (shared as
+            // "themeSections"); the legacy home sections would go unused.
+            'sections' => ThemeTemplates::supports($theme->manifest) ? [] : $sections->present($theme, $store->currency()),
             'slots' => $slots->render('home.after_featured', []),
         ]);
     }
@@ -123,6 +128,7 @@ class CatalogController extends Controller
         return $request->validate([
             'brand_id' => ['nullable', 'integer', 'exists:brands,id'],
             'in_stock' => ['nullable', 'boolean'],
+            'on_sale' => ['nullable', 'boolean'],
             'min_price' => ['nullable', 'numeric', 'min:0', 'max:999999999'],
             'max_price' => ['nullable', 'numeric', 'min:0', 'max:999999999'],
             'options' => ['sometimes', 'array', 'max:30'], 'options.*' => ['integer', 'distinct', 'exists:product_attribute_values,id'],

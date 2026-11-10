@@ -1,0 +1,35 @@
+{
+    "sections": {
+        "main": {
+            "type": "main-collection",
+            "settings": {
+                "show_banner": false,
+                "banner_image": "asset:assets/hero.jpg",
+                "banner_height": 200,
+                "heading": "Search results",
+                "description": "",
+                "columns": "4",
+                "show_filters": true,
+                "show_sort": true,
+                "show_categories": true,
+                "show_brands": true,
+                "show_price": true,
+                "show_stock": true
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "apps": {
+            "type": "apps",
+            "settings": {
+                "heading": ""
+            },
+            "blocks": {},
+            "block_order": []
+        }
+    },
+    "order": [
+        "main",
+        "apps"
+    ]
+}

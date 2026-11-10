@@ -8,6 +8,8 @@ const variants: Record<string, Variant> = {
     draft: 'outline',
     archived: 'secondary',
     pending: 'outline',
+    approved: 'default',
+    rejected: 'destructive',
     pending_payment: 'outline',
     payment_failed: 'destructive',
     partially_paid: 'outline',
@@ -48,6 +50,8 @@ export function StatusBadge({ status }: { status: string }) {
         failed: t('Payment failed'),
         partially_paid: t('Partially paid'),
         pending: t('Pending'),
+        approved: t('Approved'),
+        rejected: t('Rejected'),
         confirmed: t('Confirmed'),
         on_hold: t('On hold'),
         processing: t('Processing'),
@@ -77,13 +81,18 @@ export function StatusBadge({ status }: { status: string }) {
         'completed',
         'delivered',
         'paid',
+        'approved',
         'published',
         'active',
     ].includes(status)
         ? 'success'
-        : ['cancelled', 'failed', 'payment_failed', 'delivery_failed'].includes(
-                status,
-            )
+        : [
+                'cancelled',
+                'failed',
+                'payment_failed',
+                'delivery_failed',
+                'rejected',
+            ].includes(status)
           ? 'danger'
           : [
                   'pending',
@@ -107,6 +116,7 @@ export function StatusBadge({ status }: { status: string }) {
         <Badge
             className="status-badge"
             data-tone={tone}
+            data-status={status}
             variant={variants[status] ?? 'outline'}
         >
             {label}

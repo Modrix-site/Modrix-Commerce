@@ -66,6 +66,7 @@ final class CorePermissions
                 'audit.view' => 'View audit log',
                 'system.view' => 'View system status',
                 'system.update' => 'Install core updates',
+                'backups.manage' => 'Manage backups',
             ],
         ];
     }

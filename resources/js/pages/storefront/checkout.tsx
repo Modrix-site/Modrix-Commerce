@@ -23,7 +23,7 @@ import { useT } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { regionsFor } from '@/lib/regions';
 import { show as cartShow } from '@/routes/cart';
-import type { Address, Country, PricedCart } from '@/types';
+import type { Address, Country, MoneyValue, PricedCart } from '@/types';
 
 type AddressFields = {
     first_name: string;
@@ -44,6 +44,7 @@ type Props = {
         code: string;
         label: string;
         instructions: string | null;
+        fee: MoneyValue | null;
     }[];
     paymentSlots?: SlotItem[];
     slots?: SlotItem[];
@@ -51,6 +52,7 @@ type Props = {
     email: string | null;
     countries: Country[];
     soleCountry: string | null;
+    deliveryRestriction?: string | null;
     checkoutToken: string;
     /** The store's terms page (Checkout tab "Require accepting the terms"). */
     termsUrl?: string | null;
@@ -93,14 +95,19 @@ export default function Checkout({
     email,
     countries,
     soleCountry,
+    deliveryRestriction = null,
     checkoutToken,
     termsUrl = null,
 }: Props) {
     const t = useT();
     // Checkout tab settings (customizer).
     const pageSettings = useStoreSettings().checkout;
+    const shippingAddresses = addresses.filter((a) =>
+        countries.some((c) => c.code === a.country_code),
+    );
     const defaultAddress =
-        addresses.find((a) => a.is_default_shipping) ?? addresses[0];
+        shippingAddresses.find((a) => a.is_default_shipping) ??
+        shippingAddresses[0];
     // A store that ships to one country starts with it filled in. The server
     // sends `soleCountry`; fall back to the single option in the list.
     const defaultCountry =
@@ -114,7 +121,7 @@ export default function Checkout({
         billing_same: true,
         billing: { ...emptyAddress, country_code: defaultCountry },
         shipping_method: '',
-        payment_method: paymentMethods[0]?.code ?? '',
+        payment_method: summary.payment_method ?? paymentMethods[0]?.code ?? '',
         customer_note: '',
         terms: false,
         save_address: addresses.length === 0,
@@ -172,12 +179,14 @@ export default function Checkout({
         firstQuote.current = false;
         const timer = window.setTimeout(() => {
             router.reload({
-                only: ['summary', 'paymentSlots', 'slots'],
+                only: ['summary', 'paymentMethods', 'paymentSlots', 'slots'],
                 data: {
                     country: data.shipping.country_code || undefined,
                     region: data.shipping.region || undefined,
+                    city: data.shipping.city || undefined,
                     postal_code: data.shipping.postal_code || undefined,
                     shipping_method: data.shipping_method || undefined,
+                    payment_method: data.payment_method || undefined,
                 },
             });
         }, 300);
@@ -186,8 +195,10 @@ export default function Checkout({
     }, [
         data.shipping.country_code,
         data.shipping.region,
+        data.shipping.city,
         data.shipping.postal_code,
         data.shipping_method,
+        data.payment_method,
     ]);
 
     // Drop a selected method that is no longer offered for the new destination.
@@ -224,6 +235,9 @@ export default function Checkout({
 
     const submit = (event: FormEvent) => {
         event.preventDefault();
+        if (summary.payment_method !== data.payment_method) {
+            return;
+        }
         // The total shown is sent only so the server can detect a price change; it is never charged.
         form.transform((d) => ({
             ...d,
@@ -233,6 +247,7 @@ export default function Checkout({
     };
 
     const generalError = errors.cart ?? errors.total ?? errors.coupon;
+    const paymentQuotePending = summary.payment_method !== data.payment_method;
 
     return (
         <>
@@ -302,7 +317,9 @@ export default function Checkout({
                                         type="tel"
                                         autoComplete="tel"
                                         value={data.phone}
-                                        required={pageSettings.phone === 'required'}
+                                        required={
+                                            pageSettings.phone === 'required'
+                                        }
                                         onChange={(e) =>
                                             setData('phone', e.target.value)
                                         }
@@ -324,14 +341,21 @@ export default function Checkout({
                                 ? t('Billing address')
                                 : t('Shipping address')}
                         </h2>
-                        {addresses.length > 0 && (
+                        {deliveryRestriction && (
+                            <p className="text-sm text-muted-foreground">
+                                {t('We deliver only to :location.', {
+                                    location: deliveryRestriction,
+                                })}
+                            </p>
+                        )}
+                        {shippingAddresses.length > 0 && (
                             <label className="grid gap-2 text-sm">
                                 {t('Use a saved address')}
                                 <select
                                     className="h-9 rounded-md border border-input bg-transparent px-2 dark:bg-input/30"
                                     defaultValue={defaultAddress?.id}
                                     onChange={(e) => {
-                                        const chosen = addresses.find(
+                                        const chosen = shippingAddresses.find(
                                             (a) =>
                                                 a.id === Number(e.target.value),
                                         );
@@ -349,7 +373,7 @@ export default function Checkout({
                                         );
                                     }}
                                 >
-                                    {addresses.map((a) => (
+                                    {shippingAddresses.map((a) => (
                                         <option key={a.id} value={a.id}>
                                             {a.first_name} {a.last_name},{' '}
                                             {a.line1}, {a.city}
@@ -422,6 +446,16 @@ export default function Checkout({
                             <p className="text-sm text-muted-foreground">
                                 {t(
                                     'Enter your country to see shipping options.',
+                                )}
+                            </p>
+                        ) : summary.issues.includes(
+                              t(
+                                  'Add your state or city to see the shipping method and amount.',
+                              ),
+                          ) ? (
+                            <p className="text-sm text-muted-foreground">
+                                {t(
+                                    'Add your state or city to see the shipping method and amount.',
                                 )}
                             </p>
                         ) : summary.shipping_options.length === 0 ? (
@@ -540,6 +574,23 @@ export default function Checkout({
                                                     </span>
                                                 )}
                                             </label>
+                                            {selected &&
+                                                method.fee &&
+                                                Number(method.fee.amount) >
+                                                    0 && (
+                                                    <p
+                                                        className="pl-5 text-muted-foreground"
+                                                        role="status"
+                                                    >
+                                                        {t(
+                                                            'An additional :fee cash on delivery fee will be collected by the courier.',
+                                                            {
+                                                                fee: method.fee
+                                                                    .formatted,
+                                                            },
+                                                        )}
+                                                    </p>
+                                                )}
                                             {reason !== undefined && (
                                                 <p className="pl-5 text-muted-foreground">
                                                     {reason}
@@ -598,10 +649,12 @@ export default function Checkout({
                 <aside
                     className={cn(
                         'grid content-start gap-4 self-start rounded-lg border p-5',
-                        pageSettings.summary_side === 'left' && 'lg:order-first',
+                        pageSettings.summary_side === 'left' &&
+                            'lg:order-first',
                         pageSettings.sticky_summary && 'lg:sticky lg:top-24',
                     )}
                     aria-label={t('Order summary')}
+                    aria-busy={paymentQuotePending}
                 >
                     <h2 className="font-semibold">{t('Order summary')}</h2>
                     <ul className="grid gap-2 text-sm">
@@ -618,21 +671,47 @@ export default function Checkout({
                                     />
                                 )}
                                 <div className="min-w-0 flex-1">
-                                    <p className="font-medium">
-                                        {line.product_name}
-                                    </p>
-                                    {line.variant_name && (
-                                        <p className="mt-1 text-muted-foreground">
-                                            {line.variant_name}
+                                    <div className="flex items-start justify-between gap-2">
+                                        <p className="font-medium">
+                                            {line.product_name}
                                         </p>
+                                        <span className="shrink-0 whitespace-nowrap tabular-nums">
+                                            {line.addons &&
+                                            line.addons.length > 0 &&
+                                            line.base_subtotal
+                                                ? line.base_subtotal.formatted
+                                                : line.subtotal.formatted}
+                                        </span>
+                                    </div>
+                                    {line.addons && line.addons.length > 0 ? (
+                                        <ul className="mt-1 grid gap-0.5 text-xs text-muted-foreground">
+                                            {line.addons.map((addon) => (
+                                                <li
+                                                    key={addon.id}
+                                                    className="flex items-center justify-between gap-2"
+                                                >
+                                                    <span>+ {addon.name}</span>
+                                                    <span className="shrink-0 whitespace-nowrap tabular-nums">
+                                                        +
+                                                        {
+                                                            addon.subtotal
+                                                                .formatted
+                                                        }
+                                                    </span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        line.variant_name && (
+                                            <p className="mt-1 text-muted-foreground">
+                                                {line.variant_name}
+                                            </p>
+                                        )
                                     )}
                                     <p className="mt-1 text-xs text-muted-foreground">
                                         {t('Quantity')}: {line.quantity}
                                     </p>
                                 </div>
-                                <span className="shrink-0 whitespace-nowrap tabular-nums">
-                                    {line.subtotal.formatted}
-                                </span>
                             </li>
                         ))}
                     </ul>
@@ -648,7 +727,17 @@ export default function Checkout({
                         <CheckoutCoupon code={summary.coupon_code} />
                     )}
                     {summary.issues.map((issue) => (
-                        <p key={issue} className="text-sm text-destructive">
+                        <p
+                            key={issue}
+                            className={
+                                issue ===
+                                t(
+                                    'Add your state or city to see the shipping method and amount.',
+                                )
+                                    ? 'text-sm text-muted-foreground'
+                                    : 'text-sm text-destructive'
+                            }
+                        >
                             {issue}
                         </p>
                     ))}
@@ -671,6 +760,7 @@ export default function Checkout({
                         className="store-button"
                         disabled={
                             form.processing ||
+                            paymentQuotePending ||
                             !summary.can_checkout ||
                             !summary.shipping ||
                             paymentMethods.length === 0

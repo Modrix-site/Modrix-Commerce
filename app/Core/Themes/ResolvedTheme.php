@@ -2,6 +2,8 @@
 
 namespace App\Core\Themes;
 
+use App\Core\Localization\ContentTranslations;
+
 /**
  * The theme a storefront request is rendered with: the manifest snapshot,
  * the effective design (defaults + merchant overrides) and where it came from.
@@ -79,15 +81,67 @@ final class ResolvedTheme
      */
     public function toProps(): array
     {
+        $translations = app(ContentTranslations::class);
+        $pages = PageSettingFields::resolve($this->design);
+        $warm = [];
+        foreach (PageSettingFields::fields() as $key => $field) {
+            if (! in_array($field['type'], ['string', 'text'], true) || $translations->skipKey($key)) {
+                continue;
+            }
+            [$page, $name] = explode('.', $key, 2);
+            if (is_string($pages[$page][$name] ?? null)) {
+                $warm[] = $pages[$page][$name];
+            }
+        }
+        foreach ($this->manifest->customFields() as $key => $field) {
+            if (! in_array($field['type'], ['string', 'text', 'textarea'], true) || $translations->skipKey($key)) {
+                continue;
+            }
+            $value = $this->design[$key] ?? $field['default'];
+            if (is_string($value)) {
+                $warm[] = $value;
+            }
+        }
+        $warm[] = $this->design['announcement'] ?? '';
+        $warm[] = $this->design['footer_text'] ?? '';
+        foreach ($this->design as $key => $value) {
+            if (is_string($key) && is_string($value) && ! $translations->skipKey($key)
+                && (str_starts_with($key, 'menu_') || str_starts_with($key, 'footer_'))) {
+                $warm[] = $value;
+            }
+        }
+        $translations->warm($warm);
+
+        foreach (PageSettingFields::fields() as $key => $field) {
+            if (! in_array($field['type'], ['string', 'text'], true) || $translations->skipKey($key)) {
+                continue;
+            }
+            [$page, $name] = explode('.', $key, 2);
+            if (is_string($pages[$page][$name] ?? null)) {
+                $pages[$page][$name] = $translations->translate($pages[$page][$name]);
+            }
+        }
+
         return [
             'name' => $this->manifest->name,
             'displayName' => $this->manifest->displayName,
             'version' => $this->manifest->version,
             'source' => $this->source,
             'frontend' => $this->manifest->frontend,
-            'settings' => collect($this->manifest->customFields())->mapWithKeys(fn (array $field, string $key) => [substr($key, 7) => $field['type'] === 'image' ? $this->imageUrl($this->design[$key] ?? null) : ($this->design[$key] ?? $field['default'])])->all(),
+            'settings' => collect($this->manifest->customFields())->mapWithKeys(function (array $field, string $key) use ($translations) {
+                $name = substr($key, 7);
+                if ($field['type'] === 'image') {
+                    return [$name => $this->imageUrl($this->design[$key] ?? null)];
+                }
+                $value = $this->design[$key] ?? $field['default'];
+                if (in_array($field['type'], ['string', 'text', 'textarea'], true) && is_string($value) && ! $translations->skipKey($key)) {
+                    $value = $translations->translate($value);
+                }
+
+                return [$name => $value];
+            })->all(),
             'css' => $this->css(),
-            'pages' => PageSettingFields::resolve($this->design),
+            'pages' => $pages,
             'layout' => [
                 'header' => $this->design['layout.header'],
                 'footer' => $this->design['layout.footer'],
@@ -99,9 +153,13 @@ final class ResolvedTheme
             ],
             'logo' => $this->imageUrl($this->design['logo']),
             'favicon' => $this->imageUrl($this->design['favicon']),
-            'announcement' => $this->design['announcement'] !== '' ? $this->design['announcement'] : null,
-            'footerText' => $this->design['footer_text'] !== '' ? $this->design['footer_text'] : null,
-            'content' => array_intersect_key($this->design, array_filter(ThemeSchema::designFields(), fn (array $field, string $key) => str_starts_with($key, 'menu_') || str_starts_with($key, 'footer_') || str_starts_with($key, 'contact_') || $key === 'help_link', ARRAY_FILTER_USE_BOTH)),
+            'announcement' => $this->design['announcement'] !== '' ? $translations->translate($this->design['announcement']) : null,
+            'footerText' => $this->design['footer_text'] !== '' ? $translations->translate($this->design['footer_text']) : null,
+            'content' => app(StorefrontLinks::class)->content(collect(array_intersect_key($this->design, array_filter(ThemeSchema::designFields(), fn (array $field, string $key) => str_starts_with($key, 'menu_') || str_starts_with($key, 'footer_') || str_starts_with($key, 'contact_') || $key === 'help_link', ARRAY_FILTER_USE_BOTH)))
+                ->map(fn (mixed $value, string $key) => is_string($value) && ! str_ends_with($key, '_link') && ! $translations->skipKey($key)
+                    ? $translations->translate($value)
+                    : $value)
+                ->all()),
         ];
     }
 }

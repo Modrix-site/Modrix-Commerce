@@ -54,7 +54,7 @@ export default function TaxesIndex({ rates, settings, countries }: Props) {
                 <Alert>
                     <TriangleAlert />
                     <AlertDescription>
-                        EcoModular does not determine your tax obligations.
+                        Modrix Commerce does not determine your tax obligations.
                         Configure the rates and rules required where you sell,
                         and consult a tax professional.
                     </AlertDescription>

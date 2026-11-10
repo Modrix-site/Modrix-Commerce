@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Storefront;
 
+use App\Core\Extensions\StorefrontSlots;
 use App\Domains\Orders\Models\Order;
 use App\Http\Controllers\Controller;
 use App\Http\Presenters\OrderPresenter;
@@ -22,11 +23,14 @@ class AccountOrderController extends Controller
         return Inertia::render('storefront/account/orders', ['orders' => $orders]);
     }
 
-    public function show(Request $request, Order $order, OrderPresenter $presenter): Response
+    public function show(Request $request, Order $order, OrderPresenter $presenter, StorefrontSlots $slots): Response
     {
         // Not found rather than forbidden, so order numbers cannot be probed.
         abort_unless($order->user_id !== null && $order->user_id === $request->user()?->getAuthIdentifier(), 404);
 
-        return Inertia::render('storefront/account/order', ['order' => $presenter->forCustomer($order)]);
+        return Inertia::render('storefront/account/order', [
+            'order' => $presenter->forCustomer($order),
+            'returnSlots' => $slots->render('account.order', ['order' => $order]),
+        ]);
     }
 }

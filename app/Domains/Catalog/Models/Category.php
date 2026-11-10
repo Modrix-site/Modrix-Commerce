@@ -127,10 +127,12 @@ class Category extends Model
     public function ancestors(): array
     {
         $ancestors = [];
+        $this->loadMissing('parent');
         $current = $this->parent;
 
         while ($current !== null && count($ancestors) < self::MAX_DEPTH) {
             array_unshift($ancestors, $current);
+            $current->loadMissing('parent');
             $current = $current->parent;
         }
 

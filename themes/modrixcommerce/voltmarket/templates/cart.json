@@ -1,0 +1,17 @@
+{
+    "sections": {
+        "cart": {
+            "type": "main-cart",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        },
+        "apps": {
+            "type": "apps",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        }
+    },
+    "order": ["cart", "apps"]
+}

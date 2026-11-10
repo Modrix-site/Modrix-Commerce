@@ -1,3 +1,4 @@
+import { StoreMenuTree } from '@/components/storefront/store-menu';
 import { Form, router, usePage } from '@inertiajs/react';
 import { PlaceSlot } from '@/components/extensions/place-slot';
 import {
@@ -92,7 +93,10 @@ export function ElectronicsHeader() {
                         ))}
                     </select>
                 </label>
-                <PlaceSlot place="header.actions" className="flex items-center gap-1" />
+                <PlaceSlot
+                    place="header.actions"
+                    className="flex items-center gap-1"
+                />
                 <CustomerNotificationBell />
                 <Link
                     href={auth.user ? '/account' : login()}
@@ -150,11 +154,7 @@ export function ElectronicsHeader() {
                         </ul>
                     )}
                 </div>
-                {(storefront?.navigation?.header.links ?? []).map((link, i) => (
-                    <Link key={i} href={link.url}>
-                        {link.label}
-                    </Link>
-                ))}
+                <StoreMenuTree menu={storefront?.navigation?.header} />
             </nav>
         </header>
     );
@@ -198,11 +198,10 @@ export function ElectronicsFooter() {
                 {(storefront?.navigation?.footer ?? []).map((menu, column) => (
                     <div key={column}>
                         <h3>{menu.title}</h3>
-                        {menu.links.map((link, i) => (
-                            <Link key={i} href={link.url}>
-                                {link.label}
-                            </Link>
-                        ))}
+                        <StoreMenuTree
+                            menu={menu}
+                            orientation={menu.layout ?? 'vertical'}
+                        />
                     </div>
                 ))}
                 <div>

@@ -1,0 +1,90 @@
+{
+    "name": "Product collection",
+    "settings": [
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "The everyday collection"
+        },
+        {
+            "type": "text",
+            "id": "eyebrow",
+            "label": "Eyebrow",
+            "default": "CONSIDERED COMPANIONS"
+        },
+        {
+            "type": "collection",
+            "id": "collection",
+            "label": "Collection",
+            "products": 12,
+            "fallback": "latest"
+        },
+        {
+            "type": "range",
+            "id": "limit",
+            "label": "Product limit",
+            "default": 8,
+            "min": 2,
+            "max": 12,
+            "step": 1
+        },
+        {
+            "type": "select",
+            "id": "columns",
+            "label": "Desktop columns",
+            "default": "4",
+            "options": [
+                {
+                    "value": "3",
+                    "label": "3"
+                },
+                {
+                    "value": "4",
+                    "label": "4"
+                }
+            ]
+        },
+        {
+            "type": "checkbox",
+            "id": "show_swatches",
+            "label": "Show product color options",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "quick_add",
+            "label": "Quick add",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "button_label",
+            "label": "Add button label",
+            "default": "Add to bag"
+        },
+        {
+            "type": "text",
+            "id": "view_label",
+            "label": "Collection link label",
+            "default": "Shop all"
+        },
+        {
+            "type": "url",
+            "id": "link",
+            "label": "Collection destination",
+            "default": "/search"
+        }
+    ],
+    "blocks": [],
+    "presets": [
+        {
+            "name": "Product collection"
+        }
+    ],
+    "enabled_on": {
+        "templates": [
+            "*"
+        ]
+    }
+}

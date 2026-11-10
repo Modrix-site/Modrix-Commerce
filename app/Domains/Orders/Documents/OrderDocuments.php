@@ -101,6 +101,7 @@ final class OrderDocuments
                     'discount_total' => $locked->discount_total,
                     'shipping_total' => $locked->shipping_total,
                     'tax_total' => $locked->tax_total,
+                    'payment_fee_total' => $locked->payment_fee_total,
                     'grand_total' => $locked->grand_total,
                     'prices_include_tax' => $locked->prices_include_tax,
                     'shipping_method' => $locked->shipping_method_name,

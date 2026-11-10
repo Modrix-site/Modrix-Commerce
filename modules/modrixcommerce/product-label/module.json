@@ -1,0 +1,149 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/product-label",
+    "display_name": "Product Label",
+    "description": "Highlights products with attractive labels — New, Sale, Low stock, Featured and your own custom badges — on every product card and product page, to draw the shopper's eye.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "tag",
+    "accent": "#f43f5e",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\ProductLabel\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\ProductLabel\\ProductLabelServiceProvider",
+    "permissions": [
+        {
+            "name": "labels.manage",
+            "label": "Manage product labels",
+            "group": "Marketing"
+        }
+    ],
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "product.labels",
+        "settings",
+        "permissions"
+    ],
+    "routes": {
+        "admin": "routes/admin.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages"
+    },
+    "settings": [
+        {
+            "key": "enabled",
+            "type": "boolean",
+            "label": "Show product labels",
+            "default": true
+        },
+        {
+            "key": "show_new",
+            "type": "boolean",
+            "label": "Show a \"New\" label",
+            "help": "Adds a New badge to products published within the window below.",
+            "default": true
+        },
+        {
+            "key": "new_days",
+            "type": "integer",
+            "label": "\"New\" lasts (days)",
+            "help": "How many days after publishing a product keeps its New label.",
+            "min": 1,
+            "max": 365,
+            "default": 21
+        },
+        {
+            "key": "show_sale",
+            "type": "boolean",
+            "label": "Show a \"Sale\" label",
+            "help": "Adds a Sale badge to products with a compare-at price higher than the selling price.",
+            "default": true
+        },
+        {
+            "key": "show_low_stock",
+            "type": "boolean",
+            "label": "Show a \"Low stock\" label",
+            "help": "Adds a Low stock badge when a product has few units left.",
+            "default": true
+        },
+        {
+            "key": "low_stock_threshold",
+            "type": "integer",
+            "label": "Low stock at",
+            "help": "Show the Low stock label at or below this many units.",
+            "min": 1,
+            "max": 100,
+            "default": 5
+        },
+        {
+            "key": "show_featured",
+            "type": "boolean",
+            "label": "Show a \"Featured\" label",
+            "help": "Adds a Featured badge to products marked as featured in the catalogue.",
+            "default": false
+        },
+        {
+            "key": "show_sold_out",
+            "type": "boolean",
+            "label": "Show a \"Sold out\" label",
+            "help": "Adds a Sold out badge to products with no purchasable variant.",
+            "default": true
+        },
+        {
+            "key": "custom_labels",
+            "type": "text",
+            "label": "Custom labels",
+            "help": "One per line, as \"SKU = Label text\". The label sticks to every product with that SKU. Example: MARKET-DEMO-01 = Best seller"
+        },
+        {
+            "key": "badge_style",
+            "type": "select",
+            "label": "Badge style",
+            "default": "solid",
+            "options": [
+                { "value": "solid", "label": "Solid colour" },
+                { "value": "soft", "label": "Soft tint" },
+                { "value": "outline", "label": "Outline" }
+            ]
+        },
+        {
+            "key": "position",
+            "type": "select",
+            "label": "Where labels sit on the image",
+            "default": "top-left",
+            "options": [
+                { "value": "top-left", "label": "Top left" },
+                { "value": "top-right", "label": "Top right" },
+                { "value": "bottom-left", "label": "Bottom left" },
+                { "value": "bottom-right", "label": "Bottom right" }
+            ]
+        },
+        {
+            "key": "max_labels",
+            "type": "integer",
+            "label": "Labels per product",
+            "help": "How many labels a product card may show at once.",
+            "min": 1,
+            "max": 4,
+            "default": 2
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "product-label",
+            "title": "Product Label",
+            "route": "index",
+            "icon": "tag",
+            "group": "Marketing",
+            "permission": "labels.manage",
+            "order": 335
+        }
+    ]
+}

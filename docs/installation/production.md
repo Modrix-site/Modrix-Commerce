@@ -130,7 +130,7 @@ Both are required:
 
 ```ini
 [Unit]
-Description=EcoModular queue worker
+Description=Modrix Commerce queue worker
 After=network.target mysql.service redis.service
 
 [Service]
@@ -164,7 +164,7 @@ Check it with `php artisan schedule:list`. Within two minutes, the health check 
 Use `LOG_STACK=daily` with `LOG_DAILY_DAYS=14`; Laravel then rotates `storage/logs/laravel-YYYY-MM-DD.log` and deletes old files. If you use the `single` channel instead, configure logrotate:
 
 ```
-/var/www/ecomodular/storage/logs/*.log {
+/var/www/modrixcommerce/storage/logs/*.log {
     daily
     rotate 14
     compress

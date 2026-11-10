@@ -1,0 +1,88 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/tiered-pricing",
+    "display_name": "Tiered Pricing & Volume Discounts",
+    "description": "Increase average order value with volume discounts, tiered quantity-break pricing tables, and automatic bulk cart discounts.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "layers",
+    "accent": "#2563eb",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\TieredPricing\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\TieredPricing\\TieredPricingServiceProvider",
+    "permissions": [
+        {
+            "name": "tiered_pricing.manage",
+            "label": "Manage tiered pricing rules and volume discounts",
+            "group": "Marketing"
+        }
+    ],
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "storefront.slots",
+        "database.migrations",
+        "pricing.steps",
+        "settings",
+        "permissions"
+    ],
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages",
+        "slots": "resources/js/slots"
+    },
+    "settings": [
+        {
+            "key": "enabled",
+            "type": "boolean",
+            "label": "Enable tiered pricing on single product pages and cart",
+            "default": true
+        },
+        {
+            "key": "table_heading",
+            "type": "string",
+            "label": "Default table heading",
+            "default": "Buy in Bulk & Save",
+            "max_length": 120
+        },
+        {
+            "key": "table_subheading",
+            "type": "string",
+            "label": "Default table subheading",
+            "default": "Purchase multiple quantities to unlock tiered volume discounts",
+            "max_length": 255
+        },
+        {
+            "key": "show_savings_badge",
+            "type": "boolean",
+            "label": "Show savings percentage badge in tier rows",
+            "default": true
+        },
+        {
+            "key": "highlight_active_tier",
+            "type": "boolean",
+            "label": "Highlight the tier matching the currently chosen quantity",
+            "default": true
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "tiered-pricing",
+            "title": "Tiered Pricing",
+            "route": "index",
+            "icon": "layers",
+            "group": "Marketing",
+            "permission": "tiered_pricing.manage",
+            "order": 340
+        }
+    ]
+}

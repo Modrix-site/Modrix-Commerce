@@ -19,10 +19,12 @@ export function Tabs({
     items,
     label,
     focusErrors = true,
+    onChange,
 }: {
     items: TabItem[];
     label: string;
     focusErrors?: boolean;
+    onChange?: (id: string) => void;
 }) {
     const baseId = useId();
     const fromHash = () => {
@@ -52,6 +54,12 @@ export function Tabs({
         // Only react to errors appearing, not to the user switching tabs.
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [firstError]);
+
+    useEffect(() => {
+        if (active) {
+            onChange?.(active);
+        }
+    }, [active, onChange]);
 
     const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
         const index = items.findIndex((i) => i.id === active);

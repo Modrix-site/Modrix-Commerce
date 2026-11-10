@@ -17,5 +17,6 @@ final class ShippingRequest
         public readonly Money $merchandiseTotal,
         public readonly string $totalWeight,
         public readonly int $itemCount,
+        public readonly ?string $city = null,
     ) {}
 }

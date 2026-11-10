@@ -1,0 +1,116 @@
+{
+    "title": "Atelier design",
+    "description": "Editorial luxury minimalism storefront. Sections and layout can be edited live with zero hardcoding.",
+    "sections": true,
+    "fields": {
+        "custom.body_size": {
+            "type": "select",
+            "label": "Body text size",
+            "group": "Typography",
+            "tab": "general",
+            "options": ["12", "13", "14", "15", "16"],
+            "default": "14"
+        },
+        "custom.heading_size": {
+            "type": "select",
+            "label": "Section heading size",
+            "group": "Typography",
+            "tab": "general",
+            "options": ["22", "24", "26", "28", "32"],
+            "default": "26"
+        },
+        "custom.button_size": {
+            "type": "select",
+            "label": "Button text size",
+            "group": "Typography",
+            "tab": "general",
+            "options": ["11", "12", "13", "14"],
+            "default": "12"
+        },
+        "custom.nav_size": {
+            "type": "select",
+            "label": "Navigation text size",
+            "group": "Typography",
+            "tab": "general",
+            "options": ["10", "11", "12", "13"],
+            "default": "11"
+        },
+        "custom.card_title_size": {
+            "type": "select",
+            "label": "Product card title size",
+            "group": "Typography",
+            "tab": "general",
+            "options": ["12", "13", "14", "15"],
+            "default": "13"
+        },
+        "custom.card_price_size": {
+            "type": "select",
+            "label": "Product card price size",
+            "group": "Typography",
+            "tab": "general",
+            "options": ["12", "13", "14", "15"],
+            "default": "13"
+        },
+        "custom.footer_size": {
+            "type": "select",
+            "label": "Footer text size",
+            "group": "Typography",
+            "tab": "general",
+            "options": ["11", "12", "13", "14"],
+            "default": "12"
+        },
+        "custom.button_radius": {
+            "type": "integer",
+            "label": "Button corner radius (px)",
+            "group": "Components",
+            "tab": "general",
+            "min": 0,
+            "max": 50,
+            "default": 0
+        },
+        "custom.button_height": {
+            "type": "integer",
+            "label": "Button height (px)",
+            "group": "Components",
+            "tab": "general",
+            "min": 36,
+            "max": 60,
+            "default": 46
+        },
+        "custom.cart_label": {
+            "type": "string",
+            "label": "Add to bag label",
+            "group": "Labels",
+            "tab": "general",
+            "default": "Add to bag"
+        },
+        "custom.options_label": {
+            "type": "string",
+            "label": "Choose options label",
+            "group": "Labels",
+            "tab": "general",
+            "default": "Choose options"
+        },
+        "custom.sold_label": {
+            "type": "string",
+            "label": "Sold out label",
+            "group": "Labels",
+            "tab": "general",
+            "default": "Currently unavailable"
+        },
+        "custom.surface_color": {
+            "type": "color",
+            "label": "Surface sunken color",
+            "group": "Colors",
+            "tab": "general",
+            "default": "#f1f0ed"
+        },
+        "custom.accent_color": {
+            "type": "color",
+            "label": "Editorial accent color",
+            "group": "Colors",
+            "tab": "general",
+            "default": "#79513d"
+        }
+    }
+}

@@ -47,6 +47,11 @@ final class StorefrontCatalog
             }
         }
         $query = $this->visibleWithPrice($currency);
+        if ($filters['on_sale'] ?? false) {
+            $query->whereHas('variants', fn ($variant) => $variant->where('is_active', true)
+                ->whereHas('prices', fn ($price) => $price->where('currency', $currency)
+                    ->whereColumn('compare_at_amount', '>', 'amount')));
+        }
         if ($filters['in_stock'] ?? false) {
             $query->whereHas('variants', fn ($variant) => $variant->where('is_active', true)
                 ->whereHas('prices', fn ($price) => $price->where('currency', $currency))
@@ -194,6 +199,9 @@ final class StorefrontCatalog
             'slug' => $product->slug,
             'short_description' => $product->localized('short_description'),
             'image' => $image instanceof ProductImage ? ['url' => $image->url(), 'alt' => $image->alt] : null,
+            'swatches' => $variants->flatMap(fn (ProductVariant $v) => $v->options)
+                ->filter(fn ($option) => is_string($option->color) && preg_match('/^#[0-9a-fA-F]{6}$/', $option->color))
+                ->unique('id')->values()->map(fn ($option) => ['id' => $option->id, 'value' => $option->value, 'color' => $option->color])->all(),
             'hover_image' => ($second = $product->images->get(1)) instanceof ProductImage ? ['url' => $second->url(), 'alt' => $second->alt] : null,
             'brand' => $product->relationLoaded('brand') && $product->brand !== null ? ['name' => $product->brand->name, 'slug' => $product->brand->slug] : null,
             'price' => $from,
@@ -288,6 +296,7 @@ final class StorefrontCatalog
                 ->whereHas('prices', fn ($p) => $p->where('currency', $currency)))
             ->with([
                 'variants' => fn ($q) => $q->where('is_active', true),
+                'variants.options',
                 'variants.prices',
                 'variants.stocks',
                 // Two: the second shows on hover when the merchant turns it on.

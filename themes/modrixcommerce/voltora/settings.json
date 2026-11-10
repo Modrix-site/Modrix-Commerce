@@ -1,0 +1,922 @@
+{
+    "title": "Voltora storefront",
+    "description": "Separate settings for the reference homepage, catalog, product and cart. Each image section accepts direct uploads. Navigation and business details use the core platform. Compatible extensions render through the standard slots.",
+    "hide_core_fields": [
+        "layout.header",
+        "layout.footer",
+        "header.cart_icon",
+        "header.cart_count",
+        "header.account_link",
+        "header.background",
+        "header.text",
+        "layout.product_card",
+        "layout.product_page",
+        "layout.grid_columns",
+        "announcement",
+        "container",
+        "logo",
+        "footer_text"
+    ],
+    "fields": {
+        "custom.brand": {
+            "type": "string",
+            "label": "Brand name",
+            "group": "Header",
+            "default": "Voltora",
+            "max": 60
+        },
+        "custom.logo_image": {
+            "type": "image",
+            "label": "Logo image",
+            "group": "Header",
+            "default": ""
+        },
+        "custom.search_placeholder": {
+            "type": "string",
+            "label": "Search placeholder",
+            "group": "Header",
+            "default": "Search for items or brands",
+            "max": 160
+        },
+        "custom.sticky_header": {
+            "type": "boolean",
+            "label": "Sticky header",
+            "group": "Header",
+            "default": false
+        },
+        "custom.show_location": {
+            "type": "boolean",
+            "label": "Show delivery link",
+            "group": "Header",
+            "default": true
+        },
+        "custom.location_label": {
+            "type": "string",
+            "label": "Delivery link label",
+            "group": "Header",
+            "default": "Delivery at checkout",
+            "max": 80
+        },
+        "custom.show_navigation": {
+            "type": "boolean",
+            "label": "Show navigation",
+            "group": "Header",
+            "default": true
+        },
+        "custom.top_link_label": {
+            "type": "string",
+            "label": "Top link",
+            "group": "Header",
+            "default": "",
+            "max": 40
+        },
+        "custom.top_link": {
+            "type": "link",
+            "label": "Top link address",
+            "group": "Header",
+            "default": ""
+        },
+        "custom.show_account": {
+            "type": "boolean",
+            "label": "Show account link",
+            "group": "Header",
+            "default": true
+        },
+        "custom.account_label": {
+            "type": "string",
+            "label": "Account label",
+            "group": "Header",
+            "default": "Sign in",
+            "max": 40
+        },
+        "custom.cart_icon": {
+            "type": "select",
+            "label": "Cart or bag",
+            "group": "Header",
+            "default": "cart",
+            "options": ["cart", "bag"]
+        },
+        "custom.show_cart_count": {
+            "type": "boolean",
+            "label": "Show cart count",
+            "group": "Header",
+            "default": true
+        },
+        "custom.show_language": {
+            "type": "boolean",
+            "label": "Show language",
+            "group": "Top bar",
+            "tab": "header",
+            "default": true
+        },
+        "custom.show_currency": {
+            "type": "boolean",
+            "label": "Show currency",
+            "group": "Top bar",
+            "tab": "header",
+            "default": true
+        },
+        "custom.bar_background": {
+            "type": "color",
+            "label": "Top bar background",
+            "group": "Top bar",
+            "tab": "header",
+            "default": ""
+        },
+        "custom.bar_text": {
+            "type": "color",
+            "label": "Top bar text",
+            "group": "Top bar",
+            "tab": "header",
+            "default": ""
+        },
+        "custom.nav_background": {
+            "type": "color",
+            "label": "Navigation background",
+            "group": "Navigation bar",
+            "tab": "header",
+            "default": ""
+        },
+        "custom.nav_text": {
+            "type": "color",
+            "label": "Navigation text",
+            "group": "Navigation bar",
+            "tab": "header",
+            "default": ""
+        },
+        "custom.page_width": {
+            "type": "integer",
+            "label": "Content width (px)",
+            "group": "Layout",
+            "default": 1140,
+            "min": 960,
+            "max": 1600
+        },
+        "custom.section_gap": {
+            "type": "integer",
+            "label": "Section spacing (px)",
+            "group": "Layout",
+            "default": 28,
+            "min": 12,
+            "max": 80
+        },
+        "custom.show_hero": {
+            "type": "boolean",
+            "label": "Show hero carousel",
+            "group": "Hero",
+            "default": true
+        },
+        "custom.hero_height": {
+            "type": "integer",
+            "label": "Hero height (px)",
+            "group": "Hero",
+            "default": 310,
+            "min": 220,
+            "max": 650
+        },
+        "custom.hero_overlay": {
+            "type": "integer",
+            "label": "Image darkness (%)",
+            "group": "Hero",
+            "default": 40,
+            "min": 0,
+            "max": 90
+        },
+        "custom.hero_1_eyebrow": {
+            "type": "string",
+            "label": "Eyebrow",
+            "group": "Hero slide 1",
+            "default": "THE EVERYDAY UPGRADE",
+            "max": 100
+        },
+        "custom.hero_1_title": {
+            "type": "string",
+            "label": "Heading",
+            "group": "Hero slide 1",
+            "default": "Big upgrades. Smaller prices.",
+            "max": 120
+        },
+        "custom.hero_1_text": {
+            "type": "string",
+            "label": "Description",
+            "group": "Hero slide 1",
+            "default": "Discover tech that makes every day better.",
+            "max": 240
+        },
+        "custom.hero_1_button": {
+            "type": "string",
+            "label": "Button label",
+            "group": "Hero slide 1",
+            "default": "Shop the collection",
+            "max": 60
+        },
+        "custom.hero_1_link": {
+            "type": "link",
+            "label": "Button link",
+            "group": "Hero slide 1",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.hero_1_image": {
+            "type": "image",
+            "label": "Slide image",
+            "group": "Hero slide 1",
+            "default": "asset:assets/workspace-photo.jpg"
+        },
+        "custom.hero_2_eyebrow": {
+            "type": "string",
+            "label": "Eyebrow",
+            "group": "Hero slide 2",
+            "default": "THE EVERYDAY UPGRADE",
+            "max": 100
+        },
+        "custom.hero_2_title": {
+            "type": "string",
+            "label": "Heading",
+            "group": "Hero slide 2",
+            "default": "Your sound. Your space.",
+            "max": 120
+        },
+        "custom.hero_2_text": {
+            "type": "string",
+            "label": "Description",
+            "group": "Hero slide 2",
+            "default": "Discover tech that makes every day better.",
+            "max": 240
+        },
+        "custom.hero_2_button": {
+            "type": "string",
+            "label": "Button label",
+            "group": "Hero slide 2",
+            "default": "Shop the collection",
+            "max": 60
+        },
+        "custom.hero_2_link": {
+            "type": "link",
+            "label": "Button link",
+            "group": "Hero slide 2",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.hero_2_image": {
+            "type": "image",
+            "label": "Slide image",
+            "group": "Hero slide 2",
+            "default": "asset:assets/headphones-photo.jpg"
+        },
+        "custom.show_benefits": {
+            "type": "boolean",
+            "label": "Show benefits",
+            "group": "Benefits",
+            "default": true
+        },
+        "custom.benefit_1": {
+            "type": "string",
+            "label": "Benefit 1",
+            "group": "Benefits",
+            "default": "Fast delivery",
+            "max": 80
+        },
+        "custom.benefit_2": {
+            "type": "string",
+            "label": "Benefit 2",
+            "group": "Benefits",
+            "default": "Customer support",
+            "max": 80
+        },
+        "custom.benefit_3": {
+            "type": "string",
+            "label": "Benefit 3",
+            "group": "Benefits",
+            "default": "Secure shopping",
+            "max": 80
+        },
+        "custom.benefit_4": {
+            "type": "string",
+            "label": "Benefit 4",
+            "group": "Benefits",
+            "default": "Quality essentials",
+            "max": 80
+        },
+        "custom.show_promotions": {
+            "type": "boolean",
+            "label": "Show promotion tiles",
+            "group": "Promotions",
+            "default": true
+        },
+        "custom.promo_1_title": {
+            "type": "string",
+            "label": "Tile 1 heading",
+            "group": "Promotions",
+            "default": "A little more for less",
+            "max": 100
+        },
+        "custom.promo_1_image": {
+            "type": "image",
+            "label": "Tile 1 image",
+            "group": "Promotions",
+            "default": "asset:assets/headphones-photo.jpg"
+        },
+        "custom.promo_1_link": {
+            "type": "link",
+            "label": "Tile 1 link",
+            "group": "Promotions",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.promo_2_title": {
+            "type": "string",
+            "label": "Tile 2 heading",
+            "group": "Promotions",
+            "default": "Made for your day",
+            "max": 100
+        },
+        "custom.promo_2_image": {
+            "type": "image",
+            "label": "Tile 2 image",
+            "group": "Promotions",
+            "default": "asset:assets/workspace-photo.jpg"
+        },
+        "custom.promo_2_link": {
+            "type": "link",
+            "label": "Tile 2 link",
+            "group": "Promotions",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.promo_3_title": {
+            "type": "string",
+            "label": "Tile 3 heading",
+            "group": "Promotions",
+            "default": "Smart living",
+            "max": 100
+        },
+        "custom.promo_3_image": {
+            "type": "image",
+            "label": "Tile 3 image",
+            "group": "Promotions",
+            "default": "asset:assets/kitchen-photo.jpg"
+        },
+        "custom.promo_3_link": {
+            "type": "link",
+            "label": "Tile 3 link",
+            "group": "Promotions",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.promo_4_title": {
+            "type": "string",
+            "label": "Tile 4 heading",
+            "group": "Promotions",
+            "default": "Your next upgrade",
+            "max": 100
+        },
+        "custom.promo_4_image": {
+            "type": "image",
+            "label": "Tile 4 image",
+            "group": "Promotions",
+            "default": "asset:assets/gaming-photo.jpg"
+        },
+        "custom.promo_4_link": {
+            "type": "link",
+            "label": "Tile 4 link",
+            "group": "Promotions",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.show_spotlight": {
+            "type": "boolean",
+            "label": "Show tabbed spotlight",
+            "group": "Spotlight",
+            "default": true
+        },
+        "custom.spotlight_heading": {
+            "type": "string",
+            "label": "Section heading",
+            "group": "Spotlight",
+            "default": "Your next upgrade",
+            "max": 160
+        },
+        "custom.spot_1_label": {
+            "type": "string",
+            "label": "Tab label",
+            "group": "Spotlight tab 1",
+            "default": "Computing",
+            "max": 60
+        },
+        "custom.spot_1_title": {
+            "type": "string",
+            "label": "Heading",
+            "group": "Spotlight tab 1",
+            "default": "A smarter workspace.",
+            "max": 120
+        },
+        "custom.spot_1_text": {
+            "type": "string",
+            "label": "Description",
+            "group": "Spotlight tab 1",
+            "default": "Discover portable power, thoughtful accessories and everything in between.",
+            "max": 300
+        },
+        "custom.spot_1_button": {
+            "type": "string",
+            "label": "Button label",
+            "group": "Spotlight tab 1",
+            "default": "Explore computing",
+            "max": 60
+        },
+        "custom.spot_1_link": {
+            "type": "link",
+            "label": "Button link",
+            "group": "Spotlight tab 1",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.spot_1_image": {
+            "type": "image",
+            "label": "Tab image",
+            "group": "Spotlight tab 1",
+            "default": "asset:assets/workspace-photo.jpg"
+        },
+        "custom.spot_2_label": {
+            "type": "string",
+            "label": "Tab label",
+            "group": "Spotlight tab 2",
+            "default": "Audio",
+            "max": 60
+        },
+        "custom.spot_2_title": {
+            "type": "string",
+            "label": "Heading",
+            "group": "Spotlight tab 2",
+            "default": "Your sound. Your space.",
+            "max": 120
+        },
+        "custom.spot_2_text": {
+            "type": "string",
+            "label": "Description",
+            "group": "Spotlight tab 2",
+            "default": "Discover sound for every part of your day.",
+            "max": 300
+        },
+        "custom.spot_2_button": {
+            "type": "string",
+            "label": "Button label",
+            "group": "Spotlight tab 2",
+            "default": "Explore audio",
+            "max": 60
+        },
+        "custom.spot_2_link": {
+            "type": "link",
+            "label": "Button link",
+            "group": "Spotlight tab 2",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.spot_2_image": {
+            "type": "image",
+            "label": "Tab image",
+            "group": "Spotlight tab 2",
+            "default": "asset:assets/headphones-photo.jpg"
+        },
+        "custom.spot_3_label": {
+            "type": "string",
+            "label": "Tab label",
+            "group": "Spotlight tab 3",
+            "default": "Wearables",
+            "max": 60
+        },
+        "custom.spot_3_title": {
+            "type": "string",
+            "label": "Heading",
+            "group": "Spotlight tab 3",
+            "default": "Made for every moment.",
+            "max": 120
+        },
+        "custom.spot_3_text": {
+            "type": "string",
+            "label": "Description",
+            "group": "Spotlight tab 3",
+            "default": "Explore thoughtful tech for everyday movement.",
+            "max": 300
+        },
+        "custom.spot_3_button": {
+            "type": "string",
+            "label": "Button label",
+            "group": "Spotlight tab 3",
+            "default": "Explore wearables",
+            "max": 60
+        },
+        "custom.spot_3_link": {
+            "type": "link",
+            "label": "Button link",
+            "group": "Spotlight tab 3",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.spot_3_image": {
+            "type": "image",
+            "label": "Tab image",
+            "group": "Spotlight tab 3",
+            "default": "asset:assets/watch-photo.jpg"
+        },
+        "custom.show_finance": {
+            "type": "boolean",
+            "label": "Show payment information banner",
+            "group": "Payment information",
+            "default": true
+        },
+        "custom.finance_heading": {
+            "type": "string",
+            "label": "Heading",
+            "group": "Payment information",
+            "default": "Flexible payments.",
+            "max": 160
+        },
+        "custom.finance_text": {
+            "type": "string",
+            "label": "Text",
+            "group": "Payment information",
+            "default": "More freedom for your next upgrade.",
+            "max": 160
+        },
+        "custom.finance_link": {
+            "type": "link",
+            "label": "Link",
+            "group": "Payment information",
+            "default": "/cart",
+            "max": 500
+        },
+        "custom.show_lifestyle": {
+            "type": "boolean",
+            "label": "Show lifestyle tiles",
+            "group": "Lifestyle",
+            "default": true
+        },
+        "custom.lifestyle_heading": {
+            "type": "string",
+            "label": "Section heading",
+            "group": "Lifestyle",
+            "default": "Tech for daily life",
+            "max": 160
+        },
+        "custom.life_1_title": {
+            "type": "string",
+            "label": "Tile 1 heading",
+            "group": "Lifestyle",
+            "default": "Stay connected",
+            "max": 100
+        },
+        "custom.life_1_image": {
+            "type": "image",
+            "label": "Tile 1 image",
+            "group": "Lifestyle",
+            "default": "asset:assets/phone-photo.jpg"
+        },
+        "custom.life_1_link": {
+            "type": "link",
+            "label": "Tile 1 link",
+            "group": "Lifestyle",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.life_2_title": {
+            "type": "string",
+            "label": "Tile 2 heading",
+            "group": "Lifestyle",
+            "default": "Work smarter",
+            "max": 100
+        },
+        "custom.life_2_image": {
+            "type": "image",
+            "label": "Tile 2 image",
+            "group": "Lifestyle",
+            "default": "asset:assets/workspace-photo.jpg"
+        },
+        "custom.life_2_link": {
+            "type": "link",
+            "label": "Tile 2 link",
+            "group": "Lifestyle",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.life_3_title": {
+            "type": "string",
+            "label": "Tile 3 heading",
+            "group": "Lifestyle",
+            "default": "Level up your game",
+            "max": 100
+        },
+        "custom.life_3_image": {
+            "type": "image",
+            "label": "Tile 3 image",
+            "group": "Lifestyle",
+            "default": "asset:assets/gaming-photo.jpg"
+        },
+        "custom.life_3_link": {
+            "type": "link",
+            "label": "Tile 3 link",
+            "group": "Lifestyle",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.life_4_title": {
+            "type": "string",
+            "label": "Tile 4 heading",
+            "group": "Lifestyle",
+            "default": "Bring entertainment home",
+            "max": 100
+        },
+        "custom.life_4_image": {
+            "type": "image",
+            "label": "Tile 4 image",
+            "group": "Lifestyle",
+            "default": "asset:assets/headphones-photo.jpg"
+        },
+        "custom.life_4_link": {
+            "type": "link",
+            "label": "Tile 4 link",
+            "group": "Lifestyle",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.life_5_title": {
+            "type": "string",
+            "label": "Tile 5 heading",
+            "group": "Lifestyle",
+            "default": "Create your story",
+            "max": 100
+        },
+        "custom.life_5_image": {
+            "type": "image",
+            "label": "Tile 5 image",
+            "group": "Lifestyle",
+            "default": "asset:assets/camera-photo.jpg"
+        },
+        "custom.life_5_link": {
+            "type": "link",
+            "label": "Tile 5 link",
+            "group": "Lifestyle",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.life_6_title": {
+            "type": "string",
+            "label": "Tile 6 heading",
+            "group": "Lifestyle",
+            "default": "Make life easier",
+            "max": 100
+        },
+        "custom.life_6_image": {
+            "type": "image",
+            "label": "Tile 6 image",
+            "group": "Lifestyle",
+            "default": "asset:assets/kitchen-photo.jpg"
+        },
+        "custom.life_6_link": {
+            "type": "link",
+            "label": "Tile 6 link",
+            "group": "Lifestyle",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.show_brands": {
+            "type": "boolean",
+            "label": "Show brand strip",
+            "group": "Brand strip",
+            "default": true
+        },
+        "custom.brand_names": {
+            "type": "string",
+            "label": "Names separated by |",
+            "group": "Brand strip",
+            "default": "VOLTORA|Noviq|Auralis|OR BEXA|Homena",
+            "max": 500
+        },
+        "custom.catalog_heading": {
+            "type": "string",
+            "label": "Catalog heading",
+            "group": "Catalog",
+            "default": "All products",
+            "max": 160
+        },
+        "custom.catalog_columns": {
+            "type": "select",
+            "label": "Desktop columns",
+            "group": "Catalog",
+            "default": "4",
+            "options": [
+                "3",
+                "4",
+                "5"
+            ]
+        },
+        "custom.catalog_image_height": {
+            "type": "integer",
+            "label": "Image height (px)",
+            "group": "Catalog",
+            "default": 220,
+            "min": 160,
+            "max": 400
+        },
+        "custom.catalog_filters": {
+            "type": "boolean",
+            "label": "Show filters",
+            "group": "Catalog",
+            "default": true
+        },
+        "custom.catalog_stock_filter": {
+            "type": "boolean",
+            "label": "Show stock filter",
+            "group": "Catalog",
+            "default": true
+        },
+        "custom.catalog_banner": {
+            "type": "image",
+            "label": "Catalog banner",
+            "group": "Catalog",
+            "default": ""
+        },
+        "custom.show_buy_button": {
+            "type": "boolean",
+            "label": "Enable Buy now buttons",
+            "group": "Catalog",
+            "default": true
+        },
+        "custom.show_sale_badge": {
+            "type": "boolean",
+            "label": "Show genuine sale badges",
+            "group": "Catalog",
+            "default": true
+        },
+        "custom.product_button": {
+            "type": "string",
+            "label": "Add-to-cart label",
+            "group": "Product",
+            "default": "ADD TO CART",
+            "max": 60
+        },
+        "custom.show_product_details": {
+            "type": "boolean",
+            "label": "Show description",
+            "group": "Product",
+            "default": true
+        },
+        "custom.related_heading": {
+            "type": "string",
+            "label": "Related products heading",
+            "group": "Product",
+            "default": "People also viewed",
+            "max": 160
+        },
+        "custom.delivery_text": {
+            "type": "string",
+            "label": "Delivery information",
+            "group": "Product",
+            "default": "Shipping options and rates are calculated at checkout.",
+            "max": 500
+        },
+        "custom.product_trust": {
+            "type": "string",
+            "label": "Purchase reassurance",
+            "group": "Product",
+            "default": "Secure checkout · Customer support",
+            "max": 160
+        },
+        "custom.product_image_height": {
+            "type": "integer",
+            "label": "Gallery height (px)",
+            "group": "Product",
+            "default": 420,
+            "min": 250,
+            "max": 700
+        },
+        "custom.cart_heading": {
+            "type": "string",
+            "label": "Cart heading",
+            "group": "Cart",
+            "default": "Cart",
+            "max": 160
+        },
+        "custom.cart_empty_heading": {
+            "type": "string",
+            "label": "Empty-cart heading",
+            "group": "Cart",
+            "default": "Your cart is empty",
+            "max": 160
+        },
+        "custom.cart_checkout_label": {
+            "type": "string",
+            "label": "Checkout button",
+            "group": "Cart",
+            "default": "PROCEED TO CHECKOUT",
+            "max": 160
+        },
+        "custom.cart_summary_heading": {
+            "type": "string",
+            "label": "Summary heading",
+            "group": "Cart",
+            "default": "Cart summary",
+            "max": 160
+        },
+        "custom.cart_promo_heading": {
+            "type": "string",
+            "label": "Promotion heading",
+            "group": "Cart",
+            "default": "More value. Every day.",
+            "max": 160
+        },
+        "custom.cart_promo_text": {
+            "type": "string",
+            "label": "Promotion text",
+            "group": "Cart",
+            "default": "Explore our latest offers.",
+            "max": 160
+        },
+        "custom.cart_show_coupon": {
+            "type": "boolean",
+            "label": "Show coupon field",
+            "group": "Cart",
+            "default": true
+        },
+        "custom.cart_show_promo": {
+            "type": "boolean",
+            "label": "Show cart promotion",
+            "group": "Cart",
+            "default": true
+        },
+        "custom.cart_promo_link": {
+            "type": "link",
+            "label": "Promotion link",
+            "group": "Cart",
+            "default": "/search",
+            "max": 500
+        },
+        "custom.cart_promo_image": {
+            "type": "image",
+            "label": "Promotion image",
+            "group": "Cart",
+            "default": ""
+        },
+        "custom.newsletter_heading": {
+            "type": "string",
+            "label": "Newsletter heading",
+            "group": "Footer",
+            "default": "Subscribe to our newsletter",
+            "max": 160
+        },
+        "custom.footer_newsletter": {
+            "type": "boolean",
+            "label": "Show enabled footer newsletter",
+            "group": "Footer",
+            "default": true
+        },
+        "custom.footer_copyright": {
+            "type": "string",
+            "label": "Copyright",
+            "group": "Footer",
+            "default": "© 2026 Voltora. All rights reserved.",
+            "max": 160
+        },
+        "custom.payment_text": {
+            "type": "string",
+            "label": "Payment information",
+            "group": "Product",
+            "default": "Choose an available payment method at checkout.",
+            "max": 500
+        },
+        "custom.warranty_text": {
+            "type": "string",
+            "label": "Warranty information",
+            "group": "Product",
+            "default": "Contact support for warranty and returns information.",
+            "max": 500
+        },
+        "custom.product_buy_now_button": {
+            "type": "string",
+            "label": "Buy now label",
+            "group": "Product",
+            "default": "BUY NOW",
+            "max": 500
+        },
+        "custom.cart_continue_label": {
+            "type": "string",
+            "label": "Continue shopping label",
+            "group": "Cart",
+            "default": "Continue shopping",
+            "max": 500
+        },
+        "custom.card_buy_button": {
+            "type": "boolean",
+            "label": "Show Buy button on product cards",
+            "group": "Catalog",
+            "default": false
+        },
+        "custom.show_saved": {
+            "type": "boolean",
+            "label": "Show device-local save-for-later hearts",
+            "group": "Catalog",
+            "default": false
+        }
+    }
+}

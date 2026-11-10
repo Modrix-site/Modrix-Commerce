@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\PasswordUpdateRequest;
 use App\Http\Requests\Settings\TwoFactorAuthenticationRequest;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -13,6 +14,13 @@ use Laravel\Fortify\Features;
 
 class SecurityController extends Controller
 {
+    public function password(Request $request): Response
+    {
+        return Inertia::render('storefront/account/password', [
+            'passwordRules' => Password::defaults()->toPasswordRulesString(),
+        ]);
+    }
+
     /**
      * Show the user's security settings page.
      */
@@ -47,7 +55,7 @@ class SecurityController extends Controller
             $props['requiresConfirmation'] = Features::optionEnabled(Features::twoFactorAuthentication(), 'confirm');
         }
 
-        return Inertia::render('settings/security', $props);
+        return Inertia::render($request->routeIs('account.*') ? 'storefront/account/security' : 'settings/security', $props);
     }
 
     /**

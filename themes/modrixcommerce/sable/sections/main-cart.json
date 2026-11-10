@@ -1,0 +1,23 @@
+{
+    "name": "Shopping bag",
+    "settings": [
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "Your shopping bag"
+        }
+    ],
+    "blocks": [],
+    "presets": [
+        {
+            "name": "Shopping bag"
+        }
+    ],
+    "enabled_on": {
+        "templates": [
+            "cart"
+        ]
+    },
+    "limit": 1
+}

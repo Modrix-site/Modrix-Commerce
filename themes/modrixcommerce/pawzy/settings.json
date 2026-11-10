@@ -1,0 +1,563 @@
+{
+    "title": "Pawzy theme studio",
+    "description": "Pawzy typography, navigation, sidebar, home campaigns, product pages and footer. Core commerce and extension controls remain available.",
+    "mode": "extend",
+    "sections": true,
+    "fields": {
+        "custom.brand": {
+            "type": "string",
+            "label": "Store brand",
+            "default": "Pawzy",
+            "group": "Pawzy header",
+            "tab": "header",
+            "max": 60
+        },
+        "custom.header_background": {
+            "type": "color",
+            "label": "Header background",
+            "default": "#38495f",
+            "group": "Pawzy header",
+            "tab": "header"
+        },
+        "custom.search_placeholder": {
+            "type": "string",
+            "label": "Search placeholder",
+            "default": "Enter your keywords",
+            "group": "Pawzy header",
+            "tab": "header",
+            "max": 120
+        },
+        "custom.show_navigation": {
+            "type": "boolean",
+            "label": "Show main navigation",
+            "default": true,
+            "group": "Pawzy navigation",
+            "tab": "header"
+        },
+        "custom.use_store_navigation": {
+            "type": "boolean",
+            "label": "Use core Navigation menus",
+            "default": false,
+            "group": "Pawzy navigation",
+            "tab": "header"
+        },
+        "custom.show_sidebar": {
+            "type": "boolean",
+            "label": "Enable category sidebar menu",
+            "default": true,
+            "group": "Pawzy navigation",
+            "tab": "header"
+        },
+        "custom.sidebar_label": {
+            "type": "string",
+            "label": "Category menu label",
+            "default": "Shop by categories",
+            "group": "Pawzy navigation",
+            "tab": "header",
+            "max": 60
+        },
+        "custom.show_announcement": {
+            "type": "boolean",
+            "label": "Show announcement bar",
+            "default": true,
+            "group": "Pawzy header",
+            "tab": "header"
+        },
+        "custom.show_search": {
+            "type": "boolean",
+            "label": "Show search",
+            "default": true,
+            "group": "Pawzy header",
+            "tab": "header"
+        },
+        "custom.home_gap": {
+            "type": "integer",
+            "label": "Space between home sections (px)",
+            "default": 72,
+            "group": "Pawzy homepage",
+            "tab": "home",
+            "min": 24,
+            "max": 120
+        },
+        "custom.hero_height": {
+            "type": "integer",
+            "label": "Hero height (px)",
+            "default": 440,
+            "group": "Pawzy hero",
+            "tab": "home",
+            "min": 260,
+            "max": 700
+        },
+        "custom.hero_text_position": {
+            "type": "select",
+            "label": "Hero text position",
+            "default": "left",
+            "group": "Pawzy hero",
+            "tab": "home",
+            "options": ["left", "center", "right"]
+        },
+        "custom.hero_overlay": {
+            "type": "integer",
+            "label": "Hero shade opacity (%)",
+            "default": 0,
+            "group": "Pawzy hero",
+            "tab": "home",
+            "min": 0,
+            "max": 80
+        },
+        "custom.hero_show": {
+            "type": "boolean",
+            "label": "Show homepage hero",
+            "default": true,
+            "group": "Pawzy hero",
+            "tab": "home"
+        },
+        "custom.hero_eyebrow": {
+            "type": "string",
+            "label": "Eyebrow",
+            "default": "Pet picks",
+            "group": "Pawzy hero",
+            "tab": "home",
+            "max": 80
+        },
+        "custom.hero_heading": {
+            "type": "string",
+            "label": "Heading",
+            "default": "Smiles, Wags, And Love",
+            "group": "Pawzy hero",
+            "tab": "home",
+            "max": 120
+        },
+        "custom.hero_body": {
+            "type": "text",
+            "label": "Text",
+            "default": "Everything they love. Everything they need. Find a little joy for every paw.",
+            "group": "Pawzy hero",
+            "tab": "home",
+            "max": 500
+        },
+        "custom.hero_button_label": {
+            "type": "string",
+            "label": "Button label",
+            "default": "Shop now",
+            "group": "Pawzy hero",
+            "tab": "home",
+            "max": 40
+        },
+        "custom.hero_button_link": {
+            "type": "link",
+            "label": "Button link",
+            "default": "/search",
+            "group": "Pawzy hero",
+            "tab": "home"
+        },
+        "custom.hero_button_2_label": {
+            "type": "string",
+            "label": "Second button label",
+            "default": "",
+            "group": "Pawzy hero",
+            "tab": "home",
+            "max": 40
+        },
+        "custom.hero_button_2_link": {
+            "type": "link",
+            "label": "Second button link",
+            "default": "",
+            "group": "Pawzy hero",
+            "tab": "home"
+        },
+        "custom.hero_image": {
+            "type": "image",
+            "label": "Hero image",
+            "default": "asset:assets/images/hero.jpg",
+            "group": "Pawzy hero",
+            "tab": "home"
+        },
+        "custom.hero_background": {
+            "type": "color",
+            "label": "Background",
+            "default": "#ef90b5",
+            "group": "Pawzy hero",
+            "tab": "home"
+        },
+        "custom.hero_foreground": {
+            "type": "color",
+            "label": "Text color",
+            "default": "#263344",
+            "group": "Pawzy hero",
+            "tab": "home"
+        },
+        "custom.hero_shade": {
+            "type": "color",
+            "label": "Shade color",
+            "default": "#000000",
+            "group": "Pawzy hero",
+            "tab": "home"
+        },
+        "custom.hero_mobile_height": {
+            "type": "integer",
+            "label": "Mobile height (px)",
+            "default": 420,
+            "group": "Pawzy hero",
+            "tab": "home",
+            "min": 240,
+            "max": 800
+        },
+        "custom.hero_title_size": {
+            "type": "integer",
+            "label": "Heading size (px)",
+            "default": 58,
+            "group": "Pawzy hero",
+            "tab": "home",
+            "min": 28,
+            "max": 90
+        },
+        "custom.hero_mobile_title_size": {
+            "type": "integer",
+            "label": "Mobile heading size (px)",
+            "default": 34,
+            "group": "Pawzy hero",
+            "tab": "home",
+            "min": 22,
+            "max": 56
+        },
+        "custom.hero_image_layout": {
+            "type": "select",
+            "label": "Image layout",
+            "default": "side",
+            "group": "Pawzy hero",
+            "tab": "home",
+            "options": ["side", "background"]
+        },
+        "custom.hero_image_width": {
+            "type": "integer",
+            "label": "Side image width (%)",
+            "default": 52,
+            "group": "Pawzy hero",
+            "tab": "home",
+            "min": 30,
+            "max": 70
+        },
+        "custom.hero_image_fit": {
+            "type": "select",
+            "label": "Image fit",
+            "default": "cover",
+            "group": "Pawzy hero",
+            "tab": "home",
+            "options": ["cover", "contain"]
+        },
+        "custom.hero_content_width": {
+            "type": "integer",
+            "label": "Text width (%)",
+            "default": 43,
+            "group": "Pawzy hero",
+            "tab": "home",
+            "min": 30,
+            "max": 80
+        },
+        "custom.hero_radius": {
+            "type": "integer",
+            "label": "Corner radius (px)",
+            "default": 22,
+            "group": "Pawzy hero",
+            "tab": "home",
+            "min": 0,
+            "max": 40
+        },
+        "custom.hero_valign": {
+            "type": "select",
+            "label": "Vertical alignment",
+            "default": "center",
+            "group": "Pawzy hero",
+            "tab": "home",
+            "options": ["top", "center", "bottom"]
+        },
+        "custom.hero_full_bleed": {
+            "type": "boolean",
+            "label": "Stretch hero to the screen edges",
+            "default": false,
+            "group": "Pawzy hero",
+            "tab": "home"
+        },
+        "custom.show_faq": {
+            "type": "boolean",
+            "label": "Show homepage FAQ",
+            "default": true,
+            "group": "Pawzy FAQ",
+            "tab": "home"
+        },
+        "custom.faq_title": {
+            "type": "string",
+            "label": "FAQ heading",
+            "default": "Frequently Asked Questions",
+            "group": "Pawzy FAQ",
+            "tab": "home",
+            "max": 120
+        },
+        "custom.faq_1_question": {
+            "type": "string",
+            "label": "Question 1",
+            "default": "What type of pets do you support?",
+            "group": "Pawzy FAQ",
+            "tab": "home",
+            "max": 160
+        },
+        "custom.faq_1_answer": {
+            "type": "text",
+            "label": "Answer 1",
+            "default": "Explore essentials for cats, dogs, birds and small companions. Check each product for suitability and sizing.",
+            "group": "Pawzy FAQ",
+            "tab": "home",
+            "max": 1000
+        },
+        "custom.faq_2_question": {
+            "type": "string",
+            "label": "Question 2",
+            "default": "Do you offer grooming essentials?",
+            "group": "Pawzy FAQ",
+            "tab": "home",
+            "max": 160
+        },
+        "custom.faq_2_answer": {
+            "type": "text",
+            "label": "Answer 2",
+            "default": "Browse the grooming collection for brushes and everyday care accessories. Always follow the product care instructions.",
+            "group": "Pawzy FAQ",
+            "tab": "home",
+            "max": 1000
+        },
+        "custom.faq_3_question": {
+            "type": "string",
+            "label": "Question 3",
+            "default": "How long does shipping take?",
+            "group": "Pawzy FAQ",
+            "tab": "home",
+            "max": 160
+        },
+        "custom.faq_3_answer": {
+            "type": "text",
+            "label": "Answer 3",
+            "default": "Available delivery methods, charges and estimated times are shown at checkout for your address.",
+            "group": "Pawzy FAQ",
+            "tab": "home",
+            "max": 1000
+        },
+        "custom.faq_4_question": {
+            "type": "string",
+            "label": "Question 4",
+            "default": "Can I return a product?",
+            "group": "Pawzy FAQ",
+            "tab": "home",
+            "max": 160
+        },
+        "custom.faq_4_answer": {
+            "type": "text",
+            "label": "Answer 4",
+            "default": "Please read the store return policy and contact our team with your order number before returning an item.",
+            "group": "Pawzy FAQ",
+            "tab": "home",
+            "max": 1000
+        },
+        "custom.faq_5_question": {
+            "type": "string",
+            "label": "Question 5",
+            "default": "Are your products safe for pets?",
+            "group": "Pawzy FAQ",
+            "tab": "home",
+            "max": 160
+        },
+        "custom.faq_5_answer": {
+            "type": "text",
+            "label": "Answer 5",
+            "default": "Choose the correct size, supervise play and replace damaged items. Contact your veterinarian for individual care advice.",
+            "group": "Pawzy FAQ",
+            "tab": "home",
+            "max": 1000
+        },
+        "custom.catalog_banner": {
+            "type": "image",
+            "label": "Collection banner",
+            "default": "asset:assets/images/pets.jpg",
+            "group": "Pawzy catalog",
+            "tab": "catalog"
+        },
+        "custom.catalog_show_banner": {
+            "type": "boolean",
+            "label": "Show collection banner",
+            "default": true,
+            "group": "Pawzy catalog",
+            "tab": "catalog"
+        },
+        "custom.catalog_show_pet_links": {
+            "type": "boolean",
+            "label": "Show circular category links",
+            "default": true,
+            "group": "Pawzy catalog",
+            "tab": "catalog"
+        },
+        "custom.catalog_columns": {
+            "type": "select",
+            "label": "Desktop grid columns",
+            "default": "4",
+            "group": "Pawzy catalog",
+            "tab": "catalog",
+            "options": ["2", "3", "4"]
+        },
+        "custom.catalog_image_height": {
+            "type": "integer",
+            "label": "Product image height (px)",
+            "default": 320,
+            "group": "Pawzy catalog",
+            "tab": "catalog",
+            "min": 180,
+            "max": 480
+        },
+        "custom.catalog_show_filters": {
+            "type": "boolean",
+            "label": "Show collection filters",
+            "default": true,
+            "group": "Pawzy catalog",
+            "tab": "catalog"
+        },
+        "custom.catalog_show_count": {
+            "type": "boolean",
+            "label": "Show product count",
+            "default": true,
+            "group": "Pawzy catalog",
+            "tab": "catalog"
+        },
+        "custom.catalog_filter_layout": {
+            "type": "select",
+            "label": "Filters layout",
+            "default": "toolbar",
+            "group": "Pawzy catalog",
+            "tab": "catalog",
+            "options": ["toolbar", "sidebar"]
+        },
+        "custom.show_buy_button": {
+            "type": "boolean",
+            "label": "Show Buy now buttons",
+            "default": true,
+            "group": "Pawzy product",
+            "tab": "product"
+        },
+        "custom.sticky_add_to_cart": {
+            "type": "boolean",
+            "label": "Sticky mobile purchase bar",
+            "default": true,
+            "group": "Pawzy product",
+            "tab": "product"
+        },
+        "custom.show_product_benefits": {
+            "type": "boolean",
+            "label": "Show product benefit panel",
+            "default": true,
+            "group": "Pawzy product",
+            "tab": "product"
+        },
+        "custom.product_shipping": {
+            "type": "text",
+            "label": "Delivery information",
+            "default": "Delivery options and estimated times are shown at checkout.",
+            "group": "Pawzy product",
+            "tab": "product",
+            "max": 1000
+        },
+        "custom.product_returns": {
+            "type": "text",
+            "label": "Returns information",
+            "default": "See our return policy or contact the store with your order number.",
+            "group": "Pawzy product",
+            "tab": "product",
+            "max": 1000
+        },
+        "custom.product_custom_tab": {
+            "type": "text",
+            "label": "Care guide",
+            "default": "Choose the right size for your pet. Supervise play and inspect accessories regularly. Follow the individual product care instructions.",
+            "group": "Pawzy product",
+            "tab": "product",
+            "max": 2000
+        },
+        "custom.show_trust_band": {
+            "type": "boolean",
+            "label": "Show service benefits",
+            "default": true,
+            "group": "Pawzy footer",
+            "tab": "footer"
+        },
+        "custom.footer_background": {
+            "type": "color",
+            "label": "Footer background",
+            "default": "#f7f3f7",
+            "group": "Pawzy footer",
+            "tab": "footer"
+        },
+        "custom.footer_intro": {
+            "type": "text",
+            "label": "Footer introduction",
+            "default": "A little care. A lot of love. Everyday essentials for your favourite companions.",
+            "group": "Pawzy footer",
+            "tab": "footer",
+            "max": 500
+        },
+        "custom.show_footer": {
+            "type": "boolean",
+            "label": "Show footer",
+            "default": true,
+            "group": "Pawzy footer",
+            "tab": "footer"
+        },
+        "custom.show_footer_links": {
+            "type": "boolean",
+            "label": "Show footer links",
+            "default": true,
+            "group": "Pawzy footer",
+            "tab": "footer"
+        },
+        "custom.show_newsletter": {
+            "type": "boolean",
+            "label": "Show newsletter extension area",
+            "default": true,
+            "group": "Pawzy footer",
+            "tab": "footer"
+        },
+        "custom.newsletter_heading": {
+            "type": "string",
+            "label": "Newsletter heading",
+            "default": "Subscribe to our newsletter",
+            "group": "Pawzy footer",
+            "tab": "footer",
+            "max": 120
+        },
+        "custom.show_comparison": {
+            "type": "boolean",
+            "label": "Show pet style comparison",
+            "default": true,
+            "group": "Pawzy comparison",
+            "tab": "home"
+        },
+        "custom.comparison_before": {
+            "type": "image",
+            "label": "First look image",
+            "default": "asset:assets/images/dog.jpg",
+            "group": "Pawzy comparison",
+            "tab": "home"
+        },
+        "custom.comparison_after": {
+            "type": "image",
+            "label": "Second look image",
+            "default": "asset:assets/images/fashion.jpg",
+            "group": "Pawzy comparison",
+            "tab": "home"
+        },
+        "custom.promotion_end": {
+            "type": "string",
+            "label": "Promotion end date (ISO 8601 with timezone; blank hides timer)",
+            "default": "",
+            "max": 40,
+            "group": "Pawzy homepage",
+            "tab": "home"
+        }
+    }
+}

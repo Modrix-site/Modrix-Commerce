@@ -76,7 +76,7 @@ class SaveProductRequest extends FormRequest
             'status' => ['required', Rule::enum(ProductStatus::class)],
             'published_at' => ['nullable', 'date'],
             'short_description' => ['nullable', 'string', 'max:500'],
-            'description' => ['nullable', 'string', 'max:20000'],
+            'description' => ['nullable', 'string', 'max:50000'],
             'meta_title' => ['nullable', 'string', 'max:191'],
             'meta_description' => ['nullable', 'string', 'max:500'],
             'brand_id' => ['nullable', 'integer', Rule::exists('brands', 'id')],

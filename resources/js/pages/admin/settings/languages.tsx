@@ -11,25 +11,46 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { index as interfaceText } from '@/routes/admin/settings/interface-text';
 import { edit } from '@/routes/admin/settings/languages';
 
+type Phrase = { group: string; text: string };
+
 type Props = {
     available: { code: string; name: string }[];
     default: string;
     additional: string[];
+    mode: 'automatic' | 'manual';
+    phrases: Phrase[];
+    translations: Record<string, Record<string, string>>;
 };
 
 export default function LanguageSettings({
     available,
     default: defaultLocale,
     additional,
+    mode: initialMode,
+    phrases,
+    translations,
 }: Props) {
     const [search, setSearch] = useState('');
     const [base, setBase] = useState(defaultLocale);
     const [extra, setExtra] = useState<string[]>(additional);
+    const [mode, setMode] = useState(initialMode);
+    const [copy, setCopy] = useState(translations);
+    const [phraseLocale, setPhraseLocale] = useState(
+        additional.find((code) => code !== defaultLocale) ?? '',
+    );
 
     const toggle = (code: string, on: boolean) =>
         setExtra((current) =>
             on ? [...current, code] : current.filter((c) => c !== code),
         );
+    const phraseLanguages = available.filter(
+        (language) => extra.includes(language.code) && language.code !== base,
+    );
+    const selectedPhrase =
+        phraseLanguages.find((language) => language.code === phraseLocale)
+            ?.code ??
+        phraseLanguages[0]?.code ??
+        '';
 
     return (
         <>
@@ -37,7 +58,7 @@ export default function LanguageSettings({
             <AdminPage>
                 <PageHeader
                     title="Languages"
-                    description="Products and categories are written in the default language. Shoppers can switch to any additional language; untranslated texts fall back to the default."
+                    description="Products and categories are written in the default language. Shoppers can switch to any additional language. Homepage, footer and theme text can follow that language automatically, or you can write those translations yourself."
                     actions={
                         <Button variant="outline" asChild>
                             <Link href={interfaceText()}>Storefront text</Link>
@@ -49,6 +70,23 @@ export default function LanguageSettings({
                         <Form
                             {...LanguageSettingsController.update.form()}
                             options={{ preserveScroll: true }}
+                            transform={(data) => ({
+                                ...data,
+                                mode,
+                                translations:
+                                    mode === 'manual'
+                                        ? Object.entries(copy).flatMap(
+                                              ([locale, rows]) =>
+                                                  Object.entries(rows).map(
+                                                      ([source, value]) => ({
+                                                          locale,
+                                                          source,
+                                                          value,
+                                                      }),
+                                                  ),
+                                          )
+                                        : [],
+                            })}
                             className="grid gap-6"
                         >
                             {({ processing, errors }) => (
@@ -162,6 +200,140 @@ export default function LanguageSettings({
                                         <InputError
                                             message={errors.additional}
                                         />
+                                    </fieldset>
+                                    <fieldset className="grid gap-3">
+                                        <legend className="text-sm font-medium">
+                                            Homepage, footer and theme text
+                                        </legend>
+                                        <p className="text-sm text-muted-foreground">
+                                            This applies to every theme. Choose
+                                            whether that text is translated
+                                            automatically when a shopper picks a
+                                            language, or you write the
+                                            translations.
+                                        </p>
+                                        <label className="flex items-start gap-2 text-sm">
+                                            <input
+                                                type="radio"
+                                                name="mode"
+                                                value="automatic"
+                                                checked={mode === 'automatic'}
+                                                onChange={() =>
+                                                    setMode('automatic')
+                                                }
+                                            />
+                                            <span>
+                                                Translate automatically when a
+                                                shopper selects a language
+                                            </span>
+                                        </label>
+                                        <label className="flex items-start gap-2 text-sm">
+                                            <input
+                                                type="radio"
+                                                name="mode"
+                                                value="manual"
+                                                checked={mode === 'manual'}
+                                                onChange={() =>
+                                                    setMode('manual')
+                                                }
+                                            />
+                                            <span>
+                                                I will translate the homepage,
+                                                footer and theme text
+                                            </span>
+                                        </label>
+                                        <InputError message={errors.mode} />
+                                        {mode === 'manual' &&
+                                            phraseLanguages.length > 0 && (
+                                                <div className="grid gap-3 rounded-lg border p-3">
+                                                    <FormField
+                                                        id="phrase-locale"
+                                                        label="Language to translate"
+                                                    >
+                                                        <NativeSelect
+                                                            id="phrase-locale"
+                                                            value={
+                                                                selectedPhrase
+                                                            }
+                                                            onChange={(e) =>
+                                                                setPhraseLocale(
+                                                                    e.target
+                                                                        .value,
+                                                                )
+                                                            }
+                                                            className="sm:max-w-xs"
+                                                        >
+                                                            {phraseLanguages.map(
+                                                                (language) => (
+                                                                    <option
+                                                                        key={
+                                                                            language.code
+                                                                        }
+                                                                        value={
+                                                                            language.code
+                                                                        }
+                                                                    >
+                                                                        {
+                                                                            language.name
+                                                                        }
+                                                                    </option>
+                                                                ),
+                                                            )}
+                                                        </NativeSelect>
+                                                    </FormField>
+                                                    {phrases.length === 0 ? (
+                                                        <p className="text-sm text-muted-foreground">
+                                                            The active theme
+                                                            has no homepage or
+                                                            footer text to
+                                                            translate yet.
+                                                        </p>
+                                                    ) : (
+                                                        phrases.map(
+                                                            (phrase, index) => (
+                                                                <FormField
+                                                                    key={`${selectedPhrase}:${phrase.text}`}
+                                                                    id={`phrase-${index}`}
+                                                                    label={`${phrase.group}: ${phrase.text}`}
+                                                                >
+                                                                    <Input
+                                                                        value={
+                                                                            copy[
+                                                                                selectedPhrase
+                                                                            ]?.[
+                                                                                phrase
+                                                                                    .text
+                                                                            ] ??
+                                                                            ''
+                                                                        }
+                                                                        onChange={(
+                                                                            e,
+                                                                        ) =>
+                                                                            setCopy(
+                                                                                (
+                                                                                    current,
+                                                                                ) => ({
+                                                                                    ...current,
+                                                                                    [selectedPhrase]:
+                                                                                        {
+                                                                                            ...current[
+                                                                                                selectedPhrase
+                                                                                            ],
+                                                                                            [phrase.text]:
+                                                                                                e
+                                                                                                    .target
+                                                                                                    .value,
+                                                                                        },
+                                                                                }),
+                                                                            )
+                                                                        }
+                                                                    />
+                                                                </FormField>
+                                                            ),
+                                                        )
+                                                    )}
+                                                </div>
+                                            )}
                                     </fieldset>
                                     <div>
                                         <Button

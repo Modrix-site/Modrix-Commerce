@@ -1,0 +1,54 @@
+{
+    "sections": {
+        "footer": {
+            "type": "footer",
+            "settings": {
+                "show_intro": true,
+                "intro_brand": "ATELIER",
+                "intro_heading": "Considered essentials. Lasting stories.",
+                "intro_text": "Discover objects that bring intention to everyday life.",
+                "newsletter_enabled": true,
+                "newsletter_heading": "Join our newsletter",
+                "newsletter_text": "Be the first to discover new collections and stories.",
+                "newsletter_placeholder": "Email address",
+                "newsletter_button": "Sign up",
+                "newsletter_success": "Thank you for subscribing.",
+                "back_to_top": true,
+                "top_label": "Back to top",
+                "social_heading": "Follow us",
+                "social_instagram": "https://instagram.com"
+            },
+            "blocks": {
+                "col_0": {
+                    "type": "column",
+                    "settings": {
+                        "title": "Need some help?",
+                        "links": "Contact us | /pages/contact\nCustomer care | /search"
+                    }
+                },
+                "col_1": {
+                    "type": "column",
+                    "settings": {
+                        "title": "Orders",
+                        "links": "Shipping & delivery | /pages/shipping\nReturns | /pages/returns"
+                    }
+                },
+                "col_2": {
+                    "type": "column",
+                    "settings": {
+                        "title": "Terms & legal",
+                        "links": "Privacy policy | /pages/privacy\nTerms | /pages/terms"
+                    }
+                }
+            },
+            "block_order": [
+                "col_0",
+                "col_1",
+                "col_2"
+            ]
+        }
+    },
+    "order": [
+        "footer"
+    ]
+}

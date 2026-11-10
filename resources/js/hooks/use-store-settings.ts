@@ -35,6 +35,9 @@ export const DEFAULT_PAGE_SETTINGS: PageSettings = {
         related_count: 12,
         upsells: true,
         quantity: true,
+        sticky_bar: null,
+        sticky_bar_buttons: 'both',
+        sticky_bar_options: true,
     },
     cart: {
         free_shipping_bar: false,

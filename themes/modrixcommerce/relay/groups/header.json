@@ -1,0 +1,81 @@
+{
+    "sections": {
+        "topbar": {
+            "type": "topbar",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Track your order",
+                        "link": "/account/orders"
+                    }
+                }
+            },
+            "block_order": ["block_0"]
+        },
+        "header": {
+            "type": "header",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Smartphones",
+                        "link": "/c/relay-smartphones",
+                        "icon": "phone"
+                    }
+                },
+                "block_1": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Tablets",
+                        "link": "/c/relay-tablets",
+                        "icon": "tablet"
+                    }
+                },
+                "block_2": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Laptops",
+                        "link": "/c/relay-laptops",
+                        "icon": "laptop"
+                    }
+                },
+                "block_3": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Audio",
+                        "link": "/c/relay-audio",
+                        "icon": "audio"
+                    }
+                },
+                "block_4": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Technology Toys",
+                        "link": "/c/relay-technology",
+                        "icon": "gaming"
+                    }
+                },
+                "block_5": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Accessories",
+                        "link": "/c/relay-accessories",
+                        "icon": "headphones"
+                    }
+                }
+            },
+            "block_order": [
+                "block_0",
+                "block_1",
+                "block_2",
+                "block_3",
+                "block_4",
+                "block_5"
+            ]
+        }
+    },
+    "order": ["topbar", "header"]
+}

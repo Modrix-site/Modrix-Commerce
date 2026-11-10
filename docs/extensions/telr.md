@@ -19,12 +19,12 @@ Upload `dist/ecomodular-telr-1.0.0.zip` from **Extensions → Upload extension**
 
 Saving credentials requires the `payments.manage` permission and a recent password confirmation. Open **Payments**, then the **Telr** tab.
 
-Uploads never replace a package that is already on disk. Remove the existing `modules/ecomodular/telr` directory before uploading this zip onto a store that already has those files. After upload, run `npm run build` so the settings page and the iframe page are in the storefront assets. If you cache routes (`php artisan route:cache`), rebuild the cache after enabling the module.
+Uploads never replace a package that is already on disk. Remove the existing `modules/modrixcommerce/telr` directory before uploading this zip onto a store that already has those files. After upload, run `npm run build` so the settings page and the iframe page are in the storefront assets. If you cache routes (`php artisan route:cache`), rebuild the cache after enabling the module.
 
 To build the zip again from a checkout:
 
 ```bash
-php artisan ecomodular:package ecomodular/telr --output=dist
+php artisan ecomodular:package modrixcommerce/telr --output=dist
 ```
 
 ## Credentials

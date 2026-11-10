@@ -1,0 +1,63 @@
+{
+    "name": "Split editorial campaign",
+    "settings": [
+        {
+            "type": "image",
+            "id": "image",
+            "label": "Photograph",
+            "default": "asset:assets/gift-editorial.webp"
+        },
+        {
+            "type": "text",
+            "id": "alt",
+            "label": "Image description",
+            "default": "Botanical gift collection"
+        },
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "A season of little wonders."
+        },
+        {
+            "type": "textarea",
+            "id": "body",
+            "label": "Text",
+            "default": "Make every ritual feel special. Explore beautifully considered gifts for the people you love."
+        },
+        {
+            "type": "text",
+            "id": "button",
+            "label": "Button label",
+            "default": "Explore gifts"
+        },
+        {
+            "type": "url",
+            "id": "link",
+            "label": "Destination",
+            "default": "/c/linden-gifts"
+        },
+        {
+            "type": "color",
+            "id": "background",
+            "label": "Background",
+            "default": "#f8f8f8"
+        },
+        {
+            "type": "color",
+            "id": "foreground",
+            "label": "Text color",
+            "default": "#373737"
+        }
+    ],
+    "blocks": [],
+    "max_blocks": 40,
+    "presets": [
+        {
+            "name": "Split editorial campaign"
+        }
+    ],
+    "enabled_on": {
+        "templates": ["*"]
+    }
+}

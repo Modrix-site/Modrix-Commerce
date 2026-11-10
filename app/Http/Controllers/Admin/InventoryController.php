@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Core\Settings\SettingsRepository;
+use App\Domains\Catalog\Models\Product;
 use App\Domains\Catalog\Models\ProductVariant;
+use App\Domains\Inventory\CommittedStock;
 use App\Domains\Inventory\Exceptions\InsufficientStock;
 use App\Domains\Inventory\InventoryService;
 use App\Domains\Inventory\Models\InventoryMovement;
@@ -20,7 +22,7 @@ use Inertia\Response;
 
 class InventoryController extends Controller
 {
-    public function index(Request $request, InventoryService $inventory, SettingsRepository $settings): Response
+    public function index(Request $request, InventoryService $inventory, SettingsRepository $settings, CommittedStock $committedStock): Response
     {
         $filters = $request->validate([
             'search' => ['nullable', 'string', 'max:120'],
@@ -29,44 +31,88 @@ class InventoryController extends Controller
 
         $defaultThreshold = (int) $settings->get('inventory.low_stock_threshold', InventoryService::DEFAULT_LOW_STOCK_THRESHOLD);
         $locationId = $inventory->defaultLocation()->id;
+        $search = $filters['search'] ?? null;
+        $stock = $filters['stock'] ?? null;
 
-        $variants = ProductVariant::query()
-            ->select('product_variants.*')
-            ->selectRaw('COALESCE(inventory_stocks.on_hand, 0) as stock_on_hand')
+        // Tracked variants with their stock; the filters decide which variants "match".
+        $variantQuery = fn () => ProductVariant::query()
             ->leftJoin('inventory_stocks', fn ($join) => $join
                 ->on('inventory_stocks.variant_id', '=', 'product_variants.id')
                 ->where('inventory_stocks.location_id', $locationId))
-            ->join('products', 'products.id', '=', 'product_variants.product_id')
-            ->whereNull('products.deleted_at')
-            ->where('product_variants.track_inventory', true)
-            ->with('product:id,name')
-            ->when($filters['search'] ?? null, function ($query, string $search) {
-                $query->where(function ($q) use ($search) {
-                    Like::where($q, 'product_variants.sku', $search);
-                    Like::orWhere($q, 'products.name', $search);
-                });
-            })
-            ->when(($filters['stock'] ?? null) === 'out', fn ($q) => $q->whereRaw('COALESCE(inventory_stocks.on_hand, 0) <= 0'))
-            ->when(($filters['stock'] ?? null) === 'low', fn ($q) => $q->whereRaw(
+            ->where('product_variants.track_inventory', true);
+        $matching = fn ($query) => $query
+            ->when($search, fn ($q, string $term) => $q->where(function ($q) use ($term) {
+                Like::where($q, 'product_variants.sku', $term);
+                $q->orWhereIn('product_variants.product_id', fn ($products) => Like::where($products->select('id')->from('products'), 'name', $term));
+            }))
+            ->when($stock === 'out', fn ($q) => $q->whereRaw('COALESCE(inventory_stocks.on_hand, 0) <= 0'))
+            ->when($stock === 'low', fn ($q) => $q->whereRaw(
                 'COALESCE(inventory_stocks.on_hand, 0) <= COALESCE(product_variants.low_stock_threshold, ?)',
                 [$defaultThreshold],
-            ))
-            ->orderBy('stock_on_hand')
-            ->orderBy('product_variants.sku')
+            ));
+
+        // One row per product: most urgent first (its lowest tracked variant).
+        $products = Product::query()
+            ->select('products.id', 'products.name')
+            ->whereIn('products.id', $matching($variantQuery())->select('product_variants.product_id'))
+            ->selectSub(
+                $variantQuery()->whereColumn('product_variants.product_id', 'products.id')->selectRaw('MIN(COALESCE(inventory_stocks.on_hand, 0))'),
+                'lowest_on_hand',
+            )
+            ->with(['images' => fn ($q) => $q->orderBy('position')])
+            ->withCount(['variants as untracked_count' => fn ($q) => $q->where('track_inventory', false)])
+            ->orderBy('lowest_on_hand')
+            ->orderBy('products.name')
             ->paginate(30)
-            ->withQueryString()
-            ->through(fn (ProductVariant $variant) => [
-                'id' => $variant->id,
-                'sku' => $variant->sku,
-                'product_id' => $variant->product_id,
-                'name' => $variant->displayName(),
-                'on_hand' => (int) $variant->getAttribute('stock_on_hand'),
-                'threshold' => $variant->low_stock_threshold ?? $defaultThreshold,
-                'allow_backorder' => $variant->allow_backorder,
-            ]);
+            ->withQueryString();
+
+        $pageIds = $products->getCollection()->pluck('id')->all();
+        $variants = $variantQuery()
+            ->select('product_variants.*')
+            ->selectRaw('COALESCE(inventory_stocks.on_hand, 0) as stock_on_hand')
+            ->whereIn('product_variants.product_id', $pageIds)
+            ->orderBy('product_variants.position')
+            ->get()
+            ->groupBy('product_id');
+        $matched = $search || $stock
+            ? array_flip($matching($variantQuery())->whereIn('product_variants.product_id', $pageIds)->pluck('product_variants.id')->all())
+            : [];
+        $committed = $committedStock->forVariants($variants->flatten()->pluck('id')->all());
+
+        $products->through(function (Product $product) use ($variants, $defaultThreshold, $matched, $committed) {
+            $rows = ($variants->get($product->id) ?? collect())->map(function (ProductVariant $variant) use ($defaultThreshold, $matched, $committed) {
+                $onHand = (int) $variant->getAttribute('stock_on_hand');
+                $threshold = $variant->low_stock_threshold ?? $defaultThreshold;
+
+                return [
+                    'id' => $variant->id,
+                    'sku' => $variant->sku,
+                    'name' => $variant->name,
+                    'available' => $onHand,
+                    'committed' => $committed[$variant->id] ?? 0,
+                    'threshold' => $threshold,
+                    'state' => $onHand <= 0 ? 'out' : ($onHand <= $threshold ? 'low' : 'ok'),
+                    'allow_backorder' => $variant->allow_backorder,
+                    'match' => isset($matched[$variant->id]),
+                    'url' => route('admin.products.variants.show', [$variant->product_id, $variant->id]),
+                ];
+            })->values();
+
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'image_url' => $product->images->first()?->url(),
+                'available' => $rows->sum('available'),
+                'committed' => $rows->sum('committed'),
+                'low' => $rows->where('state', 'low')->count(),
+                'out' => $rows->where('state', 'out')->count(),
+                'untracked' => (int) $product->getAttribute('untracked_count'),
+                'variants' => $rows->all(),
+            ];
+        });
 
         return Inertia::render('admin/inventory/index', [
-            'variants' => $variants,
+            'products' => $products,
             'filters' => ['search' => $filters['search'] ?? '', 'stock' => $filters['stock'] ?? ''],
             'reasons' => array_map(fn (MovementReason $r) => ['value' => $r->value, 'label' => $r->label()], MovementReason::manual()),
             'canManage' => $request->user()?->can('inventory.manage') ?? false,

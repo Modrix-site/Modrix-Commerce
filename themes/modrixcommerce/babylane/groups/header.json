@@ -1,0 +1,46 @@
+{
+    "sections": {
+        "promotion": {
+            "type": "promo-strip",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        },
+        "header": {
+            "type": "header",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Home",
+                        "link": "/"
+                    }
+                },
+                "block_1": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Shop all",
+                        "link": "/search"
+                    }
+                },
+                "block_2": {
+                    "type": "link",
+                    "settings": {
+                        "label": "New arrivals",
+                        "link": "/search?sort=newest"
+                    }
+                },
+                "block_3": {
+                    "type": "link",
+                    "settings": {
+                        "label": "My account",
+                        "link": "/account"
+                    }
+                }
+            },
+            "block_order": ["block_0", "block_1", "block_2", "block_3"]
+        }
+    },
+    "order": ["promotion", "header"]
+}

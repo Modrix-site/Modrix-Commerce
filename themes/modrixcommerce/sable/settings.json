@@ -1,0 +1,20 @@
+{
+    "title": "Sable design",
+    "description": "Edit content, images, menus and layouts in the live section editor.",
+    "fields": {
+        "custom.image_background": {
+            "type": "color",
+            "label": "Product image background",
+            "group": "Colors",
+            "tab": "general",
+            "default": "#f3f2ef"
+        },
+        "custom.sticky_header": {
+            "type": "boolean",
+            "label": "Use platform compact header on scroll",
+            "group": "Header",
+            "tab": "header",
+            "default": false
+        }
+    }
+}

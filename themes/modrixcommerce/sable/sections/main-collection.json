@@ -1,0 +1,66 @@
+{
+    "name": "Shop grid and filters",
+    "limit": 1,
+    "enabled_on": {
+        "templates": [
+            "collection",
+            "search"
+        ]
+    },
+    "settings": [
+        {
+            "type": "text",
+            "id": "shop_heading",
+            "label": "Shop heading",
+            "default": "Shop all"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_heading",
+            "label": "Show page heading",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "filter_label",
+            "label": "Filter label",
+            "default": "Filter:"
+        },
+        {
+            "type": "text",
+            "id": "availability_label",
+            "label": "Availability label",
+            "default": "Availability"
+        },
+        {
+            "type": "text",
+            "id": "price_label",
+            "label": "Price label",
+            "default": "Price"
+        },
+        {
+            "type": "text",
+            "id": "sort_label",
+            "label": "Sorting label",
+            "default": "Sort by:"
+        },
+        {
+            "type": "text",
+            "id": "add_label",
+            "label": "Card button label",
+            "default": "Add to cart"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_swatches",
+            "label": "Show color swatches",
+            "default": true
+        }
+    ],
+    "blocks": [],
+    "presets": [
+        {
+            "name": "Shop grid and filters"
+        }
+    ]
+}

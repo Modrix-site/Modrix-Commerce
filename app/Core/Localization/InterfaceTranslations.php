@@ -23,6 +23,9 @@ final class InterfaceTranslations
     /** @var array<string, array<string, string>> */
     private array $loaded = [];
 
+    /** @var array<string, array<string, string>> the store's own texts, read once per request */
+    private array $overrides = [];
+
     /**
      * @return list<string> every translatable storefront text
      */
@@ -73,12 +76,16 @@ final class InterfaceTranslations
      */
     public function overrides(string $locale): array
     {
+        if (isset($this->overrides[$locale])) {
+            return $this->overrides[$locale];
+        }
+
         if (! Schema::hasTable('interface_translations')) {
-            return [];
+            return $this->overrides[$locale] = [];
         }
 
         /** @var array<string, string> */
-        return DB::table('interface_translations')->where('locale', $locale)->pluck('value', 'key')->all();
+        return $this->overrides[$locale] = DB::table('interface_translations')->where('locale', $locale)->pluck('value', 'key')->all();
     }
 
     /**
@@ -115,6 +122,7 @@ final class InterfaceTranslations
     public function forget(string $locale): void
     {
         unset($this->loaded[$locale]);
+        unset($this->overrides[$locale]);
         Cache::forget($this->cacheKey($locale));
     }
 

@@ -1,0 +1,63 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/razorpay",
+    "display_name": "Razorpay",
+    "description": "Razorpay payment gateway with server-created Orders, Standard Checkout, captured payment verification, signed webhooks and protected partial or full refunds.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "credit-card",
+    "accent": "#2563eb",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": { "psr-4": { "ModrixCommerce\\Razorpay\\": "src/" } },
+    "provider": "ModrixCommerce\\Razorpay\\RazorpayServiceProvider",
+    "capabilities": [
+        "payment.gateway",
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "database.migrations",
+        "content_security"
+    ],
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": { "pages": "resources/js/pages" },
+    "content_security": {
+        "script-src": [
+            "https://checkout.razorpay.com",
+            "https://cdn.razorpay.com"
+        ],
+        "frame-src": [
+            "https://api.razorpay.com",
+            "https://checkout.razorpay.com"
+        ],
+        "connect-src": [
+            "https://api.razorpay.com",
+            "https://checkout.razorpay.com",
+            "https://lumberjack.razorpay.com"
+        ],
+        "img-src": [
+            "https://cdn.razorpay.com",
+            "https://checkout.razorpay.com"
+        ],
+        "form-action": [
+            "https://api.razorpay.com",
+            "https://checkout.razorpay.com"
+        ]
+    },
+    "admin_navigation": [
+        {
+            "key": "razorpay",
+            "title": "Razorpay",
+            "route": "index",
+            "icon": "credit-card",
+            "group": "Configuration",
+            "permission": "payments.manage",
+            "order": 868
+        }
+    ]
+}

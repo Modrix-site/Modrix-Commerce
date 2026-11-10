@@ -33,7 +33,7 @@ class HearthThemeTest extends TestCase
         $file = new UploadedFile(base_path('dist/ecomodular-hearth-1.0.0.zip'), 'hearth.zip', 'application/zip', null, true);
         $this->actingAs($this->userWithRole('administrator'))->post(route('admin.themes.packages.store'), ['package' => $file])->assertSessionHasNoErrors();
 
-        return Extension::where('name', 'ecomodular/hearth')->firstOrFail();
+        return Extension::where('name', 'modrixcommerce/hearth')->firstOrFail();
     }
 
     public function test_zip_installs_with_its_own_frontend_and_settings_without_activation(): void
@@ -41,8 +41,8 @@ class HearthThemeTest extends TestCase
         $theme = $this->upload();
         $this->assertSame(ModuleState::Discovered, $theme->state);
         $this->assertNull($theme->applied_manifest);
-        $this->assertFileExists($this->themesPath.'/ecomodular/hearth/settings.json');
-        $this->assertFileExists($this->themesPath.'/ecomodular/hearth/src/product.tsx');
+        $this->assertFileExists($this->themesPath.'/modrixcommerce/hearth/settings.json');
+        $this->assertFileExists($this->themesPath.'/modrixcommerce/hearth/src/product.tsx');
         $this->assertCount(110, $theme->manifest['customizer']['fields']);
         $this->assertSame('src/header.tsx', $theme->manifest['frontend']['header']);
         $this->assertSame('src/footer.tsx', $theme->manifest['frontend']['footer']);
@@ -64,7 +64,7 @@ class HearthThemeTest extends TestCase
         $variant = $this->sellable();
         foreach (['/', '/search', '/p/'.$variant->product->slug, '/cart'] as $url) {
             $this->get($url)->assertInertia(fn (Assert $page) => $page
-                ->where('storefront.theme.name', 'ecomodular/hearth')
+                ->where('storefront.theme.name', 'modrixcommerce/hearth')
                 ->where('storefront.theme.frontend.product', 'src/product.tsx')
                 ->where('storefront.theme.settings.hero_heading', 'A home of your own')
                 ->where('storefront.theme.settings.catalog_columns', '4')

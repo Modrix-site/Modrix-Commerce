@@ -1,0 +1,94 @@
+{
+    "sections": {
+        "footer": {
+            "type": "footer",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Customer care",
+                        "label": "Help & contact",
+                        "link": "/pages/linden-care"
+                    }
+                },
+                "block_1": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Customer care",
+                        "label": "Delivery information",
+                        "link": "/pages/linden-care"
+                    }
+                },
+                "block_2": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Customer care",
+                        "label": "Track your order",
+                        "link": "/account/orders"
+                    }
+                },
+                "block_3": {
+                    "type": "link",
+                    "settings": {
+                        "group": "About & information",
+                        "label": "Our story",
+                        "link": "/pages/about-linden"
+                    }
+                },
+                "block_4": {
+                    "type": "link",
+                    "settings": {
+                        "group": "About & information",
+                        "label": "Tips & rituals",
+                        "link": "/pages/linden-rituals"
+                    }
+                },
+                "block_5": {
+                    "type": "link",
+                    "settings": {
+                        "group": "About & information",
+                        "label": "Shop all",
+                        "link": "/search"
+                    }
+                },
+                "block_6": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Your account",
+                        "label": "My account",
+                        "link": "/account"
+                    }
+                },
+                "block_7": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Your account",
+                        "label": "Shopping bag",
+                        "link": "/cart"
+                    }
+                },
+                "block_8": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Your account",
+                        "label": "Create an account",
+                        "link": "/register"
+                    }
+                }
+            },
+            "block_order": [
+                "block_0",
+                "block_1",
+                "block_2",
+                "block_3",
+                "block_4",
+                "block_5",
+                "block_6",
+                "block_7",
+                "block_8"
+            ]
+        }
+    },
+    "order": ["footer"]
+}

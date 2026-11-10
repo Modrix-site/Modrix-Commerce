@@ -2,9 +2,12 @@ import { Head, Link, router } from '@inertiajs/react';
 import { Suspense } from 'react';
 import { PlaceSlot } from '@/components/extensions/place-slot';
 import { ProductGrid } from '@/components/storefront/product-card';
-import { ElectronicsListing } from '@/components/storefront/electronics-listing';
 import { useStoreTheme } from '@/hooks/use-store-theme';
 import { themeCatalog } from '@/lib/theme-pages';
+import {
+    ThemeTemplate,
+    useThemeSections,
+} from '@/components/storefront/theme-sections';
 import { Button } from '@/components/ui/button';
 import { useT } from '@/lib/i18n';
 import { home } from '@/routes';
@@ -32,6 +35,7 @@ export type ListingProps = {
     filters?: {
         brand_id?: number | string;
         in_stock?: boolean | number | string;
+        on_sale?: boolean | number | string;
         min_price?: string;
         max_price?: string;
         options?: number[];
@@ -56,7 +60,8 @@ export default function Listing(props: ListingProps) {
         sort,
     } = props;
     const t = useT();
-    const { header, theme } = useStoreTheme();
+    const { theme } = useStoreTheme();
+    const sectionsTemplate = useThemeSections() !== null;
     const sorts = [
         { value: 'newest', label: t('Newest') },
         { value: 'price_asc', label: t('Price: low to high') },
@@ -71,14 +76,26 @@ export default function Listing(props: ListingProps) {
         router.visit(url.pathname + url.search, { preserveScroll: true });
     };
 
-    const CustomCatalog = themeCatalog(theme?.name);
+    const CustomCatalog = theme?.frontend?.catalog
+        ? themeCatalog(theme.name)
+        : undefined;
+    if (sectionsTemplate)
+        return (
+            <>
+                <Head title={meta.title}>
+                    {meta.description && (
+                        <meta name="description" content={meta.description} />
+                    )}
+                </Head>
+                <ThemeTemplate page={{ ...props, sorts, changeSort }} />
+            </>
+        );
     if (CustomCatalog)
         return (
             <Suspense fallback={<p role="status">Loading catalog…</p>}>
                 <CustomCatalog {...props} />
             </Suspense>
         );
-    if (header === 'electronics') return <ElectronicsListing {...props} />;
     return (
         <>
             <Head title={meta.title}>

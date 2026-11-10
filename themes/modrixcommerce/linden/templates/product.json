@@ -1,0 +1,23 @@
+{
+    "sections": {
+        "product": {
+            "type": "main-product",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        },
+        "recent": {
+            "type": "recently-viewed",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        },
+        "apps": {
+            "type": "apps",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        }
+    },
+    "order": ["product", "recent", "apps"]
+}

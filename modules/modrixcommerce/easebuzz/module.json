@@ -1,0 +1,64 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/easebuzz",
+    "display_name": "Easebuzz Payments",
+    "description": "Easebuzz payment gateway for India supporting UPI, Cards, Net Banking, Wallets, and EMI with SHA-512 cryptographic verification and server-to-server reconciliation.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "credit-card",
+    "accent": "#202c59",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\Easebuzz\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\Easebuzz\\EasebuzzServiceProvider",
+    "capabilities": [
+        "payment.gateway",
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "content_security"
+    ],
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages"
+    },
+    "content_security": {
+        "connect-src": [
+            "https://pay.easebuzz.in",
+            "https://testpay.easebuzz.in",
+            "https://dashboard.easebuzz.in",
+            "https://testdashboard.easebuzz.in"
+        ],
+        "frame-src": [
+            "https://pay.easebuzz.in",
+            "https://testpay.easebuzz.in",
+            "https://dashboard.easebuzz.in",
+            "https://testdashboard.easebuzz.in"
+        ],
+        "form-action": [
+            "https://pay.easebuzz.in",
+            "https://testpay.easebuzz.in",
+            "https://dashboard.easebuzz.in",
+            "https://testdashboard.easebuzz.in"
+        ]
+    },
+    "admin_navigation": [
+        {
+            "key": "easebuzz",
+            "title": "Easebuzz",
+            "route": "index",
+            "icon": "credit-card",
+            "group": "Configuration",
+            "permission": "payments.manage",
+            "order": 890
+        }
+    ]
+}

@@ -1,0 +1,77 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/newsletter",
+    "display_name": "Newsletter Sign-up",
+    "description": "Collects newsletter subscribers with recorded consent on the home page and the order confirmation, with one-click unsubscribe and a CSV export for your email tool.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "mail",
+    "accent": "#0ea5e9",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\Newsletter\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\Newsletter\\NewsletterServiceProvider",
+    "permissions": [
+        {
+            "name": "newsletter.manage",
+            "label": "Manage newsletter subscribers",
+            "group": "Marketing"
+        }
+    ],
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "storefront.slots",
+        "database.migrations",
+        "settings",
+        "permissions"
+    ],
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages",
+        "slots": "resources/js/slots"
+    },
+    "settings": [
+        {
+            "key": "heading",
+            "tab": "home",
+            "type": "string",
+            "label": "Sign-up heading",
+            "default": "Get our news and offers"
+        },
+        {
+            "key": "consent_text",
+            "type": "text",
+            "label": "Consent text shown next to the checkbox",
+            "help": "Recorded with every subscription. Say what you will send and how to unsubscribe.",
+            "default": "I agree to receive news and offers by email. I can unsubscribe at any time."
+        },
+        {
+            "key": "show_on_confirmation",
+            "type": "boolean",
+            "label": "Offer sign-up on the order confirmation page",
+            "default": true
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "subscribers",
+            "title": "Newsletter",
+            "route": "index",
+            "icon": "bell",
+            "group": "Marketing",
+            "permission": "newsletter.manage",
+            "order": 300
+        }
+    ]
+}

@@ -1,0 +1,39 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/paytabs",
+    "display_name": "PayTabs",
+    "description": "PayTabs payment gateway with regional hosted checkout, signed notifications, verified core payments, configurable wallets and protected partial or full refunds.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "credit-card",
+    "accent": "#542d8b",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": { "psr-4": { "ModrixCommerce\\PayTabs\\": "src/" } },
+    "provider": "ModrixCommerce\\PayTabs\\PayTabsServiceProvider",
+    "capabilities": [
+        "payment.gateway",
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "database.migrations"
+    ],
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": { "pages": "resources/js/pages" },
+    "admin_navigation": [
+        {
+            "key": "paytabs",
+            "title": "PayTabs",
+            "route": "index",
+            "icon": "credit-card",
+            "group": "Configuration",
+            "permission": "payments.manage",
+            "order": 867
+        }
+    ]
+}

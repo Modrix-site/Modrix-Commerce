@@ -1,0 +1,224 @@
+{
+    "sections": {
+        "hero": {
+            "type": "hero",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        },
+        "ranges": {
+            "type": "ranges",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "range",
+                    "settings": {
+                        "label": "Vanilla",
+                        "image": "asset:assets/range-vanilla.webp",
+                        "link": "/c/linden-range-vanilla"
+                    }
+                },
+                "block_1": {
+                    "type": "range",
+                    "settings": {
+                        "label": "Glow essentials",
+                        "image": "asset:assets/range-glow.webp",
+                        "link": "/c/linden-skincare"
+                    }
+                },
+                "block_2": {
+                    "type": "range",
+                    "settings": {
+                        "label": "Vitamin C",
+                        "image": "asset:assets/range-vitamin.webp",
+                        "link": "/c/linden-skincare"
+                    }
+                },
+                "block_3": {
+                    "type": "range",
+                    "settings": {
+                        "label": "Ginger",
+                        "image": "asset:assets/range-ginger.webp",
+                        "link": "/c/linden-haircare"
+                    }
+                },
+                "block_4": {
+                    "type": "range",
+                    "settings": {
+                        "label": "Soft Musk",
+                        "image": "asset:assets/range-musk.webp",
+                        "link": "/c/linden-fragrance"
+                    }
+                }
+            },
+            "block_order": [
+                "block_0",
+                "block_1",
+                "block_2",
+                "block_3",
+                "block_4"
+            ]
+        },
+        "offers": {
+            "type": "product-rail",
+            "settings": {
+                "heading": "Little treats, lovely prices",
+                "collection": "linden-gifts",
+                "background": "#ffffff"
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "favourites": {
+            "type": "product-rail",
+            "settings": {
+                "heading": "Products we love",
+                "collection": "linden-body",
+                "background": "#f8f8f8"
+            },
+            "blocks": {
+                "block_0": {
+                    "type": "tab",
+                    "settings": {
+                        "label": "Bestsellers",
+                        "collection": "linden-body"
+                    }
+                },
+                "block_1": {
+                    "type": "tab",
+                    "settings": {
+                        "label": "Shower cleansers",
+                        "collection": "linden-shower"
+                    }
+                },
+                "block_2": {
+                    "type": "tab",
+                    "settings": {
+                        "label": "Body creams",
+                        "collection": "linden-butters"
+                    }
+                }
+            },
+            "block_order": ["block_0", "block_1", "block_2"]
+        },
+        "gifts": {
+            "type": "product-rail",
+            "settings": {
+                "heading": "Beautifully considered gifts",
+                "collection": "linden-gifts",
+                "campaign_image": "asset:assets/gift-campaign.webp",
+                "campaign_heading": "Seasonal gifts",
+                "campaign_button": "Shop now",
+                "campaign_link": "/c/linden-gifts",
+                "background": "#ffffff"
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "editorial": {
+            "type": "editorial",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        },
+        "newin": {
+            "type": "product-rail",
+            "settings": {
+                "heading": "Just arrived",
+                "collection": "linden-new",
+                "background": "#ffffff"
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "stories": {
+            "type": "journal",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "story",
+                    "settings": {
+                        "heading": "Creamy, soft, everyday comfort",
+                        "body": "Discover our collection of body creams.",
+                        "image": "asset:assets/story-butter.webp",
+                        "link": "/c/linden-butters",
+                        "button": "Shop now"
+                    }
+                },
+                "block_1": {
+                    "type": "story",
+                    "settings": {
+                        "heading": "A little time for you",
+                        "body": "Find your next everyday ritual.",
+                        "image": "asset:assets/story-ritual.webp",
+                        "link": "/c/linden-body",
+                        "button": "Shop now"
+                    }
+                },
+                "block_2": {
+                    "type": "story",
+                    "settings": {
+                        "heading": "A fresh touch of colour",
+                        "body": "Discover lip care and finishing touches.",
+                        "image": "asset:assets/story-lips.webp",
+                        "link": "/c/linden-makeup",
+                        "button": "Shop now"
+                    }
+                }
+            },
+            "block_order": ["block_0", "block_1", "block_2"]
+        },
+        "values": {
+            "type": "values",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "value",
+                    "settings": {
+                        "icon": "delivery",
+                        "heading": "Delivery, your way",
+                        "body": "Available choices at checkout",
+                        "background": "#e9ebce"
+                    }
+                },
+                "block_1": {
+                    "type": "value",
+                    "settings": {
+                        "icon": "leaf",
+                        "heading": "Inspired by nature",
+                        "body": "Explore botanical beauty essentials",
+                        "background": "#e9ebce"
+                    }
+                },
+                "block_2": {
+                    "type": "value",
+                    "settings": {
+                        "icon": "heart",
+                        "heading": "Small rituals. Everyday joy.",
+                        "body": "Find the products you love",
+                        "background": "#e9ebce"
+                    }
+                }
+            },
+            "block_order": ["block_0", "block_1", "block_2"]
+        },
+        "apps": {
+            "type": "apps",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        }
+    },
+    "order": [
+        "hero",
+        "ranges",
+        "offers",
+        "favourites",
+        "gifts",
+        "editorial",
+        "newin",
+        "stories",
+        "values",
+        "apps"
+    ]
+}

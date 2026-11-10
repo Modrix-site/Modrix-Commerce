@@ -1,4 +1,4 @@
-# Contributing to EcoModular
+# Contributing to Modrix Commerce
 
 Thank you for helping. By contributing you agree that your contribution is licensed under the project's MIT License.
 

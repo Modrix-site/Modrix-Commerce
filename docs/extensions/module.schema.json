@@ -1,8 +1,8 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://github.com/eleydo/ecomodular/docs/extensions/module.schema.json",
-    "title": "EcoModular module manifest",
-    "description": "module.json of an EcoModular module. Data only; never executed. The platform validator (App\\Core\\Extensions\\ManifestValidator) is authoritative and additionally checks paths, files, conflicts and dependencies.",
+    "$id": "https://github.com/eleydo/modrixcommerce/docs/extensions/module.schema.json",
+    "title": "Modrix Commerce module manifest",
+    "description": "module.json of an Modrix Commerce module. Data only; never executed. The platform validator (App\\Core\\Extensions\\ManifestValidator) is authoritative and additionally checks paths, files, conflicts and dependencies.",
     "type": "object",
     "additionalProperties": false,
     "required": ["name", "display_name", "version", "type", "platform_version"],

@@ -1,0 +1,97 @@
+{
+    "name": "Product shelf",
+    "settings": [
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "Featured products"
+        },
+        {
+            "type": "collection",
+            "id": "collection",
+            "label": "Collection",
+            "products": 18,
+            "fallback": "latest"
+        },
+        {
+            "type": "range",
+            "id": "limit",
+            "label": "Product count",
+            "min": 2,
+            "max": 18,
+            "step": 1,
+            "default": 6
+        },
+        {
+            "type": "range",
+            "id": "columns",
+            "label": "Desktop columns",
+            "min": 3,
+            "max": 6,
+            "step": 1,
+            "default": 6
+        },
+        {
+            "type": "range",
+            "id": "offset",
+            "label": "Skip first products",
+            "min": 0,
+            "max": 30,
+            "step": 1,
+            "default": 0
+        },
+        {
+            "type": "checkbox",
+            "id": "filled",
+            "label": "Gray heading bar",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "discounted",
+            "label": "Show discounted products only",
+            "default": false
+        },
+        {
+            "type": "checkbox",
+            "id": "quick_add",
+            "label": "Show quick add controls",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "view_label",
+            "label": "View all label",
+            "default": "View all"
+        },
+        {
+            "type": "url",
+            "id": "link",
+            "label": "View all destination",
+            "default": "/search"
+        },
+        {
+            "type": "text",
+            "id": "ends_at",
+            "label": "Countdown end (ISO date, optional)",
+            "default": ""
+        },
+        {
+            "type": "text",
+            "id": "countdown_label",
+            "label": "Countdown label",
+            "default": "Ends in"
+        }
+    ],
+    "blocks": [],
+    "max_blocks": 50,
+    "presets": [
+        {
+            "name": "Product shelf"
+        }
+    ],
+    "enabled_on": {
+        "templates": ["*"]
+    }
+}

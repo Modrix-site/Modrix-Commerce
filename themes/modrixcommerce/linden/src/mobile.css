@@ -1,0 +1,213 @@
+.lv-mobile-bar,
+.lv-mobile-modal,
+.lv-mobile-overlay {
+    display: none;
+}
+@media (max-width: 767px) {
+    .lv-shell {
+        --lv-mobile-bar-height: calc(76px + env(safe-area-inset-bottom, 0px));
+    }
+    .lv-shell:has(.lv-mobile-bar) .storefront {
+        padding-bottom: var(--lv-mobile-bar-height);
+    }
+    /* The platform's sticky purchase bar sits just above the tab bar. */
+    .lv-shell:has(.lv-mobile-bar) {
+        --store-sticky-offset: var(--lv-mobile-bar-height);
+    }
+    .lv-mobile-bar {
+        position: fixed;
+        inset: auto 0 0;
+        z-index: 60;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        height: var(--lv-mobile-bar-height);
+        padding: 8px 8px calc(7px + env(safe-area-inset-bottom, 0px));
+        border-top: 1px solid var(--border, #ddd);
+        background: var(--background, #fff);
+        color: var(--foreground, #222);
+        box-shadow: 0 -2px 8px #00000005;
+        pointer-events: auto;
+    }
+    .lv-mobile-bar > :is(button, a) {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        min-width: 0;
+        padding: 0 3px;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        font-size: 13px;
+        font-weight: 400;
+        line-height: 1.3;
+        text-decoration: none;
+        overflow-wrap: anywhere;
+    }
+    .lv-mobile-bar > [data-active='true'] {
+        color: var(--lv-mobile-active, #0068ad);
+    }
+    .lv-mobile-bar svg {
+        flex-shrink: 0;
+    }
+    .lv-mobile-cart-icon {
+        position: relative;
+        display: block;
+    }
+    .lv-mobile-cart-icon .lv-count {
+        top: -2px;
+        right: -9px;
+        bottom: auto;
+        padding-inline: 3px;
+        background: var(--foreground, #222);
+        color: var(--background, #fff);
+    }
+    .lv-mobile-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 70;
+        display: block;
+        background: #0009;
+    }
+    .lv-mobile-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 71;
+        display: block;
+        width: 100%;
+        height: 100dvh;
+        max-width: none;
+        max-height: none;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--foreground, #222);
+        outline: none;
+        pointer-events: none !important;
+    }
+    .lv-mobile-panel {
+        display: flex;
+        flex-direction: column;
+        width: min(84vw, 480px);
+        height: calc(100% - var(--lv-mobile-bar-height));
+        overflow: hidden;
+        background: var(--background, #fff);
+        box-shadow: 4px 0 20px #0002;
+        pointer-events: auto;
+    }
+    .lv-mobile-panel-heading {
+        position: relative;
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        min-height: 64px;
+        padding: 14px 48px;
+        background: var(--primary, #fcb800);
+        color: var(--primary-foreground, #111);
+    }
+    .lv-mobile-panel-heading h2 {
+        font-size: 17px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-align: center;
+        text-transform: uppercase;
+    }
+    .lv-mobile-panel-heading > button {
+        position: absolute;
+        inset-inline-end: 5px;
+        display: grid;
+        width: 40px;
+        height: 44px;
+        place-items: center;
+        border: 0;
+        background: transparent;
+        color: inherit;
+    }
+    .lv-mobile-panel-body {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+    }
+    .lv-mobile-categories,
+    .lv-mobile-categories ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+    .lv-mobile-categories ul {
+        padding-inline-start: 16px;
+        background: var(--muted, #f8f8f8);
+    }
+    .lv-mobile-category-row {
+        display: flex;
+        align-items: center;
+        min-height: 62px;
+        border-bottom: 1px solid var(--border, #ddd);
+    }
+    .lv-mobile-category-row > a {
+        flex: 1;
+        padding: 18px 20px;
+        color: inherit;
+        font-size: 16px;
+    }
+    .lv-mobile-category-row > button {
+        display: grid;
+        width: 48px;
+        min-height: 48px;
+        flex-shrink: 0;
+        place-items: center;
+        border: 0;
+        background: transparent;
+        color: inherit;
+    }
+    .lv-mobile-main-menu > a,
+    .lv-mobile-main-menu .store-menu-row {
+        display: flex;
+        align-items: center;
+        min-height: 62px;
+        padding: 14px 20px;
+        border-bottom: 1px solid var(--border, #ddd);
+        font-size: 16px;
+    }
+    .lv-mobile-main-menu .store-menu-tree {
+        display: block;
+        width: 100%;
+    }
+    .lv-mobile-main-menu .store-menu-link {
+        padding: 0;
+    }
+    .lv-mobile-search-content {
+        padding: 24px 20px;
+    }
+    .lv-mobile-search-content form {
+        display: grid;
+        gap: 14px;
+    }
+    .lv-mobile-search-content label {
+        font-size: 14px;
+    }
+    .lv-mobile-search-content input {
+        width: 100%;
+        height: 46px;
+        min-width: 0;
+        padding: 10px 12px;
+        border: 1px solid var(--border, #ddd);
+        border-radius: 3px;
+        background: var(--background, #fff);
+        font-size: 16px;
+    }
+    .lv-mobile-empty {
+        padding: 24px 20px;
+        color: var(--muted-foreground, #777);
+    }
+    .lv-mobile-browse {
+        display: block;
+        padding: 20px;
+        color: var(--lv-mobile-active, #0068ad);
+        font-size: 14px;
+    }
+}

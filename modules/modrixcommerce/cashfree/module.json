@@ -1,0 +1,57 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/cashfree",
+    "display_name": "Cashfree Payments",
+    "description": "Cashfree Payments gateway for India with hosted checkout, UPI, cards, net banking, signed webhooks, and instant refunds.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "credit-card",
+    "accent": "#0c3260",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\Cashfree\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\Cashfree\\CashfreeServiceProvider",
+    "capabilities": [
+        "payment.gateway",
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "content_security"
+    ],
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages"
+    },
+    "content_security": {
+        "script-src": [
+            "https://sdk.cashfree.com"
+        ],
+        "frame-src": [
+            "https://sandbox.cashfree.com",
+            "https://api.cashfree.com"
+        ],
+        "connect-src": [
+            "https://sandbox.cashfree.com",
+            "https://api.cashfree.com"
+        ]
+    },
+    "admin_navigation": [
+        {
+            "key": "cashfree",
+            "title": "Cashfree Payments",
+            "route": "index",
+            "icon": "credit-card",
+            "group": "Configuration",
+            "permission": "payments.manage",
+            "order": 871
+        }
+    ]
+}

@@ -1,0 +1,77 @@
+{
+    "name": "Editorial split hero",
+    "settings": [
+        {
+            "type": "text",
+            "id": "eyebrow",
+            "label": "Eyebrow",
+            "default": "OBJECTS OF INTENTION"
+        },
+        {
+            "type": "textarea",
+            "id": "heading",
+            "label": "Heading",
+            "default": "The art of everyday."
+        },
+        {
+            "type": "textarea",
+            "id": "text",
+            "label": "Text",
+            "default": "Discover essentials with a lasting point of view."
+        },
+        {
+            "type": "text",
+            "id": "button",
+            "label": "Button label",
+            "default": "Discover the collection"
+        },
+        {
+            "type": "url",
+            "id": "link",
+            "label": "Button destination",
+            "default": "/search"
+        },
+        {
+            "type": "image",
+            "id": "image",
+            "label": "Photograph",
+            "default": "asset:assets/hero.jpg"
+        },
+        {
+            "type": "text",
+            "id": "alt",
+            "label": "Photograph description",
+            "default": "Brown leather satchel with dark straps"
+        },
+        {
+            "type": "color",
+            "id": "background",
+            "label": "Section background",
+            "default": "#eeece7"
+        },
+        {
+            "type": "color",
+            "id": "photo_background",
+            "label": "Photo container background",
+            "default": "#dcdada"
+        },
+        {
+            "type": "range",
+            "id": "heading_size",
+            "label": "Heading font size (px)",
+            "default": 56,
+            "min": 28,
+            "max": 80,
+            "step": 2
+        },
+        {
+            "type": "range",
+            "id": "height",
+            "label": "Desktop height (px)",
+            "default": 640,
+            "min": 350,
+            "max": 900,
+            "step": 10
+        }
+    ]
+}

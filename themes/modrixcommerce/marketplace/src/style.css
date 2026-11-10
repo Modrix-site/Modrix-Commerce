@@ -1,0 +1,11 @@
+@import '../../../../resources/js/components/storefront/electronics.css';
+
+.marketplace-index .electronics-home {
+    gap: var(--marketplace-home-gap, 20px);
+}
+.marketplace-cart {
+    padding: 24px 0;
+}
+.marketplace-cart > h1 {
+    color: var(--primary);
+}

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Storefront;
 
+use App\Core\Settings\SettingsRepository;
 use App\Domains\Cart\CartManager;
 use App\Domains\Cart\Models\Cart;
 use App\Domains\Cart\Models\CartItem;
@@ -9,6 +10,7 @@ use App\Domains\Catalog\Models\Product;
 use App\Domains\Catalog\Models\ProductVariant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -118,6 +120,22 @@ class CartTest extends TestCase
         $this->get(route('cart.show'))->assertInertia(fn (Assert $page) => $page
             ->where('cart.can_checkout', false)
             ->where('cart.lines.0.purchasable', false));
+    }
+
+    public function test_a_cart_left_in_another_currency_uses_the_store_price(): void
+    {
+        app(SettingsRepository::class)->set('store.default_currency', 'AED');
+        $variant = $this->variant('1199.00');
+        $variant->prices()->create(['currency' => 'AED', 'amount' => '50.00']);
+        $user = User::factory()->create();
+        $cart = Cart::query()->forceCreate(['token' => (string) Str::uuid(), 'user_id' => $user->id, 'currency' => 'USD']);
+        $cart->items()->forceCreate(['variant_id' => $variant->id, 'quantity' => 1, 'seen_unit_price' => '1199.0000']);
+
+        $this->actingAs($user)->get(route('cart.show'))->assertInertia(fn (Assert $page) => $page
+            ->where('cart.currency', 'AED')
+            ->where('cart.subtotal.amount', '50.00')
+            ->where('cart.lines.0.notices', []));
+        $this->assertSame('AED', $cart->fresh()->currency);
     }
 
     public function test_guest_cart_merges_into_user_cart_on_login_capped_by_stock()

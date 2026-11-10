@@ -1,0 +1,76 @@
+{
+    "sections": {
+        "main": {
+            "type": "main-product",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "accordion",
+                    "settings": {
+                        "heading": "Order instructions",
+                        "icon": "tag",
+                        "body": "Choose your preferred options and quantity, then add the item to your cart. Review your order and delivery details at checkout."
+                    }
+                },
+                "block_1": {
+                    "type": "accordion",
+                    "settings": {
+                        "heading": "Dimension",
+                        "icon": "box",
+                        "body": "For dimensions and fit advice, contact our team before ordering."
+                    }
+                },
+                "block_2": {
+                    "type": "accordion",
+                    "settings": {
+                        "heading": "Material",
+                        "icon": "material",
+                        "body": "Please refer to the product description for material and finish details."
+                    }
+                },
+                "block_3": {
+                    "type": "accordion",
+                    "settings": {
+                        "heading": "Shipping",
+                        "icon": "truck",
+                        "body": "Available shipping methods, delivery charges and any applicable taxes are shown at checkout."
+                    }
+                },
+                "block_4": {
+                    "type": "accordion",
+                    "settings": {
+                        "heading": "Returns",
+                        "icon": "return",
+                        "body": "For return assistance, contact our team through your customer account. Returns follow the store’s published policy."
+                    }
+                },
+                "block_5": {
+                    "type": "accordion",
+                    "settings": {
+                        "heading": "Care instructions",
+                        "icon": "care",
+                        "body": "Keep your item dry, wipe gently with a soft cloth and store away from direct heat. Follow any product-specific care advice."
+                    }
+                }
+            },
+            "block_order": [
+                "block_0",
+                "block_1",
+                "block_2",
+                "block_3",
+                "block_4",
+                "block_5"
+            ]
+        },
+        "apps": {
+            "type": "apps",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        }
+    },
+    "order": [
+        "main",
+        "apps"
+    ]
+}

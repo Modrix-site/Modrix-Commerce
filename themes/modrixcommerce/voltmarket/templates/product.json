@@ -1,0 +1,46 @@
+{
+    "sections": {
+        "product": {
+            "type": "main-product",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "benefit",
+                    "settings": {
+                        "icon": "delivery",
+                        "heading": "Delivery options at checkout"
+                    }
+                },
+                "block_1": {
+                    "type": "benefit",
+                    "settings": {
+                        "icon": "returns",
+                        "heading": "Returns according to store policy"
+                    }
+                },
+                "block_2": {
+                    "type": "benefit",
+                    "settings": {
+                        "icon": "payment",
+                        "heading": "Protected checkout"
+                    }
+                },
+                "block_3": {
+                    "type": "benefit",
+                    "settings": {
+                        "icon": "support",
+                        "heading": "Support when you need it"
+                    }
+                }
+            },
+            "block_order": ["block_0", "block_1", "block_2", "block_3"]
+        },
+        "apps": {
+            "type": "apps",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        }
+    },
+    "order": ["product", "apps"]
+}

@@ -1,6 +1,6 @@
 # Backup and Restore
 
-EcoModular backs itself up with `php artisan ecomodular:backup` and restores with `php artisan ecomodular:restore`. The restore procedure is tested on every test run (`tests/Feature/Operations`), and CI runs it against MySQL (see [the drill record](#restore-drill-record)).
+Modrix Commerce backs itself up with `php artisan ecomodular:backup` and restores with `php artisan ecomodular:restore`. The restore procedure is tested on every test run (`tests/Feature/Operations`), and CI runs it against MySQL (see [the drill record](#restore-drill-record)).
 
 ## What is backed up
 
@@ -56,6 +56,17 @@ The restore works in this order:
 Then run `php artisan queue:restart`.
 
 The database driver must match: a MySQL backup restores into MySQL. To move between servers, install the same release, copy `.env` (same `APP_KEY`) and the archive, then restore.
+
+### From the admin
+
+Admin → Settings → **Backups** (permission `backups.manage`; owners have it, the Administrator role does not by default) lists the archives with date, size, encryption and contents, and lets you:
+
+- **Back up now**, database only or with files. It runs on the queue, so a worker must be running (`php artisan queue:work`); the page warns when a backup stays queued for more than two minutes.
+- **Download** and **delete** archives (both ask for a recent password confirmation and are audit-logged).
+- Set the **schedule** (daily time or off, database only or with files) and **how many to keep**. Saved values override `ECOMODULAR_BACKUP_SCHEDULE` / `ECOMODULAR_BACKUP_KEEP`; until then the env values apply. Encryption stays env-only (`ECOMODULAR_BACKUP_PASSWORD`).
+- **Restore** an archive: type its name to confirm. The archive is verified first (checksums, password, database driver). The queued job then takes a database-only safety backup, enters maintenance mode (the page keeps a bypass so it can show progress), restores, removes queued jobs that came back with the dump, leaves maintenance mode and restarts the queue workers. Everyone is signed out: sign in with the accounts as they were in the backup.
+
+If a restore fails once it has started, the store stays in maintenance mode and the page shows the recovery commands, for example `php artisan ecomodular:restore <pre-restore backup> --force` and `php artisan up`.
 
 ### Verification after a restore
 

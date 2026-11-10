@@ -19,6 +19,9 @@ final class ModuleSettingsSchema
     /** @var array<string, Manifest|null> */
     private array $manifests = [];
 
+    /** @var array<string, array{settings: array<string, mixed>, values: array<string, mixed>}> values per module, for as long as the stored settings are unchanged */
+    private array $values = [];
+
     public function __construct(private readonly SettingsRepository $settings) {}
 
     /**
@@ -28,12 +31,22 @@ final class ModuleSettingsSchema
      */
     public function values(Manifest $manifest): array
     {
+        // Module code reads settings one key at a time, often per product card:
+        // reuse the values while the stored settings are the same array.
+        $settings = $this->settings->all();
+        $memo = $this->values[$manifest->name] ?? null;
+        if ($memo !== null && $memo['settings'] === $settings) {
+            return $memo['values'];
+        }
+
         $values = [];
 
         foreach ($manifest->settings as $field) {
             $stored = $this->settings->get("{$manifest->settingsPrefix()}.{$field['key']}");
             $values[$field['key']] = $stored ?? ($field['default'] ?? ($field['type'] === 'boolean' ? false : null));
         }
+
+        $this->values[$manifest->name] = ['settings' => $settings, 'values' => $values];
 
         return $values;
     }

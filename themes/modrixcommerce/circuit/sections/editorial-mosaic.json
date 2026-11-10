@@ -1,0 +1,64 @@
+{
+    "name": "Editorial tiles",
+    "enabled_on": {
+        "templates": ["*"]
+    },
+    "settings": [
+        {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+        },
+        {
+            "type": "text",
+            "id": "shop_button",
+            "label": "Button label on tiles",
+            "default": "Shop Now"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "tile",
+            "name": "Tile",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Title"
+                },
+                {
+                    "type": "text",
+                    "id": "text",
+                    "label": "Caption"
+                },
+                {
+                    "type": "image",
+                    "id": "image",
+                    "label": "Image"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Link"
+                }
+            ]
+        }
+    ],
+    "max_blocks": 8,
+    "presets": [
+        {
+            "name": "Editorial tiles",
+            "blocks": [
+                {
+                    "type": "tile"
+                },
+                {
+                    "type": "tile"
+                },
+                {
+                    "type": "tile"
+                }
+            ]
+        }
+    ]
+}

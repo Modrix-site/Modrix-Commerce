@@ -1,0 +1,461 @@
+{
+    "categories": [
+        {
+            "name": "Body care",
+            "slug": "linden-body",
+            "description": "Discover body cleansers, creams, oils and everyday accessories. These are demonstration products; replace sample specifications and imagery with your verified catalog before publishing."
+        },
+        {
+            "name": "Shower cleansers",
+            "slug": "linden-shower",
+            "description": "Linden & Vale demonstration collection. Edit this introduction for your own store."
+        },
+        {
+            "name": "Body creams",
+            "slug": "linden-butters",
+            "description": "Linden & Vale demonstration collection. Edit this introduction for your own store."
+        },
+        {
+            "name": "Body oils & mists",
+            "slug": "linden-oils",
+            "description": "Linden & Vale demonstration collection. Edit this introduction for your own store."
+        },
+        {
+            "name": "Bath accessories",
+            "slug": "linden-accessories",
+            "description": "Linden & Vale demonstration collection. Edit this introduction for your own store."
+        },
+        {
+            "name": "Deodorants",
+            "slug": "linden-deodorants",
+            "description": "Linden & Vale demonstration collection. Edit this introduction for your own store."
+        },
+        {
+            "name": "Face & skincare",
+            "slug": "linden-skincare",
+            "description": "Linden & Vale demonstration collection. Edit this introduction for your own store."
+        },
+        {
+            "name": "Haircare",
+            "slug": "linden-haircare",
+            "description": "Linden & Vale demonstration collection. Edit this introduction for your own store."
+        },
+        {
+            "name": "Makeup",
+            "slug": "linden-makeup",
+            "description": "Linden & Vale demonstration collection. Edit this introduction for your own store."
+        },
+        {
+            "name": "Fragrance",
+            "slug": "linden-fragrance",
+            "description": "Linden & Vale demonstration collection. Edit this introduction for your own store."
+        },
+        {
+            "name": "Gifts",
+            "slug": "linden-gifts",
+            "description": "Linden & Vale demonstration collection. Edit this introduction for your own store."
+        },
+        {
+            "name": "New arrivals",
+            "slug": "linden-new",
+            "description": "Linden & Vale demonstration collection. Edit this introduction for your own store."
+        },
+        {
+            "name": "Vanilla",
+            "slug": "linden-range-vanilla",
+            "description": "Linden & Vale demonstration collection. Edit this introduction for your own store."
+        }
+    ],
+    "products": [
+        {
+            "name": "Moringa Shower Cleanser",
+            "slug": "linden-moringa-cleanser",
+            "sku": "LINDEN-DEMO-1",
+            "price": "59.00",
+            "stock": 20,
+            "description": "<p>Moringa Shower Cleanser. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body", "linden-shower"],
+            "image": "assets/moringa.webp"
+        },
+        {
+            "name": "Silk Roll-on Deodorant",
+            "slug": "linden-demo-2",
+            "sku": "LINDEN-DEMO-2",
+            "price": "59.00",
+            "stock": 20,
+            "description": "<p>Silk Roll-on Deodorant. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body", "linden-deodorants"],
+            "image": "assets/rollon.webp"
+        },
+        {
+            "name": "Shea Body Cream",
+            "slug": "linden-demo-3",
+            "sku": "LINDEN-DEMO-3",
+            "price": "99.00",
+            "compare_at_price": "159.00",
+            "stock": 20,
+            "description": "<p>Shea Body Cream. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body", "linden-butters"],
+            "image": "assets/shea-butter.webp"
+        },
+        {
+            "name": "Ginger Botanical Shampoo",
+            "slug": "linden-demo-4",
+            "sku": "LINDEN-DEMO-4",
+            "price": "55.00",
+            "stock": 20,
+            "description": "<p>Ginger Botanical Shampoo. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-haircare"],
+            "image": "assets/ginger-shampoo.webp"
+        },
+        {
+            "name": "Rose Shower Cleanser",
+            "slug": "linden-demo-5",
+            "sku": "LINDEN-DEMO-5",
+            "price": "59.00",
+            "stock": 20,
+            "description": "<p>Rose Shower Cleanser. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body", "linden-shower"],
+            "image": "assets/rose-gel.webp"
+        },
+        {
+            "name": "Argan Body Cream",
+            "slug": "linden-demo-6",
+            "sku": "LINDEN-DEMO-6",
+            "price": "59.00",
+            "compare_at_price": "99.00",
+            "stock": 20,
+            "description": "<p>Argan Body Cream. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body", "linden-butters"],
+            "image": "assets/argan-butter.webp"
+        },
+        {
+            "name": "Vanilla Body Cream",
+            "slug": "linden-demo-7",
+            "sku": "LINDEN-DEMO-7",
+            "price": "109.00",
+            "stock": 20,
+            "description": "<p>Vanilla Body Cream. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": [
+                "linden-body",
+                "linden-butters",
+                "linden-range-vanilla"
+            ],
+            "image": "assets/vanilla-butter.webp"
+        },
+        {
+            "name": "Aloe Roll-on Deodorant",
+            "slug": "linden-demo-8",
+            "sku": "LINDEN-DEMO-8",
+            "price": "59.00",
+            "stock": 20,
+            "description": "<p>Aloe Roll-on Deodorant. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body", "linden-deodorants"],
+            "image": "assets/aloe-rollon.webp"
+        },
+        {
+            "name": "Soft Musk Shower Cleanser",
+            "slug": "linden-demo-9",
+            "sku": "LINDEN-DEMO-9",
+            "price": "69.00",
+            "stock": 20,
+            "description": "<p>Soft Musk Shower Cleanser. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body", "linden-shower", "linden-fragrance"],
+            "image": "assets/musk-gel.webp"
+        },
+        {
+            "name": "Midnight Shower Cleanser",
+            "slug": "linden-demo-10",
+            "sku": "LINDEN-DEMO-10",
+            "price": "69.00",
+            "stock": 20,
+            "description": "<p>Midnight Shower Cleanser. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body", "linden-shower", "linden-fragrance"],
+            "image": "assets/black-gel.webp"
+        },
+        {
+            "name": "Daily Glow Face Serum",
+            "slug": "linden-demo-11",
+            "sku": "LINDEN-DEMO-11",
+            "price": "149.00",
+            "stock": 20,
+            "description": "<p>Daily Glow Face Serum. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-skincare"],
+            "image": "assets/serum.webp"
+        },
+        {
+            "name": "Sunlit Bronze Drops",
+            "slug": "linden-demo-12",
+            "sku": "LINDEN-DEMO-12",
+            "price": "129.00",
+            "stock": 20,
+            "description": "<p>Sunlit Bronze Drops. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-makeup", "linden-new"],
+            "image": "assets/bronze-drops.webp"
+        },
+        {
+            "name": "Clear Glow Lip Oil",
+            "slug": "linden-demo-13",
+            "sku": "LINDEN-DEMO-13",
+            "price": "90.00",
+            "stock": 20,
+            "description": "<p>Clear Glow Lip Oil. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-makeup", "linden-new"],
+            "image": "assets/lip-oil.webp"
+        },
+        {
+            "name": "Berry Lip Tint",
+            "slug": "linden-demo-14",
+            "sku": "LINDEN-DEMO-14",
+            "price": "90.00",
+            "stock": 20,
+            "description": "<p>Berry Lip Tint. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-makeup", "linden-new"],
+            "image": "assets/lip-tint.webp"
+        },
+        {
+            "name": "Amber Shimmer Body Mist",
+            "slug": "linden-demo-15",
+            "sku": "LINDEN-DEMO-15",
+            "price": "119.00",
+            "stock": 20,
+            "description": "<p>Amber Shimmer Body Mist. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": [
+                "linden-body",
+                "linden-oils",
+                "linden-fragrance",
+                "linden-new"
+            ],
+            "image": "assets/body-mist.webp"
+        },
+        {
+            "name": "Cotton Exfoliating Glove Set",
+            "slug": "linden-demo-16",
+            "sku": "LINDEN-DEMO-16",
+            "price": "32.00",
+            "stock": 20,
+            "description": "<p>Cotton Exfoliating Glove Set. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body", "linden-accessories"],
+            "image": "assets/gloves.webp"
+        },
+        {
+            "name": "Natural Long Handle Body Brush",
+            "slug": "linden-demo-17",
+            "sku": "LINDEN-DEMO-17",
+            "price": "79.00",
+            "stock": 20,
+            "description": "<p>Natural Long Handle Body Brush. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body", "linden-accessories"],
+            "image": "assets/brush.webp"
+        },
+        {
+            "name": "Coral Bath Lily",
+            "slug": "linden-demo-18",
+            "sku": "LINDEN-DEMO-18",
+            "price": "29.00",
+            "stock": 20,
+            "description": "<p>Coral Bath Lily. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body", "linden-accessories"],
+            "image": "assets/bath-lily.webp"
+        },
+        {
+            "name": "Strawberry Body Cream",
+            "slug": "linden-demo-19",
+            "sku": "LINDEN-DEMO-19",
+            "price": "59.00",
+            "compare_at_price": "99.00",
+            "stock": 20,
+            "description": "<p>Strawberry Body Cream. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body", "linden-butters"],
+            "image": "assets/strawberry-butter.webp"
+        },
+        {
+            "name": "Botanical Body Oil",
+            "slug": "linden-demo-20",
+            "sku": "LINDEN-DEMO-20",
+            "price": "139.00",
+            "stock": 20,
+            "description": "<p>Botanical Body Oil. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body", "linden-oils"],
+            "image": "assets/body-oil.webp"
+        },
+        {
+            "name": "Coconut Shower Cleanser",
+            "slug": "linden-demo-21",
+            "sku": "LINDEN-DEMO-21",
+            "price": "59.00",
+            "stock": 20,
+            "description": "<p>Coconut Shower Cleanser. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body", "linden-shower"],
+            "image": "assets/coconut-gel.webp"
+        },
+        {
+            "name": "Aloe Body Moisturiser",
+            "slug": "linden-demo-22",
+            "sku": "LINDEN-DEMO-22",
+            "price": "99.00",
+            "stock": 20,
+            "description": "<p>Aloe Body Moisturiser. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body", "linden-butters"],
+            "image": "assets/aloe-cream.webp"
+        },
+        {
+            "name": "Vanilla Shower Cleanser",
+            "slug": "linden-demo-23",
+            "sku": "LINDEN-DEMO-23",
+            "price": "59.00",
+            "stock": 20,
+            "description": "<p>Vanilla Shower Cleanser. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": [
+                "linden-body",
+                "linden-shower",
+                "linden-range-vanilla"
+            ],
+            "image": "assets/musk-gel.webp"
+        },
+        {
+            "name": "Berry Mini Gift",
+            "slug": "linden-demo-24",
+            "sku": "LINDEN-DEMO-24",
+            "price": "65.00",
+            "compare_at_price": "85.00",
+            "stock": 20,
+            "description": "<p>Berry Mini Gift. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body", "linden-gifts"],
+            "image": "assets/gift-berry.webp"
+        },
+        {
+            "name": "Shea Mini Gift",
+            "slug": "linden-demo-25",
+            "sku": "LINDEN-DEMO-25",
+            "price": "65.00",
+            "compare_at_price": "85.00",
+            "stock": 20,
+            "description": "<p>Shea Mini Gift. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body", "linden-gifts"],
+            "image": "assets/gift-shea.webp"
+        },
+        {
+            "name": "Rose Mini Gift",
+            "slug": "linden-demo-26",
+            "sku": "LINDEN-DEMO-26",
+            "price": "65.00",
+            "compare_at_price": "85.00",
+            "stock": 20,
+            "description": "<p>Rose Mini Gift. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body", "linden-gifts"],
+            "image": "assets/gift-rose.webp"
+        },
+        {
+            "name": "Citrus Mini Gift",
+            "slug": "linden-demo-27",
+            "sku": "LINDEN-DEMO-27",
+            "price": "65.00",
+            "compare_at_price": "85.00",
+            "stock": 20,
+            "description": "<p>Citrus Mini Gift. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body", "linden-gifts"],
+            "image": "assets/gift-citrus.webp"
+        },
+        {
+            "name": "Coconut Body Cream",
+            "slug": "linden-demo-28",
+            "sku": "LINDEN-DEMO-28",
+            "price": "59.00",
+            "compare_at_price": "99.00",
+            "stock": 20,
+            "description": "<p>Coconut Body Cream. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body", "linden-butters"],
+            "image": "assets/vanilla-butter.webp"
+        },
+        {
+            "name": "Moringa Body Scrub",
+            "slug": "linden-demo-29",
+            "sku": "LINDEN-DEMO-29",
+            "price": "99.00",
+            "stock": 20,
+            "description": "<p>Moringa Body Scrub. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body", "linden-butters"],
+            "image": "assets/argan-butter.webp"
+        },
+        {
+            "name": "Botanical Hand Cream",
+            "slug": "linden-demo-30",
+            "sku": "LINDEN-DEMO-30",
+            "price": "65.00",
+            "stock": 20,
+            "description": "<p>Botanical Hand Cream. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body"],
+            "image": "assets/hand-cream.webp"
+        },
+        {
+            "name": "Mint Foot Cream",
+            "slug": "linden-demo-31",
+            "sku": "LINDEN-DEMO-31",
+            "price": "69.00",
+            "stock": 20,
+            "description": "<p>Mint Foot Cream. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body", "linden-butters"],
+            "image": "assets/aloe-cream.webp"
+        },
+        {
+            "name": "Citrus Body Cream",
+            "slug": "linden-demo-32",
+            "sku": "LINDEN-DEMO-32",
+            "price": "89.00",
+            "stock": 20,
+            "description": "<p>Citrus Body Cream. A demonstration product for the Linden & Vale beauty storefront.</p><p>Replace the sample composition, benefits, usage instructions, pricing and photography with verified product information before publishing.</p>",
+            "short_description": "An everyday beauty essential from the Linden & Vale demonstration collection.",
+            "categories": ["linden-body", "linden-butters"],
+            "image": "assets/aloe-cream.webp"
+        }
+    ],
+    "pages": [
+        {
+            "title": "Our story",
+            "slug": "about-linden",
+            "content": "<h2>Linden & Vale</h2><p>A new perspective on everyday beauty rituals. Replace this demonstration introduction with your store’s story, values and verified sourcing information.</p>"
+        },
+        {
+            "title": "Customer care",
+            "slug": "linden-care",
+            "content": "<h2>We are here to help</h2><p>Add your verified support details, opening hours, delivery information and returns policy here.</p>"
+        },
+        {
+            "title": "Tips & rituals",
+            "slug": "linden-rituals",
+            "content": "<h2>A little time for you</h2><p>Create editorial guides for your catalog here. Use only verified instructions and product information.</p>"
+        }
+    ]
+}

@@ -1,0 +1,61 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/instamojo",
+    "display_name": "Instamojo Payments",
+    "description": "Instamojo payment gateway for India with UPI, Cards, Net Banking, Wallets, and Payment Request API.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "credit-card",
+    "accent": "#4b68ff",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\Instamojo\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\Instamojo\\InstamojoServiceProvider",
+    "capabilities": [
+        "payment.gateway",
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "content_security"
+    ],
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages"
+    },
+    "content_security": {
+        "connect-src": [
+            "https://api.instamojo.com",
+            "https://www.instamojo.com",
+            "https://test.instamojo.com"
+        ],
+        "frame-src": [
+            "https://api.instamojo.com",
+            "https://www.instamojo.com",
+            "https://test.instamojo.com"
+        ],
+        "form-action": [
+            "https://api.instamojo.com",
+            "https://www.instamojo.com",
+            "https://test.instamojo.com"
+        ]
+    },
+    "admin_navigation": [
+        {
+            "key": "instamojo",
+            "title": "Instamojo",
+            "route": "index",
+            "icon": "credit-card",
+            "group": "Configuration",
+            "permission": "payments.manage",
+            "order": 877
+        }
+    ]
+}

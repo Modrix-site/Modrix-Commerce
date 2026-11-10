@@ -24,13 +24,13 @@ use function Laravel\Prompts\text;
     {--email= : Owner email address}
     {--currency=USD : Default ISO 4217 currency}
     {--timezone= : Store timezone (defaults to APP_TIMEZONE)}')]
-#[Description('Install EcoModular: verify requirements, create the owner account and lock the installer')]
+#[Description('Install Modrix Commerce: verify requirements, create the owner account and lock the installer')]
 class InstallCommand extends Command
 {
     public function handle(InstallationState $state, RequirementChecker $requirements, InstallPlatform $install): int
     {
         if ($state->isInstalled()) {
-            $this->components->error('EcoModular is already installed. The installer cannot be re-run.');
+            $this->components->error('Modrix Commerce is already installed. The installer cannot be re-run.');
 
             return self::FAILURE;
         }

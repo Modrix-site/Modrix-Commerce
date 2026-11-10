@@ -1,0 +1,14 @@
+{
+    "name": "App and extension blocks",
+    "settings": [],
+    "blocks": [],
+    "max_blocks": 50,
+    "presets": [
+        {
+            "name": "App and extension blocks"
+        }
+    ],
+    "enabled_on": {
+        "templates": ["*"]
+    }
+}

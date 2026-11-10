@@ -1,0 +1,45 @@
+{
+    "name": "Ranges we love",
+    "settings": [
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "Ranges we love"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "range",
+            "name": "Range tile",
+            "settings": [
+                {
+                    "type": "image",
+                    "id": "image",
+                    "label": "Photograph"
+                },
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Label",
+                    "default": "Vanilla"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Destination",
+                    "default": "/search"
+                }
+            ]
+        }
+    ],
+    "max_blocks": 40,
+    "presets": [
+        {
+            "name": "Ranges we love"
+        }
+    ],
+    "enabled_on": {
+        "templates": ["*"]
+    }
+}

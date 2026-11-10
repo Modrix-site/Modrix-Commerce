@@ -94,6 +94,8 @@ final class PlaceOrder
                 region: $data->shippingAddress['region'] ?? null,
                 postalCode: $data->shippingAddress['postal_code'] ?? null,
                 shippingMethod: $data->shippingMethod,
+                paymentMethod: $data->paymentMethod,
+                city: $data->shippingAddress['city'] ?? null,
             ));
 
             $this->assertCheckoutable($priced, $data);
@@ -198,6 +200,7 @@ final class PlaceOrder
             'shipping_total' => $priced->shippingTotal->toDecimal(),
             'shipping_tax_total' => $priced->shippingTax->toDecimal(),
             'tax_total' => $priced->taxTotal->toDecimal(),
+            'payment_fee_total' => $priced->paymentFeeTotal->toDecimal(),
             'grand_total' => $priced->grandTotal()->toDecimal(),
             'prices_include_tax' => $priced->pricesIncludeTax,
             'coupon_code' => $priced->couponDiscountTotal->isPositive() ? $priced->couponCode : null,

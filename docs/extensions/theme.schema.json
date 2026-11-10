@@ -1,8 +1,8 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://github.com/eleydo/ecomodular/docs/extensions/theme.schema.json",
-    "title": "EcoModular theme manifest",
-    "description": "theme.json of an EcoModular theme. Themes are data only. The platform validator (App\\Core\\Themes\\ThemeManifestValidator) is authoritative and additionally checks files, paths and section settings.",
+    "$id": "https://github.com/eleydo/modrixcommerce/docs/extensions/theme.schema.json",
+    "title": "Modrix Commerce theme manifest",
+    "description": "theme.json of an Modrix Commerce theme. Themes are data only. The platform validator (App\\Core\\Themes\\ThemeManifestValidator) is authoritative and additionally checks files, paths and section settings.",
     "type": "object",
     "additionalProperties": false,
     "required": [
@@ -1170,6 +1170,16 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
+                "mode": {
+                    "enum": ["extend", "replace"]
+                },
+                "core_fields": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                },
+                "sections": {
+                    "type": "boolean"
+                },
                 "title": {
                     "type": "string",
                     "maxLength": 120
@@ -1186,7 +1196,7 @@
                 },
                 "fields": {
                     "type": "object",
-                    "maxProperties": 120,
+                    "maxProperties": 160,
                     "additionalProperties": {
                         "$ref": "#/$defs/customizerField"
                     }
@@ -1227,6 +1237,22 @@
                 },
                 "product": {
                     "const": "src/product.tsx"
+                },
+                "layout": {
+                    "const": "src/layout.tsx"
+                },
+                "customizer": {
+                    "const": "src/customizer.tsx"
+                },
+                "pages": {
+                    "type": "object",
+                    "propertyNames": {
+                        "pattern": "^storefront/[a-z0-9-]+(?:/[a-z0-9-]+)*$"
+                    },
+                    "additionalProperties": {
+                        "type": "string",
+                        "pattern": "^src/pages/[a-z0-9-]+(?:/[a-z0-9-]+)*\\.tsx$"
+                    }
                 }
             }
         },

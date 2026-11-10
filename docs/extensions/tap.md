@@ -11,13 +11,13 @@ The gateway code is `tap`. Checkout themes receive it from the core payment list
 
 ## Install
 
-1. Admin → Extensions → Upload, and choose `dist/ecomodular-tap-1.0.0.zip`. `module.json` is at the root of the archive. An upload does not replace a copy that is already in `modules/ecomodular/tap`.
+1. Admin → Extensions → Upload, and choose `dist/ecomodular-tap-1.0.0.zip`. `module.json` is at the root of the archive. An upload does not replace a copy that is already in `modules/modrixcommerce/tap`.
 2. Enable **Tap Payments**.
 3. Run `npm run build` so the settings page is in the Vite manifest. Skip this only when `npm run dev` is already serving the store.
 4. If route caching is on, rebuild it: `php artisan route:cache`.
-5. Admin → Payments → **Tap Payments**, or open `/admin/m/ecomodular/tap`. Saving credentials asks you to confirm your password first.
+5. Admin → Payments → **Tap Payments**, or open `/admin/m/modrixcommerce/tap`. Saving credentials asks you to confirm your password first.
 
-You can also copy `modules/ecomodular/tap` into place and enable it from Extensions.
+You can also copy `modules/modrixcommerce/tap` into place and enable it from Extensions.
 
 ## Configure
 

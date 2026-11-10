@@ -10,13 +10,13 @@ The gateway code is `authorize_net`. Official references:
 
 ## Install
 
-1. Admin → Extensions → Upload, and choose `dist/ecomodular-authorize-net-1.0.0.zip`. `module.json` is at the root of the archive. An upload does not replace a copy that is already in `modules/ecomodular/authorize-net`.
+1. Admin → Extensions → Upload, and choose `dist/ecomodular-authorize-net-1.0.0.zip`. `module.json` is at the root of the archive. An upload does not replace a copy that is already in `modules/modrixcommerce/authorize-net`.
 2. Enable **Authorize.Net**.
 3. Run `npm run build` so the settings page and the checkout handoff page are in the Vite manifest. Skip this only when `npm run dev` is already serving the store.
 4. If route caching is on, rebuild it: `php artisan route:cache`.
-5. Admin → Payments → **Authorize.Net**, or open `/admin/m/ecomodular/authorize-net`. Saving credentials asks you to confirm your password first.
+5. Admin → Payments → **Authorize.Net**, or open `/admin/m/modrixcommerce/authorize-net`. Saving credentials asks you to confirm your password first.
 
-You can also copy `modules/ecomodular/authorize-net` into place and enable it from Extensions.
+You can also copy `modules/modrixcommerce/authorize-net` into place and enable it from Extensions.
 
 ## Configure
 

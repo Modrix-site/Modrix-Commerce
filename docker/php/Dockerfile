@@ -1,4 +1,4 @@
-# EcoModular PHP-FPM image.
+# Modrix Commerce PHP-FPM image.
 #
 # Targets:
 #   runtime  PHP-FPM with the required extensions only (production-style).

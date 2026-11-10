@@ -3,9 +3,11 @@
 namespace App\Domains\Payments;
 
 use App\Core\Settings\SettingsRepository;
+use App\Core\Settings\StoreSettings;
 use App\Domains\Checkout\Pricing\PricedCart;
 use App\Domains\Payments\Contracts\PaymentGateway;
 use App\Domains\Payments\Contracts\PaymentMethod;
+use App\Domains\Pricing\Money;
 
 /**
  * Registry of payment methods: the merchant-configured manual methods plus
@@ -118,7 +120,7 @@ final class PaymentMethods
     }
 
     /**
-     * @return array{enabled: bool, label: string, instructions: string}
+     * @return array{enabled: bool, label: string, instructions: string, fee_enabled: bool, fee_amount: string}
      */
     public function manualConfig(string $code): array
     {
@@ -128,6 +130,20 @@ final class PaymentMethods
             'enabled' => (bool) $this->settings->get("payments.{$code}.enabled", false),
             'label' => (string) ($this->settings->get("payments.{$code}.label") ?: $defaults['label']),
             'instructions' => (string) ($this->settings->get("payments.{$code}.instructions") ?: $defaults['instructions']),
+            'fee_enabled' => $code === 'cash_on_delivery' && (bool) $this->settings->get('payments.cash_on_delivery.fee_enabled', false),
+            'fee_amount' => $code === 'cash_on_delivery' ? (string) $this->settings->get('payments.cash_on_delivery.fee_amount', '0.00') : '0.00',
         ];
+    }
+
+    public function cashOnDeliveryFee(string $currency): Money
+    {
+        $config = $this->manualConfig('cash_on_delivery');
+        $feeCurrency = $this->settings->get('payments.cash_on_delivery.fee_currency', app(StoreSettings::class)->currency());
+
+        if (! $config['enabled'] || ! $config['fee_enabled'] || $currency !== $feeCurrency) {
+            return Money::zero($currency);
+        }
+
+        return Money::of($config['fee_amount'], $currency)->nonNegative()->rounded();
     }
 }

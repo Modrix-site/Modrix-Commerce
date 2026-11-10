@@ -8,6 +8,7 @@ import { ExtensionSlot } from '@/components/extensions/extension-slot';
 import { PlaceSlot } from '@/components/extensions/place-slot';
 import { rememberProduct } from '@/components/storefront/recent-products';
 import { BuyNowButton } from '@/components/storefront/buy-now-button';
+import { ProductDescription } from '@/components/storefront/product-description';
 import { RelatedProducts } from '@/components/storefront/related-products';
 import { StickyAddToCart } from '@/components/storefront/sticky-add-to-cart';
 import { SaleNotice } from '@/components/storefront/sale-notice';
@@ -143,11 +144,14 @@ export function ElectronicsProduct({
                     </details>
                     <details open>
                         <summary>Product information</summary>
-                        <p>
-                            {product.description ||
-                                product.short_description ||
-                                'Contact our team for more information about this product.'}
-                        </p>
+                        {product.description ? (
+                            <ProductDescription product={product} />
+                        ) : (
+                            <p>
+                                {product.short_description ||
+                                    'Contact our team for more information about this product.'}
+                            </p>
+                        )}
                     </details>
                 </div>
                 <aside
@@ -192,6 +196,9 @@ export function ElectronicsProduct({
                         name={product.name}
                         image={product.images[0]?.url}
                         variant={variant}
+                        options={product.options}
+                        selected={selected}
+                        onOption={onOption}
                         hasOptions={product.options.length > 0}
                         showBuyButton={product.show_buy_button}
                     />
@@ -268,9 +275,16 @@ export function ElectronicsProduct({
             </div>
             <section className="electronics-product-section">
                 <h2>More information</h2>
-                <p className="text-sm whitespace-pre-line">
-                    {product.description ?? product.short_description}
-                </p>
+                {product.description ? (
+                    <ProductDescription
+                        product={product}
+                        className="text-sm"
+                    />
+                ) : (
+                    <p className="text-sm whitespace-pre-line">
+                        {product.short_description}
+                    </p>
+                )}
             </section>
             <PlaceSlot place="product.after_description" />
             <ExtensionSlot items={slots} />

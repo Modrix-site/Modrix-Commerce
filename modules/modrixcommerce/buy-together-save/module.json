@@ -1,0 +1,109 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/buy-together-save",
+    "display_name": "Buy Together & Save",
+    "description": "Increase average order value with customizable 'Buy Together & Save' product bundle offers, combo discounts, smart companion suggestions, and 1-click cart addition with instant savings.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "sparkles",
+    "accent": "#059669",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\BuyTogetherSave\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\BuyTogetherSave\\BuyTogetherSaveServiceProvider",
+    "permissions": [
+        {
+            "name": "buy_together.manage",
+            "label": "Manage Buy Together & Save deals and settings",
+            "group": "Marketing"
+        }
+    ],
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "storefront.slots",
+        "database.migrations",
+        "pricing.steps",
+        "settings",
+        "permissions"
+    ],
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages",
+        "slots": "resources/js/slots"
+    },
+    "settings": [
+        {
+            "key": "enabled",
+            "type": "boolean",
+            "label": "Enable 'Buy Together & Save' on single product pages",
+            "default": true
+        },
+        {
+            "key": "heading",
+            "type": "string",
+            "label": "Offer Title / Heading",
+            "default": "Buy Together & Save"
+        },
+        {
+            "key": "subheading",
+            "type": "string",
+            "label": "Offer Subtitle",
+            "default": "Purchase these items together and get exclusive bundle savings"
+        },
+        {
+            "key": "default_discount_type",
+            "type": "string",
+            "label": "Default Bundle Discount Type",
+            "default": "percent"
+        },
+        {
+            "key": "default_discount_value",
+            "type": "integer",
+            "label": "Default Bundle Discount Value",
+            "default": 10,
+            "min": 1,
+            "max": 90
+        },
+        {
+            "key": "auto_bundle_fallback",
+            "type": "boolean",
+            "label": "Auto-generate bundle when no manual deal is defined",
+            "help": "Automatically pulls matching companion products from the same category or bestsellers.",
+            "default": true
+        },
+        {
+            "key": "cta_button_text",
+            "type": "string",
+            "label": "Add to Cart Button Text",
+            "default": "Add Bundle to Cart & Save"
+        },
+        {
+            "key": "show_savings_badge",
+            "type": "boolean",
+            "label": "Show Savings Badge and Strikethrough Price",
+            "default": true
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "buy-together-save",
+            "title": "Buy Together & Save",
+            "route": "index",
+            "icon": "sparkles",
+            "group": "Marketing",
+            "permission": "buy_together.manage",
+            "order": 335
+        }
+    ]
+}

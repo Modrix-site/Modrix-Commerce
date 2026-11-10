@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Catalog;
 
 use App\Core\Audit\AuditLogger;
+use App\Core\Content\RichText;
 use App\Core\Localization\Locales;
 use App\Domains\Catalog\Models\Category;
 use App\Domains\Catalog\Models\CategoryTranslation;
@@ -95,17 +96,20 @@ class TranslationController extends Controller
     {
         $additional = $this->locales->additional();
         $translations = $model->translations()->whereIn('locale', $additional)->get()->keyBy('locale');
+        $value = fn (?Model $row, string $field) => $kind === 'product' && $field === 'description'
+            ? RichText::toHtml($row?->getAttribute($field))
+            : $row?->getAttribute($field);
 
         return Inertia::render('admin/translations/edit', [
             'kind' => $kind,
             'item' => ['id' => $model->id, 'name' => $model->name, 'slug' => $model->slug, 'backUrl' => $backUrl],
             'fields' => $fields,
             'defaultLocale' => ['code' => $this->locales->default(), 'name' => Locales::name($this->locales->default())],
-            'source' => collect($fields)->mapWithKeys(fn (string $f) => [$f => $model->getAttribute($f)]),
+            'source' => collect($fields)->mapWithKeys(fn (string $f) => [$f => $value($model, $f)]),
             'locales' => array_map(fn (string $code) => [
                 'code' => $code,
                 'name' => Locales::name($code),
-                'values' => collect($fields)->mapWithKeys(fn (string $f) => [$f => $translations->get($code)?->getAttribute($f)]),
+                'values' => collect($fields)->mapWithKeys(fn (string $f) => [$f => $value($translations->get($code), $f)]),
                 'updateUrl' => $kind === 'product'
                     ? route('admin.products.translations.update', [$model, $code])
                     : route('admin.categories.translations.update', [$model, $code]),
@@ -127,6 +131,10 @@ class TranslationController extends Controller
         foreach (array_keys($limits) as $field) {
             $value = $data[$field] ?? null;
             $values[$field] = is_string($value) && trim($value) !== '' ? trim($value) : null;
+        }
+
+        if ($model instanceof Product) {
+            $values['description'] = RichText::clean($values['description']);
         }
 
         if (array_filter($values) === []) {

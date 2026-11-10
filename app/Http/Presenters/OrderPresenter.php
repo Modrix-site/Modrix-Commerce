@@ -263,6 +263,7 @@ final class OrderPresenter
             'discount_total' => $order->money('discount_total'),
             'shipping_total' => $order->money('shipping_total'),
             'tax_total' => $order->money('tax_total'),
+            'payment_fee_total' => $order->money('payment_fee_total'),
             'grand_total' => $order->money('grand_total'),
             'prices_include_tax' => $order->prices_include_tax,
         ];

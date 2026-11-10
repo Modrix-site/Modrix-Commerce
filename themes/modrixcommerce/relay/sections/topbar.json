@@ -1,0 +1,83 @@
+{
+    "name": "Welcome and account bar",
+    "settings": [
+        {
+            "type": "text",
+            "id": "greeting",
+            "label": "Welcome message",
+            "default": "Welcome to Relay Electronics!"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_currency",
+            "label": "Show currency selector",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_language",
+            "label": "Show language selector",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "login_label",
+            "label": "Login label",
+            "default": "Login"
+        },
+        {
+            "type": "text",
+            "id": "register_label",
+            "label": "Register label",
+            "default": "Register"
+        },
+        {
+            "type": "text",
+            "id": "account_label",
+            "label": "Account label",
+            "default": "My account"
+        },
+        {
+            "type": "color",
+            "id": "background",
+            "label": "Background",
+            "default": "#ffffff"
+        },
+        {
+            "type": "color",
+            "id": "foreground",
+            "label": "Text color",
+            "default": "#888888"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "link",
+            "name": "Utility link",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Label",
+                    "default": "Track your order"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Destination",
+                    "default": "/account/orders"
+                }
+            ]
+        }
+    ],
+    "max_blocks": 30,
+    "presets": [
+        {
+            "name": "Welcome and account bar"
+        }
+    ],
+    "enabled_on": {
+        "groups": ["header"]
+    },
+    "limit": 1
+}

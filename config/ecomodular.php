@@ -97,7 +97,7 @@ return [
     ],
 
     'marketplace' => [
-        'url' => rtrim((string) env('ECOMODULAR_MARKETPLACE_URL', 'https://marketplace.ecomodular.dev'), '/'),
+        'url' => rtrim((string) (env('ECOMODULAR_MARKETPLACE_URL') ?: 'https://cloud-apps.modrixcommerce.com'), '/'),
         'trusted_keys' => array_values(array_filter(array_map('trim', explode(',', (string) env('ECOMODULAR_MARKETPLACE_TRUSTED_KEYS', ''))))),
         'grace_days' => (int) env('ECOMODULAR_MARKETPLACE_GRACE_DAYS', 14),
         'timeout' => (int) env('ECOMODULAR_MARKETPLACE_TIMEOUT', 10),
@@ -130,7 +130,7 @@ return [
 
     'themes' => [
         'path' => env('ECOMODULAR_THEMES_PATH', base_path('themes')),
-        'default' => env('ECOMODULAR_DEFAULT_THEME', 'ecomodular/essence'),
+        'default' => env('ECOMODULAR_DEFAULT_THEME', 'modrixcommerce/essence'),
     ],
 
 ];

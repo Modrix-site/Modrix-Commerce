@@ -5,6 +5,7 @@ import { EmptyState } from '@/components/admin/empty-state';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
+import { RichTextEditor } from '@/components/admin/rich-text-editor';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -174,6 +175,9 @@ export default function TranslationEdit({
                                                     const id = `${current.code}-${field}`;
                                                     const isLong =
                                                         LONG.includes(field);
+                                                    const isRich =
+                                                        kind === 'product' &&
+                                                        field === 'description';
 
                                                     return (
                                                         <div
@@ -193,16 +197,36 @@ export default function TranslationEdit({
                                                                     }
                                                                     )
                                                                 </span>
-                                                                <p
-                                                                    lang={
-                                                                        defaultLocale.code
-                                                                    }
-                                                                    className="max-h-40 overflow-y-auto rounded-md bg-muted p-2 text-sm whitespace-pre-line"
-                                                                >
-                                                                    {source[
-                                                                        field
-                                                                    ] || '—'}
-                                                                </p>
+                                                                {isRich &&
+                                                                source[
+                                                                    field
+                                                                ] ? (
+                                                                    <div
+                                                                        lang={
+                                                                            defaultLocale.code
+                                                                        }
+                                                                        className="rich-text max-h-60 overflow-y-auto rounded-md bg-muted p-2 text-sm"
+                                                                        dangerouslySetInnerHTML={{
+                                                                            __html:
+                                                                                source[
+                                                                                    field
+                                                                                ] ??
+                                                                                '',
+                                                                        }}
+                                                                    />
+                                                                ) : (
+                                                                    <p
+                                                                        lang={
+                                                                            defaultLocale.code
+                                                                        }
+                                                                        className="max-h-40 overflow-y-auto rounded-md bg-muted p-2 text-sm whitespace-pre-line"
+                                                                    >
+                                                                        {source[
+                                                                            field
+                                                                        ] ||
+                                                                            '—'}
+                                                                    </p>
+                                                                )}
                                                             </div>
                                                             <div className="grid content-start gap-1">
                                                                 <Label
@@ -219,7 +243,48 @@ export default function TranslationEdit({
                                                                     }
                                                                     )
                                                                 </Label>
-                                                                {isLong ? (
+                                                                {isRich ? (
+                                                                    <div
+                                                                        lang={
+                                                                            current.code
+                                                                        }
+                                                                    >
+                                                                        <input
+                                                                            type="hidden"
+                                                                            name={
+                                                                                field
+                                                                            }
+                                                                            value={
+                                                                                currentValues[
+                                                                                    field
+                                                                                ] ??
+                                                                                ''
+                                                                            }
+                                                                        />
+                                                                        <RichTextEditor
+                                                                            key={
+                                                                                id
+                                                                            }
+                                                                            id={
+                                                                                id
+                                                                            }
+                                                                            value={
+                                                                                currentValues[
+                                                                                    field
+                                                                                ] ??
+                                                                                ''
+                                                                            }
+                                                                            onChange={(
+                                                                                html,
+                                                                            ) =>
+                                                                                updateField(
+                                                                                    field,
+                                                                                    html,
+                                                                                )
+                                                                            }
+                                                                        />
+                                                                    </div>
+                                                                ) : isLong ? (
                                                                     <Textarea
                                                                         id={id}
                                                                         name={

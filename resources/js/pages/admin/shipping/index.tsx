@@ -1,4 +1,4 @@
-import { Form, Head } from '@inertiajs/react';
+import { Form, Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import ShippingMethodController from '@/actions/App/Http/Controllers/Admin/ShippingMethodController';
 import { EmptyState } from '@/components/admin/empty-state';
@@ -42,10 +42,14 @@ export default function ShippingIndex({
     methods,
     countries,
     currency,
+    deliveryArea,
+    locationWarnings,
 }: {
     methods: Method[];
     countries: Country[];
     currency: string;
+    deliveryArea: string;
+    locationWarnings: string[];
 }) {
     const [editing, setEditing] = useState<number | 'new' | null>(null);
 
@@ -64,6 +68,34 @@ export default function ShippingIndex({
                         )
                     }
                 />
+                <div className="grid gap-2 rounded-lg border bg-muted/30 p-4 text-sm">
+                    <p>
+                        <strong>Store delivery area:</strong> {deliveryArea}
+                    </p>
+                    <p className="text-muted-foreground">
+                        All methods below respect this area. Country and region
+                        rules can narrow it further.
+                    </p>
+                    <Link
+                        href="/admin/settings/store#regional"
+                        className="w-fit underline underline-offset-4"
+                    >
+                        Change store location and delivery area
+                    </Link>
+                </div>
+                {locationWarnings.length > 0 && (
+                    <div
+                        role="status"
+                        className="grid gap-2 rounded-lg border p-4 text-sm"
+                    >
+                        <p className="font-semibold">
+                            Check duplicate delivery locations
+                        </p>
+                        {locationWarnings.map((warning) => (
+                            <p key={warning}>{warning}</p>
+                        ))}
+                    </div>
+                )}
                 {editing === 'new' && (
                     <MethodForm
                         countries={countries}
@@ -108,7 +140,7 @@ export default function ShippingIndex({
                                                 {m.regional_rates.length > 0 &&
                                                     `${m.regional_rates.length} state rates · `}
                                                 {m.countries.length === 0
-                                                    ? 'all countries'
+                                                    ? 'all permitted delivery countries'
                                                     : m.countries.join(', ')}
                                             </p>
                                         </div>
@@ -270,9 +302,9 @@ function MethodForm({
                                     Delivery coverage
                                 </h3>
                                 <p className="text-sm text-muted-foreground">
-                                    Leave countries unselected for worldwide
-                                    delivery. Regional prices override the
-                                    default rate.
+                                    Leave countries unselected to use the
+                                    store's delivery area. Regional prices
+                                    override the default rate.
                                 </p>
                                 <div className="flex flex-wrap gap-2">
                                     <Button
@@ -296,7 +328,7 @@ function MethodForm({
                                         variant="ghost"
                                         onClick={() => setSelected([])}
                                     >
-                                        All countries
+                                        Use store delivery area
                                     </Button>
                                 </div>
                                 <Input

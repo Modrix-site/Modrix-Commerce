@@ -1,0 +1,51 @@
+{
+    "sections": {
+        "main": {
+            "type": "main-product",
+            "settings": {
+                "gallery_width": "56",
+                "show_sku": true,
+                "show_quantity": true,
+                "show_wishlist": true,
+                "show_stock": true,
+                "add_label": "Add to bag",
+                "adding_label": "Adding…",
+                "sold_label": "Currently unavailable",
+                "choose_label": "Choose options",
+                "show_buy_now": true,
+                "buy_label": "Buy now",
+                "details_heading": "Details",
+                "delivery_heading": "Delivery & returns",
+                "delivery_text": "Complimentary signature packaging and insured express delivery on all orders.",
+                "services_heading": "Care & services",
+                "services_text": "Lifetime warranty against manufacturing defects and dedicated customer care.",
+                "related_heading": "You may also like",
+                "related_limit": 4
+            },
+            "blocks": {
+                "specs": {
+                    "type": "accordion",
+                    "settings": {
+                        "heading": "Specifications",
+                        "body": "Handcrafted with full-grain leather, premium metal hardware and archival construction."
+                    }
+                }
+            },
+            "block_order": [
+                "specs"
+            ]
+        },
+        "apps": {
+            "type": "apps",
+            "settings": {
+                "heading": ""
+            },
+            "blocks": {},
+            "block_order": []
+        }
+    },
+    "order": [
+        "main",
+        "apps"
+    ]
+}

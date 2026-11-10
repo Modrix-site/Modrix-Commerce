@@ -1,0 +1,546 @@
+{
+    "platform_contract": "StorefrontSlots::SLOTS + StorefrontSlots::PLACES; core commerce services and events",
+    "modules": [
+        {
+            "name": "modrixcommerce/advanced-seo",
+            "label": "Advanced SEO",
+            "capabilities": [
+                "admin.routes",
+                "admin.navigation",
+                "storefront.slots",
+                "settings",
+                "permissions"
+            ]
+        },
+        {
+            "name": "modrixcommerce/ai-assistant",
+            "label": "AI Content Assistant",
+            "capabilities": ["admin.routes", "admin.navigation", "settings"]
+        },
+        {
+            "name": "modrixcommerce/amazon-payment-services",
+            "label": "Amazon Payment Services",
+            "capabilities": [
+                "payment.gateway",
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "content_security"
+            ]
+        },
+        {
+            "name": "modrixcommerce/authorize-net",
+            "label": "Authorize.Net",
+            "capabilities": [
+                "payment.gateway",
+                "storefront.routes",
+                "admin.routes",
+                "admin.navigation",
+                "content_security"
+            ]
+        },
+        {
+            "name": "modrixcommerce/bot-protection",
+            "label": "Bot Protection",
+            "capabilities": [
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "database.migrations",
+                "events.listen",
+                "scheduled.tasks",
+                "console.commands",
+                "settings",
+                "permissions"
+            ]
+        },
+        {
+            "name": "modrixcommerce/cart-abandonment-recovery",
+            "label": "Cart Abandonment Recovery",
+            "capabilities": [
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "storefront.slots",
+                "database.migrations",
+                "events.listen",
+                "scheduled.tasks",
+                "console.commands",
+                "settings",
+                "permissions"
+            ]
+        },
+        {
+            "name": "modrixcommerce/cashfree",
+            "label": "Cashfree Payments",
+            "capabilities": [
+                "payment.gateway",
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "content_security"
+            ]
+        },
+        {
+            "name": "modrixcommerce/ccavenue",
+            "label": "CCAvenue",
+            "capabilities": [
+                "payment.gateway",
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "content_security"
+            ]
+        },
+        {
+            "name": "modrixcommerce/checkout-com",
+            "label": "Checkout.com",
+            "capabilities": [
+                "payment.gateway",
+                "storefront.routes",
+                "admin.routes",
+                "admin.navigation",
+                "content_security"
+            ]
+        },
+        {
+            "name": "modrixcommerce/cloud-connector",
+            "label": "Modrix Cloud Connector",
+            "capabilities": [
+                "admin.routes",
+                "admin.navigation",
+                "console.commands",
+                "scheduled.tasks"
+            ]
+        },
+        {
+            "name": "modrixcommerce/cross-sell-upsell",
+            "label": "Cross-sell & Upsell",
+            "capabilities": [
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "storefront.slots",
+                "database.migrations",
+                "pricing.steps",
+                "events.listen",
+                "settings",
+                "permissions"
+            ]
+        },
+        {
+            "name": "modrixcommerce/currency-converter",
+            "label": "Live Currency Converter",
+            "capabilities": ["settings", "scheduled.tasks"]
+        },
+        {
+            "name": "modrixcommerce/easebuzz",
+            "label": "Easebuzz Payments",
+            "capabilities": [
+                "payment.gateway",
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "content_security"
+            ]
+        },
+        {
+            "name": "modrixcommerce/flash-sales",
+            "label": "Flash Sales",
+            "capabilities": [
+                "admin.routes",
+                "admin.navigation",
+                "storefront.slots",
+                "database.migrations",
+                "catalog.sale_prices",
+                "settings",
+                "permissions"
+            ]
+        },
+        {
+            "name": "modrixcommerce/fraud-detection",
+            "label": "Fraud Detection",
+            "capabilities": [
+                "admin.routes",
+                "admin.navigation",
+                "database.migrations",
+                "events.listen",
+                "scheduled.tasks",
+                "console.commands",
+                "settings",
+                "permissions"
+            ]
+        },
+        {
+            "name": "modrixcommerce/frequently-bought-together",
+            "label": "Frequently Bought Together",
+            "capabilities": [
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "storefront.slots",
+                "settings",
+                "permissions"
+            ]
+        },
+        {
+            "name": "modrixcommerce/gdpr-cookie-consent",
+            "label": "GDPR Cookie Consent",
+            "capabilities": [
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "storefront.slots",
+                "database.migrations",
+                "settings",
+                "permissions"
+            ]
+        },
+        {
+            "name": "modrixcommerce/google-analytics",
+            "label": "Google Analytics",
+            "capabilities": [
+                "admin.routes",
+                "admin.navigation",
+                "storefront.slots",
+                "settings",
+                "permissions",
+                "content_security"
+            ]
+        },
+        {
+            "name": "modrixcommerce/image-studio",
+            "label": "Image Studio",
+            "capabilities": [
+                "admin.routes",
+                "admin.navigation",
+                "database.migrations",
+                "settings",
+                "permissions",
+                "events.listen",
+                "console.commands",
+                "catalog.image_urls"
+            ]
+        },
+        {
+            "name": "modrixcommerce/instamojo",
+            "label": "Instamojo Payments",
+            "capabilities": [
+                "payment.gateway",
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "content_security"
+            ]
+        },
+        {
+            "name": "modrixcommerce/login-monitoring",
+            "label": "Login Monitoring",
+            "capabilities": [
+                "admin.routes",
+                "admin.navigation",
+                "database.migrations",
+                "events.listen",
+                "scheduled.tasks",
+                "console.commands",
+                "settings",
+                "permissions"
+            ]
+        },
+        {
+            "name": "modrixcommerce/myfatoorah",
+            "label": "MyFatoorah Payments",
+            "capabilities": [
+                "payment.gateway",
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "content_security"
+            ]
+        },
+        {
+            "name": "modrixcommerce/newsletter",
+            "label": "Newsletter Sign-up",
+            "capabilities": [
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "storefront.slots",
+                "database.migrations",
+                "settings",
+                "permissions"
+            ]
+        },
+        {
+            "name": "modrixcommerce/ngenius",
+            "label": "Network International (N-Genius)",
+            "capabilities": [
+                "payment.gateway",
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "content_security"
+            ]
+        },
+        {
+            "name": "modrixcommerce/order-alerts",
+            "label": "Paid Order Alerts",
+            "capabilities": [
+                "events.listen",
+                "notifications",
+                "settings",
+                "database.migrations"
+            ]
+        },
+        {
+            "name": "modrixcommerce/order-returns",
+            "label": "Order Returns",
+            "capabilities": [
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "storefront.slots",
+                "database.migrations",
+                "settings",
+                "permissions"
+            ]
+        },
+        {
+            "name": "modrixcommerce/payby",
+            "label": "PayBy (Astra Tech)",
+            "capabilities": [
+                "payment.gateway",
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "content_security"
+            ]
+        },
+        {
+            "name": "modrixcommerce/paypal",
+            "label": "PayPal",
+            "capabilities": [
+                "payment.gateway",
+                "admin.routes",
+                "admin.navigation"
+            ]
+        },
+        {
+            "name": "modrixcommerce/paytabs",
+            "label": "PayTabs",
+            "capabilities": [
+                "payment.gateway",
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "database.migrations"
+            ]
+        },
+        {
+            "name": "modrixcommerce/paytm",
+            "label": "Paytm Payment Gateway",
+            "capabilities": [
+                "payment.gateway",
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "content_security"
+            ]
+        },
+        {
+            "name": "modrixcommerce/payu",
+            "label": "PayU Payments",
+            "capabilities": [
+                "payment.gateway",
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "content_security"
+            ]
+        },
+        {
+            "name": "modrixcommerce/phonepe",
+            "label": "PhonePe Payment Gateway",
+            "capabilities": [
+                "payment.gateway",
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "content_security"
+            ]
+        },
+        {
+            "name": "modrixcommerce/product-addons",
+            "label": "Product Addons & Warranties",
+            "capabilities": [
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "storefront.slots",
+                "database.migrations",
+                "pricing.steps",
+                "events.listen",
+                "settings",
+                "permissions"
+            ]
+        },
+        {
+            "name": "modrixcommerce/product-fields",
+            "label": "Product Fields",
+            "capabilities": [
+                "admin.routes",
+                "admin.navigation",
+                "storefront.slots",
+                "database.migrations",
+                "permissions"
+            ]
+        },
+        {
+            "name": "modrixcommerce/product-label",
+            "label": "Product Label",
+            "capabilities": [
+                "admin.routes",
+                "admin.navigation",
+                "product.labels",
+                "settings",
+                "permissions"
+            ]
+        },
+        {
+            "name": "modrixcommerce/product-reviews",
+            "label": "Product Reviews",
+            "capabilities": [
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "storefront.slots",
+                "database.migrations",
+                "settings",
+                "permissions"
+            ]
+        },
+        {
+            "name": "modrixcommerce/promo-popup",
+            "label": "Marketing Popup",
+            "capabilities": [
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "storefront.slots",
+                "database.migrations",
+                "settings",
+                "permissions"
+            ]
+        },
+        {
+            "name": "modrixcommerce/razorpay",
+            "label": "Razorpay",
+            "capabilities": [
+                "payment.gateway",
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "database.migrations",
+                "content_security"
+            ]
+        },
+        {
+            "name": "modrixcommerce/refund-management",
+            "label": "Advanced Refund Management",
+            "capabilities": [
+                "admin.routes",
+                "admin.navigation",
+                "database.migrations",
+                "settings",
+                "permissions",
+                "events.listen"
+            ]
+        },
+        {
+            "name": "modrixcommerce/sales-widget",
+            "label": "Sales Trend Widget",
+            "capabilities": ["dashboard.widgets", "settings"]
+        },
+        {
+            "name": "modrixcommerce/sitemap",
+            "label": "XML Sitemap",
+            "capabilities": [
+                "admin.routes",
+                "admin.navigation",
+                "settings",
+                "permissions",
+                "sitemap.provider"
+            ]
+        },
+        {
+            "name": "modrixcommerce/social-proof-notifications",
+            "label": "Social Proof Notifications",
+            "capabilities": [
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "storefront.slots",
+                "database.migrations",
+                "settings",
+                "permissions",
+                "events.listen"
+            ]
+        },
+        {
+            "name": "modrixcommerce/tabby",
+            "label": "Tabby: Buy Now, Pay Later",
+            "capabilities": [
+                "payment.gateway",
+                "storefront.slots",
+                "storefront.routes",
+                "admin.routes",
+                "admin.navigation",
+                "settings",
+                "content_security"
+            ]
+        },
+        {
+            "name": "modrixcommerce/tamara",
+            "label": "Tamara: Buy Now, Pay Later",
+            "capabilities": [
+                "payment.gateway",
+                "storefront.slots",
+                "storefront.routes",
+                "admin.routes",
+                "admin.navigation",
+                "settings"
+            ]
+        },
+        {
+            "name": "modrixcommerce/tap",
+            "label": "Tap Payments",
+            "capabilities": [
+                "payment.gateway",
+                "admin.routes",
+                "admin.navigation"
+            ]
+        },
+        {
+            "name": "modrixcommerce/telr",
+            "label": "Telr",
+            "capabilities": [
+                "payment.gateway",
+                "storefront.routes",
+                "admin.routes",
+                "admin.navigation",
+                "content_security"
+            ]
+        },
+        {
+            "name": "modrixcommerce/ziina",
+            "label": "Ziina Payment Gateway",
+            "capabilities": [
+                "payment.gateway",
+                "admin.routes",
+                "admin.navigation",
+                "storefront.routes",
+                "content_security"
+            ]
+        }
+    ]
+}

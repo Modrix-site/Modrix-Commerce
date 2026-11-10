@@ -158,7 +158,7 @@
 ### Task 5: Bundled modules
 
 **Files (each module's provider and `module.json`; committed only for files that are committed today, the rest working tree only):**
-- Product reviews: `block('ecomodular/product-reviews', 'reviews', 'Product reviews', 'ProductReviews', ['product.after_details', 'product.after_description'], 'product.after_details', …)`, plus the setting `show_summary` (boolean, default true, `tab: product`).
+- Product reviews: `block('modrixcommerce/product-reviews', 'reviews', 'Product reviews', 'ProductReviews', ['product.after_details', 'product.after_description'], 'product.after_details', …)`, plus the setting `show_summary` (boolean, default true, `tab: product`).
 - Tabby and Tamara: `promo` blocks for the product page `['product.after_price', 'product.after_add_to_cart']`, defaulting to their current place (`product.after_details` stays allowed and remains the default), plus `show_product_promo` (`tab: product`). The cart promo stays as registered.
 - Frequently bought together: `['product.after_details', 'product.after_add_to_cart']`, plus `limit` (integer, `tab: product`) where a matching setting exists; otherwise add one.
 - Newsletter: the sign-up block `['home.after_featured', 'storefront.footer']`. Today it is registered in both, so it becomes two blocks, keeping both behaviours, plus `show_signup` (`tab: home`).

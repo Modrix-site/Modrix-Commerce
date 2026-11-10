@@ -1,0 +1,79 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/refund-management",
+    "display_name": "Advanced Refund Management",
+    "description": "Adds advanced refund management to Modrix Commerce, enabling merchants to process partial and full refunds, generate credit memos, and track refund payments directly from the Admin Panel.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "receipt",
+    "accent": "#e11d48",
+    "platform_version": "^0.4 || ^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\RefundManagement\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\RefundManagement\\RefundManagementServiceProvider",
+    "permissions": [
+        {
+            "name": "refunds.manage",
+            "label": "Process refunds, credit memos, and refund payments",
+            "group": "Orders"
+        }
+    ],
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "database.migrations",
+        "settings",
+        "permissions",
+        "events.listen"
+    ],
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php"
+    },
+    "admin_navigation": [
+        {
+            "key": "refund-management",
+            "title": "Refunds & Credit Memos",
+            "route": "index",
+            "icon": "receipt",
+            "group": "Sales",
+            "permission": "refunds.manage",
+            "order": 58
+        }
+    ],
+    "settings": [
+        {
+            "key": "credit_memo_prefix",
+            "type": "string",
+            "label": "Credit memo number prefix",
+            "default": "CM-{year}-",
+            "max_length": 24,
+            "help": "Supports {year} placeholder, e.g. CM-2026-00001."
+        },
+        {
+            "key": "credit_memo_padding",
+            "type": "integer",
+            "label": "Sequence number padding",
+            "default": 5,
+            "min": 1,
+            "max": 10
+        },
+        {
+            "key": "auto_generate_credit_memo",
+            "type": "boolean",
+            "label": "Automatically generate a credit memo when a refund is processed",
+            "default": true
+        },
+        {
+            "key": "default_restock",
+            "type": "boolean",
+            "label": "Pre-fill restock quantities when selecting items to refund",
+            "default": true
+        }
+    ]
+}

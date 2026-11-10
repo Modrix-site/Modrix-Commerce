@@ -1,0 +1,163 @@
+{
+    "title": "Linden & Vale design",
+    "description": "Edit all page sections in the live editor. Colors and fonts apply to the whole customer storefront.",
+    "fields": {
+        "custom.body_size": {
+            "type": "select",
+            "label": "Body size",
+            "group": "Typography",
+            "tab": "general",
+            "options": [
+                "12",
+                "13",
+                "14",
+                "15",
+                "16"
+            ],
+            "default": "14"
+        },
+        "custom.card_size": {
+            "type": "select",
+            "label": "Product card text size",
+            "group": "Typography",
+            "tab": "general",
+            "options": [
+                "12",
+                "13",
+                "14",
+                "15",
+                "16"
+            ],
+            "default": "14"
+        },
+        "custom.heading_size": {
+            "type": "select",
+            "label": "Section heading size",
+            "group": "Typography",
+            "tab": "general",
+            "options": [
+                "24",
+                "27",
+                "28",
+                "30",
+                "32"
+            ],
+            "default": "28"
+        },
+        "custom.product_title_size": {
+            "type": "select",
+            "label": "Product title size",
+            "group": "Typography",
+            "tab": "product",
+            "options": [
+                "28",
+                "32",
+                "36",
+                "40",
+                "44"
+            ],
+            "default": "36"
+        },
+        "custom.sale_color": {
+            "type": "color",
+            "label": "Promotion color",
+            "group": "Colors",
+            "tab": "general",
+            "default": "#c63842"
+        },
+        "custom.badge_color": {
+            "type": "color",
+            "label": "Product badge color",
+            "group": "Colors",
+            "tab": "general",
+            "default": "#ffda52"
+        },
+        "custom.cart_label": {
+            "type": "text",
+            "label": "Card Add to cart label",
+            "group": "Product cards",
+            "tab": "general",
+            "default": "Add to cart"
+        },
+        "custom.options_label": {
+            "type": "text",
+            "label": "Card Choose options label",
+            "group": "Product cards",
+            "tab": "general",
+            "default": "Choose options"
+        },
+        "custom.sold_label": {
+            "type": "text",
+            "label": "Sold out label",
+            "group": "Product cards",
+            "tab": "general",
+            "default": "Sold out"
+        },
+        "custom.footer_size": {
+            "type": "select",
+            "label": "Footer text size",
+            "group": "Typography",
+            "tab": "general",
+            "options": [
+                "10",
+                "11",
+                "12",
+                "13",
+                "14",
+                "15",
+                "16"
+            ],
+            "default": "12"
+        },
+        "custom.nav_size": {
+            "type": "select",
+            "label": "Navigation text size",
+            "group": "Typography",
+            "tab": "general",
+            "options": [
+                "11",
+                "12",
+                "13",
+                "14",
+                "15"
+            ],
+            "default": "13"
+        },
+        "custom.button_size": {
+            "type": "select",
+            "label": "Button text size",
+            "group": "Typography",
+            "tab": "general",
+            "options": [
+                "10",
+                "11",
+                "12",
+                "13",
+                "14"
+            ],
+            "default": "11"
+        },
+        "custom.catalog_title_size": {
+            "type": "select",
+            "label": "Catalog title size",
+            "group": "Typography",
+            "tab": "general",
+            "options": [
+                "28",
+                "32",
+                "36",
+                "40",
+                "44"
+            ],
+            "default": "36"
+        },
+        "custom.card_ratio": {
+            "type": "select",
+            "label": "Product image shape",
+            "group": "Product cards",
+            "tab": "general",
+            "options": ["square", "portrait", "tall"],
+            "default": "portrait"
+        }
+    }
+}

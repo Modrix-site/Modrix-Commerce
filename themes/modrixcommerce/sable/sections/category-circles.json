@@ -1,0 +1,57 @@
+{
+    "name": "Circular collections",
+    "settings": [
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": ""
+        },
+        {
+            "type": "range",
+            "id": "size",
+            "label": "Circle size",
+            "default": 110,
+            "min": 70,
+            "max": 160,
+            "step": 10
+        }
+    ],
+    "blocks": [
+        {
+            "type": "category",
+            "name": "Collection link",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Label",
+                    "default": "Carryalls"
+                },
+                {
+                    "type": "image",
+                    "id": "image",
+                    "label": "Image",
+                    "default": "asset:assets/product-3.png"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Destination",
+                    "default": "/search"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Circular collections"
+        }
+    ],
+    "enabled_on": {
+        "templates": [
+            "*"
+        ]
+    },
+    "max_blocks": 10
+}

@@ -9,7 +9,10 @@ use App\Core\Settings\GeneralSettings;
 use App\Core\Settings\SettingsRepository;
 use App\Core\Settings\StorefrontCurrencies;
 use App\Core\Settings\StoreSettings;
+use App\Core\Storefront\AccountMenu;
 use App\Core\Themes\ResolvedTheme;
+use App\Core\Themes\Sections\SectionPresenter;
+use App\Core\Themes\Sections\ThemeTemplates;
 use App\Core\Themes\StoreNavigation;
 use App\Core\Themes\ThemeResolver;
 use App\Domains\Cart\CartManager;
@@ -38,14 +41,35 @@ class ShareStorefrontData
         private readonly StorefrontSlots $slots,
     ) {}
 
+    /** Storefront route => the theme template it renders (sections v2 themes). */
+    private const TEMPLATES = [
+        'home' => 'index',
+        'storefront.product' => 'product',
+        'storefront.category' => 'collection',
+        'storefront.brand' => 'collection',
+        'storefront.search' => 'search',
+        'cart.show' => 'cart',
+        'storefront.page' => 'page',
+    ];
+
     public function handle(Request $request, Closure $next): Response
     {
+        // Theme editor preview: a staff member's unsaved changes, framed by the editor only.
+        $user = $request->user();
+        $editor = $request->query('_editor') === '1' && $user instanceof User && $user->can('themes.manage');
+
+        app(ThemeTemplates::class)->useDraft($editor ? $user->id : null);
+
+        if ($editor) {
+            $request->attributes->set('theme.editor', true);
+        }
+
         $currencyService = app(StorefrontCurrencies::class);
         $rates = $currencyService->rates();
         $requested = $request->query('currency', $request->session()->get('storefront.currency', $this->store->currency()));
         $selected = is_string($requested) && isset($rates[$requested]) ? $requested : $this->store->currency();
         $request->session()->put('storefront.currency', $selected);
-        $converting = $request->routeIs('home', 'storefront.search', 'storefront.category', 'storefront.brand', 'storefront.product', 'cart.show');
+        $converting = $request->routeIs('home', 'storefront.search', 'storefront.category', 'storefront.brand', 'storefront.product', 'cart.show', 'checkout.show');
         $displayCurrency = $converting ? $selected : $this->store->currency();
         if ($converting) {
             $request->attributes->set('storefront.display_currency', $displayCurrency);
@@ -87,7 +111,13 @@ class ShareStorefrontData
                 [],
             ),
             'navigation' => app(StoreNavigation::class)->forTheme($this->themes->forRequest($request)),
-            'themePreview' => $this->preview($request),
+            'accountLinks' => fn () => $request->user() instanceof User
+                ? app(AccountMenu::class)->links()
+                : [],
+            'themePreview' => $editor ? null : $this->preview($request),
+            // Sections of the header, footer and this page (themes built from sections).
+            'themeSections' => fn () => app(SectionPresenter::class)->page($this->themes->forRequest($request), $this->template($request)),
+            'themeEditor' => $editor,
             // Global overlays (marketing popups, cookie bars) on every storefront page.
             'overlays' => $this->slots->render('storefront.overlay', []),
             'footerSlots' => $this->slots->render('storefront.footer', []),
@@ -113,6 +143,17 @@ class ShareStorefrontData
             'exitUrl' => route('admin.themes.preview.exit'),
             'manageUrl' => route('admin.themes.index'),
         ];
+    }
+
+    private function template(Request $request): ?string
+    {
+        foreach (self::TEMPLATES as $route => $template) {
+            if ($request->routeIs($route)) {
+                return $template;
+            }
+        }
+
+        return null;
     }
 
     private function cartCount(Request $request): int

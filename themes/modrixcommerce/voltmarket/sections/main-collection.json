@@ -1,0 +1,72 @@
+{
+    "name": "Catalog with filters",
+    "settings": [
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Shop heading",
+            "default": "Shop all"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_categories",
+            "label": "Category filters",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_brands",
+            "label": "Brand filters",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_price",
+            "label": "Price filters",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_options",
+            "label": "Variant option filters",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "quick_add",
+            "label": "Quick add controls",
+            "default": true
+        },
+        {
+            "type": "range",
+            "id": "columns",
+            "label": "Desktop columns",
+            "min": 3,
+            "max": 5,
+            "step": 1,
+            "default": 5
+        },
+        {
+            "type": "text",
+            "id": "empty_heading",
+            "label": "Empty heading",
+            "default": "No products found"
+        },
+        {
+            "type": "text",
+            "id": "empty_text",
+            "label": "Empty text",
+            "default": "Try another search or remove a filter."
+        }
+    ],
+    "blocks": [],
+    "max_blocks": 50,
+    "presets": [
+        {
+            "name": "Catalog with filters"
+        }
+    ],
+    "enabled_on": {
+        "templates": ["*"]
+    }
+}

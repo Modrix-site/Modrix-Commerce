@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Core\Admin\AdminNavigation;
 use App\Core\Audit\AuditLogger;
 use App\Core\Settings\SettingsRepository;
+use App\Core\Settings\StoreSettings;
 use App\Domains\Payments\Gateways\Stripe\StripeSettings;
 use App\Domains\Payments\PaymentMethods;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -31,6 +33,7 @@ class PaymentSettingsController extends Controller
             'methods' => $manual,
             'gatewayExtensions' => $navigation->paymentGatewaysForUser($request->user()),
             'guestCheckout' => (bool) $settings->get('checkout.guest_enabled', true),
+            'currency' => app(StoreSettings::class)->currency(),
             'stripe' => [
                 'enabled' => $stripe->enabled(),
                 'configured' => $stripe->enabled() && $stripe->hasCredentials(),
@@ -52,6 +55,10 @@ class PaymentSettingsController extends Controller
             $attributes["methods.{$code}.instructions"] = 'instructions';
         }
 
+        $rules['methods.cash_on_delivery.fee_enabled'] = ['boolean'];
+        $rules['methods.cash_on_delivery.fee_amount'] = [Rule::requiredIf($request->boolean('methods.cash_on_delivery.fee_enabled')), 'nullable', 'string', 'regex:/^\d{1,13}(\.\d{1,4})?$/'];
+        $attributes['methods.cash_on_delivery.fee_amount'] = 'courier fee';
+
         $data = $request->validate($rules, [], $attributes);
         $values = ['checkout.guest_enabled' => (bool) ($data['guest_checkout'] ?? false)];
 
@@ -60,6 +67,10 @@ class PaymentSettingsController extends Controller
             $values["payments.{$code}.label"] = $data['methods'][$code]['label'];
             $values["payments.{$code}.instructions"] = $data['methods'][$code]['instructions'];
         }
+
+        $values['payments.cash_on_delivery.fee_enabled'] = (bool) ($data['methods']['cash_on_delivery']['fee_enabled'] ?? false);
+        $values['payments.cash_on_delivery.fee_amount'] = $data['methods']['cash_on_delivery']['fee_amount'] ?? '0.00';
+        $values['payments.cash_on_delivery.fee_currency'] = app(StoreSettings::class)->currency();
 
         $settings->setMany($values);
         $audit->record('payments.settings_updated', null, [

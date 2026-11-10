@@ -1,0 +1,160 @@
+{
+    "name": "Footer",
+    "settings": [
+        {
+            "type": "text",
+            "id": "brand",
+            "label": "Wordmark",
+            "default": "SABLE ATELIER"
+        },
+        {
+            "type": "textarea",
+            "id": "body",
+            "label": "Brand description",
+            "default": "Considered companions for a life in motion."
+        },
+        {
+            "type": "text",
+            "id": "copyright",
+            "label": "Copyright",
+            "default": "Sable Atelier. All rights reserved."
+        },
+        {
+            "type": "color",
+            "id": "background",
+            "label": "Background",
+            "default": "#dddddd"
+        },
+        {
+            "type": "text",
+            "id": "email",
+            "label": "Contact email",
+            "default": ""
+        },
+        {
+            "type": "text",
+            "id": "phone",
+            "label": "Contact phone",
+            "default": ""
+        },
+        {
+            "type": "textarea",
+            "id": "address",
+            "label": "Address",
+            "default": ""
+        },
+        {
+            "type": "text",
+            "id": "language_label",
+            "label": "Language label",
+            "default": "Language"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_language",
+            "label": "Show language selector",
+            "default": true
+        }
+    ],
+    "blocks": [
+        {
+            "type": "link",
+            "name": "Footer link",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "group",
+                    "label": "Column title",
+                    "default": "Explore"
+                },
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Label",
+                    "default": "All collections"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Destination",
+                    "default": "/search"
+                }
+            ]
+        },
+        {
+            "type": "social",
+            "name": "Social profile",
+            "settings": [
+                {
+                    "type": "select",
+                    "id": "network",
+                    "label": "Network",
+                    "default": "instagram",
+                    "options": [
+                        {
+                            "value": "instagram",
+                            "label": "instagram"
+                        },
+                        {
+                            "value": "facebook",
+                            "label": "facebook"
+                        },
+                        {
+                            "value": "youtube",
+                            "label": "youtube"
+                        },
+                        {
+                            "value": "pinterest",
+                            "label": "pinterest"
+                        },
+                        {
+                            "value": "snapchat",
+                            "label": "snapchat"
+                        }
+                    ]
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Profile URL",
+                    "default": ""
+                }
+            ]
+        },
+        {
+            "type": "payment",
+            "name": "Accepted payment",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Payment name",
+                    "default": ""
+                },
+                {
+                    "type": "image",
+                    "id": "image",
+                    "label": "Payment mark"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Optional details URL",
+                    "default": ""
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Footer"
+        }
+    ],
+    "enabled_on": {
+        "groups": [
+            "footer"
+        ]
+    },
+    "limit": 1,
+    "max_blocks": 24
+}

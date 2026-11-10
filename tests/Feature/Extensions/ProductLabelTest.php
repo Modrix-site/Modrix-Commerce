@@ -33,13 +33,13 @@ class ProductLabelTest extends TestCase
         $this->setUpModules();
         File::copyDirectory(base_path('modules'), $this->modulesPath);
         $this->modules = app(ModuleManager::class);
-        $this->modules->install('ecomodular/product-label');
-        $this->modules->enable('ecomodular/product-label', true);
+        $this->modules->install('modrixcommerce/product-label');
+        $this->modules->enable('modrixcommerce/product-label', true);
     }
 
     private function state(): ModuleState
     {
-        return Extension::query()->where('name', 'ecomodular/product-label')->firstOrFail()->state;
+        return Extension::query()->where('name', 'modrixcommerce/product-label')->firstOrFail()->state;
     }
 
     /**
@@ -56,7 +56,7 @@ class ProductLabelTest extends TestCase
     public function test_module_is_enabled_and_registers_its_admin_route()
     {
         $this->assertSame(ModuleState::Enabled, $this->state());
-        $this->assertTrue(app('router')->has('admin.ecomodular.product-label.index'));
+        $this->assertTrue(app('router')->has('admin.modrixcommerce.product-label.index'));
         $this->assertTrue(app(ProductLabels::class)->isActive());
     }
 
@@ -64,7 +64,7 @@ class ProductLabelTest extends TestCase
     {
         $product = $this->sellable('20.00')->product;
 
-        $this->modules->configure('ecomodular/product-label', [
+        $this->modules->configure('modrixcommerce/product-label', [
             'enabled' => '1',
             'show_new' => '1',
             'new_days' => '21',
@@ -99,7 +99,7 @@ class ProductLabelTest extends TestCase
         // Give the price a higher compare-at price so it reads as on sale.
         $variant->prices()->update(['compare_at_amount' => '30.0000']);
 
-        $this->modules->configure('ecomodular/product-label', [
+        $this->modules->configure('modrixcommerce/product-label', [
             'enabled' => '1',
             'show_new' => '0',
             'show_sale' => '1',
@@ -120,7 +120,7 @@ class ProductLabelTest extends TestCase
         $product->refresh();
         $variant->refresh();
 
-        $this->modules->configure('ecomodular/product-label', [
+        $this->modules->configure('modrixcommerce/product-label', [
             'enabled' => '1',
             'show_new' => '0',
             'show_sale' => '0',
@@ -138,7 +138,7 @@ class ProductLabelTest extends TestCase
         app(InventoryService::class)->adjust($variant, -1, MovementReason::Adjustment);
         $variant->refresh();
 
-        $this->modules->configure('ecomodular/product-label', [
+        $this->modules->configure('modrixcommerce/product-label', [
             'enabled' => '1',
             'show_new' => '0',
             'show_sale' => '0',
@@ -156,7 +156,7 @@ class ProductLabelTest extends TestCase
         $product->forceFill(['published_at' => now()->subDays(90)])->save();
         $product->refresh();
 
-        $this->modules->configure('ecomodular/product-label', [
+        $this->modules->configure('modrixcommerce/product-label', [
             'enabled' => '1',
             'show_new' => '0',
             'show_sale' => '0',
@@ -177,7 +177,7 @@ class ProductLabelTest extends TestCase
         $product = $variant->product;
         $product->forceFill(['published_at' => now()->subDay(), 'is_featured' => true])->save();
 
-        $this->modules->configure('ecomodular/product-label', [
+        $this->modules->configure('modrixcommerce/product-label', [
             'enabled' => '1',
             'show_new' => '1',
             'show_sale' => '1',
@@ -194,7 +194,7 @@ class ProductLabelTest extends TestCase
         $product = $this->sellable('20.00')->product;
         $product->forceFill(['published_at' => now()->subDay()])->save();
 
-        $this->modules->configure('ecomodular/product-label', ['enabled' => '0'], $this->owner());
+        $this->modules->configure('modrixcommerce/product-label', ['enabled' => '0'], $this->owner());
 
         $this->assertSame([], $this->labels($product->refresh()));
     }
@@ -206,7 +206,7 @@ class ProductLabelTest extends TestCase
         $product->forceFill(['published_at' => now()->subDay()])->save();
         $this->taxRate('US', '0');
 
-        $this->modules->configure('ecomodular/product-label', [
+        $this->modules->configure('modrixcommerce/product-label', [
             'enabled' => '1',
             'show_new' => '1',
             'show_sale' => '0',
@@ -225,14 +225,14 @@ class ProductLabelTest extends TestCase
     public function test_admin_page_requires_the_labels_permission()
     {
         $this->actingAs($this->userWithRole('catalog-manager'))
-            ->get(route('admin.ecomodular.product-label.index'))
+            ->get(route('admin.modrixcommerce.product-label.index'))
             ->assertForbidden();
 
         $this->actingAs($this->owner())
-            ->get(route('admin.ecomodular.product-label.index'))
+            ->get(route('admin.modrixcommerce.product-label.index'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('module/ecomodular/product-label/admin/index', false)
+                ->component('module/modrixcommerce/product-label/admin/index', false)
                 ->where('state.enabled', true)
                 ->has('state.rules'));
     }

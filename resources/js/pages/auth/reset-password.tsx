@@ -50,6 +50,7 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
                             <PasswordInput
                                 id="password"
                                 name="password"
+                                required
                                 autoComplete="new-password"
                                 className="mt-1 block w-full"
                                 autoFocus
@@ -66,6 +67,7 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
                             <PasswordInput
                                 id="password_confirmation"
                                 name="password_confirmation"
+                                required
                                 autoComplete="new-password"
                                 className="mt-1 block w-full"
                                 placeholder={t('Confirm password')}

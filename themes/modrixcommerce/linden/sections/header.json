@@ -1,0 +1,152 @@
+{
+    "name": "Beauty store header",
+    "settings": [
+        {
+            "type": "checkbox",
+            "id": "sticky",
+            "label": "Sticky header",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "compact_on_scroll",
+            "label": "Compact header while scrolling",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "brand",
+            "label": "Wordmark",
+            "default": "Linden & Vale"
+        },
+        {
+            "type": "image",
+            "id": "logo",
+            "label": "Logo"
+        },
+        {
+            "type": "text",
+            "id": "search_placeholder",
+            "label": "Search placeholder",
+            "default": "Search"
+        },
+        {
+            "type": "text",
+            "id": "account_label",
+            "label": "Account label",
+            "default": "My account"
+        },
+        {
+            "type": "select",
+            "id": "menu_source",
+            "label": "Menus",
+            "default": "auto",
+            "options": [
+                {
+                    "value": "auto",
+                    "label": "Use store menus once saved"
+                },
+                {
+                    "value": "theme",
+                    "label": "Theme section links"
+                },
+                {
+                    "value": "store",
+                    "label": "Store navigation menus"
+                }
+            ]
+        },
+        {
+            "type": "checkbox",
+            "id": "show_language",
+            "label": "Show language selector",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_wishlist",
+            "label": "Show wishlist",
+            "default": false
+        },
+        {
+            "type": "checkbox",
+            "id": "show_mobile_bar",
+            "label": "Show mobile shopping bar",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "mobile_menu_label",
+            "label": "Mobile menu label",
+            "default": "Menu"
+        },
+        {
+            "type": "text",
+            "id": "mobile_categories_label",
+            "label": "Mobile categories label",
+            "default": "Categories"
+        },
+        {
+            "type": "text",
+            "id": "mobile_search_label",
+            "label": "Mobile search label",
+            "default": "Search"
+        },
+        {
+            "type": "text",
+            "id": "mobile_cart_label",
+            "label": "Mobile cart label",
+            "default": "Cart"
+        },
+        {
+            "type": "color",
+            "id": "mobile_active_color",
+            "label": "Mobile active color",
+            "default": "#004236"
+        },
+        {
+            "type": "color",
+            "id": "background",
+            "label": "Header background",
+            "default": "#ffffff"
+        },
+        {
+            "type": "color",
+            "id": "foreground",
+            "label": "Header text",
+            "default": "#373737"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "link",
+            "name": "Navigation link",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Label",
+                    "default": "Body care"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Destination",
+                    "default": "/search"
+                }
+            ]
+        }
+    ],
+    "max_blocks": 40,
+    "presets": [
+        {
+            "name": "Beauty store header"
+        }
+    ],
+    "enabled_on": {
+        "groups": [
+            "header"
+        ]
+    },
+    "limit": 1
+}

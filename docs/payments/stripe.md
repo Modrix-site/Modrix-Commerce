@@ -1,6 +1,6 @@
 # Stripe Setup
 
-EcoModular takes card payments through [Stripe Checkout](https://docs.stripe.com/payments/checkout): the customer pays on Stripe's hosted page, so card numbers never reach your server. An order is marked paid only when Stripe confirms the payment, either by a signed webhook or by the store asking Stripe directly with your secret key. The redirect back from Stripe is never trusted on its own.
+Modrix Commerce takes card payments through [Stripe Checkout](https://docs.stripe.com/payments/checkout): the customer pays on Stripe's hosted page, so card numbers never reach your server. An order is marked paid only when Stripe confirms the payment, either by a signed webhook or by the store asking Stripe directly with your secret key. The redirect back from Stripe is never trusted on its own.
 
 ## What you need
 
@@ -36,7 +36,8 @@ Sign in as an owner or administrator and open **Admin → Payments → Configure
 
 1. Paste the secret key and the signing secret.
 2. Tick **Offer card payments at checkout** and save.
-3. Click **Test connection**.
+3. Turn on **Accept Apple Pay** or **Accept Google Pay** only after that wallet is enabled in the Stripe Dashboard and this store's domain is registered there. Stripe Checkout shows a wallet only while its switch is on.
+4. Click **Test connection**.
 
 Keys are encrypted with `APP_KEY` before they are stored. The admin page only ever shows the last four characters. If you rotate `APP_KEY`, re-enter the keys.
 

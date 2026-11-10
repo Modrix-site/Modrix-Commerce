@@ -1,0 +1,61 @@
+{
+    "sections": {
+        "header": {
+            "type": "header",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Home",
+                        "link": "/"
+                    }
+                },
+                "block_1": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Shop all",
+                        "link": "/search"
+                    }
+                },
+                "block_2": {
+                    "type": "link",
+                    "settings": {
+                        "label": "New arrivals",
+                        "link": "/search?sort=newest"
+                    }
+                },
+                "block_3": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Computers",
+                        "link": "/search?q=laptop"
+                    }
+                },
+                "block_4": {
+                    "type": "link",
+                    "settings": {
+                        "label": "Audio",
+                        "link": "/search?q=headphones"
+                    }
+                },
+                "block_5": {
+                    "type": "link",
+                    "settings": {
+                        "label": "My orders",
+                        "link": "/account/orders"
+                    }
+                }
+            },
+            "block_order": [
+                "block_0",
+                "block_1",
+                "block_2",
+                "block_3",
+                "block_4",
+                "block_5"
+            ]
+        }
+    },
+    "order": ["header"]
+}

@@ -25,7 +25,7 @@ export default function MarketplaceIndex({
             <Head title="Marketplace" />
             <section className="mb-8 grid gap-2">
                 <h1 className="text-3xl font-semibold tracking-tight">
-                    Extensions for EcoModular
+                    Extensions for Modrix Commerce
                 </h1>
                 <p className="max-w-2xl text-muted-foreground">
                     Official modules and themes, reviewed and signed by the

@@ -9,6 +9,10 @@ use App\Core\Extensions\Models\ExtensionEvent;
 use App\Core\Extensions\ModuleState;
 use App\Core\Extensions\StorefrontSlots;
 use App\Core\Extensions\TabSettings;
+use App\Core\Localization\ContentTranslations;
+use App\Core\Localization\Locales;
+use App\Core\Localization\TranslationDrafts;
+use App\Core\Marketplace\Client\StoreLicense;
 use App\Core\Themes\CustomizerTabs;
 use App\Core\Themes\PageSettingFields;
 use App\Core\Themes\ThemeCustomizations;
@@ -52,6 +56,7 @@ class ThemeController extends Controller
             'themes' => $this->repository->all()->map(fn (Extension $t) => $this->summary($t))->values(),
             'previewing' => $resolver->previewing($request),
             'defaultTheme' => config('ecomodular.themes.default'),
+            'licensedThemes' => StoreLicense::query()->where('type', 'theme')->where('status', 'active')->pluck('extension_name')->values(),
         ]);
     }
 
@@ -88,18 +93,30 @@ class ThemeController extends Controller
         [$design, $ignored] = $this->customizations->effectiveDesign($manifest);
 
         $fields = [];
-        foreach (array_diff_key($manifest->designFields(), array_flip($manifest->customizer['hide_core_fields'] ?? [])) as $key => $field) {
+        foreach ($manifest->customizerFields() as $key => $field) {
             if (str_starts_with($key, 'menu_') || preg_match('/^footer_[1-3]_/', $key)) {
                 continue; // Links are managed globally in Admin → Navigation.
             }
             if ($field['type'] === 'font') {
                 $field['options'] = [...array_keys(ThemeSchema::FONT_STACKS), ...array_map(fn ($f) => "custom:{$f}", $manifest->customFontFamilies())];
             }
-            $fields[] = ['key' => $key, ...$field, 'tab' => CustomizerTabs::for($key, $field)];
+            $fields[] = ['key' => $key, ...$field, 'tab' => CustomizerTabs::for($key, $field),
+                'translatable' => in_array($field['type'], ['string', 'text'], true) && ! app(ContentTranslations::class)->skipKey($key)];
         }
 
         return Inertia::render('admin/themes/customize', [
             'theme' => $this->summary($theme),
+            'textTranslation' => [
+                'url' => route('admin.themes.text-translations', $theme),
+                'sourceLocale' => app(Locales::class)->default(),
+                'locales' => Locales::options(app(Locales::class)->additional()),
+                'aiAvailable' => app(TranslationDrafts::class)->available(),
+            ],
+            'customizer' => [
+                'component' => $manifest->frontend['customizer'] ?? null,
+                'mode' => $manifest->customizer['mode'] ?? 'extend',
+                'sections' => $manifest->customizer['sections'] ?? true,
+            ],
             'design' => [
                 'title' => $manifest->customizer['title'] ?? 'Design',
                 'description' => $manifest->customizer['description'] ?? null,
@@ -115,7 +132,8 @@ class ThemeController extends Controller
                 'types' => collect(ThemeSchema::sectionTypes())->map(fn ($type, $key) => [
                     'key' => $key,
                     'label' => $type['label'],
-                    'fields' => collect($type['fields'])->map(fn ($f, $k) => ['key' => $k, ...$f])->values(),
+                    'fields' => collect($type['fields'])->map(fn ($f, $k) => ['key' => $k, ...$f,
+                        'translatable' => in_array($f['type'], ['string', 'text'], true) && ! app(ContentTranslations::class)->skipKey($k)])->values(),
                 ])->values(),
                 'home' => $this->customizations->sections($manifest, 'home'),
                 'customized' => $this->customizations->hasSectionOverrides($manifest, 'home'),
@@ -232,7 +250,8 @@ class ThemeController extends Controller
     /**
      * @return array<string, mixed>
      */
-    private function summary(Extension $theme): array
+    /** @internal Also used by the theme editor. */
+    public function summary(Extension $theme): array
     {
         $data = $theme->state === ModuleState::Enabled && $theme->applied_manifest !== null ? $theme->applied_manifest : $theme->manifest;
         $manifest = $data === null ? null : ThemeManifest::fromArray($data);
@@ -269,9 +288,11 @@ class ThemeController extends Controller
                 $design['color.foreground'] ?? null,
             ])),
             'fonts' => $manifest === null ? null : [$design['font_heading'] ?? 'sans', $design['font_body'] ?? 'sans'],
-            'screenshot' => $manifest?->screenshot !== null ? route('theme.asset', ['vendor' => $manifest->vendor(), 'theme' => $manifest->package(), 'path' => $manifest->screenshot, 'v' => $manifest->version]) : null,
+            'screenshot' => $manifest?->screenshot !== null ? route('theme.asset', ['vendor' => $manifest->vendor(), 'theme' => $manifest->package(), 'path' => $manifest->screenshot, 'v' => $manifest->version.'-'.$this->screenshotRevision($manifest)]) : null,
             'capabilities' => array_map(fn (string $c) => ThemeSchema::CAPABILITIES[$c] ?? $c, $manifest->capabilities ?? []),
             'has_demo' => $manifest?->demoContent !== null,
+            // Themes built from sections open in the full-screen theme editor.
+            'has_sections' => $manifest !== null && in_array('sections', $manifest->capabilities, true),
             'customized' => $manifest !== null && (array_filter($this->customizations->designOverrides($manifest), fn (string $key) => ! PageSettingFields::isPageKey($key), ARRAY_FILTER_USE_KEY) !== [] || $this->customizations->hasSectionOverrides($manifest, 'home')),
         ];
     }
@@ -281,7 +302,8 @@ class ThemeController extends Controller
      *
      * @return list<array{value: string, label: string, url: string}>
      */
-    private function imageOptions(ThemeManifest $manifest): array
+    /** @internal Also used by the theme editor. */
+    public function imageOptions(ThemeManifest $manifest): array
     {
         $options = [];
         $dir = ThemeRepository::packageDir($manifest->name);
@@ -330,6 +352,13 @@ class ThemeController extends Controller
         }
 
         return $back ? back() : redirect()->route('admin.themes.index');
+    }
+
+    private function screenshotRevision(ThemeManifest $manifest): int
+    {
+        $file = ThemeRepository::packageDir($manifest->name).DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $manifest->screenshot ?? '');
+
+        return is_file($file) ? (int) filemtime($file) : 0;
     }
 
     private function assertTheme(Extension $theme): void

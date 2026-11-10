@@ -49,7 +49,7 @@ class SampleModulesTest extends TestCase
      */
     private function downgradeReviewsFilesTo100(): void
     {
-        $dir = $this->modulesPath.'/ecomodular/product-reviews';
+        $dir = $this->modulesPath.'/modrixcommerce/product-reviews';
         File::move($dir.'/database/migrations/2026_10_15_100100_add_verified_purchase_to_product_reviews.php', $this->modulesPath.'/held-migration.php');
         $manifest = json_decode((string) File::get($dir.'/module.json'), true);
         $manifest['version'] = '1.0.0';
@@ -58,14 +58,14 @@ class SampleModulesTest extends TestCase
 
     private function restoreReviewsFilesTo110(): void
     {
-        File::copyDirectory(base_path('modules/ecomodular/product-reviews'), $this->modulesPath.'/ecomodular/product-reviews');
+        File::copyDirectory(base_path('modules/modrixcommerce/product-reviews'), $this->modulesPath.'/modrixcommerce/product-reviews');
     }
 
     public function test_bundled_modules_are_valid_and_not_installed_by_default()
     {
         app(ModuleRepository::class)->sync();
 
-        foreach (['ecomodular/product-reviews', 'ecomodular/sales-widget', 'ecomodular/order-alerts', 'ecomodular/newsletter'] as $name) {
+        foreach (['modrixcommerce/product-reviews', 'modrixcommerce/sales-widget', 'modrixcommerce/order-alerts', 'modrixcommerce/newsletter'] as $name) {
             $extension = Extension::query()->where('name', $name)->firstOrFail();
             $this->assertSame(ModuleState::Discovered, $extension->state, implode(' ', (array) $extension->errors));
         }
@@ -74,13 +74,13 @@ class SampleModulesTest extends TestCase
     public function test_newsletter_module_records_consent_unsubscribes_exports_and_erases()
     {
         $owner = $this->owner();
-        $this->modules->install('ecomodular/newsletter', $owner);
-        $this->modules->enable('ecomodular/newsletter', true, $owner);
+        $this->modules->install('modrixcommerce/newsletter', $owner);
+        $this->modules->enable('modrixcommerce/newsletter', true, $owner);
 
         // The sign-up form is offered in the home page slot.
-        $this->get('/')->assertInertia(fn (Assert $page) => $page->where('slots.0.component', 'ecomodular/newsletter/SignupForm')->where('slots.0.props.source', 'home')->where('storefront.footerSlots.0.component', 'ecomodular/newsletter/SignupForm')->where('storefront.footerSlots.0.props.source', 'footer'));
+        $this->get('/')->assertInertia(fn (Assert $page) => $page->where('slots.0.component', 'modrixcommerce/newsletter/SignupForm')->where('slots.0.props.source', 'home')->where('storefront.footerSlots.0.component', 'modrixcommerce/newsletter/SignupForm')->where('storefront.footerSlots.0.props.source', 'footer'));
 
-        $subscribe = route('ecomodular.newsletter.subscribe');
+        $subscribe = route('modrixcommerce.newsletter.subscribe');
         $this->post($subscribe, ['email' => 'ana@example.com'])->assertSessionHasErrors('consent');
         $this->post($subscribe, ['email' => 'Ana@Example.com', 'consent' => '1', 'source' => 'home'])->assertSessionHasNoErrors();
         // Signing up again does not reveal or duplicate anything.
@@ -91,18 +91,18 @@ class SampleModulesTest extends TestCase
         $this->assertStringContainsString('unsubscribe', $row->consent_text);
 
         // Export: active subscribers with consent and an unsubscribe link; staff only.
-        $this->actingAs($this->userWithRole('analyst'))->get(route('admin.ecomodular.newsletter.export'))->assertForbidden();
-        $csv = $this->actingAs($owner)->get(route('admin.ecomodular.newsletter.export'))->assertOk()->streamedContent();
+        $this->actingAs($this->userWithRole('analyst'))->get(route('admin.modrixcommerce.newsletter.export'))->assertForbidden();
+        $csv = $this->actingAs($owner)->get(route('admin.modrixcommerce.newsletter.export'))->assertOk()->streamedContent();
         $this->assertStringContainsString('ana@example.com', $csv);
-        $this->assertStringContainsString('/m/ecomodular/newsletter/unsubscribe/'.$row->unsubscribe_token, $csv);
+        $this->assertStringContainsString('/m/modrixcommerce/newsletter/unsubscribe/'.$row->unsubscribe_token, $csv);
 
         // One-click unsubscribe; the export then excludes the address.
-        $this->get(route('ecomodular.newsletter.unsubscribe', $row->unsubscribe_token))->assertRedirect('/');
+        $this->get(route('modrixcommerce.newsletter.unsubscribe', $row->unsubscribe_token))->assertRedirect('/');
         $this->assertNotNull(DB::table('newsletter_subscribers')->value('unsubscribed_at'));
-        $this->assertStringNotContainsString('ana@example.com', $this->actingAs($owner)->get(route('admin.ecomodular.newsletter.export'))->streamedContent());
+        $this->assertStringNotContainsString('ana@example.com', $this->actingAs($owner)->get(route('admin.modrixcommerce.newsletter.export'))->streamedContent());
 
         // Erasure deletes the record.
-        $this->actingAs($owner)->delete(route('admin.ecomodular.newsletter.destroy', $row->id))->assertRedirect();
+        $this->actingAs($owner)->delete(route('admin.modrixcommerce.newsletter.destroy', $row->id))->assertRedirect();
         $this->assertSame(0, DB::table('newsletter_subscribers')->count());
     }
 
@@ -114,18 +114,18 @@ class SampleModulesTest extends TestCase
         $product = $this->sellable(product: ['name' => 'Teapot'])->product;
 
         // Install and enable v1.0.0.
-        $this->modules->install('ecomodular/product-reviews', $owner);
-        $this->modules->enable('ecomodular/product-reviews', true, $owner);
+        $this->modules->install('modrixcommerce/product-reviews', $owner);
+        $this->modules->enable('modrixcommerce/product-reviews', true, $owner);
         $this->assertTrue(Schema::hasTable('product_reviews'));
         $this->assertFalse(Schema::hasColumn('product_reviews', 'verified_purchase'));
 
         // Configure: moderation on, short minimum length.
-        $this->modules->configure('ecomodular/product-reviews', ['auto_approve' => '0', 'min_length' => '5'], $owner);
+        $this->modules->configure('modrixcommerce/product-reviews', ['auto_approve' => '0', 'min_length' => '5'], $owner);
 
         // A guest sees the slot asking to sign in.
         $this->get(route('storefront.product', $product->slug))
             ->assertInertia(fn (Assert $page) => $page
-                ->where('slots.0.component', 'ecomodular/product-reviews/ProductReviews')
+                ->where('slots.0.component', 'modrixcommerce/product-reviews/ProductReviews')
                 ->where('slots.0.props.reason', 'login')
                 ->where('slots.0.props.count', 0));
 
@@ -136,29 +136,29 @@ class SampleModulesTest extends TestCase
         ]);
 
         // Staff without the module permission cannot moderate; the owner can.
-        $this->actingAs($this->userWithRole('catalog-manager'))->post(route('admin.ecomodular.product-reviews.approve', $earlierId))->assertForbidden();
-        $this->actingAs($owner)->get(route('admin.ecomodular.product-reviews.index'))
+        $this->actingAs($this->userWithRole('catalog-manager'))->post(route('admin.modrixcommerce.product-reviews.approve', $earlierId))->assertForbidden();
+        $this->actingAs($owner)->get(route('admin.modrixcommerce.product-reviews.index'))
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page->component('module/ecomodular/product-reviews/admin/index', false)->has('reviews.data', 1));
-        $this->actingAs($owner)->post(route('admin.ecomodular.product-reviews.approve', $earlierId))->assertRedirect();
+            ->assertInertia(fn (Assert $page) => $page->component('module/modrixcommerce/product-reviews/admin/index', false)->has('reviews.data', 1));
+        $this->actingAs($owner)->post(route('admin.modrixcommerce.product-reviews.approve', $earlierId))->assertRedirect();
 
         // Disable: the reviews stay in the database.
-        $this->modules->disable('ecomodular/product-reviews', $owner);
+        $this->modules->disable('modrixcommerce/product-reviews', $owner);
         $this->assertSame(1, DB::table('product_reviews')->count());
 
         // New release on disk → update → the new column exists and data is intact.
         $this->restoreReviewsFilesTo110();
         app(ModuleRepository::class)->sync();
-        $this->assertSame(ModuleState::UpdatePending, $this->state('ecomodular/product-reviews'));
+        $this->assertSame(ModuleState::UpdatePending, $this->state('modrixcommerce/product-reviews'));
 
-        $updated = $this->modules->update('ecomodular/product-reviews', $owner);
+        $updated = $this->modules->update('modrixcommerce/product-reviews', $owner);
         $this->assertSame('1.2.0', $updated->version);
         $this->assertSame(ModuleState::Disabled, $updated->state);
         $this->assertTrue(Schema::hasColumn('product_reviews', 'verified_purchase'));
         $this->assertSame(1, DB::table('product_reviews')->count());
 
-        $this->modules->enable('ecomodular/product-reviews', true, $owner);
-        $this->assertSame(ModuleState::Enabled, $this->state('ecomodular/product-reviews'));
+        $this->modules->enable('modrixcommerce/product-reviews', true, $owner);
+        $this->assertSame(ModuleState::Enabled, $this->state('modrixcommerce/product-reviews'));
 
         // The review from 1.0.0 has no verified purchase: it stays in the admin but is not shown.
         $this->get(route('storefront.product', $product->slug))
@@ -166,21 +166,21 @@ class SampleModulesTest extends TestCase
 
         // A verified buyer reviews; it waits for moderation; one review per customer.
         $this->app['auth']->forgetGuards();
-        $this->post('/m/ecomodular/product-reviews/products/'.$product->slug.'/reviews')->assertRedirect(route('login'));
+        $this->post('/m/modrixcommerce/product-reviews/products/'.$product->slug.'/reviews')->assertRedirect(route('login'));
         $this->enableCheckout();
         $this->actingAs($customer);
         $this->addToCart($product->variants()->firstOrFail());
         $this->post(route('checkout.store'), $this->checkoutPayload(['email' => $customer->email]))->assertRedirect();
         app(OrderWorkflow::class)->recordManualPayment(Order::query()->where('user_id', $customer->id)->firstOrFail(), $owner);
-        $this->actingAs($customer)->post(route('ecomodular.product-reviews.store', $product->slug), ['rating' => 4, 'title' => 'Lovely', 'body' => 'Pours well.'])
+        $this->actingAs($customer)->post(route('modrixcommerce.product-reviews.store', $product->slug), ['rating' => 4, 'title' => 'Lovely', 'body' => 'Pours well.'])
             ->assertSessionHasNoErrors();
-        $this->actingAs($customer)->post(route('ecomodular.product-reviews.store', $product->slug), ['rating' => 1, 'body' => 'Second try'])
+        $this->actingAs($customer)->post(route('modrixcommerce.product-reviews.store', $product->slug), ['rating' => 1, 'body' => 'Second try'])
             ->assertSessionHasErrors('body');
         $this->actingAs($customer)->get(route('storefront.product', $product->slug))
             ->assertInertia(fn (Assert $page) => $page->where('slots.0.props.count', 0)->where('slots.0.props.own.status', 'pending'));
 
         $newId = (int) DB::table('product_reviews')->where('user_id', $customer->id)->value('id');
-        $this->actingAs($owner)->post(route('admin.ecomodular.product-reviews.approve', $newId))->assertRedirect();
+        $this->actingAs($owner)->post(route('admin.modrixcommerce.product-reviews.approve', $newId))->assertRedirect();
         $this->get(route('storefront.product', $product->slug))
             ->assertInertia(fn (Assert $page) => $page
                 ->where('slots.0.props.count', 1)
@@ -191,16 +191,16 @@ class SampleModulesTest extends TestCase
 
     public function test_only_buyers_can_review_and_reviews_are_marked_verified()
     {
-        $this->modules->install('ecomodular/product-reviews');
-        $this->modules->enable('ecomodular/product-reviews', true);
-        $this->modules->configure('ecomodular/product-reviews', ['auto_approve' => '1', 'min_length' => '5']);
+        $this->modules->install('modrixcommerce/product-reviews');
+        $this->modules->enable('modrixcommerce/product-reviews', true);
+        $this->modules->configure('modrixcommerce/product-reviews', ['auto_approve' => '1', 'min_length' => '5']);
 
         $this->enableCheckout();
         $variant = $this->sellable('10.00', 5);
         $product = $variant->product;
         $buyer = User::factory()->create();
 
-        $this->actingAs($buyer)->post(route('ecomodular.product-reviews.store', $product->slug), ['rating' => 5, 'body' => 'Not bought yet'])
+        $this->actingAs($buyer)->post(route('modrixcommerce.product-reviews.store', $product->slug), ['rating' => 5, 'body' => 'Not bought yet'])
             ->assertSessionHasErrors('body');
 
         $this->actingAs($buyer);
@@ -208,7 +208,7 @@ class SampleModulesTest extends TestCase
         $this->post(route('checkout.store'), $this->checkoutPayload(['email' => $buyer->email]))->assertRedirect();
         app(OrderWorkflow::class)->recordManualPayment(Order::query()->firstOrFail(), $this->owner());
 
-        $this->actingAs($buyer)->post(route('ecomodular.product-reviews.store', $product->slug), ['rating' => 5, 'body' => 'Bought and loved it'])
+        $this->actingAs($buyer)->post(route('modrixcommerce.product-reviews.store', $product->slug), ['rating' => 5, 'body' => 'Bought and loved it'])
             ->assertSessionHasNoErrors();
 
         $this->assertDatabaseHas('product_reviews', ['user_id' => $buyer->id, 'status' => 'approved', 'verified_purchase' => true]);
@@ -216,12 +216,12 @@ class SampleModulesTest extends TestCase
 
     public function test_sales_widget_appears_on_the_dashboard_for_report_viewers()
     {
-        $this->modules->install('ecomodular/sales-widget');
-        $this->modules->enable('ecomodular/sales-widget', true);
+        $this->modules->install('modrixcommerce/sales-widget');
+        $this->modules->enable('modrixcommerce/sales-widget', true);
 
         $this->actingAs($this->userWithRole('store-manager'))->get(route('admin.dashboard'))
             ->assertInertia(fn (Assert $page) => $page
-                ->where('widgets.0.component', 'ecomodular/sales-widget/SalesTrend')
+                ->where('widgets.0.component', 'modrixcommerce/sales-widget/SalesTrend')
                 ->has('widgets.0.props.series', 7));
 
         $this->actingAs($this->userWithRole('catalog-manager'))->get(route('admin.dashboard'))
@@ -230,9 +230,9 @@ class SampleModulesTest extends TestCase
 
     public function test_order_alerts_are_sent_once_per_paid_order_above_the_minimum()
     {
-        $this->modules->install('ecomodular/order-alerts');
-        $this->modules->enable('ecomodular/order-alerts', true);
-        $this->modules->configure('ecomodular/order-alerts', ['recipient' => 'owner@example.com', 'minimum_total' => '20']);
+        $this->modules->install('modrixcommerce/order-alerts');
+        $this->modules->enable('modrixcommerce/order-alerts', true);
+        $this->modules->configure('modrixcommerce/order-alerts', ['recipient' => 'owner@example.com', 'minimum_total' => '20']);
 
         $this->enableCheckout();
         $big = $this->sellable('50.00', 5);
@@ -260,6 +260,6 @@ class SampleModulesTest extends TestCase
 
         $this->get(route('storefront.product', $product->slug))
             ->assertInertia(fn (Assert $page) => $page->has('slots', 0));
-        $this->post('/m/ecomodular/product-reviews/products/'.$product->slug.'/reviews')->assertNotFound();
+        $this->post('/m/modrixcommerce/product-reviews/products/'.$product->slug.'/reviews')->assertNotFound();
     }
 }

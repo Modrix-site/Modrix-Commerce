@@ -5,6 +5,7 @@ namespace App\Domains\Checkout;
 use App\Domains\Checkout\Pricing\PricedCart;
 use App\Domains\Customers\Models\Customer;
 use App\Domains\Pricing\Money;
+use App\Domains\Shipping\DeliveryArea;
 use App\Domains\Shipping\Models\ShippingMethod;
 use App\Domains\Shipping\ShippingRegions;
 use App\Models\User;
@@ -21,9 +22,9 @@ final class FreeShippingProgress
     /**
      * @return array{threshold: Money, remaining: Money}|null null when no method offers free shipping
      */
-    public static function for(PricedCart $cart, ?string $country = null, ?string $region = null): ?array
+    public static function for(PricedCart $cart, ?string $country = null, ?string $region = null, ?string $city = null): ?array
     {
-        if (! $cart->requiresShipping()) {
+        if (! $cart->requiresShipping() || ($country !== null && ! app(DeliveryArea::class)->allows($country, $region, $city))) {
             return null;
         }
 
@@ -91,13 +92,13 @@ final class FreeShippingProgress
     /**
      * The signed-in customer's default shipping country and region.
      *
-     * @return array{country: string|null, region: string|null}
+     * @return array{country: string|null, region: string|null, city: string|null}
      */
     public static function destinationFor(?User $user): array
     {
         $address = $user === null ? null : Customer::query()->where('user_id', $user->getKey())->first()
             ?->addresses()->where('is_default_shipping', true)->first();
 
-        return ['country' => $address?->country_code, 'region' => $address?->region];
+        return ['country' => $address?->country_code, 'region' => $address?->region, 'city' => $address?->city];
     }
 }

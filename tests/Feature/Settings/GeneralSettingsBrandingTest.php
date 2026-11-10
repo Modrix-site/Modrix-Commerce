@@ -122,6 +122,6 @@ class GeneralSettingsBrandingTest extends TestCase
         $this->actingAs($this->owner())->post(route('admin.settings.general.branding'), ['login_message' => 'Staff sign-in only']);
         auth()->logout();
 
-        $this->get(route('login'))->assertInertia(fn (Assert $page) => $page->where('branding.login_message', 'Staff sign-in only'));
+        $this->get(route('admin.login'))->assertInertia(fn (Assert $page) => $page->where('branding.login_message', 'Staff sign-in only'));
     }
 }

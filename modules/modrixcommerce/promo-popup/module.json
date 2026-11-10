@@ -1,0 +1,144 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/promo-popup",
+    "display_name": "Marketing Popup",
+    "description": "Shows a marketing pop-up on your storefront: an offer headline with a discount coupon, an email sign-up with recorded consent, or both. Collects leads and hands out coupon codes.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "megaphone",
+    "accent": "#db2777",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\PromoPopup\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\PromoPopup\\PromoPopupServiceProvider",
+    "permissions": [
+        {
+            "name": "marketing.manage",
+            "label": "Manage marketing popups and leads",
+            "group": "Marketing"
+        }
+    ],
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "storefront.slots",
+        "database.migrations",
+        "settings",
+        "permissions"
+    ],
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages",
+        "slots": "resources/js/slots"
+    },
+    "settings": [
+        {
+            "key": "enabled",
+            "type": "boolean",
+            "label": "Show the pop-up on the storefront",
+            "default": true
+        },
+        {
+            "key": "mode",
+            "type": "select",
+            "label": "What the pop-up offers",
+            "help": "Coupon: reveal a discount code. Email: collect an address. Both: collect the address, then reveal the code.",
+            "default": "both",
+            "options": [
+                { "value": "both", "label": "Email sign-up and coupon" },
+                { "value": "email", "label": "Email sign-up only" },
+                { "value": "coupon", "label": "Coupon only" }
+            ]
+        },
+        {
+            "key": "headline",
+            "type": "string",
+            "label": "Headline",
+            "default": "Get 10% off your first order"
+        },
+        {
+            "key": "body",
+            "type": "text",
+            "label": "Message",
+            "help": "One or two short sentences under the headline.",
+            "default": "Join our list for a welcome offer and early access to new arrivals."
+        },
+        {
+            "key": "cta_label",
+            "type": "string",
+            "label": "Button label",
+            "default": "Get my offer"
+        },
+        {
+            "key": "coupon_code",
+            "type": "string",
+            "label": "Coupon code",
+            "help": "The code shown to the shopper. It must already exist as a discount in your store; the pop-up does not create discounts.",
+            "default": "WELCOME10"
+        },
+        {
+            "key": "coupon_note",
+            "type": "string",
+            "label": "Coupon note",
+            "default": "Use this code at checkout."
+        },
+        {
+            "key": "consent_text",
+            "type": "text",
+            "label": "Consent text shown next to the checkbox",
+            "help": "Recorded with every lead. Say what you will send and how to unsubscribe.",
+            "default": "I agree to receive marketing emails and can unsubscribe at any time."
+        },
+        {
+            "key": "show_on",
+            "type": "select",
+            "label": "Where it appears",
+            "default": "all",
+            "options": [
+                { "value": "all", "label": "Every storefront page" },
+                { "value": "home", "label": "The home page only" }
+            ]
+        },
+        {
+            "key": "delay_seconds",
+            "type": "integer",
+            "label": "Show after (seconds)",
+            "help": "How long the shopper is on the page before the pop-up appears.",
+            "min": 0,
+            "max": 120,
+            "default": 6
+        },
+        {
+            "key": "frequency",
+            "type": "select",
+            "label": "How often to show it",
+            "default": "session",
+            "options": [
+                { "value": "session", "label": "Once per visit" },
+                { "value": "once", "label": "Once per browser" },
+                { "value": "always", "label": "Every page load" }
+            ]
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "promo-popup",
+            "title": "Marketing Popup",
+            "route": "index",
+            "icon": "megaphone",
+            "group": "Marketing",
+            "permission": "marketing.manage",
+            "order": 320
+        }
+    ]
+}

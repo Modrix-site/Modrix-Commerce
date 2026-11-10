@@ -1,10 +1,18 @@
-import { ChevronDown, ChevronRight, Plus, Trash2 } from 'lucide-react';
+import { Link } from '@inertiajs/react';
+import {
+    ChevronDown,
+    ChevronRight,
+    Plus,
+    SquareArrowOutUpRight,
+    Trash2,
+} from 'lucide-react';
 import { Fragment, useState } from 'react';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { show as variantShow } from '@/routes/admin/products/variants';
 import type { Option } from '@/types';
 import { VariantImagePicker } from './variant-image-picker';
 import type { VariantImageProps } from './variant-image-picker';
@@ -250,7 +258,31 @@ export function VariantsTable({
                                                 }
                                             />
                                         </td>
-                                        <td className="p-2">
+                                        <td className="flex p-2">
+                                            {variant.id !== null &&
+                                                productId !== undefined && (
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="size-8"
+                                                        asChild
+                                                    >
+                                                        <Link
+                                                            href={
+                                                                variantShow({
+                                                                    product:
+                                                                        productId,
+                                                                    variant:
+                                                                        variant.id,
+                                                                }).url
+                                                            }
+                                                            aria-label={`Open variant ${i + 1}`}
+                                                            title="Open variant (price, inventory per location, shipping)"
+                                                        >
+                                                            <SquareArrowOutUpRight />
+                                                        </Link>
+                                                    </Button>
+                                                )}
                                             <Button
                                                 type="button"
                                                 variant="ghost"

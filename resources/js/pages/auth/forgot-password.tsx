@@ -10,7 +10,13 @@ import { login } from '@/routes';
 import { email } from '@/routes/password';
 import { msg, useT } from '@/lib/i18n';
 
-export default function ForgotPassword({ status }: { status?: string }) {
+export default function ForgotPassword({
+    status,
+    loginUrl,
+}: {
+    status?: string;
+    loginUrl?: string;
+}) {
     const t = useT();
 
     return (
@@ -18,7 +24,10 @@ export default function ForgotPassword({ status }: { status?: string }) {
             <Head title={t('Forgot password')} />
 
             {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
+                <div
+                    role="status"
+                    className="mb-4 rounded-md bg-muted p-3 text-center text-sm font-medium"
+                >
                     {status}
                 </div>
             )}
@@ -35,7 +44,8 @@ export default function ForgotPassword({ status }: { status?: string }) {
                                     id="email"
                                     type="email"
                                     name="email"
-                                    autoComplete="off"
+                                    autoComplete="email"
+                                    required
                                     autoFocus
                                     placeholder="email@example.com"
                                 />
@@ -61,7 +71,9 @@ export default function ForgotPassword({ status }: { status?: string }) {
 
                 <div className="space-x-1 text-center text-sm text-muted-foreground">
                     <span>{t('Or, return to')}</span>
-                    <TextLink href={login()}>{t('log in')}</TextLink>
+                    <TextLink href={loginUrl ?? login()}>
+                        {t('log in')}
+                    </TextLink>
                 </div>
             </div>
         </>

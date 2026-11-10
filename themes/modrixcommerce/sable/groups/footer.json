@@ -1,0 +1,132 @@
+{
+    "sections": {
+        "footer": {
+            "type": "footer",
+            "settings": {},
+            "blocks": {
+                "link_0": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Collections",
+                        "label": "New arrivals",
+                        "link": "/search?sort=newest"
+                    }
+                },
+                "link_1": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Collections",
+                        "label": "Travel collection",
+                        "link": "/search?q=travel"
+                    }
+                },
+                "link_2": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Collections",
+                        "label": "Everyday collection",
+                        "link": "/search?q=tote"
+                    }
+                },
+                "link_3": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Collections",
+                        "label": "Small essentials",
+                        "link": "/search?q=pouch"
+                    }
+                },
+                "link_4": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Collections",
+                        "label": "Weekenders",
+                        "link": "/search?q=weekender"
+                    }
+                },
+                "link_5": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Collections",
+                        "label": "All collections",
+                        "link": "/search"
+                    }
+                },
+                "link_6": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Information",
+                        "label": "Customer care",
+                        "link": "/account"
+                    }
+                },
+                "link_7": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Information",
+                        "label": "Order tracking",
+                        "link": "/account/orders"
+                    }
+                },
+                "link_8": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Information",
+                        "label": "Delivery details",
+                        "link": "/checkout"
+                    }
+                },
+                "link_9": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Information",
+                        "label": "Returns assistance",
+                        "link": "/account"
+                    }
+                },
+                "link_10": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Information",
+                        "label": "Payment options",
+                        "link": "/checkout"
+                    }
+                },
+                "link_11": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Information",
+                        "label": "Your shopping bag",
+                        "link": "/cart"
+                    }
+                },
+                "link_12": {
+                    "type": "link",
+                    "settings": {
+                        "group": "Information",
+                        "label": "My account",
+                        "link": "/account"
+                    }
+                }
+            },
+            "block_order": [
+                "link_0",
+                "link_1",
+                "link_2",
+                "link_3",
+                "link_4",
+                "link_5",
+                "link_6",
+                "link_7",
+                "link_8",
+                "link_9",
+                "link_10",
+                "link_11",
+                "link_12"
+            ]
+        }
+    },
+    "order": [
+        "footer"
+    ]
+}

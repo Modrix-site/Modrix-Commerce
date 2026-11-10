@@ -68,7 +68,7 @@ export default function MarketplaceOrder({ order }: Props) {
                 {order.status === 'paid' && (
                     <p className="text-sm">
                         Copy your license key from your account and enter it in
-                        your store under Admin → Extensions → Marketplace.
+                        your store under Admin → Modrix Cloud.
                     </p>
                 )}
                 <div className="flex gap-2">

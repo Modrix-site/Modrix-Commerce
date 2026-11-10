@@ -1,0 +1,171 @@
+{
+    "name": "Footer",
+    "settings": [
+        {
+            "type": "select",
+            "id": "menu_source",
+            "label": "Footer menus",
+            "options": [
+                {
+                    "value": "auto",
+                    "label": "Admin → Navigation once saved, else theme links"
+                },
+                {
+                    "value": "store",
+                    "label": "Always Admin → Navigation"
+                },
+                {
+                    "value": "theme",
+                    "label": "Theme links only"
+                }
+            ],
+            "default": "auto"
+        },
+        {
+            "type": "text",
+            "id": "newsletter_heading",
+            "label": "Newsletter heading",
+            "default": "Get exclusive offers delivered to your inbox"
+        },
+        {
+            "type": "text",
+            "id": "copyright",
+            "label": "Copyright",
+            "default": "Linden & Vale. All rights reserved."
+        },
+        {
+            "type": "color",
+            "id": "background",
+            "label": "Background",
+            "default": "#ffffff"
+        },
+        {
+            "type": "color",
+            "id": "foreground",
+            "label": "Headings and text",
+            "default": "#222222"
+        },
+        {
+            "type": "color",
+            "id": "muted",
+            "label": "Secondary text",
+            "default": "#777777"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_top",
+            "label": "Show Back to top",
+            "default": true
+        },
+        {
+            "type": "image",
+            "id": "qr_image",
+            "label": "Optional store QR image"
+        },
+        {
+            "type": "text",
+            "id": "qr_alt",
+            "label": "QR image description",
+            "default": "Store information"
+        },
+        {
+            "type": "text",
+            "id": "app_heading",
+            "label": "App link heading",
+            "default": "Download our app"
+        },
+        {
+            "type": "url",
+            "id": "appstore_url",
+            "label": "App Store URL"
+        },
+        {
+            "type": "text",
+            "id": "appstore_label",
+            "label": "App Store label",
+            "default": "App Store"
+        },
+        {
+            "type": "url",
+            "id": "playstore_url",
+            "label": "Google Play URL"
+        },
+        {
+            "type": "text",
+            "id": "playstore_label",
+            "label": "Google Play label",
+            "default": "Google Play"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "link",
+            "name": "Footer link",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "group",
+                    "label": "Column heading",
+                    "default": "Quick links"
+                },
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Label",
+                    "default": ""
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Destination",
+                    "default": "/search"
+                }
+            ]
+        },
+        {
+            "type": "social",
+            "name": "Social link",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Network name",
+                    "default": ""
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Profile URL",
+                    "default": "https://www.instagram.com/"
+                }
+            ]
+        },
+        {
+            "type": "payment",
+            "name": "Payment label",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Label",
+                    "default": ""
+                },
+                {
+                    "type": "image",
+                    "id": "image",
+                    "label": "Payment logo"
+                }
+            ]
+        }
+    ],
+    "max_blocks": 50,
+    "presets": [
+        {
+            "name": "Footer"
+        }
+    ],
+    "enabled_on": {
+        "groups": ["footer"]
+    },
+    "limit": 1
+}

@@ -1,0 +1,277 @@
+{
+    "sections": {
+        "hero": {
+            "type": "hero",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "promotion",
+                    "settings": {
+                        "heading": "Find your sound.",
+                        "body": "Made for your everyday.",
+                        "image": "asset:assets/product-headphones.jpg",
+                        "button": "Shop audio",
+                        "link": "/search?q=headphones",
+                        "background": "#f5f5f5"
+                    }
+                },
+                "block_1": {
+                    "type": "promotion",
+                    "settings": {
+                        "heading": "Big ideas. Pocket size.",
+                        "body": "Your next connection.",
+                        "image": "asset:assets/product-phone.jpg",
+                        "button": "Explore phones",
+                        "link": "/search?q=phone",
+                        "background": "#e9eef2"
+                    }
+                }
+            },
+            "block_order": ["block_0", "block_1"]
+        },
+        "benefits": {
+            "type": "benefits",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "benefit",
+                    "settings": {
+                        "icon": "delivery",
+                        "heading": "Delivery options",
+                        "body": "Calculated at checkout"
+                    }
+                },
+                "block_1": {
+                    "type": "benefit",
+                    "settings": {
+                        "icon": "returns",
+                        "heading": "Easy returns",
+                        "body": "Review store policy"
+                    }
+                },
+                "block_2": {
+                    "type": "benefit",
+                    "settings": {
+                        "icon": "payment",
+                        "heading": "Secure checkout",
+                        "body": "Shop with confidence"
+                    }
+                },
+                "block_3": {
+                    "type": "benefit",
+                    "settings": {
+                        "icon": "support",
+                        "heading": "Here to help",
+                        "body": "Customer support"
+                    }
+                },
+                "block_4": {
+                    "type": "benefit",
+                    "settings": {
+                        "icon": "gift",
+                        "heading": "Thoughtful finds",
+                        "body": "Something for everyone"
+                    }
+                }
+            },
+            "block_order": [
+                "block_0",
+                "block_1",
+                "block_2",
+                "block_3",
+                "block_4"
+            ]
+        },
+        "deals": {
+            "type": "product-shelf",
+            "settings": {
+                "heading": "Discover today’s offers",
+                "filled": false,
+                "discounted": true,
+                "limit": 6,
+                "link": "/search?sort=price_asc",
+                "view_label": "View all offers"
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "categories": {
+            "type": "category-grid",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Computers",
+                        "image": "asset:assets/cat-laptop.jpg",
+                        "link": "/search?q=laptop"
+                    }
+                },
+                "block_1": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Phones",
+                        "image": "asset:assets/cat-phone.jpg",
+                        "link": "/search?q=phone"
+                    }
+                },
+                "block_2": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Audio",
+                        "image": "asset:assets/product-headphones.jpg",
+                        "link": "/search?q=headphones"
+                    }
+                },
+                "block_3": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Home & kitchen",
+                        "image": "asset:assets/cat-home.jpg",
+                        "link": "/search?q=home"
+                    }
+                },
+                "block_4": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Cameras",
+                        "image": "asset:assets/cat-camera.jpg",
+                        "link": "/search?q=camera"
+                    }
+                },
+                "block_5": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Watches",
+                        "image": "asset:assets/hero-watch.jpg",
+                        "link": "/search?q=watch"
+                    }
+                },
+                "block_6": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Tablets",
+                        "image": "asset:assets/cat-tablet.jpg",
+                        "link": "/search?q=tablet"
+                    }
+                },
+                "block_7": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Accessories",
+                        "image": "asset:assets/product-earbuds.jpg",
+                        "link": "/search?q=earbuds"
+                    }
+                }
+            },
+            "block_order": [
+                "block_0",
+                "block_1",
+                "block_2",
+                "block_3",
+                "block_4",
+                "block_5",
+                "block_6",
+                "block_7"
+            ]
+        },
+        "promotions": {
+            "type": "promotions",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "promotion",
+                    "settings": {
+                        "heading": "Sound that goes with you",
+                        "image": "asset:assets/promo-speaker.jpg",
+                        "body": "Find your next everyday favourite.",
+                        "button": "Shop now",
+                        "link": "/search?q=speaker"
+                    }
+                },
+                "block_1": {
+                    "type": "promotion",
+                    "settings": {
+                        "heading": "A fresh start for your home",
+                        "image": "asset:assets/promo-appliance.jpg",
+                        "body": "Find your next everyday favourite.",
+                        "button": "Shop now",
+                        "link": "/search?q=home"
+                    }
+                },
+                "block_2": {
+                    "type": "promotion",
+                    "settings": {
+                        "heading": "Make room for more ideas",
+                        "image": "asset:assets/cat-tablet.jpg",
+                        "body": "Find your next everyday favourite.",
+                        "button": "Shop now",
+                        "link": "/search?q=tablet"
+                    }
+                }
+            },
+            "block_order": ["block_0", "block_1", "block_2"]
+        },
+        "featured": {
+            "type": "product-shelf",
+            "settings": {
+                "heading": "Featured products",
+                "offset": 2
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "exclusive": {
+            "type": "product-shelf",
+            "settings": {
+                "heading": "Exclusive picks",
+                "offset": 4
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "technology": {
+            "type": "product-shelf",
+            "settings": {
+                "heading": "Computer & technology",
+                "offset": 6
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "story": {
+            "type": "rich-text",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        },
+        "networking": {
+            "type": "product-shelf",
+            "settings": {
+                "heading": "Connected living",
+                "offset": 8
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "apps": {
+            "type": "apps",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        }
+    },
+    "order": [
+        "hero",
+        "benefits",
+        "deals",
+        "categories",
+        "promotions",
+        "featured",
+        "exclusive",
+        "technology",
+        "story",
+        "networking",
+        "apps"
+    ]
+}

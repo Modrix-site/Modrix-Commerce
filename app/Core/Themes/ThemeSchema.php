@@ -26,6 +26,7 @@ final class ThemeSchema
         'custom_fonts' => 'Ships its own web fonts',
         'dark_mode' => 'Has dark colors',
         'demo_content' => 'Includes demo products and categories',
+        'sections' => 'Every page is built from sections in the theme editor',
     ];
 
     public const COLORS = [

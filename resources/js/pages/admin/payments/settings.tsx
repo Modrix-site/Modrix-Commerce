@@ -1,30 +1,32 @@
-import { Form, Head, Link } from "@inertiajs/react";
-import PaymentSettingsController from "@/actions/App/Http/Controllers/Admin/PaymentSettingsController";
-import { ExtensionIcon } from "@/components/admin/extension-icon";
-import { FormField } from "@/components/admin/form-field";
-import { AdminPage, PageHeader } from "@/components/admin/page-header";
-import { Tabs } from "@/components/admin/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Form, Head, Link } from '@inertiajs/react';
+import PaymentSettingsController from '@/actions/App/Http/Controllers/Admin/PaymentSettingsController';
+import { ExtensionIcon } from '@/components/admin/extension-icon';
+import { FormField } from '@/components/admin/form-field';
+import { AdminPage, PageHeader } from '@/components/admin/page-header';
+import { Tabs } from '@/components/admin/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { settings as settingsRoute } from "@/routes/admin/payments";
-import { edit as stripeEdit } from "@/routes/admin/payments/stripe";
-import { index as webhooks } from "@/routes/admin/payments/webhooks";
+} from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { settings as settingsRoute } from '@/routes/admin/payments';
+import { edit as stripeEdit } from '@/routes/admin/payments/stripe';
+import { index as webhooks } from '@/routes/admin/payments/webhooks';
 
 type Method = {
     code: string;
     enabled: boolean;
     label: string;
     instructions: string;
+    fee_enabled: boolean;
+    fee_amount: string;
 };
 
 function OnOff({ on, extra }: { on: boolean; extra?: string }) {
@@ -43,6 +45,7 @@ export default function PaymentSettings({
     guestCheckout,
     gatewayExtensions,
     stripe,
+    currency,
 }: {
     gatewayExtensions: {
         key: string;
@@ -52,6 +55,7 @@ export default function PaymentSettings({
     }[];
     methods: Method[];
     guestCheckout: boolean;
+    currency: string;
     stripe: { enabled: boolean; configured: boolean; mode: string | null };
 }) {
     return (
@@ -79,15 +83,15 @@ export default function PaymentSettings({
                                 label="Payment settings"
                                 items={[
                                     {
-                                        id: "stripe",
+                                        id: 'stripe',
                                         label: (
                                             <>
                                                 Stripe
                                                 <OnOff
                                                     on={stripe.configured}
                                                     extra={
-                                                        stripe.mode === "test"
-                                                            ? " (test)"
+                                                        stripe.mode === 'test'
+                                                            ? ' (test)'
                                                             : undefined
                                                     }
                                                 />
@@ -156,7 +160,7 @@ export default function PaymentSettings({
                                                         <Link
                                                             href={gateway.href}
                                                         >
-                                                            Configure{" "}
+                                                            Configure{' '}
                                                             {gateway.title}
                                                         </Link>
                                                     </Button>
@@ -165,8 +169,8 @@ export default function PaymentSettings({
                                         ),
                                     })),
                                     {
-                                        id: "checkout",
-                                        label: "Checkout",
+                                        id: 'checkout',
+                                        label: 'Checkout',
                                         hasError: Boolean(
                                             errors.guest_checkout,
                                         ),
@@ -214,6 +218,7 @@ export default function PaymentSettings({
                                             <MethodCard
                                                 method={m}
                                                 errors={errors}
+                                                currency={currency}
                                             />
                                         ),
                                     })),
@@ -239,18 +244,20 @@ export default function PaymentSettings({
 function MethodCard({
     method: m,
     errors,
+    currency,
 }: {
     method: Method;
     errors: Record<string, string | undefined>;
+    currency: string;
 }) {
     return (
         <Card>
             <CardHeader>
                 <CardTitle>{m.label}</CardTitle>
                 <CardDescription>
-                    {m.code === "cash_on_delivery"
-                        ? "Orders can be shipped before payment is recorded."
-                        : "Orders can be shipped only after you record the payment."}
+                    {m.code === 'cash_on_delivery'
+                        ? 'Orders can be shipped before payment is recorded.'
+                        : 'Orders can be shipped only after you record the payment.'}
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
@@ -286,11 +293,40 @@ function MethodCard({
                         defaultValue={m.instructions}
                     />
                 </FormField>
+                {m.code === 'cash_on_delivery' && (
+                    <div className="grid gap-4 rounded-lg border p-4">
+                        <label className="flex items-center gap-2 text-sm">
+                            <Checkbox
+                                name="methods[cash_on_delivery][fee_enabled]"
+                                value="1"
+                                defaultChecked={m.fee_enabled}
+                            />
+                            Add a courier collection fee
+                        </label>
+                        <FormField
+                            id="cash_on_delivery-fee_amount"
+                            label={`Courier fee (${currency})`}
+                            error={
+                                errors['methods.cash_on_delivery.fee_amount']
+                            }
+                            hint="Added to the order total only for cash on delivery with physical items. The courier collects this fee when delivering the order. Enter the final fee including any applicable tax."
+                        >
+                            <Input
+                                id="cash_on_delivery-fee_amount"
+                                name="methods[cash_on_delivery][fee_amount]"
+                                type="number"
+                                min="0"
+                                step="0.0001"
+                                defaultValue={m.fee_amount}
+                            />
+                        </FormField>
+                    </div>
+                )}
             </CardContent>
         </Card>
     );
 }
 
 PaymentSettings.layout = {
-    breadcrumbs: [{ title: "Payments", href: settingsRoute() }],
+    breadcrumbs: [{ title: 'Payments', href: settingsRoute() }],
 };

@@ -1,0 +1,68 @@
+{
+    "name": "Product spotlight",
+    "enabled_on": {
+        "templates": ["*"]
+    },
+    "settings": [
+        {
+            "type": "text",
+            "id": "spotlight_eyebrow",
+            "label": "Eyebrow",
+            "default": "Save 30-60% electronics"
+        },
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "Small Size Big Sound"
+        },
+        {
+            "type": "textarea",
+            "id": "body",
+            "label": "Text"
+        },
+        {
+            "type": "text",
+            "id": "spotlight_price",
+            "label": "Price line",
+            "default": "From $135.00"
+        },
+        {
+            "type": "image",
+            "id": "image",
+            "label": "Image"
+        },
+        {
+            "type": "radio",
+            "id": "image_position",
+            "label": "Image position",
+            "default": "right",
+            "options": [
+                {
+                    "value": "left",
+                    "label": "Left"
+                },
+                {
+                    "value": "right",
+                    "label": "Right"
+                }
+            ]
+        },
+        {
+            "type": "text",
+            "id": "button_label",
+            "label": "Button label"
+        },
+        {
+            "type": "url",
+            "id": "button_link",
+            "label": "Button link",
+            "default": "/search"
+        }
+    ],
+    "presets": [
+        {
+            "name": "Product spotlight"
+        }
+    ]
+}

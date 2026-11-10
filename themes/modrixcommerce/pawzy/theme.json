@@ -1,0 +1,329 @@
+{
+    "$schema": "../../../docs/extensions/theme.schema.json",
+    "name": "modrixcommerce/pawzy",
+    "display_name": "Pawzy",
+    "description": "A playful pet shop with navy navigation, yellow accents, pet collections, editorial campaigns and a complete package-owned customizer.",
+    "version": "1.0.0",
+    "type": "theme",
+    "theme_type": "storefront",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "capabilities": ["home.sections", "custom_fonts", "demo_content"],
+    "assets": "assets",
+    "design": {
+        "color.background": "#ffffff",
+        "color.foreground": "#263344",
+        "color.primary": "#ffd400",
+        "color.primary_foreground": "#263344",
+        "color.muted": "#f3f3f3",
+        "color.muted_foreground": "#737780",
+        "color.accent": "#f7f3f7",
+        "color.accent_foreground": "#263344",
+        "color.border": "#ececee",
+        "color.search": "#ffd400",
+        "color.sale": "#ef6749",
+        "font_body": "custom:Manrope",
+        "font_heading": "custom:Manrope",
+        "radius": "0.375rem",
+        "density": "spacious",
+        "container": "reference",
+        "layout.header": "electronics",
+        "layout.footer": "columns",
+        "layout.product_card": "electronics",
+        "layout.grid_columns": "4",
+        "layout.product_page": "split",
+        "announcement": "Free shipping on orders over $100!",
+        "footer_text": "\u00c2\u00a9 Pawzy. All rights reserved.",
+        "style.general.body_size": "14",
+        "style.general.heading_weight": "800",
+        "contact_email": "",
+        "contact_phone": "",
+        "menu_1_label": "Home",
+        "menu_1_link": "/",
+        "menu_2_label": "Collections",
+        "menu_2_link": "/c/pawzy-cats",
+        "menu_3_label": "Products",
+        "menu_3_link": "/search",
+        "menu_4_label": "Our story",
+        "menu_4_link": "/pages/pawzy-our-story",
+        "menu_5_label": "Pet journal",
+        "menu_5_link": "/pages/pawzy-pet-journal",
+        "footer_1_title": "My account",
+        "footer_1_1_label": "Login / Register",
+        "footer_1_1_link": "/account",
+        "footer_1_2_label": "View your orders",
+        "footer_1_2_link": "/account/orders",
+        "footer_1_3_label": "Shop all products",
+        "footer_1_3_link": "/search",
+        "footer_2_title": "Information",
+        "footer_2_1_label": "Our story",
+        "footer_2_1_link": "/pages/pawzy-our-story",
+        "footer_2_2_label": "Pet journal",
+        "footer_2_2_link": "/pages/pawzy-pet-journal",
+        "footer_2_3_label": "Shipping & delivery",
+        "footer_2_3_link": "/pages/pawzy-shipping",
+        "footer_3_title": "Our policies",
+        "footer_3_1_label": "Order & payment",
+        "footer_3_1_link": "/pages/pawzy-payments",
+        "footer_3_2_label": "Returns & exchanges",
+        "footer_3_2_link": "/pages/pawzy-returns",
+        "footer_3_3_label": "Privacy policy",
+        "footer_3_3_link": "/pages/pawzy-privacy"
+    },
+    "fonts": [
+        {
+            "family": "Manrope",
+            "file": "assets/fonts/manrope-latin.woff2",
+            "weight": "400 800",
+            "style": "normal"
+        }
+    ],
+    "sections": {
+        "home": [
+            {
+                "type": "campaign",
+                "settings": {
+                    "heading": "Smiles, Wags, And Love",
+                    "image": "asset:assets/images/hero.jpg",
+                    "background": "#ef90b5",
+                    "foreground": "#263344",
+                    "eyebrow": "Pet picks",
+                    "body": "Everything they love. Everything they need. Find a little joy for every paw.",
+                    "button_label": "Shop now",
+                    "button_link": "/search",
+                    "height": "large"
+                }
+            },
+            {
+                "type": "promotion_grid",
+                "settings": {
+                    "title": "",
+                    "style": "service",
+                    "columns": "4",
+                    "tile_1_title": "Return policy",
+                    "tile_1_image": "",
+                    "tile_1_link": "/pages/pawzy-returns",
+                    "tile_1_text": "Here to help with your order.",
+                    "tile_2_title": "Delivery options",
+                    "tile_2_image": "",
+                    "tile_2_link": "/pages/pawzy-shipping",
+                    "tile_2_text": "Available at checkout.",
+                    "tile_3_title": "Secure payments",
+                    "tile_3_image": "",
+                    "tile_3_link": "/pages/pawzy-payments",
+                    "tile_3_text": "Shop with confidence.",
+                    "tile_4_title": "Pet essentials",
+                    "tile_4_image": "",
+                    "tile_4_link": "/search",
+                    "tile_4_text": "Care for every companion."
+                }
+            },
+            {
+                "type": "promotion_grid",
+                "settings": {
+                    "title": "",
+                    "style": "card",
+                    "columns": "3",
+                    "tile_1_title": "Pet Fashion",
+                    "tile_1_image": "asset:assets/images/fashion.jpg",
+                    "tile_1_link": "/c/pawzy-fashion",
+                    "tile_1_text": "A little extra personality.",
+                    "tile_2_title": "Pet Food",
+                    "tile_2_image": "asset:assets/images/food.jpg",
+                    "tile_2_link": "/c/pawzy-food",
+                    "tile_2_text": "Good things in every bowl.",
+                    "tile_3_title": "Pet Toys",
+                    "tile_3_image": "asset:assets/images/toy.jpg",
+                    "tile_3_link": "/c/pawzy-toys",
+                    "tile_3_text": "Let the good times roll."
+                }
+            },
+            {
+                "type": "promo_banner",
+                "settings": {
+                    "text": "A little treat for your best friend. Discover everyday favourites.",
+                    "button_label": "Shop the collection",
+                    "button_link": "/search",
+                    "tone": "muted"
+                }
+            },
+            {
+                "type": "featured_products",
+                "settings": {
+                    "title": "Pawfect Product Picks",
+                    "limit": 4,
+                    "source": "latest"
+                }
+            },
+            {
+                "type": "promotion_grid",
+                "settings": {
+                    "title": "Shop By Pet",
+                    "style": "circle",
+                    "columns": "6",
+                    "tile_1_title": "Birds",
+                    "tile_1_image": "asset:assets/images/bird.jpg",
+                    "tile_1_link": "/c/pawzy-birds",
+                    "tile_1_text": "",
+                    "tile_2_title": "Cats",
+                    "tile_2_image": "asset:assets/images/cat.jpg",
+                    "tile_2_link": "/c/pawzy-cats",
+                    "tile_2_text": "",
+                    "tile_3_title": "Dogs",
+                    "tile_3_image": "asset:assets/images/dog.jpg",
+                    "tile_3_link": "/c/pawzy-dogs",
+                    "tile_3_text": "",
+                    "tile_4_title": "Rabbit",
+                    "tile_4_image": "asset:assets/images/rabbit.jpg",
+                    "tile_4_link": "/c/pawzy-small-pets",
+                    "tile_4_text": "",
+                    "tile_5_title": "Fish",
+                    "tile_5_image": "asset:assets/images/fish.jpg",
+                    "tile_5_link": "/c/pawzy-small-pets",
+                    "tile_5_text": "",
+                    "tile_6_title": "Hamster",
+                    "tile_6_image": "asset:assets/images/hamster.jpg",
+                    "tile_6_link": "/c/pawzy-small-pets",
+                    "tile_6_text": ""
+                }
+            },
+            {
+                "type": "image_with_text",
+                "settings": {
+                    "heading": "Essentials That Make Life Better For Pets",
+                    "body": "Fun & Play\nMake every day an adventure with engaging toys.\n\nHealthy Nutrition\nFind everyday feeding essentials.\n\nDaily Hygiene\nA little care goes a long way.\n\nComfortable Living\nTheir favourite place to curl up.",
+                    "image": "asset:assets/images/care.jpg",
+                    "button_label": "Explore pet care",
+                    "button_link": "/search",
+                    "image_position": "right"
+                }
+            },
+            {
+                "type": "featured_products",
+                "settings": {
+                    "title": "Pawfect Product Picks",
+                    "limit": 8,
+                    "source": "latest"
+                }
+            },
+            {
+                "type": "campaign",
+                "settings": {
+                    "heading": "Which Style Suits Your Pup?",
+                    "image": "asset:assets/images/fashion.jpg",
+                    "background": "#bce0df",
+                    "foreground": "#263344",
+                    "eyebrow": "The style edit",
+                    "body": "For walks, playdates and all their little adventures.",
+                    "button_label": "Shop now",
+                    "button_link": "/c/pawzy-fashion",
+                    "height": "large"
+                }
+            },
+            {
+                "type": "image_with_text",
+                "settings": {
+                    "heading": "Pet Food",
+                    "body": "Bring a little happiness to every mealtime. Explore bowls and feeding essentials for your companion.",
+                    "image": "asset:assets/images/food.jpg",
+                    "button_label": "Shop feeding essentials",
+                    "button_link": "/c/pawzy-food",
+                    "image_position": "left"
+                }
+            },
+            {
+                "type": "featured_products",
+                "settings": {
+                    "title": "Made For Mealtime",
+                    "limit": 4,
+                    "source": "category",
+                    "category": "pawzy-food"
+                }
+            },
+            {
+                "type": "image_with_text",
+                "settings": {
+                    "heading": "Pet Fashion",
+                    "body": "Soft layers and playful accessories. Find something as individual as they are.",
+                    "image": "asset:assets/images/fashion.jpg",
+                    "button_label": "Discover the collection",
+                    "button_link": "/c/pawzy-fashion",
+                    "image_position": "right"
+                }
+            },
+            {
+                "type": "rich_text",
+                "settings": {
+                    "heading": "What Pet Parents Love",
+                    "body": "Comfort for the quiet moments. Joy for the playful ones. Thoughtful little essentials for a life shared with pets.",
+                    "alignment": "center"
+                }
+            },
+            {
+                "type": "promotion_grid",
+                "settings": {
+                    "title": "From Latest News",
+                    "style": "editorial",
+                    "columns": "3",
+                    "tile_1_title": "Keeping Pets Active Daily",
+                    "tile_1_image": "asset:assets/images/toy.jpg",
+                    "tile_1_link": "/pages/pawzy-pet-journal",
+                    "tile_1_text": "Little games, happy companions.",
+                    "tile_2_title": "Pet Travel Made Simple",
+                    "tile_2_image": "asset:assets/images/dog.jpg",
+                    "tile_2_link": "/pages/pawzy-pet-journal",
+                    "tile_2_text": "Make every adventure a little easier.",
+                    "tile_3_title": "Love And Care For Pets",
+                    "tile_3_image": "asset:assets/images/care.jpg",
+                    "tile_3_link": "/pages/pawzy-pet-journal",
+                    "tile_3_text": "Everyday moments that matter."
+                }
+            },
+            {
+                "type": "promotion_grid",
+                "settings": {
+                    "title": "Follow Our Pet Community",
+                    "style": "plain",
+                    "columns": "4",
+                    "tile_1_title": "Everyday adventures",
+                    "tile_1_image": "asset:assets/images/dog.jpg",
+                    "tile_1_link": "/c/pawzy-dogs",
+                    "tile_1_text": "",
+                    "tile_2_title": "Curious companions",
+                    "tile_2_image": "asset:assets/images/cat.jpg",
+                    "tile_2_link": "/c/pawzy-cats",
+                    "tile_2_text": "",
+                    "tile_3_title": "Play all day",
+                    "tile_3_image": "asset:assets/images/toy.jpg",
+                    "tile_3_link": "/c/pawzy-toys",
+                    "tile_3_text": "",
+                    "tile_4_title": "Cosy moments",
+                    "tile_4_image": "asset:assets/images/care.jpg",
+                    "tile_4_link": "/search",
+                    "tile_4_text": ""
+                }
+            }
+        ]
+    },
+    "frontend": {
+        "index": "src/index.tsx",
+        "catalog": "src/catalog.tsx",
+        "product": "src/product.tsx",
+        "header": "src/header.tsx",
+        "footer": "src/footer.tsx",
+        "layout": "src/layout.tsx",
+        "stylesheet": "src/style.css",
+        "customizer": "src/customizer.tsx"
+    },
+    "customizer_file": "settings.json",
+    "demo_content": "demo.json",
+    "screenshot": "assets/demo-preview.png",
+    "changelog": [
+        {
+            "version": "1.0.0",
+            "date": "2026-10-21",
+            "notes": "Pawzy pet storefront, theme-owned editor, demo catalog and core extension integration."
+        }
+    ]
+}

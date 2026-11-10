@@ -1,0 +1,86 @@
+{
+    "name": "Editorial showcase",
+    "settings": [
+        {
+            "type": "image",
+            "id": "card_1_image",
+            "label": "First card image",
+            "default": "asset:assets/writing.jpg"
+        },
+        {
+            "type": "text",
+            "id": "card_1_alt",
+            "label": "First card image description",
+            "default": "Writing at a desk"
+        },
+        {
+            "type": "text",
+            "id": "card_1_heading",
+            "label": "First card heading",
+            "default": "THE WRITING EDIT"
+        },
+        {
+            "type": "textarea",
+            "id": "card_1_text",
+            "label": "First card text",
+            "default": "An invitation to put pen to paper."
+        },
+        {
+            "type": "text",
+            "id": "card_1_button",
+            "label": "First card button",
+            "default": "Discover now"
+        },
+        {
+            "type": "url",
+            "id": "card_1_link",
+            "label": "First card link",
+            "default": "/search"
+        },
+        {
+            "type": "image",
+            "id": "card_2_image",
+            "label": "Second card image",
+            "default": "asset:assets/hero.jpg"
+        },
+        {
+            "type": "text",
+            "id": "card_2_alt",
+            "label": "Second card image description",
+            "default": "Leather accessories"
+        },
+        {
+            "type": "text",
+            "id": "card_2_heading",
+            "label": "Second card heading",
+            "default": "EVERYDAY COMPANIONS"
+        },
+        {
+            "type": "textarea",
+            "id": "card_2_text",
+            "label": "Second card text",
+            "default": "Timeless pieces for a life in motion."
+        },
+        {
+            "type": "text",
+            "id": "card_2_button",
+            "label": "Second card button",
+            "default": "Discover now"
+        },
+        {
+            "type": "url",
+            "id": "card_2_link",
+            "label": "Second card link",
+            "default": "/search"
+        },
+        {
+            "type": "range",
+            "id": "image_height",
+            "label": "Card image height (px)",
+            "default": 420,
+            "min": 250,
+            "max": 650,
+            "step": 10
+        }
+    ]
+}

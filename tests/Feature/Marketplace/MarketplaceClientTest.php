@@ -5,10 +5,7 @@ namespace Tests\Feature\Marketplace;
 use App\Core\Extensions\Models\Extension;
 use App\Core\Extensions\ModuleManager;
 use App\Core\Extensions\ModuleState;
-use App\Core\Marketplace\Client\MarketplaceError;
-use App\Core\Marketplace\Client\PackageInstaller;
 use App\Core\Marketplace\Client\StoreLicense;
-use App\Core\Marketplace\Client\StoreLicenses;
 use App\Core\Marketplace\Client\UpdateHistory;
 use App\Core\Marketplace\PackageException;
 use App\Core\Marketplace\Signing;
@@ -19,6 +16,10 @@ use App\Domains\Marketplace\Models\License;
 use App\Domains\Marketplace\Models\MarketplaceProduct;
 use App\Domains\Orders\Models\Order;
 use App\Models\User;
+use EcoModular\CloudConnector\CloudClient;
+use EcoModular\CloudConnector\CloudError;
+use EcoModular\CloudConnector\PackageInstaller;
+use EcoModular\CloudConnector\StoreLicenses;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Factory as HttpFactory;
@@ -48,6 +49,7 @@ class MarketplaceClientTest extends TestCase
         parent::setUp();
         $this->installPlatform();
         $this->setUpModules();
+        $this->enableBundledModule('modrixcommerce/cloud-connector');
         $this->setUpMarketplace();
         $this->product = $this->product(['price' => '0']);
         $this->publish($this->product, $this->packageModule('1.0.0'));
@@ -71,11 +73,12 @@ class MarketplaceClientTest extends TestCase
         $license = app(StoreLicenses::class)->activate($key, $admin);
         $this->assertSame('active', $license->status);
         $this->assertSame('acme/hello', $license->extension_name);
-        $this->assertSame('1.0.0', $license->available_release['version']);
+        $this->assertNull($license->available_release);
+        $this->assertNull($license->last_error);
         $this->assertTrue(Signing::verify($license->token['token'], $license->token['signature'], [$this->publicKey]));
 
-        // Install: verified files land in modules/, nothing is installed in the database or enabled.
-        $entry = app(PackageInstaller::class)->install($license, $admin);
+        // Activation pulls verified files; the module is not yet installed or enabled.
+        $entry = UpdateHistory::query()->where('action', 'install')->firstOrFail();
         $this->assertTrue($entry->success);
         $this->assertFileExists($this->modulesPath.'/acme/hello/module.json');
         $this->assertSame(ModuleState::Discovered, Extension::query()->where('name', 'acme/hello')->firstOrFail()->state);
@@ -88,9 +91,10 @@ class MarketplaceClientTest extends TestCase
         // A new release is published; the store sees and applies the update.
         $this->publish($this->product, $this->packageModule('1.1.0', withSecondMigration: true));
         $license = app(StoreLicenses::class)->check($license->fresh());
-        $this->assertSame('1.1.0', $license->available_release['version']);
+        $this->assertNull($license->available_release);
+        $this->assertNull($license->last_error);
 
-        $update = app(PackageInstaller::class)->install($license, $admin);
+        $update = UpdateHistory::query()->where('action', 'update')->latest('id')->firstOrFail();
         $this->assertSame('update', $update->action);
         $this->assertSame('1.0.0', $update->from_version);
         $this->assertFileExists((string) $update->backup_path);
@@ -110,7 +114,7 @@ class MarketplaceClientTest extends TestCase
 
     public function test_a_tampered_package_is_refused_and_the_store_is_untouched()
     {
-        $license = app(StoreLicenses::class)->activate($this->buyKey(), $this->owner());
+        $key = $this->buyKey();
         $release = $this->product->latestPublishedRelease();
 
         // Someone replaces the archive on the marketplace storage after signing.
@@ -119,6 +123,8 @@ class MarketplaceClientTest extends TestCase
         $signed = $release->signed_metadata;
         $signed['size'] = $release->size; // the attacker cannot re-sign
         $release->forceFill(['signed_metadata' => $signed])->save();
+        $license = app(StoreLicenses::class)->activate($key, $this->owner());
+        $this->assertStringContainsString('not signed by a trusted', $license->last_error);
 
         try {
             app(PackageInstaller::class)->install($license, $this->owner());
@@ -133,10 +139,12 @@ class MarketplaceClientTest extends TestCase
 
     public function test_a_corrupted_download_fails_the_checksum()
     {
-        $license = app(StoreLicenses::class)->activate($this->buyKey(), $this->owner());
+        $key = $this->buyKey();
         $release = $this->product->latestPublishedRelease();
         $bytes = (string) Storage::disk('local')->get($release->archive_path);
         Storage::disk('local')->put($release->archive_path, substr($bytes, 0, -1).(substr($bytes, -1) === 'A' ? 'B' : 'A')); // same size
+        $license = app(StoreLicenses::class)->activate($key, $this->owner());
+        $this->assertStringContainsString('signed checksum', $license->last_error);
 
         $this->expectException(PackageException::class);
         $this->expectExceptionMessage('signed checksum');
@@ -147,7 +155,7 @@ class MarketplaceClientTest extends TestCase
     {
         config(['ecomodular.marketplace.trusted_keys' => [Signing::generateKeyPair()['public']]]);
 
-        $this->expectException(MarketplaceError::class);
+        $this->expectException(CloudError::class);
         $this->expectExceptionMessage('could not be verified');
         app(StoreLicenses::class)->activate($this->buyKey(), $this->owner());
     }
@@ -157,7 +165,7 @@ class MarketplaceClientTest extends TestCase
         $admin = $this->owner();
         $key = $this->buyKey();
         $license = app(StoreLicenses::class)->activate($key, $admin);
-        app(PackageInstaller::class)->install($license, $admin);
+        $this->assertNull($license->last_error);
 
         app(LicenseManager::class)->changeStatus(License::findByKey($key), License::REFUNDED, 'Refund', $admin);
         $license = app(StoreLicenses::class)->check($license->fresh());
@@ -166,7 +174,7 @@ class MarketplaceClientTest extends TestCase
         $this->assertNull($license->available_release);
         $this->assertFileExists($this->modulesPath.'/acme/hello/module.json');
 
-        $this->expectException(MarketplaceError::class);
+        $this->expectException(CloudError::class);
         app(PackageInstaller::class)->install($license, $admin);
     }
 
@@ -174,7 +182,7 @@ class MarketplaceClientTest extends TestCase
     {
         $license = app(StoreLicenses::class)->activate($this->buyKey(), $this->owner());
         Http::fake(fn () => throw new ConnectionException('Connection refused'));
-        cache()->forget('ecomodular.marketplace.catalog');
+        app(CloudClient::class)->forgetCatalog();
 
         // Checking records the error and changes nothing else.
         $checked = app(StoreLicenses::class)->check($license->fresh());
@@ -183,7 +191,7 @@ class MarketplaceClientTest extends TestCase
         $this->assertFalse($checked->needsVerification()); // still within the token validity
 
         // The admin page renders with a notice.
-        $this->actingAs($this->owner())->get(route('admin.marketplace-client.index'))
+        $this->actingAs($this->owner())->get(route('admin.modrixcommerce.cloud-connector.index'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page->where('catalogError', fn ($e) => str_contains((string) $e, 'could not be reached'))->has('licenses', 1));
 
@@ -201,7 +209,7 @@ class MarketplaceClientTest extends TestCase
     {
         $admin = $this->owner();
         $license = app(StoreLicenses::class)->activate($this->buyKey(), $admin);
-        app(PackageInstaller::class)->install($license, $admin);
+        $this->assertNull($license->last_error);
 
         // The publisher publishes an advisory for versions before 1.1.0.
         $this->actingAs($admin)->post(route('admin.marketplace.advisories.store', $this->product), [
@@ -216,15 +224,16 @@ class MarketplaceClientTest extends TestCase
         $license = app(StoreLicenses::class)->check($license->fresh());
         $this->assertCount(1, $license->advisoriesFor('1.0.0'));
         $this->assertSame([], $license->advisoriesFor('1.1.0'));
-        $this->actingAs($admin)->get(route('admin.marketplace-client.index'))
+        $this->actingAs($admin)->get(route('admin.modrixcommerce.cloud-connector.index'))
             ->assertInertia(fn (Assert $page) => $page->where('licenses.0.advisories.0.title', 'Stored XSS in notes'));
         $health = collect(app(HealthCheck::class)->run())->firstWhere('key', 'advisories');
         $this->assertSame('warning', $health['status']);
 
         // After updating to the fixed version the warning is gone.
         $this->publish($this->product, $this->packageModule('1.1.0', withSecondMigration: true));
-        app(PackageInstaller::class)->install(app(StoreLicenses::class)->check($license->fresh()), $admin);
-        $this->actingAs($admin)->get(route('admin.marketplace-client.index'))
+        $checked = app(StoreLicenses::class)->check($license->fresh());
+        $this->assertNull($checked->last_error);
+        $this->actingAs($admin)->get(route('admin.modrixcommerce.cloud-connector.index'))
             ->assertInertia(fn (Assert $page) => $page->has('licenses.0.advisories', 0));
         $this->assertSame('ok', collect(app(HealthCheck::class)->run())->firstWhere('key', 'advisories')['status']);
     }
@@ -256,13 +265,13 @@ class MarketplaceClientTest extends TestCase
 
     public function test_client_admin_permissions()
     {
-        $this->actingAs($this->userWithRole('store-manager'))->get(route('admin.marketplace-client.index'))->assertForbidden();
-        $this->actingAs($this->userWithRole('store-manager'))->post(route('admin.marketplace-client.licenses.activate'), ['key' => 'EMK-AAAAA-AAAAA-AAAAA-AAAAA'])->assertForbidden();
+        $this->actingAs($this->userWithRole('store-manager'))->get(route('admin.modrixcommerce.cloud-connector.index'))->assertForbidden();
+        $this->actingAs($this->userWithRole('store-manager'))->post(route('admin.modrixcommerce.cloud-connector.licenses.activate'), ['key' => 'EMK-AAAAA-AAAAA-AAAAA-AAAAA'])->assertForbidden();
 
         $license = StoreLicense::query()->forceCreate([
             'product_slug' => 'x', 'product_name' => 'X', 'extension_name' => 'acme/x', 'type' => 'module',
             'key_encrypted' => encrypt('k', false), 'key_hint' => 'AAAAA', 'status' => 'active',
         ]);
-        $this->actingAs($this->owner())->post(route('admin.marketplace-client.install', $license))->assertRedirect(route('password.confirm'));
+        $this->actingAs($this->owner())->post(route('admin.modrixcommerce.cloud-connector.install', $license))->assertRedirect(route('password.confirm'));
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Core\Marketplace\Client;
 
+use App\Core\Extensions\ModuleRepository;
+use App\Core\Themes\ThemeRepository;
 use Composer\Semver\Semver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -94,5 +96,19 @@ class StoreLicense extends Model
         $grace = max(0, (int) config('ecomodular.marketplace.grace_days', 14));
 
         return $this->token_valid_until === null || $this->token_valid_until->copy()->addDays($grace)->isPast();
+    }
+
+    /**
+     * The version of the licensed package on disk, or null when it is not there.
+     */
+    public function installedVersion(): ?string
+    {
+        $dir = $this->type === 'theme'
+            ? ThemeRepository::packageDir($this->extension_name)
+            : ModuleRepository::packageDir($this->extension_name);
+        $file = $dir.'/'.($this->type === 'theme' ? 'theme.json' : 'module.json');
+        $data = is_file($file) ? json_decode((string) file_get_contents($file), true) : null;
+
+        return is_array($data) && is_string($data['version'] ?? null) ? $data['version'] : null;
     }
 }

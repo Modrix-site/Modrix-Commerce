@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Core\Audit\AuditLogger;
 use App\Core\Settings\Countries;
 use App\Core\Settings\StoreSettings;
+use App\Domains\Shipping\DeliveryArea;
 use App\Domains\Shipping\Models\ShippingMethod;
+use App\Domains\Shipping\ShippingLocationAudit;
 use App\Domains\Shipping\ShippingRegions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
@@ -20,14 +22,18 @@ class ShippingMethodController extends Controller
 {
     public function index(StoreSettings $store): Response
     {
+        $methods = ShippingMethod::query()->orderBy('position')->orderBy('id')->get();
+
         return Inertia::render('admin/shipping/index', [
-            'methods' => ShippingMethod::query()->orderBy('position')->orderBy('id')->get()->map(fn (ShippingMethod $m) => [
+            'methods' => $methods->map(fn (ShippingMethod $m) => [
                 ...$m->only(['id', 'code', 'name', 'description', 'rate', 'currency', 'free_over', 'is_active', 'position', 'regions_only', 'delivery_estimate']),
                 'countries' => $m->countries ?? [],
                 'regional_rates' => $m->regional_rates ?? [],
             ]),
             'countries' => Countries::options(),
             'currency' => $store->currency(),
+            'deliveryArea' => app(DeliveryArea::class)->label(),
+            'locationWarnings' => app(ShippingLocationAudit::class)->warnings($methods),
         ]);
     }
 
@@ -81,7 +87,7 @@ class ShippingMethodController extends Controller
             'rate' => ['required', 'string', 'regex:/^\d{1,13}(\.\d{1,4})?$/'],
             'free_over' => ['nullable', 'string', 'regex:/^\d{1,13}(\.\d{1,4})?$/'],
             'countries' => ['nullable', 'array'],
-            'countries.*' => ['string', 'size:2', Rule::in(Countries::codes())],
+            'countries.*' => ['string', 'size:2', 'distinct', Rule::in(Countries::codes())],
             'is_active' => ['boolean'],
             'delivery_estimate' => ['nullable', 'string', 'max:255'],
             'regions_only' => ['boolean'],

@@ -1,4 +1,4 @@
-# Getting Started with EcoModular Extensions
+# Getting Started with Modrix Commerce Extensions
 
 This guide takes you from an empty directory to a package the official marketplace accepts. For the full rules, see the [module developer guide](module-development.md) and the [theme developer guide](theme-development.md).
 
@@ -15,7 +15,7 @@ Themes use validated design data and can optionally include compiled React pages
 
 ```bash
 php artisan ecomodular:make:module acme/gift-notes --author="Acme Ltd"
-php artisan ecomodular:make:theme acme/harbor --from=ecomodular/noir
+php artisan ecomodular:make:theme acme/harbor --from=modrixcommerce/noir
 ```
 
 The generated module contains:

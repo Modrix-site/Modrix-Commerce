@@ -1,0 +1,72 @@
+{
+    "name": "Header",
+    "settings": [
+        {
+            "type": "text",
+            "id": "brand",
+            "label": "Wordmark",
+            "default": "SABLE ATELIER"
+        },
+        {
+            "type": "image",
+            "id": "logo",
+            "label": "Logo image"
+        },
+        {
+            "type": "text",
+            "id": "announcement",
+            "label": "Announcement",
+            "default": "Considered essentials. Extraordinary journeys."
+        },
+        {
+            "type": "checkbox",
+            "id": "overlay",
+            "label": "Overlay home hero",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_collections",
+            "label": "Show collections dropdown",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "collections_label",
+            "label": "Collections menu label",
+            "default": "Collections"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "link",
+            "name": "Menu link",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Label",
+                    "default": "Shop all"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Destination",
+                    "default": "/search"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Header"
+        }
+    ],
+    "enabled_on": {
+        "groups": [
+            "header"
+        ]
+    },
+    "limit": 1,
+    "max_blocks": 8
+}

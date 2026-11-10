@@ -1,0 +1,61 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/ziina",
+    "display_name": "Ziina Payment Gateway",
+    "description": "Ziina payment gateway for the UAE with Apple Pay, Google Pay, cards, fast checkout, and Central Bank of the UAE regulatory compliance.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "credit-card",
+    "accent": "#6236ff",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\Ziina\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\Ziina\\ZiinaServiceProvider",
+    "capabilities": [
+        "payment.gateway",
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "content_security"
+    ],
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages"
+    },
+    "content_security": {
+        "connect-src": [
+            "https://api-v2.ziina.com",
+            "https://api.ziina.com",
+            "https://pay.ziina.com"
+        ],
+        "frame-src": [
+            "https://api-v2.ziina.com",
+            "https://api.ziina.com",
+            "https://pay.ziina.com"
+        ],
+        "form-action": [
+            "https://api-v2.ziina.com",
+            "https://api.ziina.com",
+            "https://pay.ziina.com"
+        ]
+    },
+    "admin_navigation": [
+        {
+            "key": "ziina",
+            "title": "Ziina",
+            "route": "index",
+            "icon": "credit-card",
+            "group": "Configuration",
+            "permission": "payments.manage",
+            "order": 876
+        }
+    ]
+}

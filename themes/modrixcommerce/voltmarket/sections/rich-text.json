@@ -1,0 +1,57 @@
+{
+    "name": "Image with text",
+    "settings": [
+        {
+            "type": "text",
+            "id": "eyebrow",
+            "label": "Eyebrow",
+            "default": "ONE PLACE. MORE POSSIBILITIES."
+        },
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "Your next great find starts here."
+        },
+        {
+            "type": "textarea",
+            "id": "body",
+            "label": "Text",
+            "default": "Explore everyday technology, useful home essentials and thoughtful upgrades, all together at Volt Market."
+        },
+        {
+            "type": "image",
+            "id": "image",
+            "label": "Image",
+            "default": "asset:assets/campaign-tablet.jpg"
+        },
+        {
+            "type": "text",
+            "id": "button",
+            "label": "Button label",
+            "default": "Explore the store"
+        },
+        {
+            "type": "url",
+            "id": "link",
+            "label": "Button destination",
+            "default": "/search"
+        },
+        {
+            "type": "color",
+            "id": "background",
+            "label": "Background",
+            "default": "#f5f5f5"
+        }
+    ],
+    "blocks": [],
+    "max_blocks": 50,
+    "presets": [
+        {
+            "name": "Image with text"
+        }
+    ],
+    "enabled_on": {
+        "templates": ["*"]
+    }
+}

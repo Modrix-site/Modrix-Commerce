@@ -1,0 +1,133 @@
+{
+    "name": "Editorial footer",
+    "enabled_on": {
+        "groups": ["footer"]
+    },
+    "settings": [
+        {
+            "type": "checkbox",
+            "id": "show_intro",
+            "label": "Show top editorial intro",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "intro_brand",
+            "label": "Editorial brand wordmark",
+            "default": "ATELIER"
+        },
+        {
+            "type": "text",
+            "id": "intro_heading",
+            "label": "Editorial intro heading",
+            "default": "Considered essentials. Lasting stories."
+        },
+        {
+            "type": "textarea",
+            "id": "intro_text",
+            "label": "Editorial intro text",
+            "default": "Discover objects that bring intention to everyday life."
+        },
+        {
+            "type": "checkbox",
+            "id": "newsletter_enabled",
+            "label": "Show newsletter signup",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "newsletter_heading",
+            "label": "Newsletter heading",
+            "default": "Join our newsletter"
+        },
+        {
+            "type": "text",
+            "id": "newsletter_text",
+            "label": "Newsletter description",
+            "default": "Be the first to discover new collections and stories."
+        },
+        {
+            "type": "text",
+            "id": "newsletter_placeholder",
+            "label": "Newsletter email placeholder",
+            "default": "Email address"
+        },
+        {
+            "type": "text",
+            "id": "newsletter_button",
+            "label": "Newsletter button label",
+            "default": "Sign up"
+        },
+        {
+            "type": "text",
+            "id": "newsletter_success",
+            "label": "Newsletter success message",
+            "default": "Thank you for subscribing."
+        },
+        {
+            "type": "text",
+            "id": "copyright",
+            "label": "Copyright text",
+            "default": ""
+        },
+        {
+            "type": "checkbox",
+            "id": "back_to_top",
+            "label": "Show back to top button",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "top_label",
+            "label": "Back to top label",
+            "default": "Back to top"
+        },
+        {
+            "type": "text",
+            "id": "social_heading",
+            "label": "Social heading",
+            "default": "Follow us"
+        },
+        {
+            "type": "url",
+            "id": "social_instagram",
+            "label": "Instagram URL",
+            "default": "https://instagram.com"
+        },
+        {
+            "type": "url",
+            "id": "social_facebook",
+            "label": "Facebook URL"
+        },
+        {
+            "type": "url",
+            "id": "social_pinterest",
+            "label": "Pinterest URL"
+        },
+        {
+            "type": "url",
+            "id": "social_youtube",
+            "label": "YouTube URL"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "column",
+            "name": "Navigation column",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Column heading",
+                    "default": "Need some help?"
+                },
+                {
+                    "type": "textarea",
+                    "id": "links",
+                    "label": "Links (one per line, format: Label | /link)",
+                    "default": "Contact us | /pages/contact\nCustomer care | /search"
+                }
+            ]
+        }
+    ]
+}

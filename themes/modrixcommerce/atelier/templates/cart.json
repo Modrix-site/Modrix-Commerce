@@ -1,0 +1,30 @@
+{
+    "sections": {
+        "main": {
+            "type": "main-cart",
+            "settings": {
+                "heading": "Shopping bag",
+                "summary_heading": "Order summary",
+                "checkout_label": "Proceed to checkout",
+                "continue_label": "Continue shopping",
+                "empty_heading": "Your bag is empty",
+                "empty_button": "Explore the collection",
+                "shipping_note": "Shipping and taxes calculated at checkout."
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "apps": {
+            "type": "apps",
+            "settings": {
+                "heading": ""
+            },
+            "blocks": {},
+            "block_order": []
+        }
+    },
+    "order": [
+        "main",
+        "apps"
+    ]
+}

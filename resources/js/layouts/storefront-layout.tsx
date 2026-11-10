@@ -1,76 +1,114 @@
-import { Form, Head, router, usePage } from "@inertiajs/react";
-import { Eye, Globe, Search, User } from "lucide-react";
-import { pageSettingAttributes } from "@/components/storefront/page-settings/attributes";
+import { Form, Head, router, usePage } from '@inertiajs/react';
+import { Eye, Globe, Search, User } from 'lucide-react';
+import { pageSettingAttributes } from '@/components/storefront/page-settings/attributes';
 import {
     CartIcon,
     SearchIconLink,
     useShowAccountLink,
     useShowCartCount,
-} from "@/components/storefront/page-settings/header-parts";
-import { useStoreSettings } from "@/hooks/use-store-settings";
-import type { ReactNode } from "react";
-import { Suspense } from "react";
-import { themeHeader, themeFooter } from "@/lib/theme-pages";
+} from '@/components/storefront/page-settings/header-parts';
+import { useStoreSettings } from '@/hooks/use-store-settings';
+import type { ReactNode } from 'react';
+import { Suspense } from 'react';
+import { themeHeader, themeFooter } from '@/lib/theme-pages';
+import {
+    ThemeEditorBridge,
+    ThemeSectionList,
+    useThemeSections,
+} from '@/components/storefront/theme-sections';
+import { ThemeStyles, themeLayout } from '@/lib/theme-runtime';
 import {
     AtelierFooter,
     AtelierHeader,
     AtelierTrustBand,
-} from "@/components/storefront/atelier-chrome";
+} from '@/components/storefront/atelier-chrome';
 import {
     ElectronicsFooter,
     ElectronicsHeader,
-} from "@/components/storefront/electronics-chrome";
-import { RecentlyViewed } from "@/components/storefront/recent-products";
-import { ExtensionSlot } from "@/components/extensions/extension-slot";
+} from '@/components/storefront/electronics-chrome';
+import { RecentlyViewed } from '@/components/storefront/recent-products';
+import { ExtensionSlot } from '@/components/extensions/extension-slot';
 import {
     StoreFooterMenus,
     StoreMenuLink as Link,
-} from "@/components/storefront/footer-menus";
-import "@/components/storefront/electronics.css";
-import "@/components/storefront/atelier.css";
-import { SearchToggle } from "@/components/storefront/search-toggle";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useFlashToast } from "@/hooks/use-flash-toast";
-import { PlaceSlot } from "@/components/extensions/place-slot";
-import { CustomerNotificationBell } from "@/components/storefront/customer-notification-bell";
-import { SiteHeader } from "@/components/storefront/site-header";
-import { useStoreTheme } from "@/hooks/use-store-theme";
-import { storePageFor } from "@/lib/store-page";
-import { useT } from "@/lib/i18n";
-import { cn } from "@/lib/utils";
-import { dashboard, home, login } from "@/routes";
-import { show as cartShow } from "@/routes/cart";
-import { search } from "@/routes/storefront";
-import type { StorefrontShared } from "@/types";
+} from '@/components/storefront/footer-menus';
+import '@/components/storefront/electronics.css';
+import '@/components/storefront/atelier.css';
+import { SearchToggle } from '@/components/storefront/search-toggle';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useFlashToast } from '@/hooks/use-flash-toast';
+import { PlaceSlot } from '@/components/extensions/place-slot';
+import { CustomerNotificationBell } from '@/components/storefront/customer-notification-bell';
+import { SiteHeader } from '@/components/storefront/site-header';
+import { StoreMenuTree } from '@/components/storefront/store-menu';
+import { StoreNavigationShell } from '@/components/storefront/sidebar-navigation';
+import { useStoreTheme } from '@/hooks/use-store-theme';
+import { storePageFor } from '@/lib/store-page';
+import { useT } from '@/lib/i18n';
+import { cn } from '@/lib/utils';
+import { dashboard, home, login } from '@/routes';
+import { show as cartShow } from '@/routes/cart';
+import { search } from '@/routes/storefront';
+import type { StorefrontShared } from '@/types';
 
 /**
- * Storefront chrome, rendered from the active theme's validated design
- * values and layout variants (ADR-031). Themes choose; the core renders.
- * Cart, checkout and account behaviour stay in the core.
+ * Resolves package-owned layout and CSS, with the platform chrome as fallback.
+ * Commerce actions and validation remain on the server.
  */
 export default function StorefrontLayout({
     children,
 }: {
     children: ReactNode;
 }) {
+    const { theme } = useStoreTheme();
+    const CustomLayout = themeLayout(theme ?? undefined);
+    useFlashToast();
+
+    return (
+        <>
+            <ThemeStyles theme={theme ?? undefined} />
+            {CustomLayout ? (
+                <Suspense
+                    fallback={
+                        <DefaultStorefrontLayout>
+                            {children}
+                        </DefaultStorefrontLayout>
+                    }
+                >
+                    <CustomLayout DefaultLayout={DefaultStorefrontLayout}>
+                        {children}
+                    </CustomLayout>
+                </Suspense>
+            ) : (
+                <DefaultStorefrontLayout>{children}</DefaultStorefrontLayout>
+            )}
+        </>
+    );
+}
+
+function DefaultStorefrontLayout({ children }: { children: ReactNode }) {
     const page = usePage();
     const { storefront } = page.props;
     const { header, footer, theme } = useStoreTheme();
     const customPage = [
-        "storefront/home",
-        "storefront/listing",
-        "storefront/product",
-        "storefront/cart",
+        'storefront/home',
+        'storefront/listing',
+        'storefront/product',
+        'storefront/cart',
     ].includes(page.component);
     const t = useT();
-    const CustomHeader = theme?.frontend?.header
-        ? themeHeader(theme.name)
-        : undefined;
-    const CustomFooter = theme?.frontend?.footer
-        ? themeFooter(theme.name)
-        : undefined;
-    useFlashToast();
+    const sections = storefront?.themeSections ?? null;
+    const CustomHeader = sections
+        ? HeaderGroup
+        : theme?.frontend?.header
+          ? themeHeader(theme.name)
+          : undefined;
+    const CustomFooter = sections
+        ? FooterGroup
+        : theme?.frontend?.footer
+          ? themeFooter(theme.name)
+          : undefined;
     // Customizer styles can differ per page (Homepage, Catalog, Product, Cart).
     const storePage = storePageFor(usePage().component);
     // Header and Catalog page settings, for every theme's CSS.
@@ -82,12 +120,12 @@ export default function StorefrontLayout({
             data-page={storePage}
             {...pageSettingAttributes(pageSettings)}
             data-component={page.component}
-            dir={storefront?.direction ?? "ltr"}
+            dir={storefront?.direction ?? 'ltr'}
             lang={storefront?.locale}
             className={cn(
-                "storefront flex min-h-screen flex-col bg-background text-foreground",
-                header === "electronics" && "electronics-store",
-                header === "atelier" && "ecom-atelier",
+                'storefront flex min-h-screen flex-col bg-background text-foreground',
+                header === 'electronics' && 'electronics-store',
+                header === 'atelier' && 'ecom-atelier',
             )}
         >
             {storefront?.seoDescription && (
@@ -113,7 +151,7 @@ export default function StorefrontLayout({
                 href="#main"
                 className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded focus:bg-background focus:px-3 focus:py-2"
             >
-                {t("Skip to content")}
+                {t('Skip to content')}
             </a>
             {storefront?.themePreview && (
                 <PreviewBanner preview={storefront.themePreview} />
@@ -121,9 +159,9 @@ export default function StorefrontLayout({
             {!CustomHeader && theme?.announcement && (
                 <div
                     className={
-                        header === "atelier"
-                            ? "ecom-announcement"
-                            : "bg-primary px-4 py-2 text-center text-sm text-primary-foreground"
+                        header === 'atelier'
+                            ? 'ecom-announcement'
+                            : 'bg-primary px-4 py-2 text-center text-sm text-primary-foreground'
                     }
                 >
                     {theme.announcement}
@@ -146,7 +184,7 @@ export default function StorefrontLayout({
                                     const params = new URLSearchParams(
                                         window.location.search,
                                     );
-                                    params.set("currency", e.target.value);
+                                    params.set('currency', e.target.value);
                                     router.visit(
                                         `${window.location.pathname}?${params.toString()}`,
                                         { preserveScroll: true },
@@ -164,40 +202,45 @@ export default function StorefrontLayout({
                 </div>
             )}
             <SiteHeader>
-            {CustomHeader ? (
-                <Suspense
-                    fallback={
-                        <div className="h-32" aria-label="Loading header" />
-                    }
-                >
-                    <CustomHeader />
-                </Suspense>
-            ) : header === "electronics" ? (
-                <ElectronicsHeader />
-            ) : header === "atelier" ? (
-                <AtelierHeader />
-            ) : header === "centered" ? (
-                <CenteredHeader />
-            ) : header === "minimal" ? (
-                <MinimalHeader />
-            ) : (
-                <ClassicHeader />
-            )}
-            </SiteHeader>
-            <main
-                id="main"
-                className={cn(
-                    "flex-1",
-                    (!CustomHeader || !customPage) &&
-                        header !== "atelier" &&
-                        "mx-auto w-full max-w-[var(--store-container,72rem)] px-4 py-8",
+                {CustomHeader ? (
+                    <Suspense
+                        fallback={
+                            <div className="h-32" aria-label="Loading header" />
+                        }
+                    >
+                        <CustomHeader />
+                    </Suspense>
+                ) : header === 'electronics' ? (
+                    <ElectronicsHeader />
+                ) : header === 'atelier' ? (
+                    <AtelierHeader />
+                ) : header === 'centered' ? (
+                    <CenteredHeader />
+                ) : header === 'minimal' ? (
+                    <MinimalHeader />
+                ) : (
+                    <ClassicHeader />
                 )}
-            >
-                {children}
-            </main>
-            {header === "electronics" && <RecentlyViewed />}
+            </SiteHeader>
+            <StoreNavigationShell>
+                <main
+                    id="main"
+                    className={cn(
+                        'flex-1',
+                        (!CustomHeader || !customPage) &&
+                            header !== 'atelier' &&
+                            'mx-auto w-full max-w-[var(--store-container,72rem)] px-4 py-8',
+                    )}
+                >
+                    {children}
+                </main>
+            </StoreNavigationShell>
+            {header === 'electronics' &&
+                !page.component.startsWith('storefront/auth/') && (
+                    <RecentlyViewed />
+                )}
             {!CustomFooter &&
-                footer === "atelier" &&
+                footer === 'atelier' &&
                 theme?.settings?.show_trust_band !== false && (
                     <AtelierTrustBand />
                 )}
@@ -205,30 +248,48 @@ export default function StorefrontLayout({
                 <Suspense fallback={null}>
                     <CustomFooter />
                 </Suspense>
-            ) : footer === "electronics" ? (
+            ) : footer === 'electronics' ? (
                 <ElectronicsFooter />
-            ) : footer === "atelier" ? (
+            ) : footer === 'atelier' ? (
                 <AtelierFooter />
-            ) : footer === "columns" ? (
+            ) : footer === 'columns' ? (
                 <ColumnsFooter />
             ) : (
                 <SimpleFooter />
             )}
             {/* Global module overlays (marketing popups, cookie bars). */}
             <ExtensionSlot items={storefront?.overlays} />
+            <ThemeEditorBridge />
         </div>
     );
 }
 
+/** Header and footer section groups of a theme built from sections. */
+function HeaderGroup() {
+    const sections = useThemeSections();
+
+    return sections ? (
+        <ThemeSectionList sections={sections.header} area="header" />
+    ) : null;
+}
+
+function FooterGroup() {
+    const sections = useThemeSections();
+
+    return sections ? (
+        <ThemeSectionList sections={sections.footer} area="footer" />
+    ) : null;
+}
+
 function Brand({ className }: { className?: string }) {
     const { storefront } = usePage().props;
-    const name = storefront?.storeName ?? "";
+    const name = storefront?.storeName ?? '';
     const logo = storefront?.theme.logo;
 
     return (
         <Link
             href={home()}
-            className={cn("text-lg font-semibold", className)}
+            className={cn('text-lg font-semibold', className)}
             aria-label={logo ? name : undefined}
         >
             {logo ? (
@@ -246,20 +307,20 @@ function SearchForm({ className }: { className?: string }) {
     return (
         <Form
             {...search.form()}
-            className={cn("flex items-center gap-2", className)}
+            className={cn('flex items-center gap-2', className)}
             role="search"
         >
             <Input
                 type="search"
                 name="q"
-                placeholder={t("Search products")}
-                aria-label={t("Search products")}
+                placeholder={t('Search products')}
+                aria-label={t('Search products')}
             />
             <Button
                 type="submit"
                 variant="outline"
                 size="icon"
-                aria-label={t("Search")}
+                aria-label={t('Search')}
             >
                 <Search />
             </Button>
@@ -278,7 +339,7 @@ function LanguageSwitcher() {
 
     const change = (code: string) => {
         const params = new URLSearchParams(window.location.search);
-        params.set("lang", code);
+        params.set('lang', code);
         router.visit(`${window.location.pathname}?${params.toString()}`, {
             preserveScroll: true,
         });
@@ -287,7 +348,7 @@ function LanguageSwitcher() {
     return (
         <label className="flex items-center gap-1 text-sm">
             <Globe className="size-4" aria-hidden />
-            <span className="sr-only">{t("Language")}</span>
+            <span className="sr-only">{t('Language')}</span>
             <select
                 value={storefront.locale}
                 onChange={(e) => change(e.target.value)}
@@ -313,30 +374,33 @@ function AccountLinks() {
     return (
         <nav className="flex items-center gap-1" aria-label="Account">
             <LanguageSwitcher />
-            <PlaceSlot place="header.actions" className="flex items-center gap-1" />
+            <PlaceSlot
+                place="header.actions"
+                className="flex items-center gap-1"
+            />
             <CustomerNotificationBell />
             <SearchIconLink />
             <Button
                 variant="ghost"
                 size="sm"
                 asChild
-                className={showAccount ? undefined : "hidden"}
+                className={showAccount ? undefined : 'hidden'}
             >
                 <Link href={auth.user ? dashboard() : login()}>
                     <User />
                     <span className="hidden sm:inline">
                         {auth.user
                             ? auth.isStaff
-                                ? t("Admin")
-                                : t("Account")
-                            : t("Log in")}
+                                ? t('Admin')
+                                : t('Account')
+                            : t('Log in')}
                     </span>
                 </Link>
             </Button>
             <Button variant="outline" size="sm" asChild>
                 <Link
                     href={cartShow()}
-                    aria-label={t("Cart, :count items", { count: cartCount })}
+                    aria-label={t('Cart, :count items', { count: cartCount })}
                 >
                     <CartIcon />
                     {showCount && (
@@ -357,26 +421,14 @@ function CategoryNav({ centered = false }: { centered?: boolean }) {
     }
 
     return (
-        <nav aria-label={t("Categories")} className="border-t">
-            <ul
+        <nav aria-label={t('Categories')} className="border-t">
+            <StoreMenuTree
+                menu={storefront?.navigation?.header}
                 className={cn(
-                    "mx-auto flex max-w-[var(--store-container,72rem)] gap-5 overflow-x-auto px-4 py-2 text-sm",
-                    centered && "justify-center",
+                    'mx-auto max-w-[var(--store-container,72rem)] gap-5 px-4 text-sm',
+                    centered && 'justify-center',
                 )}
-            >
-                {(storefront.navigation?.header.links ?? []).map(
-                    (link, index) => (
-                        <li key={index}>
-                            <Link
-                                href={link.url}
-                                className="whitespace-nowrap text-muted-foreground hover:text-foreground"
-                            >
-                                {link.label}
-                            </Link>
-                        </li>
-                    ),
-                )}
-            </ul>
+            />
         </nav>
     );
 }
@@ -418,26 +470,16 @@ function MinimalHeader() {
             <div className="mx-auto flex max-w-[var(--store-container,72rem)] items-center gap-6 px-4 py-3">
                 <Brand />
                 <nav
-                    aria-label={t("Categories")}
+                    aria-label={t('Categories')}
                     className="mr-auto hidden gap-5 text-sm md:flex"
                 >
-                    {(storefront?.navigation?.header.links ?? []).map(
-                        (link, index) => (
-                            <Link
-                                key={index}
-                                href={link.url}
-                                className="text-muted-foreground hover:text-foreground"
-                            >
-                                {link.label}
-                            </Link>
-                        ),
-                    )}
+                    <StoreMenuTree menu={storefront?.navigation?.header} />
                 </nav>
                 <SearchToggle
                     className={buttonVariants({
-                        variant: "ghost",
-                        size: "icon",
-                        className: "ml-auto md:ml-0",
+                        variant: 'ghost',
+                        size: 'icon',
+                        className: 'ml-auto md:ml-0',
                     })}
                 >
                     <Search />
@@ -461,8 +503,8 @@ function SimpleFooter() {
                 </p>
             )}
             <p>
-                © {new Date().getFullYear()} {storefront?.storeName}.{" "}
-                {t("Powered by EcoModular, open-source commerce (MIT).")}
+                © {new Date().getFullYear()} {storefront?.storeName}.{' '}
+                {t('Powered by Modrix Commerce, open-source commerce (MIT).')}
             </p>
         </footer>
     );
@@ -483,7 +525,7 @@ function ColumnsFooter() {
 function PreviewBanner({
     preview,
 }: {
-    preview: NonNullable<StorefrontShared["themePreview"]>;
+    preview: NonNullable<StorefrontShared['themePreview']>;
 }) {
     return (
         <div

@@ -23,6 +23,10 @@ final class ShippingRates
      */
     public function quote(ShippingRequest $request): array
     {
+        if (! app(DeliveryArea::class)->allows($request->countryCode, $request->region, $request->city)) {
+            return [];
+        }
+
         $rates = [];
 
         foreach ($this->providers as $provider) {

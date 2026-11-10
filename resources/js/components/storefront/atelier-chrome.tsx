@@ -1,3 +1,4 @@
+import { StoreMenuTree } from '@/components/storefront/store-menu';
 import { usePage } from '@inertiajs/react';
 import { PlaceSlot } from '@/components/extensions/place-slot';
 import {
@@ -24,9 +25,7 @@ export function AtelierHeader() {
     const showAccount = useShowAccountLink();
     const showCount = useShowCartCount();
     const { theme } = useStoreTheme();
-    const menuLabels = (storefront?.navigation?.header.links ?? []).map(
-        (item) => ({ label: item.label, link: item.url }),
-    );
+    const menuLabels = storefront?.navigation?.header.links ?? [];
 
     return (
         <header className="ecom-header">
@@ -50,7 +49,10 @@ export function AtelierHeader() {
                     <Link href={search()} aria-label="Search">
                         <Search size={17} />
                     </Link>
-                    <PlaceSlot place="header.actions" className="flex items-center gap-1" />
+                    <PlaceSlot
+                        place="header.actions"
+                        className="flex items-center gap-1"
+                    />
                     <CustomerNotificationBell />
                     <Link
                         href={auth.user ? '/account' : login()}
@@ -71,11 +73,7 @@ export function AtelierHeader() {
             </div>
             {menuLabels.length > 0 && (
                 <nav className="ecom-nav" aria-label="Main navigation">
-                    {menuLabels.map((item) => (
-                        <Link key={item.label} href={item.link || '/search'}>
-                            {item.label}
-                        </Link>
-                    ))}
+                    <StoreMenuTree menu={storefront?.navigation?.header} />
                 </nav>
             )}
         </header>
@@ -107,13 +105,7 @@ export function AtelierFooter() {
     const { storefront } = usePage().props;
     const { theme } = useStoreTheme();
     const settings = theme?.settings ?? {};
-    const columns = (storefront?.navigation?.footer ?? []).map((menu) => ({
-        title: menu.title,
-        links: menu.links.map((item) => ({
-            label: item.label,
-            link: item.url,
-        })),
-    }));
+    const columns = storefront?.navigation?.footer ?? [];
     const heading = String(settings.footer_heading ?? 'Stories worth keeping.');
     const note = String(settings.footer_note ?? 'thought made everyday');
 
@@ -136,11 +128,12 @@ export function AtelierFooter() {
                             column.title && (
                                 <div key={column.title}>
                                     <h3>{column.title}</h3>
-                                    {column.links.map((link) => (
-                                        <Link key={link.label} href={link.link}>
-                                            {link.label}
-                                        </Link>
-                                    ))}
+                                    <StoreMenuTree
+                                        menu={column}
+                                        orientation={
+                                            column.layout ?? 'vertical'
+                                        }
+                                    />
                                 </div>
                             ),
                     )}

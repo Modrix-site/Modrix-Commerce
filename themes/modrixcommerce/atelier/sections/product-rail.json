@@ -1,0 +1,83 @@
+{
+    "name": "Considered essentials rail",
+    "settings": [
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Section heading",
+            "default": "Considered essentials"
+        },
+        {
+            "type": "text",
+            "id": "link_label",
+            "label": "View all label",
+            "default": "Explore all"
+        },
+        {
+            "type": "url",
+            "id": "link_url",
+            "label": "View all destination",
+            "default": "/search"
+        },
+        {
+            "type": "select",
+            "id": "source",
+            "label": "Product source",
+            "default": "latest",
+            "options": [
+                {
+                    "value": "latest",
+                    "label": "Latest arrivals"
+                },
+                {
+                    "value": "featured",
+                    "label": "Featured products"
+                },
+                {
+                    "value": "category",
+                    "label": "Specific category"
+                }
+            ]
+        },
+        {
+            "type": "collection",
+            "id": "category",
+            "label": "Category"
+        },
+        {
+            "type": "range",
+            "id": "limit",
+            "label": "Number of products",
+            "default": 8,
+            "min": 2,
+            "max": 16,
+            "step": 1
+        },
+        {
+            "type": "select",
+            "id": "columns",
+            "label": "Desktop columns",
+            "default": "4",
+            "options": [
+                {
+                    "value": "3",
+                    "label": "3 columns"
+                },
+                {
+                    "value": "4",
+                    "label": "4 columns"
+                },
+                {
+                    "value": "5",
+                    "label": "5 columns"
+                }
+            ]
+        },
+        {
+            "type": "color",
+            "id": "background",
+            "label": "Background color",
+            "default": "#f7f6f3"
+        }
+    ]
+}

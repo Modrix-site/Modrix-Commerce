@@ -1,0 +1,174 @@
+{
+    "categories": [
+        {
+            "name": "Travel",
+            "slug": "sable-travel"
+        },
+        {
+            "name": "Everyday",
+            "slug": "sable-everyday"
+        },
+        {
+            "name": "Small essentials",
+            "slug": "sable-essentials"
+        }
+    ],
+    "products": [
+        {
+            "name": "Contour Carry-on",
+            "slug": "sable-demo-1",
+            "sku": "SABLE-DEMO-1",
+            "price": "890.00",
+            "stock": 10,
+            "short_description": "A considered companion for life in motion.",
+            "description": "Original Sable Atelier demonstration product. Replace specifications and verify price and inventory before selling.",
+            "categories": [
+                "sable-travel"
+            ],
+            "image": "assets/product-1.png"
+        },
+        {
+            "name": "Field Weekender",
+            "slug": "sable-demo-2",
+            "sku": "SABLE-DEMO-2",
+            "price": "620.00",
+            "stock": 10,
+            "short_description": "A considered companion for life in motion.",
+            "description": "Original Sable Atelier demonstration product. Replace specifications and verify price and inventory before selling.",
+            "categories": [
+                "sable-travel"
+            ],
+            "image": "assets/product-2.png"
+        },
+        {
+            "name": "Loom Carryall",
+            "slug": "sable-demo-3",
+            "sku": "SABLE-DEMO-3",
+            "price": "420.00",
+            "stock": 10,
+            "short_description": "A considered companion for life in motion.",
+            "description": "Original Sable Atelier demonstration product. Replace specifications and verify price and inventory before selling.",
+            "categories": [
+                "sable-everyday"
+            ],
+            "image": "assets/product-3.png"
+        },
+        {
+            "name": "Fold Travel Pouch",
+            "slug": "sable-demo-4",
+            "sku": "SABLE-DEMO-4",
+            "price": "160.00",
+            "stock": 10,
+            "short_description": "A considered companion for life in motion.",
+            "description": "Original Sable Atelier demonstration product. Replace specifications and verify price and inventory before selling.",
+            "categories": [
+                "sable-essentials"
+            ],
+            "image": "assets/product-4.png"
+        },
+        {
+            "name": "Shore Tote",
+            "slug": "sable-demo-5",
+            "sku": "SABLE-DEMO-5",
+            "price": "450.00",
+            "stock": 10,
+            "short_description": "A considered companion for life in motion.",
+            "description": "Original Sable Atelier demonstration product. Replace specifications and verify price and inventory before selling.",
+            "categories": [
+                "sable-everyday"
+            ],
+            "image": "assets/product-5.png"
+        },
+        {
+            "name": "Arc Crossbody",
+            "slug": "sable-demo-6",
+            "sku": "SABLE-DEMO-6",
+            "price": "390.00",
+            "stock": 10,
+            "short_description": "A considered companion for life in motion.",
+            "description": "Original Sable Atelier demonstration product. Replace specifications and verify price and inventory before selling.",
+            "categories": [
+                "sable-everyday"
+            ],
+            "image": "assets/product-6.png"
+        },
+        {
+            "name": "Forma Bucket",
+            "slug": "sable-demo-7",
+            "sku": "SABLE-DEMO-7",
+            "price": "560.00",
+            "stock": 10,
+            "short_description": "A considered companion for life in motion.",
+            "description": "Original Sable Atelier demonstration product. Replace specifications and verify price and inventory before selling.",
+            "categories": [
+                "sable-everyday"
+            ],
+            "image": "assets/product-7.png"
+        },
+        {
+            "name": "Roam Backpack",
+            "slug": "sable-demo-8",
+            "sku": "SABLE-DEMO-8",
+            "price": "520.00",
+            "stock": 10,
+            "short_description": "A considered companion for life in motion.",
+            "description": "Original Sable Atelier demonstration product. Replace specifications and verify price and inventory before selling.",
+            "categories": [
+                "sable-travel"
+            ],
+            "image": "assets/product-8.png"
+        },
+        {
+            "name": "Contour Cabin Case",
+            "slug": "sable-demo-9",
+            "sku": "SABLE-DEMO-9",
+            "price": "890.00",
+            "stock": 10,
+            "short_description": "A considered companion for life in motion.",
+            "description": "Original Sable Atelier demonstration product. Replace specifications and verify price and inventory before selling.",
+            "categories": [
+                "sable-travel"
+            ],
+            "image": "assets/product-9.png"
+        },
+        {
+            "name": "Petal Organizer",
+            "slug": "sable-demo-10",
+            "sku": "SABLE-DEMO-10",
+            "price": "180.00",
+            "stock": 10,
+            "short_description": "A considered companion for life in motion.",
+            "description": "Original Sable Atelier demonstration product. Replace specifications and verify price and inventory before selling.",
+            "categories": [
+                "sable-essentials"
+            ],
+            "image": "assets/product-10.png"
+        },
+        {
+            "name": "Crescent Shoulder Bag",
+            "slug": "sable-demo-11",
+            "sku": "SABLE-DEMO-11",
+            "price": "590.00",
+            "stock": 10,
+            "short_description": "A considered companion for life in motion.",
+            "description": "Original Sable Atelier demonstration product. Replace specifications and verify price and inventory before selling.",
+            "categories": [
+                "sable-everyday"
+            ],
+            "image": "assets/product-11.png"
+        },
+        {
+            "name": "Studio Vanity Case",
+            "slug": "sable-demo-12",
+            "sku": "SABLE-DEMO-12",
+            "price": "280.00",
+            "stock": 10,
+            "short_description": "A considered companion for life in motion.",
+            "description": "Original Sable Atelier demonstration product. Replace specifications and verify price and inventory before selling.",
+            "categories": [
+                "sable-essentials"
+            ],
+            "image": "assets/product-12.png"
+        }
+    ]
+}

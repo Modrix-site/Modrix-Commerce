@@ -32,11 +32,11 @@ class VerifiedReviewsTest extends TestCase
         $this->installPlatform();
         config(['inertia.ssr.enabled' => false]);
         $this->setUpModules();
-        File::copyDirectory(base_path('modules/ecomodular/product-reviews'), $this->modulesPath.'/ecomodular/product-reviews');
+        File::copyDirectory(base_path('modules/modrixcommerce/product-reviews'), $this->modulesPath.'/modrixcommerce/product-reviews');
         app(ModuleRepository::class)->sync();
-        app(ModuleManager::class)->install('ecomodular/product-reviews');
-        app(ModuleManager::class)->enable('ecomodular/product-reviews', true);
-        app(ModuleManager::class)->configure('ecomodular/product-reviews', ['auto_approve' => '1', 'min_length' => '5']);
+        app(ModuleManager::class)->install('modrixcommerce/product-reviews');
+        app(ModuleManager::class)->enable('modrixcommerce/product-reviews', true);
+        app(ModuleManager::class)->configure('modrixcommerce/product-reviews', ['auto_approve' => '1', 'min_length' => '5']);
         $this->enableCheckout();
         $this->variant = $this->sellable('10.00', 5);
     }
@@ -53,7 +53,7 @@ class VerifiedReviewsTest extends TestCase
 
     private function review(User $user, string $body = 'Works really well')
     {
-        return $this->actingAs($user)->post(route('ecomodular.product-reviews.store', $this->variant->product->slug), ['rating' => 5, 'body' => $body]);
+        return $this->actingAs($user)->post(route('modrixcommerce.product-reviews.store', $this->variant->product->slug), ['rating' => 5, 'body' => $body]);
     }
 
     public function test_customers_who_did_not_buy_cannot_review()
@@ -107,7 +107,7 @@ class VerifiedReviewsTest extends TestCase
 
     public function test_purchase_is_always_required_and_no_longer_a_setting()
     {
-        $manifest = app(ModuleRepository::class)->find('ecomodular/product-reviews')->manifest();
+        $manifest = app(ModuleRepository::class)->find('modrixcommerce/product-reviews')->manifest();
 
         $this->assertNotContains('require_purchase', array_column($manifest->settings, 'key'));
     }

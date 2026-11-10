@@ -34,7 +34,7 @@ class VoltoraThemeTest extends TestCase
         $file = new UploadedFile(base_path('dist/ecomodular-voltora-1.0.0.zip'), 'voltora.zip', 'application/zip', null, true);
         $this->actingAs($this->userWithRole('administrator'))->post(route('admin.themes.packages.store'), ['package' => $file])->assertSessionHasNoErrors();
 
-        return Extension::where('name', 'ecomodular/voltora')->firstOrFail();
+        return Extension::where('name', 'modrixcommerce/voltora')->firstOrFail();
     }
 
     public function test_zip_installs_with_its_own_frontend_and_settings_without_activation(): void
@@ -42,8 +42,8 @@ class VoltoraThemeTest extends TestCase
         $theme = $this->upload();
         $this->assertSame(ModuleState::Discovered, $theme->state);
         $this->assertNull($theme->applied_manifest);
-        $this->assertFileExists($this->themesPath.'/ecomodular/voltora/settings.json');
-        $this->assertFileExists($this->themesPath.'/ecomodular/voltora/src/product.tsx');
+        $this->assertFileExists($this->themesPath.'/modrixcommerce/voltora/settings.json');
+        $this->assertFileExists($this->themesPath.'/modrixcommerce/voltora/src/product.tsx');
         $this->assertCount(120, $theme->manifest['customizer']['fields']);
         $this->assertSame('src/header.tsx', $theme->manifest['frontend']['header']);
         $this->assertSame('src/footer.tsx', $theme->manifest['frontend']['footer']);
@@ -65,7 +65,7 @@ class VoltoraThemeTest extends TestCase
         $variant = $this->sellable();
         foreach (['/', '/search', '/p/'.$variant->product->slug, '/cart'] as $url) {
             $this->get($url)->assertInertia(fn (Assert $page) => $page
-                ->where('storefront.theme.name', 'ecomodular/voltora')
+                ->where('storefront.theme.name', 'modrixcommerce/voltora')
                 ->where('storefront.theme.frontend.product', 'src/product.tsx')
                 ->where('storefront.theme.settings.hero_1_title', 'Everyday, yours')
                 ->where('storefront.theme.settings.catalog_columns', '4')

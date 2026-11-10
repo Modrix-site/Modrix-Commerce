@@ -1,0 +1,145 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/gdpr-cookie-consent",
+    "display_name": "GDPR Cookie Consent",
+    "description": "Shows a cookie-consent banner to visitors from the EU, EEA, the UK and Switzerland so the store can lawfully set marketing and analytics cookies. Records each consent decision (accept, reject or custom categories) for your accountability records.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "cookie",
+    "accent": "#0ea5e9",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\GdprCookieConsent\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\GdprCookieConsent\\GdprCookieConsentServiceProvider",
+    "permissions": [
+        {
+            "name": "privacy.manage",
+            "label": "Manage cookie consent and records",
+            "group": "Privacy"
+        }
+    ],
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "storefront.slots",
+        "database.migrations",
+        "settings",
+        "permissions"
+    ],
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages",
+        "slots": "resources/js/slots"
+    },
+    "settings": [
+        {
+            "key": "enabled",
+            "type": "boolean",
+            "label": "Show the consent banner",
+            "default": true
+        },
+        {
+            "key": "audience",
+            "type": "select",
+            "label": "Who sees the banner",
+            "help": "GDPR only: EU/EEA, UK and Switzerland. Everyone: all visitors, wherever they are.",
+            "default": "gdpr",
+            "options": [
+                { "value": "gdpr", "label": "GDPR countries only" },
+                { "value": "all", "label": "Everyone" }
+            ]
+        },
+        {
+            "key": "title",
+            "type": "string",
+            "label": "Headline",
+            "default": "We value your privacy"
+        },
+        {
+            "key": "body",
+            "type": "text",
+            "label": "Message",
+            "help": "Explain what cookies you set and why. Link to your privacy page from here.",
+            "default": "We use cookies to make the site work and, with your consent, to understand how it is used and to show relevant offers. You can accept all cookies or choose which categories to allow."
+        },
+        {
+            "key": "privacy_url",
+            "type": "string",
+            "label": "Privacy policy link",
+            "help": "Optional path such as /page/privacy. Leave empty to hide the link."
+        },
+        {
+            "key": "accept_label",
+            "type": "string",
+            "label": "Accept all button label",
+            "default": "Accept all"
+        },
+        {
+            "key": "reject_label",
+            "type": "string",
+            "label": "Reject non-essential label",
+            "default": "Reject"
+        },
+        {
+            "key": "customize_label",
+            "type": "string",
+            "label": "Customize button label",
+            "default": "Customize"
+        },
+        {
+            "key": "allow_customize",
+            "type": "boolean",
+            "label": "Offer category choices",
+            "help": "Show a second panel where visitors choose which cookie categories to allow.",
+            "default": true
+        },
+        {
+            "key": "essential_text",
+            "type": "string",
+            "label": "Essential cookies description",
+            "default": "Required for the store to work, such as your cart and sign-in. Always on."
+        },
+        {
+            "key": "analytics_text",
+            "type": "string",
+            "label": "Analytics cookies description",
+            "default": "Help us understand how visitors use the site so we can improve it."
+        },
+        {
+            "key": "marketing_text",
+            "type": "string",
+            "label": "Marketing cookies description",
+            "default": "Let us show relevant offers and measure our advertising."
+        },
+        {
+            "key": "consent_expiry_days",
+            "type": "integer",
+            "label": "Consent lasts (days)",
+            "help": "How long the choice is remembered before the banner asks again.",
+            "min": 1,
+            "max": 730,
+            "default": 365
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "gdpr-cookie-consent",
+            "title": "Cookie Consent",
+            "route": "index",
+            "icon": "cookie",
+            "group": "Privacy",
+            "permission": "privacy.manage",
+            "order": 400
+        }
+    ]
+}

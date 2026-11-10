@@ -8,6 +8,7 @@
 */
 
 use App\Http\Controllers\Admin\AuditLogController;
+use App\Http\Controllers\Admin\BackupSettingsController;
 use App\Http\Controllers\Admin\Catalog\AttributeController;
 use App\Http\Controllers\Admin\Catalog\BrandController;
 use App\Http\Controllers\Admin\Catalog\CategoryController;
@@ -16,8 +17,10 @@ use App\Http\Controllers\Admin\Catalog\ProductController;
 use App\Http\Controllers\Admin\Catalog\ProductCsvController;
 use App\Http\Controllers\Admin\Catalog\ProductFileController;
 use App\Http\Controllers\Admin\Catalog\ProductImageController;
+use App\Http\Controllers\Admin\Catalog\ProductVariantController;
 use App\Http\Controllers\Admin\Catalog\TranslationController;
 use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\CustomerCartController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DocumentSettingsController;
@@ -28,9 +31,9 @@ use App\Http\Controllers\Admin\ExtensionController;
 use App\Http\Controllers\Admin\GeneralSettingsController;
 use App\Http\Controllers\Admin\InterfaceTextController;
 use App\Http\Controllers\Admin\InventoryController;
+use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\LanguageSettingsController;
 use App\Http\Controllers\Admin\MarketplaceAdminController;
-use App\Http\Controllers\Admin\MarketplaceClientController;
 use App\Http\Controllers\Admin\MarketplaceSellerController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\NavigationController;
@@ -51,6 +54,8 @@ use App\Http\Controllers\Admin\CoreUpdateController;
 use App\Http\Controllers\Admin\SystemStatusController;
 use App\Http\Controllers\Admin\TaxController;
 use App\Http\Controllers\Admin\ThemeController;
+use App\Http\Controllers\Admin\ThemeEditorController;
+use App\Http\Controllers\Admin\ThemeTextTranslationController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Marketplace\MarketplaceReviewController;
 use Illuminate\Support\Facades\Route;
@@ -90,6 +95,19 @@ Route::middleware(['can:roles.manage', 'password.confirm'])->group(function () {
     Route::get('roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit');
     Route::put('roles/{role}', [RoleController::class, 'update'])->name('roles.update');
     Route::delete('roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+});
+
+// Settings → Backups. Downloading, deleting and restoring need a recent password confirmation.
+Route::middleware('can:backups.manage')->group(function () {
+    Route::get('settings/backups', [BackupSettingsController::class, 'index'])->middleware('password.confirm')->name('settings.backups.index');
+    Route::get('settings/backups/status', [BackupSettingsController::class, 'status'])->name('settings.backups.status');
+    Route::put('settings/backups/schedule', [BackupSettingsController::class, 'schedule'])->name('settings.backups.schedule');
+    Route::post('settings/backups', [BackupSettingsController::class, 'store'])->middleware('throttle:6,1')->name('settings.backups.store');
+    Route::middleware('password.confirm')->group(function () {
+        Route::get('settings/backups/{name}/download', [BackupSettingsController::class, 'download'])->name('settings.backups.download');
+        Route::delete('settings/backups/{name}', [BackupSettingsController::class, 'destroy'])->name('settings.backups.destroy');
+        Route::post('settings/backups/{name}/restore', [BackupSettingsController::class, 'restore'])->name('settings.backups.restore');
+    });
 });
 
 Route::middleware('can:settings.manage')->group(function () {
@@ -145,6 +163,9 @@ Route::middleware('can:products.update')->group(function () {
     Route::get('products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
     Route::get('products/related-search', [ProductController::class, 'relatedSearch'])->name('products.related-search');
     Route::put('products/{product}', [ProductController::class, 'update'])->name('products.update');
+    // One variant, Shopify-style (price, inventory per location, shipping).
+    Route::get('products/{product}/variants/{variant}', [ProductVariantController::class, 'show'])->name('products.variants.show');
+    Route::put('products/{product}/variants/{variant}', [ProductVariantController::class, 'update'])->name('products.variants.update');
     Route::post('products/{product}/images', [ProductImageController::class, 'store'])->name('products.images.store');
     Route::put('products/{product}/images/order', [ProductImageController::class, 'reorder'])->name('products.images.reorder');
     Route::put('products/{product}/images/{image}', [ProductImageController::class, 'update'])->name('products.images.update')->scopeBindings();
@@ -191,6 +212,9 @@ Route::post('inventory/{variant}/adjust', [InventoryController::class, 'adjust']
 // Orders
 Route::middleware('can:orders.view')->group(function () {
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+    // Orders -> Invoices and Customer carts (lists only).
+    Route::get('invoices', [InvoiceController::class, 'index'])->name('invoices.index');
+    Route::get('carts', [CustomerCartController::class, 'index'])->name('carts.index');
     Route::get('orders/export', [OrderBulkController::class, 'export'])->middleware('throttle:10,1')->name('orders.export');
     Route::get('orders/bulk/documents', [OrderBulkController::class, 'documents'])->middleware('throttle:10,1')->name('orders.bulk.documents');
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
@@ -273,6 +297,7 @@ Route::get('reports', [ReportController::class, 'index'])->middleware('can:repor
 Route::middleware('can:themes.manage')->group(function () {
     Route::resource('pages', PageController::class)->except('show');
     Route::post('pages/{page}/restore', [PageController::class, 'restore'])->whereNumber('page')->name('pages.restore');
+    Route::post('pages/{page}/duplicate', [PageController::class, 'duplicate'])->whereNumber('page')->name('pages.duplicate');
     Route::get('navigation', [NavigationController::class, 'index'])->name('navigation.index');
     Route::put('navigation', [NavigationController::class, 'update'])->name('navigation.update');
     Route::get('themes', [ThemeController::class, 'index'])->name('themes.index');
@@ -280,6 +305,10 @@ Route::middleware('can:themes.manage')->group(function () {
     Route::post('themes/preview/exit', [ThemeController::class, 'exitPreview'])->name('themes.preview.exit');
     Route::post('themes/uploads', [ThemeController::class, 'upload'])->middleware('throttle:30,1')->name('themes.uploads.store');
     Route::get('themes/{theme}/customize', [ThemeController::class, 'customize'])->name('themes.customize');
+    // Theme editor for themes built from sections (Shopify-style).
+    Route::get('themes/{theme}/editor', [ThemeEditorController::class, 'show'])->name('themes.editor');
+    Route::put('themes/{theme}/editor/draft', [ThemeEditorController::class, 'draft'])->middleware('throttle:240,1')->name('themes.editor.draft');
+    Route::put('themes/{theme}/editor', [ThemeEditorController::class, 'save'])->middleware('throttle:60,1')->name('themes.editor.save');
     Route::post('themes/{theme}/activate', [ThemeController::class, 'activate'])->name('themes.activate');
     Route::post('themes/{theme}/enable', [ThemeController::class, 'enable'])->name('themes.enable');
     Route::post('themes/{theme}/disable', [ThemeController::class, 'disable'])->name('themes.disable');
@@ -287,6 +316,7 @@ Route::middleware('can:themes.manage')->group(function () {
     Route::post('themes/{theme}/preview', [ThemeController::class, 'preview'])->name('themes.preview');
     Route::post('themes/{theme}/update', [ThemeController::class, 'update'])->name('themes.update');
     Route::put('themes/{theme}/design', [ThemeController::class, 'design'])->name('themes.design');
+    Route::post('themes/{theme}/text-translations', [ThemeTextTranslationController::class, 'handle'])->middleware('throttle:30,1')->name('themes.text-translations');
     Route::put('themes/{theme}/sections', [ThemeController::class, 'sections'])->name('themes.sections');
     // Extension blocks and extension settings shown in the customizer tabs.
     Route::put('themes/blocks', [ExtensionBlocksController::class, 'update'])->name('themes.blocks.update');
@@ -298,19 +328,13 @@ Route::middleware('can:themes.manage')->group(function () {
     Route::post('themes/{theme}/demo', [ThemeController::class, 'demo'])->middleware('throttle:5,1')->name('themes.demo');
 });
 
-// Marketplace client (every store): licenses, installs and updates from the official marketplace.
-Route::middleware('can:extensions.view')->group(function () {
-    Route::get('extensions/marketplace', [MarketplaceClientController::class, 'index'])->name('marketplace-client.index');
-});
-Route::middleware(['can:licenses.manage', 'throttle:20,1'])->group(function () {
-    Route::post('extensions/marketplace/licenses', [MarketplaceClientController::class, 'activate'])->name('marketplace-client.licenses.activate');
-    Route::post('extensions/marketplace/licenses/{license}/check', [MarketplaceClientController::class, 'check'])->name('marketplace-client.licenses.check');
-    Route::delete('extensions/marketplace/licenses/{license}', [MarketplaceClientController::class, 'deactivate'])->name('marketplace-client.licenses.deactivate');
-});
-Route::middleware(['can:extensions.install', 'password.confirm', 'throttle:10,1'])->group(function () {
-    Route::post('extensions/marketplace/licenses/{license}/install', [MarketplaceClientController::class, 'install'])->name('marketplace-client.install');
-    Route::post('extensions/marketplace/history/{entry}/rollback', [MarketplaceClientController::class, 'rollback'])->name('marketplace-client.rollback');
-});
+// Modrix Cloud (licenses, installs, updates) is provided by the Modrix Cloud Connector module.
+// The former address keeps working: to the module when it is enabled, else to Extensions.
+Route::get('extensions/marketplace', function () {
+    return Route::has('admin.modrixcommerce.cloud-connector.index')
+        ? redirect()->route('admin.modrixcommerce.cloud-connector.index')
+        : redirect()->route('admin.extensions.index');
+})->middleware('can:extensions.view')->name('marketplace-client.index');
 
 // Marketplace server administration (platform owner's marketplace instance only).
 Route::middleware(['marketplace.server', 'can:marketplace.manage'])->prefix('marketplace')->name('marketplace.')->group(function () {

@@ -1,0 +1,127 @@
+{
+    "mode": "Built-in image generation",
+    "sources": {
+        "hero": "exec-f02107ff-9e10-48e3-ba82-c66878e38081.png",
+        "vr": "exec-2370112d-a6f5-4f09-9129-a0b85857b0c6.png",
+        "phone-coral": "exec-b7d95c0e-ca0e-4411-8f20-265f32f13185.png",
+        "speaker-teal": "exec-28d22fcd-cdcc-4e01-a117-8f4c563105fb.png",
+        "phone-red": "exec-954ac3df-d981-4b7a-99aa-6e1334bb973f.png",
+        "phone-silver": "exec-d52f4f4b-5902-432a-9cef-ba751c574c38.png",
+        "laptop": "exec-1430390d-d7ad-4c09-b1db-1ef55375bb2d.png",
+        "drone": "exec-dc51cc28-ce57-40d8-b85e-8794770a8911.png",
+        "phone-mint": "exec-38329082-a1d9-46ca-91de-8b8a8936ef0f.png",
+        "tablet": "exec-6e6f15f1-5db4-49f9-bcc1-3fbd5e6d1ce5.png",
+        "speaker-retro": "exec-d76eb783-bce0-4f16-bd69-e217efaebc72.png",
+        "headphones": "exec-1e193cdb-2037-42bf-a589-8893093eda5d.png",
+        "phone-graphite": "exec-0fe89397-8c41-405b-a5b6-f5ec5c820de1.png",
+        "mini-pc": "exec-9913b8ac-1c9d-45fa-ae14-96b2a11ed2e9.png",
+        "speaker-round": "exec-8dd5c960-5358-42dc-aa0d-016a162db580.png",
+        "speaker-waterproof": "exec-a5076035-8cab-4792-a374-5b9b0e288d0c.png",
+        "drone-folding": "exec-27ec5f28-da54-455a-b5ce-015bd5b4f4bb.png",
+        "controller": "exec-855940c5-b930-4899-935a-c5a3af7eb5a6.png",
+        "keyboard": "exec-12259753-6e59-436a-8041-951cfed35d10.png",
+        "watch": "exec-715c0459-999a-4a9c-83d4-c3c2b1c382bc.png",
+        "charging-pad": "exec-88fa2733-b921-49ae-8cab-29a48a78d4a7.png",
+        "memory-card": "exec-29d4483e-d0cb-4989-8d7b-e3092bbe03ec.png",
+        "phone-mount": "exec-029e995d-eb40-4500-96db-0f824689d0c8.png",
+        "phone-case": "exec-6f25dabc-5adf-4db9-bdaf-b110d239a9e2.png",
+        "vr-black": "exec-68bb26b1-e24c-4d1d-a014-b811df74cb89.png",
+        "vr-side": "exec-ac6a69f2-09be-423d-bb20-15615fc3b452.png",
+        "vr-back": "exec-e0b343d3-5868-4bfe-80f2-54b91f069b59.png"
+    },
+    "prompts": [
+        {
+            "key": "phone-red",
+            "prompt": "Square photorealistic studio ecommerce product photograph of two unbranded red smartphones, one showing a satin red rear panel with two tiny dark cameras and the other showing a colorful abstract gradient screen, both upright in a neatly overlapping arrangement. Pure white seamless background with a subtle soft contact shadow, whole product centered and fully visible, 15 percent breathing room on all sides. Crisp material details and bright neutral lighting. No logos, branding, readable text, people, watermark or packaging."
+        },
+        {
+            "key": "phone-silver",
+            "prompt": "Square photorealistic studio ecommerce product photograph of one slim silver unbranded smartphone upright at a subtle angle, glossy abstract blue and lavender gradient screen with no interface or text. Pure white seamless background with a subtle soft contact shadow, whole product centered and fully visible, 15 percent breathing room on all sides. Crisp material details and bright neutral lighting. No logos, branding, readable text, people, watermark or packaging."
+        },
+        {
+            "key": "laptop",
+            "prompt": "Square photorealistic studio ecommerce product photograph of one slim brushed silver unbranded 14 inch laptop open three quarters, dark keyboard, large trackpad, screen showing an abstract blue and warm sunset gradient without text or interface. Pure white seamless background with a subtle soft contact shadow, whole product centered and fully visible, 15 percent breathing room on all sides. Crisp material details and bright neutral lighting. No logos, branding, readable text, people, watermark or packaging."
+        },
+        {
+            "key": "drone",
+            "prompt": "Square photorealistic studio ecommerce product photograph of one unbranded white compact quadcopter drone with four arms, four propellers and a small camera gimbal, standing on a white surface, three quarter angle. Pure white seamless background with a subtle soft contact shadow, whole product centered and fully visible, 15 percent breathing room on all sides. Crisp material details and bright neutral lighting. No logos, branding, readable text, people, watermark or packaging."
+        },
+        {
+            "key": "phone-mint",
+            "prompt": "Square photorealistic studio ecommerce product photograph of one unbranded mint green tall smartphone, upright, front display showing abstract turquoise and midnight blue gradients with no interface. Pure white seamless background with a subtle soft contact shadow, whole product centered and fully visible, 15 percent breathing room on all sides. Crisp material details and bright neutral lighting. No logos, branding, readable text, people, watermark or packaging."
+        },
+        {
+            "key": "tablet",
+            "prompt": "Square photorealistic studio ecommerce product photograph of one thin unbranded silver 11 inch tablet standing landscape on a dark gray folding stand, screen showing an abstract green and blue gradient with no text or interface. Pure white seamless background with a subtle soft contact shadow, whole product centered and fully visible, 15 percent breathing room on all sides. Crisp material details and bright neutral lighting. No logos, branding, readable text, people, watermark or packaging."
+        },
+        {
+            "key": "speaker-retro",
+            "prompt": "Square photorealistic studio ecommerce product photograph of one compact unbranded portable radio-style Bluetooth speaker, black textured rectangular cabinet, woven dark gray front grille, brown leather-like carrying handle and two small metallic knobs on top. Pure white seamless background with a subtle soft contact shadow, whole product centered and fully visible, 15 percent breathing room on all sides. Crisp material details and bright neutral lighting. No logos, branding, readable text, people, watermark or packaging."
+        },
+        {
+            "key": "headphones",
+            "prompt": "Square photorealistic studio ecommerce product photograph of one pair of premium unbranded over-ear wireless headphones, deep cobalt blue padded earcups and headband, standing upright at a three quarter angle. Pure white seamless background with a subtle soft contact shadow, whole product centered and fully visible, 15 percent breathing room on all sides. Crisp material details and bright neutral lighting. No logos, branding, readable text, people, watermark or packaging."
+        },
+        {
+            "key": "phone-graphite",
+            "prompt": "Square photorealistic studio ecommerce product photograph of one premium unbranded graphite smartphone upright, front screen facing viewer, thin black bezel and abstract midnight blue and violet gradient display, subtle dark metal edge. Pure white seamless background with a subtle soft contact shadow, whole product centered and fully visible, 15 percent breathing room on all sides. Crisp material details and bright neutral lighting. No logos, branding, readable text, people, watermark or packaging."
+        },
+        {
+            "key": "mini-pc",
+            "prompt": "Square photorealistic studio ecommerce product photograph of one small unbranded silver mini desktop computer, rounded square aluminum case, three quarter perspective, small dark ports along its front edge. Pure white seamless background with a subtle soft contact shadow, whole product centered and fully visible, 15 percent breathing room on all sides. Crisp material details and bright neutral lighting. No logos, branding, readable text, people, watermark or packaging."
+        },
+        {
+            "key": "speaker-round",
+            "prompt": "Square photorealistic studio ecommerce product photograph of one unbranded circular pebble-shaped silver portable speaker with perforated metal grille and a short tan leather wrist loop, resting at a three quarter angle. Pure white seamless background with a subtle soft contact shadow, whole product centered and fully visible, 15 percent breathing room on all sides. Crisp material details and bright neutral lighting. No logos, branding, readable text, people, watermark or packaging."
+        },
+        {
+            "key": "speaker-waterproof",
+            "prompt": "Square photorealistic studio ecommerce product photograph of one unbranded black cylindrical portable speaker with dark woven fabric, a chunky rubber base and a small blue fabric carry loop, standing upright at a slight angle. Pure white seamless background with a subtle soft contact shadow, whole product centered and fully visible, 15 percent breathing room on all sides. Crisp material details and bright neutral lighting. No logos, branding, readable text, people, watermark or packaging."
+        },
+        {
+            "key": "drone-folding",
+            "prompt": "Square photorealistic studio ecommerce product photograph of a compact dark graphite folding quadcopter drone, wings unfolded, three-quarter view. Pure white seamless background with a subtle soft contact shadow, whole product centered and fully visible, 15 percent breathing room on all sides. Crisp material details and bright neutral lighting. No logos, branding, readable text, people, watermark or packaging."
+        },
+        {
+            "key": "controller",
+            "prompt": "Square photorealistic studio ecommerce product photograph of a matte black wireless console game controller, front three-quarter view. Pure white seamless background with a subtle soft contact shadow, whole product centered and fully visible, 15 percent breathing room on all sides. Crisp material details and bright neutral lighting. No logos, branding, readable text, people, watermark or packaging."
+        },
+        {
+            "key": "watch",
+            "prompt": "Square photorealistic studio ecommerce product photograph of a square silver smartwatch with a dark navy sport band, clean abstract clock dial. Pure white seamless background with a subtle soft contact shadow, whole product centered and fully visible, 15 percent breathing room on all sides. Crisp material details and bright neutral lighting. No logos, branding, readable text, people, watermark or packaging."
+        },
+        {
+            "key": "keyboard",
+            "prompt": "Square photorealistic studio ecommerce product photograph of a compact graphite mechanical wireless keyboard with understated blank keycaps, three-quarter view. Pure white seamless background with a subtle soft contact shadow, whole product centered and fully visible, 15 percent breathing room on all sides. Crisp material details and bright neutral lighting. No logos, branding, readable text, people, watermark or packaging."
+        },
+        {
+            "key": "charging-pad",
+            "prompt": "Square photorealistic studio ecommerce product photograph of a slim round black wireless phone charging pad with a short cable. Pure white seamless background with a subtle soft contact shadow, whole product centered and fully visible, 15 percent breathing room on all sides. Crisp material details and bright neutral lighting. No logos, branding, readable text, people, watermark or packaging."
+        },
+        {
+            "key": "memory-card",
+            "prompt": "Square photorealistic studio ecommerce product photograph of a small generic charcoal microSD memory card and larger SD adapter, minimal gold contacts visible. Pure white seamless background with a subtle soft contact shadow, whole product centered and fully visible, 15 percent breathing room on all sides. Crisp material details and bright neutral lighting. No logos, branding, readable text, people, watermark or packaging."
+        },
+        {
+            "key": "phone-case",
+            "prompt": "Square photorealistic studio ecommerce product photograph of a crystal transparent protective smartphone case, no phone inside, three-quarter view. Pure white seamless background with a subtle soft contact shadow, whole product centered and fully visible, 15 percent breathing room on all sides. Crisp material details and bright neutral lighting. No logos, branding, readable text, people, watermark or packaging."
+        },
+        {
+            "key": "phone-mount",
+            "prompt": "Square photorealistic studio ecommerce product photograph of a dark graphite adjustable car dashboard phone mount with a suction base, three-quarter view. Pure white seamless background with a subtle soft contact shadow, whole product centered and fully visible, 15 percent breathing room on all sides. Crisp material details and bright neutral lighting. No logos, branding, readable text, people, watermark or packaging."
+        },
+        {
+            "key": "vr-black",
+            "prompt": "Square photorealistic studio ecommerce photograph of a compact matte black virtual reality headset with a broad fabric head strap, front three-quarter view, pure white background, soft contact shadow, all parts centered with 15 percent margins, no logos, text or people."
+        },
+        {
+            "key": "vr-side",
+            "prompt": "Use the reference product exactly: same ivory VR headset, black face cushion, pale straps, four front sensors and the same two controllers. Create a clean side three-quarter profile view of this product for its ecommerce gallery. Pure white background, subtle contact shadow, whole product centered with 15 percent breathing room, no text, logos or people."
+        },
+        {
+            "key": "vr-back",
+            "prompt": "Use the reference product exactly: same ivory VR headset, black face cushion, pale straps, four front sensors and the same two controllers. Create a clean rear view showing the black facial cushion and lenses of this product for its ecommerce gallery. Pure white background, subtle contact shadow, whole product centered with 15 percent breathing room, no text, logos or people."
+        }
+    ],
+    "original_directory": "Codex generated_images folder for this conversation; full local source paths are preserved in workspace tmp/relay-image-paths.json."
+}

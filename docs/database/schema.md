@@ -225,7 +225,7 @@ Marketplace server:
 | `marketplace_ledger_entries`           | Append-only: sale, refund and payout entries (gross, commission, net, signed). Unique `(order_item_id, type)`.                                      |
 | `marketplace_reviews`                  | Reviews by license holders: rating, title, body, moderation status. Unique `(product_id, user_id)`.                                                 |
 
-Module `ecomodular/newsletter`: `newsletter_subscribers` (email, consent text and time, source, unsubscribe token, `unsubscribed_at`).
+Module `modrixcommerce/newsletter`: `newsletter_subscribers` (email, consent text and time, source, unsubscribe token, `unsubscribed_at`).
 
 ## Media and translations (implemented)
 

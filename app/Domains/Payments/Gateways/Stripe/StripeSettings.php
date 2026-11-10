@@ -35,6 +35,43 @@ final class StripeSettings
         return (string) ($this->settings->get('payments.stripe.label') ?: self::DEFAULT_LABEL);
     }
 
+    public function applePay(): bool
+    {
+        return (bool) $this->settings->get('payments.stripe.apple_pay', false);
+    }
+
+    public function googlePay(): bool
+    {
+        return (bool) $this->settings->get('payments.stripe.google_pay', false);
+    }
+
+    public function walletConfigurationId(): ?string
+    {
+        $id = $this->settings->get('payments.stripe.wallet_configuration_id');
+
+        return is_string($id) && preg_match('/^pmc_[A-Za-z0-9]+$/', $id) === 1 ? $id : null;
+    }
+
+    public function walletStamp(): string
+    {
+        return ($this->applePay() ? '1' : '0').($this->googlePay() ? '1' : '0');
+    }
+
+    public function rememberedWalletStamp(): ?string
+    {
+        $stamp = $this->settings->get('payments.stripe.wallet_configuration_stamp');
+
+        return is_string($stamp) ? $stamp : null;
+    }
+
+    public function rememberWalletConfiguration(string $id): void
+    {
+        $this->settings->setMany([
+            'payments.stripe.wallet_configuration_id' => $id,
+            'payments.stripe.wallet_configuration_stamp' => $this->walletStamp(),
+        ]);
+    }
+
     public function secretKey(): ?string
     {
         return $this->secrets->get(self::SECRET_KEY);
@@ -67,7 +104,7 @@ final class StripeSettings
     }
 
     /**
-     * @return array{enabled: bool, label: string, mode: string|null, secret_key_hint: string|null, webhook_secret_hint: string|null}
+     * @return array{enabled: bool, label: string, mode: string|null, apple_pay: bool, google_pay: bool, secret_key_hint: string|null, webhook_secret_hint: string|null}
      */
     public function toArray(): array
     {
@@ -75,17 +112,29 @@ final class StripeSettings
             'enabled' => $this->enabled(),
             'label' => $this->label(),
             'mode' => $this->mode(),
+            'apple_pay' => $this->applePay(),
+            'google_pay' => $this->googlePay(),
             'secret_key_hint' => $this->secrets->hint(self::SECRET_KEY),
             'webhook_secret_hint' => $this->secrets->hint(self::WEBHOOK_SECRET),
         ];
     }
 
-    public function update(bool $enabled, string $label, ?string $secretKey, ?string $webhookSecret): void
+    public function update(bool $enabled, string $label, ?string $secretKey, ?string $webhookSecret, ?bool $applePay = null, ?bool $googlePay = null): void
     {
-        $this->settings->setMany([
+        $values = [
             'payments.stripe.enabled' => $enabled,
             'payments.stripe.label' => $label,
-        ]);
+        ];
+
+        if ($applePay !== null) {
+            $values['payments.stripe.apple_pay'] = $applePay;
+        }
+
+        if ($googlePay !== null) {
+            $values['payments.stripe.google_pay'] = $googlePay;
+        }
+
+        $this->settings->setMany($values);
 
         if ($secretKey !== null && $secretKey !== '') {
             $this->secrets->put(self::SECRET_KEY, $secretKey);

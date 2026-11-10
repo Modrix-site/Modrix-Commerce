@@ -39,7 +39,7 @@ class GeneralSettingsMaintenanceTest extends TestCase
     {
         $this->close();
 
-        $this->get(route('login'))->assertOk();
+        $this->get(route('admin.login'))->assertOk();
         $this->get('/health')->assertStatus(200);
         $this->post('/webhooks/payments/unknown')->assertStatus(404);
         $this->actingAs($this->owner())->get(route('admin.dashboard'))->assertOk();

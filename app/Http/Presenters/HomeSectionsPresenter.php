@@ -2,7 +2,9 @@
 
 namespace App\Http\Presenters;
 
+use App\Core\Localization\ContentTranslations;
 use App\Core\Themes\ResolvedTheme;
+use App\Core\Themes\StorefrontLinks;
 use App\Domains\Catalog\Models\Category;
 use App\Domains\Catalog\StorefrontCatalog;
 
@@ -23,13 +25,14 @@ final class HomeSectionsPresenter
         $sections = [];
 
         foreach ($theme->sections('home') as $i => $section) {
-            $settings = $section['settings'];
+            $settings = $this->translate($section['settings']);
+            $settings = app(StorefrontLinks::class)->content($settings);
             $data = match ($section['type']) {
                 'hero', 'image_with_text', 'campaign' => ['image' => $theme->imageUrl($settings['image'] ?? null)],
                 'promotion_grid' => ['tiles' => array_values(array_filter(array_map(fn (int $i) => [
                     'title' => $settings["tile_{$i}_title"] ?? '', 'text' => $settings["tile_{$i}_text"] ?? '',
                     'image' => $theme->imageUrl($settings["tile_{$i}_image"] ?? null), 'link' => $settings["tile_{$i}_link"] ?? '',
-                ], range(1, 8)), fn (array $tile) => $tile['title'] !== '' || $tile['image'] !== null))],
+                ], range(1, 8)), fn (array $tile) => ($tile['title'] !== '' || $tile['image'] !== null) && ($tile['link'] === '' || app(StorefrontLinks::class)->resolve($tile['link']) !== null)))],
                 'featured_products' => ['products' => $this->products($settings, $currency)],
                 'category_grid' => ['categories' => Category::query()->active()->withCurrentTranslation()->whereNull('parent_id')
                     ->orderBy('position')->orderBy('name')->limit((int) ($settings['limit'] ?? 6))
@@ -68,5 +71,21 @@ final class HomeSectionsPresenter
         }
 
         return $this->catalog->latest($currency, $limit);
+    }
+
+    /**
+     * @param  array<string, mixed>  $settings
+     * @return array<string, mixed>
+     */
+    private function translate(array $settings): array
+    {
+        $translations = app(ContentTranslations::class);
+        foreach ($settings as $key => $value) {
+            if (is_string($key) && is_string($value) && ! $translations->skipKey($key)) {
+                $settings[$key] = $translations->translate($value);
+            }
+        }
+
+        return $settings;
     }
 }

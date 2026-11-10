@@ -1,0 +1,70 @@
+{
+    "title": "Circuit design",
+    "description": "Electronics megastore. Homepage tiles and banners are in Homepage sections; menus in Navigation; newsletter uses the Newsletter extension.",
+    "fields": {
+        "custom.accent": {
+            "type": "color",
+            "label": "Sale and highlight color",
+            "group": "Colors",
+            "tab": "general",
+            "default": "#e5484d"
+        },
+        "custom.success": {
+            "type": "color",
+            "label": "Stock badge color",
+            "group": "Colors",
+            "tab": "general",
+            "default": "#1f9d55"
+        },
+        "custom.panel": {
+            "type": "color",
+            "label": "Panel background",
+            "group": "Colors",
+            "tab": "general",
+            "default": "#f4f4f6"
+        },
+        "custom.button_shape": {
+            "type": "select",
+            "label": "Button shape",
+            "group": "Buttons",
+            "tab": "general",
+            "default": "pill",
+            "options": ["pill", "rounded", "square"]
+        },
+        "custom.header_background": {
+            "type": "color",
+            "label": "Header background",
+            "group": "Header",
+            "tab": "header",
+            "default": "#14102a"
+        },
+        "custom.header_foreground": {
+            "type": "color",
+            "label": "Header text",
+            "group": "Header",
+            "tab": "header",
+            "default": "#ffffff"
+        },
+        "custom.show_saved": {
+            "type": "boolean",
+            "label": "Wishlist (saved on this device)",
+            "group": "Header",
+            "tab": "header",
+            "default": true
+        },
+        "custom.sticky_header": {
+            "type": "boolean",
+            "label": "Sticky header (replaces Circuit's header on phones and tablets)",
+            "group": "Header",
+            "tab": "header",
+            "default": false
+        },
+        "custom.voucher_color": {
+            "type": "color",
+            "label": "Voucher strip color",
+            "group": "Voucher strip",
+            "tab": "home",
+            "default": "#0b4d3f"
+        }
+    }
+}

@@ -3,6 +3,7 @@
 namespace App\Core\Operations;
 
 use App\Core\Platform;
+use App\Core\Settings\BackupSettings;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -52,9 +53,11 @@ final class Backups
     }
 
     /**
+     * @param  bool  $prune  False keeps every older archive (a pre-restore backup must
+     *                       not delete the archive about to be restored).
      * @return array{name: string, path: string, size: int, encrypted: bool}
      */
-    public function create(bool $withFiles = true): array
+    public function create(bool $withFiles = true, bool $prune = true): array
     {
         File::ensureDirectoryExists($this->directory(), 0700);
         $work = storage_path('framework/backup-'.Str::random(12));
@@ -113,7 +116,9 @@ final class Backups
             }
 
             @chmod($path, 0600);
-            $this->prune();
+            if ($prune) {
+                $this->prune();
+            }
 
             return ['name' => $name, 'path' => $path, 'size' => (int) filesize($path), 'encrypted' => $password !== null];
         } finally {
@@ -145,6 +150,42 @@ final class Backups
     public function latest(): ?array
     {
         return $this->all()[0] ?? null;
+    }
+
+    /**
+     * What an archive is, read from its manifest only (cheap: no checksums).
+     * An archive whose manifest cannot be read with the configured password,
+     * or a damaged one, reports readable=false; it never throws.
+     *
+     * @return array{encrypted: bool, readable: bool, includes_files: ?bool, platform_version: ?string}
+     */
+    public function describe(string $path): array
+    {
+        $result = ['encrypted' => false, 'readable' => false, 'includes_files' => null, 'platform_version' => null];
+        $zip = new ZipArchive;
+        if (! is_file($path) || $zip->open($path, ZipArchive::RDONLY) !== true) {
+            return $result;
+        }
+
+        try {
+            $stat = $zip->statName('manifest.json');
+            $result['encrypted'] = is_array($stat) && (int) ($stat['encryption_method'] ?? 0) !== ZipArchive::EM_NONE;
+            if ($password = $this->password()) {
+                $zip->setPassword($password);
+            }
+
+            $raw = $zip->getFromName('manifest.json');
+            $manifest = $raw === false ? null : json_decode($raw, true);
+            if (is_array($manifest) && ($manifest['format'] ?? null) === self::FORMAT) {
+                $result['readable'] = true;
+                $result['includes_files'] = (bool) ($manifest['includes_files'] ?? false);
+                $result['platform_version'] = isset($manifest['platform_version']) ? (string) $manifest['platform_version'] : null;
+            }
+        } finally {
+            $zip->close();
+        }
+
+        return $result;
     }
 
     /**
@@ -656,7 +697,7 @@ final class Backups
 
     private function prune(): void
     {
-        $keep = max(1, (int) config('ecomodular.backup.keep', 7));
+        $keep = app(BackupSettings::class)->keep();
 
         foreach (array_slice($this->all(), $keep) as $old) {
             @unlink($old['path']);

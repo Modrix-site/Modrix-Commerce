@@ -1,0 +1,78 @@
+{
+    "name": "Service highlights",
+    "enabled_on": {
+        "templates": ["*"]
+    },
+    "settings": [
+        {
+            "type": "text",
+            "id": "services_label",
+            "label": "Accessible name",
+            "default": "Our services"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "service",
+            "name": "Service",
+            "settings": [
+                {
+                    "type": "select",
+                    "id": "icon",
+                    "label": "Icon",
+                    "default": "truck",
+                    "options": [
+                        {
+                            "value": "truck",
+                            "label": "Delivery"
+                        },
+                        {
+                            "value": "returns",
+                            "label": "Returns"
+                        },
+                        {
+                            "value": "support",
+                            "label": "Support"
+                        },
+                        {
+                            "value": "ticket",
+                            "label": "Voucher"
+                        },
+                        {
+                            "value": "package",
+                            "label": "Package"
+                        }
+                    ]
+                },
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Title",
+                    "default": "Free Shipping"
+                },
+                {
+                    "type": "textarea",
+                    "id": "text",
+                    "label": "Text"
+                }
+            ]
+        }
+    ],
+    "max_blocks": 6,
+    "presets": [
+        {
+            "name": "Service highlights",
+            "blocks": [
+                {
+                    "type": "service"
+                },
+                {
+                    "type": "service"
+                },
+                {
+                    "type": "service"
+                }
+            ]
+        }
+    ]
+}

@@ -35,6 +35,10 @@ export type PageSettings = {
         related_count: number;
         upsells: boolean;
         quantity: boolean;
+        /** null: the theme decides (its `sticky_add_to_cart` setting, else phones). */
+        sticky_bar: 'off' | 'phones' | 'everywhere' | null;
+        sticky_bar_buttons: 'both' | 'add_to_cart' | 'buy_now';
+        sticky_bar_options: boolean;
     };
     cart: {
         free_shipping_bar: boolean;

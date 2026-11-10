@@ -43,3 +43,6 @@ yarn-error.log
 /opencode.json
 /opencode.jsonc
 /.superpowers/
+
+# Modrix Cloud marketplace: its own repository (github.com/oeleydo-ship-it/ModrixCloud)
+/marketplace-catalog/

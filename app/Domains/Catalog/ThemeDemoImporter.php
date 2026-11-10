@@ -3,6 +3,7 @@
 namespace App\Domains\Catalog;
 
 use App\Core\Audit\AuditLogger;
+use App\Core\Content\RichText;
 use App\Core\Extensions\ManifestValidator;
 use App\Core\Settings\StoreSettings;
 use App\Core\Themes\ThemeException;
@@ -14,6 +15,7 @@ use App\Domains\Catalog\Actions\StoreProductImage;
 use App\Domains\Catalog\Models\Category;
 use App\Domains\Catalog\Models\Product;
 use App\Domains\Catalog\Models\ProductVariant;
+use App\Domains\Content\Models\Page;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -43,15 +45,27 @@ final class ThemeDemoImporter
     ) {}
 
     /**
-     * @return array{categories: int, products: int}
+     * @return array{categories: int, products: int, pages?: int}
      */
     public function import(ThemeManifest $manifest, User $actor): array
     {
         $data = $this->read($manifest);
         $createdCategories = 0;
         $createdProducts = 0;
+        $createdPages = 0;
 
-        DB::transaction(function () use ($data, $manifest, $actor, &$createdCategories, &$createdProducts) {
+        DB::transaction(function () use ($data, $manifest, $actor, &$createdCategories, &$createdProducts, &$createdPages) {
+            foreach ($data['pages'] as $page) {
+                if (Page::withTrashed()->where('slug', $page['slug'])->exists()) {
+                    continue;
+                }
+                Page::create([
+                    'title' => $page['title'], 'slug' => $page['slug'],
+                    'content' => RichText::clean($page['content']), 'kind' => Page::KIND_PAGE,
+                    'status' => 'published', 'meta_title' => $page['title'],
+                ]);
+                $createdPages++;
+            }
             foreach ($data['categories'] as $category) {
                 if (Category::query()->where('slug', $category['slug'])->exists()) {
                     continue;
@@ -95,18 +109,22 @@ final class ThemeDemoImporter
                     $path = $this->assetPath($manifest, $item['image']);
                     $this->images->handle($product, new UploadedFile($path, basename($path), test: true), $item['name']);
                 }
+                foreach ($item['images'] ?? [] as $image) {
+                    $path = $this->assetPath($manifest, $image);
+                    $this->images->handle($product, new UploadedFile($path, basename($path), test: true), $item['name']);
+                }
 
                 $createdProducts++;
             }
         });
 
-        $this->audit->record('theme.demo_imported', null, ['theme' => $manifest->name, 'categories' => $createdCategories, 'products' => $createdProducts], $actor);
+        $this->audit->record('theme.demo_imported', null, ['theme' => $manifest->name, 'categories' => $createdCategories, 'products' => $createdProducts, 'pages' => $createdPages], $actor);
 
-        return ['categories' => $createdCategories, 'products' => $createdProducts];
+        return ['categories' => $createdCategories, 'products' => $createdProducts] + ($data['pages'] === [] ? [] : ['pages' => $createdPages]);
     }
 
     /**
-     * @return array{categories: list<array<string, mixed>>, products: list<array<string, mixed>>}
+     * @return array{categories: list<array<string, mixed>>, products: list<array<string, mixed>>, pages: list<array<string, mixed>>}
      */
     private function read(ThemeManifest $manifest): array
     {
@@ -128,9 +146,16 @@ final class ThemeDemoImporter
 
         $categories = is_array($data['categories'] ?? null) ? array_values($data['categories']) : [];
         $products = is_array($data['products'] ?? null) ? array_values($data['products']) : [];
+        $pages = is_array($data['pages'] ?? null) ? array_values($data['pages']) : [];
 
-        if (count($categories) + count($products) > self::MAX_ITEMS) {
+        if (count($categories) + count($products) + count($pages) > self::MAX_ITEMS) {
             throw new ThemeException('The demo content has too many items.');
+        }
+        foreach ($pages as $i => $page) {
+            if (! is_array($page) || ! $this->text($page['title'] ?? null, 160) || ! $this->slug($page['slug'] ?? null)
+                || ! $this->text($page['content'] ?? null, 10000)) {
+                throw new ThemeException("Demo page #{$i} is invalid.");
+            }
         }
 
         foreach ($categories as $i => $category) {
@@ -152,10 +177,14 @@ final class ThemeDemoImporter
                 || (isset($product['image']) && (! is_string($product['image']) || $this->assetPath($manifest, $product['image']) === ''))) {
                 throw new ThemeException("Demo product #{$i} is invalid.");
             }
+            if (isset($product['images']) && (! is_array($product['images']) || ! array_is_list($product['images']) || count($product['images']) > 8
+                || array_filter($product['images'], fn ($image) => ! is_string($image) || $this->assetPath($manifest, $image) === '') !== [])) {
+                throw new ThemeException("Demo product #{$i} has invalid gallery images.");
+            }
         }
 
-        /** @var array{categories: list<array<string, mixed>>, products: list<array<string, mixed>>} */
-        return ['categories' => $categories, 'products' => $products];
+        /** @var array{categories: list<array<string, mixed>>, products: list<array<string, mixed>>, pages: list<array<string, mixed>>} */
+        return ['categories' => $categories, 'products' => $products, 'pages' => $pages];
     }
 
     private function assetPath(ThemeManifest $manifest, string $path): string

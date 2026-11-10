@@ -88,6 +88,9 @@ A new order **{{ $order->number }}** was placed by {{ $order->email }} using {{ 
 @endif
 | Shipping | {{ $order->money('shipping_total')->format() }} |
 | Tax{{ $order->prices_include_tax ? ' (included)' : '' }} | {{ $order->money('tax_total')->format() }} |
+@if ($order->money('payment_fee_total')->isPositive())
+| Cash on delivery fee (collected by the courier) | {{ $order->money('payment_fee_total')->format() }} |
+@endif
 | **Total** | **{{ $order->money('grand_total')->format() }}** |
 
 @if ($order->shippingAddress)

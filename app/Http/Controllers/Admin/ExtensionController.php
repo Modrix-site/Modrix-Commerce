@@ -11,6 +11,7 @@ use App\Core\Extensions\ModuleManager;
 use App\Core\Extensions\ModuleRepository;
 use App\Core\Extensions\ModuleSettingsSchema;
 use App\Core\Extensions\ModuleState;
+use App\Core\Marketplace\Client\StoreLicense;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Closure;
@@ -39,6 +40,12 @@ class ExtensionController extends Controller
         return Inertia::render('admin/extensions/index', [
             'extensions' => $this->repository->all()->map(fn (Extension $e) => $this->summary($e))->values(),
             'safeMode' => (bool) config('ecomodular.modules.safe_mode'),
+            'licensedExtensions' => StoreLicense::query()->where('type', 'module')->where('status', 'active')->pluck('extension_name')->values(),
+            // Modrix Cloud needs the bundled connector; the page points to it until it is enabled.
+            'cloudConnector' => fn () => ($connector = $this->repository->find('modrixcommerce/cloud-connector')) === null ? null : [
+                'id' => $connector->id,
+                'enabled' => $connector->state === ModuleState::Enabled,
+            ],
         ]);
     }
 
@@ -184,8 +191,8 @@ class ExtensionController extends Controller
         }
 
         return match ($extension->name) {
-            'ecomodular/tabby' => '/images/extensions/tabby.svg',
-            'ecomodular/tamara' => '/images/extensions/tamara.svg',
+            'modrixcommerce/tabby' => '/images/extensions/tabby.svg',
+            'modrixcommerce/tamara' => '/images/extensions/tamara.svg',
             default => null,
         };
     }

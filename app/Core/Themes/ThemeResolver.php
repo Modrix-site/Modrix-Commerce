@@ -81,7 +81,7 @@ final class ThemeResolver
 
     private function defaultTheme(): ?ThemeManifest
     {
-        $name = (string) config('ecomodular.themes.default', 'ecomodular/essence');
+        $name = (string) config('ecomodular.themes.default', 'modrixcommerce/essence');
         if ($this->repository->find($name)?->state === ModuleState::Disabled) {
             return null;
         }
@@ -106,6 +106,8 @@ final class ThemeResolver
     private function make(ThemeManifest $manifest, string $source): ResolvedTheme
     {
         [$design] = $this->customizations->effectiveDesign($manifest);
+        // Unsaved theme settings of a staff member in the theme editor.
+        $design = array_replace($design, app(Sections\ThemeTemplates::class)->designDraft($manifest));
 
         return new ResolvedTheme($manifest, $source, $design, $this->customizations, hasPackage: true);
     }
@@ -113,7 +115,7 @@ final class ThemeResolver
     private function builtin(): ResolvedTheme
     {
         $manifest = ThemeManifest::fromArray([
-            'name' => 'ecomodular/builtin',
+            'name' => 'modrixcommerce/builtin',
             'display_name' => 'Built-in',
             'version' => '0.0.0',
             'platform_version' => '*',

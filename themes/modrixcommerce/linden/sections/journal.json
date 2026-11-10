@@ -1,0 +1,57 @@
+{
+    "name": "Beauty stories",
+    "settings": [
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "What's new"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "story",
+            "name": "Story card",
+            "settings": [
+                {
+                    "type": "image",
+                    "id": "image",
+                    "label": "Photograph"
+                },
+                {
+                    "type": "text",
+                    "id": "heading",
+                    "label": "Heading",
+                    "default": "Your everyday ritual"
+                },
+                {
+                    "type": "textarea",
+                    "id": "body",
+                    "label": "Text",
+                    "default": "Find a little inspiration for your daily routine."
+                },
+                {
+                    "type": "text",
+                    "id": "button",
+                    "label": "Button label",
+                    "default": "Shop now"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Destination",
+                    "default": "/search"
+                }
+            ]
+        }
+    ],
+    "max_blocks": 40,
+    "presets": [
+        {
+            "name": "Beauty stories"
+        }
+    ],
+    "enabled_on": {
+        "templates": ["*"]
+    }
+}

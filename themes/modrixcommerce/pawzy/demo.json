@@ -1,0 +1,253 @@
+{
+    "categories": [
+        {
+            "name": "Cats",
+            "slug": "pawzy-cats",
+            "description": "Explore everyday essentials for cats. Find comfort, care and a little more happiness."
+        },
+        {
+            "name": "Dogs",
+            "slug": "pawzy-dogs",
+            "description": "Explore everyday essentials for dogs. Find comfort, care and a little more happiness."
+        },
+        {
+            "name": "Pet Fashion",
+            "slug": "pawzy-fashion",
+            "description": "Explore everyday essentials for pet fashion. Find comfort, care and a little more happiness."
+        },
+        {
+            "name": "Pet Food & Feeding",
+            "slug": "pawzy-food",
+            "description": "Explore everyday essentials for pet food & feeding. Find comfort, care and a little more happiness."
+        },
+        {
+            "name": "Pet Toys",
+            "slug": "pawzy-toys",
+            "description": "Explore everyday essentials for pet toys. Find comfort, care and a little more happiness."
+        },
+        {
+            "name": "Pet Bedding",
+            "slug": "pawzy-bedding",
+            "description": "Explore everyday essentials for pet bedding. Find comfort, care and a little more happiness."
+        },
+        {
+            "name": "Grooming",
+            "slug": "pawzy-grooming",
+            "description": "Explore everyday essentials for grooming. Find comfort, care and a little more happiness."
+        },
+        {
+            "name": "Birds",
+            "slug": "pawzy-birds",
+            "description": "Explore everyday essentials for birds. Find comfort, care and a little more happiness."
+        },
+        {
+            "name": "Small Pets",
+            "slug": "pawzy-small-pets",
+            "description": "Explore everyday essentials for small pets. Find comfort, care and a little more happiness."
+        }
+    ],
+    "products": [
+        {
+            "name": "Heart Pattern Pet Bed",
+            "slug": "pawzy-heart-pattern-pet-bed",
+            "sku": "PAWZY-DEMO-01",
+            "price": "14.00",
+            "stock": 20,
+            "short_description": "A little comfort, care and happiness for your favourite companion.",
+            "description": "Pawzy demonstration product. Lifestyle photographs illustrate the collection; replace them with accurate product photography and confirm dimensions, materials, suitability, care instructions and pricing before selling.\n\nChoose the correct size for your pet. Supervise play and inspect accessories regularly.",
+            "categories": ["pawzy-cats", "pawzy-dogs", "pawzy-bedding"],
+            "image": "assets/images/bed-heart.jpg",
+            "images": ["assets/images/bed-brown.jpg", "assets/images/house.jpg"]
+        },
+        {
+            "name": "Plush Cushion Pet Bed",
+            "slug": "pawzy-plush-cushion-pet-bed",
+            "sku": "PAWZY-DEMO-02",
+            "price": "24.00",
+            "stock": 20,
+            "short_description": "A little comfort, care and happiness for your favourite companion.",
+            "description": "Pawzy demonstration product. Lifestyle photographs illustrate the collection; replace them with accurate product photography and confirm dimensions, materials, suitability, care instructions and pricing before selling.\n\nChoose the correct size for your pet. Supervise play and inspect accessories regularly.",
+            "categories": ["pawzy-cats", "pawzy-dogs", "pawzy-bedding"],
+            "image": "assets/images/bed-brown.jpg"
+        },
+        {
+            "name": "Red Bunny Pet Costume",
+            "slug": "pawzy-red-bunny-pet-costume",
+            "sku": "PAWZY-DEMO-03",
+            "price": "17.00",
+            "compare_at_price": "21.00",
+            "stock": 20,
+            "short_description": "A little comfort, care and happiness for your favourite companion.",
+            "description": "Pawzy demonstration product. Lifestyle photographs illustrate the collection; replace them with accurate product photography and confirm dimensions, materials, suitability, care instructions and pricing before selling.\n\nChoose the correct size for your pet. Supervise play and inspect accessories regularly.",
+            "categories": ["pawzy-dogs", "pawzy-fashion"],
+            "image": "assets/images/costume.jpg"
+        },
+        {
+            "name": "Interactive Pet Ball And Thrower",
+            "slug": "pawzy-ball-and-thrower",
+            "sku": "PAWZY-DEMO-04",
+            "price": "8.00",
+            "stock": 20,
+            "short_description": "A little comfort, care and happiness for your favourite companion.",
+            "description": "Pawzy demonstration product. Lifestyle photographs illustrate the collection; replace them with accurate product photography and confirm dimensions, materials, suitability, care instructions and pricing before selling.\n\nChoose the correct size for your pet. Supervise play and inspect accessories regularly.",
+            "categories": ["pawzy-cats", "pawzy-dogs", "pawzy-toys"],
+            "image": "assets/images/ball.jpg"
+        },
+        {
+            "name": "Boba Drink Pet Plush",
+            "slug": "pawzy-boba-drink-pet-plush",
+            "sku": "PAWZY-DEMO-05",
+            "price": "12.00",
+            "stock": 20,
+            "short_description": "A little comfort, care and happiness for your favourite companion.",
+            "description": "Pawzy demonstration product. Lifestyle photographs illustrate the collection; replace them with accurate product photography and confirm dimensions, materials, suitability, care instructions and pricing before selling.\n\nChoose the correct size for your pet. Supervise play and inspect accessories regularly.",
+            "categories": ["pawzy-dogs", "pawzy-toys"],
+            "image": "assets/images/plush.jpg"
+        },
+        {
+            "name": "Cosy Pet Hideaway",
+            "slug": "pawzy-cosy-pet-hideaway",
+            "sku": "PAWZY-DEMO-06",
+            "price": "45.00",
+            "compare_at_price": "49.00",
+            "stock": 20,
+            "short_description": "A little comfort, care and happiness for your favourite companion.",
+            "description": "Pawzy demonstration product. Lifestyle photographs illustrate the collection; replace them with accurate product photography and confirm dimensions, materials, suitability, care instructions and pricing before selling.\n\nChoose the correct size for your pet. Supervise play and inspect accessories regularly.",
+            "categories": ["pawzy-dogs", "pawzy-bedding"],
+            "image": "assets/images/house.jpg"
+        },
+        {
+            "name": "Everyday Feeding Bowl",
+            "slug": "pawzy-everyday-feeding-bowl",
+            "sku": "PAWZY-DEMO-07",
+            "price": "16.00",
+            "stock": 20,
+            "short_description": "A little comfort, care and happiness for your favourite companion.",
+            "description": "Pawzy demonstration product. Lifestyle photographs illustrate the collection; replace them with accurate product photography and confirm dimensions, materials, suitability, care instructions and pricing before selling.\n\nChoose the correct size for your pet. Supervise play and inspect accessories regularly.",
+            "categories": ["pawzy-cats", "pawzy-dogs", "pawzy-food"],
+            "image": "assets/images/food.jpg"
+        },
+        {
+            "name": "Soft Knit Pet Sweater",
+            "slug": "pawzy-soft-knit-pet-sweater",
+            "sku": "PAWZY-DEMO-08",
+            "price": "22.00",
+            "stock": 20,
+            "short_description": "A little comfort, care and happiness for your favourite companion.",
+            "description": "Pawzy demonstration product. Lifestyle photographs illustrate the collection; replace them with accurate product photography and confirm dimensions, materials, suitability, care instructions and pricing before selling.\n\nChoose the correct size for your pet. Supervise play and inspect accessories regularly.",
+            "categories": ["pawzy-cats", "pawzy-dogs", "pawzy-fashion"],
+            "image": "assets/images/sweater.jpg"
+        },
+        {
+            "name": "Daily Grooming Brush",
+            "slug": "pawzy-daily-grooming-brush",
+            "sku": "PAWZY-DEMO-09",
+            "price": "12.00",
+            "compare_at_price": "16.00",
+            "stock": 20,
+            "short_description": "A little comfort, care and happiness for your favourite companion.",
+            "description": "Pawzy demonstration product. Lifestyle photographs illustrate the collection; replace them with accurate product photography and confirm dimensions, materials, suitability, care instructions and pricing before selling.\n\nChoose the correct size for your pet. Supervise play and inspect accessories regularly.",
+            "categories": ["pawzy-cats", "pawzy-dogs", "pawzy-grooming"],
+            "image": "assets/images/care.jpg"
+        },
+        {
+            "name": "Adventure Walking Set",
+            "slug": "pawzy-adventure-walking-set",
+            "sku": "PAWZY-DEMO-10",
+            "price": "28.00",
+            "stock": 20,
+            "short_description": "A little comfort, care and happiness for your favourite companion.",
+            "description": "Pawzy demonstration product. Lifestyle photographs illustrate the collection; replace them with accurate product photography and confirm dimensions, materials, suitability, care instructions and pricing before selling.\n\nChoose the correct size for your pet. Supervise play and inspect accessories regularly.",
+            "categories": ["pawzy-dogs"],
+            "image": "assets/images/dog.jpg"
+        },
+        {
+            "name": "Cosy Cat Blanket",
+            "slug": "pawzy-cosy-cat-blanket",
+            "sku": "PAWZY-DEMO-11",
+            "price": "18.00",
+            "stock": 20,
+            "short_description": "A little comfort, care and happiness for your favourite companion.",
+            "description": "Pawzy demonstration product. Lifestyle photographs illustrate the collection; replace them with accurate product photography and confirm dimensions, materials, suitability, care instructions and pricing before selling.\n\nChoose the correct size for your pet. Supervise play and inspect accessories regularly.",
+            "categories": ["pawzy-cats", "pawzy-bedding"],
+            "image": "assets/images/cat.jpg"
+        },
+        {
+            "name": "Playtime Rope Toy",
+            "slug": "pawzy-playtime-rope-toy",
+            "sku": "PAWZY-DEMO-12",
+            "price": "9.00",
+            "compare_at_price": "13.00",
+            "stock": 20,
+            "short_description": "A little comfort, care and happiness for your favourite companion.",
+            "description": "Pawzy demonstration product. Lifestyle photographs illustrate the collection; replace them with accurate product photography and confirm dimensions, materials, suitability, care instructions and pricing before selling.\n\nChoose the correct size for your pet. Supervise play and inspect accessories regularly.",
+            "categories": ["pawzy-dogs", "pawzy-toys"],
+            "image": "assets/images/toy.jpg"
+        },
+        {
+            "name": "Plaid Shirt Pet Outfit",
+            "slug": "pawzy-plaid-shirt-pet-outfit",
+            "sku": "PAWZY-DEMO-13",
+            "price": "19.00",
+            "stock": 20,
+            "short_description": "A playful little outfit for your favourite companion.",
+            "description": "Demonstration product. Check sizing, material and pet suitability before purchase.",
+            "categories": ["pawzy-cats", "pawzy-dogs", "pawzy-fashion"],
+            "image": "assets/images/shirt.jpg"
+        },
+        {
+            "name": "Reindeer Pet Wear",
+            "slug": "pawzy-reindeer-pet-wear",
+            "sku": "PAWZY-DEMO-14",
+            "price": "19.00",
+            "stock": 20,
+            "short_description": "A playful little outfit for your favourite companion.",
+            "description": "Demonstration product. Check sizing, material and pet suitability before purchase.",
+            "categories": ["pawzy-cats", "pawzy-dogs", "pawzy-fashion"],
+            "image": "assets/images/reindeer.jpg"
+        },
+        {
+            "name": "Pirate Pet Outfit",
+            "slug": "pawzy-pirate-pet-outfit",
+            "sku": "PAWZY-DEMO-15",
+            "price": "19.00",
+            "stock": 20,
+            "short_description": "A playful little outfit for your favourite companion.",
+            "description": "Demonstration product. Check sizing, material and pet suitability before purchase.",
+            "categories": ["pawzy-cats", "pawzy-dogs", "pawzy-fashion"],
+            "image": "assets/images/pirate.jpg"
+        }
+    ],
+    "pages": [
+        {
+            "title": "Our story",
+            "slug": "pawzy-our-story",
+            "content": "A little care. A lot of love. Pawzy brings together everyday essentials for the companions who make life brighter. Explore comfort, play and practical pet care in one place."
+        },
+        {
+            "title": "Pet journal",
+            "slug": "pawzy-pet-journal",
+            "content": "Keeping pets active daily\nMake time for short, supervised play sessions using toys suited to your companion. Rotate their favourites to keep play interesting.\n\nPet travel made simple\nPlan breaks, bring familiar bedding and use a secure carrier or appropriately fitted restraint.\n\nLove and care for pets\nChoose suitable accessories, follow care instructions and consult your veterinarian about individual health needs."
+        },
+        {
+            "title": "Shipping & delivery",
+            "slug": "pawzy-shipping",
+            "content": "Available delivery methods, prices and estimated delivery times are displayed at checkout for your address. View your order history to follow your purchases. Contact the store if you need help with a delivery."
+        },
+        {
+            "title": "Order & payment",
+            "slug": "pawzy-payments",
+            "content": "Your order total and available payment methods are shown at checkout. Payment confirmation follows the selected provider. View your account order history for updates or contact the store with your order number."
+        },
+        {
+            "title": "Returns & exchanges",
+            "slug": "pawzy-returns",
+            "content": "Please contact the store with your order number to request help with a return or exchange. The store team will explain eligibility and the next steps for your purchase."
+        },
+        {
+            "title": "Privacy policy",
+            "slug": "pawzy-privacy",
+            "content": "We use the information you provide to process orders and support your account. Newsletter subscriptions require consent and can be withdrawn. Contact the store about access to or removal of your personal information."
+        }
+    ]
+}

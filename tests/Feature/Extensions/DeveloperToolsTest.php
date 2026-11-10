@@ -75,13 +75,16 @@ class DeveloperToolsTest extends TestCase
 
     public function test_a_scaffolded_theme_validates_and_activates()
     {
-        $this->artisan('ecomodular:make:theme', ['name' => 'acme/harbor', '--from' => 'ecomodular/noir'])
-            ->expectsOutputToContain('created from ecomodular/noir')
+        $this->artisan('ecomodular:make:theme', ['name' => 'acme/harbor', '--from' => 'modrixcommerce/noir'])
+            ->expectsOutputToContain('created from modrixcommerce/noir')
             ->assertSuccessful();
 
         $manifest = json_decode((string) File::get($this->themesPath.'/acme/harbor/theme.json'), true);
         $this->assertSame(['acme/harbor', '0.1.0', '^1.0'], [$manifest['name'], $manifest['version'], $manifest['platform_version']]);
         $this->assertFileExists($this->themesPath.'/acme/harbor/assets/images/hero.webp');
+        $this->assertSame('settings.json', $manifest['customizer_file']);
+        $this->assertSame('src/customizer.tsx', $manifest['frontend']['customizer']);
+        $this->assertFileExists($this->themesPath.'/acme/harbor/src/customizer.tsx');
 
         app(ThemeManager::class)->activate('acme/harbor');
         $this->assertSame('acme/harbor', app(ThemeRepository::class)->active()?->name);
@@ -96,8 +99,9 @@ class DeveloperToolsTest extends TestCase
             ->assertSuccessful();
         $this->assertFileExists($this->output.'/acme-gift-notes-0.1.0.zip');
 
-        $this->artisan('ecomodular:package', ['name' => 'ecomodular/bloom', '--type' => 'theme', '--output' => $this->output])->assertSuccessful();
-        $this->assertFileExists($this->output.'/ecomodular-bloom-1.0.0.zip');
+        $this->artisan('ecomodular:package', ['name' => 'modrixcommerce/bloom', '--type' => 'theme', '--output' => $this->output])->assertSuccessful();
+        $bloom = json_decode(File::get($this->themesPath.'/modrixcommerce/bloom/theme.json'), true);
+        $this->assertFileExists($this->output.'/ecomodular-bloom-'.$bloom['version'].'.zip');
     }
 
     public function test_package_command_reports_invalid_and_dangerous_packages()

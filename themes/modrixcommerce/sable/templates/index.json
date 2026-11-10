@@ -1,0 +1,184 @@
+{
+    "sections": {
+        "hero": {
+            "type": "image-banner",
+            "settings": {
+                "height": "large",
+                "primary_heading": true
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "collections": {
+            "type": "category-circles",
+            "settings": {},
+            "blocks": {
+                "block_0": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Carry-on",
+                        "image": "asset:assets/product-1.png",
+                        "link": "/search?q=carry"
+                    }
+                },
+                "block_1": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Weekenders",
+                        "image": "asset:assets/product-2.png",
+                        "link": "/search?q=weekender"
+                    }
+                },
+                "block_2": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Totes",
+                        "image": "asset:assets/product-3.png",
+                        "link": "/search?q=tote"
+                    }
+                },
+                "block_3": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Small essentials",
+                        "image": "asset:assets/product-4.png",
+                        "link": "/search?q=pouch"
+                    }
+                },
+                "block_4": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Everyday",
+                        "image": "asset:assets/product-6.png",
+                        "link": "/search?q=crossbody"
+                    }
+                },
+                "block_5": {
+                    "type": "category",
+                    "settings": {
+                        "label": "Backpacks",
+                        "image": "asset:assets/product-8.png",
+                        "link": "/search?q=backpack"
+                    }
+                }
+            },
+            "block_order": [
+                "block_0",
+                "block_1",
+                "block_2",
+                "block_3",
+                "block_4",
+                "block_5"
+            ]
+        },
+        "studio": {
+            "type": "image-banner",
+            "settings": {
+                "image": "asset:assets/studio.jpg",
+                "alt": "Sable travel bags in a walnut studio",
+                "heading": "Objects for the journey.",
+                "eyebrow": "THE TRAVEL EDIT",
+                "body": "",
+                "height": "medium",
+                "inset": true,
+                "alignment": "center",
+                "overlay": 5,
+                "button_label": "Discover the edit"
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "essentials": {
+            "type": "product-grid",
+            "settings": {
+                "heading": "Everyday, elevated.",
+                "eyebrow": "THE ESSENTIALS",
+                "limit": 8
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "mountains": {
+            "type": "image-banner",
+            "settings": {
+                "image": "asset:assets/editorial.jpg",
+                "alt": "Traveler on a mountain plateau",
+                "heading": "Take the long way home.",
+                "eyebrow": "ROOM FOR POSSIBILITY",
+                "body": "",
+                "height": "medium",
+                "inset": true,
+                "alignment": "center",
+                "button_label": "Explore travel"
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "travel": {
+            "type": "product-grid",
+            "settings": {
+                "heading": "Go somewhere new.",
+                "eyebrow": "THE JOURNEY COLLECTION",
+                "limit": 12
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "campaign": {
+            "type": "image-banner",
+            "settings": {
+                "image": "asset:assets/hero.jpg",
+                "heading": "For all the places you become.",
+                "eyebrow": "SABLE STORIES",
+                "body": "",
+                "height": "medium",
+                "inset": true,
+                "alignment": "center",
+                "button_label": "Find your companion"
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "picks": {
+            "type": "product-grid",
+            "settings": {
+                "heading": "Little things. Lasting impressions.",
+                "eyebrow": "THE FINISHING TOUCH",
+                "limit": 4
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "story": {
+            "type": "story",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        },
+        "newsletter": {
+            "type": "newsletter",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        },
+        "apps": {
+            "type": "apps",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        }
+    },
+    "order": [
+        "hero",
+        "collections",
+        "studio",
+        "essentials",
+        "mountains",
+        "travel",
+        "campaign",
+        "picks",
+        "story",
+        "newsletter",
+        "apps"
+    ]
+}

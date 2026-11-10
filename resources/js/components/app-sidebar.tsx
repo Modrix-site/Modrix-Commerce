@@ -1,23 +1,20 @@
 import { Link, usePage } from '@inertiajs/react';
-import { ChevronDown, ChevronLeft } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { navIcon } from '@/components/admin/nav-icon';
+import { adminNavTree } from '@/components/admin-nav-tree';
 import AppLogo from '@/components/app-logo';
 import { NavUser } from '@/components/nav-user';
-import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger,
-} from '@/components/ui/collapsible';
 import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
-    SidebarGroup,
-    SidebarGroupLabel,
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarMenuSub,
+    SidebarMenuSubButton,
+    SidebarMenuSubItem,
     useSidebar,
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/hooks/use-current-url';
@@ -48,15 +45,17 @@ export function AppSidebar() {
                   },
               ];
 
+    const entries = adminNavTree(groups);
+
     return (
-        <Sidebar collapsible="icon" variant="sidebar" className="admin-sidebar">
-            <SidebarHeader className="h-16 justify-center border-b border-sidebar-border px-4 py-2 group-data-[collapsible=icon]:px-2">
+        <Sidebar collapsible="icon" variant="inset" className="admin-sidebar">
+            <SidebarHeader className="h-14 justify-center px-3 py-2 group-data-[collapsible=icon]:px-2">
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton
                             size="lg"
                             asChild
-                            className="hover:bg-transparent active:bg-transparent"
+                            className="h-auto justify-center overflow-visible hover:bg-transparent active:bg-transparent"
                         >
                             <Link href={dashboard()} prefetch>
                                 <AppLogo />
@@ -79,67 +78,77 @@ export function AppSidebar() {
                 />
             </button>
 
-            <SidebarContent className="gap-5 px-3 py-4 group-data-[collapsible=icon]:px-2">
-                {groups.map((group) => (
-                    <Collapsible
-                        key={group.title}
-                        defaultOpen
-                        className="group/nav-section"
-                    >
-                        <SidebarGroup className="p-0">
-                            <SidebarGroupLabel asChild>
-                                <CollapsibleTrigger className="mb-1 flex w-full justify-between px-3 text-[10px] font-semibold tracking-wider uppercase">
-                                    {group.title}
-                                    <ChevronDown className="size-3 transition-transform group-data-[state=closed]/nav-section:-rotate-90" />
-                                </CollapsibleTrigger>
-                            </SidebarGroupLabel>
-                            <CollapsibleContent>
-                                <SidebarMenu>
-                                    {group.items.map((item) => {
-                                        const Icon = navIcon(item.icon);
+            <SidebarContent className="gap-0 px-2 py-3 group-data-[collapsible=icon]:px-2">
+                <SidebarMenu className="gap-0.5">
+                    {entries.map((entry) => {
+                        const Icon = navIcon(entry.icon);
+                        const childActive = entry.children.some((child) =>
+                            isCurrentOrParentUrl(child.href),
+                        );
+                        const selfActive =
+                            entry.key === 'dashboard'
+                                ? isCurrentUrl(entry.href)
+                                : isCurrentOrParentUrl(entry.href);
+                        // A section shows its pages while you are in it.
+                        const open =
+                            entry.children.length > 0 &&
+                            (selfActive || childActive);
 
-                                        return (
-                                            <SidebarMenuItem key={item.key}>
-                                                <SidebarMenuButton
+                        return (
+                            <SidebarMenuItem key={entry.key}>
+                                <SidebarMenuButton
+                                    asChild
+                                    isActive={
+                                        entry.key.startsWith('group:')
+                                            ? false
+                                            : selfActive && !childActive
+                                    }
+                                    data-open={open}
+                                    tooltip={{ children: entry.title }}
+                                    className="admin-nav-parent h-8 rounded-lg px-2.5 font-semibold group-data-[collapsible=icon]:size-10!"
+                                >
+                                    <Link
+                                        href={entry.href}
+                                        prefetch
+                                        onClick={() => setOpenMobile(false)}
+                                    >
+                                        <Icon />
+                                        <span>{entry.title}</span>
+                                    </Link>
+                                </SidebarMenuButton>
+                                {open && (
+                                    <SidebarMenuSub className="admin-nav-sub">
+                                        {entry.children.map((child) => (
+                                            <SidebarMenuSubItem key={child.key}>
+                                                <SidebarMenuSubButton
                                                     asChild
-                                                    isActive={
-                                                        item.key === 'dashboard'
-                                                            ? isCurrentUrl(
-                                                                  item.href,
-                                                              )
-                                                            : isCurrentOrParentUrl(
-                                                                  item.href,
-                                                              )
-                                                    }
-                                                    tooltip={{
-                                                        children: item.title,
-                                                    }}
-                                                    className="h-9 rounded-lg px-3 font-medium group-data-[collapsible=icon]:size-10!"
+                                                    isActive={isCurrentOrParentUrl(
+                                                        child.href,
+                                                    )}
                                                 >
                                                     <Link
-                                                        href={item.href}
+                                                        href={child.href}
                                                         prefetch
                                                         onClick={() =>
                                                             setOpenMobile(false)
                                                         }
                                                     >
-                                                        <Icon />
                                                         <span>
-                                                            {item.title}
+                                                            {child.title}
                                                         </span>
                                                     </Link>
-                                                </SidebarMenuButton>
-                                            </SidebarMenuItem>
-                                        );
-                                    })}
-                                </SidebarMenu>
-                            </CollapsibleContent>
-                        </SidebarGroup>
-                    </Collapsible>
-                ))}
+                                                </SidebarMenuSubButton>
+                                            </SidebarMenuSubItem>
+                                        ))}
+                                    </SidebarMenuSub>
+                                )}
+                            </SidebarMenuItem>
+                        );
+                    })}
+                </SidebarMenu>
             </SidebarContent>
 
-            <SidebarFooter className="border-t border-sidebar-border p-3">
+            <SidebarFooter className="p-2">
                 <NavUser />
                 <p className="px-2 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">v{platform.version}</p>
             </SidebarFooter>

@@ -539,7 +539,7 @@ Each entry records a decision, its context, and its consequences. Entries are ap
         - Coupons and other pricing steps apply on top of the sale price.
         - A provider that throws is logged and ignored, so a broken module never stops the store selling at regular prices.
     - **Admin product-editor slot** `admin.product.sidebar`: modules add panels to the editor sidebar. The panels save through their own routes and permissions.
-    - **Flash Sales** (`modules/ecomodular/flash-sales`) is the first user of both:
+    - **Flash Sales** (`modules/modrixcommerce/flash-sales`) is the first user of both:
         - sales with a name, a start and end time, and a percentage (1–90) or fixed-amount discount;
         - products added from the sale page or with the "Flash sale" toggle in the product editor, each with an optional own discount;
         - a "−20%" badge and the original price crossed out, a countdown on the product page, and an optional home page banner.

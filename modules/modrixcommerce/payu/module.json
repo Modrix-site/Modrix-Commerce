@@ -1,0 +1,61 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/payu",
+    "display_name": "PayU Payments",
+    "description": "PayU payment gateway for India with Credit/Debit Cards, Net Banking, UPI, EMI, SHA-512 cryptographic verification, and server reconciliation.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "credit-card",
+    "accent": "#a6c43a",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\PayU\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\PayU\\PayuServiceProvider",
+    "capabilities": [
+        "payment.gateway",
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "content_security"
+    ],
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages"
+    },
+    "content_security": {
+        "connect-src": [
+            "https://secure.payu.in",
+            "https://test.payu.in",
+            "https://info.payu.in"
+        ],
+        "frame-src": [
+            "https://secure.payu.in",
+            "https://test.payu.in",
+            "https://info.payu.in"
+        ],
+        "form-action": [
+            "https://secure.payu.in",
+            "https://test.payu.in",
+            "https://info.payu.in"
+        ]
+    },
+    "admin_navigation": [
+        {
+            "key": "payu",
+            "title": "PayU",
+            "route": "index",
+            "icon": "credit-card",
+            "group": "Configuration",
+            "permission": "payments.manage",
+            "order": 875
+        }
+    ]
+}

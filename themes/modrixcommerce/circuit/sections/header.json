@@ -1,0 +1,112 @@
+{
+    "name": "Header",
+    "limit": 1,
+    "enabled_on": {
+        "groups": ["header"]
+    },
+    "settings": [
+        {
+            "type": "header",
+            "content": "Logo"
+        },
+        {
+            "type": "text",
+            "id": "brand",
+            "label": "Store name",
+            "default": "circuit"
+        },
+        {
+            "type": "image",
+            "id": "logo_image",
+            "label": "Logo image"
+        },
+        {
+            "type": "header",
+            "content": "Search"
+        },
+        {
+            "type": "text",
+            "id": "search_placeholder",
+            "label": "Search placeholder",
+            "default": "I'm looking for…"
+        },
+        {
+            "type": "header",
+            "content": "Menu row"
+        },
+        {
+            "type": "text",
+            "id": "shop_menu_label",
+            "label": "Categories menu label",
+            "default": "Shop"
+        },
+        {
+            "type": "text",
+            "id": "highlight_label",
+            "label": "Highlighted menu link",
+            "default": "Today's Deals"
+        },
+        {
+            "type": "url",
+            "id": "highlight_link",
+            "label": "Highlighted menu link address",
+            "default": "/search?sort=price_asc"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_recent",
+            "label": "Show \"Recently viewed products\"",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "recent_label",
+            "label": "Recently viewed label",
+            "default": "Recently Viewed Products"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_rail",
+            "label": "Show the category icon rail (desktop)",
+            "default": true
+        }
+    ],
+    "blocks": [
+        {
+            "type": "announcement",
+            "name": "Announcement",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "text",
+                    "label": "Text",
+                    "default": "Free shipping on orders over $50"
+                }
+            ]
+        },
+        {
+            "type": "top_link",
+            "name": "Top link",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Label",
+                    "default": "Help Center"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Link",
+                    "default": "/account"
+                }
+            ]
+        }
+    ],
+    "max_blocks": 12,
+    "presets": [
+        {
+            "name": "Header"
+        }
+    ]
+}

@@ -1,0 +1,11 @@
+{
+    "name": "App extensions",
+    "settings": [
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": ""
+        }
+    ]
+}

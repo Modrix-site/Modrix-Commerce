@@ -13,6 +13,14 @@ const variants: Record<
     invalid: 'destructive',
 };
 
+/** Same pill colours as order and product statuses (see .status-badge). */
+const tones: Record<string, string> = {
+    enabled: 'success',
+    update_pending: 'progress',
+    failed: 'danger',
+    invalid: 'danger',
+};
+
 export function ExtensionStateBadge({
     state,
     label,
@@ -20,5 +28,13 @@ export function ExtensionStateBadge({
     state: string;
     label: string;
 }) {
-    return <Badge variant={variants[state] ?? 'outline'}>{label}</Badge>;
+    return (
+        <Badge
+            className="status-badge"
+            data-tone={tones[state] ?? 'neutral'}
+            variant={variants[state] ?? 'outline'}
+        >
+            {label}
+        </Badge>
+    );
 }

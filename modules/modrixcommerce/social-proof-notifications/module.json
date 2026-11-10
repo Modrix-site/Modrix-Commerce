@@ -1,0 +1,234 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/social-proof-notifications",
+    "display_name": "Social Proof Notifications",
+    "description": "Boost sales and customer trust with real-time purchase toasts, live visitor viewer counts, low-stock urgency badges, and engagement analytics.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "bell",
+    "accent": "#6366f1",
+    "platform_version": "^0.4 || ^1.0",
+    "author": "Modrix Commerce",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\SocialProofNotifications\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\SocialProofNotifications\\SocialProofNotificationsServiceProvider",
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "storefront.slots",
+        "database.migrations",
+        "settings",
+        "permissions",
+        "events.listen"
+    ],
+    "permissions": [
+        {
+            "name": "social_proof.manage",
+            "label": "Manage social proof notifications and analytics",
+            "group": "Marketing"
+        }
+    ],
+    "assets": {
+        "pages": "resources/js/pages",
+        "slots": "resources/js/slots"
+    },
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "settings": [
+        {
+            "key": "enabled",
+            "type": "boolean",
+            "label": "Enable social proof notifications",
+            "help": "Toggle all storefront popups and badges on or off.",
+            "default": true
+        },
+        {
+            "key": "position",
+            "type": "select",
+            "label": "Popup screen position",
+            "default": "bottom-left",
+            "options": [
+                {
+                    "value": "bottom-left",
+                    "label": "Bottom Left"
+                },
+                {
+                    "value": "bottom-right",
+                    "label": "Bottom Right"
+                },
+                {
+                    "value": "top-left",
+                    "label": "Top Left"
+                },
+                {
+                    "value": "top-right",
+                    "label": "Top Right"
+                }
+            ]
+        },
+        {
+            "key": "theme_style",
+            "type": "select",
+            "label": "Popup visual style",
+            "default": "modern_white",
+            "options": [
+                {
+                    "value": "modern_white",
+                    "label": "Modern Clean (Card)"
+                },
+                {
+                    "value": "dark_luxury",
+                    "label": "Dark Luxury"
+                },
+                {
+                    "value": "minimal_glass",
+                    "label": "Glassmorphism"
+                }
+            ]
+        },
+        {
+            "key": "initial_delay_seconds",
+            "type": "integer",
+            "label": "Initial delay before first popup (seconds)",
+            "default": 3,
+            "min": 1,
+            "max": 60
+        },
+        {
+            "key": "display_duration_seconds",
+            "type": "integer",
+            "label": "Popup display duration (seconds)",
+            "default": 5,
+            "min": 2,
+            "max": 30
+        },
+        {
+            "key": "interval_seconds",
+            "type": "integer",
+            "label": "Interval between popups (seconds)",
+            "default": 8,
+            "min": 2,
+            "max": 120
+        },
+        {
+            "key": "max_per_session",
+            "type": "integer",
+            "label": "Maximum popups per page session",
+            "default": 8,
+            "min": 1,
+            "max": 50
+        },
+        {
+            "key": "name_privacy",
+            "type": "select",
+            "label": "Customer name privacy",
+            "default": "first_name_initial",
+            "options": [
+                {
+                    "value": "first_name_initial",
+                    "label": "First Name and Initial (e.g. Sarah M.)"
+                },
+                {
+                    "value": "first_name_only",
+                    "label": "First Name Only (e.g. Sarah)"
+                },
+                {
+                    "value": "anonymous",
+                    "label": "Anonymous (e.g. Someone)"
+                }
+            ]
+        },
+        {
+            "key": "show_location",
+            "type": "boolean",
+            "label": "Show customer city / country",
+            "default": true
+        },
+        {
+            "key": "hide_on_mobile",
+            "type": "boolean",
+            "label": "Hide popups on mobile devices",
+            "default": false
+        },
+        {
+            "key": "show_recent_purchases",
+            "type": "boolean",
+            "label": "Show recent purchase notifications",
+            "default": true
+        },
+        {
+            "key": "purchase_lookup_days",
+            "type": "integer",
+            "label": "Recent orders lookup window (days)",
+            "default": 7,
+            "min": 1,
+            "max": 30
+        },
+        {
+            "key": "show_live_product_viewers",
+            "type": "boolean",
+            "label": "Show live viewer count on product page",
+            "default": true
+        },
+        {
+            "key": "min_live_viewers",
+            "type": "integer",
+            "label": "Minimum live viewers threshold to display",
+            "default": 2,
+            "min": 1,
+            "max": 20
+        },
+        {
+            "key": "show_low_stock_alerts",
+            "type": "boolean",
+            "label": "Show low stock urgency alerts",
+            "default": true
+        },
+        {
+            "key": "low_stock_threshold",
+            "type": "integer",
+            "label": "Low stock alert threshold (units)",
+            "default": 5,
+            "min": 1,
+            "max": 50
+        },
+        {
+            "key": "show_product_badge",
+            "type": "boolean",
+            "label": "Show social proof badge on product detail pages",
+            "default": true
+        },
+        {
+            "key": "enable_simulated_proof",
+            "type": "boolean",
+            "label": "Enable starter simulated notifications",
+            "help": "Generates natural verified buyer proof when the store has few recent orders.",
+            "default": false
+        },
+        {
+            "key": "allow_dismiss",
+            "type": "boolean",
+            "label": "Allow visitors to close/dismiss popups",
+            "default": true
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "social-proof",
+            "title": "Social Proof",
+            "route": "index",
+            "icon": "bell",
+            "group": "Marketing",
+            "permission": "social_proof.manage",
+            "order": 345
+        }
+    ]
+}

@@ -8,7 +8,10 @@ use App\Domains\Customers\AddressRules;
 use App\Domains\Customers\CustomerProfiles;
 use App\Domains\Customers\Models\CustomerAddress;
 use App\Domains\Customers\PersonalDataExport;
+use App\Domains\Notifications\CustomerNotifications;
+use App\Domains\Orders\Models\Order;
 use App\Http\Controllers\Controller;
+use App\Http\Presenters\OrderPresenter;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -24,16 +27,27 @@ class AccountController extends Controller
 {
     public function __construct(private readonly CustomerProfiles $profiles) {}
 
-    public function show(Request $request): Response
+    public function show(Request $request, OrderPresenter $orders, CustomerNotifications $notifications): Response
     {
-        $customer = $this->profiles->forUser($this->user($request));
+        $user = $this->user($request);
+        $customer = $this->profiles->forUser($user);
+        $placed = Order::query()->where('user_id', $user->id);
 
         return Inertia::render('storefront/account/index', [
             'customer' => [
                 'name' => $customer->fullName(),
                 'email' => $customer->email,
+                'member_since' => $user->created_at?->toIso8601String(),
             ],
             'defaultAddress' => $customer->addresses()->where('is_default_shipping', true)->first()?->toPresentable(),
+            'stats' => [
+                'orders' => (clone $placed)->count(),
+                'unread_notifications' => $notifications->unreadCount($user),
+                'addresses' => $customer->addresses()->count(),
+            ],
+            'recentOrders' => (clone $placed)->latest('placed_at')->limit(3)->get()
+                ->map(fn (Order $order) => $orders->customerSummary($order))
+                ->values(),
         ]);
     }
 

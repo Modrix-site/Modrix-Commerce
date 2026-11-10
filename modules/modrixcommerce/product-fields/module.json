@@ -1,0 +1,52 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/product-fields",
+    "display_name": "Product Fields",
+    "description": "Custom fields for products: define fields such as Material, Care instructions or Warranty (text, long text, number, yes/no, date, dropdown or link), fill them in on each product, and choose which ones show as a details list on the product page.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "list-plus",
+    "accent": "#6366f1",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\ProductFields\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\ProductFields\\ProductFieldsServiceProvider",
+    "permissions": [
+        {
+            "name": "product_fields.manage",
+            "label": "Manage product fields",
+            "group": "Catalog"
+        }
+    ],
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "storefront.slots",
+        "database.migrations",
+        "permissions"
+    ],
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages",
+        "slots": "resources/js/slots"
+    },
+    "admin_navigation": [
+        {
+            "key": "product-fields",
+            "title": "Product fields",
+            "route": "index",
+            "icon": "list",
+            "group": "Catalog",
+            "permission": "product_fields.manage",
+            "order": 135
+        }
+    ]
+}

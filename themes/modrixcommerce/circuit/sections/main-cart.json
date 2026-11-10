@@ -1,0 +1,70 @@
+{
+    "name": "Cart items",
+    "enabled_on": {
+        "templates": ["cart"]
+    },
+    "limit": 1,
+    "settings": [
+        {
+            "type": "text",
+            "id": "cart_heading",
+            "label": "Heading",
+            "default": "Shopping cart"
+        },
+        {
+            "type": "text",
+            "id": "cart_note",
+            "label": "Note under the checkout button",
+            "default": "Taxes and shipping calculated at checkout."
+        },
+        {
+            "type": "checkbox",
+            "id": "cart_payments",
+            "label": "Show payment badges",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "payment_labels",
+            "label": "Payment badges (separated by commas)",
+            "default": "Amex, Klarna, Bank, Mastercard, Wallet, Visa, PayPal"
+        },
+        {
+            "type": "header",
+            "content": "Empty cart"
+        },
+        {
+            "type": "text",
+            "id": "empty_heading",
+            "label": "Heading",
+            "default": "Your cart is empty"
+        },
+        {
+            "type": "text",
+            "id": "empty_text",
+            "label": "Text",
+            "default": "Browse our products and find something you love."
+        },
+        {
+            "type": "text",
+            "id": "continue_label",
+            "label": "Button",
+            "default": "Continue shopping"
+        },
+        {
+            "type": "header",
+            "content": "Breadcrumb"
+        },
+        {
+            "type": "text",
+            "id": "home_label",
+            "label": "Home link label",
+            "default": "Home"
+        }
+    ],
+    "presets": [
+        {
+            "name": "Cart items"
+        }
+    ]
+}

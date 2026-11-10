@@ -1,0 +1,185 @@
+{
+    "name": "Product details",
+    "limit": 1,
+    "enabled_on": {
+        "templates": [
+            "product"
+        ]
+    },
+    "settings": [
+        {
+            "type": "text",
+            "id": "tax_note",
+            "label": "Price note",
+            "default": "Shipping and taxes calculated at checkout."
+        },
+        {
+            "type": "text",
+            "id": "quantity_label",
+            "label": "Quantity label",
+            "default": "Quantity"
+        },
+        {
+            "type": "text",
+            "id": "add_label",
+            "label": "Add button label",
+            "default": "Add to cart"
+        },
+        {
+            "type": "text",
+            "id": "buy_label",
+            "label": "Express button label",
+            "default": "Buy it now"
+        },
+        {
+            "type": "text",
+            "id": "payment_label",
+            "label": "Payment link label",
+            "default": "More payment options"
+        },
+        {
+            "type": "text",
+            "id": "description_label",
+            "label": "Description heading",
+            "default": "Description"
+        },
+        {
+            "type": "text",
+            "id": "related_heading",
+            "label": "Recommendations heading",
+            "default": "You may also like"
+        },
+        {
+            "type": "range",
+            "id": "related_limit",
+            "label": "Recommendations limit",
+            "default": 5,
+            "min": 2,
+            "max": 10,
+            "step": 1
+        },
+        {
+            "type": "checkbox",
+            "id": "show_buy",
+            "label": "Show Buy it now",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_assurances",
+            "label": "Show service cards",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "assurance_one",
+            "label": "First service",
+            "default": "Secure checkout"
+        },
+        {
+            "type": "text",
+            "id": "assurance_one_text",
+            "label": "First service detail",
+            "default": "Payment options at checkout"
+        },
+        {
+            "type": "text",
+            "id": "assurance_two",
+            "label": "Second service",
+            "default": "Personal assistance"
+        },
+        {
+            "type": "text",
+            "id": "assurance_two_text",
+            "label": "Second service detail",
+            "default": "Here to help with your order"
+        },
+        {
+            "type": "collection",
+            "id": "recommendations",
+            "label": "Recommendations fallback",
+            "products": 10,
+            "fallback": "latest"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_sku",
+            "label": "Show SKU",
+            "default": false
+        }
+    ],
+    "blocks": [
+        {
+            "type": "accordion",
+            "name": "Product information",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "heading",
+                    "label": "Heading",
+                    "default": "Shipping"
+                },
+                {
+                    "type": "select",
+                    "id": "icon",
+                    "label": "Icon",
+                    "default": "truck",
+                    "options": [
+                        {
+                            "value": "document",
+                            "label": "document"
+                        },
+                        {
+                            "value": "tag",
+                            "label": "tag"
+                        },
+                        {
+                            "value": "box",
+                            "label": "box"
+                        },
+                        {
+                            "value": "material",
+                            "label": "material"
+                        },
+                        {
+                            "value": "truck",
+                            "label": "truck"
+                        },
+                        {
+                            "value": "return",
+                            "label": "return"
+                        },
+                        {
+                            "value": "care",
+                            "label": "care"
+                        }
+                    ]
+                },
+                {
+                    "type": "textarea",
+                    "id": "body",
+                    "label": "Content",
+                    "default": "Available delivery options and charges are shown at checkout."
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Optional destination",
+                    "default": ""
+                },
+                {
+                    "type": "text",
+                    "id": "link_label",
+                    "label": "Link label",
+                    "default": "Learn more"
+                }
+            ]
+        }
+    ],
+    "max_blocks": 12,
+    "presets": [
+        {
+            "name": "Product details"
+        }
+    ]
+}

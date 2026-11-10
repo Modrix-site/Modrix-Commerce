@@ -1,0 +1,84 @@
+{
+    "$schema": "../../../docs/extensions/theme.schema.json",
+    "name": "modrixcommerce/linden",
+    "display_name": "Linden & Vale",
+    "description": "A rebranded botanical beauty storefront with an evergreen centered header, soft serif headings, editorial campaigns, product shelves, four-column catalog and gallery-led product pages, all editable in the current live customizer.",
+    "version": "1.0.3",
+    "type": "theme",
+    "theme_type": "storefront",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "capabilities": [
+        "custom_fonts",
+        "demo_content",
+        "sections"
+    ],
+    "assets": "assets",
+    "fonts": [
+        {
+            "family": "Work Sans",
+            "file": "assets/work-sans.woff2",
+            "weight": "300 700",
+            "style": "normal"
+        },
+        {
+            "family": "Fraunces",
+            "file": "assets/fraunces.woff2",
+            "weight": "300 700",
+            "style": "normal"
+        }
+    ],
+    "design": {
+        "color.background": "#fafafa",
+        "color.foreground": "#373737",
+        "color.primary": "#004236",
+        "color.primary_foreground": "#ffffff",
+        "color.muted": "#f8f8f8",
+        "color.muted_foreground": "#777777",
+        "color.accent": "#004236",
+        "color.accent_foreground": "#ffffff",
+        "color.border": "#e8e8e8",
+        "font_body": "custom:Work Sans",
+        "font_heading": "custom:Fraunces",
+        "radius": "0.25rem",
+        "density": "compact",
+        "container": "wide",
+        "layout.header": "minimal",
+        "layout.footer": "columns",
+        "layout.product_card": "minimal",
+        "layout.grid_columns": "4",
+        "layout.product_page": "split",
+        "color.search": "#ffffff",
+        "color.sale": "#c63842"
+    },
+    "customizer_file": "settings.json",
+    "frontend": {
+        "stylesheet": "src/style.css",
+        "layout": "src/layout.tsx"
+    },
+    "demo_content": "demo.json",
+    "changelog": [
+        {
+            "version": "1.0.3",
+            "date": "2026-11-09",
+            "notes": "Adds a preview image for the Appearance page."
+        },
+        {
+            "version": "1.0.2",
+            "date": "2026-11-09",
+            "notes": "Product page: bundles, reviews and recommendations use the full width under the gallery instead of the narrow summary column."
+        },
+        {
+            "version": "1.0.1",
+            "date": "2026-11-09",
+            "notes": "The sticky header turns compact while scrolling and keeps the menu on one line, with an on/off setting in the Header section."
+        },
+        {
+            "version": "1.0.0",
+            "date": "2026-11-09",
+            "notes": "Linden & Vale: rebranded botanical beauty design built in MagicPath, native live section customization, original imagery and standard storefront commerce and module integrations."
+        }
+    ],
+    "screenshot": "assets/demo-preview.webp"
+}

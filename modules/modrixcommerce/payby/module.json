@@ -1,0 +1,61 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/payby",
+    "display_name": "PayBy (Astra Tech)",
+    "description": "PayBy payment gateway for the UAE with cards, Botim wallet, Apple Pay, and RSA-SHA256 asymmetric cryptographic security.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "credit-card",
+    "accent": "#ff5e00",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\PayBy\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\PayBy\\PaybyServiceProvider",
+    "capabilities": [
+        "payment.gateway",
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "content_security"
+    ],
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages"
+    },
+    "content_security": {
+        "connect-src": [
+            "https://api.payby.com",
+            "https://uat.test2pay.com",
+            "https://pay.payby.com"
+        ],
+        "frame-src": [
+            "https://api.payby.com",
+            "https://uat.test2pay.com",
+            "https://pay.payby.com"
+        ],
+        "form-action": [
+            "https://api.payby.com",
+            "https://uat.test2pay.com",
+            "https://pay.payby.com"
+        ]
+    },
+    "admin_navigation": [
+        {
+            "key": "payby",
+            "title": "PayBy",
+            "route": "index",
+            "icon": "credit-card",
+            "group": "Configuration",
+            "permission": "payments.manage",
+            "order": 878
+        }
+    ]
+}

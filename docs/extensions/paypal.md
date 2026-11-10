@@ -11,13 +11,13 @@ The gateway code is `paypal`. Official references:
 
 ## Install
 
-1. Admin → Extensions → Upload, and choose `dist/ecomodular-paypal-1.0.0.zip`. `module.json` is at the root of the archive. An upload does not replace a copy that is already in `modules/ecomodular/paypal`.
+1. Admin → Extensions → Upload, and choose `dist/ecomodular-paypal-1.0.0.zip`. `module.json` is at the root of the archive. An upload does not replace a copy that is already in `modules/modrixcommerce/paypal`.
 2. Enable **PayPal**.
 3. Run `npm run build` so the settings page is in the Vite manifest. Skip this only when `npm run dev` is already serving the store.
 4. If route caching is on, rebuild it: `php artisan route:cache`.
-5. Admin → Payments → **PayPal**, or open `/admin/m/ecomodular/paypal`. Saving credentials asks you to confirm your password first.
+5. Admin → Payments → **PayPal**, or open `/admin/m/modrixcommerce/paypal`. Saving credentials asks you to confirm your password first.
 
-You can also copy `modules/ecomodular/paypal` into place and enable it from Extensions.
+You can also copy `modules/modrixcommerce/paypal` into place and enable it from Extensions.
 
 ## Configure
 

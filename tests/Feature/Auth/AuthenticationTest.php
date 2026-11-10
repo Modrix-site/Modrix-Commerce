@@ -14,6 +14,8 @@ class AuthenticationTest extends TestCase
 
     public function test_login_screen_can_be_rendered()
     {
+        $this->installPlatform();
+
         $response = $this->get(route('login'));
 
         $response->assertOk();

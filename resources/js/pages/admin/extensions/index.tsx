@@ -6,6 +6,7 @@ import {
     Puzzle,
     CheckCircle2,
     RefreshCw,
+    Cloud,
 } from 'lucide-react';
 import { useState } from 'react';
 import { ExtensionIcon } from '@/components/admin/extension-icon';
@@ -26,9 +27,13 @@ import type { ExtensionSummary } from '@/types';
 export default function ExtensionsIndex({
     extensions,
     safeMode,
+    licensedExtensions = [],
+    cloudConnector = null,
 }: {
     extensions: ExtensionSummary[];
     safeMode: boolean;
+    licensedExtensions?: string[];
+    cloudConnector?: { id: number; enabled: boolean } | null;
 }) {
     const can = useCan();
     const [category, setCategory] = useState('All extensions');
@@ -85,6 +90,25 @@ export default function ExtensionsIndex({
                         <AlertDescription>
                             Extensions are temporarily paused. Disable the
                             problem extension before turning off safe mode.
+                        </AlertDescription>
+                    </Alert>
+                )}
+                {cloudConnector && !cloudConnector.enabled && (
+                    <Alert className="mb-5">
+                        <Cloud />
+                        <AlertTitle>Connect to Modrix Cloud</AlertTitle>
+                        <AlertDescription>
+                            <p>
+                                Install and enable the Modrix Cloud Connector to
+                                browse every theme and extension and install
+                                your free and purchased ones in one click.
+                            </p>
+                            <Link
+                                href={show(cloudConnector.id)}
+                                className="font-medium underline"
+                            >
+                                Open Modrix Cloud Connector
+                            </Link>
                         </AlertDescription>
                     </Alert>
                 )}
@@ -184,7 +208,8 @@ export default function ExtensionsIndex({
                             {visible.map((extension) => (
                                 <article
                                     key={extension.id}
-                                    className="flex flex-col gap-4 rounded-xl border bg-card p-5 shadow-sm transition-shadow hover:shadow-md"
+                                    id={`extension-${extension.name.replaceAll('/', '-')}`}
+                                    className="flex scroll-mt-6 flex-col gap-4 rounded-xl border bg-card p-5 shadow-sm transition-shadow target:ring-2 target:ring-primary hover:shadow-md"
                                 >
                                     <div className="flex items-start justify-between gap-3">
                                         <ExtensionIcon
@@ -226,6 +251,13 @@ export default function ExtensionsIndex({
                                             'Extend your store with additional features.'}
                                     </p>
                                     <div className="flex flex-wrap gap-1.5">
+                                        {licensedExtensions.includes(
+                                            extension.name,
+                                        ) && (
+                                            <Badge variant="outline">
+                                                Modrix Cloud licensed
+                                            </Badge>
+                                        )}
                                         {categoriesForExtension(extension).map(
                                             (c) => (
                                                 <Badge

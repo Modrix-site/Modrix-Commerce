@@ -1,0 +1,143 @@
+{
+    "name": "Editorial header",
+    "enabled_on": {
+        "groups": ["header"]
+    },
+    "settings": [
+        {
+            "type": "checkbox",
+            "id": "sticky",
+            "label": "Sticky header",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "compact_on_scroll",
+            "label": "Compact header while scrolling",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "brand",
+            "label": "Wordmark",
+            "default": "ATELIER"
+        },
+        {
+            "type": "image",
+            "id": "logo",
+            "label": "Logo image"
+        },
+        {
+            "type": "number",
+            "id": "logo_width",
+            "label": "Logo width (px)",
+            "default": 160
+        },
+        {
+            "type": "checkbox",
+            "id": "announcement_enabled",
+            "label": "Show announcement bar",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "announcement_text",
+            "label": "Announcement text",
+            "default": "Discover considered design, made for everyday life"
+        },
+        {
+            "type": "url",
+            "id": "announcement_link",
+            "label": "Announcement link",
+            "default": "/search"
+        },
+        {
+            "type": "text",
+            "id": "search_placeholder",
+            "label": "Search placeholder",
+            "default": "Search the collection"
+        },
+        {
+            "type": "text",
+            "id": "account_label",
+            "label": "Account label",
+            "default": "Account"
+        },
+        {
+            "type": "text",
+            "id": "wishlist_label",
+            "label": "Favourites label",
+            "default": "Favourites"
+        },
+        {
+            "type": "text",
+            "id": "cart_label",
+            "label": "Bag label",
+            "default": "Shopping bag"
+        },
+        {
+            "type": "select",
+            "id": "menu_source",
+            "label": "Menu source",
+            "default": "auto",
+            "options": [
+                {
+                    "value": "auto",
+                    "label": "Use store menus once saved"
+                },
+                {
+                    "value": "theme",
+                    "label": "Theme section links"
+                },
+                {
+                    "value": "store",
+                    "label": "Store navigation menus"
+                }
+            ]
+        },
+        {
+            "type": "checkbox",
+            "id": "show_language",
+            "label": "Show language selector",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_search",
+            "label": "Show search icon",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_account",
+            "label": "Show account icon",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_wishlist",
+            "label": "Show favourites icon",
+            "default": true
+        }
+    ],
+    "blocks": [
+        {
+            "type": "link",
+            "name": "Navigation link",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Link text",
+                    "default": "New arrivals"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Destination",
+                    "default": "/search"
+                }
+            ]
+        }
+    ]
+}

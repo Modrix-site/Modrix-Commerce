@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Storefront;
 
-use App\Domains\Notifications\NotificationKinds;
+use App\Domains\Notifications\CustomerNotifications;
 use App\Domains\Notifications\NotificationPresenter;
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -26,7 +26,7 @@ class AccountNotificationController extends Controller
 
     public function __construct(
         private readonly NotificationPresenter $presenter,
-        private readonly NotificationKinds $kinds,
+        private readonly CustomerNotifications $notifications,
     ) {}
 
     public function index(Request $request): Response
@@ -74,13 +74,7 @@ class AccountNotificationController extends Controller
      */
     private function mine(Request $request): MorphMany
     {
-        // By audience, not name: "customer.new" is a staff kind.
-        $customerKinds = array_keys(array_filter(
-            $this->kinds->all(),
-            fn (array $definition) => $definition['audience'] === NotificationKinds::CUSTOMER,
-        ));
-
-        return $this->user($request)->notifications()->whereIn('data->kind', $customerKinds);
+        return $this->notifications->for($this->user($request));
     }
 
     private function user(Request $request): User

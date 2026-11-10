@@ -1,0 +1,63 @@
+{
+    "$schema": "../../../docs/extensions/theme.schema.json",
+    "name": "modrixcommerce/atelier",
+    "display_name": "Atelier",
+    "description": "Editorial luxury minimalism storefront with balanced typography, split hero, curated product rails, storytelling blocks, category grid, immersive campaign banners and full live section customizer.",
+    "version": "1.0.0",
+    "type": "theme",
+    "theme_type": "storefront",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "capabilities": [
+        "custom_fonts",
+        "demo_content",
+        "sections"
+    ],
+    "assets": "assets",
+    "screenshot": "assets/demo-preview.jpg",
+    "fonts": [
+        {
+            "family": "Jost",
+            "file": "assets/jost.woff2",
+            "weight": "400 700",
+            "style": "normal"
+        }
+    ],
+    "design": {
+        "color.background": "#ffffff",
+        "color.foreground": "#171717",
+        "color.primary": "#111111",
+        "color.primary_foreground": "#ffffff",
+        "color.muted": "#f1f0ed",
+        "color.muted_foreground": "#666666",
+        "color.accent": "#79513d",
+        "color.accent_foreground": "#ffffff",
+        "color.border": "#d8d8d8",
+        "color.search": "#111111",
+        "color.sale": "#79513d",
+        "font_body": "custom:Jost",
+        "font_heading": "custom:Jost",
+        "radius": "0",
+        "density": "compact",
+        "container": "wide",
+        "layout.header": "minimal",
+        "layout.footer": "columns",
+        "layout.product_card": "minimal",
+        "layout.grid_columns": "4",
+        "layout.product_page": "split"
+    },
+    "customizer_file": "settings.json",
+    "frontend": {
+        "stylesheet": "src/style.css",
+        "layout": "src/layout.tsx"
+    },
+    "demo_content": "demo.json",
+    "changelog": [
+        {
+            "version": "1.0.0",
+            "date": "2026-11-09",
+            "notes": "Atelier: editorial luxury minimalism storefront with live customizer, split hero, product rails, storytelling blocks, campaign banners, gift edit, and full module slots."
+        }
+    ]
+}

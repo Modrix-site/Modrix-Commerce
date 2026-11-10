@@ -9,8 +9,8 @@ import {
     RotateCcw,
     Trash2,
 } from 'lucide-react';
-import { useState } from 'react';
-import type { FormEvent } from 'react';
+import { Component, Suspense, useState } from 'react';
+import type { FormEvent, ReactNode } from 'react';
 import ThemeController from '@/actions/App/Http/Controllers/Admin/ThemeController';
 import { NativeSelect } from '@/components/admin/form-field';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
@@ -51,6 +51,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { index } from '@/routes/admin/themes';
+import { themeCustomizer } from '@/lib/theme-customizer';
+import {
+    ThemeTextTranslation,
+    ThemeTextTranslationProvider,
+} from '@/components/admin/themes/text-translation';
+import type { TextTranslationConfig } from '@/components/admin/themes/text-translation';
 import type {
     ThemeField,
     ThemeImageOption,
@@ -60,8 +66,14 @@ import type {
 
 type Value = string | number | boolean | null;
 
-type Props = {
+export type ThemeCustomizerPageProps = {
+    textTranslation?: TextTranslationConfig;
     theme: ThemeSummary;
+    customizer?: {
+        component: string | null;
+        mode: 'extend' | 'replace';
+        sections: boolean;
+    };
     design: {
         title: string;
         description: string | null;
@@ -86,6 +98,8 @@ type Props = {
         Record<CustomizerTab, ExtensionSettingsGroup[]>
     >;
 };
+
+type Props = ThemeCustomizerPageProps;
 
 const FONT_LABELS: Record<string, string> = {
     sans: 'Instrument Sans',
@@ -117,13 +131,75 @@ const PAGE_SETTING_TABS: string[] = [
     'checkout',
 ];
 
-export default function ThemeCustomize({
+export default function ThemeCustomize(props: Props) {
+    const Customizer = themeCustomizer(
+        props.theme.name,
+        props.customizer?.component,
+    );
+    const editor = Customizer ? (
+        <CustomizerBoundary
+            key={props.theme.id}
+            fallback={<DefaultThemeCustomizer {...props} />}
+        >
+            <Suspense
+                fallback={
+                    <DefaultThemeCustomizer key={props.theme.id} {...props} />
+                }
+            >
+                <Customizer
+                    key={props.theme.id}
+                    {...props}
+                    DefaultCustomizer={DefaultThemeCustomizer}
+                    controls={customizerControls}
+                />
+            </Suspense>
+        </CustomizerBoundary>
+    ) : (
+        <DefaultThemeCustomizer key={props.theme.id} {...props} />
+    );
+    return (
+        <ThemeTextTranslationProvider config={props.textTranslation}>
+            {editor}
+        </ThemeTextTranslationProvider>
+    );
+}
+
+class CustomizerBoundary extends Component<
+    { children: ReactNode; fallback: ReactNode },
+    { failed: boolean }
+> {
+    state = { failed: false };
+
+    static getDerivedStateFromError() {
+        return { failed: true };
+    }
+
+    render() {
+        return this.state.failed ? (
+            <>
+                <Alert variant="destructive">
+                    <AlertTitle>Theme editor unavailable</AlertTitle>
+                    <AlertDescription>
+                        The theme's custom editor could not load. You can
+                        continue using the default controls below.
+                    </AlertDescription>
+                </Alert>
+                {this.props.fallback}
+            </>
+        ) : (
+            this.props.children
+        );
+    }
+}
+
+export function DefaultThemeCustomizer({
     theme,
     design,
     sections,
     images,
     blocks = [],
     extensionSettings = {},
+    customizer,
 }: Props) {
     const [tab, setTab] = useCustomizerTab();
 
@@ -180,7 +256,11 @@ export default function ThemeCustomize({
                 >
                     {/* Cards with forms stay mounted (only hidden), so unsaved
                         edits survive switching tabs. */}
-                    <div hidden={tab !== 'home'}>
+                    <div
+                        hidden={
+                            tab !== 'home' || customizer?.sections === false
+                        }
+                    >
                         <SectionsCard
                             themeId={theme.id}
                             sections={sections}
@@ -263,8 +343,8 @@ function DesignCard({
                     <div>
                         <CardTitle>{design.title}</CardTitle>
                         <CardDescription>
-                            Leave a setting on "Theme default" to follow the
-                            theme, including future updates of it.
+                            {design.description ??
+                                'Leave a setting on "Theme default" to follow the theme, including future updates of it.'}
                         </CardDescription>
                     </div>
                     {Object.keys(design.presets).length > 0 && (
@@ -477,6 +557,14 @@ function DesignInput({
         <div className="grid content-start gap-2">
             <div className="flex items-center justify-between gap-2">
                 <Label htmlFor={id}>{field.label}</Label>
+                {['string', 'text'].includes(field.type) &&
+                    field.translatable === true && (
+                        <ThemeTextTranslation
+                            fieldKey={field.key}
+                            label={field.label}
+                            source={String(shown ?? '')}
+                        />
+                    )}
                 {overridden && (
                     <button
                         type="button"
@@ -896,6 +984,7 @@ function SectionsCard({
                                         {type?.fields.map((field) => (
                                             <SectionInput
                                                 key={field.key}
+                                                sectionType={section.type}
                                                 id={`section-${i}-${field.key}`}
                                                 field={field}
                                                 value={
@@ -977,6 +1066,7 @@ function SectionsCard({
 
 function SectionInput({
     id,
+    sectionType,
     field,
     value,
     images,
@@ -984,6 +1074,7 @@ function SectionInput({
     onChange,
 }: {
     id: string;
+    sectionType: string;
     field: ThemeField;
     value: Value;
     images: ThemeImageOption[];
@@ -1015,10 +1106,20 @@ function SectionInput({
                     {field.label}
                 </label>
             ) : (
-                <Label htmlFor={id}>
-                    {field.label}
-                    {field.required && ' *'}
-                </Label>
+                <div className="flex items-center justify-between gap-2">
+                    <Label htmlFor={id}>
+                        {field.label}
+                        {field.required && ' *'}
+                    </Label>
+                    {field.translatable === true && (
+                        <ThemeTextTranslation
+                            fieldKey={field.key}
+                            sectionType={sectionType}
+                            source={text}
+                            label={field.label}
+                        />
+                    )}
+                </div>
             )}
             {field.type === 'select' ? (
                 <NativeSelect
@@ -1157,6 +1258,16 @@ function ResetCard({ theme }: { theme: ThemeSummary }) {
         </Card>
     );
 }
+
+const customizerControls = {
+    Design: DesignCard,
+    Sections: SectionsCard,
+    Images: ImageLibrary,
+    Reset: ResetCard,
+    Field: DesignInput,
+};
+
+export type ThemeCustomizerControls = typeof customizerControls;
 
 ThemeCustomize.layout = {
     breadcrumbs: [{ title: 'Appearance', href: index() }],

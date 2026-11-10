@@ -1,0 +1,66 @@
+{
+    "title": "Baby Lane design",
+    "description": "Colors and fonts apply across the store. Use the live section editor to add, reorder and edit campaigns, navigation and footer blocks.",
+    "fields": {
+        "custom.product_link_color": {
+            "type": "color",
+            "label": "Product links",
+            "group": "Colors",
+            "tab": "general",
+            "default": "#0068ad"
+        },
+        "custom.sale_color": {
+            "type": "color",
+            "label": "Sale prices",
+            "group": "Colors",
+            "tab": "general",
+            "default": "#e84506"
+        },
+        "custom.show_buy_button": {
+            "type": "boolean",
+            "label": "Show Buy now button",
+            "group": "Product",
+            "tab": "product",
+            "default": true
+        },
+        "custom.show_pattern": {
+            "type": "boolean",
+            "label": "Show homepage baby pattern",
+            "group": "Background",
+            "tab": "general",
+            "default": true
+        },
+        "custom.body_size": {
+            "type": "select",
+            "label": "Body text size",
+            "group": "Typography",
+            "tab": "general",
+            "options": ["13", "14", "15", "16"],
+            "default": "14"
+        },
+        "custom.card_size": {
+            "type": "select",
+            "label": "Product card text size",
+            "group": "Typography",
+            "tab": "general",
+            "options": ["12", "13", "14", "15"],
+            "default": "14"
+        },
+        "custom.page_title_size": {
+            "type": "select",
+            "label": "Page title size",
+            "group": "Typography",
+            "tab": "general",
+            "options": ["24", "28", "32", "36"],
+            "default": "32"
+        },
+        "custom.product_title_size": {
+            "type": "select",
+            "label": "Product title size",
+            "group": "Typography",
+            "tab": "general",
+            "options": ["20", "22", "24", "28"],
+            "default": "24"
+        }
+    }
+}

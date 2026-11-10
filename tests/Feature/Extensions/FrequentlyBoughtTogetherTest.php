@@ -40,8 +40,8 @@ class FrequentlyBoughtTogetherTest extends TestCase
         $this->setUpModules();
         File::copyDirectory(base_path('modules'), $this->modulesPath);
         $this->modules = app(ModuleManager::class);
-        $this->modules->install('ecomodular/frequently-bought-together');
-        $this->modules->enable('ecomodular/frequently-bought-together', true);
+        $this->modules->install('modrixcommerce/frequently-bought-together');
+        $this->modules->enable('modrixcommerce/frequently-bought-together', true);
     }
 
     private function state(string $name): ModuleState
@@ -96,9 +96,9 @@ class FrequentlyBoughtTogetherTest extends TestCase
 
     public function test_module_is_enabled_and_registers_its_routes()
     {
-        $this->assertSame(ModuleState::Enabled, $this->state('ecomodular/frequently-bought-together'));
-        $this->assertTrue(app('router')->has('admin.ecomodular.frequently-bought-together.index'));
-        $this->assertTrue(app('router')->has('ecomodular.frequently-bought-together.add'));
+        $this->assertSame(ModuleState::Enabled, $this->state('modrixcommerce/frequently-bought-together'));
+        $this->assertTrue(app('router')->has('admin.modrixcommerce.frequently-bought-together.index'));
+        $this->assertTrue(app('router')->has('modrixcommerce.frequently-bought-together.add'));
     }
 
     public function test_slot_suggests_products_bought_together_from_order_history()
@@ -114,7 +114,7 @@ class FrequentlyBoughtTogetherTest extends TestCase
 
         $this->get(route('storefront.product', $viewed->slug))
             ->assertInertia(fn (Assert $page) => $page
-                ->where('slots.0.component', 'ecomodular/frequently-bought-together/BundleWidget')
+                ->where('slots.0.component', 'modrixcommerce/frequently-bought-together/BundleWidget')
                 ->where('slots.0.props.current.id', $viewed->id)
                 ->has('slots.0.props.items', 2)
                 // Most frequently co-purchased first.
@@ -127,7 +127,7 @@ class FrequentlyBoughtTogetherTest extends TestCase
         $viewed = $this->sellable('10.00')->product;
         $companion = $this->sellable('12.00')->product;
 
-        $this->modules->configure('ecomodular/frequently-bought-together', [
+        $this->modules->configure('modrixcommerce/frequently-bought-together', [
             'min_orders' => '2',
             'fallback_related' => '0',
         ], $this->owner());
@@ -150,15 +150,38 @@ class FrequentlyBoughtTogetherTest extends TestCase
         // No order history at all; the fallback fills the bundle.
         $this->get(route('storefront.product', $viewed->slug))
             ->assertInertia(fn (Assert $page) => $page
-                ->where('slots.0.component', 'ecomodular/frequently-bought-together/BundleWidget')
+                ->where('slots.0.component', 'modrixcommerce/frequently-bought-together/BundleWidget')
                 ->where('slots.0.props.items.0.id', $relative->id));
+    }
+
+    public function test_multiple_related_companions_render_with_lazy_loading_prevented(): void
+    {
+        $category = Category::factory()->create();
+        $viewed = $this->sellable('10.00')->product;
+        $first = $this->sellable('12.00')->product;
+        $second = $this->sellable('14.00')->product;
+        foreach ([$viewed, $first, $second] as $product) {
+            $product->categories()->attach($category);
+        }
+
+        $wasPrevented = \Illuminate\Database\Eloquent\Model::preventsLazyLoading();
+        \Illuminate\Database\Eloquent\Model::preventLazyLoading();
+        try {
+            $this->get(route('storefront.product', $viewed->slug))
+                ->assertInertia(fn (Assert $page) => $page
+                    ->where('slots.0.component', 'modrixcommerce/frequently-bought-together/BundleWidget')
+                    ->has('slots.0.props.items', 2)
+                    ->where('slots.0.props.items', fn ($items) => collect($items)->pluck('id')->sort()->values()->all() === collect([$first->id, $second->id])->sort()->values()->all()));
+        } finally {
+            \Illuminate\Database\Eloquent\Model::preventLazyLoading($wasPrevented);
+        }
     }
 
     public function test_disabled_module_shows_no_bundle()
     {
         $viewed = $this->sellable()->product;
 
-        $this->modules->configure('ecomodular/frequently-bought-together', ['enabled' => '0'], $this->owner());
+        $this->modules->configure('modrixcommerce/frequently-bought-together', ['enabled' => '0'], $this->owner());
 
         $this->get(route('storefront.product', $viewed->slug))
             ->assertInertia(fn (Assert $page) => $page->has('slots', 0));
@@ -171,7 +194,7 @@ class FrequentlyBoughtTogetherTest extends TestCase
         $b = $this->sellable('14.00');
         $this->paidOrder([$viewed, $a->product, $b->product]);
 
-        $this->post(route('ecomodular.frequently-bought-together.add'), [
+        $this->post(route('modrixcommerce.frequently-bought-together.add'), [
             'product_id' => $viewed->id,
             'variant_ids' => [$a->id, $b->id],
         ])->assertSessionHasNoErrors();
@@ -190,7 +213,7 @@ class FrequentlyBoughtTogetherTest extends TestCase
         // Drain the stock.
         app(InventoryService::class)->adjust($soldOut, -1, MovementReason::Adjustment);
 
-        $this->post(route('ecomodular.frequently-bought-together.add'), [
+        $this->post(route('modrixcommerce.frequently-bought-together.add'), [
             'product_id' => $viewed->id,
             'variant_ids' => [$soldOut->id],
         ])->assertSessionHasErrors('bundle');
@@ -200,7 +223,7 @@ class FrequentlyBoughtTogetherTest extends TestCase
     {
         $current = $this->sellable('10.00');
         $extra = $this->sellable('12.00');
-        $url = route('ecomodular.frequently-bought-together.add');
+        $url = route('modrixcommerce.frequently-bought-together.add');
         $this->post($url, [
             'product_id' => $current->product_id,
             'current_variant_id' => $extra->id,
@@ -220,9 +243,9 @@ class FrequentlyBoughtTogetherTest extends TestCase
         $viewed = $this->sellable('10.00')->product;
         $variant = $this->sellable('12.00');
 
-        $this->modules->configure('ecomodular/frequently-bought-together', ['enabled' => '0'], $this->owner());
+        $this->modules->configure('modrixcommerce/frequently-bought-together', ['enabled' => '0'], $this->owner());
 
-        $this->post(route('ecomodular.frequently-bought-together.add'), [
+        $this->post(route('modrixcommerce.frequently-bought-together.add'), [
             'product_id' => $viewed->id,
             'variant_ids' => [$variant->id],
         ])->assertNotFound();
@@ -233,14 +256,14 @@ class FrequentlyBoughtTogetherTest extends TestCase
         $this->sellable('10.00');
 
         $this->actingAs($this->userWithRole('catalog-manager'))
-            ->get(route('admin.ecomodular.frequently-bought-together.index'))
+            ->get(route('admin.modrixcommerce.frequently-bought-together.index'))
             ->assertForbidden();
 
         $this->actingAs($this->owner())
-            ->get(route('admin.ecomodular.frequently-bought-together.index'))
+            ->get(route('admin.modrixcommerce.frequently-bought-together.index'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('module/ecomodular/frequently-bought-together/admin/index', false)
+                ->component('module/modrixcommerce/frequently-bought-together/admin/index', false)
                 ->where('state.enabled', true)
                 ->has('state.max_products'));
     }

@@ -20,7 +20,7 @@ class AdminAccessTest extends TestCase
 
     public function test_guests_are_redirected_to_login()
     {
-        $this->get(route('admin.dashboard'))->assertRedirect(route('login'));
+        $this->get(route('admin.dashboard'))->assertRedirect(route('admin.login'));
     }
 
     public function test_customers_cannot_enter_the_admin_area()

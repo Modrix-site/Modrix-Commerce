@@ -1,0 +1,209 @@
+{
+    "name": "Product information",
+    "enabled_on": {
+        "templates": ["product"]
+    },
+    "limit": 1,
+    "settings": [
+        {
+            "type": "header",
+            "content": "Buying options"
+        },
+        {
+            "type": "text",
+            "id": "size_guide_label",
+            "label": "Size guide label (empty to hide)",
+            "default": "Size guide"
+        },
+        {
+            "type": "url",
+            "id": "size_guide_link",
+            "label": "Size guide link",
+            "default": "/search"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_share",
+            "label": "Show \"Share\"",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "ask_label",
+            "label": "Ask a question label",
+            "default": "Ask a question"
+        },
+        {
+            "type": "url",
+            "id": "ask_link",
+            "label": "Ask a question link (empty to hide)",
+            "default": "/account"
+        },
+        {
+            "type": "number",
+            "id": "stock_threshold",
+            "label": "Show \"Hurry up! Only N left\" at or below",
+            "min": 1,
+            "max": 999,
+            "default": 20
+        },
+        {
+            "type": "text",
+            "id": "marquee",
+            "label": "Scrolling benefits (separated by |)",
+            "default": "Free returns within 30 days | Unlimited delivery for only $175 | Secure checkout"
+        },
+        {
+            "type": "header",
+            "content": "Details"
+        },
+        {
+            "type": "text",
+            "id": "sku_label",
+            "label": "SKU label",
+            "default": "Sku:"
+        },
+        {
+            "type": "text",
+            "id": "available_label",
+            "label": "Availability label",
+            "default": "Available:"
+        },
+        {
+            "type": "text",
+            "id": "collections_label",
+            "label": "Collections label",
+            "default": "Collections:"
+        },
+        {
+            "type": "text",
+            "id": "brand_label",
+            "label": "Brand label",
+            "default": "Brand:"
+        },
+        {
+            "type": "text",
+            "id": "safe_checkout_label",
+            "label": "Safe checkout label",
+            "default": "Guarantee Safe Checkout:"
+        },
+        {
+            "type": "text",
+            "id": "payment_labels",
+            "label": "Payment badges (separated by commas)",
+            "default": "Amex, Klarna, Bank, Mastercard, Wallet, Visa, PayPal"
+        },
+        {
+            "type": "header",
+            "content": "Accordions"
+        },
+        {
+            "type": "text",
+            "id": "description_label",
+            "label": "Description title",
+            "default": "Description"
+        },
+        {
+            "type": "text",
+            "id": "shipping_label",
+            "label": "Shipping title",
+            "default": "Shipping and Returns"
+        },
+        {
+            "type": "textarea",
+            "id": "shipping_text",
+            "label": "Shipping and Returns text",
+            "default": "Orders ship within 1-2 business days. Delivery takes 3-5 days in country and 5-10 days internationally."
+        },
+        {
+            "type": "text",
+            "id": "returns_label",
+            "label": "Returns title",
+            "default": "Return Policies"
+        },
+        {
+            "type": "textarea",
+            "id": "returns_text",
+            "label": "Return Policies text",
+            "default": "Return any unused item within 15 days of delivery for a full refund. Items must be in their original packaging."
+        },
+        {
+            "type": "header",
+            "content": "Related products"
+        },
+        {
+            "type": "text",
+            "id": "related_heading",
+            "label": "Related products heading",
+            "default": "People Also Bought"
+        },
+        {
+            "type": "text",
+            "id": "related_text",
+            "label": "Related products text",
+            "default": "Here's some of our most similar products people are buying."
+        },
+        {
+            "type": "text",
+            "id": "recent_heading",
+            "label": "Recently viewed heading",
+            "default": "Recently Viewed"
+        },
+        {
+            "type": "text",
+            "id": "recent_text",
+            "label": "Recently viewed text",
+            "default": "Explore your recently viewed items."
+        },
+        {
+            "type": "header",
+            "content": "Breadcrumb"
+        },
+        {
+            "type": "text",
+            "id": "home_label",
+            "label": "Home link label",
+            "default": "Home"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "delivery",
+            "name": "Delivery line",
+            "settings": [
+                {
+                    "type": "select",
+                    "id": "icon",
+                    "label": "Icon",
+                    "default": "truck",
+                    "options": [
+                        {
+                            "value": "truck",
+                            "label": "Delivery"
+                        },
+                        {
+                            "value": "ticket",
+                            "label": "Voucher"
+                        },
+                        {
+                            "value": "package",
+                            "label": "Package"
+                        }
+                    ]
+                },
+                {
+                    "type": "text",
+                    "id": "text",
+                    "label": "Text",
+                    "default": "Estimated delivery: 3-5 days"
+                }
+            ]
+        }
+    ],
+    "max_blocks": 6,
+    "presets": [
+        {
+            "name": "Product information"
+        }
+    ]
+}

@@ -24,6 +24,7 @@ use App\Domains\Payments\Models\Payment;
 use App\Domains\Payments\PaymentMethods;
 use App\Domains\Payments\PaymentReconciler;
 use App\Domains\Payments\PaymentStarter;
+use App\Domains\Shipping\DeliveryArea;
 use App\Domains\Shipping\ShippingCoverage;
 use App\Http\Controllers\Controller;
 use App\Http\Presenters\OrderPresenter;
@@ -65,8 +66,10 @@ class CheckoutController extends Controller
         $destination = $request->validate([
             'country' => ['nullable', 'string', 'size:2', Rule::in(Countries::codes())],
             'region' => ['nullable', 'string', 'max:120'],
+            'city' => ['nullable', 'string', 'max:120'],
             'postal_code' => ['nullable', 'string', 'max:32'],
             'shipping_method' => ['nullable', 'string', 'max:64'],
+            'payment_method' => ['nullable', 'string', 'max:64'],
         ]);
 
         $customer = $user !== null ? $profiles->forUser($user) : null;
@@ -81,6 +84,8 @@ class CheckoutController extends Controller
                 region: $destination['region'] ?? null,
                 postalCode: $destination['postal_code'] ?? null,
                 shippingMethod: $destination['shipping_method'] ?? null,
+                paymentMethod: $destination['payment_method'] ?? array_key_first($this->paymentMethods->enabled()),
+                city: $destination['city'] ?? null,
             ));
         };
 
@@ -95,11 +100,15 @@ class CheckoutController extends Controller
                 'code' => $m->code(),
                 'label' => $m->label(),
                 'instructions' => $m->instructions(),
+                'fee' => $m->code() === 'cash_on_delivery' && $price()->requiresShipping()
+                    ? $this->paymentMethods->cashOnDeliveryFee($price()->currency)
+                    : null,
             ], $this->paymentMethods->enabled())),
             'addresses' => fn () => $customer?->addresses()->get()->map(fn (CustomerAddress $a) => $a->toPresentable())->all() ?? [],
             'email' => $user?->email,
-            'countries' => fn () => app(ShippingCoverage::class)->options($price()->currency),
-            'soleCountry' => fn () => app(ShippingCoverage::class)->sole($price()->currency),
+            'countries' => fn () => $price()->requiresShipping() ? app(ShippingCoverage::class)->options($price()->currency) : Countries::options(),
+            'soleCountry' => fn () => $price()->requiresShipping() ? app(ShippingCoverage::class)->sole($price()->currency) : null,
+            'deliveryRestriction' => fn () => $price()->requiresShipping() && str_starts_with(app(DeliveryArea::class)->toArray()['mode'], 'store_') ? app(DeliveryArea::class)->label() : null,
             'checkoutToken' => fn () => (string) Str::uuid(),
             'placeSlots' => fn () => app(StorefrontSlots::class)->renderMany(['checkout.before_place_order'], ['cart' => $price()]),
             'pageCheckout' => fn () => $this->checkoutSettings($request),

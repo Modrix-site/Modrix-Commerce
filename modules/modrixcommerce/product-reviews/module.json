@@ -1,0 +1,72 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/product-reviews",
+    "display_name": "Product Reviews",
+    "description": "Verified buyers rate and review products; staff moderate reviews before they appear. Only reviews from a paid order are shown.",
+    "version": "1.2.0",
+    "type": "module",
+    "icon": "star",
+    "accent": "#eab308",
+    "platform_version": "^0.4 || ^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\ProductReviews\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\ProductReviews\\ProductReviewsServiceProvider",
+    "permissions": [
+        {
+            "name": "reviews.moderate",
+            "label": "Moderate product reviews",
+            "group": "Reviews"
+        }
+    ],
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "storefront.slots",
+        "database.migrations",
+        "settings",
+        "permissions"
+    ],
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages",
+        "slots": "resources/js/slots"
+    },
+    "settings": [
+        {
+            "key": "auto_approve",
+            "type": "boolean",
+            "label": "Publish reviews without moderation",
+            "help": "When off, new reviews wait for a staff member to approve them.",
+            "default": false
+        },
+        {
+            "key": "min_length",
+            "type": "integer",
+            "label": "Minimum review length (characters)",
+            "default": 10,
+            "min": 0,
+            "max": 500
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "reviews",
+            "title": "Reviews",
+            "route": "index",
+            "icon": "star",
+            "group": "Catalog",
+            "permission": "reviews.moderate",
+            "order": 140
+        }
+    ]
+}

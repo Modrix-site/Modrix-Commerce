@@ -1,6 +1,6 @@
 # Third-Party Notices
 
-EcoModular's own code is MIT-licensed (see `LICENSE`). It depends on third-party packages that remain under their own licenses. Licenses were last reviewed on 2026-10-13 (release candidate 1.0.0-rc.1) from `composer.lock` and `package-lock.json` with `composer licenses --no-dev` and a scan of every installed `package.json`. Regenerate this list before each release.
+Modrix Commerce's own code is MIT-licensed (see `LICENSE`). It depends on third-party packages that remain under their own licenses. Licenses were last reviewed on 2026-10-13 (release candidate 1.0.0-rc.1) from `composer.lock` and `package-lock.json` with `composer licenses --no-dev` and a scan of every installed `package.json`. Regenerate this list before each release.
 
 ## Runtime PHP dependencies (`composer licenses --no-dev`)
 
@@ -35,6 +35,6 @@ The compiled JavaScript and CSS shipped to browsers contain code from the MIT, I
 
 ## Notes
 
-- No dependency is licensed under a copyleft license that conflicts with distributing EcoModular under MIT.
+- No dependency is licensed under a copyleft license that conflicts with distributing Modrix Commerce under MIT.
 - The application was scaffolded from `laravel/react-starter-kit` (MIT, Copyright (c) Taylor Otwell).
 - Commercial extensions sold on the official marketplace are separate works under their own terms; see `docs/marketplace/licensing.md`. They are not part of this repository's MIT distribution.

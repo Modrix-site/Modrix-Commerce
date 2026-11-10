@@ -1,0 +1,178 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/cart-abandonment-recovery",
+    "display_name": "Cart Abandonment Recovery",
+    "description": "Recovers lost revenue with automated email sequences, exit-intent modals, one-click cart restoration, coupon incentives, and conversion analytics.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "shopping-cart",
+    "accent": "#f59e0b",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\CartAbandonmentRecovery\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\CartAbandonmentRecovery\\CartAbandonmentRecoveryServiceProvider",
+    "permissions": [
+        {
+            "name": "cart_abandonment.manage",
+            "label": "Manage cart abandonment recovery and campaigns",
+            "group": "Marketing"
+        }
+    ],
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "storefront.slots",
+        "database.migrations",
+        "events.listen",
+        "scheduled.tasks",
+        "console.commands",
+        "settings",
+        "permissions"
+    ],
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages",
+        "slots": "resources/js/slots"
+    },
+    "settings": [
+        {
+            "key": "enabled",
+            "type": "boolean",
+            "label": "Enable automated cart recovery emails",
+            "help": "Automatically sends email sequences to shoppers who abandon their cart.",
+            "default": true
+        },
+        {
+            "key": "abandonment_threshold_minutes",
+            "type": "integer",
+            "label": "Abandonment cutoff (minutes)",
+            "help": "Time of cart inactivity before a cart is classified as abandoned.",
+            "min": 5,
+            "max": 1440,
+            "default": 60
+        },
+        {
+            "key": "exit_intent_enabled",
+            "tab": "cart",
+            "type": "boolean",
+            "label": "Enable exit-intent modal on cart and checkout",
+            "help": "Shows a high-converting modal when a visitor with items moves cursor to leave.",
+            "default": true
+        },
+        {
+            "key": "exit_intent_headline",
+            "tab": "cart",
+            "type": "string",
+            "label": "Exit-intent popup headline",
+            "default": "Wait! Don't leave your cart behind"
+        },
+        {
+            "key": "exit_intent_discount_code",
+            "tab": "cart",
+            "type": "string",
+            "label": "Exit-intent coupon code (optional)",
+            "help": "Discount coupon code offered to shoppers in the exit popup (e.g. SAVE10).",
+            "default": "SAVE10"
+        },
+        {
+            "key": "save_cart_slot_enabled",
+            "tab": "cart",
+            "type": "boolean",
+            "label": "Show 'Email My Cart' widget on cart page",
+            "help": "Displays an email capture box beneath cart totals so shoppers can save their cart.",
+            "default": true
+        },
+        {
+            "key": "step1_delay_hours",
+            "type": "integer",
+            "label": "Email 1 delay (hours after abandonment)",
+            "help": "How many hours after abandonment to send the first friendly reminder.",
+            "min": 1,
+            "max": 72,
+            "default": 1
+        },
+        {
+            "key": "step1_subject",
+            "type": "string",
+            "label": "Email 1 subject line",
+            "default": "Did you forget something in your cart?"
+        },
+        {
+            "key": "step1_discount_code",
+            "type": "string",
+            "label": "Email 1 coupon code (optional)"
+        },
+        {
+            "key": "step2_enabled",
+            "type": "boolean",
+            "label": "Send email 2 (follow-up nudge)",
+            "default": true
+        },
+        {
+            "key": "step2_delay_hours",
+            "type": "integer",
+            "label": "Email 2 delay (hours after abandonment)",
+            "min": 2,
+            "max": 168,
+            "default": 24
+        },
+        {
+            "key": "step2_subject",
+            "type": "string",
+            "label": "Email 2 subject line",
+            "default": "Your cart items are waiting for you"
+        },
+        {
+            "key": "step2_discount_code",
+            "type": "string",
+            "label": "Email 2 coupon code (optional)"
+        },
+        {
+            "key": "step3_enabled",
+            "type": "boolean",
+            "label": "Send email 3 (final incentive)",
+            "default": true
+        },
+        {
+            "key": "step3_delay_hours",
+            "type": "integer",
+            "label": "Email 3 delay (hours after abandonment)",
+            "min": 6,
+            "max": 336,
+            "default": 72
+        },
+        {
+            "key": "step3_subject",
+            "type": "string",
+            "label": "Email 3 subject line",
+            "default": "Here is an exclusive discount to finish your order!"
+        },
+        {
+            "key": "step3_discount_code",
+            "type": "string",
+            "label": "Email 3 coupon code (optional)",
+            "default": "RECOVER10"
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "cart-abandonment",
+            "title": "Abandoned Carts",
+            "route": "index",
+            "icon": "shopping-bag",
+            "group": "Marketing",
+            "permission": "cart_abandonment.manage",
+            "order": 340
+        }
+    ]
+}

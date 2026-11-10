@@ -1,0 +1,11 @@
+{
+    "sections": {
+        "main-page_u7794g": {
+            "type": "main-page",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        }
+    },
+    "order": ["main-page_u7794g"]
+}

@@ -15,6 +15,16 @@ final class PricedLine
     /** @var list<string> */
     public array $notices = [];
 
+    /** Catalog/sale unit price before any module add-ons are attached. */
+    public ?Money $baseUnitPrice;
+
+    /**
+     * Optional product add-ons (warranties, extra features, services) attached to this line.
+     *
+     * @var list<array{id: int, name: string, unit_price: Money, subtotal: Money}>
+     */
+    public array $addons = [];
+
     /** All discounts on the line: offer discounts plus its share of the coupon. */
     public Money $discount;
 
@@ -34,10 +44,11 @@ final class PricedLine
         public readonly int $itemId,
         public readonly ProductVariant $variant,
         public readonly int $quantity,
-        public readonly ?Money $unitPrice,
+        public ?Money $unitPrice,
         public readonly VariantAvailability $availability,
         string $currency,
     ) {
+        $this->baseUnitPrice = $unitPrice;
         $this->discount = Money::zero($currency);
         $this->offerDiscount = Money::zero($currency);
         $this->tax = Money::zero($currency);
@@ -56,6 +67,24 @@ final class PricedLine
         return $this->unitPrice === null
             ? Money::zero($this->discount->currency())
             : $this->unitPrice->multipliedBy($this->quantity)->rounded();
+    }
+
+    /**
+     * Base unit price (excluding add-ons) × quantity.
+     */
+    public function baseSubtotal(): Money
+    {
+        return $this->baseUnitPrice === null
+            ? Money::zero($this->discount->currency())
+            : $this->baseUnitPrice->multipliedBy($this->quantity)->rounded();
+    }
+
+    /**
+     * Add-ons subtotal for this line.
+     */
+    public function addonsSubtotal(): Money
+    {
+        return $this->subtotal()->minus($this->baseSubtotal())->nonNegative();
     }
 
     /**
@@ -95,7 +124,11 @@ final class PricedLine
             'image' => $image ? ['url' => $image->url(), 'alt' => $image->alt] : null,
             'quantity' => $this->quantity,
             'unit_price' => $this->unitPrice,
+            'base_unit_price' => $this->baseUnitPrice,
             'subtotal' => $this->subtotal(),
+            'base_subtotal' => $this->baseSubtotal(),
+            'addons_subtotal' => $this->addonsSubtotal(),
+            'addons' => $this->addons,
             'discount' => $this->discount,
             'offer_discount' => $this->offerDiscount,
             'offer_label' => $this->offerLabel,

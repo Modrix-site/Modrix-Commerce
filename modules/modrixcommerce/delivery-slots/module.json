@@ -1,0 +1,92 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/delivery-slots",
+    "display_name": "Delivery Date & Time Slots",
+    "description": "Allow shoppers to choose their preferred delivery date, time slot, and delivery instructions during checkout with capacity limits and blackout date management.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "calendar",
+    "accent": "#0ea5e9",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\DeliverySlots\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\DeliverySlots\\DeliverySlotsServiceProvider",
+    "permissions": [
+        {
+            "name": "delivery_slots.manage",
+            "label": "Manage delivery time slots, schedules, and blackout dates",
+            "group": "Operations"
+        }
+    ],
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "storefront.slots",
+        "database.migrations",
+        "settings",
+        "permissions",
+        "events.listen"
+    ],
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages",
+        "slots": "resources/js/slots"
+    },
+    "settings": [
+        {
+            "key": "enabled",
+            "type": "boolean",
+            "label": "Enable delivery date and time slots at checkout",
+            "default": true
+        },
+        {
+            "key": "is_required",
+            "type": "boolean",
+            "label": "Require customers to select a delivery slot before placing order",
+            "default": false
+        },
+        {
+            "key": "max_advance_days",
+            "type": "integer",
+            "label": "Maximum days in advance customers can schedule delivery",
+            "default": 7,
+            "min": 1,
+            "max": 30
+        },
+        {
+            "key": "same_day_cutoff",
+            "type": "string",
+            "label": "Same-day delivery cutoff time (HH:MM in 24hr format)",
+            "default": "14:00",
+            "max_length": 5
+        },
+        {
+            "key": "heading",
+            "type": "string",
+            "label": "Section Heading at Checkout",
+            "default": "Select Preferred Delivery Time",
+            "max_length": 120
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "delivery-slots",
+            "title": "Delivery Slots",
+            "route": "index",
+            "icon": "calendar",
+            "group": "Operations",
+            "permission": "delivery_slots.manage",
+            "order": 420
+        }
+    ]
+}

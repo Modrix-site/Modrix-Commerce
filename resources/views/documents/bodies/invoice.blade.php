@@ -54,5 +54,8 @@
     @endif
     <tr><td>{{ __('Shipping') }}@if ($invoice->totals['shipping_method']) <span class="muted">({{ $invoice->totals['shipping_method'] }})</span>@endif</td><td class="num">{{ $money($invoice->totals['shipping_total']) }}</td></tr>
     <tr><td>{{ $invoice->totals['prices_include_tax'] ? __('Included tax') : __('Tax') }}</td><td class="num">{{ $money($invoice->totals['tax_total']) }}</td></tr>
+    @if ((float) ($invoice->totals['payment_fee_total'] ?? 0) > 0)
+        <tr><td>{{ __('Cash on delivery fee (collected by the courier)') }}</td><td class="num">{{ $money($invoice->totals['payment_fee_total']) }}</td></tr>
+    @endif
     <tr class="grand"><td>{{ __('Total') }}</td><td class="num">{{ $money($invoice->totals['grand_total']) }}</td></tr>
 </table>

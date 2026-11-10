@@ -28,6 +28,8 @@ final class StorefrontSlots
         // Props are built for the signed-in staff member; return null to show nothing.
         'admin.product.sidebar' => ['product'],
         'order.confirmation' => ['order'],
+        // On the signed-in customer's order page. Context: the order.
+        'account.order' => ['order'],
         // Under the cart total. Context: the priced cart.
         'cart.after_totals' => ['cart'],
         // Under one payment method at checkout, shown while it is selected. Props must

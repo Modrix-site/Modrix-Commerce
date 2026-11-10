@@ -1,0 +1,233 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/login-monitoring",
+    "display_name": "Login Monitoring",
+    "description": "Comprehensive authentication intelligence and session security engine to track logins, stop brute-force attacks, detect impossible travel, and prevent account takeovers.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "fingerprint",
+    "accent": "#059669",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\LoginMonitoring\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\LoginMonitoring\\LoginMonitoringServiceProvider",
+    "permissions": [
+        {
+            "name": "login_monitoring.view_dashboard",
+            "label": "View login monitoring dashboard, live activity, and reports",
+            "group": "Login Monitoring"
+        },
+        {
+            "name": "login_monitoring.manage_sessions",
+            "label": "View active user sessions and terminate sessions remotely",
+            "group": "Login Monitoring"
+        },
+        {
+            "name": "login_monitoring.manage_incidents",
+            "label": "Triage suspicious login queue and resolve security incidents",
+            "group": "Login Monitoring"
+        },
+        {
+            "name": "login_monitoring.manage_policies",
+            "label": "Configure login access policies, MFA, and geofencing",
+            "group": "Login Monitoring"
+        },
+        {
+            "name": "login_monitoring.manage_settings",
+            "label": "Configure lockout limits, impossible travel, and alerts",
+            "group": "Login Monitoring"
+        },
+        {
+            "name": "login_monitoring.export_reports",
+            "label": "Export authentication audit reports and analytics",
+            "group": "Login Monitoring"
+        }
+    ],
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "database.migrations",
+        "events.listen",
+        "scheduled.tasks",
+        "console.commands",
+        "settings",
+        "permissions"
+    ],
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages"
+    },
+    "settings": [
+        {
+            "key": "enabled",
+            "type": "boolean",
+            "label": "Enable real-time login monitoring",
+            "help": "Track every authentication attempt, detect anomalies, and protect accounts.",
+            "default": true
+        },
+        {
+            "key": "max_failed_attempts",
+            "type": "integer",
+            "label": "Maximum failed login attempts",
+            "help": "Number of consecutive failed logins before triggering temporary account lockout.",
+            "min": 2,
+            "max": 20,
+            "default": 5
+        },
+        {
+            "key": "lockout_duration_minutes",
+            "type": "integer",
+            "label": "Temporary lockout duration (minutes)",
+            "help": "Duration to lock out IP or account after exceeding max failed attempts.",
+            "min": 5,
+            "max": 1440,
+            "default": 30
+        },
+        {
+            "key": "detect_impossible_travel",
+            "type": "boolean",
+            "label": "Detect impossible travel scenarios",
+            "help": "Flag logins from locations that cannot be reached within the elapsed time.",
+            "default": true
+        },
+        {
+            "key": "impossible_travel_speed_kmh",
+            "type": "integer",
+            "label": "Maximum travel speed threshold (km/h)",
+            "help": "Logins exceeding this implied travel speed between sequential logins are flagged.",
+            "min": 300,
+            "max": 1500,
+            "default": 800
+        },
+        {
+            "key": "alert_on_new_device",
+            "type": "boolean",
+            "label": "Alert on new / unfamiliar device login",
+            "help": "Notify users and administrators when an unrecognized browser or device logs in.",
+            "default": true
+        },
+        {
+            "key": "alert_on_suspicious_login",
+            "type": "boolean",
+            "label": "Alert on high-risk suspicious logins",
+            "help": "Trigger immediate alerts when risk score exceeds threshold.",
+            "default": true
+        },
+        {
+            "key": "mfa_enforcement",
+            "type": "select",
+            "label": "Multi-Factor Authentication (MFA) policy",
+            "help": "Determines when MFA verification is enforced for users.",
+            "default": "risk_based",
+            "options": [
+                { "value": "optional", "label": "Optional (User choice)" },
+                { "value": "risk_based", "label": "Risk-Based (Triggered on unfamiliar device/location)" },
+                { "value": "staff_only", "label": "Enforce for Staff & Admin accounts only" },
+                { "value": "all_users", "label": "Strict (Enforce for all users)" }
+            ]
+        },
+        {
+            "key": "session_lifetime_hours",
+            "type": "integer",
+            "label": "Maximum session lifetime (hours)",
+            "help": "Inactivity limit before requiring re-authentication.",
+            "min": 1,
+            "max": 168,
+            "default": 24
+        },
+        {
+            "key": "email_alerts_enabled",
+            "type": "boolean",
+            "label": "Email security incident alerts",
+            "help": "Send instant email notifications to admins on credential stuffing or brute force.",
+            "default": true
+        },
+        {
+            "key": "alert_emails",
+            "type": "string",
+            "label": "Security alert recipients (comma-separated)",
+            "help": "Email addresses to receive high-risk incident alerts."
+        },
+        {
+            "key": "slack_webhook_url",
+            "type": "string",
+            "label": "Slack Webhook URL",
+            "help": "Incoming Slack webhook for real-time authentication alerts."
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "login-monitoring",
+            "title": "Login Monitoring",
+            "route": "dashboard",
+            "icon": "fingerprint",
+            "group": "Security",
+            "permission": "login_monitoring.view_dashboard",
+            "order": 270,
+            "children": [
+                {
+                    "key": "login-dashboard",
+                    "title": "Dashboard",
+                    "route": "dashboard",
+                    "permission": "login_monitoring.view_dashboard"
+                },
+                {
+                    "key": "login-live-activity",
+                    "title": "Live Activity",
+                    "route": "activity.index",
+                    "permission": "login_monitoring.view_dashboard"
+                },
+                {
+                    "key": "login-suspicious-queue",
+                    "title": "Suspicious Queue",
+                    "route": "queue.index",
+                    "permission": "login_monitoring.manage_incidents"
+                },
+                {
+                    "key": "login-sessions",
+                    "title": "Active Sessions",
+                    "route": "sessions.index",
+                    "permission": "login_monitoring.manage_sessions"
+                },
+                {
+                    "key": "login-incidents",
+                    "title": "Security Incidents",
+                    "route": "incidents.index",
+                    "permission": "login_monitoring.manage_incidents"
+                },
+                {
+                    "key": "login-reports",
+                    "title": "Reports & Analytics",
+                    "route": "reports.index",
+                    "permission": "login_monitoring.view_dashboard"
+                },
+                {
+                    "key": "login-mfa-settings",
+                    "title": "MFA Settings",
+                    "route": "mfa.index",
+                    "permission": "login_monitoring.manage_policies"
+                },
+                {
+                    "key": "login-policies",
+                    "title": "Access Policies",
+                    "route": "policies.index",
+                    "permission": "login_monitoring.manage_policies"
+                },
+                {
+                    "key": "login-audit-logs",
+                    "title": "Audit Logs",
+                    "route": "audit.index",
+                    "permission": "login_monitoring.view_dashboard"
+                }
+            ]
+        }
+    ]
+}

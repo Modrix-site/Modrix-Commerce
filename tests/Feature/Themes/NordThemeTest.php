@@ -37,7 +37,7 @@ class NordThemeTest extends TestCase
         $file = new UploadedFile(base_path('dist/ecomodular-nord-1.0.0.zip'), 'nord.zip', 'application/zip', null, true);
         $this->actingAs($this->userWithRole('administrator'))
             ->post(route('admin.themes.packages.store'), ['package' => $file])->assertSessionHasNoErrors();
-        $theme = Extension::where('name', 'ecomodular/nord')->firstOrFail();
+        $theme = Extension::where('name', 'modrixcommerce/nord')->firstOrFail();
         $this->assertSame(ModuleState::Discovered, $theme->state);
         $this->assertNull($theme->applied_manifest);
         $this->assertCount(105, $theme->manifest['customizer']['fields']);
@@ -48,13 +48,13 @@ class NordThemeTest extends TestCase
     public function test_reference_assets_and_twelve_default_links_resolve_and_demo_import_is_additive(): void
     {
         app(ThemeRepository::class)->sync();
-        app(ThemeManager::class)->activate('ecomodular/nord');
+        app(ThemeManager::class)->activate('modrixcommerce/nord');
         $this->get('/')->assertInertia(fn (Assert $page) => $page
             ->has('storefront.navigation.header.links', 12)
             ->where('storefront.theme.settings.hero_heading', 'Fall Winter Collection')
-            ->where('storefront.theme.settings.hero_image', fn ($url) => str_contains($url, '/theme-assets/ecomodular/nord/assets/hero.jpg')));
-        $this->get('/theme-assets/ecomodular/nord/assets/hero.jpg')->assertOk();
-        $manifest = ThemeManifest::fromArray(Extension::where('name', 'ecomodular/nord')->firstOrFail()->manifest);
+            ->where('storefront.theme.settings.hero_image', fn ($url) => str_contains($url, '/theme-assets/modrixcommerce/nord/assets/hero.jpg')));
+        $this->get('/theme-assets/modrixcommerce/nord/assets/hero.jpg')->assertOk();
+        $manifest = ThemeManifest::fromArray(Extension::where('name', 'modrixcommerce/nord')->firstOrFail()->manifest);
         $importer = app(ThemeDemoImporter::class);
         $this->assertSame(['categories' => 2, 'products' => 6], $importer->import($manifest, $this->owner()));
         $this->assertSame(['categories' => 0, 'products' => 0], $importer->import($manifest, $this->owner()));
@@ -62,7 +62,7 @@ class NordThemeTest extends TestCase
 
     public function test_catalog_slots_receive_category_brand_and_search_context_with_server_filters(): void
     {
-        app(ThemeManager::class)->activate('ecomodular/nord');
+        app(ThemeManager::class)->activate('modrixcommerce/nord');
         $category = Category::factory()->create(['slug' => 'nord-test-category']);
         $brand = Brand::query()->create(['name' => 'Nord Brand', 'slug' => 'nord-test-brand']);
         $variant = $this->sellable('25', 3, product: ['name' => 'Nord sweater', 'brand_id' => $brand->id]);
@@ -80,7 +80,7 @@ class NordThemeTest extends TestCase
 
     public function test_existing_and_future_slots_preserve_core_cart_and_checkout_totals(): void
     {
-        app(ThemeManager::class)->activate('ecomodular/nord');
+        app(ThemeManager::class)->activate('modrixcommerce/nord');
         $slots = app(StorefrontSlots::class);
         $slots->register('home.after_featured', 'acme/future', 'HomePanel', fn () => ['message' => 'Home extension']);
         $slots->register('product.after_details', 'acme/future', 'ProductPanel', fn ($context) => ['id' => $context['product']->id]);

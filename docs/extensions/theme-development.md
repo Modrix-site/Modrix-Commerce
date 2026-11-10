@@ -16,7 +16,7 @@ extension content; Hearth uses the Newsletter extension without requiring it.
 ZIP installation still validates paths and files and never executes code.
 Rebuild frontend assets after installing packages containing browser entries.
 
-Nord (`themes/ecomodular/nord`) follows the supplied NORD fashion reference,
+Nord (`themes/modrixcommerce/nord`) follows the supplied NORD fashion reference,
 including its mobile header, campaign imagery, catalog and product gallery.
 It provides 105 independent settings and styles the core cart and checkout.
 Default theme navigation supports up to twelve links; saved shared Navigation
@@ -30,7 +30,7 @@ Checkout also renders `checkout.after_summary`, with the same priced `cart`
 as payment-method extensions. Its slots refresh together with shipping quotes.
 Existing home, product, cart, payment, footer and overlay slots remain supported.
 
-Hearth Home is the complete reference package in `themes/ecomodular/hearth`:
+Hearth Home is the complete reference package in `themes/modrixcommerce/hearth`:
 header, footer, homepage, catalog, product, cart, scoped CSS, 109 settings,
 reference images and optional sample furniture. It installs from a root-level
 `theme.json` ZIP and is not automatically activated or demo-imported.
@@ -69,34 +69,112 @@ A theme decides how a store looks: colors, typography, spacing, header and foote
 
 The bundled themes are working examples:
 
-| Theme                | Style                                                                                                    |
-| -------------------- | -------------------------------------------------------------------------------------------------------- |
-| `ecomodular/essence` | The free default theme: neutral, light, classic header, column footer. Activated on installation.        |
-| `ecomodular/noir`    | Dark luxury: gold accents, Didone headings, centered header, minimal cards, three columns, demo content. |
-| `ecomodular/bloom`   | Warm and botanical: cream and sage, serif headings, framed rounded cards, dark colors, demo content.     |
-| `ecomodular/harvest` | Warm and appetising, for grocers and food delivery: large cards, a delivery-first home page.             |
-| `ecomodular/aurora`  | Crisp and modern: teal aurora accents, clean cards. Ships three palette presets (aurora, slate, ember).  |
-| `ecomodular/prism`   | Geometric precision: zero radius, minimal layout. Custom facet style, accent shape and edge sharpness.   |
+| Theme                    | Style                                                                                                    |
+| ------------------------ | -------------------------------------------------------------------------------------------------------- |
+| `modrixcommerce/essence` | The free default theme: neutral, light, classic header, column footer. Activated on installation.        |
+| `modrixcommerce/noir`    | Dark luxury: gold accents, Didone headings, centered header, minimal cards, three columns, demo content. |
+| `modrixcommerce/bloom`   | Warm and botanical: cream and sage, serif headings, framed rounded cards, dark colors, demo content.     |
+| `modrixcommerce/harvest` | Warm and appetising, for grocers and food delivery: large cards, a delivery-first home page.             |
+| `modrixcommerce/aurora`  | Crisp and modern: teal aurora accents, clean cards. Ships three palette presets (aurora, slate, ember).  |
+| `modrixcommerce/prism`   | Geometric precision: zero radius, minimal layout. Custom facet style, accent shape and edge sharpness.   |
 
-## Themes are data, not code
+## Theme package boundaries
 
-A theme package contains **no PHP, no JavaScript, no HTML and no CSS**. It contains:
+A theme package contains no PHP or server scripts. It contains:
 
 - a manifest (`theme.json`);
 - images (PNG, JPEG, WebP) and fonts (WOFF2);
 - optionally `demo.json`, a README and a license.
+- optionally declared React/TypeScript components and CSS under `src/`.
 
-Any other file type rejects the package.
+Browser source is accepted only when the manifest declares frontend entries. Raw HTML and server code are rejected.
 
 The default renderer uses validated design settings, layout variants and section types. Themes can also declare compiled browser page components as described above. Theme browser code must be reviewed before deployment; themes cannot contain PHP or run server code.
 
-If a design needs new components, the platform gains a new section type or variant, or a module adds content through a storefront slot. Themes never ship code.
+Build new visual components inside the theme's `src/` directory. Use a module for server behavior and storefront slots for feature UI. Adding a theme or module does not require registering its name, routes, provider or components in core files.
+
+## Override any storefront page or layout
+
+Declare only the parts your theme replaces:
+
+```json
+"frontend": {
+  "layout": "src/layout.tsx",
+  "stylesheet": "src/style.css",
+  "pages": {
+    "storefront/checkout": "src/pages/checkout.tsx",
+    "storefront/account/orders": "src/pages/account/orders.tsx",
+    "storefront/page": "src/pages/content.tsx"
+  }
+}
+```
+
+`pages` keys are core Inertia component names beginning with `storefront/`.
+They cannot replace admin, installation or module pages. Values must be existing
+TSX files beneath `src/pages/`; nested directories are supported. A declared
+page override takes precedence over the older `index`, `catalog`, `cart` and
+`product` entries. Missing declarations or files absent from the compiled build
+use the existing platform renderer. The current server-resolved theme controls
+selection, including previews and theme switches.
+
+Every page receives its original controller props and a `CorePage` component:
+
+```tsx
+import type { ThemePageProps } from '@/lib/theme-runtime';
+
+export default function Checkout({ CorePage, ...props }: ThemePageProps) {
+    return (
+        <section className="custom-checkout">
+            <CorePage {...props} />
+        </section>
+    );
+}
+```
+
+Wrap `CorePage` when retaining checkout or account behavior. A full replacement
+must use the existing server routes, validation and commerce data, and render
+the relevant extension slots. Theme code does not replace pricing, payments,
+stock calculations or authorization on the server.
+
+An optional `layout.tsx` receives `children` and `DefaultLayout`:
+
+```tsx
+import type { ThemeLayoutProps } from '@/lib/theme-runtime';
+
+export default function Layout({ children, DefaultLayout }: ThemeLayoutProps) {
+    return <DefaultLayout>{children}</DefaultLayout>;
+}
+```
+
+Use `DefaultLayout` to retain shared navigation, preview banner, theme root
+attributes, SEO, header/footer and global extension overlays. A fully custom
+layout owns those integrations, including `data-theme`, locale/direction,
+`theme.css`, extension overlays and preview UI. `usePage()` exposes shared
+storefront props. Prefer the existing header/footer entries when only chrome
+changes. Declared `src/style.css` is loaded automatically on every storefront
+page, so checkout and account pages do not depend on visiting the home page.
+Scope CSS to `[data-theme="vendor/name"]`, including when importing it directly
+from a component.
+
+Package discovery happens during the frontend build. Run `npm run build` after
+adding or changing browser entries; rebuilding assets does not require editing
+core or Vite configuration. This is not a runtime loader for prebuilt external
+JavaScript bundles.
+
+For extensions, keep PHP, routes, migrations and UI in `modules/<vendor>/<name>`.
+The module loader handles declared providers, autoloading and routes; the browser
+discovers module pages and slot components by convention. Register behavior
+through providers, events and platform registries, then render UI through
+`ExtensionSlot` / `PlaceSlot`. See [Module Development](module-development.md)
+and [Extension Blocks](extension-blocks.md). Do not import a particular theme
+from a module or from core; themes consume the shared platform components.
 
 ## Package layout
 
 ```text
 themes/<vendor>/<name>/
   theme.json            manifest (required)
+  src/                  optional declared browser components and scoped CSS
   assets/               images and WOFF2 fonts (only files in here are served)
   demo.json             optional demo categories and products
   README.md, LICENSE    optional
@@ -114,7 +192,7 @@ The schema is [`theme.schema.json`](theme.schema.json). Add `"$schema": "../../.
 | `type`                                             | yes            | `"theme"`.                                                                                                                 |
 | `theme_type`                                       | yes            | `"storefront"`.                                                                                                            |
 | `platform_version`                                 | yes            | Constraint against the platform version (currently `0.4.0`).                                                               |
-| `requires`                                         |                | Modules that must be enabled, e.g. `{"ecomodular/product-reviews": "^1.0"}`.                                               |
+| `requires`                                         |                | Modules that must be enabled, e.g. `{"modrixcommerce/product-reviews": "^1.0"}`.                                           |
 | `capabilities`                                     |                | `home.sections`, `custom_fonts`, `dark_mode`, `demo_content`. Required by the matching keys.                               |
 | `assets`                                           |                | Directory for images and fonts.                                                                                            |
 | `screenshot`                                       |                | An image in `assets`, shown in the theme list.                                                                             |
@@ -165,7 +243,224 @@ Home page sections are listed in order. Unknown section types or settings reject
 - **Data:** the core loads products and categories for sections; themes never query anything.
 - **Module content:** content placed by modules in the `home.after_featured` slot appears after the sections.
 
+The table above is the legacy home-page format. New themes should use theme sections, described next.
+
+## Theme sections and the theme editor
+
+A theme with the capability `sections` builds **every page** from its own sections, as on Shopify. The platform defines no section types: the theme declares each one in data and ships its React component. Merchants edit these themes in **Appearance → Themes → Edit theme**, a full-screen editor with live preview.
+
+```text
+sections/<type>.json         section schema
+src/sections/<type>.tsx      its component (default export)
+templates/<name>.json        index, product, collection, search, cart, page (all required)
+groups/header.json           header section group
+groups/footer.json           footer section group
+```
+
+### Section schema
+
+```json
+{
+    "name": "Slideshow",
+    "limit": 1,
+    "max_blocks": 8,
+    "enabled_on": { "templates": ["index"], "groups": [] },
+    "settings": [
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "Welcome"
+        },
+        {
+            "type": "collection",
+            "id": "collection",
+            "label": "Products from",
+            "products": 8,
+            "fallback": "latest"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "slide",
+            "name": "Slide",
+            "limit": 8,
+            "settings": [{ "type": "image", "id": "image", "label": "Image" }]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Slideshow",
+            "blocks": [{ "type": "slide" }, { "type": "slide" }]
+        }
+    ]
+}
+```
+
+- **`enabled_on`:** which templates (`"*"` for all) and groups the section can be added to. Without it, a section fits every template and no group.
+- **`limit`:** how many times a section can appear in one template. `max_blocks` (up to 50) and a block's `limit` cap its blocks.
+- **`presets`:** what **Add section** offers. A preset may set settings and starting blocks.
+- **Setting types:**
+    - `header` is a label only.
+    - Value types are `text`, `textarea`, `richtext` (plain paragraphs), `number`, `range` (`min`, `max`, `step`), `checkbox`, `select` and `radio` (`options: [{value, label}]`), `color`, `image`, `url`, `collection` and `product`.
+    - `info` adds help text under a control.
+    - Values are validated by type and never evaluated.
+
+### Templates and groups
+
+Shopify's JSON shape, with a section id and block id map plus an order:
+
+```json
+{
+    "sections": {
+        "hero": {
+            "type": "slideshow",
+            "settings": {},
+            "blocks": { "s1": { "type": "slide", "settings": {} } },
+            "block_order": ["s1"]
+        }
+    },
+    "order": ["hero"]
+}
+```
+
+`"disabled": true` hides a section or block. Ids are lowercase (`a-z`, `0-9`, `_`, `-`, up to 40 characters). A template holds up to 40 sections. Missing settings get their schema default. The package files are the defaults, and **Reset** returns to them.
+
+### Section components
+
+```tsx
+import type { ThemeSectionProps } from '@/components/storefront/theme-sections';
+import { blockAttributes } from '@/components/storefront/theme-sections';
+
+export default function Slideshow({
+    section,
+    page,
+}: ThemeSectionProps<{ heading: string }>) {
+    return (
+        <section>
+            <h2>{section.settings.heading}</h2>
+            {section.blocks.map((block) => (
+                <img
+                    key={block.id}
+                    {...blockAttributes(block)}
+                    src={String(block.settings.image ?? '')}
+                    alt=""
+                />
+            ))}
+        </section>
+    );
+}
+```
+
+Values arrive resolved for display:
+
+- **`image`:** a URL, or `null`.
+- **`url`:** a link, or `""` when it points to a page that no longer exists.
+- **`collection`:** `{handle, title, url, image_url, products}`, with up to `products` product cards. An empty value uses `fallback` (`latest` or `featured`).
+- **`product`:** a product card, or `null`.
+- **Text:** translated into the shopper's language.
+
+`page` holds the page's own props:
+
+- **product:** the product and the selected variant
+- **collection** and **search:** the listing
+- **cart:** the cart
+- **page:** the content page
+
+Spread `blockAttributes(block)` on a block's root element so clicking it in the preview selects the block.
+
+### Saving, publishing and preview
+
+- **Save, as on Shopify:** Save stores the edits on the theme. On the live theme they are live at once. An inactive theme shows **Draft**, and **Publish** activates it.
+- **Live preview:** the preview is the real storefront in a frame. Unsaved edits are kept in a short-lived draft for the editing staff member only. The storefront may be framed only in that mode, and only by its own origin.
+
 ## Customizer
+
+### Theme-owned schema and editor
+
+Keep the theme's controls in its package, independently of the platform defaults:
+
+```text
+themes/acme/store/
+  theme.json
+  settings.json
+  src/customizer.tsx
+```
+
+Declare them in `theme.json`:
+
+```json
+"customizer_file": "settings.json",
+"frontend": {
+  "customizer": "src/customizer.tsx"
+}
+```
+
+`settings.json` replaces the inline `customizer` block when both exist. Use
+`mode: "replace"` to show only the theme's fields and explicitly selected core
+controls, instead of adding them to all platform controls:
+
+```json
+{
+    "title": "My store design",
+    "mode": "replace",
+    "core_fields": ["color.primary", "font_heading", "logo"],
+    "sections": false,
+    "fields": {
+        "custom.hero_heading": {
+            "type": "string",
+            "label": "Campaign heading",
+            "group": "Campaign",
+            "tab": "home",
+            "default": "The new collection",
+            "max": 100
+        }
+    }
+}
+```
+
+`mode` defaults to `extend` for compatibility. In replacement mode, omitting
+`core_fields` hides every core design control; it does not erase saved settings,
+change commerce rules or disable core fallbacks. `hide_core_fields` still applies
+after selection. `sections: false` hides the platform home-section editor without
+deleting sections. Existing store-wide page settings keep their current scope.
+Use `design` in `theme.json` for theme defaults, `fields.*.default` for custom
+defaults, and `presets` for palettes. Saved merchant values take precedence.
+
+An optional `src/customizer.tsx` replaces the editor UI for that theme:
+
+```tsx
+import type { ThemeCustomizerProps } from '@/lib/theme-customizer';
+
+export default function Customizer({
+    DefaultCustomizer,
+    ...props
+}: ThemeCustomizerProps) {
+    return <DefaultCustomizer {...props} />;
+}
+```
+
+Replace the return value with your own UI, or compose the supplied `controls`:
+`Design`, `Sections`, `Images`, `Reset` and `Field`. `Design` accepts `themeId`,
+`design`, `images` and a standard customizer `tab`; `Sections` accepts `themeId`,
+`sections` and `images`. These reuse the existing validated save routes, uploads,
+presets and error handling. All controller props are also supplied: `theme`,
+`design`, `sections`, `images`, `blocks`, `extensionSettings`, and `customizer`.
+Render extension block/settings controls when replacing the full UI. The Circuit
+theme's `src/customizer.tsx` is a complete example using the shared controls.
+
+For bespoke forms, submit `{design: {"custom.hero_heading": "New campaign"}}`
+to `ThemeController.design.url(theme.id)` using Inertia `useForm`. Send only
+changed fields; omitted settings remain untouched. Empty strings or null reset
+a setting to its theme default. Server validation remains authoritative.
+
+The editor is resolved from the theme being edited, including inactive themes,
+and loaded only through the admin customizer. Missing compiled components or a
+failed editor fall back to the default controls. Rebuild assets after adding
+browser files. New `ecomodular:make:theme` packages include their own schema and
+editor starter. Existing active themes use their applied manifest snapshot;
+after updating package declarations, apply the theme update through Appearance
+to use the new editor. Circuit 1.1.0 includes its new editor declaration.
 
 A theme can ship a `customizer` block that changes the heading, hides core fields and adds its own fields. Every field key must start with `custom.` and is stored under the theme's settings namespace.
 
@@ -187,6 +482,34 @@ A theme can ship a `customizer` block that changes the heading, hides core field
 ```
 
 Field types: `string`, `text`, `color`, `boolean`, `integer`, `select`, `link`, `image` and `font`. A `font` field offers every built-in stack plus the theme's own `custom:<Family>` entries.
+
+### Translate storefront text from the customizer
+
+Text settings and homepage section text have a **Translate** control. Choose an
+additional language enabled in Languages, generate a draft with **Translate with
+AI**, review or edit it, then **Save translation**. The AI Assistant extension
+supplies the configured provider, model and API key through the platform's
+translation registry. Theme managers do not need product-edit permission.
+If AI is disabled, manual translation is still available. Drafts are never saved
+automatically, and source settings are unchanged. Save the design or homepage
+separately if the source itself was edited.
+
+Reviewed translations take precedence over automatic and interface translations
+in both language modes. They are matched by exact original text and target
+language, using the existing shared content-translation store. Identical wording
+can therefore reuse a translation across themes. Changing the source restores
+the usual language fallback until its new translation is saved. Clearing and
+saving a translation removes this reviewed override. Links, email addresses,
+phone numbers, colors and asset values are excluded. Long text up to 10,000
+characters is supported.
+
+Package editors that compose `controls.Design`, `controls.Sections` or
+`controls.Field` receive the translation UI automatically. Bespoke controls can
+use `ThemeTextTranslation` from
+`@/components/admin/themes/text-translation`, passing `fieldKey`, `label` and the
+current effective `source` text. For a section field, also pass `sectionType`.
+The customizer provides the translation context around both default and
+package-owned editors; no theme-specific backend changes are needed.
 
 ### Palettes
 
@@ -268,7 +591,7 @@ Prefix slugs and SKUs with your theme name so they do not collide with real cata
 ## Compatibility and testing
 
 - Declare `platform_version` as `"^1.0"` (themes written for `0.x` must add `^1.0` after testing). The design settings, variants and section types follow the platform's compatibility policy (see the module guide): within a major version they are only added to, never removed.
-- `tests/Feature/Themes/ThemeCompatibilityTest.php` runs every bundled theme through home, category, search, product, cart, checkout (asserting identical totals) and account pages. Add your theme to its data provider.
+- `tests/Feature/Themes/ThemeCompatibilityTest.php` exercises bundled themes. Keep tests for a new package alongside its development workflow; test edits are not required to register a theme at runtime.
 
 ### Managed pages and navigation targets
 

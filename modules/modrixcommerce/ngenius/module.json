@@ -1,0 +1,64 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/ngenius",
+    "display_name": "Network International (N-Genius)",
+    "description": "Network International N-Genius Online payment gateway for UAE and the Middle East with hosted payment page, card payments, tokenization, and API refunds.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "credit-card",
+    "accent": "#004b87",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\NGenius\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\NGenius\\NGeniusServiceProvider",
+    "capabilities": [
+        "payment.gateway",
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "content_security"
+    ],
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages"
+    },
+    "content_security": {
+        "connect-src": [
+            "https://api-gateway.ngenius-payments.com",
+            "https://api-gateway.sandbox.ngenius-payments.com",
+            "https://paypage.ngenius-payments.com",
+            "https://paypage.sandbox.ngenius-payments.com"
+        ],
+        "frame-src": [
+            "https://api-gateway.ngenius-payments.com",
+            "https://api-gateway.sandbox.ngenius-payments.com",
+            "https://paypage.ngenius-payments.com",
+            "https://paypage.sandbox.ngenius-payments.com"
+        ],
+        "form-action": [
+            "https://api-gateway.ngenius-payments.com",
+            "https://api-gateway.sandbox.ngenius-payments.com",
+            "https://paypage.ngenius-payments.com",
+            "https://paypage.sandbox.ngenius-payments.com"
+        ]
+    },
+    "admin_navigation": [
+        {
+            "key": "ngenius",
+            "title": "N-Genius",
+            "route": "index",
+            "icon": "credit-card",
+            "group": "Configuration",
+            "permission": "payments.manage",
+            "order": 873
+        }
+    ]
+}

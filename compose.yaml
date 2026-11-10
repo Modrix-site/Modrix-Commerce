@@ -1,4 +1,4 @@
-# EcoModular local development stack.
+# Modrix Commerce local development stack.
 #
 #   docker compose up -d --build
 #   docker compose exec app composer install

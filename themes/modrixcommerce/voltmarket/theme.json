@@ -1,0 +1,83 @@
+{
+    "$schema": "../../../docs/extensions/theme.schema.json",
+    "name": "modrixcommerce/voltmarket",
+    "display_name": "Volt Market",
+    "description": "A yellow-accent marketplace with campaign mosaics, compact product shelves, sidebar filtering and a three-column product page. Built with the native live section editor; customize fonts, colors, navigation, footer and every section.",
+    "version": "1.1.3",
+    "type": "theme",
+    "theme_type": "storefront",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "capabilities": [
+        "custom_fonts",
+        "demo_content",
+        "sections"
+    ],
+    "assets": "assets",
+    "fonts": [
+        {
+            "family": "Instrument Sans",
+            "file": "assets/instrument-sans.woff2",
+            "weight": "400 700",
+            "style": "normal"
+        }
+    ],
+    "design": {
+        "color.background": "#ffffff",
+        "color.foreground": "#222222",
+        "color.primary": "#fcb800",
+        "color.primary_foreground": "#111111",
+        "color.muted": "#f5f5f5",
+        "color.muted_foreground": "#777777",
+        "color.accent": "#0068ad",
+        "color.accent_foreground": "#ffffff",
+        "color.border": "#e7e7e7",
+        "font_body": "custom:Instrument Sans",
+        "font_heading": "custom:Instrument Sans",
+        "radius": "0.25rem",
+        "density": "compact",
+        "container": "wide",
+        "layout.header": "minimal",
+        "layout.footer": "columns",
+        "layout.product_card": "minimal",
+        "layout.grid_columns": "4",
+        "layout.product_page": "split",
+        "color.search": "#111111",
+        "color.sale": "#df3b00"
+    },
+    "customizer_file": "settings.json",
+    "frontend": {
+        "stylesheet": "src/style.css",
+        "layout": "src/layout.tsx"
+    },
+    "demo_content": "demo.json",
+    "changelog": [
+        {
+            "version": "1.1.3",
+            "date": "2026-11-08",
+            "notes": "Uses Admin → Navigation menus (top, departments, mobile, footer) once saved; header and footer get a Menus setting."
+        },
+        {
+            "version": "1.1.2",
+            "date": "2026-11-08",
+            "notes": "The sticky header turns compact while scrolling (logo, search and icons only), with an on/off setting in the live Header section."
+        },
+        {
+            "version": "1.1.1",
+            "date": "2026-11-08",
+            "notes": "Theme-native sticky header on desktop and mobile, with an on/off setting in the live Header section. Announcement banners scroll away; mobile navigation and module actions stay available."
+        },
+        {
+            "version": "1.1.0",
+            "date": "2026-11-08",
+            "notes": "Mobile-only fixed navigation with separate menu, expandable category and search panels, live cart count, and editable labels and accent color."
+        },
+        {
+            "version": "1.0.2",
+            "date": "2026-11-07",
+            "notes": "New marketplace theme created with MagicPath; native section editor and platform shopping flows."
+        }
+    ],
+    "screenshot": "assets/demo-preview.webp"
+}

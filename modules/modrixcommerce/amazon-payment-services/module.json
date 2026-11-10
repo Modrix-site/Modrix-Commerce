@@ -1,0 +1,56 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/amazon-payment-services",
+    "display_name": "Amazon Payment Services",
+    "description": "Amazon Payment Services (formerly PayFort) gateway with hosted checkout, SHA signature verification, payment status inquiry, and API refunds for UAE and MENA.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "credit-card",
+    "accent": "#ff9900",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\AmazonPaymentServices\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\AmazonPaymentServices\\AmazonPaymentServicesServiceProvider",
+    "capabilities": [
+        "payment.gateway",
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "content_security"
+    ],
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages"
+    },
+    "content_security": {
+        "form-action": [
+            "https://sbcheckout.payfort.com",
+            "https://checkout.payfort.com"
+        ],
+        "connect-src": [
+            "https://sbpaymentservices.payfort.com",
+            "https://paymentservices.payfort.com",
+            "https://sbcheckout.payfort.com",
+            "https://checkout.payfort.com"
+        ]
+    },
+    "admin_navigation": [
+        {
+            "key": "amazon-payment-services",
+            "title": "Amazon Payment Services",
+            "route": "index",
+            "icon": "credit-card",
+            "group": "Configuration",
+            "permission": "payments.manage",
+            "order": 870
+        }
+    ]
+}

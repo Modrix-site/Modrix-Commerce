@@ -1,0 +1,147 @@
+{
+    "name": "Footer",
+    "settings": [
+        {
+            "type": "select",
+            "id": "menu_source",
+            "label": "Footer menus",
+            "options": [
+                {
+                    "value": "auto",
+                    "label": "Admin → Navigation once saved, else theme links"
+                },
+                {
+                    "value": "store",
+                    "label": "Always Admin → Navigation"
+                },
+                {
+                    "value": "theme",
+                    "label": "Theme links only"
+                }
+            ],
+            "default": "auto"
+        },
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Contact heading",
+            "default": "Contact us"
+        },
+        {
+            "type": "textarea",
+            "id": "body",
+            "label": "Contact text",
+            "default": "We’re here to help you find your next favourite."
+        },
+        {
+            "type": "text",
+            "id": "phone",
+            "label": "Phone",
+            "default": ""
+        },
+        {
+            "type": "text",
+            "id": "email",
+            "label": "Email",
+            "default": ""
+        },
+        {
+            "type": "textarea",
+            "id": "address",
+            "label": "Address",
+            "default": ""
+        },
+        {
+            "type": "text",
+            "id": "copyright",
+            "label": "Copyright",
+            "default": "Volt Market. All rights reserved."
+        },
+        {
+            "type": "checkbox",
+            "id": "show_directory",
+            "label": "Show category directory",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_localization",
+            "label": "Show currency and language",
+            "default": true
+        },
+        {
+            "type": "color",
+            "id": "background",
+            "label": "Footer background",
+            "default": "#ffffff"
+        },
+        {
+            "type": "color",
+            "id": "foreground",
+            "label": "Footer text",
+            "default": "#222222"
+        },
+        {
+            "type": "color",
+            "id": "muted",
+            "label": "Footer secondary text",
+            "default": "#777777"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "link",
+            "name": "Footer link",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "group",
+                    "label": "Column heading",
+                    "default": "Quick links"
+                },
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Label",
+                    "default": "Shop all"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Destination",
+                    "default": "/search"
+                }
+            ]
+        },
+        {
+            "type": "social",
+            "name": "Social link",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "label",
+                    "label": "Network label",
+                    "default": "Instagram"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Profile URL",
+                    "default": "https://www.instagram.com/"
+                }
+            ]
+        }
+    ],
+    "max_blocks": 50,
+    "presets": [
+        {
+            "name": "Footer"
+        }
+    ],
+    "enabled_on": {
+        "groups": [
+            "footer"
+        ]
+    },
+    "limit": 1
+}
