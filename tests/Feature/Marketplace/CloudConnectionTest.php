@@ -12,6 +12,7 @@ use App\Models\User;
 use EcoModular\CloudConnector\CloudClient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request as ClientRequest;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\Support\MarketplaceFixtures;
@@ -176,6 +177,28 @@ class CloudConnectionTest extends TestCase
             ->post(route('admin.modrixcommerce.cloud-connector.install-from-cloud'), ['identifier' => 'acme/hello'])
             ->assertRedirect(route('admin.modrixcommerce.cloud-connector.index'));
         $this->assertDatabaseHas('marketplace_licenses', ['extension_name' => 'acme/hello', 'status' => 'active']);
+    }
+
+    public function test_a_license_recorded_with_the_license_kind_as_type_is_repaired_from_the_signed_token(): void
+    {
+        // Older Modrix Cloud tokens signed "free"/"paid" as type, so no signed release
+        // ("module"/"theme") matched: "The signed release is for a different product."
+        $this->fakeCloud();
+        $this->connect();
+        $license = StoreLicense::query()->where('extension_name', 'acme/hello')->firstOrFail();
+
+        $license->forceFill(['type' => 'free'])->save();
+        $this->withSession(['auth.password_confirmed_at' => time()])
+            ->post(route('admin.modrixcommerce.cloud-connector.licenses.check', $license));
+        $this->assertSame('module', $license->fresh()->type);
+
+        // Installing repairs it too, then verifies and installs the release.
+        $license->forceFill(['type' => 'paid'])->save();
+        File::deleteDirectory($this->modulesPath.'/acme/hello');
+        $this->post(route('admin.modrixcommerce.cloud-connector.install', $license))->assertSessionHasNoErrors();
+        $this->assertSame('module', $license->fresh()->type);
+        $this->assertFileExists($this->modulesPath.'/acme/hello/module.json');
+        $this->assertDatabaseHas('marketplace_update_history', ['extension_name' => 'acme/hello', 'action' => 'install', 'success' => true]);
     }
 
     public function test_a_license_used_on_another_store_needs_move_here(): void

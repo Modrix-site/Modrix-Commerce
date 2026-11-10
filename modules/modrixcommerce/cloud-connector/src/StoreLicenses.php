@@ -35,7 +35,8 @@ final class StoreLicenses
             'product_slug' => (string) $token['product'],
             'product_name' => (string) $token['product'],
             'extension_name' => (string) $token['extension'],
-            'type' => (string) $token['type'],
+            // Older Modrix Cloud tokens carried the license kind (free/paid) here instead of the package type.
+            'type' => self::packageType($token['type'] ?? null) ?? $license->type ?? 'module',
             'key_encrypted' => Crypt::encryptString($key),
             'key_hint' => substr($key, -5),
         ]);
@@ -45,6 +46,7 @@ final class StoreLicenses
             foreach ($this->client->catalog() as $product) {
                 if (($product['slug'] ?? null) === $license->product_slug) {
                     $license->product_name = (string) $product['name'];
+                    $license->type = self::packageType($token['type'] ?? null) ?? self::packageType($product['type'] ?? null) ?? $license->type;
                 }
             }
         } catch (CloudError) {
@@ -153,6 +155,12 @@ final class StoreLicenses
     {
         $token = $signed['token'];
 
+        // Keeps the package identity in step with the signed token, which also
+        // repairs licenses recorded from tokens that carried "free"/"paid" as type.
+        if (($type = self::packageType($token['type'] ?? null)) !== null) {
+            $license->type = $type;
+        }
+
         $license->forceFill([
             'status' => (string) $token['status'],
             'updates_until' => is_string($token['updates_until'] ?? null) ? Carbon::parse($token['updates_until']) : null,
@@ -160,6 +168,12 @@ final class StoreLicenses
             'token_valid_until' => Carbon::parse((string) $token['valid_until']),
             'last_checked_at' => now(),
         ]);
+    }
+
+    /** "module" or "theme"; null for anything else (such as a license kind). */
+    public static function packageType(mixed $type): ?string
+    {
+        return in_array($type, ['module', 'theme'], true) ? $type : null;
     }
 
     private function refreshUpdate(StoreLicense $license): void

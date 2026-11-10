@@ -60,6 +60,7 @@ final class PackageInstaller
         try {
             File::ensureDirectoryExists($work);
             $key = $license->key();
+            $this->repairType($license, $key);
             $update = $this->client->update($key, $currentVersion);
 
             if (! ($update['available'] ?? false) || ! is_array($update['release'] ?? null)) {
@@ -270,5 +271,23 @@ final class PackageInstaller
             'sha256' => $sha256,
             'actor_id' => $actor?->id,
         ]);
+    }
+
+    /**
+     * Licenses recorded from older Modrix Cloud tokens hold the license kind
+     * ("free"/"paid") as their type, so no signed release could match them.
+     * Re-reads the type from a fresh signed token before installing.
+     */
+    private function repairType(StoreLicense $license, string $key): void
+    {
+        if (StoreLicenses::packageType($license->type) !== null) {
+            return;
+        }
+
+        $type = StoreLicenses::packageType($this->client->check($key)['token']['type'] ?? null);
+
+        if ($type !== null) {
+            $license->forceFill(['type' => $type])->save();
+        }
     }
 }
