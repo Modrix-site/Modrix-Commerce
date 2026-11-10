@@ -62,7 +62,9 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleAppearance::class,
             StorefrontMaintenance::class,
             HandleInertiaRequests::class,
-            AddLinkHeadersForPreloadedAssets::class,
+            // Capped: listing every Vite chunk made the Link header ~7 KB, over Nginx's
+            // default FastCGI header buffer, so pages failed with 502 Bad Gateway.
+            AddLinkHeadersForPreloadedAssets::using(10),
         ]);
 
         $middleware->alias([
