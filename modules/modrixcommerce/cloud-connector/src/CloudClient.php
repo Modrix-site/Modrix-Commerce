@@ -45,8 +45,12 @@ final class CloudClient
     /** The official Modrix Cloud, so a fresh store connects without any configuration. */
     public const DEFAULT_URL = 'https://cloud-apps.modrixcommerce.com';
 
-    /** The official Modrix Cloud's Ed25519 public key, which signs every release it serves. */
-    public const TRUSTED_KEY = TrustedKeys::OFFICIAL;
+    /**
+     * The official Modrix Cloud's Ed25519 public key (key id e6064ae59fe8ad04),
+     * which signs every license and release it serves. Hardcoded so a store
+     * connects without any configuration; must equal TrustedKeys::OFFICIAL.
+     */
+    public const TRUSTED_KEY = 'hfNCkhP3lhEjNPjg6Sd5D5s187ebC5ButhVJe+ilKKk=';
 
     /**
      * Modrix Cloud's address. Merchants cannot change it; ECOMODULAR_MARKETPLACE_URL
@@ -381,7 +385,7 @@ final class CloudClient
      */
     public function trustedKeys(): array
     {
-        return TrustedKeys::all();
+        return array_values(array_unique([self::TRUSTED_KEY, ...TrustedKeys::all()]));
     }
 
     /**

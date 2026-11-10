@@ -3,6 +3,7 @@
 namespace Tests\Feature\Marketplace;
 
 use App\Core\Marketplace\Client\StoreLicense;
+use App\Core\Marketplace\TrustedKeys;
 use App\Core\Settings\SecretSettings;
 use App\Domains\Marketplace\MarketplaceCheckout;
 use App\Domains\Marketplace\Models\License;
@@ -97,6 +98,19 @@ class CloudConnectionTest extends TestCase
 
         $this->assertSame('https://cloud-apps.modrixcommerce.com', $client->baseUrl());
         $this->assertSame([CloudClient::TRUSTED_KEY], $client->trustedKeys());
+    }
+
+    public function test_the_hardcoded_key_is_the_live_modrix_cloud_signing_key(): void
+    {
+        // Settings → Licensing on cloud-apps.modrixcommerce.com shows key id e6064ae59fe8ad04.
+        $raw = base64_decode(CloudClient::TRUSTED_KEY, true);
+
+        $this->assertIsString($raw);
+        $this->assertSame(SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES, strlen($raw));
+        $this->assertSame(TrustedKeys::OFFICIAL_KEY_ID, substr(hash('sha256', $raw), 0, 16));
+        $this->assertSame('e6064ae59fe8ad04', TrustedKeys::OFFICIAL_KEY_ID);
+        // Core updates and the connector trust the same key.
+        $this->assertSame(TrustedKeys::OFFICIAL, CloudClient::TRUSTED_KEY);
     }
 
     public function test_configured_keys_are_trusted_alongside_the_official_one(): void

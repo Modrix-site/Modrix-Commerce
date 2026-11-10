@@ -8,8 +8,14 @@ namespace App\Core\Marketplace;
  */
 final class TrustedKeys
 {
-    /** The official Modrix Cloud's Ed25519 public key, which signs every release it serves. */
-    public const OFFICIAL = 'Z8CzGqObdJVPKGDbgzoAVdDY8nL68NTMYM2r80sPMyk=';
+    /**
+     * The official Modrix Cloud's (cloud-apps.modrixcommerce.com) Ed25519 public
+     * key, key id e6064ae59fe8ad04, which signs every license and release it serves.
+     */
+    public const OFFICIAL = 'hfNCkhP3lhEjNPjg6Sd5D5s187ebC5ButhVJe+ilKKk=';
+
+    /** First 16 hex digits of sha256 of the raw key, as Modrix Cloud shows it under Settings → Licensing. */
+    public const OFFICIAL_KEY_ID = 'e6064ae59fe8ad04';
 
     /**
      * The official key plus any configured (ECOMODULAR_MARKETPLACE_TRUSTED_KEYS).
