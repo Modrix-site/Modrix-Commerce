@@ -32,6 +32,9 @@ return [
     'modules' => [
         'path' => env('ECOMODULAR_MODULES_PATH', base_path('modules')),
         'safe_mode' => (bool) env('ECOMODULAR_SAFE_MODE', false),
+        // First-party modules the core relies on: they can be disabled, never deleted.
+        // The cloud connector is how packages are reinstalled from Modrix Cloud.
+        'protected' => ['modrixcommerce/cloud-connector'],
     ],
 
     /*

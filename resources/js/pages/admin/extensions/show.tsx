@@ -51,6 +51,7 @@ type Extension = ExtensionSummary & {
     routes: string[];
     has_migrations: boolean;
     dependents: { name: string; state: string }[];
+    protected: boolean;
     installed_at: string | null;
     enabled_at: string | null;
 };
@@ -93,6 +94,9 @@ export default function ExtensionShow({ extension, settings, events }: Props) {
     const canUninstall =
         installed &&
         ['installed', 'disabled', 'failed', 'update_pending'].includes(state);
+    // Anything that is not running can be deleted; the server re-checks
+    // dependents and a module that is waiting to be re-enabled.
+    const canDelete = !extension.protected && state !== 'enabled';
 
     return (
         <>
@@ -188,6 +192,9 @@ export default function ExtensionShow({ extension, settings, events }: Props) {
                     )}
                     {canUninstall && can('extensions.install') && (
                         <UninstallDialog extension={extension} />
+                    )}
+                    {canDelete && can('extensions.install') && (
+                        <DeleteDialog extension={extension} />
                     )}
                 </div>
 
@@ -495,6 +502,103 @@ function UninstallDialog({ extension }: { extension: Extension }) {
                                     }
                                 >
                                     Uninstall and delete data
+                                </Button>
+                            </DialogFooter>
+                        </>
+                    )}
+                </Form>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+function DeleteDialog({ extension }: { extension: Extension }) {
+    const [typed, setTyped] = useState('');
+    const installedDependents = extension.dependents.filter(
+        (d) => d.state !== 'discovered' && d.state !== 'invalid',
+    );
+    const blocked = installedDependents.length > 0;
+
+    return (
+        <Dialog onOpenChange={(open) => !open && setTyped('')}>
+            <DialogTrigger asChild>
+                <Button variant="outline" className="text-destructive">
+                    Delete
+                </Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogTitle>Delete {extension.display_name}?</DialogTitle>
+                <DialogDescription>
+                    This removes the module's files from{' '}
+                    <span className="font-mono">modules/{extension.name}</span>
+                    {extension.version !== null
+                        ? ', runs its uninstall migrations and deletes its database tables, settings and staff permissions.'
+                        : '.'}{' '}
+                    To use it again you have to upload or reinstall the
+                    package.
+                </DialogDescription>
+                {blocked ? (
+                    <Alert variant="destructive">
+                        <AlertTriangle />
+                        <AlertTitle>Required by other modules</AlertTitle>
+                        <AlertDescription>
+                            Uninstall or delete{' '}
+                            {installedDependents.map((d) => d.name).join(', ')}{' '}
+                            first.
+                        </AlertDescription>
+                    </Alert>
+                ) : (
+                    <Alert variant="destructive">
+                        <ShieldAlert />
+                        <AlertTitle>This cannot be undone</AlertTitle>
+                        <AlertDescription>
+                            Back up your database and files first if you might
+                            need this module again.
+                        </AlertDescription>
+                    </Alert>
+                )}
+                <Form
+                    {...ExtensionController.destroy.form(extension.id)}
+                    className="grid gap-4"
+                >
+                    {({ processing, errors }) => (
+                        <>
+                            <div className="grid gap-2">
+                                <Label htmlFor="delete-confirmation">
+                                    Type{' '}
+                                    <span className="font-mono">
+                                        {extension.name}
+                                    </span>{' '}
+                                    to confirm
+                                </Label>
+                                <Input
+                                    id="delete-confirmation"
+                                    name="confirmation"
+                                    autoComplete="off"
+                                    value={typed}
+                                    onChange={(e) => setTyped(e.target.value)}
+                                    disabled={blocked}
+                                />
+                                <InputError
+                                    message={
+                                        errors.confirmation ?? errors.module
+                                    }
+                                />
+                            </div>
+                            <DialogFooter className="gap-2">
+                                <DialogClose asChild>
+                                    <Button variant="secondary">Cancel</Button>
+                                </DialogClose>
+                                <Button
+                                    type="submit"
+                                    variant="destructive"
+                                    disabled={
+                                        blocked ||
+                                        processing ||
+                                        typed !== extension.name
+                                    }
+                                >
+                                    Delete module
                                 </Button>
                             </DialogFooter>
                         </>

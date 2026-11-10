@@ -374,6 +374,7 @@ Route::middleware('throttle:30,1')->group(function () {
     Route::post('extensions/{extension}/disable', [ExtensionController::class, 'disable'])->middleware('can:extensions.disable')->name('extensions.disable');
     Route::post('extensions/{extension}/update', [ExtensionController::class, 'update'])->middleware(['can:extensions.update', 'password.confirm'])->name('extensions.update');
     Route::put('extensions/{extension}/settings', [ExtensionController::class, 'configure'])->middleware('can:extensions.configure')->name('extensions.settings');
+    Route::delete('extensions/{extension}/package', [ExtensionController::class, 'destroy'])->middleware(['can:extensions.install', 'password.confirm'])->name('extensions.destroy');
     Route::delete('extensions/{extension}', [ExtensionController::class, 'uninstall'])->middleware(['can:extensions.install', 'password.confirm'])->name('extensions.uninstall');
 });
 

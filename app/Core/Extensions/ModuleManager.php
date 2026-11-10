@@ -15,6 +15,7 @@ use Composer\Semver\Semver;
 use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Throwable;
 
@@ -230,11 +231,110 @@ final class ModuleManager
     }
 
     /**
+     * Removes a module completely: its tables, settings and permissions (when
+     * installed), its package files under the modules directory and its
+     * `extensions` record. Irreversible; the caller must pass the module's
+     * name as confirmation. The module must not be running, no installed
+     * module may require it, and protected first-party modules are refused.
+     */
+    public function delete(string $name, string $confirmation, ?User $actor = null): void
+    {
+        if ($confirmation !== $name) {
+            throw new ModuleException("Type {$name} to confirm. Deleting removes the module's files and data.");
+        }
+
+        if (self::isProtected($name)) {
+            throw new ModuleException("{$name} is part of Modrix Commerce and cannot be deleted. Disable it instead.");
+        }
+
+        $this->operation($name, 'deleted', $actor, function (Extension $extension, ?Manifest $manifest) {
+            if ($extension->state === ModuleState::Enabled
+                || (in_array($extension->state, [ModuleState::UpdatePending, ModuleState::Failed], true) && $extension->enabled_before_update)) {
+                throw new ModuleException("Disable {$extension->display_name} before deleting it.");
+            }
+
+            $dependents = array_values(array_filter(
+                $this->dependents($extension->name, ModuleState::cases()),
+                fn (string $dependent) => $dependent !== $extension->name,
+            ));
+            if ($dependents !== []) {
+                throw new ModuleException('Uninstall or delete '.implode(', ', $dependents).' first: they depend on this module.');
+            }
+
+            $dir = $this->packageDirForDeletion($extension);
+
+            if ($extension->isInstalled()) {
+                $manifest ??= $extension->manifest();
+
+                if ($manifest?->migrations !== null && $dir !== null) {
+                    try {
+                        $this->migrator()->reset([$this->migrationPath($extension, $manifest)]);
+                    } catch (Throwable $e) {
+                        throw new ModuleException("Could not remove the module's tables: {$this->describe($e)} Nothing was deleted.");
+                    }
+                }
+
+                Permission::query()->where('source', $extension->name)->delete();
+
+                if ($manifest !== null) {
+                    $this->settings->forget($manifest);
+                }
+            }
+
+            if ($dir !== null && ! File::deleteDirectory($dir)) {
+                throw new ModuleException("Could not delete the files in modules/{$extension->path}. Check the folder's permissions and try again.");
+            }
+
+            // Drop the vendor folder once its last package is gone.
+            $vendor = dirname((string) $dir);
+            if ($dir !== null && is_dir($vendor) && (glob($vendor.DIRECTORY_SEPARATOR.'*') ?: []) === []) {
+                @rmdir($vendor);
+            }
+
+            $extension->delete();
+            $extension->state = ModuleState::Discovered;
+
+            return $extension;
+        }, allowInvalid: true, message: fn (Extension $e) => "Deleted modules/{$e->path} and its record.");
+    }
+
+    /**
+     * First-party modules the core relies on; they can be disabled but never deleted.
+     */
+    public static function isProtected(string $name): bool
+    {
+        return in_array($name, (array) config('ecomodular.modules.protected', []), true);
+    }
+
+    /**
+     * The package folder, verified to sit exactly at modules/<vendor>/<name>.
+     */
+    private function packageDirForDeletion(Extension $extension): ?string
+    {
+        if (preg_match('#^[a-z0-9][a-z0-9_.-]*/[a-z0-9][a-z0-9_.-]*$#i', (string) $extension->path) !== 1) {
+            throw new ModuleException("Refusing to delete an unexpected package path: {$extension->path}.");
+        }
+
+        $root = realpath(ModuleRepository::path());
+        $dir = realpath(ModuleRepository::packageDir($extension));
+
+        if ($dir === false) {
+            return null; // Files already gone; only the record remains.
+        }
+
+        if ($root === false || dirname($dir, 2) !== $root || is_link(ModuleRepository::packageDir($extension))) {
+            throw new ModuleException("Refusing to delete modules/{$extension->path}: it is outside the modules directory.");
+        }
+
+        return $dir;
+    }
+
+    /**
      * @param  Closure(Extension, Manifest): Extension  $change
      * @param  (Closure(Extension, Manifest): mixed)|null  $after
      * @param  (Closure(Extension): string)|null  $message
      */
-    private function operation(string $name, string $action, ?User $actor, Closure $change, ?Closure $after = null, ?Closure $message = null): Extension
+    private function operation(string $name, string $action, ?User $actor, Closure $change, ?Closure $after = null, ?Closure $message = null, bool $allowInvalid = false): Extension
     {
         $lock = Cache::lock('ecomodular:modules:lifecycle', 300);
 
@@ -247,7 +347,7 @@ final class ModuleManager
             $extension = $this->repository->find($name) ?? throw new ModuleException("Module {$name} was not found in the modules directory.");
             $manifest = $extension->state === ModuleState::Invalid ? null : $extension->manifest();
 
-            if ($manifest === null || ($extension->errors !== null && $extension->errors !== [])) {
+            if (! $allowInvalid && ($manifest === null || ($extension->errors !== null && $extension->errors !== []))) {
                 throw new ModuleException("Module {$name} has an invalid manifest: ".implode(' ', (array) $extension->errors));
             }
 

@@ -67,6 +67,7 @@ class ExtensionController extends Controller
                 'routes' => array_keys($manifest->routes ?? []),
                 'has_migrations' => $manifest?->migrations !== null,
                 'dependents' => $dependents,
+                'protected' => ModuleManager::isProtected($extension->name),
                 'installed_at' => $extension->installed_at?->toIso8601String(),
                 'enabled_at' => $extension->enabled_at?->toIso8601String(),
             ],
@@ -124,6 +125,30 @@ class ExtensionController extends Controller
         $data = $request->validate(['confirmation' => ['required', 'string', 'max:100']]);
 
         return $this->run($extension, fn () => $this->manager->uninstall($extension->name, $data['confirmation'], $this->actor($request)), 'Module uninstalled and its data removed.');
+    }
+
+    /**
+     * Deletes a module that is not running: its data (if installed), its files
+     * and its record. The extension record is gone afterwards, so this returns
+     * to the list instead of the detail page.
+     */
+    public function destroy(Request $request, Extension $extension): RedirectResponse
+    {
+        abort_unless($extension->type === 'module', 404);
+        $data = $request->validate(['confirmation' => ['required', 'string', 'max:100']]);
+        $name = $extension->display_name;
+
+        try {
+            $this->manager->delete($extension->name, $data['confirmation'], $this->actor($request));
+        } catch (ModuleException $e) {
+            Inertia::flash('toast', ['type' => 'error', 'message' => $e->getMessage()]);
+
+            throw ValidationException::withMessages(['module' => $e->getMessage()]);
+        }
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => __(':name was deleted.', ['name' => $name])]);
+
+        return redirect()->route('admin.extensions.index');
     }
 
     /**
