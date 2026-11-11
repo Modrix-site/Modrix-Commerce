@@ -1,23 +1,18 @@
 import { Form, Head, router, useForm } from '@inertiajs/react';
 import {
     AlertCircle,
-    ArrowUpRight,
     CheckCircle2,
-    Clock,
-    Copy,
     Download,
     Eye,
     FolderPlus,
     Mail,
     Plus,
-    RefreshCw,
     Search,
     Send,
     Settings,
     Tag,
     Trash2,
     Users,
-    X,
     XCircle,
 } from 'lucide-react';
 import { useState } from 'react';
@@ -26,7 +21,6 @@ import { EmptyState } from '@/components/admin/empty-state';
 import { FormField, NativeSelect } from '@/components/admin/form-field';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Tabs } from '@/components/admin/tabs';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -39,7 +33,6 @@ import {
 } from '@/components/ui/card';
 import {
     Dialog,
-    DialogClose,
     DialogContent,
     DialogDescription,
     DialogFooter,

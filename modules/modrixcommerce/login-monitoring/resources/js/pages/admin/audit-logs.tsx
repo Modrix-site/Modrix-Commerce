@@ -1,14 +1,5 @@
 import { Head, router } from '@inertiajs/react';
-import {
-    Activity,
-    Clock,
-    FileText,
-    Filter,
-    RefreshCw,
-    Search,
-    Shield,
-    User,
-} from 'lucide-react';
+import { FileText, RefreshCw, Search, User } from 'lucide-react';
 import { useState } from 'react';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Badge } from '@/components/ui/badge';

@@ -102,7 +102,7 @@ export default function StorePickupPicker({
     const [pickupTime, setPickupTime] = useState(
         initialSelection?.pickup_time || '',
     );
-    const [notes, setNotes] = useState(initialSelection?.customer_notes || '');
+    const [notes] = useState(initialSelection?.customer_notes || '');
 
     const [isSaving, setIsSaving] = useState(false);
     const [saveSuccess, setSaveSuccess] = useState<string | null>(
@@ -719,7 +719,7 @@ export default function StorePickupPicker({
                                         onChange={(e) => {
                                             setPickupDate(e.target.value);
                                             if (selectedBranchId) {
-                                                submitSelection(
+                                                void submitSelection(
                                                     selectedBranchId,
                                                     collectorName,
                                                     collectorPhone,
@@ -746,7 +746,7 @@ export default function StorePickupPicker({
                                         onChange={(e) => {
                                             setPickupTime(e.target.value);
                                             if (selectedBranchId) {
-                                                submitSelection(
+                                                void submitSelection(
                                                     selectedBranchId,
                                                     collectorName,
                                                     collectorPhone,

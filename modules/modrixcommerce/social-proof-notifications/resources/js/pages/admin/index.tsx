@@ -98,7 +98,7 @@ export default function SocialProofAdminIndex({
     const [productName, setProductName] = useState('');
     const [customerName, setCustomerName] = useState('');
     const [customerCity, setCustomerCity] = useState('');
-    const [customerCountry, setCustomerCountry] = useState('US');
+    const [customerCountry] = useState('US');
     const [customMessage, setCustomMessage] = useState('');
 
     function handleSearch(e: React.FormEvent) {

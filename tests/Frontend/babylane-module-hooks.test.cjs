@@ -201,7 +201,7 @@ function once(html, name) {
     );
 }
 
-test('product module places, labels and flash-sale notices survive theme rendering', () => {
+void test('product module places, labels and flash-sale notices survive theme rendering', () => {
     const product = {
         id: 7,
         name: 'Baby wipes',
@@ -240,7 +240,7 @@ test('product module places, labels and flash-sale notices survive theme renderi
     assert.match(html, /Family event/);
 });
 
-test('every product card passes its own product into extension blocks', () => {
+void test('every product card passes its own product into extension blocks', () => {
     const { Card } = load(path.join(theme, 'src/components.tsx'));
     const html = renderToStaticMarkup(
         React.createElement(Card, {
@@ -260,7 +260,7 @@ test('every product card passes its own product into extension blocks', () => {
     assert.match(html, /Soft/);
 });
 
-test('catalog renders the before-products hook and legacy after-products slots exactly once', () => {
+void test('catalog renders the before-products hook and legacy after-products slots exactly once', () => {
     const html = render('main-collection', {
         title: 'Baby Hygiene',
         products: { data: [], total: 0, last_page: 1, current_page: 1 },
@@ -281,7 +281,7 @@ test('catalog renders the before-products hook and legacy after-products slots e
     once(app, 'catalog-after-module');
 });
 
-test('header actions, footer extensions and cart commerce props remain available', () => {
+void test('header actions, footer extensions and cart commerce props remain available', () => {
     once(render('header'), 'header.actions');
     once(render('footer'), 'footer-module');
     const html = render('main-cart', {
@@ -294,7 +294,7 @@ test('header actions, footer extensions and cart commerce props remain available
     assert.match(html, /data-module="core-cross-sells">1/);
 });
 
-test('all page-slot templates ship an enabled app section for arbitrary installed modules', () => {
+void test('all page-slot templates ship an enabled app section for arbitrary installed modules', () => {
     for (const name of [
         'index',
         'collection',
@@ -327,7 +327,7 @@ test('all page-slot templates ship an enabled app section for arbitrary installe
     }
 });
 
-test('theme layout retains the platform shell around checkout, account, orders and global overlays', () => {
+void test('theme layout retains the platform shell around checkout, account, orders and global overlays', () => {
     const Layout = load(path.join(theme, 'src/layout.tsx')).default;
     for (const page of [
         'checkout.payment_method',

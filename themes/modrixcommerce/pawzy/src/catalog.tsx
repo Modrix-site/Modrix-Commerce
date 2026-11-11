@@ -16,7 +16,7 @@ export default function PawzyCatalog({
     slots,
     description,
     meta,
-    breadcrumbs,
+    breadcrumbs: _breadcrumbs,
     products,
     sort,
     filters = {},

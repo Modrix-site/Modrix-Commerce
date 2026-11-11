@@ -74,7 +74,7 @@ type Props = {
     recentHighRisk: RecentHighRisk[];
 };
 
-function riskBadge(level: string) {
+function _riskBadge(level: string) {
     switch (level) {
         case 'high':
             return (
@@ -205,7 +205,7 @@ function TrendChart({ data }: { data: TrendPoint[] }) {
     }
 
     const maxTotal = Math.max(...data.map((d) => d.total), 1);
-    const barWidth = Math.max(8, Math.min(32, Math.floor(100 / data.length)));
+    const _barWidth = Math.max(8, Math.min(32, Math.floor(100 / data.length)));
 
     return (
         <div className="relative">

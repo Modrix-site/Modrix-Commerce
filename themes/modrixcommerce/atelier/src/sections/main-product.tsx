@@ -28,7 +28,6 @@ import {
     rememberViewed,
     toggleSaved,
     useDeviceList,
-    toSaved,
 } from '../components';
 
 type Props = ThemeSectionProps<Record<string, unknown>, ThemeProductProps>;

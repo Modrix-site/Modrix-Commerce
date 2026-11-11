@@ -163,10 +163,14 @@ function Catalog({ section, page }: Props) {
                                     const data = new FormData(e.currentTarget);
                                     visit({
                                         min_price: String(
-                                            data.get('min_price') ?? '',
+                                            (data.get('min_price') as
+                                                | string
+                                                | null) ?? '',
                                         ),
                                         max_price: String(
-                                            data.get('max_price') ?? '',
+                                            (data.get('max_price') as
+                                                | string
+                                                | null) ?? '',
                                         ),
                                     });
                                 }}
@@ -241,11 +245,8 @@ function Catalog({ section, page }: Props) {
                                             if (k.startsWith('options'))
                                                 u.searchParams.delete(k);
                                         for (const [k, v] of data.entries())
-                                            if (String(v))
-                                                u.searchParams.append(
-                                                    k,
-                                                    String(v),
-                                                );
+                                            if (typeof v === 'string' && v)
+                                                u.searchParams.append(k, v);
                                         setPanel(null);
                                         router.get(
                                             u.pathname + u.search,

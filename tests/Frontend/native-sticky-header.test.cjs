@@ -47,7 +47,7 @@ function header(settings, sections) {
     return context.exports.SiteHeader({ children: 'Original theme header' });
 }
 
-test('native sticky headers retain their own chrome when enabled or disabled', () => {
+void test('native sticky headers retain their own chrome when enabled or disabled', () => {
     for (const sticky of [true, false]) {
         for (const legacy of [true, false, undefined]) {
             const result = header({ sticky_header: legacy }, [
@@ -59,7 +59,7 @@ test('native sticky headers retain their own chrome when enabled or disabled', (
     }
 });
 
-test('existing themes keep the shared compact header behavior', () => {
+void test('existing themes keep the shared compact header behavior', () => {
     const result = header({ sticky_header: true }, [
         { type: 'header', settings: {} },
     ]);
@@ -70,7 +70,7 @@ test('existing themes keep the shared compact header behavior', () => {
     assert.equal(wrapper.props['data-compact'], '');
 });
 
-test('sticky settings on other section types do not change header behavior', () => {
+void test('sticky settings on other section types do not change header behavior', () => {
     const result = header({ sticky_header: true }, [
         { type: 'promo-strip', settings: { sticky: true } },
     ]);

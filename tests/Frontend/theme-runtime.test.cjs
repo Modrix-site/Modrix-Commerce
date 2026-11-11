@@ -97,7 +97,7 @@ const theme = {
     },
 };
 
-test('checkout quote reloads keep the same page component so address and delivery state survive', () => {
+void test('checkout quote reloads keep the same page component so address and delivery state survive', () => {
     const api = runtime();
     const Page = api.withThemePage('storefront/checkout', api.CorePage);
     for (let reload = 0; reload < 3; reload++) {
@@ -115,7 +115,7 @@ test('checkout quote reloads keep the same page component so address and deliver
     );
 });
 
-test('a package page wraps the original page with unchanged commerce props', async () => {
+void test('a package page wraps the original page with unchanged commerce props', async () => {
     const api = runtime();
     api.state.theme = theme;
     const Page = api.withThemePage('storefront/checkout', api.CorePage);
@@ -125,7 +125,7 @@ test('a package page wraps the original page with unchanged commerce props', asy
     );
 });
 
-test('switching themes and missing compiled entries fall back to core', async () => {
+void test('switching themes and missing compiled entries fall back to core', async () => {
     const api = runtime();
     const Page = api.withThemePage('storefront/checkout', api.CorePage);
     for (const current of [
@@ -146,7 +146,7 @@ test('switching themes and missing compiled entries fall back to core', async ()
     );
 });
 
-test('theme declarations cannot override admin or module pages', () => {
+void test('theme declarations cannot override admin or module pages', () => {
     const api = runtime();
     assert.equal(
         api.withThemePage('admin/dashboard', api.CorePage),
@@ -158,7 +158,7 @@ test('theme declarations cannot override admin or module pages', () => {
     );
 });
 
-test('declared layout and stylesheet load independently of the homepage', async () => {
+void test('declared layout and stylesheet load independently of the homepage', async () => {
     const api = runtime();
     const Layout = api.themeLayout(theme);
     assert.equal(
@@ -178,7 +178,7 @@ test('declared layout and stylesheet load independently of the homepage', async 
     );
 });
 
-test('core source has no direct dependency on any named theme package', () => {
+void test('core source has no direct dependency on any named theme package', () => {
     const root = path.join(__dirname, '../../resources');
     for (const file of fs.readdirSync(root, { recursive: true })) {
         if (!/\.(tsx?|css)$/.test(file)) continue;

@@ -1,19 +1,5 @@
-import { Head, Link, router } from '@inertiajs/react';
-import {
-    Activity,
-    AlertTriangle,
-    BarChart3,
-    Calendar,
-    Download,
-    FileSpreadsheet,
-    FileText,
-    Globe,
-    Layers,
-    Shield,
-    ShieldAlert,
-    ShieldCheck,
-    TrendingUp,
-} from 'lucide-react';
+import { Head, router } from '@inertiajs/react';
+import { Calendar, Download, FileSpreadsheet, FileText } from 'lucide-react';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -55,8 +41,8 @@ type Props = {
 export default function BotReports({
     stats,
     dailySummary = [],
-    threatDistribution = {},
-    topAttackingIps = [],
+    threatDistribution: _threatDistribution = {},
+    topAttackingIps: _topAttackingIps = [],
     selectedDays = 14,
 }: Props) {
     const safeSummary = Array.isArray(dailySummary) ? dailySummary : [];

@@ -1,13 +1,5 @@
 import { Head, Link, router, useForm } from '@inertiajs/react';
-import {
-    ArrowLeft,
-    Check,
-    Clock,
-    Edit2,
-    Plus,
-    Power,
-    Trash2,
-} from 'lucide-react';
+import { ArrowLeft, Clock, Edit2, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Badge } from '@/components/ui/badge';
@@ -146,7 +138,10 @@ export default function DeliverySlotsAdminSlots({ slots, urls }: Props) {
                 current.filter((d) => d !== dayVal),
             );
         } else {
-            setData('days_of_week', [...current, dayVal].sort());
+            setData(
+                'days_of_week',
+                [...current, dayVal].sort((a, b) => a - b),
+            );
         }
     };
 

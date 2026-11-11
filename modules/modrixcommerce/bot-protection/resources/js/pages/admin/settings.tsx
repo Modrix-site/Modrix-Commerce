@@ -1,19 +1,6 @@
 import { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
-import {
-    AlertOctagon,
-    Bell,
-    Check,
-    Cloud,
-    Lock,
-    Save,
-    Settings as SettingsIcon,
-    Shield,
-    ShieldAlert,
-    ShieldCheck,
-    Sliders,
-    Zap,
-} from 'lucide-react';
+import { Bell, Lock, Save, ShieldCheck, Sliders, Zap } from 'lucide-react';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';

@@ -1,20 +1,5 @@
 import { Head, router } from '@inertiajs/react';
-import {
-    Activity,
-    AlertTriangle,
-    Clock,
-    Globe,
-    History,
-    Mail,
-    Plus,
-    Search,
-    Server,
-    Shield,
-    ShieldAlert,
-    Trash2,
-    User,
-    UserCheck,
-} from 'lucide-react';
+import { Globe, History, Mail, Plus, Server, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { EmptyState } from '@/components/admin/empty-state';

@@ -1,10 +1,7 @@
 import { Head, router } from '@inertiajs/react';
 import {
-    CheckCircle2,
     Key,
     Lock,
-    Phone,
-    RefreshCw,
     RotateCcw,
     Shield,
     ShieldAlert,

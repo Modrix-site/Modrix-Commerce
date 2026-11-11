@@ -59,7 +59,7 @@ export default function TieredPricingIndex({
     rules,
     settings,
     stats,
-    urls,
+    urls: _urls,
 }: Props) {
     const handleToggle = (id: number) => {
         router.post(

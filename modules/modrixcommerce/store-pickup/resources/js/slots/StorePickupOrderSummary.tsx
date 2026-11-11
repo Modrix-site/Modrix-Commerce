@@ -49,11 +49,11 @@ export default function StorePickupOrderSummary({
     ready_at,
     instructions,
     payment_method_name,
-    payment_method_code,
+    payment_method_code: _paymentMethodCode,
     payment_status,
 }: Props) {
     const isReady = status === 'ready_for_pickup';
-    const isPickedUp = status === 'picked_up';
+    const _isPickedUp = status === 'picked_up';
 
     return (
         <Card

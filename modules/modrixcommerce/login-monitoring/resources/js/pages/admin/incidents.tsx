@@ -1,16 +1,11 @@
 import { Head, router } from '@inertiajs/react';
 import {
     AlertOctagon,
-    AlertTriangle,
     CheckCircle2,
     Clock,
-    FileText,
-    Filter,
     RefreshCw,
     Search,
     ShieldAlert,
-    ShieldCheck,
-    XCircle,
 } from 'lucide-react';
 import { useState } from 'react';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';

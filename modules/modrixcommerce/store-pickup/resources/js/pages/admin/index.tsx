@@ -4,22 +4,15 @@ import {
     Calendar,
     CheckCircle2,
     Clock,
-    DollarSign,
     Edit,
     ExternalLink,
-    Filter,
-    MapPin,
     PackageCheck,
-    Phone,
     Plus,
     Search,
     Settings,
     Store,
     Trash2,
-    Truck,
-    User,
     UserCheck,
-    X,
 } from 'lucide-react';
 import { useState } from 'react';
 import type { FormEvent } from 'react';

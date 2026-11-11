@@ -1,17 +1,12 @@
 import { Head, router } from '@inertiajs/react';
 import {
     AlertTriangle,
-    Ban,
     Check,
-    CheckCircle2,
-    Globe,
     LogOut,
     RefreshCw,
     Search,
-    ShieldAlert,
     ShieldCheck,
     UserCheck,
-    X,
 } from 'lucide-react';
 import { useState } from 'react';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';

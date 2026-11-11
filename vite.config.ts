@@ -58,6 +58,10 @@ export default defineConfig({
             denyWarnings: true,
             typeAware: true,
         },
+        rules: {
+            // Defaults on page props guard against props the server leaves out.
+            'typescript/no-useless-default-assignment': 'off',
+        },
     },
     fmt: {
         printWidth: 80,

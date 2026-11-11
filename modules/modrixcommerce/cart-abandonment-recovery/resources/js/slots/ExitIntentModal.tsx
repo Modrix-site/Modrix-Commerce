@@ -106,7 +106,7 @@ export default function ExitIntentModal({
 
     function copyCode() {
         if (!discountCode) return;
-        navigator.clipboard.writeText(discountCode);
+        void navigator.clipboard.writeText(discountCode);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     }

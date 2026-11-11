@@ -1,6 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
 import {
-    ArrowRight,
     Check,
     Copy,
     Heart,
@@ -53,7 +52,7 @@ export default function WishlistStorefrontPage({
         if (!wishlist.share_url) {
             return;
         }
-        navigator.clipboard.writeText(wishlist.share_url);
+        void navigator.clipboard.writeText(wishlist.share_url);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };

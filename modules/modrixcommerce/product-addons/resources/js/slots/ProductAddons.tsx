@@ -6,7 +6,7 @@ import type { MoneyValue } from '@/types';
 interface AddonItem {
     id: number;
     name: string;
-    type: 'warranty' | 'feature' | 'service' | string;
+    type: 'warranty' | 'feature' | 'service' | (string & {});
     badge: string | null;
     description: string | null;
     price: MoneyValue;

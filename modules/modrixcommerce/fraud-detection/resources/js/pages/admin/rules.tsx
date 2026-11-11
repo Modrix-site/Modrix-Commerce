@@ -1,31 +1,11 @@
-import { Head, Link, router } from '@inertiajs/react';
-import {
-    Activity,
-    AlertCircle,
-    CheckCircle2,
-    ChevronRight,
-    Edit2,
-    Filter,
-    Plus,
-    Power,
-    Search,
-    Shield,
-    Trash2,
-    TrendingUp,
-    Zap,
-} from 'lucide-react';
+import { Head, router } from '@inertiajs/react';
+import { Edit2, Plus, Power, Search, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { EmptyState } from '@/components/admin/empty-state';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import {
     Dialog,
     DialogContent,
@@ -41,7 +21,7 @@ type Rule = {
     id: number;
     name: string;
     description: string | null;
-    type: 'threshold' | 'pattern' | 'country' | 'custom' | string;
+    type: 'threshold' | 'pattern' | 'country' | 'custom' | (string & {});
     field: string;
     operator: string;
     value: string;

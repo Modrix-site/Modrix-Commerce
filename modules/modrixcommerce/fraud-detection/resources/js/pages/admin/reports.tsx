@@ -145,7 +145,7 @@ function TrendChart({ data }: { data?: TrendPoint[] }) {
                         p.total > 0 ? (p.high / p.total) * totalH : 0;
                     const medPct =
                         p.total > 0 ? (p.medium / p.total) * totalH : 0;
-                    const lowPct = totalH - highPct - medPct;
+                    const _lowPct = totalH - highPct - medPct;
 
                     return (
                         <div
@@ -226,7 +226,7 @@ export default function FraudReports({
     stats,
     riskTrends,
     topIndicators,
-    riskDistribution,
+    riskDistribution: _riskDistribution,
     dailySummary,
     filters,
     exportCsvUrl,

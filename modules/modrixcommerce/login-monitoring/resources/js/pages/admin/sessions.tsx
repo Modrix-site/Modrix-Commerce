@@ -1,18 +1,5 @@
 import { Head, router } from '@inertiajs/react';
-import {
-    Activity,
-    AlertOctagon,
-    Clock,
-    Globe,
-    Laptop,
-    LogOut,
-    RefreshCw,
-    Search,
-    Shield,
-    Smartphone,
-    UserX,
-    Users,
-} from 'lucide-react';
+import { LogOut, RefreshCw, Search, UserX } from 'lucide-react';
 import { useState } from 'react';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Badge } from '@/components/ui/badge';

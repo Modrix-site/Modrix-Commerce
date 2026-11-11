@@ -1,18 +1,6 @@
 import { useState } from 'react';
-import { Head, Link, router, useForm } from '@inertiajs/react';
-import {
-    AlertTriangle,
-    Ban,
-    Check,
-    Copy,
-    Layers,
-    Plus,
-    Shield,
-    Sparkles,
-    Trash2,
-    X,
-    Zap,
-} from 'lucide-react';
+import { Head, router, useForm } from '@inertiajs/react';
+import { Layers, Plus, Sparkles, Trash2, X } from 'lucide-react';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';

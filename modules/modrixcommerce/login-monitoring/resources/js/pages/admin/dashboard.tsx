@@ -1,26 +1,17 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import {
     Activity,
-    AlertOctagon,
     AlertTriangle,
     ArrowUpRight,
     CheckCircle2,
     Clock,
     Fingerprint,
     Globe,
-    Key,
     Layers,
     Lock,
-    LogOut,
-    RefreshCw,
-    Shield,
     ShieldAlert,
-    ShieldCheck,
-    Smartphone,
-    UserCheck,
     Users,
     XCircle,
-    Zap,
 } from 'lucide-react';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Badge } from '@/components/ui/badge';
@@ -355,7 +346,7 @@ export default function LoginDashboard({
                                 const failedH = Math.round(
                                     ((t.failed || 0) / maxTrendTotal) * 100,
                                 );
-                                const suspH = Math.round(
+                                const _suspH = Math.round(
                                     ((t.suspicious || 0) / maxTrendTotal) * 100,
                                 );
 

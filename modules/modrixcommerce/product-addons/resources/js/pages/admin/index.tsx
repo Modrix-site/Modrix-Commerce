@@ -27,7 +27,7 @@ interface TargetSummary {
 interface AddonRow {
     id: number;
     name: string;
-    type: 'warranty' | 'feature' | 'service' | string;
+    type: 'warranty' | 'feature' | 'service' | (string & {});
     badge: string | null;
     description: string | null;
     price: string;

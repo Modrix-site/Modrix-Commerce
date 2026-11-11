@@ -1,15 +1,5 @@
-import { Head, Link, router } from '@inertiajs/react';
-import {
-    Activity,
-    BarChart3,
-    Compass,
-    Globe,
-    Layers,
-    PieChart,
-    Server,
-    Shield,
-    Users,
-} from 'lucide-react';
+import { Head, router } from '@inertiajs/react';
+import { BarChart3, Globe, Server } from 'lucide-react';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -42,7 +32,7 @@ export default function TrafficAnalytics({
     timeframe = '7d',
     summary,
     statusCodes = {},
-    classifications = {},
+    classifications: _classifications = {},
     geoBreakdown = [],
     timeline = [],
 }: Props) {

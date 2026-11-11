@@ -25,7 +25,7 @@ const {
 const link = (label, children = []) => ({ label, url: '/search', children });
 const plain = (value) => JSON.parse(JSON.stringify(value));
 
-test('indent keeps the selected subtree and preserves its siblings without mutating input', () => {
+void test('indent keeps the selected subtree and preserves its siblings without mutating input', () => {
     const input = [
         link('Shop', [link('Existing')]),
         link('Men', [link('Tops')]),
@@ -39,7 +39,7 @@ test('indent keeps the selected subtree and preserves its siblings without mutat
     assert.equal(JSON.stringify(input), original);
     assert.equal(treeCount(next.items), 5);
 });
-test('outdent inserts after its parent and retains the complete descendant branch', () => {
+void test('outdent inserts after its parent and retains the complete descendant branch', () => {
     const input = [
         link('Shop', [link('Women', [link('Dresses')]), link('Men')]),
         link('Help'),
@@ -50,7 +50,7 @@ test('outdent inserts after its parent and retains the complete descendant branc
     assert.equal(next.items[1].children[0].label, 'Dresses');
     assert.equal(next.items[2].label, 'Help');
 });
-test('a subtree cannot be indented past four levels', () => {
+void test('a subtree cannot be indented past four levels', () => {
     const input = [
         link('One', [
             link('Two', [link('Previous'), link('Three', [link('Four')])]),
@@ -60,7 +60,7 @@ test('a subtree cannot be indented past four levels', () => {
     assert.equal(next.items, input);
     assert.deepEqual(plain(next.path), [0, 0, 1]);
 });
-test('removing a branch cascades only through that branch', () => {
+void test('removing a branch cascades only through that branch', () => {
     const input = [
         link('Shop', [link('Men', [link('Shirts')]), link('Women')]),
         link('Help'),
@@ -70,7 +70,7 @@ test('removing a branch cascades only through that branch', () => {
     assert.equal(next[0].children[0].label, 'Women');
     assert.equal(input[0].children.length, 2);
 });
-test('editing a nested destination preserves descendants and neighbouring links', () => {
+void test('editing a nested destination preserves descendants and neighbouring links', () => {
     const input = [
         link('Shop', [link('Men', [link('Shirts')]), link('Women')]),
     ];

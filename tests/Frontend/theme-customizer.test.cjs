@@ -69,7 +69,7 @@ function render(element) {
     });
 }
 
-test('the edited theme selects its own editor and can reuse default controls', async () => {
+void test('the edited theme selects its own editor and can reuse default controls', async () => {
     const api = runtime();
     const Editor = api.themeCustomizer('acme/other', 'src/customizer.tsx');
     const html = await render(
@@ -87,7 +87,7 @@ test('the edited theme selects its own editor and can reuse default controls', a
     );
 });
 
-test('undeclared, invalid and unbuilt theme editors fall back without importing code', () => {
+void test('undeclared, invalid and unbuilt theme editors fall back without importing code', () => {
     const api = runtime();
     assert.equal(api.themeCustomizer('acme/sunny', undefined), undefined);
     assert.equal(

@@ -1,11 +1,5 @@
 import { Head, router, useForm } from '@inertiajs/react';
-import {
-    CircleAlert,
-    CircleCheck,
-    Copy,
-    ExternalLink,
-    RefreshCw,
-} from 'lucide-react';
+import { CircleAlert, CircleCheck, Copy, RefreshCw } from 'lucide-react';
 import { FormField, NativeSelect } from '@/components/admin/form-field';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Badge } from '@/components/ui/badge';

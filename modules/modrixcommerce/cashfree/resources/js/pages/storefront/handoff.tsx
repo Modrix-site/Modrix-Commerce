@@ -16,7 +16,7 @@ declare global {
 export default function CashfreeHandoff({
     paymentSessionId,
     mode,
-    orderId,
+    orderId: _orderId,
     orderNumber,
     amount,
     currency,

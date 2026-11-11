@@ -25,29 +25,29 @@ const variants = [
     { id: 2, option_value_ids: [11, 21], purchasable: true },
     { id: 3, option_value_ids: [10, 21], purchasable: false },
 ];
-test('missing combination resolves to an existing SKU retaining the clicked value', () => {
+void test('missing combination resolves to an existing SKU retaining the clicked value', () => {
     assert.equal(
         selectVariant(options, variants, { 1: 10, 2: 20 }, 1, 11).id,
         2,
     );
 });
-test('an exact sold-out combination stays selected to show its availability', () => {
+void test('an exact sold-out combination stays selected to show its availability', () => {
     assert.equal(
         selectVariant(options, variants, { 1: 10, 2: 20 }, 2, 21).id,
         3,
     );
 });
-test('unrelated changes preserve compatible selections', () => {
+void test('unrelated changes preserve compatible selections', () => {
     assert.equal(
         selectVariant(options, variants, { 1: 10, 2: 21 }, 1, 11).id,
         2,
     );
 });
-test('invalid values and empty variant sets do not resolve', () => {
+void test('invalid values and empty variant sets do not resolve', () => {
     assert.equal(selectVariant(options, variants, {}, 1, 999), undefined);
     assert.equal(selectVariant(options, [], {}, 1, 10), undefined);
 });
-test('selection uses the actual variant values and supports empty products', () => {
+void test('selection uses the actual variant values and supports empty products', () => {
     assert.equal(
         JSON.stringify(selectionForVariant(options, variants[1])),
         JSON.stringify({ 1: 11, 2: 21 }),

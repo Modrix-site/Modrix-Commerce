@@ -1,21 +1,16 @@
 import { Head, router } from '@inertiajs/react';
 import {
-    AlertOctagon,
     Ban,
     Bell,
-    Check,
-    Clock,
     Globe,
     Lock,
     Plus,
     Save,
-    Shield,
     Trash2,
     UserCheck,
 } from 'lucide-react';
 import { useState } from 'react';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -83,7 +78,7 @@ export default function AccessPolicies({
 
     const [newBlockedIp, setNewBlockedIp] = useState('');
     const [newBlockedReason, setNewBlockedReason] = useState('');
-    const [newBlockedHours, setNewBlockedHours] = useState('24');
+    const [newBlockedHours] = useState('24');
 
     const handleSaveSettings = (e: React.FormEvent) => {
         e.preventDefault();

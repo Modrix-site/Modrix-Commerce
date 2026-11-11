@@ -1,8 +1,7 @@
 import { Form, Link, usePage } from '@inertiajs/react';
 import './style.css';
-import { Heart, X, ShoppingBag, ArrowRight, Check } from 'lucide-react';
+import { Heart, X, ShoppingBag } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import type { CSSProperties } from 'react';
 import type { ProductCard } from '@/types';
 import CartController from '@/actions/App/Http/Controllers/Storefront/CartController';
 import InputError from '@/components/input-error';

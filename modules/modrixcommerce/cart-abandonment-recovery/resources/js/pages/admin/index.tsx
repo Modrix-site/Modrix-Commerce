@@ -1,6 +1,5 @@
 import { Form, Head, router } from '@inertiajs/react';
 import {
-    AlertCircle,
     ArrowUpRight,
     CheckCircle2,
     Clock,
@@ -142,7 +141,7 @@ export default function CartAbandonmentAdmin({
     }
 
     function copyRecoveryUrl(cart: AbandonedCartRow) {
-        navigator.clipboard.writeText(cart.recovery_url);
+        void navigator.clipboard.writeText(cart.recovery_url);
         setCopiedId(cart.id);
         setTimeout(() => setCopiedId(null), 2000);
     }

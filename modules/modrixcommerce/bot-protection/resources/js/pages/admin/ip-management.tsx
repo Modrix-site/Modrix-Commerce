@@ -1,15 +1,11 @@
 import { useState } from 'react';
-import { Head, Link, router, useForm } from '@inertiajs/react';
+import { Head, router, useForm } from '@inertiajs/react';
 import {
-    AlertTriangle,
     Ban,
     Check,
-    Cloud,
-    Filter,
     Globe,
     Plus,
     Search,
-    Shield,
     ShieldCheck,
     Trash2,
     X,
@@ -58,7 +54,7 @@ export default function IpManagement({
     allowedIps,
     blockedCountries = [],
     countriesList = [],
-    blockCloudAsn = false,
+    blockCloudAsn: _blockCloudAsn = false,
 }: Props) {
     const [activeTab, setActiveTab] = useState(tab);
     const [showAddBlocked, setShowAddBlocked] = useState(false);

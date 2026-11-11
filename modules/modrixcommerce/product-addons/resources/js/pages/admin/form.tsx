@@ -87,9 +87,12 @@ export default function ProductAddonForm({
         if (data.target_type !== 'products') return;
 
         const timer = setTimeout(() => {
-            fetch(`${basePath}/products?q=${encodeURIComponent(searchQuery)}`, {
-                headers: { Accept: 'application/json' },
-            })
+            void fetch(
+                `${basePath}/products?q=${encodeURIComponent(searchQuery)}`,
+                {
+                    headers: { Accept: 'application/json' },
+                },
+            )
                 .then((r) => r.json())
                 .then((res: { products: ProductPick[] }) =>
                     setSearchResults(res.products ?? []),

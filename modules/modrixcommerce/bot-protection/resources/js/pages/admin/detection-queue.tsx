@@ -1,15 +1,10 @@
 import { useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import {
-    AlertOctagon,
-    AlertTriangle,
     Ban,
     Check,
-    CheckCircle2,
     Eye,
     Filter,
-    Info,
-    Shield,
     ShieldAlert,
     ShieldCheck,
     X,

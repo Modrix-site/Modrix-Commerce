@@ -57,7 +57,7 @@ export default function SocialProofToast({
     const [visible, setVisible] = useState(false);
     const [dismissed, setDismissed] = useState(false);
     const shownCountRef = useRef(0);
-    const timerRef = useRef<NodeJS.Timeout | null>(null);
+    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     // Fetch dynamic feed if initialFeed was empty
     useEffect(() => {

@@ -1,15 +1,8 @@
 import { Head, router } from '@inertiajs/react';
 import {
-    Activity,
-    AlertTriangle,
-    CheckCircle2,
-    Download,
     FileSpreadsheet,
     FileText,
-    Filter,
     Globe,
-    RefreshCw,
-    ShieldAlert,
     TrendingUp,
     Users,
     XCircle,

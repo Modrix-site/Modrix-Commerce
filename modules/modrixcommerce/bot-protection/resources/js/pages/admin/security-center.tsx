@@ -4,16 +4,11 @@ import {
     AlertTriangle,
     Ban,
     Check,
-    CheckCircle2,
-    Eye,
     Filter,
     Flame,
     Lock,
     RefreshCw,
-    Shield,
-    ShieldAlert,
     ShieldCheck,
-    Trash2,
     Zap,
 } from 'lucide-react';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
