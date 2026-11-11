@@ -1,0 +1,235 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/external-storage",
+    "display_name": "External Cloud Storage (Wasabi, AWS S3, Cloudflare & Multi-Cloud)",
+    "description": "Automatically save product photos, product videos, and media assets directly in external cloud storage instead of locally. Supports Wasabi, AWS S3, Cloudflare R2 & Cloudflare Storage API, DigitalOcean Spaces, Backblaze B2, BunnyCDN Storage, Google Cloud Storage, MinIO, and custom APIs.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "cloud",
+    "accent": "#0284c7",
+    "platform_version": "^0.4 || ^1.0",
+    "author": "Modrix Commerce",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\ExternalStorage\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\ExternalStorage\\ExternalStorageServiceProvider",
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "storefront.slots",
+        "database.migrations",
+        "settings",
+        "permissions",
+        "events.listen",
+        "console.commands",
+        "catalog.image_urls"
+    ],
+    "permissions": [
+        {
+            "name": "external_storage.manage",
+            "label": "Manage external cloud storage & media offloading",
+            "group": "Catalog"
+        }
+    ],
+    "assets": {
+        "pages": "resources/js/pages",
+        "slots": "resources/js/slots"
+    },
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "settings": [
+        {
+            "key": "enabled",
+            "type": "boolean",
+            "label": "Enable External Cloud Storage",
+            "help": "Offload and serve product photos and videos from external cloud storage.",
+            "default": true
+        },
+        {
+            "key": "provider",
+            "type": "select",
+            "label": "External Storage Provider",
+            "help": "Select your cloud storage provider. Once enabled, open Catalog -> External Storage for step-by-step setup documentation, bucket policy snippets, and API key configuration for each provider.",
+            "default": "wasabi",
+            "options": [
+                {
+                    "value": "wasabi",
+                    "label": "Wasabi Hot Cloud Storage (S3)"
+                },
+                {
+                    "value": "s3",
+                    "label": "Amazon Web Services (AWS S3)"
+                },
+                {
+                    "value": "cloudflare_r2",
+                    "label": "Cloudflare R2 Storage (S3 API)"
+                },
+                {
+                    "value": "cloudflare_api",
+                    "label": "Cloudflare Storage via REST API"
+                },
+                {
+                    "value": "digitalocean",
+                    "label": "DigitalOcean Spaces"
+                },
+                {
+                    "value": "backblaze",
+                    "label": "Backblaze B2 Cloud Storage"
+                },
+                {
+                    "value": "bunnycdn",
+                    "label": "BunnyCDN Edge Storage API"
+                },
+                {
+                    "value": "gcs",
+                    "label": "Google Cloud Storage"
+                },
+                {
+                    "value": "minio",
+                    "label": "MinIO Object Storage"
+                },
+                {
+                    "value": "custom_s3",
+                    "label": "Custom S3-Compatible Storage"
+                },
+                {
+                    "value": "custom_api",
+                    "label": "Custom HTTP REST Storage API"
+                }
+            ]
+        },
+        {
+            "key": "save_mode",
+            "type": "select",
+            "label": "Automatic Save Behavior",
+            "help": "Choose whether new product photos and videos are saved directly in external storage instead of locally.",
+            "default": "external_only",
+            "options": [
+                {
+                    "value": "external_only",
+                    "label": "Save automatically in external storage instead of locally (No local copy)"
+                },
+                {
+                    "value": "hybrid",
+                    "label": "Save automatically in external storage + keep local backup"
+                },
+                {
+                    "value": "manual",
+                    "label": "Manual sync only"
+                }
+            ]
+        },
+        {
+            "key": "auto_offload_photos",
+            "type": "boolean",
+            "label": "Automatically save new product photos to external storage",
+            "default": true
+        },
+        {
+            "key": "auto_offload_videos",
+            "type": "boolean",
+            "label": "Automatically save product videos to external storage",
+            "default": true
+        },
+        {
+            "key": "delete_local_after_sync",
+            "type": "boolean",
+            "label": "Remove local file after cloud upload",
+            "help": "Frees local server disk space once a photo or video is safely stored in external cloud storage.",
+            "default": true
+        },
+        {
+            "key": "show_product_videos",
+            "type": "boolean",
+            "label": "Display external product videos on storefront product pages",
+            "default": true
+        },
+        {
+            "key": "bucket",
+            "type": "string",
+            "label": "Bucket / Storage Zone Name",
+            "help": "Enter the exact bucket name (Wasabi, AWS S3, Cloudflare R2, Backblaze, GCS, MinIO), Space name (DigitalOcean), or Storage Zone name (BunnyCDN).",
+            "max_length": 191
+        },
+        {
+            "key": "region",
+            "type": "string",
+            "label": "Storage Region",
+            "help": "Provider region code: e.g. us-east-1 or eu-central-1 (Wasabi/AWS S3), auto (Cloudflare R2), nyc3 or sgp1 (DigitalOcean), us-west-004 (Backblaze B2), de or ny (BunnyCDN).",
+            "default": "us-east-1",
+            "max_length": 100,
+            "suggestions": [
+                "us-east-1",
+                "us-west-1",
+                "eu-central-1",
+                "ap-southeast-1",
+                "auto",
+                "nyc3",
+                "sgp1",
+                "fra1",
+                "us-west-004",
+                "de"
+            ]
+        },
+        {
+            "key": "account_id",
+            "type": "string",
+            "label": "Cloudflare Account ID",
+            "help": "Required for Cloudflare R2 and Cloudflare REST API. Copy your 32-character Account ID from the Cloudflare Dashboard -> R2 Object Storage overview sidebar.",
+            "max_length": 191,
+            "visible_when": {
+                "provider": [
+                    "cloudflare_r2",
+                    "cloudflare_api"
+                ]
+            }
+        },
+        {
+            "key": "endpoint",
+            "type": "string",
+            "label": "Custom API / S3 Endpoint URL (Optional)",
+            "help": "Leave blank to auto-resolve for Wasabi, AWS S3, Cloudflare, DigitalOcean, Backblaze, BunnyCDN, and GCS. Required for MinIO, Custom S3, and Custom HTTP REST API.",
+            "max_length": 255,
+            "suggestions": [
+                "https://s3.wasabisys.com",
+                "https://s3.eu-central-1.wasabisys.com",
+                "https://s3.us-east-1.amazonaws.com",
+                "https://storage.bunnycdn.com",
+                "https://storage.googleapis.com"
+            ]
+        },
+        {
+            "key": "cdn_url",
+            "type": "string",
+            "label": "Public CDN / Custom Domain URL (Optional)",
+            "help": "Optional public delivery domain (e.g. Cloudflare R2 Custom Domain, CloudFront URL, or BunnyCDN Pull Zone https://yourzone.b-cdn.net) used to serve product photos & videos.",
+            "max_length": 255
+        },
+        {
+            "key": "path_prefix",
+            "type": "string",
+            "label": "Remote Folder Prefix",
+            "help": "Folder prefix inside your bucket where product photos and videos will be organized (default: catalog).",
+            "default": "catalog",
+            "max_length": 120
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "external-storage",
+            "title": "External Storage",
+            "route": "index",
+            "icon": "cloud",
+            "group": "Catalog",
+            "permission": "external_storage.manage",
+            "order": 235
+        }
+    ]
+}
