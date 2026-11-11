@@ -26,11 +26,13 @@ final class UploadedPackage
         }
         try {
             $entry = $type === 'theme' ? 'theme.json' : 'module.json';
-            $stat = $zip->statName($entry);
+            // At the root, or inside the one folder that was zipped ("prism/theme.json").
+            $prefix = PackageArchive::manifestPrefix($zip, $entry);
+            $stat = $prefix === null ? false : $zip->statName($prefix.$entry);
             if ($stat === false || $stat['size'] > 524288) {
-                throw new PackageException("The ZIP must contain {$entry} at its root (maximum 512 KB).");
+                throw new PackageException("The ZIP must contain {$entry} at its root or inside a single top folder (maximum 512 KB).");
             }
-            $data = json_decode((string) $zip->getFromName($entry, 524289), true, 32);
+            $data = json_decode((string) $zip->getFromName($prefix.$entry, 524289), true, 32);
             $name = is_array($data) ? ($data['name'] ?? null) : null;
             if (! is_string($name) || ! preg_match('/^[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?\/[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?$/', $name)) {
                 throw new PackageException('The manifest needs a valid vendor/package name.');

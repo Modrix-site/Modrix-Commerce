@@ -56,6 +56,10 @@ final class PackageArchive
                 throw new PackageException('The package contains too many files.');
             }
 
+            // A ZIP of the package folder ("prism/theme.json") unpacks as if
+            // the manifest were at the root: the folder name is stripped.
+            $prefix = self::manifestPrefix($zip, $type === 'theme' ? 'theme.json' : 'module.json') ?? '';
+
             $total = 0;
             $entries = [];
 
@@ -81,7 +85,20 @@ final class PackageArchive
             File::ensureDirectoryExists($dir);
 
             foreach ($entries as $i => $name) {
-                $target = $dir.'/'.$name;
+                // Never part of a package: OS clutter that "compress" adds.
+                if (self::isOsClutter($name)) {
+                    continue;
+                }
+
+                if ($prefix !== '') {
+                    // Outside the package folder there is only OS clutter
+                    // (__MACOSX/, .DS_Store), which manifestPrefix allowed.
+                    if (! str_starts_with($name, $prefix) || $name === $prefix) {
+                        continue;
+                    }
+                }
+
+                $target = $dir.'/'.substr($name, strlen($prefix));
 
                 if (str_ends_with($name, '/')) {
                     File::ensureDirectoryExists($target);
@@ -117,6 +134,52 @@ final class PackageArchive
         }
 
         return ['dir' => $dir, 'manifest' => $manifest];
+    }
+
+    /**
+     * Where the manifest sits: "" at the archive root, "<folder>/" when the
+     * whole package is inside one top-level folder (how "compress this
+     * folder" builds a ZIP), or null when it is in neither place.
+     * macOS clutter (__MACOSX/, .DS_Store) is ignored.
+     */
+    public static function manifestPrefix(ZipArchive $zip, string $manifest): ?string
+    {
+        if ($zip->locateName($manifest) !== false) {
+            return '';
+        }
+
+        $folders = [];
+
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $name = (string) $zip->getNameIndex($i);
+
+            if (self::isOsClutter($name)) {
+                continue;
+            }
+
+            $slash = strpos($name, '/');
+
+            if ($slash === false || $slash === 0) {
+                return null; // A file at the root: not a single-folder ZIP.
+            }
+
+            $folders[substr($name, 0, $slash)] = true;
+
+            if (count($folders) > 1) {
+                return null;
+            }
+        }
+
+        $prefix = array_key_first($folders);
+
+        return $prefix !== null && $zip->locateName($prefix.'/'.$manifest) !== false ? $prefix.'/' : null;
+    }
+
+    /** macOS/Windows files that zipping a folder adds; never package content. */
+    private static function isOsClutter(string $name): bool
+    {
+        return str_starts_with($name, '__MACOSX/')
+            || in_array(basename(rtrim($name, '/')), ['.DS_Store', 'Thumbs.db', 'desktop.ini'], true);
     }
 
     /**
