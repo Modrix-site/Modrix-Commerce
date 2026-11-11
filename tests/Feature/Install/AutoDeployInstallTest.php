@@ -22,6 +22,8 @@ class AutoDeployInstallTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        // The tests assume no database password unless they set one (CI's MySQL job has one).
+        config(['database.connections.'.config('database.default').'.password' => '']);
         app(InstallerToken::class)->delete();
     }
 
@@ -49,7 +51,7 @@ class AutoDeployInstallTest extends TestCase
 
     public function test_auto_mode_shows_only_the_owner_step()
     {
-        config(['database.connections.sqlite.password' => 'deploy-pass']);
+        config(['database.connections.'.config('database.default').'.password' => 'deploy-pass']);
 
         $this->get(route('install.show'))->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('install/index')
@@ -61,14 +63,14 @@ class AutoDeployInstallTest extends TestCase
 
     public function test_the_page_never_contains_the_database_password()
     {
-        config(['database.connections.sqlite.password' => 'deploy-pass-9f2c']);
+        config(['database.connections.'.config('database.default').'.password' => 'deploy-pass-9f2c']);
 
         $this->assertStringNotContainsString('deploy-pass-9f2c', $this->get(route('install.show'))->getContent());
     }
 
     public function test_wrong_database_password_is_rejected()
     {
-        config(['database.connections.sqlite.password' => 'deploy-pass']);
+        config(['database.connections.'.config('database.default').'.password' => 'deploy-pass']);
 
         $this->post(route('install.store'), $this->payload(['database_password' => 'nope']))
             ->assertSessionHasErrors(['database_password' => 'The database password is incorrect.']);
@@ -88,7 +90,7 @@ class AutoDeployInstallTest extends TestCase
 
     public function test_correct_database_password_installs_and_locks()
     {
-        config(['database.connections.sqlite.password' => 'deploy-pass']);
+        config(['database.connections.'.config('database.default').'.password' => 'deploy-pass']);
 
         $this->post(route('install.store'), $this->payload(['database_password' => 'deploy-pass']))
             ->assertRedirect(route('admin.dashboard'));
@@ -107,7 +109,7 @@ class AutoDeployInstallTest extends TestCase
     {
         // Before install sessions are kept in files; the owner's session must move to the
         // configured database driver, or the redirect to the admin lands on the login page.
-        config(['session.driver' => 'database', 'database.connections.sqlite.password' => 'deploy-pass']);
+        config(['session.driver' => 'database', 'database.connections.'.config('database.default').'.password' => 'deploy-pass']);
 
         $this->post(route('install.store'), $this->payload(['database_password' => 'deploy-pass']))
             ->assertRedirect(route('admin.dashboard'));

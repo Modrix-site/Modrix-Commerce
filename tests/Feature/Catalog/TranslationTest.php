@@ -46,8 +46,8 @@ class TranslationTest extends TestCase
 
         $this->actingAs($this->owner())->get(route('admin.settings.languages.edit'))
             ->assertInertia(fn (Assert $page) => $page->where('default', 'en')->where('additional', ['es', 'fr']));
-        $this->put(route('admin.settings.languages.update'), ['default' => 'en', 'additional' => ['xx']])->assertSessionHasErrors('additional.0');
-        $this->put(route('admin.settings.languages.update'), ['default' => 'es', 'additional' => ['es', 'de']])->assertSessionHasNoErrors();
+        $this->put(route('admin.settings.languages.update'), ['default' => 'en', 'additional' => ['xx'], 'mode' => 'manual'])->assertSessionHasErrors('additional.0');
+        $this->put(route('admin.settings.languages.update'), ['default' => 'es', 'additional' => ['es', 'de'], 'mode' => 'manual'])->assertSessionHasNoErrors();
         $this->assertSame(['es', 'de'], app(Locales::class)->enabled());
     }
 

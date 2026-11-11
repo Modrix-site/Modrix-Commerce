@@ -110,7 +110,7 @@ class ProductVariantImagesTest extends TestCase
         $this->actingAs($manager)->from($editor)->post(route('admin.inventory.adjust', $variant), ['mode' => 'add', 'quantity' => 6, 'reason' => 'received', 'note' => 'Received from product editor'])->assertSessionHasNoErrors()->assertRedirect($editor);
         $this->get($editor)->assertInertia(fn (Assert $page) => $page->where('product.variants.0.on_hand', 10));
         $this->put(route('admin.products.update', $product), $this->payload($product, $variant))->assertSessionHasNoErrors();
-        $this->assertSame(10, $variant->stocks()->sum('on_hand'));
+        $this->assertSame(10, (int) $variant->stocks()->sum('on_hand'));
         $this->assertDatabaseHas('inventory_movements', ['variant_id' => $variant->id, 'quantity_change' => 6, 'reason' => 'received', 'actor_id' => $manager->id]);
         $this->actingAs($this->userWithRole('order-manager'))->from($editor)->post(route('admin.inventory.adjust', $variant), ['mode' => 'add', 'quantity' => 1, 'reason' => 'received'])->assertForbidden();
     }

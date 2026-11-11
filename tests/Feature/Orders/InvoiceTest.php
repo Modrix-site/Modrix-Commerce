@@ -171,6 +171,8 @@ class InvoiceTest extends TestCase
 
     public function test_payment_and_its_email_survive_an_invoice_failure()
     {
+        $this->onlySqlite('a table is dropped to break numbering, and DDL is not rolled back on MySQL.');
+
         $order = $this->placeOrder();
         // Break invoice numbering: issuing now throws.
         Schema::drop('document_counters');

@@ -2,6 +2,7 @@
 
 namespace Tests\Support;
 
+use App\Core\Marketplace\PackageArchive;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
@@ -62,6 +63,20 @@ trait ThemeFixtures
         File::put($dir.'/theme.json', json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
 
         return $dir;
+    }
+
+    /**
+     * A ZIP of a theme bundled in the repository, built the way the package
+     * command builds it, so upload tests do not depend on files in dist/.
+     */
+    protected function bundledThemeZip(string $slug): string
+    {
+        $path = storage_path('framework/testing/'.$slug.'-'.Str::random(8).'.zip');
+        File::ensureDirectoryExists(dirname($path));
+        PackageArchive::create(base_path('themes/modrixcommerce/'.$slug), $path);
+        $this->beforeApplicationDestroyed(fn () => File::delete($path));
+
+        return $path;
     }
 
     protected function writePng(string $path, int $width = 8, int $height = 8): void

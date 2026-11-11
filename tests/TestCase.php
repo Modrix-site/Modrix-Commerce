@@ -8,7 +8,9 @@ use App\Core\Authorization\PermissionSynchronizer;
 use App\Core\Authorization\SystemRoles;
 use App\Core\Installation\InstallationState;
 use App\Models\User;
+use Illuminate\Database\Events\MigrationsEnded;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\DB;
 use Laravel\Fortify\Features;
 
 abstract class TestCase extends BaseTestCase
@@ -22,6 +24,18 @@ abstract class TestCase extends BaseTestCase
         // Tests share storage/ with the dev server: never create the real install lock.
         $this->installLockFile = sys_get_temp_dir().'/ecomodular-installed-'.bin2hex(random_bytes(6));
         config(['ecomodular.installer.lock_file' => $this->installLockFile]);
+
+        // MySQL commits implicitly on DDL, which ends the transaction that
+        // RefreshDatabase wraps each test in. When a test installs a module
+        // (its migrations run CREATE TABLE), reopen that transaction so later
+        // savepoints and rollbacks behave as they do on SQLite.
+        $this->app['events']->listen(MigrationsEnded::class, function (): void {
+            $connection = DB::connection();
+
+            if ($connection->getDriverName() === 'mysql' && $connection->transactionLevel() > 0 && ! $connection->getPdo()->inTransaction()) {
+                $connection->getPdo()->beginTransaction();
+            }
+        });
     }
 
     protected function tearDown(): void
@@ -31,6 +45,14 @@ abstract class TestCase extends BaseTestCase
         }
 
         parent::tearDown();
+    }
+
+    /** For tests built on SQLite internals (file dumps, VACUUM, the "main" schema, non-transactional DDL). */
+    protected function onlySqlite(string $why): void
+    {
+        if (DB::connection()->getDriverName() !== 'sqlite') {
+            $this->markTestSkipped('SQLite only: '.$why);
+        }
     }
 
     protected function skipUnlessFortifyHas(string $feature, ?string $message = null): void

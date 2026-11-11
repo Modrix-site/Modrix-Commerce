@@ -31,7 +31,7 @@ class VoltoraThemeTest extends TestCase
 
     private function upload(): Extension
     {
-        $file = new UploadedFile(base_path('dist/ecomodular-voltora-1.0.0.zip'), 'voltora.zip', 'application/zip', null, true);
+        $file = new UploadedFile($this->bundledThemeZip('voltora'), 'voltora.zip', 'application/zip', null, true);
         $this->actingAs($this->userWithRole('administrator'))->post(route('admin.themes.packages.store'), ['package' => $file])->assertSessionHasNoErrors();
 
         return Extension::where('name', 'modrixcommerce/voltora')->firstOrFail();
@@ -44,7 +44,7 @@ class VoltoraThemeTest extends TestCase
         $this->assertNull($theme->applied_manifest);
         $this->assertFileExists($this->themesPath.'/modrixcommerce/voltora/settings.json');
         $this->assertFileExists($this->themesPath.'/modrixcommerce/voltora/src/product.tsx');
-        $this->assertCount(120, $theme->manifest['customizer']['fields']);
+        $this->assertCount(133, $theme->manifest['customizer']['fields']);
         $this->assertSame('src/header.tsx', $theme->manifest['frontend']['header']);
         $this->assertSame('src/footer.tsx', $theme->manifest['frontend']['footer']);
         $this->assertDatabaseMissing('products', ['slug' => 'voltora-demo-1']);

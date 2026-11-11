@@ -29,6 +29,8 @@ class ManualInstallTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        // The tests assume no database password unless they set one (CI's MySQL job has one).
+        config(['database.connections.'.config('database.default').'.password' => '']);
         config(['ecomodular.installer.mode' => 'manual']);
 
         $this->envDir = sys_get_temp_dir().'/ecomodular-env-'.bin2hex(random_bytes(6));

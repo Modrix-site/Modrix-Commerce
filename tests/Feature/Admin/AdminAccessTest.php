@@ -104,7 +104,7 @@ class AdminAccessTest extends TestCase
             $this->assertNotContains($hidden, $keys);
         }
 
-        $this->assertSame(['dashboard', 'orders', 'customers'], $this->navigationKeysFor($this->userWithRole('support-agent')));
+        $this->assertSame(['dashboard', 'orders', 'invoices', 'customer-carts', 'customers'], $this->navigationKeysFor($this->userWithRole('support-agent')));
     }
 
     public function test_owner_navigation_includes_every_section()

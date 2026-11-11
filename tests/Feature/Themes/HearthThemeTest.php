@@ -30,7 +30,7 @@ class HearthThemeTest extends TestCase
 
     private function upload(): Extension
     {
-        $file = new UploadedFile(base_path('dist/ecomodular-hearth-1.0.0.zip'), 'hearth.zip', 'application/zip', null, true);
+        $file = new UploadedFile($this->bundledThemeZip('hearth'), 'hearth.zip', 'application/zip', null, true);
         $this->actingAs($this->userWithRole('administrator'))->post(route('admin.themes.packages.store'), ['package' => $file])->assertSessionHasNoErrors();
 
         return Extension::where('name', 'modrixcommerce/hearth')->firstOrFail();
@@ -43,7 +43,7 @@ class HearthThemeTest extends TestCase
         $this->assertNull($theme->applied_manifest);
         $this->assertFileExists($this->themesPath.'/modrixcommerce/hearth/settings.json');
         $this->assertFileExists($this->themesPath.'/modrixcommerce/hearth/src/product.tsx');
-        $this->assertCount(110, $theme->manifest['customizer']['fields']);
+        $this->assertCount(112, $theme->manifest['customizer']['fields']);
         $this->assertSame('src/header.tsx', $theme->manifest['frontend']['header']);
         $this->assertSame('src/footer.tsx', $theme->manifest['frontend']['footer']);
         $this->assertDatabaseMissing('products', ['slug' => 'hearth-demo-1']);

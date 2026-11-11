@@ -169,6 +169,7 @@ class AdminBackupsTest extends TestCase
 
     public function test_backup_job_failure_is_reported()
     {
+        $this->onlySqlite('the dump is made to fail with VACUUM INTO inside a transaction.');
         $owner = $this->owner();
         $status = app(BackupOperation::class)->begin('backup', null, false, $owner->id);
 
@@ -222,6 +223,7 @@ class AdminBackupsTest extends TestCase
 
     public function test_restore_job_failure_after_import_started_leaves_store_down()
     {
+        $this->onlySqlite('the backup is damaged by replacing database/database.sqlite.');
         $owner = $this->owner();
         $backup = app(Backups::class)->create(false);
         // Damage the dump: the manifest checksum no longer matches.

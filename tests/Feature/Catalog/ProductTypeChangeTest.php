@@ -34,10 +34,10 @@ class ProductTypeChangeTest extends TestCase
             ],
         ])->assertSessionHasNoErrors();
         $this->assertSame(ProductType::Variable, $product->refresh()->type);
-        $this->assertSame(12, $variant->stocks()->sum('on_hand'));
+        $this->assertSame(12, (int) $variant->stocks()->sum('on_hand'));
         $this->assertSame($image->id, $variant->refresh()->image_id);
         $this->assertSame('S', $variant->name);
-        $this->assertSame(4, $product->variants()->where('sku', 'CONVERT-M')->firstOrFail()->stocks()->sum('on_hand'));
+        $this->assertSame(4, (int) $product->variants()->where('sku', 'CONVERT-M')->firstOrFail()->stocks()->sum('on_hand'));
     }
 
     public function test_single_variant_product_can_become_simple_and_keep_its_stock(): void
@@ -52,7 +52,7 @@ class ProductTypeChangeTest extends TestCase
         ])->assertSessionHasNoErrors();
         $this->assertSame(ProductType::Simple, $product->refresh()->type);
         $this->assertSame(0, $variant->options()->count());
-        $this->assertSame(7, $variant->stocks()->sum('on_hand'));
+        $this->assertSame(7, (int) $variant->stocks()->sum('on_hand'));
     }
 
     public function test_incomplete_conversion_keeps_the_simple_product_unchanged(): void
@@ -65,6 +65,6 @@ class ProductTypeChangeTest extends TestCase
         ])->assertSessionHasErrors('option_attribute_ids');
         $this->assertSame(ProductType::Simple, $product->refresh()->type);
         $this->assertNotSame('Must not change', $product->name);
-        $this->assertSame(9, $variant->stocks()->sum('on_hand'));
+        $this->assertSame(9, (int) $variant->stocks()->sum('on_hand'));
     }
 }

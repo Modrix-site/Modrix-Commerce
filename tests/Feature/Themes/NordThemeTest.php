@@ -34,7 +34,7 @@ class NordThemeTest extends TestCase
 
     public function test_package_installs_without_activation_or_demo_import(): void
     {
-        $file = new UploadedFile(base_path('dist/ecomodular-nord-1.0.0.zip'), 'nord.zip', 'application/zip', null, true);
+        $file = new UploadedFile($this->bundledThemeZip('nord'), 'nord.zip', 'application/zip', null, true);
         $this->actingAs($this->userWithRole('administrator'))
             ->post(route('admin.themes.packages.store'), ['package' => $file])->assertSessionHasNoErrors();
         $theme = Extension::where('name', 'modrixcommerce/nord')->firstOrFail();

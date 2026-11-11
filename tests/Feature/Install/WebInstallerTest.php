@@ -18,6 +18,8 @@ class WebInstallerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        // The tests assume no database password unless they set one (CI's MySQL job has one).
+        config(['database.connections.'.config('database.default').'.password' => '']);
         $this->token = app(InstallerToken::class);
         $this->token->delete();
     }

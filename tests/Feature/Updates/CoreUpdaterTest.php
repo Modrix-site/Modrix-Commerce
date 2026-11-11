@@ -553,6 +553,7 @@ class CoreUpdaterTest extends TestCase
     /** The dump-replay path (MySQL/PostgreSQL): objects missing from the backup's listing are dropped. */
     public function test_objects_created_after_the_backup_are_dropped(): void
     {
+        $this->onlySqlite('tables are listed in the "main" schema and the test creates tables (DDL is not rolled back on MySQL).');
         $backups = app(Backups::class);
         $manifest = $backups->verify($backups->create(withFiles: false)['path']);
         $this->assertContains('main.users', $manifest['database_tables']);

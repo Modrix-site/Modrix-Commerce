@@ -20,6 +20,10 @@ class PayTabsPackageTest extends TestCase
 
     public function test_catalog_license_pulls_signed_archive_into_core_and_installs_module(): void
     {
+        if (! is_file(base_path('marketplace-catalog/src/RepositoryAdmin.php'))) {
+            $this->markTestSkipped('Needs the marketplace-catalog checkout, which lives in its own repository.');
+        }
+
         $this->installPlatform();
         $this->setUpModules();
         $this->enableBundledModule('modrixcommerce/cloud-connector');

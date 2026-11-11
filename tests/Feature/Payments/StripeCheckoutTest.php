@@ -328,9 +328,11 @@ class StripeCheckoutTest extends TestCase
     public function test_a_stripe_outage_at_checkout_keeps_the_order_and_lets_the_customer_retry()
     {
         $this->configureStripe();
-        Http::fake(['api.stripe.com/v1/checkout/sessions' => Http::sequence()
-            ->push(['error' => ['message' => 'Service unavailable']], 503)
-            ->push(['id' => 'cs_test_retry', 'url' => 'https://checkout.stripe.com/c/pay/cs_test_retry', 'expires_at' => now()->addMinutes(30)->getTimestamp()]),
+        Http::fake([
+            'api.stripe.com/v1/payment_method_configurations*' => Http::response(['id' => 'pmc_test_wallets']),
+            'api.stripe.com/v1/checkout/sessions' => Http::sequence()
+                ->push(['error' => ['message' => 'Service unavailable']], 503)
+                ->push(['id' => 'cs_test_retry', 'url' => 'https://checkout.stripe.com/c/pay/cs_test_retry', 'expires_at' => now()->addMinutes(30)->getTimestamp()]),
         ]);
 
         $this->addToCart($this->sellable());

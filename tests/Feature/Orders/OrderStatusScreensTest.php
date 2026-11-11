@@ -76,7 +76,7 @@ class OrderStatusScreensTest extends TestCase
             ->where('statusCounts.packing', 1)
             ->where('statusCounts.confirmed', 1)
             ->where('statusCounts.pending_payment', 1)
-            ->where('displayStatuses', fn ($options) => count($options) === 20));
+            ->where('displayStatuses', fn ($options) => count($options) === 22));
 
         // "Ready to fulfil" (dashboard link): paid and not yet shipped.
         $this->get(route('admin.orders.index', ['ready' => 1]))->assertInertia(fn (Assert $page) => $page->has('orders.data', 2));

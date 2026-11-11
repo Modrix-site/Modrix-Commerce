@@ -136,7 +136,8 @@ class CoreUpdateAdminTest extends TestCase
         $this->assertSame(CoreUpdateRun::QUEUED, $run->status);
         $this->assertSame('1.1.0', $run->to_version);
         $this->assertSame(Platform::VERSION, $run->from_version);
-        $this->assertSame($item, $run->release);
+        // Key order may differ (MySQL JSON); signatures use sorted keys.
+        $this->assertEquals($item, $run->release);
         $this->assertSame($owner->id, $run->actor_id);
         $this->assertSame([$run->id], $this->launched);
         $this->assertTrue(AuditLog::query()->where('action', 'core.update_started')->exists());

@@ -110,7 +110,7 @@ class MarketplaceServerTest extends TestCase
 
         $this->assertSame(MarketplaceRelease::PENDING_REVIEW, $release->status);
         // The reviewer sees the code scan (Phase 8.2).
-        $this->assertSame(['critical' => 0, 'high' => 0, 'medium' => 0, 'info' => 0], $release->fresh()->scan['summary'] ?? null);
+        $this->assertEquals(['critical' => 0, 'high' => 0, 'medium' => 0, 'info' => 0], $release->fresh()->scan['summary'] ?? null);
         $this->assertFalse($api->update($key, 'instance-0000000000000001', null, '0.4.0')['available']);
 
         app(ReleasePublisher::class)->review($release, true, null, $this->owner());

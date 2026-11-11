@@ -30,7 +30,7 @@ class VellaroThemeTest extends TestCase
 
     private function upload(): Extension
     {
-        $file = new UploadedFile(base_path('dist/ecomodular-vellaro-1.0.0.zip'), 'vellaro.zip', 'application/zip', null, true);
+        $file = new UploadedFile($this->bundledThemeZip('vellaro'), 'vellaro.zip', 'application/zip', null, true);
         $this->actingAs($this->userWithRole('administrator'))->post(route('admin.themes.packages.store'), ['package' => $file])->assertSessionHasNoErrors();
 
         return Extension::where('name', 'modrixcommerce/vellaro')->firstOrFail();
@@ -43,7 +43,7 @@ class VellaroThemeTest extends TestCase
         $this->assertNull($theme->applied_manifest);
         $this->assertFileExists($this->themesPath.'/modrixcommerce/vellaro/settings.json');
         $this->assertFileExists($this->themesPath.'/modrixcommerce/vellaro/src/product.tsx');
-        $this->assertCount(86, $theme->manifest['customizer']['fields']);
+        $this->assertCount(88, $theme->manifest['customizer']['fields']);
         $this->assertSame('src/header.tsx', $theme->manifest['frontend']['header']);
         $this->assertSame('src/footer.tsx', $theme->manifest['frontend']['footer']);
         $this->assertDatabaseMissing('products', ['slug' => 'vellaro-demo-1']);

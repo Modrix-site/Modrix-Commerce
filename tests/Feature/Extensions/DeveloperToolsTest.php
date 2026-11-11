@@ -75,8 +75,8 @@ class DeveloperToolsTest extends TestCase
 
     public function test_a_scaffolded_theme_validates_and_activates()
     {
-        $this->artisan('ecomodular:make:theme', ['name' => 'acme/harbor', '--from' => 'modrixcommerce/noir'])
-            ->expectsOutputToContain('created from modrixcommerce/noir')
+        $this->artisan('ecomodular:make:theme', ['name' => 'acme/harbor', '--from' => 'modrixcommerce/prism'])
+            ->expectsOutputToContain('created from modrixcommerce/prism')
             ->assertSuccessful();
 
         $manifest = json_decode((string) File::get($this->themesPath.'/acme/harbor/theme.json'), true);
@@ -99,9 +99,9 @@ class DeveloperToolsTest extends TestCase
             ->assertSuccessful();
         $this->assertFileExists($this->output.'/acme-gift-notes-0.1.0.zip');
 
-        $this->artisan('ecomodular:package', ['name' => 'modrixcommerce/bloom', '--type' => 'theme', '--output' => $this->output])->assertSuccessful();
-        $bloom = json_decode(File::get($this->themesPath.'/modrixcommerce/bloom/theme.json'), true);
-        $this->assertFileExists($this->output.'/ecomodular-bloom-'.$bloom['version'].'.zip');
+        $this->artisan('ecomodular:package', ['name' => 'modrixcommerce/nord', '--type' => 'theme', '--output' => $this->output])->assertSuccessful();
+        $nord = json_decode(File::get($this->themesPath.'/modrixcommerce/nord/theme.json'), true);
+        $this->assertFileExists($this->output.'/modrixcommerce-nord-'.$nord['version'].'.zip');
     }
 
     public function test_package_command_reports_invalid_and_dangerous_packages()

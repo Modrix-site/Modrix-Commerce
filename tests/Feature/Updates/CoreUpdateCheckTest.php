@@ -62,7 +62,8 @@ class CoreUpdateCheckTest extends TestCase
 
         app(CoreUpdateCheck::class)->run();
 
-        $this->assertSame($item, app(CoreUpdateCheck::class)->item());
+        // Key order may differ (MySQL JSON); signatures use sorted keys.
+        $this->assertEquals($item, app(CoreUpdateCheck::class)->item());
         $this->assertNotNull(app(CoreReleaseVerifier::class)->verify(app(CoreUpdateCheck::class)->item()));
     }
 

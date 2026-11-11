@@ -74,6 +74,8 @@ class FlashSalesTest extends TestCase
 
     public function test_sales_are_created_with_validation_and_listed()
     {
+        // The sale below starts in the future relative to this date.
+        $this->travelTo(new \DateTimeImmutable('2026-10-20 12:00:00'));
         $this->actingAs($this->marketer);
         $payload = ['name' => 'Summer', 'discount_type' => 'percent', 'discount_value' => '25', 'starts_at' => '2026-11-01T09:00', 'ends_at' => '2026-11-03T21:00', 'is_active' => '1', 'show_banner' => '1'];
 

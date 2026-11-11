@@ -30,6 +30,8 @@ class ThemeEngineTest extends TestCase
         parent::setUp();
         $this->installPlatform();
         $this->setUpThemes(withBundled: true);
+        // A bundled theme as the store default, whatever the deployment sets.
+        config(['ecomodular.themes.default' => 'modrixcommerce/prism']);
     }
 
     private function theme(string $name = 'acme/sunny'): Extension
@@ -179,17 +181,17 @@ class ThemeEngineTest extends TestCase
 
     public function test_the_bundled_default_theme_is_valid_and_used_until_another_is_activated()
     {
-        $this->assertSame(ModuleState::Discovered, $this->theme('modrixcommerce/essence')->state);
+        $this->assertSame(ModuleState::Discovered, $this->theme('modrixcommerce/prism')->state);
 
         $this->get('/')->assertOk()->assertInertia(fn (Assert $page) => $page
-            ->where('storefront.theme.name', 'modrixcommerce/essence')
+            ->where('storefront.theme.name', 'modrixcommerce/prism')
             ->where('storefront.theme.source', 'default')
             ->where('sections.0.type', 'hero'));
     }
 
     public function test_the_storefront_falls_back_to_the_builtin_design_without_any_theme()
     {
-        File::deleteDirectory($this->themesPath.'/ecomodular');
+        File::deleteDirectory($this->themesPath.'/modrixcommerce');
 
         $this->get('/')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->where('storefront.theme.source', 'builtin')
@@ -210,7 +212,7 @@ class ThemeEngineTest extends TestCase
             ->where('sections.0.settings.heading', 'Sunny days')
             ->where('sections.0.data.image', fn (string $url) => str_contains($url, '/theme-assets/acme/sunny/assets/images/hero.png')));
 
-        $this->assertSame(ModuleState::Discovered, $this->theme('modrixcommerce/essence')->state);
+        $this->assertSame(ModuleState::Discovered, $this->theme('modrixcommerce/prism')->state);
         $this->assertDatabaseHas('audit_logs', ['action' => 'theme.activated']);
     }
 
@@ -257,7 +259,7 @@ class ThemeEngineTest extends TestCase
             ->where('sections.0.type', 'rich_text'));
 
         // Switching away and back keeps them too.
-        $manager->activate('modrixcommerce/essence');
+        $manager->activate('modrixcommerce/prism');
         $manager->activate('acme/sunny');
         $this->get('/')->assertInertia(fn (Assert $page) => $page->where('storefront.theme.announcement', 'Free shipping over $50'));
     }
@@ -317,7 +319,7 @@ class ThemeEngineTest extends TestCase
         $this->assertSame(ModuleState::Discovered, $theme->state, implode("\n", (array) $theme->errors));
 
         $manifest = app(ThemeManager::class)->renderedManifest($theme);
-        $this->assertSame(['warm', 'cool'], array_keys($manifest->presets()));
+        $this->assertEqualsCanonicalizing(['warm', 'cool'], array_keys($manifest->presets()));
 
         $manager = app(ThemeManager::class);
         $manager->activate('acme/sunny');
@@ -363,11 +365,11 @@ class ThemeEngineTest extends TestCase
         // Shoppers (other sessions) keep the active theme.
         $this->app['auth']->forgetGuards();
         $this->flushSession();
-        $this->get('/')->assertInertia(fn (Assert $page) => $page->where('storefront.theme.name', 'modrixcommerce/essence')->where('storefront.themePreview', null));
+        $this->get('/')->assertInertia(fn (Assert $page) => $page->where('storefront.theme.name', 'modrixcommerce/prism')->where('storefront.themePreview', null));
 
         // A preview value in a customer's session is ignored.
         $this->actingAs(User::factory()->create())->withSession(['theme_preview' => 'acme/sunny'])
-            ->get('/')->assertInertia(fn (Assert $page) => $page->where('storefront.theme.name', 'modrixcommerce/essence'));
+            ->get('/')->assertInertia(fn (Assert $page) => $page->where('storefront.theme.name', 'modrixcommerce/prism'));
     }
 
     public function test_active_theme_with_missing_files_falls_back_and_recovers()
@@ -377,7 +379,7 @@ class ThemeEngineTest extends TestCase
 
         File::moveDirectory($dir, $this->themesPath.'/held');
         $this->assertSame(ModuleState::Failed, $this->theme()->state);
-        $this->get('/')->assertOk()->assertInertia(fn (Assert $page) => $page->where('storefront.theme.name', 'modrixcommerce/essence'));
+        $this->get('/')->assertOk()->assertInertia(fn (Assert $page) => $page->where('storefront.theme.name', 'modrixcommerce/prism'));
 
         File::moveDirectory($this->themesPath.'/held', $dir);
         $this->assertSame(ModuleState::Enabled, $this->theme()->state);

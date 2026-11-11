@@ -35,6 +35,7 @@ class InstallModeDetectionTest extends TestCase
 
     public function test_unreachable_database_detects_manual()
     {
+        $previous = config('database.default');
         config(['database.connections.unreachable' => [
             'driver' => 'sqlite',
             'database' => '/no/such/dir/x.sqlite',
@@ -46,19 +47,20 @@ class InstallModeDetectionTest extends TestCase
             $this->assertSame('unreachable', $this->environment()->databaseProblem());
             $this->assertSame(InstallMode::Manual, $this->environment()->mode());
         } finally {
-            config(['database.default' => 'sqlite']);
+            config(['database.default' => $previous]);
         }
     }
 
     public function test_empty_database_name_is_not_configured()
     {
+        $previous = config('database.default');
         config(['database.connections.blank' => ['driver' => 'mysql', 'host' => '127.0.0.1', 'database' => ''], 'database.default' => 'blank']);
 
         try {
             $this->assertSame('not_configured', $this->environment()->databaseProblem());
             $this->assertSame(InstallMode::Manual, $this->environment()->mode());
         } finally {
-            config(['database.default' => 'sqlite']);
+            config(['database.default' => $previous]);
         }
     }
 
@@ -100,7 +102,7 @@ class InstallModeDetectionTest extends TestCase
 
     public function test_configured_database_password_is_exposed_for_proof_checks()
     {
-        config(['database.connections.sqlite.password' => 'deploy-pass']);
+        config(['database.connections.'.config('database.default').'.password' => 'deploy-pass']);
 
         $this->assertSame('deploy-pass', $this->environment()->databasePasswordConfigured());
     }

@@ -41,9 +41,9 @@ class NavigationTest extends TestCase
             ->where('storefront.navigation.header.links.0.label', 'Browse')
             ->where('storefront.navigation.header.links.1.url', '/account')
             ->where('storefront.navigation.footer.1.links.0.label', 'Orders'));
-        app(ThemeManager::class)->activate('modrixcommerce/bloom');
+        app(ThemeManager::class)->activate('modrixcommerce/nord');
         $this->get('/search')->assertInertia(fn (Assert $page) => $page
-            ->where('storefront.theme.name', 'modrixcommerce/bloom')
+            ->where('storefront.theme.name', 'modrixcommerce/nord')
             ->where('storefront.navigation.header.links.0.label', 'Browse')
             ->where('storefront.navigation.footer.1.links.0.label', 'Orders'));
         $menus = $this->menus();
