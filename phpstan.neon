@@ -1,6 +1,7 @@
 includes:
     - vendor/larastan/larastan/extension.neon
     - vendor/nesbot/carbon/extension.neon
+    - phpstan-baseline.neon
 
 parameters:
     paths:
@@ -13,3 +14,6 @@ parameters:
         - modules/
 
     level: 7
+
+    # The baseline may differ slightly between the PHP versions CI runs.
+    reportUnmatchedIgnoredErrors: false
