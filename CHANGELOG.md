@@ -4,6 +4,13 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [1.0.0-rc.3] - 2026-11-11
+
+### Added (checkout)
+
+- **Under the shipping methods:** a new checkout place (`checkout.after_shipping`) for delivery scheduling and pickup widgets, right under the shipping method choice.
+- Ships the Delivery Date & Time Slots (2.0.1) and Store & Branch Pickup (1.1.1) storefront screens, which are compiled with the core.
+
 ## [1.0.0-rc.2] - 2026-11-11
 
 ### Added (core updates)

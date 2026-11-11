@@ -18,11 +18,18 @@ class DeliverySlotsStorefrontController extends Controller
 
         $validated = $request->validate([
             'date' => ['required', 'date_format:Y-m-d'],
-            'delivery_slot_id' => ['required', 'integer'],
+            'delivery_slot_id' => ['nullable', 'integer'],
             'delivery_instructions' => ['nullable', 'string', 'max:500'],
+            'shipping_method' => ['nullable', 'string', 'max:100'],
         ]);
 
-        $check = $resolver->validateSelection($validated['date'], (int) $validated['delivery_slot_id']);
+        $slotId = isset($validated['delivery_slot_id']) ? (int) $validated['delivery_slot_id'] : null;
+        $methodRule = ! empty($validated['shipping_method'])
+            ? $settings->ruleForMethod((string) $validated['shipping_method'])
+            : null;
+        $maxAllowedDays = $methodRule['max_days'] ?? null;
+
+        $check = $resolver->validateSelection($validated['date'], $slotId, $maxAllowedDays);
         if (! $check['valid']) {
             return response()->json([
                 'success' => false,
@@ -33,8 +40,8 @@ class DeliverySlotsStorefrontController extends Controller
         $slot = $check['slot'];
         $selection = [
             'date' => $validated['date'],
-            'delivery_slot_id' => $slot->id,
-            'slot_name' => $slot->name,
+            'delivery_slot_id' => $slot?->id,
+            'slot_name' => $slot?->name ?? '1-Day Instant Delivery',
             'instructions' => $validated['delivery_instructions'] ?? null,
         ];
 

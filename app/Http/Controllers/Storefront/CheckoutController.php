@@ -110,7 +110,7 @@ class CheckoutController extends Controller
             'soleCountry' => fn () => $price()->requiresShipping() ? app(ShippingCoverage::class)->sole($price()->currency) : null,
             'deliveryRestriction' => fn () => $price()->requiresShipping() && str_starts_with(app(DeliveryArea::class)->toArray()['mode'], 'store_') ? app(DeliveryArea::class)->label() : null,
             'checkoutToken' => fn () => (string) Str::uuid(),
-            'placeSlots' => fn () => app(StorefrontSlots::class)->renderMany(['checkout.before_place_order'], ['cart' => $price()]),
+            'placeSlots' => fn () => app(StorefrontSlots::class)->renderMany(['checkout.after_shipping', 'checkout.before_place_order'], ['cart' => $price()]),
             'pageCheckout' => fn () => $this->checkoutSettings($request),
             'termsUrl' => fn () => CheckoutFieldRules::termsUrl(),
         ]);

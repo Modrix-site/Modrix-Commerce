@@ -6,7 +6,6 @@ use App\Core\Settings\StoreSettings;
 use Carbon\Carbon;
 use EcoModular\DeliverySlots\Models\DeliveryBlackoutDate;
 use EcoModular\DeliverySlots\Models\DeliverySlot;
-use Illuminate\Support\Collection;
 
 /**
  * Resolves available delivery dates and time slots for checkout.
@@ -42,7 +41,7 @@ class DeliverySlotResolver
      *     reason: string|null
      * }>
      */
-    public function getAvailableDates(): array
+    public function getAvailableDates(?int $daysLimit = null): array
     {
         if (! $this->settings->enabled()) {
             return [];
@@ -50,14 +49,16 @@ class DeliverySlotResolver
 
         $now = $this->storeNow();
         $today = $now->copy()->startOfDay();
-        $maxDays = $this->settings->maxAdvanceDays();
+        $daysCount = $daysLimit !== null
+            ? max(1, min(30, $daysLimit))
+            : $this->settings->maxAdvanceDays();
 
         $activeSlots = DeliverySlot::query()->active()->get();
         if ($activeSlots->isEmpty()) {
             return [];
         }
 
-        $endDate = $today->copy()->addDays($maxDays);
+        $endDate = $today->copy()->addDays($daysCount);
         $blackoutDates = DeliveryBlackoutDate::query()
             ->whereBetween('date', [$today->toDateString(), $endDate->toDateString()])
             ->pluck('reason', 'date')
@@ -66,7 +67,7 @@ class DeliverySlotResolver
 
         $result = [];
 
-        for ($i = 0; $i <= $maxDays; $i++) {
+        for ($i = 0; $i < $daysCount; $i++) {
             $candidate = $today->copy()->addDays($i);
             $dateStr = $candidate->toDateString();
             $dayOfWeek = $candidate->dayOfWeek; // 0 = Sunday, 6 = Saturday
@@ -86,6 +87,7 @@ class DeliverySlotResolver
                     'available_slots_count' => 0,
                     'reason' => $blackoutDates[$dateStr] ?: 'Holiday / Unavailable',
                 ];
+
                 continue;
             }
 
@@ -104,6 +106,7 @@ class DeliverySlotResolver
                         'available_slots_count' => 0,
                         'reason' => 'Same-day cutoff passed',
                     ];
+
                     continue;
                 }
             }
@@ -213,7 +216,7 @@ class DeliverySlotResolver
      *
      * @return array{valid: bool, error: string|null, slot: DeliverySlot|null}
      */
-    public function validateSelection(string $dateStr, int $slotId): array
+    public function validateSelection(string $dateStr, ?int $slotId = null, ?int $maxAllowedDays = null): array
     {
         $now = $this->storeNow();
         $today = $now->copy()->startOfDay();
@@ -228,13 +231,20 @@ class DeliverySlotResolver
             return ['valid' => false, 'error' => 'Delivery date cannot be in the past.', 'slot' => null];
         }
 
-        $maxDate = $today->copy()->addDays($this->settings->maxAdvanceDays());
+        $maxDate = $maxAllowedDays !== null
+            ? $today->copy()->addDays(max(0, $maxAllowedDays - 1))
+            : $today->copy()->addDays(max(2, $this->settings->maxAdvanceDays()));
+
         if ($deliveryDate->isAfter($maxDate)) {
             return ['valid' => false, 'error' => 'Delivery date exceeds the allowed advance booking window.', 'slot' => null];
         }
 
         if (DeliveryBlackoutDate::isBlackedOut($dateStr)) {
             return ['valid' => false, 'error' => 'Selected date is unavailable for delivery.', 'slot' => null];
+        }
+
+        if ($slotId === null) {
+            return ['valid' => true, 'error' => null, 'slot' => null];
         }
 
         /** @var DeliverySlot|null $slot */

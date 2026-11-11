@@ -22,6 +22,18 @@ class DeliverySlotCheckoutValidator implements CheckoutValidator
             return null;
         }
 
+        // Store pickup orders are collected, not delivered: no slot needed.
+        if ($data->shippingMethod === 'store_pickup' || str_starts_with($data->shippingMethod, 'pickup_')) {
+            return null;
+        }
+
+        $rule = $this->settings->ruleForMethod($data->shippingMethod);
+
+        // If delivery slots or time slots are disabled for this shipping method (e.g. 1-Day Instant Delivery)
+        if (! $rule['enabled'] || ! $rule['show_time_slots']) {
+            return null;
+        }
+
         $selection = session('delivery_slots_selection');
 
         if (empty($selection) || empty($selection['delivery_slot_id']) || empty($selection['date'])) {
@@ -34,7 +46,8 @@ class DeliverySlotCheckoutValidator implements CheckoutValidator
 
         $check = $this->resolver->validateSelection(
             (string) $selection['date'],
-            (int) $selection['delivery_slot_id']
+            (int) $selection['delivery_slot_id'],
+            (int) $rule['max_days'],
         );
 
         if (! $check['valid']) {

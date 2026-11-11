@@ -37,6 +37,10 @@ final class StorefrontSlots
         'checkout.payment_method' => ['cart'],
         // Below the order summary, refreshed with the same priced cart as payment slots.
         'checkout.after_summary' => ['cart'],
+        // In the checkout form, right under the shipping methods. Props include
+        // "shipping_method" (the selected code), so delivery and pickup widgets
+        // can follow the shopper's choice.
+        'checkout.after_shipping' => ['cart'],
         // Rendered on every storefront page, outside the page content. For overlays such
         // as a marketing popup or a cookie bar; the component positions itself.
         'storefront.overlay' => [],
@@ -63,6 +67,7 @@ final class StorefrontSlots
         'product.after_description' => ['label' => 'Below the description', 'tab' => 'product', 'context' => ['product']],
         'cart.after_lines' => ['label' => 'Under the items', 'tab' => 'cart', 'context' => ['cart']],
         'cart.after_totals' => ['label' => 'Under the total', 'tab' => 'cart', 'context' => ['cart']],
+        'checkout.after_shipping' => ['label' => 'Under the shipping methods', 'tab' => 'checkout', 'context' => ['cart']],
         'checkout.after_summary' => ['label' => 'After the summary', 'tab' => 'checkout', 'context' => ['cart']],
         'checkout.before_place_order' => ['label' => 'Above "Place order"', 'tab' => 'checkout', 'context' => ['cart']],
         'storefront.footer' => ['label' => 'Footer', 'tab' => 'footer', 'context' => []],

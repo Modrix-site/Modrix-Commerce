@@ -490,14 +490,9 @@ export default function Checkout({
                                                     )
                                                 }
                                             />
-                                            <span>
-                                                <span>
+                                            <span className="flex flex-col">
+                                                <span className="font-medium text-foreground">
                                                     {option.label}
-                                                    {option.description && (
-                                                        <span className="block text-xs text-muted-foreground">
-                                                            {option.description}
-                                                        </span>
-                                                    )}
                                                 </span>
                                                 {option.description && (
                                                     <span className="block text-xs text-muted-foreground">
@@ -516,6 +511,14 @@ export default function Checkout({
                             </fieldset>
                         )}
                         <InputError message={errors.shipping_method} />
+                        {/* Delivery scheduling and pickup-branch widgets render
+                            here, full width, following the chosen method. */}
+                        <PlaceSlot
+                            place="checkout.after_shipping"
+                            extraProps={{
+                                shipping_method: data.shipping_method,
+                            }}
+                        />
                     </section>
 
                     <section
@@ -754,7 +757,12 @@ export default function Checkout({
                             error={errors.terms}
                         />
                     )}
-                    <PlaceSlot place="checkout.before_place_order" />
+                    <PlaceSlot
+                        place="checkout.before_place_order"
+                        extraProps={{
+                            shipping_method: data.shipping_method,
+                        }}
+                    />
                     <Button
                         type="submit"
                         className="store-button"

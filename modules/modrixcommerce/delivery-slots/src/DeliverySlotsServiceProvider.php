@@ -38,11 +38,8 @@ class DeliverySlotsServiceProvider extends ServiceProvider
             'delivery_slot_picker',
             'Delivery Slot Picker',
             'DeliverySlotPicker',
-            [
-                'checkout.before_place_order',
-                'checkout.after_summary',
-            ],
-            'checkout.before_place_order',
+            $places = self::checkoutPlaces(),
+            $places[0],
             function () {
                 /** @var DeliverySlotsSettings $settings */
                 $settings = $this->app->make(DeliverySlotsSettings::class);
@@ -52,7 +49,13 @@ class DeliverySlotsServiceProvider extends ServiceProvider
 
                 /** @var DeliverySlotResolver $resolver */
                 $resolver = $this->app->make(DeliverySlotResolver::class);
-                $dates = $resolver->getAvailableDates();
+                $methodRules = $settings->resolvedMethodRules();
+                $maxDaysNeeded = $settings->maxAdvanceDays();
+                foreach ($methodRules as $rule) {
+                    $maxDaysNeeded = max($maxDaysNeeded, (int) ($rule['max_days'] ?? 2));
+                }
+
+                $dates = $resolver->getAvailableDates($maxDaysNeeded);
 
                 $selection = session('delivery_slots_selection');
                 $selectedDate = $selection['date'] ?? null;
@@ -65,6 +68,9 @@ class DeliverySlotsServiceProvider extends ServiceProvider
                             break;
                         }
                     }
+                    if (! $selectedDate) {
+                        $selectedDate = $dates[0]['date'] ?? null;
+                    }
                 }
 
                 $availableSlots = $selectedDate ? $resolver->getSlotsForDate($selectedDate) : [];
@@ -72,6 +78,8 @@ class DeliverySlotsServiceProvider extends ServiceProvider
                 return [
                     'heading' => $settings->heading(),
                     'is_required' => $settings->isRequired(),
+                    'default_max_days' => $settings->maxAdvanceDays(),
+                    'method_rules' => $methodRules,
                     'dates' => $dates,
                     'initial_slots' => $availableSlots,
                     'initial_date' => $selectedDate,
@@ -135,7 +143,7 @@ class DeliverySlotsServiceProvider extends ServiceProvider
         }
 
         $slotWindow = $schedule->slot
-            ? substr($schedule->slot->start_time, 0, 5) . ' - ' . substr($schedule->slot->end_time, 0, 5)
+            ? substr($schedule->slot->start_time, 0, 5).' - '.substr($schedule->slot->end_time, 0, 5)
             : null;
 
         return [
@@ -144,5 +152,20 @@ class DeliverySlotsServiceProvider extends ServiceProvider
             'slot_window' => $slotWindow,
             'instructions' => $schedule->delivery_instructions,
         ];
+    }
+
+    /**
+     * Checkout places this core can hold, best first. "Under the shipping
+     * methods" (checkout.after_shipping) needs a newer core; on an older one
+     * the widget falls back to "Above Place order" instead of failing to boot.
+     *
+     * @return non-empty-list<string>
+     */
+    private static function checkoutPlaces(): array
+    {
+        return array_values(array_filter(
+            ['checkout.after_shipping', 'checkout.before_place_order', 'checkout.after_summary'],
+            fn (string $place): bool => array_key_exists($place, StorefrontSlots::PLACES),
+        ));
     }
 }

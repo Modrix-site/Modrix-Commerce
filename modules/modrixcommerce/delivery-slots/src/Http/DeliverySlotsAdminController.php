@@ -219,7 +219,7 @@ class DeliverySlotsAdminController extends Controller
 
         Inertia::flash('toast', [
             'type' => 'success',
-            'message' => "Slot '{$slot->name}' is now " . ($slot->is_active ? 'active' : 'disabled') . '.',
+            'message' => "Slot '{$slot->name}' is now ".($slot->is_active ? 'active' : 'disabled').'.',
         ]);
 
         return redirect()->route('admin.modrixcommerce.delivery-slots.slots');
@@ -261,6 +261,10 @@ class DeliverySlotsAdminController extends Controller
             'max_advance_days' => ['required', 'integer', 'between:1,30'],
             'same_day_cutoff' => ['required', 'regex:/^\d{2}:\d{2}$/'],
             'heading' => ['required', 'string', 'max:120'],
+            'method_rules' => ['nullable', 'array'],
+            'method_rules.*.enabled' => ['boolean'],
+            'method_rules.*.max_days' => ['required_with:method_rules', 'integer', 'between:1,30'],
+            'method_rules.*.show_time_slots' => ['boolean'],
         ]);
 
         $data['enabled'] = $request->boolean('enabled');

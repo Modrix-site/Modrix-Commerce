@@ -22,6 +22,15 @@ type BlackoutItem = {
     reason: string | null;
 };
 
+type MethodRuleItem = {
+    code: string;
+    name: string;
+    subtitle: string;
+    enabled: boolean;
+    max_days: number;
+    show_time_slots: boolean;
+};
+
 type Props = {
     settings: {
         enabled: boolean;
@@ -29,6 +38,7 @@ type Props = {
         max_advance_days: number;
         same_day_cutoff: string;
         heading: string;
+        method_rules?: Record<string, MethodRuleItem>;
     };
     blackoutDates: BlackoutItem[];
     urls: {
@@ -51,7 +61,20 @@ export default function DeliverySlotsAdminSettings({
         max_advance_days: settings.max_advance_days,
         same_day_cutoff: settings.same_day_cutoff,
         heading: settings.heading,
+        method_rules: settings.method_rules ?? {},
     });
+
+    const updateMethodRule = (code: string, patch: Partial<MethodRuleItem>) => {
+        const current = data.method_rules?.[code];
+        if (!current) return;
+        setData('method_rules', {
+            ...data.method_rules,
+            [code]: {
+                ...current,
+                ...patch,
+            },
+        });
+    };
 
     // Form for new blackout date
     const [blackoutDate, setBlackoutDate] = useState('');
@@ -204,6 +227,130 @@ export default function DeliverySlotsAdminSettings({
                                         )}
                                     </div>
                                 </div>
+
+                                {Object.values(data.method_rules ?? {}).length > 0 && (
+                                    <div className="space-y-3 rounded-lg border bg-muted/20 p-3.5">
+                                        <div>
+                                            <h4 className="text-xs font-semibold">
+                                                Per-Delivery Option Slot Rules
+                                            </h4>
+                                            <p className="text-[11px] text-muted-foreground">
+                                                Customize how many delivery days (1 day vs 1–2 days) and whether time slots are displayed for Instant vs Standard delivery.
+                                            </p>
+                                        </div>
+
+                                        <div className="space-y-2.5">
+                                            {Object.values(data.method_rules ?? {}).map((rule) => (
+                                                <div
+                                                    key={rule.code}
+                                                    className="rounded-md border bg-background p-3 space-y-2.5"
+                                                >
+                                                    <div className="flex items-center justify-between gap-2">
+                                                        <div>
+                                                            <div className="text-xs font-semibold">
+                                                                {rule.name}
+                                                            </div>
+                                                            {rule.subtitle && (
+                                                                <div className="text-[11px] text-muted-foreground">
+                                                                    {rule.subtitle}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <label className="flex items-center gap-1.5 text-xs font-medium cursor-pointer">
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={rule.enabled}
+                                                                onChange={(e) =>
+                                                                    updateMethodRule(rule.code, {
+                                                                        enabled: e.target.checked,
+                                                                    })
+                                                                }
+                                                                className="size-3.5 rounded border-input"
+                                                            />
+                                                            Active
+                                                        </label>
+                                                    </div>
+
+                                                    {rule.enabled && (
+                                                        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 pt-1 border-t">
+                                                            <div className="space-y-1">
+                                                                <Label className="text-[11px]">
+                                                                    Allowed Delivery Window (Days)
+                                                                </Label>
+                                                                <div className="flex items-center gap-1.5">
+                                                                    <Input
+                                                                        type="number"
+                                                                        min={1}
+                                                                        max={30}
+                                                                        value={rule.max_days}
+                                                                        onChange={(e) =>
+                                                                            updateMethodRule(rule.code, {
+                                                                                max_days: Math.max(
+                                                                                    1,
+                                                                                    Math.min(
+                                                                                        30,
+                                                                                        parseInt(e.target.value) || 1
+                                                                                    )
+                                                                                ),
+                                                                            })
+                                                                        }
+                                                                        className="h-8 w-20 text-xs"
+                                                                    />
+                                                                    <Button
+                                                                        type="button"
+                                                                        variant={rule.max_days === 1 ? 'default' : 'outline'}
+                                                                        size="sm"
+                                                                        className="h-7 px-2 text-[11px]"
+                                                                        onClick={() =>
+                                                                            updateMethodRule(rule.code, {
+                                                                                max_days: 1,
+                                                                                show_time_slots: false,
+                                                                            })
+                                                                        }
+                                                                    >
+                                                                        1 Day (Instant)
+                                                                    </Button>
+                                                                    <Button
+                                                                        type="button"
+                                                                        variant={rule.max_days === 2 ? 'default' : 'outline'}
+                                                                        size="sm"
+                                                                        className="h-7 px-2 text-[11px]"
+                                                                        onClick={() =>
+                                                                            updateMethodRule(rule.code, {
+                                                                                max_days: 2,
+                                                                                show_time_slots: true,
+                                                                            })
+                                                                        }
+                                                                    >
+                                                                        1–2 Days
+                                                                    </Button>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="flex items-end pb-1">
+                                                                <label className="flex items-center gap-2 text-xs cursor-pointer">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={rule.show_time_slots}
+                                                                        onChange={(e) =>
+                                                                            updateMethodRule(rule.code, {
+                                                                                show_time_slots: e.target.checked,
+                                                                            })
+                                                                        }
+                                                                        className="size-3.5 rounded border-input"
+                                                                    />
+                                                                    <span>
+                                                                        Display time slots picker
+                                                                    </span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
 
                                 <Button type="submit" size="sm" disabled={processing} className="mt-2">
                                     <Save className="mr-1.5 size-3.5" />
