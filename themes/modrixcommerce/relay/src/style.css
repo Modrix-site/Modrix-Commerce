@@ -845,8 +845,13 @@
     border: 0;
     background: white;
 }
+/* Add to cart and Buy now match each other and the quantity box: 44px, same radius. */
 .re-purchase-row .re-btn {
     flex: 1;
+    height: 44px;
+    min-height: 44px;
+    border-radius: 3px;
+    padding-block: 0;
 }
 .re-purchase-row .store-button-outline {
     border: 0;
@@ -854,6 +859,7 @@
     color: #111;
     flex: 1;
     width: auto;
+    min-height: 44px;
     min-width: 100px;
     padding: 10px;
     height: 44px;

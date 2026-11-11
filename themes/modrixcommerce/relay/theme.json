@@ -55,6 +55,11 @@
     "changelog": [
         {
             "version": "1.0.2",
+            "date": "2026-11-11",
+            "notes": "Product page: Add to cart and Buy now share the same height and corner radius as the quantity box."
+        },
+        {
+            "version": "1.0.2",
             "date": "2026-11-08",
             "notes": "Adds the actual storefront preview thumbnail and final customization/module documentation. Desktop, 390px and 320px shopping flows and live editor verified."
         },
