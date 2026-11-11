@@ -64,6 +64,7 @@
             "items": {
                 "enum": [
                     "home.sections",
+                    "sections",
                     "custom_fonts",
                     "dark_mode",
                     "demo_content"
@@ -746,6 +747,15 @@
                     "type": "boolean"
                 },
                 "product.show_sku": {
+                    "type": "boolean"
+                },
+                "product.sticky_bar": {
+                    "enum": ["off", "phones", "everywhere"]
+                },
+                "product.sticky_bar_buttons": {
+                    "enum": ["both", "add_to_cart", "buy_now"]
+                },
+                "product.sticky_bar_options": {
                     "type": "boolean"
                 },
                 "product.stock_note": {

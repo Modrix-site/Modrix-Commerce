@@ -335,5 +335,13 @@
     "login using an authentication code": "mit einem Authentifizierungscode anmelden",
     "or you can": "oder Sie können",
     "until :date": "bis :date",
-    "via :carrier": "mit :carrier"
+    "via :carrier": "mit :carrier",
+    ":price each (with add-ons)": ":price pro Stück (mit Extras)",
+    "Add-ons & Warranties": "Extras & Garantien",
+    "Back to sign in": "Zurück zur Anmeldung",
+    "Base price: :price each": "Grundpreis: :price pro Stück",
+    "Items": "Artikel",
+    "Password updated.": "Passwort aktualisiert.",
+    "Picked up": "Abgeholt",
+    "Ready for pickup": "Abholbereit"
 }

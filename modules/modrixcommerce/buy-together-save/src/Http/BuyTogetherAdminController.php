@@ -5,6 +5,7 @@ namespace EcoModular\BuyTogetherSave\Http;
 use App\Core\Audit\AuditLogger;
 use App\Domains\Catalog\Models\Category;
 use App\Domains\Catalog\Models\Product;
+use App\Domains\Catalog\Models\ProductVariant;
 use App\Http\Controllers\Controller;
 use EcoModular\BuyTogetherSave\BuyTogetherSettings;
 use EcoModular\BuyTogetherSave\Models\BuyTogetherDeal;
@@ -51,7 +52,10 @@ class BuyTogetherAdminController extends Controller
     {
         $products = Product::query()
             ->visible()
-            ->select(['id', 'name', 'sku'])
+            ->select(['id', 'name'])
+            // The SKU lives on variants: show the first one's.
+            ->addSelect(['sku' => ProductVariant::query()
+                ->select('sku')->whereColumn('product_id', 'products.id')->orderBy('id')->limit(1)])
             ->limit(100)
             ->get();
 
@@ -109,7 +113,10 @@ class BuyTogetherAdminController extends Controller
     {
         $products = Product::query()
             ->visible()
-            ->select(['id', 'name', 'sku'])
+            ->select(['id', 'name'])
+            // The SKU lives on variants: show the first one's.
+            ->addSelect(['sku' => ProductVariant::query()
+                ->select('sku')->whereColumn('product_id', 'products.id')->orderBy('id')->limit(1)])
             ->limit(100)
             ->get();
 

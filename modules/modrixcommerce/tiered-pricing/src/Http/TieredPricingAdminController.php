@@ -5,6 +5,7 @@ namespace EcoModular\TieredPricing\Http;
 use App\Core\Audit\AuditLogger;
 use App\Domains\Catalog\Models\Category;
 use App\Domains\Catalog\Models\Product;
+use App\Domains\Catalog\Models\ProductVariant;
 use App\Http\Controllers\Controller;
 use EcoModular\TieredPricing\Models\TieredPricingRule;
 use EcoModular\TieredPricing\TieredPricingSettings;
@@ -44,7 +45,10 @@ class TieredPricingAdminController extends Controller
     {
         $products = Product::query()
             ->visible()
-            ->select(['id', 'name', 'sku'])
+            ->select(['id', 'name'])
+            // The SKU lives on variants: show the first one's.
+            ->addSelect(['sku' => ProductVariant::query()
+                ->select('sku')->whereColumn('product_id', 'products.id')->orderBy('id')->limit(1)])
             ->limit(100)
             ->get();
 
@@ -101,7 +105,10 @@ class TieredPricingAdminController extends Controller
     {
         $products = Product::query()
             ->visible()
-            ->select(['id', 'name', 'sku'])
+            ->select(['id', 'name'])
+            // The SKU lives on variants: show the first one's.
+            ->addSelect(['sku' => ProductVariant::query()
+                ->select('sku')->whereColumn('product_id', 'products.id')->orderBy('id')->limit(1)])
             ->limit(100)
             ->get();
 

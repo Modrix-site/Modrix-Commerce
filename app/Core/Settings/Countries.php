@@ -54,7 +54,7 @@ final class Countries
     {
         $app = Container::getInstance();
 
-        return $app instanceof Application ? $app->getLocale() : 'en';
+        return $app instanceof Application && $app->bound('config') ? $app->getLocale() : 'en';
     }
 
     /**

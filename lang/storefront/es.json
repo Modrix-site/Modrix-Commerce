@@ -335,5 +335,13 @@
     "login using an authentication code": "iniciar sesión con un código de autenticación",
     "or you can": "o puedes",
     "until :date": "hasta :date",
-    "via :carrier": "con :carrier"
+    "via :carrier": "con :carrier",
+    ":price each (with add-ons)": ":price cada uno (con complementos)",
+    "Add-ons & Warranties": "Complementos y garantías",
+    "Back to sign in": "Volver a iniciar sesión",
+    "Base price: :price each": "Precio base: :price cada uno",
+    "Items": "Artículos",
+    "Password updated.": "Contraseña actualizada.",
+    "Picked up": "Recogido",
+    "Ready for pickup": "Listo para recoger"
 }

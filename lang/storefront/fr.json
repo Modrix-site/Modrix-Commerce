@@ -335,5 +335,13 @@
     "login using an authentication code": "vous connecter avec un code d'authentification",
     "or you can": "ou vous pouvez",
     "until :date": "jusqu'au :date",
-    "via :carrier": "via :carrier"
+    "via :carrier": "via :carrier",
+    ":price each (with add-ons)": ":price l’unité (avec options)",
+    "Add-ons & Warranties": "Options et garanties",
+    "Back to sign in": "Retour à la connexion",
+    "Base price: :price each": "Prix de base : :price l’unité",
+    "Items": "Articles",
+    "Password updated.": "Mot de passe mis à jour.",
+    "Picked up": "Retiré",
+    "Ready for pickup": "Prêt à être retiré"
 }
