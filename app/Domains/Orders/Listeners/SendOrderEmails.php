@@ -29,11 +29,23 @@ final class SendOrderEmails implements ShouldQueue
 {
     public int $tries = 3;
 
-    public function __construct(
-        private readonly PaymentMethods $paymentMethods,
-        private readonly StoreSettings $store,
-        private readonly OrderEmailSettings $emails,
-    ) {}
+    // Resolved when an email is sent, not when the subscriber is registered at
+    // boot: the payment gateways need the encryption key, which commands such
+    // as "package:discover" run without.
+    private function paymentMethods(): PaymentMethods
+    {
+        return app(PaymentMethods::class);
+    }
+
+    private function store(): StoreSettings
+    {
+        return app(StoreSettings::class);
+    }
+
+    private function emails(): OrderEmailSettings
+    {
+        return app(OrderEmailSettings::class);
+    }
 
     public function placed(OrderPlaced $event): void
     {
@@ -60,7 +72,7 @@ final class SendOrderEmails implements ShouldQueue
 
     public function shipped(OrderShipped $event): void
     {
-        if (! $this->emails->shouldSend('shipped', $event->notify)) {
+        if (! $this->emails()->shouldSend('shipped', $event->notify)) {
             return;
         }
 
@@ -81,7 +93,7 @@ final class SendOrderEmails implements ShouldQueue
 
     public function statusChanged(OrderStatusChanged $event): void
     {
-        if ($this->emails->shouldSend($event->kind, $event->notify)) {
+        if ($this->emails()->shouldSend($event->kind, $event->notify)) {
             $this->send($event->orderId, $event->kind, key: $event->key, note: $event->note);
         }
     }
@@ -126,7 +138,7 @@ final class SendOrderEmails implements ShouldQueue
                 return;
             }
 
-            $instructions = $withInstructions ? $this->paymentMethods->definition($order->payment_method_code)?->instructions() : null;
+            $instructions = $withInstructions ? $this->paymentMethods()->definition($order->payment_method_code)?->instructions() : null;
             Mail::to($order->email)->send(new OrderMail($order, $kind, $instructions, $note));
 
             OrderEvent::query()->forceCreate([
@@ -143,7 +155,7 @@ final class SendOrderEmails implements ShouldQueue
 
     private function sendToStaff(int $orderId): void
     {
-        $email = $this->store->toArray()['store_email'];
+        $email = $this->store()->toArray()['store_email'];
         $order = Order::query()->find($orderId);
 
         if ($email === null || $order === null || $this->alreadySent($order, 'staff_new_order')) {
@@ -164,7 +176,7 @@ final class SendOrderEmails implements ShouldQueue
     {
         $code = Order::query()->whereKey($orderId)->value('payment_method_code');
 
-        return is_string($code) && $this->paymentMethods->isGateway($code);
+        return is_string($code) && $this->paymentMethods()->isGateway($code);
     }
 
     private function alreadySent(Order $order, string $key): bool
