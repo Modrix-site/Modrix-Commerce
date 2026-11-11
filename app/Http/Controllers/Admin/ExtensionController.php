@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Core\Extensions\CoreCompatibility;
 use App\Core\Extensions\Manifest;
 use App\Core\Extensions\ManifestValidator;
 use App\Core\Extensions\Models\Extension;
@@ -57,12 +58,15 @@ class ExtensionController extends Controller
             ->filter(fn (Extension $e) => array_key_exists($extension->name, (array) ($e->manifest['requires'] ?? [])))
             ->map(fn (Extension $e) => ['name' => $e->name, 'state' => $e->state->value])
             ->values();
+        $coreUpdate = CoreCompatibility::updateNeeded($extension);
 
         return Inertia::render('admin/extensions/show', [
             'extension' => [
                 ...$this->summary($extension),
                 'license' => $manifest?->license,
                 'platform_version' => $manifest?->platformVersion,
+                // Set when this module needs a newer core than the store runs.
+                'core_update' => $coreUpdate === null ? null : [...$coreUpdate, 'url' => route('admin.system.status')],
                 'permissions' => $manifest->permissions ?? [],
                 'routes' => array_keys($manifest->routes ?? []),
                 'has_migrations' => $manifest?->migrations !== null,

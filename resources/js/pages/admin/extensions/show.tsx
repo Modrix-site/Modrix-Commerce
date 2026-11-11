@@ -47,6 +47,13 @@ import type { ExtensionSettingField, ExtensionSummary } from '@/types';
 type Extension = ExtensionSummary & {
     license: string | null;
     platform_version: string | null;
+    /** Set when the module needs a newer core than this store runs. */
+    core_update: {
+        required: string;
+        current: string;
+        message: string;
+        url: string;
+    } | null;
     permissions: { name: string; label: string; group: string }[];
     routes: string[];
     has_migrations: boolean;
@@ -83,14 +90,25 @@ export default function ExtensionShow({ extension, settings, events }: Props) {
     const state = extension.state;
     const sameVersion = extension.version === extension.available_version;
 
+    // A module built for a newer core can't be installed, enabled or updated here.
+    const coreTooOld = extension.core_update !== null;
+    // The platform-version error is shown as the "Core update required" banner instead.
+    const otherErrors = coreTooOld
+        ? extension.errors.filter(
+              (error) => !error.startsWith('Requires platform version'),
+          )
+        : extension.errors;
     const canInstall =
-        !installed && (state === 'discovered' || state === 'failed');
+        !coreTooOld &&
+        !installed &&
+        (state === 'discovered' || state === 'failed');
     const canEnable =
+        !coreTooOld &&
         installed &&
         sameVersion &&
         ['installed', 'disabled', 'failed'].includes(state);
     const canDisable = ['enabled', 'failed', 'update_pending'].includes(state);
-    const canUpdate = installed && extension.update_available;
+    const canUpdate = !coreTooOld && installed && extension.update_available;
     const canUninstall =
         installed &&
         ['installed', 'disabled', 'failed', 'update_pending'].includes(state);
@@ -124,13 +142,36 @@ export default function ExtensionShow({ extension, settings, events }: Props) {
                     }
                 />
 
-                {extension.errors.length > 0 && (
+                {extension.core_update && (
+                    <Alert>
+                        <AlertTriangle />
+                        <AlertTitle>Core update required</AlertTitle>
+                        <AlertDescription>
+                            <p>
+                                This module needs Modrix Commerce core{' '}
+                                <strong>
+                                    {extension.core_update.required}
+                                </strong>
+                                , but this store runs{' '}
+                                <strong>{extension.core_update.current}</strong>
+                                . Update the core, then enable the module.
+                            </p>
+                            <Button asChild size="sm" className="mt-2">
+                                <a href={extension.core_update.url}>
+                                    Go to core update
+                                </a>
+                            </Button>
+                        </AlertDescription>
+                    </Alert>
+                )}
+
+                {otherErrors.length > 0 && (
                     <Alert variant="destructive">
                         <AlertTriangle />
                         <AlertTitle>The package is invalid</AlertTitle>
                         <AlertDescription>
                             <ul className="list-disc pl-4">
-                                {extension.errors.map((error, i) => (
+                                {otherErrors.map((error, i) => (
                                     <li key={i}>{error}</li>
                                 ))}
                             </ul>
@@ -534,8 +575,7 @@ function DeleteDialog({ extension }: { extension: Extension }) {
                     {extension.version !== null
                         ? ', runs its uninstall migrations and deletes its database tables, settings and staff permissions.'
                         : '.'}{' '}
-                    To use it again you have to upload or reinstall the
-                    package.
+                    To use it again you have to upload or reinstall the package.
                 </DialogDescription>
                 {blocked ? (
                     <Alert variant="destructive">

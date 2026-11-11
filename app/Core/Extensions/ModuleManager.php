@@ -345,6 +345,16 @@ final class ModuleManager
         try {
             $this->repository->sync($actor);
             $extension = $this->repository->find($name) ?? throw new ModuleException("Module {$name} was not found in the modules directory.");
+
+            // A module built for a newer core: say so plainly, before the
+            // generic "invalid manifest" error, for anything that would run it.
+            if (in_array($action, ['installed', 'enabled', 'updated'], true)
+                && ($needed = CoreCompatibility::updateNeeded($extension)) !== null) {
+                $this->repository->record($extension, $action, $extension->state, false, $needed['message'], $actor);
+
+                throw new ModuleException($needed['message']);
+            }
+
             $manifest = $extension->state === ModuleState::Invalid ? null : $extension->manifest();
 
             if (! $allowInvalid && ($manifest === null || ($extension->errors !== null && $extension->errors !== []))) {

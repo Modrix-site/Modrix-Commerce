@@ -150,11 +150,45 @@ class ManifestValidationTest extends TestCase
 
     public function test_invalid_packages_cannot_be_installed()
     {
-        $this->makeHelloModule(overrides: ['platform_version' => '^9.0']);
+        $this->makeHelloModule(overrides: ['version' => 'v1']);
 
         $this->expectException(ModuleException::class);
         $this->expectExceptionMessage('invalid manifest');
         app(ModuleManager::class)->install('acme/hello');
+    }
+
+    /** A module built for a newer core says so plainly instead of "invalid manifest". */
+    public function test_module_for_a_newer_core_asks_for_a_core_update()
+    {
+        $this->makeHelloModule(overrides: ['platform_version' => '^9.0']);
+
+        try {
+            app(ModuleManager::class)->install('acme/hello');
+            $this->fail('Install should be refused on an older core.');
+        } catch (ModuleException $e) {
+            $this->assertStringContainsString('needs Modrix Commerce core ^9.0', $e->getMessage());
+            $this->assertStringContainsString('Update the core', $e->getMessage());
+        }
+
+        $extension = Extension::query()->where('name', 'acme/hello')->firstOrFail();
+        $this->assertNotSame(ModuleState::Installed, $extension->state);
+
+        $this->actingAs($this->userWithRole('administrator'))
+            ->get(route('admin.extensions.show', $extension))
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->where('extension.core_update.required', '^9.0')
+                ->where('extension.core_update.url', route('admin.system.status')));
+    }
+
+    public function test_compatible_module_has_no_core_update_notice()
+    {
+        $this->makeHelloModule();
+        app(ModuleRepository::class)->sync();
+        $extension = Extension::query()->where('name', 'acme/hello')->firstOrFail();
+
+        $this->actingAs($this->userWithRole('administrator'))
+            ->get(route('admin.extensions.show', $extension))
+            ->assertInertia(fn (AssertableInertia $page) => $page->where('extension.core_update', null));
     }
 
     public function test_packages_outside_vendor_name_layout_are_ignored()
