@@ -336,7 +336,6 @@ export default function ExternalStorageAdminIndex({
             <Head title="External Cloud Storage" />
 
             <PageHeader
-                icon={Cloud}
                 title="External Cloud Storage"
                 description="Automatically save product photos, product videos, and media assets directly in Wasabi, AWS S3, Cloudflare Storage, DigitalOcean Spaces, Backblaze B2, BunnyCDN, or custom cloud storage instead of locally."
                 actions={

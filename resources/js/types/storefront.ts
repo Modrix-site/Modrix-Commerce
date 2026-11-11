@@ -43,7 +43,13 @@ export type StorefrontShared = {
     currency: string;
     locale: string;
     locales: { code: string; name: string }[];
-    categories: { id: number; name: string; slug: string }[];
+    /** Top-level categories. `image` is optional; themes fall back to the name. */
+    categories: {
+        id: number;
+        name: string;
+        slug: string;
+        image?: { url: string } | null;
+    }[];
     cartCount: number;
     /** Extra account-menu items contributed by enabled modules. */
     accountLinks?: {
