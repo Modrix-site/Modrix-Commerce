@@ -24,10 +24,10 @@ Accept payments in India using **Easebuzz** (Credit/Debit Cards, UPI, Net Bankin
 ## Installation & Setup
 
 1. Install and enable the module:
-   ```bash
-   php artisan ecomodular:modules install modrixcommerce/easebuzz
-   php artisan ecomodular:modules enable modrixcommerce/easebuzz --trust
-   ```
+    ```bash
+    php artisan ecomodular:modules install modrixcommerce/easebuzz
+    php artisan ecomodular:modules enable modrixcommerce/easebuzz --trust
+    ```
 2. Navigate to **Admin -> Configuration -> Easebuzz**.
 3. Provide your **Merchant Key** and **Merchant Salt** obtained from your Easebuzz Merchant Dashboard.
 4. Toggle **Test Mode** for staging verification or disable it for production transactions.

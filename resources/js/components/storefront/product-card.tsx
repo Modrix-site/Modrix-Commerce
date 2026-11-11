@@ -66,14 +66,16 @@ export function ProductCard({ product }: { product: ProductCardData }) {
                             <span className="sr-only">{t('No image')}</span>
                         </div>
                     )}
-                    {product.image && catalog.hover_image && product.hover_image && (
-                        <img
-                            src={product.hover_image.url}
-                            alt=""
-                            loading="lazy"
-                            className="store-card-hover size-full object-cover"
-                        />
-                    )}
+                    {product.image &&
+                        catalog.hover_image &&
+                        product.hover_image && (
+                            <img
+                                src={product.hover_image.url}
+                                alt=""
+                                loading="lazy"
+                                className="store-card-hover size-full object-cover"
+                            />
+                        )}
                 </div>
                 <div
                     className={cn(

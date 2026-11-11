@@ -17,7 +17,7 @@ class CheckoutProtectionService
     public function checkCheckoutAbuse(Request $request): array
     {
         $enabled = (bool) $this->settings->of(self::MODULE, 'prevent_rapid_checkout', true);
-        if (!$enabled) {
+        if (! $enabled) {
             return ['is_abuse' => false, 'score' => 0, 'reason' => null];
         }
 

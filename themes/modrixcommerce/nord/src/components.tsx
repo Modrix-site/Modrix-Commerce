@@ -105,14 +105,16 @@ export function NordCard({ product }: { product: ProductCard }) {
                     ) : (
                         <ImageOff size={36} aria-label="No product image" />
                     )}
-                    {product.image && catalog.hover_image && product.hover_image && (
-                        <img
-                            className="store-card-hover"
-                            src={product.hover_image.url}
-                            alt=""
-                            loading="lazy"
-                        />
-                    )}
+                    {product.image &&
+                        catalog.hover_image &&
+                        product.hover_image && (
+                            <img
+                                className="store-card-hover"
+                                src={product.hover_image.url}
+                                alt=""
+                                loading="lazy"
+                            />
+                        )}
                 </Link>
                 {catalog.badges && <ProductLabels labels={product.labels} />}
                 <SaveProduct id={product.id} name={product.name} />
@@ -128,11 +130,13 @@ export function NordCard({ product }: { product: ProductCard }) {
                 {/* The whole title (short description and name) opens the product. */}
                 <Link href={url} className="nd-card-title">
                     {product.short_description && (
-                        <p className="nd-card-brand">{product.short_description}</p>
+                        <p className="nd-card-brand">
+                            {product.short_description}
+                        </p>
                     )}
                     <h3>{product.name}</h3>
                 </Link>
-                    <PlaceSlot place="product.card" extraProps={{ product }} />
+                <PlaceSlot place="product.card" extraProps={{ product }} />
                 <p className={`nd-card-price ${discounted ? 'nd-sale' : ''}`}>
                     {product.has_variants && 'From '}
                     {product.price?.formatted ?? 'View product'}

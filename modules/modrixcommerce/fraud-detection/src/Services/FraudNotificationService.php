@@ -4,8 +4,8 @@ namespace EcoModular\FraudDetection\Services;
 
 use App\Core\Extensions\ModuleSettingsSchema;
 use EcoModular\FraudDetection\FraudDetectionServiceProvider as Module;
-use EcoModular\FraudDetection\Mail\FraudAlertMailable;
 use EcoModular\FraudDetection\Mail\DailyFraudReportMailable;
+use EcoModular\FraudDetection\Mail\FraudAlertMailable;
 use EcoModular\FraudDetection\Models\FraudNotification;
 use EcoModular\FraudDetection\Models\FraudScore;
 use Illuminate\Support\Facades\Http;
@@ -83,9 +83,9 @@ class FraudNotificationService
         }
 
         try {
-            $orderNumber = $fraudScore->order?->number ?? '#' . $fraudScore->order_id;
+            $orderNumber = $fraudScore->order?->number ?? '#'.$fraudScore->order_id;
             $payload = [
-                'text' => "🚨 *High-Risk Order Detected*",
+                'text' => '🚨 *High-Risk Order Detected*',
                 'blocks' => [
                     [
                         'type' => 'header',
@@ -104,7 +104,7 @@ class FraudNotificationService
                         'type' => 'section',
                         'text' => [
                             'type' => 'mrkdwn',
-                            'text' => '*Indicators:* ' . collect($fraudScore->indicators)->pluck('label')->implode(', '),
+                            'text' => '*Indicators:* '.collect($fraudScore->indicators)->pluck('label')->implode(', '),
                         ],
                     ],
                 ],

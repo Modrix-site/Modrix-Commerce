@@ -1,4 +1,12 @@
-import { Calendar, CheckCircle2, Clock, FileText, Loader2, Truck, Zap } from 'lucide-react';
+import {
+    Calendar,
+    CheckCircle2,
+    Clock,
+    FileText,
+    Loader2,
+    Truck,
+    Zap,
+} from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -113,7 +121,9 @@ export default function DeliverySlotPicker({
         shipping_method !== undefined
             ? shipping_method
             : typeof window !== 'undefined'
-              ? new URLSearchParams(window.location.search).get('shipping_method') ?? ''
+              ? (new URLSearchParams(window.location.search).get(
+                    'shipping_method',
+                ) ?? '')
               : ''
     ).trim();
 
@@ -122,7 +132,12 @@ export default function DeliverySlotPicker({
         Boolean(activeShippingMethod?.startsWith('pickup_'));
 
     const activeRule = useMemo(
-        () => inferRuleForMethod(activeShippingMethod, method_rules, default_max_days),
+        () =>
+            inferRuleForMethod(
+                activeShippingMethod,
+                method_rules,
+                default_max_days,
+            ),
         [activeShippingMethod, method_rules, default_max_days],
     );
 
@@ -174,9 +189,15 @@ export default function DeliverySlotPicker({
         setIsLoadingSlots(true);
 
         try {
-            const res = await fetch(`${slots_url}?date=${encodeURIComponent(dateStr)}`, {
-                headers: { credentials: 'same-origin', Accept: 'application/json' },
-            });
+            const res = await fetch(
+                `${slots_url}?date=${encodeURIComponent(dateStr)}`,
+                {
+                    headers: {
+                        credentials: 'same-origin',
+                        Accept: 'application/json',
+                    },
+                },
+            );
             const data = await res.json();
             setSlots(data.slots || []);
         } catch {
@@ -199,8 +220,11 @@ export default function DeliverySlotPicker({
         setErrorMessage(null);
 
         const csrfToken =
-            (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content ||
-            '';
+            (
+                document.querySelector(
+                    'meta[name="csrf-token"]',
+                ) as HTMLMetaElement
+            )?.content || '';
 
         try {
             const res = await fetch(select_url, {
@@ -238,13 +262,21 @@ export default function DeliverySlotPicker({
 
     // Keep selected date within the active shipping method's allowed day window
     useEffect(() => {
-        if (!activeShippingMethod || isPickup || !activeRule.enabled || visibleDates.length === 0) {
+        if (
+            !activeShippingMethod ||
+            isPickup ||
+            !activeRule.enabled ||
+            visibleDates.length === 0
+        ) {
             return;
         }
 
-        const isCurrentDateAllowed = visibleDates.some((d) => d.date === selectedDate);
+        const isCurrentDateAllowed = visibleDates.some(
+            (d) => d.date === selectedDate,
+        );
         const fallbackDate =
-            visibleDates.find((d) => d.is_available)?.date ?? visibleDates[0].date;
+            visibleDates.find((d) => d.is_available)?.date ??
+            visibleDates[0].date;
 
         if (!isCurrentDateAllowed && fallbackDate) {
             void handleSelectDate(fallbackDate);
@@ -256,7 +288,13 @@ export default function DeliverySlotPicker({
             const target = selectedDate ?? fallbackDate;
             void saveSelection(null, instructions, target);
         }
-    }, [activeShippingMethod, isPickup, activeRule.enabled, activeRule.max_days, activeRule.show_time_slots]);
+    }, [
+        activeShippingMethod,
+        isPickup,
+        activeRule.enabled,
+        activeRule.max_days,
+        activeRule.show_time_slots,
+    ]);
 
     const handleSlotClick = (slot: SlotOption) => {
         if (!slot.is_available) return;
@@ -274,7 +312,13 @@ export default function DeliverySlotPicker({
 
     // Do not display the delivery slot widget until a shipping method is selected,
     // or when Store Pickup is chosen (which has its own branch selector).
-    if (!activeShippingMethod || isPickup || !activeRule.enabled || !visibleDates || visibleDates.length === 0) {
+    if (
+        !activeShippingMethod ||
+        isPickup ||
+        !activeRule.enabled ||
+        !visibleDates ||
+        visibleDates.length === 0
+    ) {
         return null;
     }
 
@@ -298,7 +342,7 @@ export default function DeliverySlotPicker({
                             is_required ? (
                                 <Badge
                                     variant="destructive"
-                                    className="text-[10px] uppercase font-bold"
+                                    className="text-[10px] font-bold uppercase"
                                 >
                                     Required
                                 </Badge>
@@ -322,7 +366,8 @@ export default function DeliverySlotPicker({
                             <Loader2 className="size-3.5 animate-spin" />
                             <span>Saving...</span>
                         </div>
-                    ) : saveStatus && (selectedSlotId || !activeRule.show_time_slots) ? (
+                    ) : saveStatus &&
+                      (selectedSlotId || !activeRule.show_time_slots) ? (
                         <div className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
                             <CheckCircle2 className="size-3.5" />
                             <span>{saveStatus}</span>
@@ -338,15 +383,16 @@ export default function DeliverySlotPicker({
 
                 {/* 1. Date Chips */}
                 <div className="mt-4">
-                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    <Label className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                         {activeRule.max_days === 1
                             ? '1. Delivery Day (1-Day Delivery Only)'
                             : `1. Choose Delivery Date (1–${activeRule.max_days} Days)`}
                     </Label>
-                    <div className="mt-2 flex gap-2 overflow-x-auto pb-2 scrollbar-thin">
+                    <div className="mt-2 flex scrollbar-thin gap-2 overflow-x-auto pb-2">
                         {visibleDates.map((d) => {
                             const isSelected = selectedDate === d.date;
-                            const isSelectable = !activeRule.show_time_slots || d.is_available;
+                            const isSelectable =
+                                !activeRule.show_time_slots || d.is_available;
                             return (
                                 <button
                                     key={d.date}
@@ -354,15 +400,15 @@ export default function DeliverySlotPicker({
                                     disabled={!isSelectable}
                                     onClick={() => handleSelectDate(d.date)}
                                     className={cn(
-                                        'flex min-w-[92px] flex-col items-center justify-center rounded-xl border p-2.5 text-center transition-all cursor-pointer',
+                                        'flex min-w-[92px] cursor-pointer flex-col items-center justify-center rounded-xl border p-2.5 text-center transition-all',
                                         isSelected
                                             ? 'border-sky-600 bg-sky-500/10 text-sky-950 ring-2 ring-sky-500/30 dark:bg-sky-950/40 dark:text-sky-100'
                                             : isSelectable
-                                              ? 'border-border bg-card hover:border-sky-500/40 hover:bg-muted/40 text-foreground'
-                                              : 'cursor-not-allowed border-dashed border-border/50 bg-muted/20 opacity-40 text-muted-foreground',
+                                              ? 'border-border bg-card text-foreground hover:border-sky-500/40 hover:bg-muted/40'
+                                              : 'cursor-not-allowed border-dashed border-border/50 bg-muted/20 text-muted-foreground opacity-40',
                                     )}
                                 >
-                                    <span className="text-[11px] font-medium uppercase text-muted-foreground">
+                                    <span className="text-[11px] font-medium text-muted-foreground uppercase">
                                         {d.is_today
                                             ? 'Today'
                                             : d.is_tomorrow
@@ -388,7 +434,7 @@ export default function DeliverySlotPicker({
                 {/* 2. Slot Selection (Hidden when show_time_slots is false, e.g. Instant 1-Day Delivery) */}
                 {activeRule.show_time_slots && (
                     <div className="mt-5">
-                        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        <Label className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                             2. Choose Time Slot
                         </Label>
 
@@ -399,29 +445,33 @@ export default function DeliverySlotPicker({
                             </div>
                         ) : slots.length === 0 ? (
                             <div className="mt-2 rounded-lg border border-dashed p-4 text-center text-xs text-muted-foreground">
-                                No time slots available for this date. Please choose another date.
+                                No time slots available for this date. Please
+                                choose another date.
                             </div>
                         ) : (
                             <div className="mt-2 grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:grid-cols-3">
                                 {slots.map((slot) => {
-                                    const isSelected = selectedSlotId === slot.id;
+                                    const isSelected =
+                                        selectedSlotId === slot.id;
                                     return (
                                         <button
                                             key={slot.id}
                                             type="button"
                                             disabled={!slot.is_available}
-                                            onClick={() => handleSlotClick(slot)}
+                                            onClick={() =>
+                                                handleSlotClick(slot)
+                                            }
                                             className={cn(
-                                                'relative flex flex-col justify-between rounded-lg border p-3 text-left transition-all cursor-pointer',
+                                                'relative flex cursor-pointer flex-col justify-between rounded-lg border p-3 text-left transition-all',
                                                 isSelected
-                                                    ? 'border-sky-600 bg-sky-50 dark:bg-sky-950/30 ring-1 ring-sky-600'
+                                                    ? 'border-sky-600 bg-sky-50 ring-1 ring-sky-600 dark:bg-sky-950/30'
                                                     : slot.is_available
                                                       ? 'border-border bg-card hover:border-sky-500/50 hover:bg-muted/30'
                                                       : 'cursor-not-allowed border-dashed bg-muted/30 opacity-50',
                                             )}
                                         >
                                             <div className="flex items-start justify-between gap-1">
-                                                <div className="font-semibold text-xs text-foreground">
+                                                <div className="text-xs font-semibold text-foreground">
                                                     {slot.name}
                                                 </div>
                                                 {slot.fee > 0 ? (
@@ -443,34 +493,42 @@ export default function DeliverySlotPicker({
 
                                             <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
                                                 <Clock className="size-3 text-sky-600" />
-                                                <span>{slot.formatted_time}</span>
+                                                <span>
+                                                    {slot.formatted_time}
+                                                </span>
                                             </div>
 
                                             <div className="mt-2 flex items-center justify-between text-[10px]">
                                                 {slot.is_available ? (
-                                                    slot.remaining_orders !== null ? (
+                                                    slot.remaining_orders !==
+                                                    null ? (
                                                         <span
                                                             className={cn(
-                                                                slot.remaining_orders <= 3
+                                                                slot.remaining_orders <=
+                                                                    3
                                                                     ? 'font-medium text-amber-600 dark:text-amber-400'
                                                                     : 'text-muted-foreground',
                                                             )}
                                                         >
-                                                            {slot.remaining_orders} slots left
+                                                            {
+                                                                slot.remaining_orders
+                                                            }{' '}
+                                                            slots left
                                                         </span>
                                                     ) : (
-                                                        <span className="text-emerald-600 dark:text-emerald-400 font-medium">
+                                                        <span className="font-medium text-emerald-600 dark:text-emerald-400">
                                                             Available
                                                         </span>
                                                     )
                                                 ) : (
-                                                    <span className="text-destructive font-medium">
-                                                        {slot.reason || 'Unavailable'}
+                                                    <span className="font-medium text-destructive">
+                                                        {slot.reason ||
+                                                            'Unavailable'}
                                                     </span>
                                                 )}
 
                                                 {isSelected && (
-                                                    <span className="text-sky-600 font-bold">
+                                                    <span className="font-bold text-sky-600">
                                                         Selected
                                                     </span>
                                                 )}
@@ -489,7 +547,7 @@ export default function DeliverySlotPicker({
                         <FileText className="size-3.5 text-muted-foreground" />
                         <Label
                             htmlFor="delivery-instructions"
-                            className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                            className="text-xs font-semibold tracking-wider text-muted-foreground uppercase"
                         >
                             {activeRule.show_time_slots
                                 ? '3. Special Delivery Instructions (Optional)'
@@ -507,7 +565,8 @@ export default function DeliverySlotPicker({
                         className="mt-2 text-xs"
                     />
                     <p className="mt-1 text-[11px] text-muted-foreground">
-                        Your driver will see these notes when delivering your order.
+                        Your driver will see these notes when delivering your
+                        order.
                     </p>
                 </div>
             </CardContent>

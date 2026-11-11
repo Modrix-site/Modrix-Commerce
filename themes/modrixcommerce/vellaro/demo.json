@@ -23,9 +23,7 @@
             "stock": 10,
             "short_description": "Optional Vellaro demonstration product.",
             "description": "Theme demonstration content. Replace materials, sizing and fulfillment details before selling.",
-            "categories": [
-                "vellaro-shirts"
-            ],
+            "categories": ["vellaro-shirts"],
             "image": "assets/shirt.jpg"
         },
         {
@@ -37,9 +35,7 @@
             "stock": 10,
             "short_description": "Optional Vellaro demonstration product.",
             "description": "Theme demonstration content. Replace materials, sizing and fulfillment details before selling.",
-            "categories": [
-                "vellaro-trousers"
-            ],
+            "categories": ["vellaro-trousers"],
             "image": "assets/chinos.jpg"
         },
         {
@@ -51,9 +47,7 @@
             "stock": 10,
             "short_description": "Optional Vellaro demonstration product.",
             "description": "Theme demonstration content. Replace materials, sizing and fulfillment details before selling.",
-            "categories": [
-                "vellaro-essentials"
-            ],
+            "categories": ["vellaro-essentials"],
             "image": "assets/top.jpg"
         },
         {
@@ -65,9 +59,7 @@
             "stock": 10,
             "short_description": "Optional Vellaro demonstration product.",
             "description": "Theme demonstration content. Replace materials, sizing and fulfillment details before selling.",
-            "categories": [
-                "vellaro-shirts"
-            ],
+            "categories": ["vellaro-shirts"],
             "image": "assets/shirt.jpg"
         },
         {
@@ -79,9 +71,7 @@
             "stock": 10,
             "short_description": "Optional Vellaro demonstration product.",
             "description": "Theme demonstration content. Replace materials, sizing and fulfillment details before selling.",
-            "categories": [
-                "vellaro-trousers"
-            ],
+            "categories": ["vellaro-trousers"],
             "image": "assets/chinos.jpg"
         }
     ]

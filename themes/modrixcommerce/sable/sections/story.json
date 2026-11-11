@@ -67,8 +67,6 @@
         }
     ],
     "enabled_on": {
-        "templates": [
-            "*"
-        ]
+        "templates": ["*"]
     }
 }

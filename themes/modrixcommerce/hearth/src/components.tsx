@@ -68,14 +68,16 @@ export function HearthCard({ product }: { product: ProductCard }) {
                 ) : (
                     <ImageOff size={34} />
                 )}
-                {product.image && catalog.hover_image && product.hover_image && (
-                    <img
-                        className='store-card-hover'
-                        src={product.hover_image.url}
-                        alt=''
-                        loading='lazy'
-                    />
-                )}
+                {product.image &&
+                    catalog.hover_image &&
+                    product.hover_image && (
+                        <img
+                            className="store-card-hover"
+                            src={product.hover_image.url}
+                            alt=""
+                            loading="lazy"
+                        />
+                    )}
             </Link>
             <Link href={url} className="hearth-card-info">
                 <strong>

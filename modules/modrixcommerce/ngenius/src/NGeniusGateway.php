@@ -77,10 +77,10 @@ final class NGeniusGateway implements PaymentGateway
             throw new GatewayException("N-Genius is not configured for currency {$payment->currency}.");
         }
 
-        $merchantOrderReference = 'ORD-' . $order->number . '-' . $payment->id;
+        $merchantOrderReference = 'ORD-'.$order->number.'-'.$payment->id;
         $minorAmount = NGeniusAmount::toMinorUnits($payment->money());
 
-        $callbackUrl = route('modrixcommerce.ngenius.response') . '?payment_id=' . $payment->id;
+        $callbackUrl = route('modrixcommerce.ngenius.response').'?payment_id='.$payment->id;
 
         $payload = [
             'action' => $this->settings->action(),
@@ -104,7 +104,7 @@ final class NGeniusGateway implements PaymentGateway
         try {
             $response = $this->api->createOrder($payload);
         } catch (Throwable $e) {
-            throw new GatewayException('Failed to create N-Genius payment order: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Failed to create N-Genius payment order: '.$e->getMessage(), 0, $e);
         }
 
         $orderReference = (string) ($response['reference'] ?? '');
@@ -138,7 +138,7 @@ final class NGeniusGateway implements PaymentGateway
         try {
             $response = $this->api->getOrder($orderReference);
         } catch (Throwable $e) {
-            throw new GatewayException('Could not retrieve payment status from N-Genius: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Could not retrieve payment status from N-Genius: '.$e->getMessage(), 0, $e);
         }
 
         return $this->buildPaymentUpdate($response, $orderReference);
@@ -232,7 +232,7 @@ final class NGeniusGateway implements PaymentGateway
                     $paymentRef = (string) $payments[0]['reference'];
                 }
             } catch (Throwable $e) {
-                throw new GatewayException('Failed to discover N-Genius payment reference for refund: ' . $e->getMessage(), 0, $e);
+                throw new GatewayException('Failed to discover N-Genius payment reference for refund: '.$e->getMessage(), 0, $e);
             }
         }
 
@@ -250,10 +250,10 @@ final class NGeniusGateway implements PaymentGateway
         try {
             $response = $this->api->refund($orderRef, $paymentRef, $payload);
         } catch (Throwable $e) {
-            throw new GatewayException('N-Genius refund request failed: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('N-Genius refund request failed: '.$e->getMessage(), 0, $e);
         }
 
-        $refundRef = (string) ($response['reference'] ?? ('ref_' . substr($idempotencyKey, 0, 18)));
+        $refundRef = (string) ($response['reference'] ?? ('ref_'.substr($idempotencyKey, 0, 18)));
         $state = strtoupper((string) ($response['state'] ?? 'SUCCESS'));
 
         $status = match ($state) {

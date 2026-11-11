@@ -144,9 +144,7 @@
         }
     ],
     "enabled_on": {
-        "groups": [
-            "header"
-        ]
+        "groups": ["header"]
     },
     "limit": 1
 }

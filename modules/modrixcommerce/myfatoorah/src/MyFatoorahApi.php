@@ -38,7 +38,7 @@ final class MyFatoorahApi
      */
     public function executePayment(array $payload): array
     {
-        $url = $this->baseUrl() . '/v2/ExecutePayment';
+        $url = $this->baseUrl().'/v2/ExecutePayment';
 
         $response = $this->sendRequest('POST', $url, $payload);
 
@@ -46,7 +46,7 @@ final class MyFatoorahApi
             $msg = $response['Message'] ?? 'Failed to execute MyFatoorah payment.';
             if (! empty($response['ValidationErrors']) && is_array($response['ValidationErrors'])) {
                 $errDetails = collect($response['ValidationErrors'])->pluck('Error')->implode(', ');
-                $msg .= ' (' . $errDetails . ')';
+                $msg .= ' ('.$errDetails.')';
             }
             throw new GatewayException("MyFatoorah: {$msg}");
         }
@@ -63,7 +63,7 @@ final class MyFatoorahApi
      */
     public function getPaymentStatus(string $key, string $keyType = 'InvoiceId'): array
     {
-        $url = $this->baseUrl() . '/v2/GetPaymentStatus';
+        $url = $this->baseUrl().'/v2/GetPaymentStatus';
 
         $payload = [
             'Key' => $key,
@@ -89,7 +89,7 @@ final class MyFatoorahApi
      */
     public function makeRefund(string $key, float $amount, string $currency, string $reason, string $keyType = 'InvoiceId'): array
     {
-        $url = $this->baseUrl() . '/v2/MakeRefund';
+        $url = $this->baseUrl().'/v2/MakeRefund';
 
         $payload = [
             'KeyType' => $keyType,
@@ -124,7 +124,7 @@ final class MyFatoorahApi
                 throw new GatewayException('MyFatoorah API Key must be configured.');
             }
 
-            $url = $this->baseUrl() . '/v2/InitiatePayment';
+            $url = $this->baseUrl().'/v2/InitiatePayment';
             $payload = [
                 'InvoiceAmount' => 10,
                 'CurrencyIso' => 'AED',
@@ -135,7 +135,7 @@ final class MyFatoorahApi
             if ($response['IsSuccess'] ?? false) {
                 return [
                     'success' => true,
-                    'message' => 'Connected successfully to MyFatoorah (' . ($this->settings->testMode() ? 'Test Environment' : 'Production') . ').',
+                    'message' => 'Connected successfully to MyFatoorah ('.($this->settings->testMode() ? 'Test Environment' : 'Production').').',
                 ];
             }
 
@@ -175,7 +175,7 @@ final class MyFatoorahApi
             throw new GatewayException('Network error connecting to MyFatoorah service.', 0, $e);
         } catch (Throwable $e) {
             Log::error('MyFatoorah request error', ['url' => $url, 'error' => $e->getMessage()]);
-            throw new GatewayException('Failed to communicate with MyFatoorah service: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Failed to communicate with MyFatoorah service: '.$e->getMessage(), 0, $e);
         }
 
         if ($response->failed()) {
@@ -188,7 +188,7 @@ final class MyFatoorahApi
 
         $decoded = $response->json();
         if (! is_array($decoded)) {
-            throw new GatewayException('MyFatoorah response could not be parsed as JSON: ' . substr($response->body(), 0, 100));
+            throw new GatewayException('MyFatoorah response could not be parsed as JSON: '.substr($response->body(), 0, 100));
         }
 
         return $decoded;

@@ -105,7 +105,9 @@ export default function CartAbandonmentAdmin({
     scanUrl,
     exportUrl,
 }: Props) {
-    const [selectedCart, setSelectedCart] = useState<AbandonedCartRow | null>(null);
+    const [selectedCart, setSelectedCart] = useState<AbandonedCartRow | null>(
+        null,
+    );
     const [search, setSearch] = useState(filters.search || '');
     const [isScanning, setIsScanning] = useState(false);
     const [copiedId, setCopiedId] = useState<number | null>(null);
@@ -115,7 +117,7 @@ export default function CartAbandonmentAdmin({
         router.get(
             window.location.pathname,
             { status: filters.status, search },
-            { preserveState: true }
+            { preserveState: true },
         );
     }
 
@@ -123,16 +125,20 @@ export default function CartAbandonmentAdmin({
         router.get(
             window.location.pathname,
             { status, search: filters.search },
-            { preserveState: true }
+            { preserveState: true },
         );
     }
 
     function handleScan() {
         setIsScanning(true);
-        router.post(scanUrl, {}, {
-            preserveScroll: true,
-            onFinish: () => setIsScanning(false),
-        });
+        router.post(
+            scanUrl,
+            {},
+            {
+                preserveScroll: true,
+                onFinish: () => setIsScanning(false),
+            },
+        );
     }
 
     function copyRecoveryUrl(cart: AbandonedCartRow) {
@@ -145,19 +151,19 @@ export default function CartAbandonmentAdmin({
         switch (status) {
             case 'recovered':
                 return (
-                    <Badge className="bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/25 border-emerald-200 dark:text-emerald-400">
+                    <Badge className="border-emerald-200 bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/25 dark:text-emerald-400">
                         <CheckCircle2 className="mr-1 size-3" /> Recovered
                     </Badge>
                 );
             case 'in_recovery':
                 return (
-                    <Badge className="bg-blue-500/15 text-blue-700 hover:bg-blue-500/25 border-blue-200 dark:text-blue-400">
+                    <Badge className="border-blue-200 bg-blue-500/15 text-blue-700 hover:bg-blue-500/25 dark:text-blue-400">
                         <TrendingUp className="mr-1 size-3" /> In Recovery
                     </Badge>
                 );
             case 'abandoned':
                 return (
-                    <Badge className="bg-amber-500/15 text-amber-700 hover:bg-amber-500/25 border-amber-200 dark:text-amber-400">
+                    <Badge className="border-amber-200 bg-amber-500/15 text-amber-700 hover:bg-amber-500/25 dark:text-amber-400">
                         <Clock className="mr-1 size-3" /> Abandoned
                     </Badge>
                 );
@@ -169,7 +175,10 @@ export default function CartAbandonmentAdmin({
                 );
             case 'unsubscribed':
                 return (
-                    <Badge variant="outline" className="border-purple-300 text-purple-700 dark:text-purple-400">
+                    <Badge
+                        variant="outline"
+                        className="border-purple-300 text-purple-700 dark:text-purple-400"
+                    >
                         Unsubscribed
                     </Badge>
                 );
@@ -192,12 +201,15 @@ export default function CartAbandonmentAdmin({
                                 onClick={handleScan}
                                 disabled={isScanning}
                             >
-                                <RefreshCw className={`size-4 mr-2 ${isScanning ? 'animate-spin' : ''}`} />
+                                <RefreshCw
+                                    className={`mr-2 size-4 ${isScanning ? 'animate-spin' : ''}`}
+                                />
                                 Run Scanner
                             </Button>
                             <Button variant="outline" asChild>
                                 <a href={exportUrl}>
-                                    <Download className="size-4 mr-2" /> Export CSV
+                                    <Download className="mr-2 size-4" /> Export
+                                    CSV
                                 </a>
                             </Button>
                         </div>
@@ -209,7 +221,7 @@ export default function CartAbandonmentAdmin({
                     <Card>
                         <CardContent className="p-5">
                             <div className="flex items-center justify-between">
-                                <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                                <span className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
                                     Recovered Revenue
                                 </span>
                                 <div className="rounded-full bg-emerald-500/10 p-2 text-emerald-600 dark:text-emerald-400">
@@ -233,7 +245,7 @@ export default function CartAbandonmentAdmin({
                     <Card>
                         <CardContent className="p-5">
                             <div className="flex items-center justify-between">
-                                <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                                <span className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
                                     Recovery Rate
                                 </span>
                                 <div className="rounded-full bg-blue-500/10 p-2 text-blue-600 dark:text-blue-400">
@@ -249,7 +261,8 @@ export default function CartAbandonmentAdmin({
                                 </span>
                             </div>
                             <p className="mt-1 text-xs text-muted-foreground">
-                                {stats.total_recovered} of {stats.total_abandoned} abandoned carts
+                                {stats.total_recovered} of{' '}
+                                {stats.total_abandoned} abandoned carts
                             </p>
                         </CardContent>
                     </Card>
@@ -257,7 +270,7 @@ export default function CartAbandonmentAdmin({
                     <Card>
                         <CardContent className="p-5">
                             <div className="flex items-center justify-between">
-                                <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                                <span className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
                                     Potential Lost Value
                                 </span>
                                 <div className="rounded-full bg-amber-500/10 p-2 text-amber-600 dark:text-amber-400">
@@ -281,7 +294,7 @@ export default function CartAbandonmentAdmin({
                     <Card>
                         <CardContent className="p-5">
                             <div className="flex items-center justify-between">
-                                <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                                <span className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
                                     Email Campaign Stats
                                 </span>
                                 <div className="rounded-full bg-indigo-500/10 p-2 text-indigo-600 dark:text-indigo-400">
@@ -297,7 +310,8 @@ export default function CartAbandonmentAdmin({
                                 </span>
                             </div>
                             <p className="mt-1 text-xs text-muted-foreground">
-                                {stats.open_rate}% open &middot; {stats.click_rate}% click rate
+                                {stats.open_rate}% open &middot;{' '}
+                                {stats.click_rate}% click rate
                             </p>
                         </CardContent>
                     </Card>
@@ -316,7 +330,11 @@ export default function CartAbandonmentAdmin({
                             <Button
                                 key={tab.key}
                                 size="sm"
-                                variant={filters.status === tab.key ? 'default' : 'outline'}
+                                variant={
+                                    filters.status === tab.key
+                                        ? 'default'
+                                        : 'outline'
+                                }
                                 onClick={() => handleStatusFilter(tab.key)}
                                 className="h-8 text-xs font-medium"
                             >
@@ -325,9 +343,12 @@ export default function CartAbandonmentAdmin({
                         ))}
                     </div>
 
-                    <form onSubmit={handleSearch} className="flex items-center gap-2">
+                    <form
+                        onSubmit={handleSearch}
+                        className="flex items-center gap-2"
+                    >
                         <div className="relative">
-                            <Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
+                            <Search className="absolute top-2.5 left-2.5 size-4 text-muted-foreground" />
                             <Input
                                 type="text"
                                 placeholder="Search by email, name..."
@@ -336,7 +357,12 @@ export default function CartAbandonmentAdmin({
                                 className="h-9 w-60 pl-8 text-sm"
                             />
                         </div>
-                        <Button type="submit" size="sm" variant="secondary" className="h-9">
+                        <Button
+                            type="submit"
+                            size="sm"
+                            variant="secondary"
+                            className="h-9"
+                        >
                             Search
                         </Button>
                     </form>
@@ -356,24 +382,34 @@ export default function CartAbandonmentAdmin({
                     <div className="overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm">
                         <div className="overflow-x-auto">
                             <table className="w-full text-left text-sm">
-                                <thead className="border-b bg-muted/50 text-xs uppercase text-muted-foreground">
+                                <thead className="border-b bg-muted/50 text-xs text-muted-foreground uppercase">
                                     <tr>
                                         <th className="px-4 py-3">Customer</th>
-                                        <th className="px-4 py-3">Cart Contents</th>
+                                        <th className="px-4 py-3">
+                                            Cart Contents
+                                        </th>
                                         <th className="px-4 py-3">Value</th>
                                         <th className="px-4 py-3">Status</th>
                                         <th className="px-4 py-3">Abandoned</th>
-                                        <th className="px-4 py-3">Emails Sent</th>
-                                        <th className="px-4 py-3 text-right">Actions</th>
+                                        <th className="px-4 py-3">
+                                            Emails Sent
+                                        </th>
+                                        <th className="px-4 py-3 text-right">
+                                            Actions
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y">
                                     {carts.data.map((cart) => (
-                                        <tr key={cart.id} className="hover:bg-muted/40 transition-colors">
+                                        <tr
+                                            key={cart.id}
+                                            className="transition-colors hover:bg-muted/40"
+                                        >
                                             <td className="px-4 py-3 font-medium">
                                                 <div className="flex flex-col">
                                                     <span className="font-semibold text-foreground">
-                                                        {cart.customer_name || 'Guest shopper'}
+                                                        {cart.customer_name ||
+                                                            'Guest shopper'}
                                                     </span>
                                                     <span className="text-xs text-muted-foreground">
                                                         {cart.email}
@@ -389,26 +425,41 @@ export default function CartAbandonmentAdmin({
                                             <td className="px-4 py-3">
                                                 <div className="flex items-center gap-2">
                                                     <span className="font-medium text-foreground">
-                                                        {cart.items_count} {cart.items_count === 1 ? 'item' : 'items'}
+                                                        {cart.items_count}{' '}
+                                                        {cart.items_count === 1
+                                                            ? 'item'
+                                                            : 'items'}
                                                     </span>
                                                     <div className="flex -space-x-2 overflow-hidden">
-                                                        {cart.items_snapshot.slice(0, 3).map((item, idx) => (
-                                                            item.image_url ? (
-                                                                <img
-                                                                    key={idx}
-                                                                    src={item.image_url}
-                                                                    alt={item.product_name}
-                                                                    className="inline-block size-6 rounded-full border border-background object-cover"
-                                                                />
-                                                            ) : (
-                                                                <div
-                                                                    key={idx}
-                                                                    className="inline-flex size-6 items-center justify-center rounded-full border border-background bg-muted text-[10px] font-semibold text-muted-foreground"
-                                                                >
-                                                                    {item.product_name.charAt(0)}
-                                                                </div>
-                                                            )
-                                                        ))}
+                                                        {cart.items_snapshot
+                                                            .slice(0, 3)
+                                                            .map((item, idx) =>
+                                                                item.image_url ? (
+                                                                    <img
+                                                                        key={
+                                                                            idx
+                                                                        }
+                                                                        src={
+                                                                            item.image_url
+                                                                        }
+                                                                        alt={
+                                                                            item.product_name
+                                                                        }
+                                                                        className="inline-block size-6 rounded-full border border-background object-cover"
+                                                                    />
+                                                                ) : (
+                                                                    <div
+                                                                        key={
+                                                                            idx
+                                                                        }
+                                                                        className="inline-flex size-6 items-center justify-center rounded-full border border-background bg-muted text-[10px] font-semibold text-muted-foreground"
+                                                                    >
+                                                                        {item.product_name.charAt(
+                                                                            0,
+                                                                        )}
+                                                                    </div>
+                                                                ),
+                                                            )}
                                                     </div>
                                                 </div>
                                             </td>
@@ -429,13 +480,21 @@ export default function CartAbandonmentAdmin({
                                             <td className="px-4 py-3 text-xs">
                                                 <div className="flex items-center gap-1.5 font-medium">
                                                     <Mail className="size-3.5 text-muted-foreground" />
-                                                    <span>{cart.emails_sent_count} / 3</span>
+                                                    <span>
+                                                        {cart.emails_sent_count}{' '}
+                                                        / 3
+                                                    </span>
                                                 </div>
-                                                {cart.next_email_scheduled_at && cart.status === 'abandoned' && (
-                                                    <div className="text-[11px] text-muted-foreground">
-                                                        Next: {cart.next_email_scheduled_at}
-                                                    </div>
-                                                )}
+                                                {cart.next_email_scheduled_at &&
+                                                    cart.status ===
+                                                        'abandoned' && (
+                                                        <div className="text-[11px] text-muted-foreground">
+                                                            Next:{' '}
+                                                            {
+                                                                cart.next_email_scheduled_at
+                                                            }
+                                                        </div>
+                                                    )}
                                             </td>
 
                                             <td className="px-4 py-3 text-right">
@@ -443,7 +502,11 @@ export default function CartAbandonmentAdmin({
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        onClick={() => setSelectedCart(cart)}
+                                                        onClick={() =>
+                                                            setSelectedCart(
+                                                                cart,
+                                                            )
+                                                        }
                                                         className="h-8 px-2"
                                                         title="View cart details"
                                                     >
@@ -453,22 +516,32 @@ export default function CartAbandonmentAdmin({
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        onClick={() => copyRecoveryUrl(cart)}
+                                                        onClick={() =>
+                                                            copyRecoveryUrl(
+                                                                cart,
+                                                            )
+                                                        }
                                                         className="h-8 px-2"
                                                         title="Copy one-click recovery link"
                                                     >
-                                                        {copiedId === cart.id ? (
+                                                        {copiedId ===
+                                                        cart.id ? (
                                                             <CheckCircle2 className="size-4 text-emerald-600" />
                                                         ) : (
                                                             <Copy className="size-4" />
                                                         )}
                                                     </Button>
 
-                                                    {cart.status === 'abandoned' && (
+                                                    {cart.status ===
+                                                        'abandoned' && (
                                                         <Form
-                                                            action={cart.send_email_url}
+                                                            action={
+                                                                cart.send_email_url
+                                                            }
                                                             method="post"
-                                                            options={{ preserveScroll: true }}
+                                                            options={{
+                                                                preserveScroll: true,
+                                                            }}
                                                         >
                                                             <Button
                                                                 size="sm"
@@ -476,7 +549,8 @@ export default function CartAbandonmentAdmin({
                                                                 className="h-8 px-2.5 text-xs"
                                                                 title="Send recovery reminder email now"
                                                             >
-                                                                <Mail className="size-3.5 mr-1" /> Send
+                                                                <Mail className="mr-1 size-3.5" />{' '}
+                                                                Send
                                                             </Button>
                                                         </Form>
                                                     )}
@@ -492,14 +566,19 @@ export default function CartAbandonmentAdmin({
                         {carts.last_page > 1 && (
                             <div className="flex items-center justify-between border-t px-4 py-3 text-xs text-muted-foreground">
                                 <div>
-                                    Showing page {carts.current_page} of {carts.last_page} ({carts.total} total)
+                                    Showing page {carts.current_page} of{' '}
+                                    {carts.last_page} ({carts.total} total)
                                 </div>
                                 <div className="flex gap-1">
                                     {carts.links.map((link, idx) => (
                                         <Button
                                             key={idx}
                                             size="sm"
-                                            variant={link.active ? 'default' : 'outline'}
+                                            variant={
+                                                link.active
+                                                    ? 'default'
+                                                    : 'outline'
+                                            }
                                             disabled={!link.url}
                                             asChild={!!link.url}
                                             className="h-7 min-w-7 px-2 text-xs"
@@ -507,10 +586,16 @@ export default function CartAbandonmentAdmin({
                                             {link.url ? (
                                                 <a
                                                     href={link.url}
-                                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: link.label,
+                                                    }}
                                                 />
                                             ) : (
-                                                <span dangerouslySetInnerHTML={{ __html: link.label }} />
+                                                <span
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: link.label,
+                                                    }}
+                                                />
                                             )}
                                         </Button>
                                     ))}
@@ -521,7 +606,10 @@ export default function CartAbandonmentAdmin({
                 )}
 
                 {/* Cart Details Modal */}
-                <Dialog open={selectedCart !== null} onOpenChange={() => setSelectedCart(null)}>
+                <Dialog
+                    open={selectedCart !== null}
+                    onOpenChange={() => setSelectedCart(null)}
+                >
                     <DialogContent className="max-w-2xl">
                         <DialogHeader>
                             <DialogTitle className="flex items-center gap-2">
@@ -529,7 +617,8 @@ export default function CartAbandonmentAdmin({
                                 Abandoned Cart #{selectedCart?.id}
                             </DialogTitle>
                             <DialogDescription>
-                                Customer details, cart items snapshot, and recovery actions.
+                                Customer details, cart items snapshot, and
+                                recovery actions.
                             </DialogDescription>
                         </DialogHeader>
 
@@ -537,25 +626,34 @@ export default function CartAbandonmentAdmin({
                             <div className="space-y-4 text-sm">
                                 <div className="grid grid-cols-2 gap-3 rounded-lg border bg-muted/40 p-3 text-xs sm:grid-cols-4">
                                     <div>
-                                        <span className="text-muted-foreground block">Customer:</span>
+                                        <span className="block text-muted-foreground">
+                                            Customer:
+                                        </span>
                                         <span className="font-semibold text-foreground">
-                                            {selectedCart.customer_name || 'Guest'}
+                                            {selectedCart.customer_name ||
+                                                'Guest'}
                                         </span>
                                     </div>
                                     <div>
-                                        <span className="text-muted-foreground block">Email:</span>
+                                        <span className="block text-muted-foreground">
+                                            Email:
+                                        </span>
                                         <span className="font-semibold text-foreground">
                                             {selectedCart.email}
                                         </span>
                                     </div>
                                     <div>
-                                        <span className="text-muted-foreground block">Status:</span>
+                                        <span className="block text-muted-foreground">
+                                            Status:
+                                        </span>
                                         <span className="mt-0.5 inline-block">
                                             {statusBadge(selectedCart.status)}
                                         </span>
                                     </div>
                                     <div>
-                                        <span className="text-muted-foreground block">Total Value:</span>
+                                        <span className="block text-muted-foreground">
+                                            Total Value:
+                                        </span>
                                         <span className="font-semibold text-foreground">
                                             {selectedCart.formatted_subtotal}
                                         </span>
@@ -563,94 +661,135 @@ export default function CartAbandonmentAdmin({
                                 </div>
 
                                 <div>
-                                    <h4 className="font-semibold text-xs uppercase tracking-wider text-muted-foreground mb-2">
+                                    <h4 className="mb-2 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                                         Cart Items ({selectedCart.items_count})
                                     </h4>
                                     <div className="divide-y rounded-md border">
-                                        {selectedCart.items_snapshot.map((item, i) => (
-                                            <div key={i} className="flex items-center justify-between p-3 text-xs">
-                                                <div className="flex items-center gap-3">
-                                                    {item.image_url ? (
-                                                        <img
-                                                            src={item.image_url}
-                                                            alt={item.product_name}
-                                                            className="size-10 rounded border object-cover"
-                                                        />
-                                                    ) : (
-                                                        <div className="flex size-10 items-center justify-center rounded border bg-muted font-bold text-muted-foreground">
-                                                            {item.product_name.charAt(0)}
-                                                        </div>
-                                                    )}
-                                                    <div>
-                                                        <div className="font-medium text-foreground">
-                                                            {item.product_name}
-                                                        </div>
-                                                        {item.variant_name && (
-                                                            <div className="text-muted-foreground">
-                                                                {item.variant_name}
+                                        {selectedCart.items_snapshot.map(
+                                            (item, i) => (
+                                                <div
+                                                    key={i}
+                                                    className="flex items-center justify-between p-3 text-xs"
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        {item.image_url ? (
+                                                            <img
+                                                                src={
+                                                                    item.image_url
+                                                                }
+                                                                alt={
+                                                                    item.product_name
+                                                                }
+                                                                className="size-10 rounded border object-cover"
+                                                            />
+                                                        ) : (
+                                                            <div className="flex size-10 items-center justify-center rounded border bg-muted font-bold text-muted-foreground">
+                                                                {item.product_name.charAt(
+                                                                    0,
+                                                                )}
                                                             </div>
                                                         )}
-                                                        {item.sku && (
-                                                            <div className="text-[11px] text-muted-foreground font-mono">
-                                                                SKU: {item.sku}
+                                                        <div>
+                                                            <div className="font-medium text-foreground">
+                                                                {
+                                                                    item.product_name
+                                                                }
                                                             </div>
-                                                        )}
+                                                            {item.variant_name && (
+                                                                <div className="text-muted-foreground">
+                                                                    {
+                                                                        item.variant_name
+                                                                    }
+                                                                </div>
+                                                            )}
+                                                            {item.sku && (
+                                                                <div className="font-mono text-[11px] text-muted-foreground">
+                                                                    SKU:{' '}
+                                                                    {item.sku}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <div className="font-semibold text-foreground">
+                                                            {
+                                                                item.formatted_price
+                                                            }
+                                                        </div>
+                                                        <div className="text-muted-foreground">
+                                                            Qty: {item.quantity}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div className="text-right">
-                                                    <div className="font-semibold text-foreground">
-                                                        {item.formatted_price}
-                                                    </div>
-                                                    <div className="text-muted-foreground">
-                                                        Qty: {item.quantity}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))}
+                                            ),
+                                        )}
                                     </div>
                                 </div>
 
-                                <div className="rounded-lg border p-3 bg-muted/20">
-                                    <span className="text-xs font-semibold text-foreground block mb-1">
+                                <div className="rounded-lg border bg-muted/20 p-3">
+                                    <span className="mb-1 block text-xs font-semibold text-foreground">
                                         One-Click Recovery Link
                                     </span>
                                     <div className="flex items-center gap-2">
                                         <Input
                                             readOnly
                                             value={selectedCart.recovery_url}
-                                            className="h-8 text-xs font-mono bg-background"
+                                            className="h-8 bg-background font-mono text-xs"
                                         />
                                         <Button
                                             size="sm"
                                             variant="secondary"
-                                            onClick={() => copyRecoveryUrl(selectedCart)}
+                                            onClick={() =>
+                                                copyRecoveryUrl(selectedCart)
+                                            }
                                             className="h-8 shrink-0"
                                         >
-                                            {copiedId === selectedCart.id ? 'Copied!' : 'Copy'}
+                                            {copiedId === selectedCart.id
+                                                ? 'Copied!'
+                                                : 'Copy'}
                                         </Button>
                                     </div>
                                 </div>
 
-                                <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t">
+                                <div className="flex flex-wrap items-center justify-between gap-2 border-t pt-2">
                                     <div className="flex items-center gap-2">
-                                        {selectedCart.status !== 'lost' && selectedCart.status !== 'recovered' && (
+                                        {selectedCart.status !== 'lost' &&
+                                            selectedCart.status !==
+                                                'recovered' && (
+                                                <Form
+                                                    action={
+                                                        selectedCart.mark_lost_url
+                                                    }
+                                                    method="post"
+                                                    options={{
+                                                        preserveScroll: true,
+                                                    }}
+                                                >
+                                                    <Button
+                                                        size="sm"
+                                                        variant="ghost"
+                                                        className="text-xs text-muted-foreground"
+                                                    >
+                                                        Mark as Lost
+                                                    </Button>
+                                                </Form>
+                                            )}
+                                        {selectedCart.status !==
+                                            'recovered' && (
                                             <Form
-                                                action={selectedCart.mark_lost_url}
+                                                action={
+                                                    selectedCart.mark_recovered_url
+                                                }
                                                 method="post"
-                                                options={{ preserveScroll: true }}
+                                                options={{
+                                                    preserveScroll: true,
+                                                }}
                                             >
-                                                <Button size="sm" variant="ghost" className="text-xs text-muted-foreground">
-                                                    Mark as Lost
-                                                </Button>
-                                            </Form>
-                                        )}
-                                        {selectedCart.status !== 'recovered' && (
-                                            <Form
-                                                action={selectedCart.mark_recovered_url}
-                                                method="post"
-                                                options={{ preserveScroll: true }}
-                                            >
-                                                <Button size="sm" variant="ghost" className="text-xs text-emerald-600">
+                                                <Button
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    className="text-xs text-emerald-600"
+                                                >
                                                     Mark as Recovered
                                                 </Button>
                                             </Form>
@@ -658,7 +797,13 @@ export default function CartAbandonmentAdmin({
                                     </div>
 
                                     <div className="flex items-center gap-2">
-                                        <Button size="sm" variant="outline" onClick={() => setSelectedCart(null)}>
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() =>
+                                                setSelectedCart(null)
+                                            }
+                                        >
                                             Close
                                         </Button>
                                         <Form
@@ -667,7 +812,8 @@ export default function CartAbandonmentAdmin({
                                             options={{ preserveScroll: true }}
                                         >
                                             <Button size="sm">
-                                                <Mail className="size-4 mr-1.5" /> Send Reminder Email
+                                                <Mail className="mr-1.5 size-4" />{' '}
+                                                Send Reminder Email
                                             </Button>
                                         </Form>
                                     </div>

@@ -3,19 +3,21 @@
 namespace Tests\Feature\Extensions\ImageStudio;
 
 use App\Core\Settings\SettingsRepository;
+use App\Domains\Catalog\Models\ProductImage;
 use EcoModular\ImageStudio\Jobs\ProcessProductImage;
 use EcoModular\ImageStudio\Models\ImageVariant;
+use EcoModular\ImageStudio\Services\ImageStudio;
 use EcoModular\ImageStudio\Support\ImageStudioSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
-use Throwable;
 use Tests\Support\CommerceFixtures;
 use Tests\Support\ImageStudioFixtures;
 use Tests\Support\ModuleFixtures;
 use Tests\TestCase;
+use Throwable;
 
 class RemoveBgRemoverTest extends TestCase
 {
@@ -52,7 +54,7 @@ class RemoveBgRemoverTest extends TestCase
     private function runJob(int $id): ?Throwable
     {
         try {
-            app(\EcoModular\ImageStudio\Services\ImageStudio::class)->markPending(\App\Domains\Catalog\Models\ProductImage::query()->findOrFail($id));
+            app(ImageStudio::class)->markPending(ProductImage::query()->findOrFail($id));
             ProcessProductImage::dispatchSync($id);
         } catch (Throwable $e) {
             return $e;

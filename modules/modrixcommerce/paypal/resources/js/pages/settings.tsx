@@ -97,9 +97,9 @@ export default function PaypalSettingsPage({
                         <CardTitle>1. PayPal app</CardTitle>
                         <CardDescription>
                             In the PayPal developer dashboard, open your REST
-                            app and copy the client ID and secret. Use a
-                            sandbox app while testing. Live mode charges real
-                            payments and requires https.
+                            app and copy the client ID and secret. Use a sandbox
+                            app while testing. Live mode charges real payments
+                            and requires https.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -211,8 +211,7 @@ export default function PaypalSettingsPage({
                         <CardDescription>
                             In the same PayPal app, add a webhook for this URL
                             and subscribe to CHECKOUT.ORDER.APPROVED,
-                            PAYMENT.CAPTURE.COMPLETED,
-                            PAYMENT.CAPTURE.DENIED,
+                            PAYMENT.CAPTURE.COMPLETED, PAYMENT.CAPTURE.DENIED,
                             PAYMENT.CAPTURE.PENDING and
                             PAYMENT.CAPTURE.REFUNDED. Copy the webhook ID into
                             the field above. The store still reads the order
@@ -237,11 +236,10 @@ export default function PaypalSettingsPage({
                         </div>
                         {!publicWebhookUrl && (
                             <p className="text-sm text-destructive">
-                                PayPal can only reach a public https://
-                                address. Set APP_URL to your store&apos;s https
-                                address before relying on webhooks. The
-                                customer&apos;s return from PayPal still works
-                                on this address.
+                                PayPal can only reach a public https:// address.
+                                Set APP_URL to your store&apos;s https address
+                                before relying on webhooks. The customer&apos;s
+                                return from PayPal still works on this address.
                             </p>
                         )}
                         <Form

@@ -93,10 +93,10 @@ final class PaytmChecksum
 
     private static function calculateHash(string $params, string $salt): string
     {
-        $finalString = $params . '|' . $salt;
+        $finalString = $params.'|'.$salt;
         $hash = hash('sha256', $finalString);
 
-        return $hash . $salt;
+        return $hash.$salt;
     }
 
     /**

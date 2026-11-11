@@ -2,8 +2,8 @@
 
 use EcoModular\FraudDetection\Http\Controllers\FraudDashboardController;
 use EcoModular\FraudDetection\Http\Controllers\FraudQueueController;
-use EcoModular\FraudDetection\Http\Controllers\FraudRulesController;
 use EcoModular\FraudDetection\Http\Controllers\FraudReportsController;
+use EcoModular\FraudDetection\Http\Controllers\FraudRulesController;
 use EcoModular\FraudDetection\Http\Controllers\FraudSettingsController;
 use Illuminate\Support\Facades\Route;
 

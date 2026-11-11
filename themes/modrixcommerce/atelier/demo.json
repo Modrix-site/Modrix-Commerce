@@ -25,9 +25,7 @@
             "stock": 15,
             "short_description": "Handcrafted full-grain leather satchel with adjustable shoulder strap and dedicated compartment.",
             "description": "Original Atelier demonstration product. Crafted with consideration and timeless minimalism.",
-            "categories": [
-                "atelier-bags"
-            ],
+            "categories": ["atelier-bags"],
             "image": "assets/hero.jpg"
         },
         {
@@ -38,9 +36,7 @@
             "stock": 25,
             "short_description": "Hardcover linen-bound archival notebook with 120gsm fountain pen friendly paper.",
             "description": "Original Atelier demonstration product. Designed to accompany quiet thought and everyday note-taking.",
-            "categories": [
-                "atelier-stationery"
-            ],
+            "categories": ["atelier-stationery"],
             "image": "assets/journal.jpg"
         },
         {
@@ -51,9 +47,7 @@
             "stock": 12,
             "short_description": "38mm brushed steel case with sapphire crystal and vegetable-tanned leather strap.",
             "description": "Original Atelier demonstration timepiece. Precision quartz movement with uncluttered indices.",
-            "categories": [
-                "atelier-accessories"
-            ],
+            "categories": ["atelier-accessories"],
             "image": "assets/watch.jpg"
         },
         {
@@ -64,9 +58,7 @@
             "stock": 18,
             "short_description": "Curated set of solid brass fountain pen and pigmented archival ink cartridges.",
             "description": "Original Atelier demonstration writing instrument edit.",
-            "categories": [
-                "atelier-stationery"
-            ],
+            "categories": ["atelier-stationery"],
             "image": "assets/writing.jpg"
         }
     ]

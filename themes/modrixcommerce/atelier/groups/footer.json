@@ -41,14 +41,8 @@
                     }
                 }
             },
-            "block_order": [
-                "col_0",
-                "col_1",
-                "col_2"
-            ]
+            "block_order": ["col_0", "col_1", "col_2"]
         }
     },
-    "order": [
-        "footer"
-    ]
+    "order": ["footer"]
 }

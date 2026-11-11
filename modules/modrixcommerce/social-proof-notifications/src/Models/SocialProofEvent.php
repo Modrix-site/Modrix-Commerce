@@ -167,7 +167,7 @@ class SocialProofEvent extends Model
             self::TYPE_ADDED_TO_CART => $location ? "{$name} from {$location}" : $name,
             self::TYPE_LOW_STOCK => 'High Demand Alert',
             self::TYPE_PRODUCT_VIEWERS => 'Trending Now',
-            self::TYPE_RECENT_REVIEW => $location ? "Verified Review by {$name}" : "Verified Review",
+            self::TYPE_RECENT_REVIEW => $location ? "Verified Review by {$name}" : 'Verified Review',
             default => 'Special Highlight',
         };
 
@@ -175,7 +175,7 @@ class SocialProofEvent extends Model
             self::TYPE_RECENT_PURCHASE => "purchased {$this->product_name}",
             self::TYPE_ADDED_TO_CART => "added {$this->product_name} to cart",
             self::TYPE_LOW_STOCK => $this->message ?: "Hurry, limited stock remaining for {$this->product_name}",
-            self::TYPE_PRODUCT_VIEWERS => $this->message ?: "Shoppers are viewing this product right now",
+            self::TYPE_PRODUCT_VIEWERS => $this->message ?: 'Shoppers are viewing this product right now',
             self::TYPE_RECENT_REVIEW => $this->message ?: "5-star rating for {$this->product_name}",
             default => $this->message ?: $this->product_name,
         };

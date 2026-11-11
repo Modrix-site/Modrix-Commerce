@@ -2,6 +2,7 @@
 
 namespace EcoModular\StorePickup\Http\Middleware;
 
+use App\Domains\Cart\Models\Cart;
 use Closure;
 use EcoModular\StorePickup\StorePickupSettings;
 use EcoModular\StorePickup\StorePickupShippingRateProvider;
@@ -97,7 +98,7 @@ class StorePickupCheckoutMiddleware
         // Cart shipping method check
         try {
             $cartId = $request->session()->get('cart_id');
-            $cart = $cartId ? \App\Domains\Cart\Models\Cart::query()->find($cartId) : null;
+            $cart = $cartId ? Cart::query()->find($cartId) : null;
             if ($cart && ! empty($cart->shipping_method_code)) {
                 return $cart->shipping_method_code === StorePickupShippingRateProvider::METHOD_CODE
                     || str_starts_with((string) $cart->shipping_method_code, 'pickup_');

@@ -82,9 +82,9 @@ final class PaytmGateway implements PaymentGateway
             throw new GatewayException('Paytm Merchant ID is missing.');
         }
 
-        $paytmOrderId = 'PTM_' . $payment->id . '_' . substr(hash_hmac('sha256', (string) $payment->id, (string) config('app.key')), 0, 10);
+        $paytmOrderId = 'PTM_'.$payment->id.'_'.substr(hash_hmac('sha256', (string) $payment->id, (string) config('app.key')), 0, 10);
         $amount = number_format((float) $payment->money()->toDisplayDecimal(), 2, '.', '');
-        $custId = 'CUST_' . ($order->user_id ?? 'GUEST_' . $order->id);
+        $custId = 'CUST_'.($order->user_id ?? 'GUEST_'.$order->id);
 
         $body = [
             'requestType' => 'Payment',
@@ -106,7 +106,7 @@ final class PaytmGateway implements PaymentGateway
         try {
             $response = $this->api->initiateTransaction($paytmOrderId, $body);
         } catch (Throwable $e) {
-            throw new GatewayException('Failed to initiate Paytm transaction: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Failed to initiate Paytm transaction: '.$e->getMessage(), 0, $e);
         }
 
         $resultStatus = $response['body']['resultInfo']['resultStatus'] ?? null;
@@ -117,7 +117,7 @@ final class PaytmGateway implements PaymentGateway
             throw new GatewayException("Paytm: {$msg}");
         }
 
-        $handoffUrl = route('modrixcommerce.paytm.handoff') . '?' . http_build_query([
+        $handoffUrl = route('modrixcommerce.paytm.handoff').'?'.http_build_query([
             'token' => $txnToken,
             'order_id' => $paytmOrderId,
             'mid' => $mid,
@@ -146,7 +146,7 @@ final class PaytmGateway implements PaymentGateway
         try {
             $response = $this->api->getTransactionStatus($orderId);
         } catch (Throwable $e) {
-            throw new GatewayException('Could not retrieve payment status from Paytm: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Could not retrieve payment status from Paytm: '.$e->getMessage(), 0, $e);
         }
 
         return $this->buildPaymentUpdate($response, $orderId);
@@ -237,7 +237,7 @@ final class PaytmGateway implements PaymentGateway
                 $statusData = $this->api->getTransactionStatus($orderId);
                 $txnId = (string) ($statusData['body']['txnId'] ?? '');
             } catch (Throwable $e) {
-                throw new GatewayException('Could not discover Paytm txnId for refund: ' . $e->getMessage(), 0, $e);
+                throw new GatewayException('Could not discover Paytm txnId for refund: '.$e->getMessage(), 0, $e);
             }
         }
 
@@ -245,13 +245,13 @@ final class PaytmGateway implements PaymentGateway
             throw new GatewayException('No Paytm transaction ID found for refund.');
         }
 
-        $refId = 'REF_' . substr($idempotencyKey, 0, 20);
+        $refId = 'REF_'.substr($idempotencyKey, 0, 20);
         $refundAmount = number_format((float) $amount->toDisplayDecimal(), 2, '.', '');
 
         try {
             $response = $this->api->refund($orderId, $txnId, $refId, $refundAmount);
         } catch (Throwable $e) {
-            throw new GatewayException('Paytm refund request failed: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Paytm refund request failed: '.$e->getMessage(), 0, $e);
         }
 
         $body = $response['body'] ?? [];

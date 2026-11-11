@@ -36,7 +36,10 @@ type Props = {
     updateUrl: string;
 };
 
-export default function BuyTogetherSettingsPage({ settings, updateUrl }: Props) {
+export default function BuyTogetherSettingsPage({
+    settings,
+    updateUrl,
+}: Props) {
     const form = useForm({
         _method: 'PUT',
         enabled: settings.enabled,
@@ -77,7 +80,8 @@ export default function BuyTogetherSettingsPage({ settings, updateUrl }: Props) 
                         <CardHeader>
                             <CardTitle>Display & Copy Customization</CardTitle>
                             <CardDescription>
-                                Customize how the "Buy Together & Save" section appears on single product pages.
+                                Customize how the "Buy Together & Save" section
+                                appears on single product pages.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4 md:grid-cols-2">
@@ -90,7 +94,9 @@ export default function BuyTogetherSettingsPage({ settings, updateUrl }: Props) 
                                 <Input
                                     id="heading"
                                     value={form.data.heading}
-                                    onChange={(e) => form.setData('heading', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData('heading', e.target.value)
+                                    }
                                     placeholder="Buy Together & Save"
                                     required
                                 />
@@ -105,7 +111,12 @@ export default function BuyTogetherSettingsPage({ settings, updateUrl }: Props) 
                                 <Input
                                     id="cta_button_text"
                                     value={form.data.cta_button_text}
-                                    onChange={(e) => form.setData('cta_button_text', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'cta_button_text',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="Add Bundle to Cart & Save"
                                     required
                                 />
@@ -120,7 +131,12 @@ export default function BuyTogetherSettingsPage({ settings, updateUrl }: Props) 
                                 <Input
                                     id="subheading"
                                     value={form.data.subheading}
-                                    onChange={(e) => form.setData('subheading', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'subheading',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="Purchase these items together and get exclusive bundle savings"
                                 />
                             </FormField>
@@ -131,11 +147,18 @@ export default function BuyTogetherSettingsPage({ settings, updateUrl }: Props) 
                                         id="show_savings_badge"
                                         checked={form.data.show_savings_badge}
                                         onCheckedChange={(checked) =>
-                                            form.setData('show_savings_badge', Boolean(checked))
+                                            form.setData(
+                                                'show_savings_badge',
+                                                Boolean(checked),
+                                            )
                                         }
                                     />
-                                    <label htmlFor="show_savings_badge" className="text-sm font-medium leading-none">
-                                        Show highlight savings badge & strikethrough price
+                                    <label
+                                        htmlFor="show_savings_badge"
+                                        className="text-sm leading-none font-medium"
+                                    >
+                                        Show highlight savings badge &
+                                        strikethrough price
                                     </label>
                                 </div>
 
@@ -143,10 +166,19 @@ export default function BuyTogetherSettingsPage({ settings, updateUrl }: Props) 
                                     <Checkbox
                                         id="enabled"
                                         checked={form.data.enabled}
-                                        onCheckedChange={(checked) => form.setData('enabled', Boolean(checked))}
+                                        onCheckedChange={(checked) =>
+                                            form.setData(
+                                                'enabled',
+                                                Boolean(checked),
+                                            )
+                                        }
                                     />
-                                    <label htmlFor="enabled" className="text-sm font-medium leading-none">
-                                        Enable Buy Together & Save globally on storefront
+                                    <label
+                                        htmlFor="enabled"
+                                        className="text-sm leading-none font-medium"
+                                    >
+                                        Enable Buy Together & Save globally on
+                                        storefront
                                     </label>
                                 </div>
                             </div>
@@ -157,7 +189,8 @@ export default function BuyTogetherSettingsPage({ settings, updateUrl }: Props) 
                         <CardHeader>
                             <CardTitle>Automatic Fallback Rules</CardTitle>
                             <CardDescription>
-                                Automatically bundle related products when no custom curated deal is assigned to a product.
+                                Automatically bundle related products when no
+                                custom curated deal is assigned to a product.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4 md:grid-cols-2">
@@ -167,11 +200,18 @@ export default function BuyTogetherSettingsPage({ settings, updateUrl }: Props) 
                                         id="auto_bundle_fallback"
                                         checked={form.data.auto_bundle_fallback}
                                         onCheckedChange={(checked) =>
-                                            form.setData('auto_bundle_fallback', Boolean(checked))
+                                            form.setData(
+                                                'auto_bundle_fallback',
+                                                Boolean(checked),
+                                            )
                                         }
                                     />
-                                    <label htmlFor="auto_bundle_fallback" className="text-sm font-medium leading-none">
-                                        Automatically create bundles from same category when no manual deal exists
+                                    <label
+                                        htmlFor="auto_bundle_fallback"
+                                        className="text-sm leading-none font-medium"
+                                    >
+                                        Automatically create bundles from same
+                                        category when no manual deal exists
                                     </label>
                                 </div>
                             </div>
@@ -184,15 +224,22 @@ export default function BuyTogetherSettingsPage({ settings, updateUrl }: Props) 
                                 <Select
                                     value={form.data.default_discount_type}
                                     onValueChange={(val: string) =>
-                                        form.setData('default_discount_type', val as 'percent' | 'fixed')
+                                        form.setData(
+                                            'default_discount_type',
+                                            val as 'percent' | 'fixed',
+                                        )
                                     }
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Discount Type" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="percent">Percentage Off (%)</SelectItem>
-                                        <SelectItem value="fixed">Fixed Amount Off ($ / Currency)</SelectItem>
+                                        <SelectItem value="percent">
+                                            Percentage Off (%)
+                                        </SelectItem>
+                                        <SelectItem value="fixed">
+                                            Fixed Amount Off ($ / Currency)
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </FormField>
@@ -201,7 +248,12 @@ export default function BuyTogetherSettingsPage({ settings, updateUrl }: Props) 
                                 id="default_discount_value"
                                 label="Default Fallback Discount Value"
                                 error={form.errors.default_discount_value}
-                                hint={form.data.default_discount_type === 'percent' ? 'e.g. 10 for 10%' : 'e.g. 15.00'}
+                                hint={
+                                    form.data.default_discount_type ===
+                                    'percent'
+                                        ? 'e.g. 10 for 10%'
+                                        : 'e.g. 15.00'
+                                }
                             >
                                 <Input
                                     id="default_discount_value"
@@ -210,7 +262,10 @@ export default function BuyTogetherSettingsPage({ settings, updateUrl }: Props) 
                                     min="0.01"
                                     value={form.data.default_discount_value}
                                     onChange={(e) =>
-                                        form.setData('default_discount_value', parseFloat(e.target.value))
+                                        form.setData(
+                                            'default_discount_value',
+                                            parseFloat(e.target.value),
+                                        )
                                     }
                                     required
                                 />
@@ -227,7 +282,7 @@ export default function BuyTogetherSettingsPage({ settings, updateUrl }: Props) 
                         <Button
                             type="submit"
                             disabled={form.processing}
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                            className="bg-emerald-600 text-white hover:bg-emerald-700"
                         >
                             <Save className="mr-2 size-4" />
                             Save Settings

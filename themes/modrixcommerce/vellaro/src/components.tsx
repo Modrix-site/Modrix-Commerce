@@ -1,20 +1,20 @@
-import { usePage } from "@inertiajs/react";
+import { usePage } from '@inertiajs/react';
 import { PlaceSlot } from '@/components/extensions/place-slot';
-import { StoreMenuLink as Link } from "@/components/storefront/footer-menus";
-import { useState } from "react";
-import { Heart, ImageOff } from "lucide-react";
-import { SaleTag } from "@/components/storefront/sale-notice";
-import { BuyButton } from "@/components/storefront/buy-button";
-import { ProductLabels } from "@/components/storefront/product-labels";
-import { useStoreSettings } from "@/hooks/use-store-settings";
-import type { ProductCard } from "@/types";
+import { StoreMenuLink as Link } from '@/components/storefront/footer-menus';
+import { useState } from 'react';
+import { Heart, ImageOff } from 'lucide-react';
+import { SaleTag } from '@/components/storefront/sale-notice';
+import { BuyButton } from '@/components/storefront/buy-button';
+import { ProductLabels } from '@/components/storefront/product-labels';
+import { useStoreSettings } from '@/hooks/use-store-settings';
+import type { ProductCard } from '@/types';
 export function useVellaro() {
     const { storefront } = usePage().props;
     const settings = storefront?.theme.settings ?? {};
     return {
         storefront,
         settings,
-        text: (key: string, fallback = "") => String(settings[key] ?? fallback),
+        text: (key: string, fallback = '') => String(settings[key] ?? fallback),
         show: (key: string) => settings[key] !== false,
     };
 }
@@ -23,9 +23,9 @@ export function VellaroCard({ product }: { product: ProductCard }) {
     const [saved, setSaved] = useState(() => {
         try {
             return (
-                typeof window !== "undefined" &&
+                typeof window !== 'undefined' &&
                 JSON.parse(
-                    localStorage.getItem("vellaro.saved") || "[]",
+                    localStorage.getItem('vellaro.saved') || '[]',
                 ).includes(product.id)
             );
         } catch {
@@ -45,18 +45,18 @@ export function VellaroCard({ product }: { product: ProductCard }) {
             {!product.in_stock && (
                 <span className="vellaro-badge">UNAVAILABLE</span>
             )}
-            {show("show_saved") && (
+            {show('show_saved') && (
                 <button
                     className="vellaro-save"
-                    aria-label={`${saved ? "Remove" : "Save"} ${product.name} for later on this device`}
+                    aria-label={`${saved ? 'Remove' : 'Save'} ${product.name} for later on this device`}
                     aria-pressed={saved}
                     onClick={() => {
                         const next = !saved;
                         setSaved(next);
                         try {
-                            const key = "vellaro.saved";
+                            const key = 'vellaro.saved';
                             const ids = new Set<number>(
-                                JSON.parse(localStorage.getItem(key) || "[]"),
+                                JSON.parse(localStorage.getItem(key) || '[]'),
                             );
                             if (next) ids.add(product.id);
                             else ids.delete(product.id);
@@ -64,11 +64,11 @@ export function VellaroCard({ product }: { product: ProductCard }) {
                         } catch {}
                     }}
                 >
-                    <Heart size={17} fill={saved ? "currentColor" : "none"} />
+                    <Heart size={17} fill={saved ? 'currentColor' : 'none'} />
                 </button>
             )}
             <Link href={url} className="vellaro-card-photo store-card-image">
-                {show("show_sale_badge") && discount > 0 && !product.sale && (
+                {show('show_sale_badge') && discount > 0 && !product.sale && (
                     <span className="vellaro-discount">{discount}% OFF</span>
                 )}
                 {catalog.badges && <ProductLabels labels={product.labels} />}
@@ -81,19 +81,21 @@ export function VellaroCard({ product }: { product: ProductCard }) {
                 ) : (
                     <ImageOff size={34} />
                 )}
-                {product.image && catalog.hover_image && product.hover_image && (
-                    <img
-                        className="store-card-hover"
-                        src={product.hover_image.url}
-                        alt=""
-                        loading="lazy"
-                    />
-                )}
+                {product.image &&
+                    catalog.hover_image &&
+                    product.hover_image && (
+                        <img
+                            className="store-card-hover"
+                            src={product.hover_image.url}
+                            alt=""
+                            loading="lazy"
+                        />
+                    )}
             </Link>
             <Link href={url} className="vellaro-card-info">
                 <strong>
-                    {product.has_variants ? "From " : ""}
-                    {product.price?.formatted ?? "View product"}
+                    {product.has_variants ? 'From ' : ''}
+                    {product.price?.formatted ?? 'View product'}
                 </strong>
                 <span>{product.name}</span>
                 {catalog.show_brand && product.brand && (
@@ -102,7 +104,7 @@ export function VellaroCard({ product }: { product: ProductCard }) {
                 {product.compare_at_price && (
                     <s>{product.compare_at_price.formatted}</s>
                 )}
-                {catalog.badges && show("show_sale_badge") && (
+                {catalog.badges && show('show_sale_badge') && (
                     <SaleTag sale={product.sale} />
                 )}
                 <PlaceSlot place="product.card" extraProps={{ product }} />

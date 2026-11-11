@@ -38,7 +38,9 @@ export default function CheckoutComFlow({
         script.async = true;
         script.onload = () => {
             const factory = (
-                window as Window & { CheckoutWebComponents?: CheckoutWebComponents }
+                window as Window & {
+                    CheckoutWebComponents?: CheckoutWebComponents;
+                }
             ).CheckoutWebComponents;
 
             if (cancelled || !factory) {

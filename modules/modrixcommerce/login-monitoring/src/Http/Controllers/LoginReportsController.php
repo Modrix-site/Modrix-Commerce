@@ -19,7 +19,7 @@ class LoginReportsController extends Controller
     public function index(Request $request): Response
     {
         $days = (int) $request->input('days', 14);
-        if (!in_array($days, [7, 14, 30, 90])) {
+        if (! in_array($days, [7, 14, 30, 90])) {
             $days = 14;
         }
 
@@ -83,12 +83,14 @@ class LoginReportsController extends Controller
     public function exportCsv(Request $request): StreamedResponse
     {
         $days = (int) $request->input('days', 30);
+
         return $this->reportService->exportCsv($days);
     }
 
     public function exportExcel(Request $request): StreamedResponse
     {
         $days = (int) $request->input('days', 30);
+
         return $this->reportService->exportExcel($days);
     }
 }

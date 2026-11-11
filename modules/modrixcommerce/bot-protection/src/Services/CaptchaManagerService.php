@@ -40,7 +40,7 @@ class CaptchaManagerService
             ->where('status', 'pending')
             ->first();
 
-        if (!$challenge || $challenge->isExpired()) {
+        if (! $challenge || $challenge->isExpired()) {
             return false;
         }
 
@@ -94,11 +94,12 @@ class CaptchaManagerService
         $solution = $payload['solution'] ?? null;
         $timestamp = (int) ($payload['timestamp'] ?? 0);
 
-        if (!$solution || abs(time() - $timestamp) > 900) {
+        if (! $solution || abs(time() - $timestamp) > 900) {
             return false;
         }
 
         $expectedHash = hash_hmac('sha256', "{$challenge->challenge_token}:{$timestamp}:{$challenge->ip_address}", config('app.key'));
+
         return hash_equals($expectedHash, (string) $solution);
     }
 

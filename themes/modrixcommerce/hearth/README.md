@@ -40,4 +40,3 @@ Saved-for-later hearts are stored on the current browser/device.
 
 The reference's preview-only Home/Catalog/Product tabs are omitted from the live store.
 Typography uses portable system and Georgia stacks instead of hotlinking third-party fonts.
-

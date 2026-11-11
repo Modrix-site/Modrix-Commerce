@@ -16,12 +16,12 @@ reimplemented.
 
 ## Decisions
 
-| Topic | Decision |
-|---|---|
-| Restore from admin | Yes, full restore, with strong guards (below). |
-| Permission | New `backups.manage` (Administration group). Owner has it implicitly. The built-in Administrator role does **not** get it by default (same treatment as `system.update`: whoever can restore can replace every account). Grantable to any role in Roles & permissions. |
-| Long operations | Backup and restore run as queued jobs; the page polls a status file. |
-| Schedule/retention | Editable on the page, saved in the settings store; env values remain the defaults until saved. |
+| Topic              | Decision                                                                                                                                                                                                                                                               |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Restore from admin | Yes, full restore, with strong guards (below).                                                                                                                                                                                                                         |
+| Permission         | New `backups.manage` (Administration group). Owner has it implicitly. The built-in Administrator role does **not** get it by default (same treatment as `system.update`: whoever can restore can replace every account). Grantable to any role in Roles & permissions. |
+| Long operations    | Backup and restore run as queued jobs; the page polls a status file.                                                                                                                                                                                                   |
+| Schedule/retention | Editable on the page, saved in the settings store; env values remain the defaults until saved.                                                                                                                                                                         |
 
 ## 1. Settings: `App\Core\Settings\BackupSettings`
 
@@ -58,15 +58,15 @@ Controller: `App\Http\Controllers\Admin\BackupSettingsController`.
 
 Routes (`routes/admin.php`, group `can:backups.manage`):
 
-| Method | URI | Action | Extra middleware |
-|---|---|---|---|
-| GET | `settings/backups` | `index` | — |
-| GET | `settings/backups/status` | `status` (JSON, polled) | — |
-| PUT | `settings/backups/schedule` | `schedule` | — |
-| POST | `settings/backups` | `store` (queue a backup) | `throttle:6,1` |
-| GET | `settings/backups/{name}/download` | `download` | `password.confirm` |
-| DELETE | `settings/backups/{name}` | `destroy` | `password.confirm` |
-| POST | `settings/backups/{name}/restore` | `restore` | `password.confirm` |
+| Method | URI                                | Action                   | Extra middleware   |
+| ------ | ---------------------------------- | ------------------------ | ------------------ |
+| GET    | `settings/backups`                 | `index`                  | —                  |
+| GET    | `settings/backups/status`          | `status` (JSON, polled)  | —                  |
+| PUT    | `settings/backups/schedule`        | `schedule`               | —                  |
+| POST   | `settings/backups`                 | `store` (queue a backup) | `throttle:6,1`     |
+| GET    | `settings/backups/{name}/download` | `download`               | `password.confirm` |
+| DELETE | `settings/backups/{name}`          | `destroy`                | `password.confirm` |
+| POST   | `settings/backups/{name}/restore`  | `restore`                | `password.confirm` |
 
 `{name}` must match `^ecomodular-backup-[0-9]{8}-[0-9]{6}-[a-z0-9]{4}\.zip$`
 and exist in `Backups::directory()`; anything else is a 404. The path is
@@ -75,7 +75,7 @@ always built from `directory()` + the validated name, never from input.
 Page props:
 
 - `backups`: list of `{name, created_at, size, encrypted, includes_files,
-  platform_version}`. `encrypted` / `includes_files` / version come from
+platform_version}`. `encrypted` / `includes_files` / version come from
   reading the archive's `manifest.json` (a new cheap
   `Backups::describe(path)` that opens the zip and reads only the manifest
   — the entry's encryption flag tells `encrypted`; an encrypted manifest
@@ -107,9 +107,18 @@ backups and never touched by restore, so the status survives the database
 being replaced. Shape:
 
 ```json
-{"id":"…","type":"backup|restore","state":"queued|running|done|failed",
- "backup":"<name or null>","with_files":true,"queued_at":"…",
- "started_at":"…","finished_at":"…","message":"…","user_id":1}
+{
+    "id": "…",
+    "type": "backup|restore",
+    "state": "queued|running|done|failed",
+    "backup": "<name or null>",
+    "with_files": true,
+    "queued_at": "…",
+    "started_at": "…",
+    "finished_at": "…",
+    "message": "…",
+    "user_id": 1
+}
 ```
 
 - `begin(type, …)` takes an exclusive `flock` on `.operation.lock`,

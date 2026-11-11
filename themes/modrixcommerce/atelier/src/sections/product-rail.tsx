@@ -15,13 +15,21 @@ export default function ProductRail({ section }: ThemeSectionProps) {
         ? c.products
         : ((c?.products as { data?: ProductCard[] } | undefined)?.data ?? []);
     if (!products.length && Array.isArray(pageProps.sections)) {
-        for (const sec of pageProps.sections as Array<{ type: string; settings: Record<string, unknown> }>) {
+        for (const sec of pageProps.sections as Array<{
+            type: string;
+            settings: Record<string, unknown>;
+        }>) {
             if (sec?.settings?.products) {
                 const sp = sec.settings.products;
                 if (Array.isArray(sp)) {
                     products = sp as ProductCard[];
                     break;
-                } else if (sp && typeof sp === 'object' && 'data' in sp && Array.isArray((sp as { data?: ProductCard[] }).data)) {
+                } else if (
+                    sp &&
+                    typeof sp === 'object' &&
+                    'data' in sp &&
+                    Array.isArray((sp as { data?: ProductCard[] }).data)
+                ) {
                     products = (sp as { data: ProductCard[] }).data;
                     break;
                 }
@@ -60,7 +68,7 @@ export default function ProductRail({ section }: ThemeSectionProps) {
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-12 text-neutral-500 font-light text-sm">
+                    <div className="py-12 text-center text-sm font-light text-neutral-500">
                         No products found in this collection.
                     </div>
                 )}

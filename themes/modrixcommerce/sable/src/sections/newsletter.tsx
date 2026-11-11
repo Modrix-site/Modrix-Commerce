@@ -1,8 +1,8 @@
-import { usePlaceItems, PlaceSlot } from "@/components/extensions/place-slot";
-import type { ThemeSectionProps } from "@/components/storefront/theme-sections";
-import { str } from "../utils";
+import { usePlaceItems, PlaceSlot } from '@/components/extensions/place-slot';
+import type { ThemeSectionProps } from '@/components/storefront/theme-sections';
+import { str } from '../utils';
 export default function Newsletter({ section }: ThemeSectionProps) {
-    const items = usePlaceItems("storefront.footer");
+    const items = usePlaceItems('storefront.footer');
     if (items.length === 0) return null;
     return (
         <section className="sa-newsletter sa-frame">

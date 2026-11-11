@@ -19,7 +19,7 @@ class FraudAlertMailable extends Mailable
 
     public function envelope(): Envelope
     {
-        $orderNumber = $this->fraudScore->order?->number ?? '#' . $this->fraudScore->order_id;
+        $orderNumber = $this->fraudScore->order?->number ?? '#'.$this->fraudScore->order_id;
 
         return new Envelope(
             subject: "⚠️ High-Risk Order Detected: {$orderNumber} (Score: {$this->fraudScore->total_score}/100)",

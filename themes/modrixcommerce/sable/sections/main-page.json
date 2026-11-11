@@ -8,9 +8,7 @@
         }
     ],
     "enabled_on": {
-        "templates": [
-            "page"
-        ]
+        "templates": ["page"]
     },
     "limit": 1
 }

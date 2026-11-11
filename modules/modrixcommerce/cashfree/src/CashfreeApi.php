@@ -3,7 +3,6 @@
 namespace EcoModular\Cashfree;
 
 use App\Domains\Payments\Gateway\GatewayException;
-use App\Domains\Pricing\Money;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Throwable;
@@ -81,7 +80,7 @@ final class CashfreeApi
         }
 
         try {
-            $this->getOrder('TEST_PROBE_' . time());
+            $this->getOrder('TEST_PROBE_'.time());
         } catch (GatewayException $e) {
             // A 404 "order_not_found" proves authentication succeeded!
             if (str_contains(strtolower($e->getMessage()), 'order') && (str_contains(strtolower($e->getMessage()), 'not found') || str_contains(strtolower($e->getMessage()), '404') || str_contains(strtolower($e->getMessage()), 'does not exist'))) {
@@ -114,11 +113,11 @@ final class CashfreeApi
                 ->connectTimeout(5)
                 ->timeout(20)
                 ->withoutRedirecting()
-                ->post($this->baseUrl() . $endpoint, $body);
+                ->post($this->baseUrl().$endpoint, $body);
         } catch (ConnectionException) {
             throw new GatewayException('Could not connect to Cashfree Payments. Please try again.', retryable: true);
         } catch (Throwable $e) {
-            throw new GatewayException('Cashfree API request failed: ' . mb_substr($e->getMessage(), 0, 150));
+            throw new GatewayException('Cashfree API request failed: '.mb_substr($e->getMessage(), 0, 150));
         }
 
         $json = $response->json();
@@ -150,11 +149,11 @@ final class CashfreeApi
                 ->connectTimeout(5)
                 ->timeout(20)
                 ->withoutRedirecting()
-                ->get($this->baseUrl() . $endpoint);
+                ->get($this->baseUrl().$endpoint);
         } catch (ConnectionException) {
             throw new GatewayException('Could not connect to Cashfree Payments. Please try again.', retryable: true);
         } catch (Throwable $e) {
-            throw new GatewayException('Cashfree API request failed: ' . mb_substr($e->getMessage(), 0, 150));
+            throw new GatewayException('Cashfree API request failed: '.mb_substr($e->getMessage(), 0, 150));
         }
 
         $json = $response->json();

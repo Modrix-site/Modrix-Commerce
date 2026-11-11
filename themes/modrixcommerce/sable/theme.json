@@ -9,11 +9,7 @@
     "platform_version": "^1.0",
     "author": "Modrix team",
     "license": "MIT",
-    "capabilities": [
-        "custom_fonts",
-        "demo_content",
-        "sections"
-    ],
+    "capabilities": ["custom_fonts", "demo_content", "sections"],
     "assets": "assets",
     "screenshot": "assets/demo-preview.webp",
     "fonts": [

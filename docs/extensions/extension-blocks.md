@@ -7,19 +7,19 @@ theme.
 
 ## Places
 
-| Place | Customizer tab | Context passed to props |
-|---|---|---|
-| `header.actions` | Header | — |
-| `home.after_featured` | Homepage | — |
-| `catalog.before_products` | Catalog | `category`, `brand`, `query` |
-| `product.card` | Catalog | — (each card adds `product` on the page) |
-| `product.after_title` | Product | `product` |
-| `product.after_price` | Product | `product` |
-| `product.after_add_to_cart` | Product | `product` |
-| `product.after_details` | Product | `product` |
-| `product.after_description` | Product | `product` |
-| `cart.after_lines` | Cart | `cart` |
-| `checkout.before_place_order` | Checkout | `cart` |
+| Place                         | Customizer tab | Context passed to props                  |
+| ----------------------------- | -------------- | ---------------------------------------- |
+| `header.actions`              | Header         | —                                        |
+| `home.after_featured`         | Homepage       | —                                        |
+| `catalog.before_products`     | Catalog        | `category`, `brand`, `query`             |
+| `product.card`                | Catalog        | — (each card adds `product` on the page) |
+| `product.after_title`         | Product        | `product`                                |
+| `product.after_price`         | Product        | `product`                                |
+| `product.after_add_to_cart`   | Product        | `product`                                |
+| `product.after_details`       | Product        | `product`                                |
+| `product.after_description`   | Product        | `product`                                |
+| `cart.after_lines`            | Cart           | `cart`                                   |
+| `checkout.before_place_order` | Checkout       | `cart`                                   |
 
 Fixed slots stay where the module puts them; the merchant cannot move them:
 
@@ -57,7 +57,15 @@ tab. It is the same setting: the tab and the module's settings page edit
 one stored value.
 
 ```json
-{ "key": "max_products", "tab": "product", "type": "integer", "label": "Products shown", "default": 3, "min": 1, "max": 6 }
+{
+    "key": "max_products",
+    "tab": "product",
+    "type": "integer",
+    "label": "Products shown",
+    "default": 3,
+    "min": 1,
+    "max": 6
+}
 ```
 
 Valid tabs are `general`, `header`, `home`, `catalog`, `product`, `cart`,

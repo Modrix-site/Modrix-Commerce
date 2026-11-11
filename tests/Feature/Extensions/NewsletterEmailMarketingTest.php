@@ -2,11 +2,9 @@
 
 namespace Tests\Feature\Extensions;
 
-use App\Core\Audit\AuditEntry;
 use App\Core\Extensions\ModuleManager;
 use App\Core\Extensions\ModuleRepository;
 use App\Core\Settings\GeneralSettings;
-use App\Core\Settings\MailSettings;
 use App\Models\User;
 use EcoModular\Newsletter\Mail\CampaignMail;
 use EcoModular\Newsletter\Models\NewsletterCampaign;
@@ -264,7 +262,7 @@ class NewsletterEmailMarketingTest extends TestCase
 
         Mail::assertSent(CampaignMail::class, function (CampaignMail $mail) {
             return $mail->hasTo('target1@example.test') &&
-                   !$mail->hasTo('target2@example.test');
+                   ! $mail->hasTo('target2@example.test');
         });
     }
 

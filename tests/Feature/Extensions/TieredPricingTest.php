@@ -5,7 +5,6 @@ namespace Tests\Feature\Extensions;
 use App\Core\Extensions\Models\Extension;
 use App\Core\Extensions\ModuleManager;
 use App\Core\Extensions\ModuleState;
-use App\Domains\Cart\CartManager;
 use App\Domains\Cart\Models\Cart;
 use App\Domains\Catalog\Models\Category;
 use App\Domains\Checkout\Pricing\CartPricer;

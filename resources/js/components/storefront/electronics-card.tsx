@@ -61,7 +61,7 @@ export function ElectronicsCard({ product }: { product: ProductCard }) {
             >
                 <Heart size={19} fill={saved ? 'currentColor' : 'none'} />
             </button>
-            <div className="relative store-card-image">
+            <div className="store-card-image relative">
                 {catalog.badges && <ProductLabels labels={product.labels} />}
                 <Link
                     href={productRoute(product.slug)}
@@ -76,14 +76,16 @@ export function ElectronicsCard({ product }: { product: ProductCard }) {
                     ) : (
                         <ImageOff size={28} />
                     )}
-                    {product.image && catalog.hover_image && product.hover_image && (
-                        <img
-                            className="store-card-hover"
-                            src={product.hover_image.url}
-                            alt=""
-                            loading="lazy"
-                        />
-                    )}
+                    {product.image &&
+                        catalog.hover_image &&
+                        product.hover_image && (
+                            <img
+                                className="store-card-hover"
+                                src={product.hover_image.url}
+                                alt=""
+                                loading="lazy"
+                            />
+                        )}
                 </Link>
             </div>
             <Link
@@ -92,9 +94,7 @@ export function ElectronicsCard({ product }: { product: ProductCard }) {
             >
                 {product.name}
             </Link>
-            {catalog.badges && (
-                <SaleTag sale={product.sale} className="mt-1" />
-            )}
+            {catalog.badges && <SaleTag sale={product.sale} className="mt-1" />}
             <PlaceSlot place="product.card" extraProps={{ product }} />
             <div className="electronics-card-price">
                 <div>

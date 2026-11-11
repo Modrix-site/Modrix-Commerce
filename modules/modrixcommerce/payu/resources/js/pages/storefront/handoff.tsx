@@ -24,11 +24,22 @@ export default function PayuHandoff({
                 <Loader2 className="size-8 animate-spin text-primary" />
                 <h1 className="text-xl font-semibold">Redirecting to PayU</h1>
                 <p className="text-sm text-muted-foreground">
-                    Order {orderNumber} is being forwarded. Please wait while we transfer you securely to PayU to complete your payment.
+                    Order {orderNumber} is being forwarded. Please wait while we
+                    transfer you securely to PayU to complete your payment.
                 </p>
-                <form ref={form} method="post" action={action} className="w-full">
+                <form
+                    ref={form}
+                    method="post"
+                    action={action}
+                    className="w-full"
+                >
                     {Object.entries(fields).map(([name, value]) => (
-                        <input key={name} type="hidden" name={name} value={value} />
+                        <input
+                            key={name}
+                            type="hidden"
+                            name={name}
+                            value={value}
+                        />
                     ))}
                     <noscript>
                         <button

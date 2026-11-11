@@ -46,7 +46,9 @@ type Props = {
 };
 
 export default function BotSettings({ settings }: Props) {
-    const [activeTab, setActiveTab] = useState<'general' | 'captcha' | 'ratelimit' | 'checkout' | 'alerts'>('general');
+    const [activeTab, setActiveTab] = useState<
+        'general' | 'captcha' | 'ratelimit' | 'checkout' | 'alerts'
+    >('general');
 
     const form = useForm({
         enabled: settings.enabled ?? true,
@@ -83,14 +85,18 @@ export default function BotSettings({ settings }: Props) {
                 title="Bot Protection Settings"
                 description="Configure threat scoring sensitivity, CAPTCHA providers, rate limits, and incident notifications."
                 actions={
-                    <Button onClick={handleSubmit} disabled={form.processing} className="gap-2">
+                    <Button
+                        onClick={handleSubmit}
+                        disabled={form.processing}
+                        className="gap-2"
+                    >
                         <Save className="h-4 w-4" /> Save Settings
                     </Button>
                 }
             />
 
             {/* Navigation Tabs */}
-            <div className="flex items-center gap-2 border-b border-border/60 pb-3 mb-6 overflow-x-auto">
+            <div className="mb-6 flex items-center gap-2 overflow-x-auto border-b border-border/60 pb-3">
                 <Button
                     variant={activeTab === 'general' ? 'default' : 'ghost'}
                     size="sm"
@@ -137,58 +143,112 @@ export default function BotSettings({ settings }: Props) {
                 {/* TAB 1: GENERAL & SCORING */}
                 {activeTab === 'general' && (
                     <Card className="border border-border/60 shadow-sm">
-                        <CardContent className="p-6 space-y-6 text-xs">
-                            <div className="flex items-center justify-between pb-4 border-b border-border/60">
+                        <CardContent className="space-y-6 p-6 text-xs">
+                            <div className="flex items-center justify-between border-b border-border/60 pb-4">
                                 <div>
-                                    <h4 className="font-semibold text-sm text-foreground">Real-Time Bot Detection Engine</h4>
-                                    <p className="text-muted-foreground">Analyze all incoming storefront requests and score behavioral anomalies.</p>
+                                    <h4 className="text-sm font-semibold text-foreground">
+                                        Real-Time Bot Detection Engine
+                                    </h4>
+                                    <p className="text-muted-foreground">
+                                        Analyze all incoming storefront requests
+                                        and score behavioral anomalies.
+                                    </p>
                                 </div>
                                 <input
                                     type="checkbox"
-                                    className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                                    className="h-5 w-5 cursor-pointer rounded border-gray-300 text-primary focus:ring-primary"
                                     checked={form.data.enabled}
-                                    onChange={(e) => form.setData('enabled', e.target.checked)}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'enabled',
+                                            e.target.checked,
+                                        )
+                                    }
                                 />
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div>
-                                    <label className="font-semibold block mb-1">Threat Sensitivity Level</label>
+                                    <label className="mb-1 block font-semibold">
+                                        Threat Sensitivity Level
+                                    </label>
                                     <select
-                                        className="w-full h-9 rounded-md border border-input bg-background px-3 text-xs"
+                                        className="h-9 w-full rounded-md border border-input bg-background px-3 text-xs"
                                         value={form.data.sensitivity_level}
-                                        onChange={(e) => form.setData('sensitivity_level', e.target.value)}
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'sensitivity_level',
+                                                e.target.value,
+                                            )
+                                        }
                                     >
-                                        <option value="low">Low (Standard store traffic, minimal challenges)</option>
-                                        <option value="medium">Medium (Recommended balanced detection)</option>
-                                        <option value="high">High (Strict defense, ideal during flash sales)</option>
-                                        <option value="paranoid">Paranoid (Challenge all unrecognized user agents)</option>
+                                        <option value="low">
+                                            Low (Standard store traffic, minimal
+                                            challenges)
+                                        </option>
+                                        <option value="medium">
+                                            Medium (Recommended balanced
+                                            detection)
+                                        </option>
+                                        <option value="high">
+                                            High (Strict defense, ideal during
+                                            flash sales)
+                                        </option>
+                                        <option value="paranoid">
+                                            Paranoid (Challenge all unrecognized
+                                            user agents)
+                                        </option>
                                     </select>
-                                    <p className="text-muted-foreground mt-1">Adjusts multiplier applied to suspicious heuristic signals.</p>
+                                    <p className="mt-1 text-muted-foreground">
+                                        Adjusts multiplier applied to suspicious
+                                        heuristic signals.
+                                    </p>
                                 </div>
 
                                 <div>
-                                    <label className="font-semibold block mb-1">Interactive Challenge Threshold (Score 10–99)</label>
+                                    <label className="mb-1 block font-semibold">
+                                        Interactive Challenge Threshold (Score
+                                        10–99)
+                                    </label>
                                     <Input
                                         type="number"
                                         min={10}
                                         max={99}
                                         value={form.data.challenge_threshold}
-                                        onChange={(e) => form.setData('challenge_threshold', parseInt(e.target.value) || 45)}
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'challenge_threshold',
+                                                parseInt(e.target.value) || 45,
+                                            )
+                                        }
                                     />
-                                    <p className="text-muted-foreground mt-1">Visitors scoring at or above this threshold receive a CAPTCHA challenge.</p>
+                                    <p className="mt-1 text-muted-foreground">
+                                        Visitors scoring at or above this
+                                        threshold receive a CAPTCHA challenge.
+                                    </p>
                                 </div>
 
                                 <div>
-                                    <label className="font-semibold block mb-1">Immediate Block Threshold (Score 50–100)</label>
+                                    <label className="mb-1 block font-semibold">
+                                        Immediate Block Threshold (Score 50–100)
+                                    </label>
                                     <Input
                                         type="number"
                                         min={50}
                                         max={100}
                                         value={form.data.block_threshold}
-                                        onChange={(e) => form.setData('block_threshold', parseInt(e.target.value) || 80)}
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'block_threshold',
+                                                parseInt(e.target.value) || 80,
+                                            )
+                                        }
                                     />
-                                    <p className="text-muted-foreground mt-1">Requests scoring at or above this threshold are blocked immediately with HTTP 403.</p>
+                                    <p className="mt-1 text-muted-foreground">
+                                        Requests scoring at or above this
+                                        threshold are blocked immediately with
+                                        HTTP 403.
+                                    </p>
                                 </div>
                             </div>
                         </CardContent>
@@ -198,42 +258,76 @@ export default function BotSettings({ settings }: Props) {
                 {/* TAB 2: CAPTCHA */}
                 {activeTab === 'captcha' && (
                     <Card className="border border-border/60 shadow-sm">
-                        <CardContent className="p-6 space-y-6 text-xs">
+                        <CardContent className="space-y-6 p-6 text-xs">
                             <div>
-                                <label className="font-semibold block mb-1">CAPTCHA Provider</label>
+                                <label className="mb-1 block font-semibold">
+                                    CAPTCHA Provider
+                                </label>
                                 <select
-                                    className="w-full max-w-md h-9 rounded-md border border-input bg-background px-3 text-xs"
+                                    className="h-9 w-full max-w-md rounded-md border border-input bg-background px-3 text-xs"
                                     value={form.data.captcha_provider}
-                                    onChange={(e) => form.setData('captcha_provider', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'captcha_provider',
+                                            e.target.value,
+                                        )
+                                    }
                                 >
-                                    <option value="custom_interactive">Interactive Security Verification (Built-in, zero setup)</option>
-                                    <option value="turnstile">Cloudflare Turnstile (Recommended, invisible)</option>
-                                    <option value="recaptcha_v2">Google reCAPTCHA v2 (Checkbox)</option>
-                                    <option value="recaptcha_v3">Google reCAPTCHA v3 (Invisible)</option>
+                                    <option value="custom_interactive">
+                                        Interactive Security Verification
+                                        (Built-in, zero setup)
+                                    </option>
+                                    <option value="turnstile">
+                                        Cloudflare Turnstile (Recommended,
+                                        invisible)
+                                    </option>
+                                    <option value="recaptcha_v2">
+                                        Google reCAPTCHA v2 (Checkbox)
+                                    </option>
+                                    <option value="recaptcha_v3">
+                                        Google reCAPTCHA v3 (Invisible)
+                                    </option>
                                     <option value="hcaptcha">hCaptcha</option>
                                 </select>
-                                <p className="text-muted-foreground mt-1">
-                                    The built-in verification works automatically out of the box with zero third-party API dependencies.
+                                <p className="mt-1 text-muted-foreground">
+                                    The built-in verification works
+                                    automatically out of the box with zero
+                                    third-party API dependencies.
                                 </p>
                             </div>
 
-                            {form.data.captcha_provider !== 'custom_interactive' && (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-border/60">
+                            {form.data.captcha_provider !==
+                                'custom_interactive' && (
+                                <div className="grid grid-cols-1 gap-4 border-t border-border/60 pt-4 md:grid-cols-2">
                                     <div>
-                                        <label className="font-semibold block mb-1">Site Key</label>
+                                        <label className="mb-1 block font-semibold">
+                                            Site Key
+                                        </label>
                                         <Input
                                             placeholder="Enter public site key"
                                             value={form.data.captcha_site_key}
-                                            onChange={(e) => form.setData('captcha_site_key', e.target.value)}
+                                            onChange={(e) =>
+                                                form.setData(
+                                                    'captcha_site_key',
+                                                    e.target.value,
+                                                )
+                                            }
                                         />
                                     </div>
                                     <div>
-                                        <label className="font-semibold block mb-1">Secret Key</label>
+                                        <label className="mb-1 block font-semibold">
+                                            Secret Key
+                                        </label>
                                         <Input
                                             type="password"
                                             placeholder="Enter private secret key"
                                             value={form.data.captcha_secret_key}
-                                            onChange={(e) => form.setData('captcha_secret_key', e.target.value)}
+                                            onChange={(e) =>
+                                                form.setData(
+                                                    'captcha_secret_key',
+                                                    e.target.value,
+                                                )
+                                            }
                                         />
                                     </div>
                                 </div>
@@ -245,69 +339,130 @@ export default function BotSettings({ settings }: Props) {
                 {/* TAB 3: RATE LIMITING & ANTI-SCRAPING */}
                 {activeTab === 'ratelimit' && (
                     <Card className="border border-border/60 shadow-sm">
-                        <CardContent className="p-6 space-y-6 text-xs">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <CardContent className="space-y-6 p-6 text-xs">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                                 <div>
-                                    <label className="font-semibold block mb-1">Storefront Rate Limit (req/min)</label>
+                                    <label className="mb-1 block font-semibold">
+                                        Storefront Rate Limit (req/min)
+                                    </label>
                                     <Input
                                         type="number"
                                         min={10}
                                         max={600}
                                         value={form.data.rate_limit_per_minute}
-                                        onChange={(e) => form.setData('rate_limit_per_minute', parseInt(e.target.value) || 120)}
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'rate_limit_per_minute',
+                                                parseInt(e.target.value) || 120,
+                                            )
+                                        }
                                     />
-                                    <p className="text-muted-foreground mt-1">Maximum storefront page requests per IP per minute.</p>
+                                    <p className="mt-1 text-muted-foreground">
+                                        Maximum storefront page requests per IP
+                                        per minute.
+                                    </p>
                                 </div>
 
                                 <div>
-                                    <label className="font-semibold block mb-1">API Endpoints Rate Limit (req/min)</label>
+                                    <label className="mb-1 block font-semibold">
+                                        API Endpoints Rate Limit (req/min)
+                                    </label>
                                     <Input
                                         type="number"
                                         min={10}
                                         max={300}
-                                        value={form.data.api_rate_limit_per_minute}
-                                        onChange={(e) => form.setData('api_rate_limit_per_minute', parseInt(e.target.value) || 60)}
+                                        value={
+                                            form.data.api_rate_limit_per_minute
+                                        }
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'api_rate_limit_per_minute',
+                                                parseInt(e.target.value) || 60,
+                                            )
+                                        }
                                     />
-                                    <p className="text-muted-foreground mt-1">Maximum JSON API calls per IP per minute.</p>
+                                    <p className="mt-1 text-muted-foreground">
+                                        Maximum JSON API calls per IP per
+                                        minute.
+                                    </p>
                                 </div>
 
                                 <div>
-                                    <label className="font-semibold block mb-1">Failed Login Limit (attempts/15m)</label>
+                                    <label className="mb-1 block font-semibold">
+                                        Failed Login Limit (attempts/15m)
+                                    </label>
                                     <Input
                                         type="number"
                                         min={3}
                                         max={20}
-                                        value={form.data.login_rate_limit_per_minute}
-                                        onChange={(e) => form.setData('login_rate_limit_per_minute', parseInt(e.target.value) || 5)}
+                                        value={
+                                            form.data
+                                                .login_rate_limit_per_minute
+                                        }
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'login_rate_limit_per_minute',
+                                                parseInt(e.target.value) || 5,
+                                            )
+                                        }
                                     />
-                                    <p className="text-muted-foreground mt-1">Lockout triggered on repeat failed authentication.</p>
+                                    <p className="mt-1 text-muted-foreground">
+                                        Lockout triggered on repeat failed
+                                        authentication.
+                                    </p>
                                 </div>
                             </div>
 
-                            <div className="pt-4 border-t border-border/60 space-y-4">
+                            <div className="space-y-4 border-t border-border/60 pt-4">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <h4 className="font-semibold text-foreground">Anti-Scraping & Price Monitoring Defense</h4>
-                                        <p className="text-muted-foreground">Detect rapid catalog pagination and traps bots via hidden honeypots.</p>
+                                        <h4 className="font-semibold text-foreground">
+                                            Anti-Scraping & Price Monitoring
+                                            Defense
+                                        </h4>
+                                        <p className="text-muted-foreground">
+                                            Detect rapid catalog pagination and
+                                            traps bots via hidden honeypots.
+                                        </p>
                                     </div>
                                     <input
                                         type="checkbox"
-                                        className="h-5 w-5 rounded border-gray-300 text-primary cursor-pointer"
-                                        checked={form.data.anti_scraping_enabled}
-                                        onChange={(e) => form.setData('anti_scraping_enabled', e.target.checked)}
+                                        className="h-5 w-5 cursor-pointer rounded border-gray-300 text-primary"
+                                        checked={
+                                            form.data.anti_scraping_enabled
+                                        }
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'anti_scraping_enabled',
+                                                e.target.checked,
+                                            )
+                                        }
                                     />
                                 </div>
 
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <h4 className="font-semibold text-foreground">Block Commercial Datacenter / Cloud ASN Traffic</h4>
-                                        <p className="text-muted-foreground">Restrict requests originating from AWS, DigitalOcean, Hetzner, and OVH.</p>
+                                        <h4 className="font-semibold text-foreground">
+                                            Block Commercial Datacenter / Cloud
+                                            ASN Traffic
+                                        </h4>
+                                        <p className="text-muted-foreground">
+                                            Restrict requests originating from
+                                            AWS, DigitalOcean, Hetzner, and OVH.
+                                        </p>
                                     </div>
                                     <input
                                         type="checkbox"
-                                        className="h-5 w-5 rounded border-gray-300 text-primary cursor-pointer"
-                                        checked={form.data.block_cloud_hosting_asn}
-                                        onChange={(e) => form.setData('block_cloud_hosting_asn', e.target.checked)}
+                                        className="h-5 w-5 cursor-pointer rounded border-gray-300 text-primary"
+                                        checked={
+                                            form.data.block_cloud_hosting_asn
+                                        }
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'block_cloud_hosting_asn',
+                                                e.target.checked,
+                                            )
+                                        }
                                     />
                                 </div>
                             </div>
@@ -318,43 +473,78 @@ export default function BotSettings({ settings }: Props) {
                 {/* TAB 4: CHECKOUT & INVENTORY */}
                 {activeTab === 'checkout' && (
                     <Card className="border border-border/60 shadow-sm">
-                        <CardContent className="p-6 space-y-6 text-xs">
-                            <div className="flex items-center justify-between pb-4 border-b border-border/60">
+                        <CardContent className="space-y-6 p-6 text-xs">
+                            <div className="flex items-center justify-between border-b border-border/60 pb-4">
                                 <div>
-                                    <h4 className="font-semibold text-foreground">Prevent Rapid Automated Checkouts</h4>
-                                    <p className="text-muted-foreground">Hold or challenge orders submitted faster than humanly possible.</p>
+                                    <h4 className="font-semibold text-foreground">
+                                        Prevent Rapid Automated Checkouts
+                                    </h4>
+                                    <p className="text-muted-foreground">
+                                        Hold or challenge orders submitted
+                                        faster than humanly possible.
+                                    </p>
                                 </div>
                                 <input
                                     type="checkbox"
-                                    className="h-5 w-5 rounded border-gray-300 text-primary cursor-pointer"
+                                    className="h-5 w-5 cursor-pointer rounded border-gray-300 text-primary"
                                     checked={form.data.prevent_rapid_checkout}
-                                    onChange={(e) => form.setData('prevent_rapid_checkout', e.target.checked)}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'prevent_rapid_checkout',
+                                            e.target.checked,
+                                        )
+                                    }
                                 />
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div>
-                                    <label className="font-semibold block mb-1">Minimum Human Checkout Duration (Seconds)</label>
+                                    <label className="mb-1 block font-semibold">
+                                        Minimum Human Checkout Duration
+                                        (Seconds)
+                                    </label>
                                     <Input
                                         type="number"
                                         min={2}
                                         max={30}
                                         value={form.data.min_checkout_seconds}
-                                        onChange={(e) => form.setData('min_checkout_seconds', parseInt(e.target.value) || 4)}
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'min_checkout_seconds',
+                                                parseInt(e.target.value) || 4,
+                                            )
+                                        }
                                     />
-                                    <p className="text-muted-foreground mt-1">Checkouts completed in fewer seconds than this are flagged as automated bot scripts.</p>
+                                    <p className="mt-1 text-muted-foreground">
+                                        Checkouts completed in fewer seconds
+                                        than this are flagged as automated bot
+                                        scripts.
+                                    </p>
                                 </div>
 
-                                <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
+                                <div className="flex items-center justify-between rounded-lg bg-muted/30 p-4">
                                     <div>
-                                        <h4 className="font-semibold text-foreground">Inventory Hoarding Shield</h4>
-                                        <p className="text-muted-foreground">Stop automated scalper bots from reserving limited-stock items in cart.</p>
+                                        <h4 className="font-semibold text-foreground">
+                                            Inventory Hoarding Shield
+                                        </h4>
+                                        <p className="text-muted-foreground">
+                                            Stop automated scalper bots from
+                                            reserving limited-stock items in
+                                            cart.
+                                        </p>
                                     </div>
                                     <input
                                         type="checkbox"
-                                        className="h-5 w-5 rounded border-gray-300 text-primary cursor-pointer"
-                                        checked={form.data.prevent_inventory_hoarding}
-                                        onChange={(e) => form.setData('prevent_inventory_hoarding', e.target.checked)}
+                                        className="h-5 w-5 cursor-pointer rounded border-gray-300 text-primary"
+                                        checked={
+                                            form.data.prevent_inventory_hoarding
+                                        }
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'prevent_inventory_hoarding',
+                                                e.target.checked,
+                                            )
+                                        }
                                     />
                                 </div>
                             </div>
@@ -365,48 +555,86 @@ export default function BotSettings({ settings }: Props) {
                 {/* TAB 5: ALERTS & NOTIFICATIONS */}
                 {activeTab === 'alerts' && (
                     <Card className="border border-border/60 shadow-sm">
-                        <CardContent className="p-6 space-y-6 text-xs">
-                            <div className="flex items-center justify-between pb-4 border-b border-border/60">
+                        <CardContent className="space-y-6 p-6 text-xs">
+                            <div className="flex items-center justify-between border-b border-border/60 pb-4">
                                 <div>
-                                    <h4 className="font-semibold text-foreground">Email Attack Spike Notifications</h4>
-                                    <p className="text-muted-foreground">Receive instant alerts when sudden surges of malicious bot traffic are intercepted.</p>
+                                    <h4 className="font-semibold text-foreground">
+                                        Email Attack Spike Notifications
+                                    </h4>
+                                    <p className="text-muted-foreground">
+                                        Receive instant alerts when sudden
+                                        surges of malicious bot traffic are
+                                        intercepted.
+                                    </p>
                                 </div>
                                 <input
                                     type="checkbox"
-                                    className="h-5 w-5 rounded border-gray-300 text-primary cursor-pointer"
+                                    className="h-5 w-5 cursor-pointer rounded border-gray-300 text-primary"
                                     checked={form.data.email_alerts_enabled}
-                                    onChange={(e) => form.setData('email_alerts_enabled', e.target.checked)}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'email_alerts_enabled',
+                                            e.target.checked,
+                                        )
+                                    }
                                 />
                             </div>
 
                             <div>
-                                <label className="font-semibold block mb-1">Alert Email Recipients (comma-separated)</label>
+                                <label className="mb-1 block font-semibold">
+                                    Alert Email Recipients (comma-separated)
+                                </label>
                                 <Input
                                     placeholder="security@store.com, admin@store.com"
                                     value={form.data.alert_emails}
-                                    onChange={(e) => form.setData('alert_emails', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'alert_emails',
+                                            e.target.value,
+                                        )
+                                    }
                                 />
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-border/60">
+                            <div className="grid grid-cols-1 gap-4 border-t border-border/60 pt-4 md:grid-cols-2">
                                 <div>
-                                    <label className="font-semibold block mb-1">Slack Webhook URL</label>
+                                    <label className="mb-1 block font-semibold">
+                                        Slack Webhook URL
+                                    </label>
                                     <Input
                                         placeholder="https://hooks.slack.com/services/..."
                                         value={form.data.slack_webhook_url}
-                                        onChange={(e) => form.setData('slack_webhook_url', e.target.value)}
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'slack_webhook_url',
+                                                e.target.value,
+                                            )
+                                        }
                                     />
-                                    <p className="text-muted-foreground mt-1">Post rich incident blocks to your Slack security channel.</p>
+                                    <p className="mt-1 text-muted-foreground">
+                                        Post rich incident blocks to your Slack
+                                        security channel.
+                                    </p>
                                 </div>
 
                                 <div>
-                                    <label className="font-semibold block mb-1">Custom Incident Webhook URL</label>
+                                    <label className="mb-1 block font-semibold">
+                                        Custom Incident Webhook URL
+                                    </label>
                                     <Input
                                         placeholder="https://siem.example.com/api/v1/webhook"
                                         value={form.data.custom_webhook_url}
-                                        onChange={(e) => form.setData('custom_webhook_url', e.target.value)}
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'custom_webhook_url',
+                                                e.target.value,
+                                            )
+                                        }
                                     />
-                                    <p className="text-muted-foreground mt-1">Send JSON attack alerts directly to your SIEM / security monitor.</p>
+                                    <p className="mt-1 text-muted-foreground">
+                                        Send JSON attack alerts directly to your
+                                        SIEM / security monitor.
+                                    </p>
                                 </div>
                             </div>
                         </CardContent>
@@ -414,7 +642,11 @@ export default function BotSettings({ settings }: Props) {
                 )}
 
                 <div className="mt-6 flex justify-end">
-                    <Button type="submit" disabled={form.processing} className="gap-2">
+                    <Button
+                        type="submit"
+                        disabled={form.processing}
+                        className="gap-2"
+                    >
                         <Save className="h-4 w-4" /> Save Configuration
                     </Button>
                 </div>

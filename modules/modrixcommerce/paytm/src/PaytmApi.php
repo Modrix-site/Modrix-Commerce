@@ -30,7 +30,7 @@ final class PaytmApi
     {
         $mid = $this->settings->mid();
 
-        return $this->baseUrl() . "/theia/api/v1/showPaymentPage?mid={$mid}&orderId={$orderId}";
+        return $this->baseUrl()."/theia/api/v1/showPaymentPage?mid={$mid}&orderId={$orderId}";
     }
 
     /**
@@ -64,7 +64,7 @@ final class PaytmApi
             ],
         ];
 
-        $url = $this->baseUrl() . "/theia/api/v1/initiateTransaction?mid={$mid}&orderId={$orderId}";
+        $url = $this->baseUrl()."/theia/api/v1/initiateTransaction?mid={$mid}&orderId={$orderId}";
 
         return $this->post($url, $payload);
     }
@@ -104,7 +104,7 @@ final class PaytmApi
             ],
         ];
 
-        $url = $this->baseUrl() . '/v3/order/status';
+        $url = $this->baseUrl().'/v3/order/status';
 
         return $this->post($url, $payload);
     }
@@ -148,7 +148,7 @@ final class PaytmApi
             ],
         ];
 
-        $url = $this->baseUrl() . '/refund/apply';
+        $url = $this->baseUrl().'/refund/apply';
 
         return $this->post($url, $payload);
     }
@@ -167,13 +167,13 @@ final class PaytmApi
             }
 
             // Probe status of a dummy test transaction
-            $response = $this->getTransactionStatus('TEST_PROBE_' . time());
+            $response = $this->getTransactionStatus('TEST_PROBE_'.time());
             $resultStatus = $response['body']['resultInfo']['resultStatus'] ?? null;
 
             if ($resultStatus !== null) {
                 return [
                     'success' => true,
-                    'message' => 'Connected successfully to Paytm Gateway (' . ($this->settings->testMode() ? 'Staging' : 'Production') . ').',
+                    'message' => 'Connected successfully to Paytm Gateway ('.($this->settings->testMode() ? 'Staging' : 'Production').').',
                 ];
             }
 
@@ -209,13 +209,13 @@ final class PaytmApi
             throw new GatewayException('Network error connecting to Paytm API.', 0, $e);
         } catch (Throwable $e) {
             Log::error('Paytm unexpected client error', ['url' => $url, 'error' => $e->getMessage()]);
-            throw new GatewayException('Failed to communicate with Paytm API: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Failed to communicate with Paytm API: '.$e->getMessage(), 0, $e);
         }
 
         if ($response->failed()) {
             $status = $response->status();
             $body = $response->json();
-            $msg = $body['body']['resultInfo']['resultMsg'] ?? ('HTTP ' . $status . ' error');
+            $msg = $body['body']['resultInfo']['resultMsg'] ?? ('HTTP '.$status.' error');
             Log::warning('Paytm API returned error response', ['url' => $url, 'status' => $status, 'body' => $body]);
             throw new GatewayException("Paytm API error ({$status}): {$msg}");
         }

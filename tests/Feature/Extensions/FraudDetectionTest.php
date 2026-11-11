@@ -10,7 +10,6 @@ use App\Domains\Orders\Events\OrderPlaced;
 use App\Domains\Orders\Models\Order;
 use App\Domains\Orders\Models\OrderAddress;
 use App\Models\User;
-use EcoModular\FraudDetection\Models\BlacklistedEmail;
 use EcoModular\FraudDetection\Models\BlacklistedIp;
 use EcoModular\FraudDetection\Models\FraudRule;
 use EcoModular\FraudDetection\Models\FraudScore;
@@ -45,9 +44,9 @@ class FraudDetectionTest extends TestCase
 
     private function createSampleOrder(array $overrides = []): Order
     {
-        $order = new Order();
+        $order = new Order;
         $order->forceFill([
-            'number' => $overrides['number'] ?? 'ORD-' . uniqid(),
+            'number' => $overrides['number'] ?? 'ORD-'.uniqid(),
             'email' => $overrides['email'] ?? $overrides['customer_email'] ?? 'customer@example.com',
             'status' => OrderStatus::PendingPayment,
             'payment_status' => PaymentStatus::Unpaid,
@@ -70,7 +69,7 @@ class FraudDetectionTest extends TestCase
             'city' => 'New York',
             'country_code' => 'US',
         ];
-        $billing = new OrderAddress();
+        $billing = new OrderAddress;
         $billing->forceFill([
             'order_id' => $order->id,
             'type' => OrderAddress::BILLING,
@@ -90,7 +89,7 @@ class FraudDetectionTest extends TestCase
             'city' => 'New York',
             'country_code' => 'US',
         ];
-        $shipping = new OrderAddress();
+        $shipping = new OrderAddress;
         $shipping->forceFill([
             'order_id' => $order->id,
             'type' => OrderAddress::SHIPPING,

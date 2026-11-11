@@ -47,10 +47,7 @@ export default function TelrSettingsPage({
     const checks: [boolean, string][] = [
         [settings.store_id !== '', 'Telr store ID saved'],
         [settings.auth_key_hint !== null, 'Authentication key saved'],
-        [
-            settings.webhook_secret_hint !== null,
-            'Webhook secret saved',
-        ],
+        [settings.webhook_secret_hint !== null, 'Webhook secret saved'],
         [publicWebhookUrl, 'Store address is a public https:// URL'],
         [settings.enabled, 'Telr enabled at checkout'],
     ];
@@ -103,11 +100,10 @@ export default function TelrSettingsPage({
                         <CardDescription>
                             In the Telr merchant admin, open Integrations and
                             copy the store ID and the hosted payment page
-                            authentication key. The secret key is the value
-                            Telr uses to sign transaction advice. Leave the
-                            remote key blank when Telr gave you one
-                            authentication key for both the payment page and
-                            refunds.
+                            authentication key. The secret key is the value Telr
+                            uses to sign transaction advice. Leave the remote
+                            key blank when Telr gave you one authentication key
+                            for both the payment page and refunds.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -160,9 +156,7 @@ export default function TelrSettingsPage({
                                             }
                                             className="h-9 rounded-md border bg-transparent px-3 text-sm"
                                         >
-                                            <option value="1">
-                                                Test
-                                            </option>
+                                            <option value="1">Test</option>
                                             <option value="0">Live</option>
                                         </select>
                                     </FormField>
@@ -264,10 +258,10 @@ export default function TelrSettingsPage({
                         <CardDescription>
                             In the Telr merchant admin, set the transaction
                             advice URL to the address below. Telr posts each
-                            sale and refund here. The store still asks Telr
-                            for the order status before marking an order paid.
-                            Logo, colours and CSS for the payment page are set
-                            in the Telr merchant admin, not in this store.
+                            sale and refund here. The store still asks Telr for
+                            the order status before marking an order paid. Logo,
+                            colours and CSS for the payment page are set in the
+                            Telr merchant admin, not in this store.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-3">

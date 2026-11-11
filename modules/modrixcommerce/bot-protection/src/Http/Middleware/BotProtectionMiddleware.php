@@ -58,12 +58,13 @@ class BotProtectionMiddleware
                     'error' => 'Challenge Required',
                     'message' => 'Interactive verification is required to access this resource.',
                     'risk_score' => $evaluation['score'],
-                    'challenge_url' => url('/m/modrixcommerce/bot-protection/challenge?return_to=' . urlencode($request->fullUrl())),
+                    'challenge_url' => url('/m/modrixcommerce/bot-protection/challenge?return_to='.urlencode($request->fullUrl())),
                 ], 403);
             }
 
             $challenge = $this->captcha->createChallenge($request, $request->fullUrl());
-            return redirect()->to(url('/m/modrixcommerce/bot-protection/challenge/' . $challenge->challenge_token));
+
+            return redirect()->to(url('/m/modrixcommerce/bot-protection/challenge/'.$challenge->challenge_token));
         }
 
         // 3. Action: THROTTLE
@@ -82,6 +83,7 @@ class BotProtectionMiddleware
         $this->traffic->logRequest($request, $evaluation, $response->getStatusCode(), $totalTime);
 
         $response->headers->set('X-Bot-Score', (string) $evaluation['score']);
+
         return $response;
     }
 

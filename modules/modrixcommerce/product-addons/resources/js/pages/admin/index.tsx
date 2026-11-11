@@ -1,9 +1,23 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { Pencil, Plus, Settings, ShieldCheck, Sparkles, Trash2, Wrench } from 'lucide-react';
+import {
+    Pencil,
+    Plus,
+    Settings,
+    ShieldCheck,
+    Sparkles,
+    Trash2,
+    Wrench,
+} from 'lucide-react';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 
 interface TargetSummary {
     id: number;
@@ -26,20 +40,33 @@ interface AddonRow {
     revenue: string;
 }
 
-const typeLabels: Record<string, { label: string; icon: typeof ShieldCheck }> = {
-    warranty: { label: 'Warranty', icon: ShieldCheck },
-    feature: { label: 'Extra Feature', icon: Sparkles },
-    service: { label: 'Service', icon: Wrench },
-};
+const typeLabels: Record<string, { label: string; icon: typeof ShieldCheck }> =
+    {
+        warranty: { label: 'Warranty', icon: ShieldCheck },
+        feature: { label: 'Extra Feature', icon: Sparkles },
+        service: { label: 'Service', icon: Wrench },
+    };
 
-export default function ProductAddonsIndex({ addons, currency }: { addons: AddonRow[]; currency: string }) {
+export default function ProductAddonsIndex({
+    addons,
+    currency,
+}: {
+    addons: AddonRow[];
+    currency: string;
+}) {
     function remove(addon: AddonRow) {
         if (!confirm(`Delete "${addon.name}"?`)) return;
         router.delete(`/admin/m/modrixcommerce/product-addons/${addon.id}`);
     }
 
-    const totalRevenue = addons.reduce((sum, a) => sum + Number(a.revenue || 0), 0);
-    const totalSold = addons.reduce((sum, a) => sum + Number(a.units_sold || 0), 0);
+    const totalRevenue = addons.reduce(
+        (sum, a) => sum + Number(a.revenue || 0),
+        0,
+    );
+    const totalSold = addons.reduce(
+        (sum, a) => sum + Number(a.units_sold || 0),
+        0,
+    );
 
     return (
         <>
@@ -52,7 +79,8 @@ export default function ProductAddonsIndex({ addons, currency }: { addons: Addon
                         <div className="flex items-center gap-2">
                             <Button variant="outline" asChild>
                                 <Link href="/admin/extensions/modrixcommerce/product-addons/settings">
-                                    <Settings className="mr-1.5 size-4" /> Display Settings
+                                    <Settings className="mr-1.5 size-4" />{' '}
+                                    Display Settings
                                 </Link>
                             </Button>
                             <Button asChild>
@@ -69,14 +97,17 @@ export default function ProductAddonsIndex({ addons, currency }: { addons: Addon
                         <CardHeader className="pb-2">
                             <CardDescription>Active Addons</CardDescription>
                             <CardTitle className="text-2xl tabular-nums">
-                                {addons.filter((a) => a.is_active).length} / {addons.length}
+                                {addons.filter((a) => a.is_active).length} /{' '}
+                                {addons.length}
                             </CardTitle>
                         </CardHeader>
                     </Card>
                     <Card>
                         <CardHeader className="pb-2">
                             <CardDescription>Addons Sold</CardDescription>
-                            <CardTitle className="text-2xl tabular-nums">{totalSold}</CardTitle>
+                            <CardTitle className="text-2xl tabular-nums">
+                                {totalSold}
+                            </CardTitle>
                         </CardHeader>
                     </Card>
                     <Card>
@@ -93,7 +124,9 @@ export default function ProductAddonsIndex({ addons, currency }: { addons: Addon
                     <CardHeader>
                         <CardTitle>Configured Addons & Warranties</CardTitle>
                         <CardDescription>
-                            When shoppers select an addon on a product page, its price is automatically added to the product line in the cart and checkout order total.
+                            When shoppers select an addon on a product page, its
+                            price is automatically added to the product line in
+                            the cart and checkout order total.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="p-0">
@@ -111,7 +144,9 @@ export default function ProductAddonsIndex({ addons, currency }: { addons: Addon
                             </thead>
                             <tbody className="divide-y">
                                 {addons.map((addon) => {
-                                    const meta = typeLabels[addon.type] ?? typeLabels.warranty;
+                                    const meta =
+                                        typeLabels[addon.type] ??
+                                        typeLabels.warranty;
                                     const Icon = meta.icon;
 
                                     return (
@@ -120,7 +155,10 @@ export default function ProductAddonsIndex({ addons, currency }: { addons: Addon
                                                 <div className="flex items-center gap-2 font-medium">
                                                     <span>{addon.name}</span>
                                                     {addon.badge && (
-                                                        <Badge variant="outline" className="text-[11px]">
+                                                        <Badge
+                                                            variant="outline"
+                                                            className="text-[11px]"
+                                                        >
                                                             {addon.badge}
                                                         </Badge>
                                                     )}
@@ -138,56 +176,109 @@ export default function ProductAddonsIndex({ addons, currency }: { addons: Addon
                                                 </span>
                                             </td>
                                             <td className="p-4">
-                                                {addon.target_type === 'all' && (
-                                                    <Badge variant="secondary">All Products</Badge>
+                                                {addon.target_type ===
+                                                    'all' && (
+                                                    <Badge variant="secondary">
+                                                        All Products
+                                                    </Badge>
                                                 )}
-                                                {addon.target_type === 'products' && (
+                                                {addon.target_type ===
+                                                    'products' && (
                                                     <div className="flex flex-wrap gap-1">
-                                                        {addon.targets.map((t) => (
-                                                            <Badge key={t.id} variant="outline">
-                                                                {t.name}
-                                                            </Badge>
-                                                        ))}
-                                                        {addon.targets.length === 0 && (
+                                                        {addon.targets.map(
+                                                            (t) => (
+                                                                <Badge
+                                                                    key={t.id}
+                                                                    variant="outline"
+                                                                >
+                                                                    {t.name}
+                                                                </Badge>
+                                                            ),
+                                                        )}
+                                                        {addon.targets
+                                                            .length === 0 && (
                                                             <span className="text-xs text-muted-foreground">
-                                                                {addon.target_ids.length} product(s)
+                                                                {
+                                                                    addon
+                                                                        .target_ids
+                                                                        .length
+                                                                }{' '}
+                                                                product(s)
                                                             </span>
                                                         )}
                                                     </div>
                                                 )}
-                                                {addon.target_type === 'categories' && (
+                                                {addon.target_type ===
+                                                    'categories' && (
                                                     <div className="flex flex-wrap gap-1">
-                                                        {addon.targets.map((t) => (
-                                                            <Badge key={t.id} variant="outline">
-                                                                Category: {t.name}
-                                                            </Badge>
-                                                        ))}
-                                                        {addon.targets.length === 0 && (
+                                                        {addon.targets.map(
+                                                            (t) => (
+                                                                <Badge
+                                                                    key={t.id}
+                                                                    variant="outline"
+                                                                >
+                                                                    Category:{' '}
+                                                                    {t.name}
+                                                                </Badge>
+                                                            ),
+                                                        )}
+                                                        {addon.targets
+                                                            .length === 0 && (
                                                             <span className="text-xs text-muted-foreground">
-                                                                {addon.target_ids.length} category(s)
+                                                                {
+                                                                    addon
+                                                                        .target_ids
+                                                                        .length
+                                                                }{' '}
+                                                                category(s)
                                                             </span>
                                                         )}
                                                     </div>
                                                 )}
                                             </td>
                                             <td className="p-4 font-semibold tabular-nums">
-                                                +{currency} {Number(addon.price).toFixed(2)}
+                                                +{currency}{' '}
+                                                {Number(addon.price).toFixed(2)}
                                             </td>
                                             <td className="p-4 text-xs text-muted-foreground tabular-nums">
-                                                {addon.units_sold} sold · {currency} {Number(addon.revenue).toFixed(2)}
+                                                {addon.units_sold} sold ·{' '}
+                                                {currency}{' '}
+                                                {Number(addon.revenue).toFixed(
+                                                    2,
+                                                )}
                                             </td>
                                             <td className="p-4">
-                                                <Badge variant={addon.is_active ? 'default' : 'secondary'}>
-                                                    {addon.is_active ? 'Active' : 'Disabled'}
+                                                <Badge
+                                                    variant={
+                                                        addon.is_active
+                                                            ? 'default'
+                                                            : 'secondary'
+                                                    }
+                                                >
+                                                    {addon.is_active
+                                                        ? 'Active'
+                                                        : 'Disabled'}
                                                 </Badge>
                                             </td>
                                             <td className="space-x-1 p-4 text-right">
-                                                <Button size="sm" variant="ghost" asChild>
-                                                    <Link href={`/admin/m/modrixcommerce/product-addons/${addon.id}/edit`}>
+                                                <Button
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    asChild
+                                                >
+                                                    <Link
+                                                        href={`/admin/m/modrixcommerce/product-addons/${addon.id}/edit`}
+                                                    >
                                                         <Pencil className="size-4" />
                                                     </Link>
                                                 </Button>
-                                                <Button size="sm" variant="ghost" onClick={() => remove(addon)}>
+                                                <Button
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    onClick={() =>
+                                                        remove(addon)
+                                                    }
+                                                >
                                                     <Trash2 className="size-4" />
                                                 </Button>
                                             </td>
@@ -196,8 +287,13 @@ export default function ProductAddonsIndex({ addons, currency }: { addons: Addon
                                 })}
                                 {addons.length === 0 && (
                                     <tr>
-                                        <td colSpan={7} className="p-8 text-center text-muted-foreground">
-                                            No warranties or product addons created yet. Click &ldquo;New Addon&rdquo; to add your first one.
+                                        <td
+                                            colSpan={7}
+                                            className="p-8 text-center text-muted-foreground"
+                                        >
+                                            No warranties or product addons
+                                            created yet. Click &ldquo;New
+                                            Addon&rdquo; to add your first one.
                                         </td>
                                     </tr>
                                 )}

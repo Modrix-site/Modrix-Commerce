@@ -23,10 +23,10 @@ Accept payments across the **United Arab Emirates (UAE)** and the wider **GCC** 
 ## Installation & Setup
 
 1. Install and enable the module:
-   ```bash
-   php artisan ecomodular:modules install modrixcommerce/myfatoorah
-   php artisan ecomodular:modules enable modrixcommerce/myfatoorah --trust
-   ```
+    ```bash
+    php artisan ecomodular:modules install modrixcommerce/myfatoorah
+    php artisan ecomodular:modules enable modrixcommerce/myfatoorah --trust
+    ```
 2. Navigate to **Admin -> Configuration -> MyFatoorah**.
 3. Enter your **API Token (Key)** and optional **Webhook Secret**.
 4. Configure test mode for staging or live mode for production.

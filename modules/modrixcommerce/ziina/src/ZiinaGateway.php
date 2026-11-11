@@ -78,12 +78,12 @@ final class ZiinaGateway implements PaymentGateway
         }
 
         $minorAmount = ZiinaAmount::toMinorUnits($payment->money());
-        $callbackUrl = route('modrixcommerce.ziina.response') . '?payment_id=' . $payment->id;
+        $callbackUrl = route('modrixcommerce.ziina.response').'?payment_id='.$payment->id;
 
         $payload = [
             'amount' => $minorAmount,
             'currency_code' => $payment->currency,
-            'message' => 'Order ' . ($order->number ?? $order->id),
+            'message' => 'Order '.($order->number ?? $order->id),
             'success_url' => $callbackUrl,
             'cancel_url' => $cancelUrl,
             'test' => $this->settings->testMode(),
@@ -92,7 +92,7 @@ final class ZiinaGateway implements PaymentGateway
         try {
             $response = $this->api->createPaymentIntent($payload);
         } catch (Throwable $e) {
-            throw new GatewayException('Failed to create Ziina Payment Intent: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Failed to create Ziina Payment Intent: '.$e->getMessage(), 0, $e);
         }
 
         $intentId = (string) ($response['id'] ?? '');
@@ -126,7 +126,7 @@ final class ZiinaGateway implements PaymentGateway
         try {
             $response = $this->api->getPaymentIntent($intentId);
         } catch (Throwable $e) {
-            throw new GatewayException('Could not retrieve payment status from Ziina: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Could not retrieve payment status from Ziina: '.$e->getMessage(), 0, $e);
         }
 
         return $this->buildPaymentUpdate($response, $intentId);
@@ -212,10 +212,10 @@ final class ZiinaGateway implements PaymentGateway
         try {
             $response = $this->api->refund($intentId, $minorAmount, $amount->currency());
         } catch (Throwable $e) {
-            throw new GatewayException('Ziina refund request failed: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Ziina refund request failed: '.$e->getMessage(), 0, $e);
         }
 
-        $refundId = (string) ($response['id'] ?? ('ref_' . substr($idempotencyKey, 0, 18)));
+        $refundId = (string) ($response['id'] ?? ('ref_'.substr($idempotencyKey, 0, 18)));
         $state = strtolower((string) ($response['status'] ?? 'completed'));
 
         $status = match ($state) {

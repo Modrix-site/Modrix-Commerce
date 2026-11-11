@@ -415,10 +415,16 @@
 [data-theme='modrixcommerce/tempo'] [data-style='card'] h3 {
     font-weight: 600;
 }
-[data-theme='modrixcommerce/tempo'] [data-style='editorial'] .tp-outlet-tile > div {
+[data-theme='modrixcommerce/tempo']
+    [data-style='editorial']
+    .tp-outlet-tile
+    > div {
     background: var(--muted);
 }
-[data-theme='modrixcommerce/tempo'] [data-style='overlay'] .tp-outlet-tile > div {
+[data-theme='modrixcommerce/tempo']
+    [data-style='overlay']
+    .tp-outlet-tile
+    > div {
     position: absolute;
     inset-inline: 0;
     bottom: 0;
@@ -760,7 +766,9 @@
     flex-shrink: 0;
     border: 2px solid transparent;
 }
-[data-theme='modrixcommerce/tempo'] .tp-gallery-thumbnails [aria-pressed='true'] {
+[data-theme='modrixcommerce/tempo']
+    .tp-gallery-thumbnails
+    [aria-pressed='true'] {
     border-color: var(--primary);
 }
 [data-theme='modrixcommerce/tempo'] .tp-gallery-thumbnails img {
@@ -1005,7 +1013,8 @@
     [data-theme='modrixcommerce/tempo'] .tp-logo img {
         margin-inline: auto;
     }
-    [data-theme='modrixcommerce/tempo'] :is(.tp-mobile-menu, .tp-mobile-actions) {
+    [data-theme='modrixcommerce/tempo']
+        :is(.tp-mobile-menu, .tp-mobile-actions) {
         display: flex;
         align-items: center;
     }

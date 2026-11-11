@@ -66,82 +66,95 @@ export default function ReturnsAdmin({
                                 className="flex items-center justify-between gap-2 rounded px-2 py-1.5 hover:bg-muted aria-[current=page]:bg-muted aria-[current=page]:font-medium"
                             >
                                 <span>{tab.label}</span>
-                                <span className="tabular-nums text-muted-foreground">
+                                <span className="text-muted-foreground tabular-nums">
                                     {counts[tab.status] ?? 0}
                                 </span>
                             </Link>
                         ))}
                     </nav>
                     <div className="grid min-w-0 content-start gap-5">
-                <PageHeader
-                    title="Returns"
-                    description="Approve or reject a customer's return request. A comment is required either way. This does not refund the payment or restock the items."
-                />
+                        <PageHeader
+                            title="Returns"
+                            description="Approve or reject a customer's return request. A comment is required either way. This does not refund the payment or restock the items."
+                        />
 
-                {returns.data.length === 0 ? (
-                    <EmptyState
-                        title="No returns here"
-                        description="Requests appear here after a customer asks to return items from an order."
-                    />
-                ) : (
-                    <ul className="grid gap-3">
-                        {returns.data.map((row) => (
-                            <li key={row.id}>
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle className="text-base">
-                                            <Link
-                                                href={row.order_url}
-                                                className="hover:underline"
-                                            >
-                                                Order {row.order_number}
-                                            </Link>
-                                            <span className="ml-2 text-sm font-normal text-muted-foreground">
-                                                {row.customer} · {row.email}
-                                            </span>
-                                        </CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="grid gap-3 text-sm">
-                                        <ul>
-                                            {row.items.map((item) => (
-                                                <li key={`${row.id}-${item.name}`}>
-                                                    {item.name} × {item.quantity}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                        <p>{row.customer_comment}</p>
-                                        {row.staff_comment && (
-                                            <p className="text-muted-foreground">
-                                                Staff: {row.staff_comment}
-                                            </p>
-                                        )}
-                                        {row.status === 'pending' && (
-                                            <div className="grid gap-3 sm:grid-cols-2">
-                                                <DecisionForm
-                                                    action={row.approve_url}
-                                                    label="Approve"
-                                                    commentMin={commentMin}
-                                                />
-                                                <DecisionForm
-                                                    action={row.reject_url}
-                                                    label="Reject"
-                                                    commentMin={commentMin}
-                                                />
-                                            </div>
-                                        )}
-                                    </CardContent>
-                                </Card>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-                <Pagination
-                    from={returns.from}
-                    to={returns.to}
-                    total={returns.total}
-                    prevUrl={returns.prev_page_url}
-                    nextUrl={returns.next_page_url}
-                />
+                        {returns.data.length === 0 ? (
+                            <EmptyState
+                                title="No returns here"
+                                description="Requests appear here after a customer asks to return items from an order."
+                            />
+                        ) : (
+                            <ul className="grid gap-3">
+                                {returns.data.map((row) => (
+                                    <li key={row.id}>
+                                        <Card>
+                                            <CardHeader>
+                                                <CardTitle className="text-base">
+                                                    <Link
+                                                        href={row.order_url}
+                                                        className="hover:underline"
+                                                    >
+                                                        Order {row.order_number}
+                                                    </Link>
+                                                    <span className="ml-2 text-sm font-normal text-muted-foreground">
+                                                        {row.customer} ·{' '}
+                                                        {row.email}
+                                                    </span>
+                                                </CardTitle>
+                                            </CardHeader>
+                                            <CardContent className="grid gap-3 text-sm">
+                                                <ul>
+                                                    {row.items.map((item) => (
+                                                        <li
+                                                            key={`${row.id}-${item.name}`}
+                                                        >
+                                                            {item.name} ×{' '}
+                                                            {item.quantity}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                                <p>{row.customer_comment}</p>
+                                                {row.staff_comment && (
+                                                    <p className="text-muted-foreground">
+                                                        Staff:{' '}
+                                                        {row.staff_comment}
+                                                    </p>
+                                                )}
+                                                {row.status === 'pending' && (
+                                                    <div className="grid gap-3 sm:grid-cols-2">
+                                                        <DecisionForm
+                                                            action={
+                                                                row.approve_url
+                                                            }
+                                                            label="Approve"
+                                                            commentMin={
+                                                                commentMin
+                                                            }
+                                                        />
+                                                        <DecisionForm
+                                                            action={
+                                                                row.reject_url
+                                                            }
+                                                            label="Reject"
+                                                            commentMin={
+                                                                commentMin
+                                                            }
+                                                        />
+                                                    </div>
+                                                )}
+                                            </CardContent>
+                                        </Card>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                        <Pagination
+                            from={returns.from}
+                            to={returns.to}
+                            total={returns.total}
+                            prevUrl={returns.prev_page_url}
+                            nextUrl={returns.next_page_url}
+                        />
                     </div>
                 </div>
             </AdminPage>

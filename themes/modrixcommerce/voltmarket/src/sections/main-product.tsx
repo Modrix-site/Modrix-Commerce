@@ -1,20 +1,20 @@
-import { Form, Link } from "@inertiajs/react";
-import { useId, useState } from "react";
-import { Minus, Plus } from "lucide-react";
-import CartController from "@/actions/App/Http/Controllers/Storefront/CartController";
+import { Form, Link } from '@inertiajs/react';
+import { useId, useState } from 'react';
+import { Minus, Plus } from 'lucide-react';
+import CartController from '@/actions/App/Http/Controllers/Storefront/CartController';
 import {
     blockAttributes,
     type ThemeSectionProps,
-} from "@/components/storefront/theme-sections";
-import type { ThemeProductProps } from "@/lib/theme-pages";
-import { PlaceSlot } from "@/components/extensions/place-slot";
-import { ProductDescription } from "@/components/storefront/product-description";
-import { VariantSelector } from "@/components/storefront/variant-selector";
-import { BuyNowButton } from "@/components/storefront/buy-now-button";
-import { StickyAddToCart } from "@/components/storefront/sticky-add-to-cart";
-import { SaleNotice } from "@/components/storefront/sale-notice";
-import InputError from "@/components/input-error";
-import { Card, str, icons } from "../components";
+} from '@/components/storefront/theme-sections';
+import type { ThemeProductProps } from '@/lib/theme-pages';
+import { PlaceSlot } from '@/components/extensions/place-slot';
+import { ProductDescription } from '@/components/storefront/product-description';
+import { VariantSelector } from '@/components/storefront/variant-selector';
+import { BuyNowButton } from '@/components/storefront/buy-now-button';
+import { StickyAddToCart } from '@/components/storefront/sticky-add-to-cart';
+import { SaleNotice } from '@/components/storefront/sale-notice';
+import InputError from '@/components/input-error';
+import { Card, str, icons } from '../components';
 type Props = ThemeSectionProps<Record<string, unknown>, ThemeProductProps>;
 export default function MainProduct(props: Props) {
     return props.page?.product ? (
@@ -48,8 +48,8 @@ function Product({ section, page }: Props) {
                     <Link href="/search">Products</Link>
                     {page.breadcrumbs.map((c) => (
                         <span key={c.slug}>
-                            {" "}
-                            / <Link href={"/c/" + c.slug}>{c.name}</Link>
+                            {' '}
+                            / <Link href={'/c/' + c.slug}>{c.name}</Link>
                         </span>
                     ))}
                     <span>/</span>
@@ -64,14 +64,14 @@ function Product({ section, page }: Props) {
                                 type="button"
                                 key={img.id}
                                 className="vm-thumb"
-                                aria-label={"View image " + (i + 1)}
+                                aria-label={'View image ' + (i + 1)}
                                 aria-pressed={i === imageIndex}
                                 onClick={() => onImage(i)}
                             >
                                 <img
                                     src={img.url}
                                     alt=""
-                                    loading={i ? "lazy" : "eager"}
+                                    loading={i ? 'lazy' : 'eager'}
                                 />
                             </button>
                         ))}
@@ -93,15 +93,15 @@ function Product({ section, page }: Props) {
                     <PlaceSlot place="product.after_title" />
                     {product.brand && (
                         <div className="vm-product-meta">
-                            Brand:{" "}
-                            <Link href={"/b/" + product.brand.slug}>
+                            Brand:{' '}
+                            <Link href={'/b/' + product.brand.slug}>
                                 {product.brand.name}
                             </Link>
                         </div>
                     )}
                     <p className="vm-product-price">
                         {variant?.price?.formatted ??
-                            "Choose options to see the price."}
+                            'Choose options to see the price.'}
                         {variant?.compare_at_price && (
                             <s>{variant.compare_at_price.formatted}</s>
                         )}
@@ -141,10 +141,10 @@ function Product({ section, page }: Props) {
                         <p className="vm-stock-note" role="status">
                             {variant?.purchasable
                                 ? variant.available === null
-                                    ? "Available to order"
-                                    : variant.available + " available"
+                                    ? 'Available to order'
+                                    : variant.available + ' available'
                                 : (variant?.message ??
-                                  "This combination is unavailable.")}
+                                  'This combination is unavailable.')}
                         </p>
                         {variant && (
                             <Form
@@ -159,7 +159,7 @@ function Product({ section, page }: Props) {
                                             value={variant.id}
                                         />
                                         <label
-                                            htmlFor={id + "-quantity"}
+                                            htmlFor={id + '-quantity'}
                                             className="vm-qty-label"
                                         >
                                             Quantity
@@ -185,7 +185,7 @@ function Product({ section, page }: Props) {
                                                     <Minus size={13} />
                                                 </button>
                                                 <input
-                                                    id={id + "-quantity"}
+                                                    id={id + '-quantity'}
                                                     name="quantity"
                                                     type="number"
                                                     min="1"
@@ -231,7 +231,7 @@ function Product({ section, page }: Props) {
                                                 }
                                             >
                                                 {processing
-                                                    ? "Adding…"
+                                                    ? 'Adding…'
                                                     : str(s.add_label)}
                                             </button>
                                             <BuyNowButton
@@ -258,7 +258,7 @@ function Product({ section, page }: Props) {
                     </div>
                     <PlaceSlot place="product.after_add_to_cart" />
                     <div className="vm-product-sku">
-                        SKU: {variant?.sku ?? "—"}
+                        SKU: {variant?.sku ?? '—'}
                         {product.brand && <p>Brand: {product.brand.name}</p>}
                     </div>
                 </div>
@@ -286,7 +286,7 @@ function Product({ section, page }: Props) {
                         </div>
                         {str(s.promo_image) && (
                             <Link
-                                href={str(s.promo_link) || "/search"}
+                                href={str(s.promo_link) || '/search'}
                                 className="vm-promo vm-rail-promo"
                             >
                                 <img src={str(s.promo_image)} alt="" />
@@ -309,35 +309,35 @@ function Product({ section, page }: Props) {
                         <button
                             type="button"
                             key={i}
-                            id={id + "-tab-" + i}
+                            id={id + '-tab-' + i}
                             role="tab"
-                            aria-controls={id + "-panel-" + i}
+                            aria-controls={id + '-panel-' + i}
                             aria-selected={tab === i}
                             tabIndex={tab === i ? 0 : -1}
                             onClick={() => setTab(i)}
                             onKeyDown={(e) => {
                                 if (
                                     [
-                                        "ArrowLeft",
-                                        "ArrowRight",
-                                        "Home",
-                                        "End",
+                                        'ArrowLeft',
+                                        'ArrowRight',
+                                        'Home',
+                                        'End',
                                     ].includes(e.key)
                                 ) {
                                     e.preventDefault();
                                     const next =
-                                        e.key === "Home"
+                                        e.key === 'Home'
                                             ? 0
-                                            : e.key === "End"
+                                            : e.key === 'End'
                                               ? 2
                                               : (i +
-                                                    (e.key === "ArrowRight"
+                                                    (e.key === 'ArrowRight'
                                                         ? 1
                                                         : 2)) %
                                                 3;
                                     setTab(next);
                                     document
-                                        .getElementById(id + "-tab-" + next)
+                                        .getElementById(id + '-tab-' + next)
                                         ?.focus();
                                 }
                             }}
@@ -350,8 +350,8 @@ function Product({ section, page }: Props) {
                     <div
                         key={i}
                         role="tabpanel"
-                        id={id + "-panel-" + i}
-                        aria-labelledby={id + "-tab-" + i}
+                        id={id + '-panel-' + i}
+                        aria-labelledby={id + '-tab-' + i}
                         hidden={tab !== i}
                         tabIndex={0}
                     >
@@ -374,7 +374,7 @@ function Product({ section, page }: Props) {
                                     </tr>
                                     <tr>
                                         <th>SKU</th>
-                                        <td>{variant?.sku ?? "—"}</td>
+                                        <td>{variant?.sku ?? '—'}</td>
                                     </tr>
                                     {product.brand && (
                                         <tr>
@@ -389,7 +389,7 @@ function Product({ section, page }: Props) {
                                                 {o.values.find(
                                                     (v) =>
                                                         v.id === selected[o.id],
-                                                )?.value ?? "Choose an option"}
+                                                )?.value ?? 'Choose an option'}
                                             </td>
                                         </tr>
                                     ))}
@@ -397,8 +397,8 @@ function Product({ section, page }: Props) {
                                         <th>Availability</th>
                                         <td>
                                             {variant?.purchasable
-                                                ? "Available"
-                                                : "Unavailable"}
+                                                ? 'Available'
+                                                : 'Unavailable'}
                                         </td>
                                     </tr>
                                 </tbody>

@@ -51,10 +51,7 @@ export default function Editorial({ section }: ThemeSectionProps) {
                                     <h3>{card.heading}</h3>
                                     <p>{card.text}</p>
                                 </div>
-                                <Link
-                                    href={card.link}
-                                    className="at-text-link"
-                                >
+                                <Link href={card.link} className="at-text-link">
                                     <span>{card.button}</span>
                                     <ArrowRight size={14} />
                                 </Link>

@@ -5,7 +5,6 @@
 | and the "modrixcommerce.payu." name prefix.
 */
 
-use App\Domains\Payments\Models\Payment;
 use EcoModular\PayU\Http\PayuCheckoutController;
 use Illuminate\Support\Facades\Route;
 

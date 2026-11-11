@@ -55,17 +55,8 @@
                     }
                 }
             },
-            "block_order": [
-                "block_0",
-                "block_1",
-                "block_2",
-                "block_3"
-            ]
+            "block_order": ["block_0", "block_1", "block_2", "block_3"]
         }
     },
-    "order": [
-        "campaign",
-        "main",
-        "apps"
-    ]
+    "order": ["campaign", "main", "apps"]
 }

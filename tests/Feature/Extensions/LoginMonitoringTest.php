@@ -2,16 +2,12 @@
 
 namespace Tests\Feature\Extensions;
 
+use App\Core\Extensions\Models\Extension;
 use App\Core\Extensions\ModuleManager;
 use App\Models\User;
-use EcoModular\LoginMonitoring\Models\LoginAllowedIp;
-use EcoModular\LoginMonitoring\Models\LoginAuditLog;
-use EcoModular\LoginMonitoring\Models\LoginBlockedIp;
 use EcoModular\LoginMonitoring\Models\LoginEvent;
-use EcoModular\LoginMonitoring\Models\LoginFailedAttempt;
 use EcoModular\LoginMonitoring\Models\LoginSecurityIncident;
 use EcoModular\LoginMonitoring\Models\LoginUserSession;
-use EcoModular\LoginMonitoring\Services\GeoLocationService;
 use EcoModular\LoginMonitoring\Services\LoginTrackerService;
 use EcoModular\LoginMonitoring\Services\MfaManagerService;
 use EcoModular\LoginMonitoring\Services\SessionManagerService;
@@ -21,6 +17,7 @@ use Illuminate\Auth\Events\Login;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Tests\Support\CommerceFixtures;
 use Tests\Support\ModuleFixtures;
 use Tests\TestCase;
@@ -36,7 +33,7 @@ class LoginMonitoringTest extends TestCase
         parent::setUp();
         $this->installPlatform();
         $this->setUpModules();
-        File::copyDirectory(base_path('modules/modrixcommerce/login-monitoring'), $this->modulesPath . '/modrixcommerce/login-monitoring');
+        File::copyDirectory(base_path('modules/modrixcommerce/login-monitoring'), $this->modulesPath.'/modrixcommerce/login-monitoring');
         $modules = app(ModuleManager::class);
         $modules->install(self::MODULE);
         $modules->enable(self::MODULE, true);
@@ -45,7 +42,7 @@ class LoginMonitoringTest extends TestCase
 
     public function test_module_installs_and_enables_successfully(): void
     {
-        $extension = \App\Core\Extensions\Models\Extension::query()->where('name', self::MODULE)->first();
+        $extension = Extension::query()->where('name', self::MODULE)->first();
         $this->assertNotNull($extension);
         $this->assertEquals('enabled', $extension->state->value);
     }
@@ -114,7 +111,7 @@ class LoginMonitoringTest extends TestCase
 
         // First login in New York (lat: 40.71, lon: -74.00) 10 minutes ago
         LoginEvent::create([
-            'event_uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'event_uuid' => (string) Str::uuid(),
             'user_id' => $user->id,
             'email' => $user->email,
             'ip_address' => '198.51.100.10',
@@ -162,7 +159,7 @@ class LoginMonitoringTest extends TestCase
         $user = User::factory()->create(['email' => 'user.with.session@example.com']);
         $sessionManager = app(SessionManagerService::class);
 
-        $sessionId = 'mock-session-' . uniqid();
+        $sessionId = 'mock-session-'.uniqid();
         LoginUserSession::create([
             'session_id' => $sessionId,
             'user_id' => $user->id,

@@ -57,10 +57,16 @@ Template/group JSON (Shopify's shape):
 
 ```json
 {
-  "sections": {
-    "hero": { "type": "slideshow", "settings": {}, "blocks": { "s1": { "type": "slide", "settings": {} } }, "block_order": ["s1"], "disabled": false }
-  },
-  "order": ["hero"]
+    "sections": {
+        "hero": {
+            "type": "slideshow",
+            "settings": {},
+            "blocks": { "s1": { "type": "slide", "settings": {} } },
+            "block_order": ["s1"],
+            "disabled": false
+        }
+    },
+    "order": ["hero"]
 }
 ```
 

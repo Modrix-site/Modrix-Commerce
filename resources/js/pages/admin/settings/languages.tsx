@@ -283,8 +283,8 @@ export default function LanguageSettings({
                                                     </FormField>
                                                     {phrases.length === 0 ? (
                                                         <p className="text-sm text-muted-foreground">
-                                                            The active theme
-                                                            has no homepage or
+                                                            The active theme has
+                                                            no homepage or
                                                             footer text to
                                                             translate yet.
                                                         </p>

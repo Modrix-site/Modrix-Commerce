@@ -705,11 +705,7 @@
             "label": "Desktop columns",
             "group": "Catalog",
             "default": "4",
-            "options": [
-                "3",
-                "4",
-                "5"
-            ]
+            "options": ["3", "4", "5"]
         },
         "custom.catalog_image_height": {
             "type": "integer",

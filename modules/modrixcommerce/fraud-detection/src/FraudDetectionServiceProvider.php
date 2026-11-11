@@ -29,7 +29,7 @@ class FraudDetectionServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'fraud-detection');
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'fraud-detection');
 
         if ($this->app->runningInConsole()) {
             $this->commands([

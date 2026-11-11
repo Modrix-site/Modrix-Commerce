@@ -7,12 +7,9 @@ use App\Domains\Catalog\Enums\ProductStatus;
 use App\Domains\Catalog\Models\Product;
 use App\Domains\Orders\Models\Order;
 use App\Domains\Orders\Models\OrderAddress;
-use App\Domains\Orders\Models\OrderItem;
 use EcoModular\SocialProofNotifications\Models\LiveProductViewer;
 use EcoModular\SocialProofNotifications\Models\SocialProofEvent;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class SocialProofService
 {

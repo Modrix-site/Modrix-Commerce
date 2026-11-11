@@ -167,11 +167,7 @@
             "group": "Hero",
             "tab": "home",
             "default": "left",
-            "options": [
-                "left",
-                "center",
-                "end"
-            ]
+            "options": ["left", "center", "end"]
         },
         "custom.show_departments": {
             "type": "boolean",
@@ -392,12 +388,7 @@
             "group": "Catalog",
             "tab": "catalog",
             "default": "4",
-            "options": [
-                "3",
-                "4",
-                "5",
-                "6"
-            ]
+            "options": ["3", "4", "5", "6"]
         },
         "custom.catalog_filters": {
             "type": "boolean",

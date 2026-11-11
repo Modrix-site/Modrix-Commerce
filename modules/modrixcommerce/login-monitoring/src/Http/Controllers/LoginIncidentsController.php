@@ -23,7 +23,7 @@ class LoginIncidentsController extends Controller
             ->with('user:id,name,email')
             ->orderByDesc('created_at');
 
-        if (!empty($search)) {
+        if (! empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where('email', 'like', "%{$search}%")
                     ->orWhere('ip_address', 'like', "%{$search}%")
@@ -31,15 +31,15 @@ class LoginIncidentsController extends Controller
             });
         }
 
-        if (!empty($status) && in_array($status, ['open', 'investigating', 'resolved', 'dismissed'])) {
+        if (! empty($status) && in_array($status, ['open', 'investigating', 'resolved', 'dismissed'])) {
             $query->where('status', $status);
         }
 
-        if (!empty($severity) && in_array($severity, ['low', 'medium', 'high', 'critical'])) {
+        if (! empty($severity) && in_array($severity, ['low', 'medium', 'high', 'critical'])) {
             $query->where('severity', $severity);
         }
 
-        if (!empty($type)) {
+        if (! empty($type)) {
             $query->where('incident_type', $type);
         }
 

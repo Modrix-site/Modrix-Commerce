@@ -40,7 +40,7 @@ final class NGeniusApi
             throw new GatewayException('N-Genius API key is not configured.');
         }
 
-        $cacheKey = 'ngenius_access_token_' . md5($apiKey . ($this->settings->testMode() ? '_test' : '_live'));
+        $cacheKey = 'ngenius_access_token_'.md5($apiKey.($this->settings->testMode() ? '_test' : '_live'));
 
         if (! $forceRefresh) {
             $cached = Cache::get($cacheKey);
@@ -49,12 +49,12 @@ final class NGeniusApi
             }
         }
 
-        $url = $this->baseUrl() . '/identity/auth/access-token';
+        $url = $this->baseUrl().'/identity/auth/access-token';
 
         try {
             $response = Http::timeout(self::TIMEOUT_SECONDS)
                 ->withHeaders([
-                    'Authorization' => 'Basic ' . $apiKey,
+                    'Authorization' => 'Basic '.$apiKey,
                     'Content-Type' => 'application/vnd.ni-identity.v1+json',
                     'Accept' => 'application/vnd.ni-identity.v1+json',
                 ])
@@ -72,7 +72,7 @@ final class NGeniusApi
         if ($response->failed()) {
             $status = $response->status();
             $body = $response->json();
-            $msg = $body['message'] ?? $body['error_description'] ?? 'Status ' . $status;
+            $msg = $body['message'] ?? $body['error_description'] ?? 'Status '.$status;
             Log::warning('N-Genius auth request rejected', ['status' => $status, 'body' => $body]);
             throw new GatewayException("N-Genius authentication failed ({$status}): {$msg}");
         }
@@ -161,7 +161,7 @@ final class NGeniusApi
 
             return [
                 'success' => true,
-                'message' => 'Connected successfully to Network International N-Genius (' . ($this->settings->testMode() ? 'Sandbox' : 'Live') . ').',
+                'message' => 'Connected successfully to Network International N-Genius ('.($this->settings->testMode() ? 'Sandbox' : 'Live').').',
             ];
         } catch (Throwable $e) {
             return [
@@ -180,12 +180,12 @@ final class NGeniusApi
     private function request(string $method, string $path, ?array $data = null, bool $retryOnAuth = true): array
     {
         $token = $this->getAccessToken();
-        $url = $this->baseUrl() . $path;
+        $url = $this->baseUrl().$path;
 
         try {
             $req = Http::timeout(self::TIMEOUT_SECONDS)
                 ->withHeaders([
-                    'Authorization' => 'Bearer ' . $token,
+                    'Authorization' => 'Bearer '.$token,
                     'Content-Type' => 'application/vnd.ni-payment.v2+json',
                     'Accept' => 'application/vnd.ni-payment.v2+json',
                 ]);
@@ -197,10 +197,10 @@ final class NGeniusApi
             };
         } catch (ConnectionException $e) {
             Log::error('N-Genius connection error', ['path' => $path, 'error' => $e->getMessage()]);
-            throw new GatewayException('Network error connecting to N-Genius: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Network error connecting to N-Genius: '.$e->getMessage(), 0, $e);
         } catch (Throwable $e) {
             Log::error('N-Genius client error', ['path' => $path, 'error' => $e->getMessage()]);
-            throw new GatewayException('Error communicating with N-Genius: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Error communicating with N-Genius: '.$e->getMessage(), 0, $e);
         }
 
         // Token may have expired prematurely; retry once with a freshly requested token
@@ -213,7 +213,7 @@ final class NGeniusApi
         if ($response->failed()) {
             $status = $response->status();
             $body = $response->json();
-            $message = $body['message'] ?? $body['errors'][0]['message'] ?? ('HTTP ' . $status . ' error');
+            $message = $body['message'] ?? $body['errors'][0]['message'] ?? ('HTTP '.$status.' error');
             Log::warning('N-Genius API error response', ['path' => $path, 'status' => $status, 'body' => $body]);
             throw new GatewayException("N-Genius API request failed ({$status}): {$message}");
         }

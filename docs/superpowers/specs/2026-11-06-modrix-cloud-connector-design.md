@@ -33,7 +33,7 @@ store's licenses in sync.
    (<domain>)". `return_url` must be on `domain`. A one-time code (5 minutes)
    is created and the browser returns to `return_url?code&state`.
 3. Store: checks `state`, then `POST connections/token {code, code_verifier,
-   instance_id}` → connection token (64 random characters; the cloud stores
+instance_id}` → connection token (64 random characters; the cloud stores
    only its SHA-256). The store keeps it encrypted; it never reaches the
    browser.
 4. Disconnect: `DELETE connections/current` and the store forgets the token.

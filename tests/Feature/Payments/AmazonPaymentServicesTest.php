@@ -39,7 +39,7 @@ class AmazonPaymentServicesTest extends TestCase
         $manifestData = json_decode((string) file_get_contents(base_path('modules/modrixcommerce/amazon-payment-services/module.json')), true);
         $manifest = Manifest::fromArray($manifestData);
         $loaded = app(ModuleLoader::class)->load('modrixcommerce/amazon-payment-services', 'modrixcommerce/amazon-payment-services', $manifest);
-        $this->assertTrue($loaded, 'Module failed to load: ' . (app(ModuleLoader::class)->failure('modrixcommerce/amazon-payment-services')?->getMessage() ?? 'unknown error'));
+        $this->assertTrue($loaded, 'Module failed to load: '.(app(ModuleLoader::class)->failure('modrixcommerce/amazon-payment-services')?->getMessage() ?? 'unknown error'));
 
         $this->settings = app(AmazonPaymentServicesSettings::class);
         $this->gateway = app(AmazonPaymentServicesGateway::class);
@@ -175,8 +175,8 @@ class AmazonPaymentServicesTest extends TestCase
 
         $session = $this->gateway->createSession($order, $payment, 'https://example.com/return', 'https://example.com/cancel');
 
-        $this->assertStringStartsWith('APS-' . $payment->id, $session->reference);
-        $this->assertStringContainsString('/m/modrixcommerce/amazon-payment-services/pay/' . $payment->id, $session->redirectUrl);
+        $this->assertStringStartsWith('APS-'.$payment->id, $session->reference);
+        $this->assertStringContainsString('/m/modrixcommerce/amazon-payment-services/pay/'.$payment->id, $session->redirectUrl);
 
         $cached = Cache::get("aps:handoff:{$payment->id}");
         $this->assertIsArray($cached);

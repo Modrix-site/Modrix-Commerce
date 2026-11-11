@@ -16,11 +16,7 @@
         }
     },
     "provider": "EcoModular\\Paypal\\PaypalServiceProvider",
-    "capabilities": [
-        "payment.gateway",
-        "admin.routes",
-        "admin.navigation"
-    ],
+    "capabilities": ["payment.gateway", "admin.routes", "admin.navigation"],
     "routes": {
         "admin": "routes/admin.php"
     },

@@ -59,7 +59,7 @@ class BotDetectionEngine
     public function evaluate(Request $request): array
     {
         $enabled = (bool) $this->settings->of(self::MODULE, 'enabled', true);
-        if (!$enabled) {
+        if (! $enabled) {
             return [
                 'score' => 0,
                 'threat_level' => 'low',
@@ -73,7 +73,7 @@ class BotDetectionEngine
         $ip = $request->ip() ?? '127.0.0.1';
         $userAgent = (string) $request->userAgent();
         $uaLower = strtolower($userAgent);
-        $path = '/' . ltrim($request->path(), '/');
+        $path = '/'.ltrim($request->path(), '/');
 
         // 1. Whitelist check: If IP is whitelisted, immediately allow
         if ($this->ipCountry->isWhitelisted($ip)) {
@@ -166,14 +166,14 @@ class BotDetectionEngine
         }
 
         // 7. Missing standard browser headers (Headless browser check)
-        $isHtmlRequest = !$request->expectsJson() && !str_starts_with($path, '/api');
+        $isHtmlRequest = ! $request->expectsJson() && ! str_starts_with($path, '/api');
         if ($isHtmlRequest) {
-            if (!$request->hasHeader('accept-language')) {
+            if (! $request->hasHeader('accept-language')) {
                 $score += 25;
                 $reasons[] = ['indicator' => 'Missing standard Accept-Language header', 'points' => 25];
                 $detectedTypes[] = 'missing_headers';
             }
-            if (!$request->hasHeader('accept-encoding')) {
+            if (! $request->hasHeader('accept-encoding')) {
                 $score += 20;
                 $reasons[] = ['indicator' => 'Missing Accept-Encoding header (typical of automated scripts)', 'points' => 20];
                 $detectedTypes[] = 'missing_headers';
@@ -269,7 +269,7 @@ class BotDetectionEngine
         }
 
         // Primary bot classification
-        $botType = !empty($detectedTypes) ? $detectedTypes[0] : ($finalScore >= 30 ? 'suspected_bot' : 'human');
+        $botType = ! empty($detectedTypes) ? $detectedTypes[0] : ($finalScore >= 30 ? 'suspected_bot' : 'human');
         $isBot = $finalScore >= 30;
 
         // Record learning profile

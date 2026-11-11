@@ -53,12 +53,14 @@ export default function ProductAddons({
     addons,
 }: Props) {
     const [pendingId, setPendingId] = useState<number | null>(null);
-    const [selectedMap, setSelectedMap] = useState<Record<number, boolean>>(() =>
-        Object.fromEntries((addons ?? []).map((a) => [a.id, a.selected])),
+    const [selectedMap, setSelectedMap] = useState<Record<number, boolean>>(
+        () => Object.fromEntries((addons ?? []).map((a) => [a.id, a.selected])),
     );
 
     useEffect(() => {
-        setSelectedMap(Object.fromEntries((addons ?? []).map((a) => [a.id, a.selected])));
+        setSelectedMap(
+            Object.fromEntries((addons ?? []).map((a) => [a.id, a.selected])),
+        );
     }, [addons]);
 
     if (!addons || addons.length === 0) return null;
@@ -71,7 +73,10 @@ export default function ProductAddons({
 
         const nextAddonSum = addons.reduce((sum, item) => {
             if (!nextMap[item.id]) return sum;
-            return sum + Number(item.price.display_amount ?? item.price.amount ?? 0);
+            return (
+                sum +
+                Number(item.price.display_amount ?? item.price.amount ?? 0)
+            );
         }, 0);
 
         window.dispatchEvent(
@@ -112,11 +117,16 @@ export default function ProductAddons({
                         <ShieldCheck className="size-4 text-primary" />
                         {heading}
                     </p>
-                    {subtext && <p className="mt-0.5 text-xs text-muted-foreground">{subtext}</p>}
+                    {subtext && (
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                            {subtext}
+                        </p>
+                    )}
                 </div>
                 {selectedAddons.length > 0 && (
                     <span className="shrink-0 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-                        {selectedAddons.length} selected (+{formatCurrency(selectedSum, sampleMoney)})
+                        {selectedAddons.length} selected (+
+                        {formatCurrency(selectedSum, sampleMoney)})
                     </span>
                 )}
             </div>
@@ -147,12 +157,16 @@ export default function ProductAddons({
                                         : 'border-muted-foreground/40 bg-background'
                                 }`}
                             >
-                                {isSelected && <Check className="size-3.5 stroke-[3]" />}
+                                {isSelected && (
+                                    <Check className="size-3.5 stroke-[3]" />
+                                )}
                             </span>
 
                             <div className="min-w-0 flex-1">
                                 <div className="flex flex-wrap items-center gap-1.5">
-                                    <span className="text-sm font-medium text-foreground">{addon.name}</span>
+                                    <span className="text-sm font-medium text-foreground">
+                                        {addon.name}
+                                    </span>
                                     <span className="inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
                                         <Icon className="size-3" />
                                         {addon.badge || meta.label}
@@ -166,10 +180,12 @@ export default function ProductAddons({
                             </div>
 
                             <div className="shrink-0 text-right">
-                                <span className="text-sm font-semibold tabular-nums text-foreground">
+                                <span className="text-sm font-semibold text-foreground tabular-nums">
                                     +{addon.price.formatted}
                                 </span>
-                                <p className="text-[10px] text-muted-foreground">per item</p>
+                                <p className="text-[10px] text-muted-foreground">
+                                    per item
+                                </p>
                             </div>
                         </button>
                     );
@@ -179,13 +195,15 @@ export default function ProductAddons({
             {selectedAddons.length > 0 && baseNumeric !== null && (
                 <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-muted/60 px-3 py-2 text-xs">
                     <span className="text-muted-foreground">
-                        Base {formatCurrency(baseNumeric, sampleMoney)} + Add-ons{' '}
+                        Base {formatCurrency(baseNumeric, sampleMoney)} +
+                        Add-ons{' '}
                         <strong className="font-medium text-foreground">
                             +{formatCurrency(selectedSum, sampleMoney)}
                         </strong>
                     </span>
-                    <span className="font-semibold tabular-nums text-foreground">
-                        Total with add-ons: {formatCurrency(baseNumeric + selectedSum, sampleMoney)}
+                    <span className="font-semibold text-foreground tabular-nums">
+                        Total with add-ons:{' '}
+                        {formatCurrency(baseNumeric + selectedSum, sampleMoney)}
                     </span>
                 </div>
             )}

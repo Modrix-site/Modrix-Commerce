@@ -17,10 +17,10 @@ final class PhonePeSignature
      */
     public function signPost(string $base64Payload, string $endpoint, string $saltKey, string|int $saltIndex): string
     {
-        $stringToHash = $base64Payload . $endpoint . $saltKey;
+        $stringToHash = $base64Payload.$endpoint.$saltKey;
         $hash = hash('sha256', $stringToHash);
 
-        return $hash . '###' . $saltIndex;
+        return $hash.'###'.$saltIndex;
     }
 
     /**
@@ -28,10 +28,10 @@ final class PhonePeSignature
      */
     public function signGet(string $endpoint, string $saltKey, string|int $saltIndex): string
     {
-        $stringToHash = $endpoint . $saltKey;
+        $stringToHash = $endpoint.$saltKey;
         $hash = hash('sha256', $stringToHash);
 
-        return $hash . '###' . $saltIndex;
+        return $hash.'###'.$saltIndex;
     }
 
     /**
@@ -54,7 +54,7 @@ final class PhonePeSignature
             return false;
         }
 
-        $expectedHash = hash('sha256', $payload . $saltKey);
+        $expectedHash = hash('sha256', $payload.$saltKey);
 
         return hash_equals($expectedHash, $receivedHash);
     }

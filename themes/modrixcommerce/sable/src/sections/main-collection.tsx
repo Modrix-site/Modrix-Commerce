@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from "react";
-import { router, Link } from "@inertiajs/react";
-import { ChevronDown, X } from "lucide-react";
-import { PlaceSlot } from "@/components/extensions/place-slot";
-import type { ThemeSectionProps } from "@/components/storefront/theme-sections";
-import type { ListingProps } from "@/pages/storefront/listing";
-import { SableCard } from "../card";
-import { str } from "../utils";
+import { useEffect, useRef, useState } from 'react';
+import { router, Link } from '@inertiajs/react';
+import { ChevronDown, X } from 'lucide-react';
+import { PlaceSlot } from '@/components/extensions/place-slot';
+import type { ThemeSectionProps } from '@/components/storefront/theme-sections';
+import type { ListingProps } from '@/pages/storefront/listing';
+import { SableCard } from '../card';
+import { str } from '../utils';
 type Props = ThemeSectionProps<Record<string, unknown>, ListingProps>;
 export default function Collection({ section, page }: Props) {
     return page?.products ? (
@@ -17,8 +17,16 @@ export default function Collection({ section, page }: Props) {
     ) : null;
 }
 function Catalog({ section, page }: Props) {
-    const { title, description, products, query, sort, filters, filterBrands, filterOptions } =
-        page;
+    const {
+        title,
+        description,
+        products,
+        query,
+        sort,
+        filters,
+        filterBrands,
+        filterOptions,
+    } = page;
     const s = section.settings;
     const [panel, setPanel] = useState<string | null>(null);
     const root = useRef<HTMLDivElement>(null);
@@ -28,43 +36,54 @@ function Catalog({ section, page }: Props) {
             if (!root.current?.contains(e.target as Node)) setPanel(null);
         };
         const escape = (e: KeyboardEvent) => {
-            if (e.key === "Escape") setPanel(null);
+            if (e.key === 'Escape') setPanel(null);
         };
-        document.addEventListener("click", close);
-        document.addEventListener("keydown", escape);
+        document.addEventListener('click', close);
+        document.addEventListener('keydown', escape);
         return () => {
-            document.removeEventListener("click", close);
-            document.removeEventListener("keydown", escape);
+            document.removeEventListener('click', close);
+            document.removeEventListener('keydown', escape);
         };
     }, [panel]);
     const visit = (updates: Record<string, string | null>) => {
         const u = new URL(window.location.href);
         for (const [k, v] of Object.entries(updates)) {
-            if (v === null || v === "") u.searchParams.delete(k);
+            if (v === null || v === '') u.searchParams.delete(k);
             else u.searchParams.set(k, v);
         }
-        u.searchParams.delete("page");
+        u.searchParams.delete('page');
         setPanel(null);
         router.get(u.pathname + u.search, {}, { preserveScroll: true });
     };
     const clear = () => {
         const u = new URL(window.location.href);
         for (const k of new Set(u.searchParams.keys()))
-            if (!["q", "sort", "_editor", "currency", "lang"].includes(k)) u.searchParams.delete(k);
+            if (!['q', 'sort', '_editor', 'currency', 'lang'].includes(k))
+                u.searchParams.delete(k);
         setPanel(null);
         router.get(u.pathname + u.search, {}, { preserveScroll: true });
     };
     const filtered = Object.values(filters ?? {}).some((v) =>
         Array.isArray(v)
             ? v.length > 0
-            : v !== undefined && v !== null && v !== "" && v !== false && v !== 0 && v !== "0",
+            : v !== undefined &&
+              v !== null &&
+              v !== '' &&
+              v !== false &&
+              v !== 0 &&
+              v !== '0',
     );
     return (
-        <section className="sa-commerce-frame sa-catalog" id="collection-products">
+        <section
+            className="sa-commerce-frame sa-catalog"
+            id="collection-products"
+        >
             {s.show_heading !== false && (
                 <div className="sa-catalog-heading">
                     <h1>
-                        {query || page.breadcrumbs.length ? title : str(s.shop_heading) || title}
+                        {query || page.breadcrumbs.length
+                            ? title
+                            : str(s.shop_heading) || title}
                     </h1>
                     {description && <p>{description}</p>}
                 </div>
@@ -75,17 +94,24 @@ function Catalog({ section, page }: Props) {
                     <div className="sa-filter-control">
                         <button
                             type="button"
-                            aria-expanded={panel === "availability"}
+                            aria-expanded={panel === 'availability'}
                             aria-controls="sa-availability-panel"
                             onClick={() =>
-                                setPanel(panel === "availability" ? null : "availability")
+                                setPanel(
+                                    panel === 'availability'
+                                        ? null
+                                        : 'availability',
+                                )
                             }
                         >
                             {str(s.availability_label)}
                             <ChevronDown size={13} />
                         </button>
-                        {panel === "availability" && (
-                            <div className="sa-filter-popover" id="sa-availability-panel">
+                        {panel === 'availability' && (
+                            <div
+                                className="sa-filter-popover"
+                                id="sa-availability-panel"
+                            >
                                 <div>
                                     <span>Availability</span>
                                     <button
@@ -100,10 +126,15 @@ function Catalog({ section, page }: Props) {
                                     <input
                                         type="checkbox"
                                         checked={
-                                            Boolean(filters?.in_stock) && filters?.in_stock !== "0"
+                                            Boolean(filters?.in_stock) &&
+                                            filters?.in_stock !== '0'
                                         }
                                         onChange={(e) =>
-                                            visit({ in_stock: e.target.checked ? "1" : null })
+                                            visit({
+                                                in_stock: e.target.checked
+                                                    ? '1'
+                                                    : null,
+                                            })
                                         }
                                     />
                                     In stock only
@@ -114,14 +145,16 @@ function Catalog({ section, page }: Props) {
                     <div className="sa-filter-control">
                         <button
                             type="button"
-                            aria-expanded={panel === "price"}
+                            aria-expanded={panel === 'price'}
                             aria-controls="sa-price-panel"
-                            onClick={() => setPanel(panel === "price" ? null : "price")}
+                            onClick={() =>
+                                setPanel(panel === 'price' ? null : 'price')
+                            }
                         >
                             {str(s.price_label)}
                             <ChevronDown size={13} />
                         </button>
-                        {panel === "price" && (
+                        {panel === 'price' && (
                             <form
                                 id="sa-price-panel"
                                 className="sa-filter-popover"
@@ -129,8 +162,12 @@ function Catalog({ section, page }: Props) {
                                     e.preventDefault();
                                     const data = new FormData(e.currentTarget);
                                     visit({
-                                        min_price: String(data.get("min_price") ?? ""),
-                                        max_price: String(data.get("max_price") ?? ""),
+                                        min_price: String(
+                                            data.get('min_price') ?? '',
+                                        ),
+                                        max_price: String(
+                                            data.get('max_price') ?? '',
+                                        ),
                                     });
                                 }}
                             >
@@ -166,7 +203,10 @@ function Catalog({ section, page }: Props) {
                                         />
                                     </label>
                                 </div>
-                                <button className="sa-filter-apply" type="submit">
+                                <button
+                                    className="sa-filter-apply"
+                                    type="submit"
+                                >
                                     Apply
                                 </button>
                             </form>
@@ -176,25 +216,36 @@ function Catalog({ section, page }: Props) {
                         <div className="sa-filter-control">
                             <button
                                 type="button"
-                                aria-expanded={panel === "more"}
-                                onClick={() => setPanel(panel === "more" ? null : "more")}
+                                aria-expanded={panel === 'more'}
+                                onClick={() =>
+                                    setPanel(panel === 'more' ? null : 'more')
+                                }
                             >
                                 More filters
                                 <ChevronDown size={13} />
                             </button>
-                            {panel === "more" && (
+                            {panel === 'more' && (
                                 <form
                                     className="sa-filter-popover"
                                     onSubmit={(e) => {
                                         e.preventDefault();
-                                        const data = new FormData(e.currentTarget);
+                                        const data = new FormData(
+                                            e.currentTarget,
+                                        );
                                         const u = new URL(window.location.href);
-                                        u.searchParams.delete("page");
-                                        u.searchParams.delete("brand_id");
-                                        for (const k of new Set(u.searchParams.keys()))
-                                            if (k.startsWith("options")) u.searchParams.delete(k);
+                                        u.searchParams.delete('page');
+                                        u.searchParams.delete('brand_id');
+                                        for (const k of new Set(
+                                            u.searchParams.keys(),
+                                        ))
+                                            if (k.startsWith('options'))
+                                                u.searchParams.delete(k);
                                         for (const [k, v] of data.entries())
-                                            if (String(v)) u.searchParams.append(k, String(v));
+                                            if (String(v))
+                                                u.searchParams.append(
+                                                    k,
+                                                    String(v),
+                                                );
                                         setPanel(null);
                                         router.get(
                                             u.pathname + u.search,
@@ -208,11 +259,18 @@ function Catalog({ section, page }: Props) {
                                             Brand
                                             <select
                                                 name="brand_id"
-                                                defaultValue={filters?.brand_id ?? ""}
+                                                defaultValue={
+                                                    filters?.brand_id ?? ''
+                                                }
                                             >
-                                                <option value="">All brands</option>
+                                                <option value="">
+                                                    All brands
+                                                </option>
                                                 {filterBrands.map((b) => (
-                                                    <option key={b.id} value={b.id}>
+                                                    <option
+                                                        key={b.id}
+                                                        value={b.id}
+                                                    >
                                                         {b.name}
                                                     </option>
                                                 ))}
@@ -223,7 +281,10 @@ function Catalog({ section, page }: Props) {
                                         <fieldset key={o.id}>
                                             <legend>{o.name}</legend>
                                             {o.values.map((v) => (
-                                                <label key={v.id} className="sa-check">
+                                                <label
+                                                    key={v.id}
+                                                    className="sa-check"
+                                                >
                                                     <input
                                                         type="checkbox"
                                                         name="options[]"
@@ -237,7 +298,10 @@ function Catalog({ section, page }: Props) {
                                             ))}
                                         </fieldset>
                                     ))}
-                                    <button type="submit" className="sa-filter-apply">
+                                    <button
+                                        type="submit"
+                                        className="sa-filter-apply"
+                                    >
                                         Apply
                                     </button>
                                 </form>
@@ -254,8 +318,12 @@ function Catalog({ section, page }: Props) {
                             onChange={(e) => visit({ sort: e.target.value })}
                         >
                             <option value="newest">Newest</option>
-                            <option value="price_asc">Price, low to high</option>
-                            <option value="price_desc">Price, high to low</option>
+                            <option value="price_asc">
+                                Price, low to high
+                            </option>
+                            <option value="price_desc">
+                                Price, high to low
+                            </option>
                             <option value="name">Alphabetically, A–Z</option>
                         </select>
                     </label>
@@ -283,13 +351,17 @@ function Catalog({ section, page }: Props) {
                 </div>
             ) : (
                 <p className="sa-empty">
-                    No products match your selection. Try another search or clear your filters.
+                    No products match your selection. Try another search or
+                    clear your filters.
                 </p>
             )}
             {products.last_page > 1 && (
                 <nav className="sa-pagination" aria-label="Pagination">
                     {products.prev_page_url && (
-                        <Link href={products.prev_page_url} aria-label="Previous page">
+                        <Link
+                            href={products.prev_page_url}
+                            aria-label="Previous page"
+                        >
                             ←
                         </Link>
                     )}
@@ -313,13 +385,20 @@ function Catalog({ section, page }: Props) {
                                             const base =
                                                 products.next_page_url ??
                                                 products.prev_page_url ??
-                                                "";
-                                            const [path, hash = ""] = base.split("#");
-                                            const [pathname, search = ""] = path.split("?");
-                                            const params = new URLSearchParams(search);
-                                            params.set("page", String(n));
+                                                '';
+                                            const [path, hash = ''] =
+                                                base.split('#');
+                                            const [pathname, search = ''] =
+                                                path.split('?');
+                                            const params = new URLSearchParams(
+                                                search,
+                                            );
+                                            params.set('page', String(n));
                                             return (
-                                                pathname + "?" + params + (hash ? "#" + hash : "")
+                                                pathname +
+                                                '?' +
+                                                params +
+                                                (hash ? '#' + hash : '')
                                             );
                                         })()}
                                     >
@@ -329,7 +408,10 @@ function Catalog({ section, page }: Props) {
                             </span>
                         ))}
                     {products.next_page_url && (
-                        <Link href={products.next_page_url} aria-label="Next page">
+                        <Link
+                            href={products.next_page_url}
+                            aria-label="Next page"
+                        >
                             →
                         </Link>
                     )}

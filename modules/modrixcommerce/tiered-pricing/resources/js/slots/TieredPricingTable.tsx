@@ -96,10 +96,10 @@ export default function TieredPricingTable({
         }
 
         // Bypass React's instance setter so the input event reaches onChange.
-        Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set?.call(
-            input,
-            String(nextQuantity),
-        );
+        Object.getOwnPropertyDescriptor(
+            HTMLInputElement.prototype,
+            'value',
+        )?.set?.call(input, String(nextQuantity));
         input.dispatchEvent(new Event('input', { bubbles: true }));
     };
 
@@ -118,35 +118,44 @@ export default function TieredPricingTable({
                     </h4>
                 </div>
                 {subheading && (
-                    <p className="mt-0.5 text-xs text-muted-foreground">{subheading}</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                        {subheading}
+                    </p>
                 )}
 
                 {/* Tier Grid / Table */}
                 <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
                     {tiers.map((tier, idx) => {
-                        const nextQuantity = Math.max(tier.min_qty, quantity?.min ?? 1);
+                        const nextQuantity = Math.max(
+                            tier.min_qty,
+                            quantity?.min ?? 1,
+                        );
                         const canSelect =
                             quantity !== null &&
                             nextQuantity <= quantity.max &&
-                            (tier.max_qty === null || nextQuantity <= tier.max_qty);
+                            (tier.max_qty === null ||
+                                nextQuantity <= tier.max_qty);
                         const isActive =
                             highlight_active_tier &&
                             quantity !== null &&
                             quantity.value >= tier.min_qty &&
-                            (tier.max_qty === null || quantity.value <= tier.max_qty);
+                            (tier.max_qty === null ||
+                                quantity.value <= tier.max_qty);
 
                         return (
                             <button
                                 key={idx}
                                 type="button"
-                                aria-pressed={highlight_active_tier ? isActive : undefined}
+                                aria-pressed={
+                                    highlight_active_tier ? isActive : undefined
+                                }
                                 disabled={!canSelect}
                                 onClick={() => handleSelectTier(nextQuantity)}
                                 className={cn(
                                     'flex flex-col items-start justify-between rounded-lg border p-3 text-left transition-all enabled:cursor-pointer enabled:hover:border-blue-500/60 enabled:hover:bg-muted/50',
                                     isActive
-                                        ? 'border-blue-600 bg-blue-50/50 dark:bg-blue-950/20 ring-1 ring-blue-600'
-                                        : 'border-border/80 bg-card'
+                                        ? 'border-blue-600 bg-blue-50/50 ring-1 ring-blue-600 dark:bg-blue-950/20'
+                                        : 'border-border/80 bg-card',
                                 )}
                             >
                                 <div className="flex w-full items-center justify-between gap-1">
@@ -167,7 +176,8 @@ export default function TieredPricingTable({
                                     <span className="text-sm font-extrabold text-blue-600 dark:text-blue-400">
                                         {tier.unit_price_formatted}
                                         <span className="text-[10px] font-normal text-muted-foreground">
-                                            {' '}/ ea
+                                            {' '}
+                                            / ea
                                         </span>
                                     </span>
 

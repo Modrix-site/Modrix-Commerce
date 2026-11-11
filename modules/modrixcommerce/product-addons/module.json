@@ -68,9 +68,18 @@
             "label": "Position on product page",
             "default": "product.after_add_to_cart",
             "options": [
-                { "value": "product.after_price", "label": "Right below the price" },
-                { "value": "product.after_add_to_cart", "label": "Below Add to Cart button" },
-                { "value": "product.after_details", "label": "Below product description" }
+                {
+                    "value": "product.after_price",
+                    "label": "Right below the price"
+                },
+                {
+                    "value": "product.after_add_to_cart",
+                    "label": "Below Add to Cart button"
+                },
+                {
+                    "value": "product.after_details",
+                    "label": "Below product description"
+                }
             ]
         }
     ],

@@ -4,7 +4,6 @@ namespace Tests\Feature\Payments;
 
 use App\Core\Extensions\Manifest;
 use App\Core\Extensions\ModuleLoader;
-use App\Domains\Checkout\Pricing\CartPriceBreakdown;
 use App\Domains\Checkout\Pricing\PricedCart;
 use App\Domains\Orders\Models\Order;
 use App\Domains\Payments\Contracts\PaymentGateway;
@@ -207,7 +206,7 @@ class EasebuzzTest extends TestCase
 
         $session = $this->gateway->createSession($order, $payment, 'https://example.com/return', 'https://example.com/cancel');
 
-        $this->assertStringStartsWith('EB_' . $payment->id, $session->reference);
+        $this->assertStringStartsWith('EB_'.$payment->id, $session->reference);
         $this->assertSame('https://testpay.easebuzz.in/pay/44a56c703b44b6e5e8942b109dcba801a', $session->redirectUrl);
 
         $cachedHandoff = Cache::get("easebuzz:handoff:{$payment->id}");

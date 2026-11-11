@@ -21,11 +21,11 @@ You can also copy `modules/modrixcommerce/tap` into place and enable it from Ext
 
 ## Configure
 
-| Field | Value |
-| --- | --- |
+| Field           | Value                                                                                                                                                 |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Payment methods | Cards only sends `src_card`. All enabled methods sends `src_all`, so KNET, mada, Benefit and the other methods turned on in Tap appear on Tap's page. |
-| Merchant ID | Optional. Sent as `merchant.id` when it is saved. |
-| Secret key | `sk_test_…` uses the test account. `sk_live_…` uses the live account. Stored encrypted. The public key is not used. |
+| Merchant ID     | Optional. Sent as `merchant.id` when it is saved.                                                                                                     |
+| Secret key      | `sk_test_…` uses the test account. `sk_live_…` uses the live account. Stored encrypted. The public key is not used.                                   |
 
 Live keys refuse a return address that is not `https://`. A test key can use the local store for the customer's return. Tap cannot post to `http://localhost`, so the charge omits `post.url` unless the webhook address is `https://`. The return from Tap still retrieves the charge.
 

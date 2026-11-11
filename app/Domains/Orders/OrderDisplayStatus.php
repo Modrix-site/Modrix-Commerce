@@ -7,6 +7,8 @@ use App\Domains\Orders\Enums\FulfillmentStatus;
 use App\Domains\Orders\Enums\OrderStatus;
 use App\Domains\Orders\Enums\PaymentStatus;
 use App\Domains\Orders\Models\Order;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * Derives the single headline status from the order, payment and
@@ -60,8 +62,8 @@ final class OrderDisplayStatus
             $pickup = null;
             if ($order->relationLoaded('pickup')) {
                 $pickup = $order->pickup;
-            } elseif ($isPickupMethod && \Illuminate\Support\Facades\Schema::hasTable('order_pickups')) {
-                $pickup = \Illuminate\Support\Facades\DB::table('order_pickups')
+            } elseif ($isPickupMethod && Schema::hasTable('order_pickups')) {
+                $pickup = DB::table('order_pickups')
                     ->where('order_id', $order->id)
                     ->first();
             }

@@ -9,7 +9,6 @@ use EcoModular\LoginMonitoring\Models\LoginEvent;
 use EcoModular\LoginMonitoring\Models\LoginSecurityIncident;
 use EcoModular\LoginMonitoring\Models\LoginTrustedDevice;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
@@ -25,7 +24,7 @@ class SuspiciousLoginService
     public function evaluateLogin(Request $request, string $email, ?User $user, array $deviceInfo, array $location): array
     {
         $enabled = (bool) $this->settings->of(self::MODULE, 'enabled', true);
-        if (!$enabled) {
+        if (! $enabled) {
             return [
                 'risk_score' => 0,
                 'threat_level' => 'low',
@@ -59,7 +58,7 @@ class SuspiciousLoginService
                 ->where('is_revoked', false)
                 ->exists();
 
-            if (!$isTrusted) {
+            if (! $isTrusted) {
                 // If user has previous logins, flag new device
                 $hasPriorLogins = LoginEvent::query()
                     ->where('user_id', $user->id)
@@ -99,7 +98,7 @@ class SuspiciousLoginService
                     if ($impliedSpeedKmh > $threshold) {
                         $score += 45;
                         $reasons[] = [
-                            'indicator' => "Impossible travel detected: {$distanceKm} km in " . round($elapsedHours, 1) . "h (" . round($impliedSpeedKmh) . " km/h)",
+                            'indicator' => "Impossible travel detected: {$distanceKm} km in ".round($elapsedHours, 1).'h ('.round($impliedSpeedKmh).' km/h)',
                             'points' => 45,
                         ];
 
@@ -109,7 +108,7 @@ class SuspiciousLoginService
                             $email,
                             $ip,
                             'high',
-                            "Impossible travel detected for {$email} ({$distanceKm} km in " . round($elapsedHours, 1) . "h)",
+                            "Impossible travel detected for {$email} ({$distanceKm} km in ".round($elapsedHours, 1).'h)',
                             ['distance_km' => $distanceKm, 'speed_kmh' => $impliedSpeedKmh, 'from' => $lastLogin->city, 'to' => $location['city']]
                         );
                     }
@@ -120,7 +119,7 @@ class SuspiciousLoginService
         // 4. Credential Stuffing / Multiple Accounts Access from Same IP
         $keyIpAccounts = "login_ip_accounts_{$ip}";
         $accounts = Cache::get($keyIpAccounts, []);
-        if (!in_array($email, $accounts, true)) {
+        if (! in_array($email, $accounts, true)) {
             $accounts[] = $email;
             Cache::put($keyIpAccounts, $accounts, 900); // 15 mins
         }
@@ -128,7 +127,7 @@ class SuspiciousLoginService
         if (count($accounts) >= 3) {
             $score += 35;
             $reasons[] = [
-                'indicator' => 'Multiple accounts (' . count($accounts) . ') accessed from this IP in past 15 mins',
+                'indicator' => 'Multiple accounts ('.count($accounts).') accessed from this IP in past 15 mins',
                 'points' => 35,
             ];
 
@@ -138,7 +137,7 @@ class SuspiciousLoginService
                 $email,
                 $ip,
                 'critical',
-                "Credential stuffing suspected from IP {$ip} probing " . count($accounts) . " accounts",
+                "Credential stuffing suspected from IP {$ip} probing ".count($accounts).' accounts',
                 ['accounts_probed' => $accounts]
             );
         }

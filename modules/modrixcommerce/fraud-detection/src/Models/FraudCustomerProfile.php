@@ -52,6 +52,7 @@ class FraudCustomerProfile extends Model
     {
         if ($this->total_orders === 0) {
             $this->trust_score = 50;
+
             return;
         }
 
@@ -67,9 +68,6 @@ class FraudCustomerProfile extends Model
         $this->is_repeat_offender = $this->rejected_orders >= 2;
     }
 
-    /**
-     * @return string
-     */
     public function trustLevel(): string
     {
         if ($this->trust_score >= 70) {
@@ -78,6 +76,7 @@ class FraudCustomerProfile extends Model
         if ($this->trust_score >= 40) {
             return 'neutral';
         }
+
         return 'suspicious';
     }
 }

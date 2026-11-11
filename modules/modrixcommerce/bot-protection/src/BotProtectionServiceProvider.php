@@ -25,7 +25,7 @@ class BotProtectionServiceProvider extends ServiceProvider
 
     public function boot(Router $router): void
     {
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'bot-protection');
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'bot-protection');
 
         if ($this->app->runningInConsole()) {
             $this->commands([

@@ -6,11 +6,11 @@ Customers ask to send items back. Staff approve or reject that request and leave
 
 On the extension page:
 
-| Setting | Effect |
-| --- | --- |
-| Return window (days) | How long after delivery, or after shipping, a request is accepted. Default 30. |
-| Orders can be returned after | Delivered, or shipped (which also includes delivered orders). |
-| Minimum comment length | Used for the customer's reason and for the staff comment on approve and reject. |
+| Setting                      | Effect                                                                          |
+| ---------------------------- | ------------------------------------------------------------------------------- |
+| Return window (days)         | How long after delivery, or after shipping, a request is accepted. Default 30.  |
+| Orders can be returned after | Delivered, or shipped (which also includes delivered orders).                   |
+| Minimum comment length       | Used for the customer's reason and for the staff comment on approve and reject. |
 
 ## Customer
 

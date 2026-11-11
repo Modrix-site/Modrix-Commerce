@@ -78,14 +78,14 @@ final class PaybyGateway implements PaymentGateway
             throw new GatewayException("PayBy is not configured for currency {$payment->currency}.");
         }
 
-        $merchantOrderNo = 'PAYBY_' . $payment->id . '_' . substr(hash_hmac('sha256', (string) $payment->id, (string) config('app.key')), 0, 10);
+        $merchantOrderNo = 'PAYBY_'.$payment->id.'_'.substr(hash_hmac('sha256', (string) $payment->id, (string) config('app.key')), 0, 10);
         $amount = (float) $payment->money()->toDisplayDecimal();
-        $redirectUrl = route('modrixcommerce.payby.response') . '?payment_id=' . $payment->id;
+        $redirectUrl = route('modrixcommerce.payby.response').'?payment_id='.$payment->id;
         $notifyUrl = route('webhooks.payments', self::CODE);
 
         $bizContent = [
             'merchantOrderNo' => $merchantOrderNo,
-            'subject' => 'Order ' . ($order->number ?? $order->id),
+            'subject' => 'Order '.($order->number ?? $order->id),
             'totalAmount' => [
                 'amount' => $amount,
                 'currency' => $payment->currency,
@@ -100,7 +100,7 @@ final class PaybyGateway implements PaymentGateway
         try {
             $response = $this->api->placeOrder($bizContent);
         } catch (Throwable $e) {
-            throw new GatewayException('Failed to place PayBy order: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Failed to place PayBy order: '.$e->getMessage(), 0, $e);
         }
 
         $respCode = $response['head']['respCode'] ?? '';
@@ -135,7 +135,7 @@ final class PaybyGateway implements PaymentGateway
         try {
             $response = $this->api->queryOrder($merchantOrderNo);
         } catch (Throwable $e) {
-            throw new GatewayException('Could not retrieve payment status from PayBy: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Could not retrieve payment status from PayBy: '.$e->getMessage(), 0, $e);
         }
 
         return $this->buildPaymentUpdate($response, $merchantOrderNo);
@@ -213,7 +213,7 @@ final class PaybyGateway implements PaymentGateway
             throw new GatewayException('Cannot refund: PayBy merchant order reference is missing.');
         }
 
-        $refundMerchantOrderNo = 'REF_' . substr($idempotencyKey, 0, 18);
+        $refundMerchantOrderNo = 'REF_'.substr($idempotencyKey, 0, 18);
         $amountFloat = (float) $amount->toDisplayDecimal();
 
         $bizContent = [
@@ -229,7 +229,7 @@ final class PaybyGateway implements PaymentGateway
         try {
             $response = $this->api->refund($bizContent);
         } catch (Throwable $e) {
-            throw new GatewayException('PayBy refund request failed: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('PayBy refund request failed: '.$e->getMessage(), 0, $e);
         }
 
         $head = $response['head'] ?? [];

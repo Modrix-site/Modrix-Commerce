@@ -14,6 +14,7 @@ use App\Domains\Orders\Enums\FulfillmentStatus;
 use App\Domains\Orders\Enums\OrderStatus;
 use App\Domains\Orders\Enums\PaymentStatus;
 use App\Domains\Orders\Models\Order;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -164,8 +165,8 @@ class FrequentlyBoughtTogetherTest extends TestCase
             $product->categories()->attach($category);
         }
 
-        $wasPrevented = \Illuminate\Database\Eloquent\Model::preventsLazyLoading();
-        \Illuminate\Database\Eloquent\Model::preventLazyLoading();
+        $wasPrevented = Model::preventsLazyLoading();
+        Model::preventLazyLoading();
         try {
             $this->get(route('storefront.product', $viewed->slug))
                 ->assertInertia(fn (Assert $page) => $page
@@ -173,7 +174,7 @@ class FrequentlyBoughtTogetherTest extends TestCase
                     ->has('slots.0.props.items', 2)
                     ->where('slots.0.props.items', fn ($items) => collect($items)->pluck('id')->sort()->values()->all() === collect([$first->id, $second->id])->sort()->values()->all()));
         } finally {
-            \Illuminate\Database\Eloquent\Model::preventLazyLoading($wasPrevented);
+            Model::preventLazyLoading($wasPrevented);
         }
     }
 

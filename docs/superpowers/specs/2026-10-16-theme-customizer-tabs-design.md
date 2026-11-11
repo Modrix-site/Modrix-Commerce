@@ -20,15 +20,15 @@ General holds the store-wide values. A page tab only overrides what it sets, and
 
 ## 1. Tabs
 
-| Tab      | Contents                                                                                                   |
-| -------- | ---------------------------------------------------------------------------------------------------------- |
+| Tab      | Contents                                                                                                         |
+| -------- | ---------------------------------------------------------------------------------------------------------------- |
 | General  | Colours, Typography, Shape and spacing, Layout, Branding (logo, favicon), and **Fonts and buttons (store-wide)** |
-| Header   | Header, announcement, Navigation (menu links, help link)                                                    |
-| Homepage | Homepage sections editor; hero, categories, promotions, collections, brand story, shortcuts, assurances     |
-| Catalog  | Catalog, listing and card settings; **Fonts and buttons (catalog)**                                        |
-| Product  | Product page settings (Buy now, sticky bar, labels); **Fonts and buttons (product)**                       |
-| Cart     | Cart settings; **Fonts and buttons (cart)**                                                                |
-| Footer   | Footer, contact details and footer columns                                                                  |
+| Header   | Header, announcement, Navigation (menu links, help link)                                                         |
+| Homepage | Homepage sections editor; hero, categories, promotions, collections, brand story, shortcuts, assurances          |
+| Catalog  | Catalog, listing and card settings; **Fonts and buttons (catalog)**                                              |
+| Product  | Product page settings (Buy now, sticky bar, labels); **Fonts and buttons (product)**                             |
+| Cart     | Cart settings; **Fonts and buttons (cart)**                                                                      |
+| Footer   | Footer, contact details and footer columns                                                                       |
 
 - **Placing fields in tabs:**
     - A field goes in the tab its theme gives it (`"tab": "catalog"`).

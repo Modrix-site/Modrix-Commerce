@@ -32,12 +32,17 @@ export default function CuratedGifts({ section }: ThemeSectionProps) {
                                 {str(b.settings.image) && (
                                     <img
                                         src={assetUrl(b.settings.image)}
-                                        alt={str(b.settings.alt, str(b.settings.label))}
+                                        alt={str(
+                                            b.settings.alt,
+                                            str(b.settings.label),
+                                        )}
                                         loading="lazy"
                                     />
                                 )}
                             </div>
-                            <span className="at-gift-label">{str(b.settings.label)}</span>
+                            <span className="at-gift-label">
+                                {str(b.settings.label)}
+                            </span>
                         </Link>
                     ))}
                 </div>

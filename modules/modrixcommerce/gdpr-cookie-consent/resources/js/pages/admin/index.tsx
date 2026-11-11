@@ -6,7 +6,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
 type Props = {
-    counts: { total: number; accepted: number; rejected: number; customised: number };
+    counts: {
+        total: number;
+        accepted: number;
+        rejected: number;
+        customised: number;
+    };
     records: {
         id: number;
         decision: string;
@@ -21,7 +26,11 @@ type Props = {
 };
 
 const decisionLabel = (decision: string): string =>
-    decision === 'accept' ? 'Accepted' : decision === 'reject' ? 'Rejected' : 'Custom';
+    decision === 'accept'
+        ? 'Accepted'
+        : decision === 'reject'
+          ? 'Rejected'
+          : 'Custom';
 
 export default function ConsentAdmin({ counts, records, exportUrl }: Props) {
     return (
@@ -58,17 +67,22 @@ export default function ConsentAdmin({ counts, records, exportUrl }: Props) {
                                     <>
                                         <Badge variant="secondary">
                                             analytics{' '}
-                                            {record.analytics_allowed ? 'on' : 'off'}
+                                            {record.analytics_allowed
+                                                ? 'on'
+                                                : 'off'}
                                         </Badge>
                                         <Badge variant="secondary">
                                             marketing{' '}
-                                            {record.marketing_allowed ? 'on' : 'off'}
+                                            {record.marketing_allowed
+                                                ? 'on'
+                                                : 'off'}
                                         </Badge>
                                     </>
                                 )}
                                 <span className="text-muted-foreground">
                                     {record.decided_at}
-                                    {record.country_code && ` · ${record.country_code}`}
+                                    {record.country_code &&
+                                        ` · ${record.country_code}`}
                                     {record.page && ` · ${record.page}`}
                                 </span>
                                 <Form

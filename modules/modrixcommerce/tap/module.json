@@ -16,11 +16,7 @@
         }
     },
     "provider": "EcoModular\\Tap\\TapServiceProvider",
-    "capabilities": [
-        "payment.gateway",
-        "admin.routes",
-        "admin.navigation"
-    ],
+    "capabilities": ["payment.gateway", "admin.routes", "admin.navigation"],
     "routes": {
         "admin": "routes/admin.php"
     },

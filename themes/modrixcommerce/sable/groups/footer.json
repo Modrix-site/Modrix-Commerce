@@ -126,7 +126,5 @@
             ]
         }
     },
-    "order": [
-        "footer"
-    ]
+    "order": ["footer"]
 }

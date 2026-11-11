@@ -79,13 +79,13 @@ final class ZiinaApi
             $response = Http::timeout(self::TIMEOUT_SECONDS)
                 ->withToken($apiKey)
                 ->acceptJson()
-                ->get(self::BASE_URL . '/payment_intent');
+                ->get(self::BASE_URL.'/payment_intent');
 
             // 200 OK or 404 (no intents yet) with valid auth confirms connection
             if ($response->successful() || $response->status() === 404) {
                 return [
                     'success' => true,
-                    'message' => 'Connected successfully to Ziina (' . ($this->settings->testMode() ? 'Test' : 'Live') . ').',
+                    'message' => 'Connected successfully to Ziina ('.($this->settings->testMode() ? 'Test' : 'Live').').',
                 ];
             }
 
@@ -98,7 +98,7 @@ final class ZiinaApi
 
             return [
                 'success' => false,
-                'error' => 'Ziina returned HTTP ' . $response->status(),
+                'error' => 'Ziina returned HTTP '.$response->status(),
             ];
         } catch (Throwable $e) {
             return [
@@ -121,7 +121,7 @@ final class ZiinaApi
             throw new GatewayException('Ziina API token is not configured.');
         }
 
-        $url = self::BASE_URL . $path;
+        $url = self::BASE_URL.$path;
 
         try {
             $req = Http::timeout(self::TIMEOUT_SECONDS)
@@ -138,13 +138,13 @@ final class ZiinaApi
             throw new GatewayException('Network error connecting to Ziina API.', 0, $e);
         } catch (Throwable $e) {
             Log::error('Ziina unexpected request error', ['url' => $url, 'error' => $e->getMessage()]);
-            throw new GatewayException('Error communicating with Ziina: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Error communicating with Ziina: '.$e->getMessage(), 0, $e);
         }
 
         if ($response->failed()) {
             $status = $response->status();
             $body = $response->json();
-            $msg = $body['message'] ?? $body['error'] ?? ('HTTP ' . $status . ' error');
+            $msg = $body['message'] ?? $body['error'] ?? ('HTTP '.$status.' error');
             Log::warning('Ziina API error response', ['path' => $path, 'status' => $status, 'body' => $body]);
             throw new GatewayException("Ziina API error ({$status}): {$msg}");
         }

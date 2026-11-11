@@ -21,29 +21,29 @@ scripts. Existing settings (store, languages, documents) stay where they are.
 
 ## 1. Branding
 
-| Setting | Notes |
-|---|---|
-| Panel name | Shown next to the admin logo (default: store name). |
-| Admin logo | Sidebar logo, light background. PNG/JPEG/WebP up to 1 MB. |
-| Admin logo (dark) | Optional, used in dark mode; falls back to the light one. |
-| Admin icon | Square mark for the collapsed sidebar; falls back to the current icon. |
-| Favicon | PNG/ICO up to 256 KB; used by admin and storefront (a theme's own favicon wins on the storefront). |
-| Accent colour | Sidebar brand colour (`--sidebar-brand`); hex only. |
-| Login logo + message | Shown on the sign-in page (e.g. "Staff sign-in only"). |
+| Setting              | Notes                                                                                              |
+| -------------------- | -------------------------------------------------------------------------------------------------- |
+| Panel name           | Shown next to the admin logo (default: store name).                                                |
+| Admin logo           | Sidebar logo, light background. PNG/JPEG/WebP up to 1 MB.                                          |
+| Admin logo (dark)    | Optional, used in dark mode; falls back to the light one.                                          |
+| Admin icon           | Square mark for the collapsed sidebar; falls back to the current icon.                             |
+| Favicon              | PNG/ICO up to 256 KB; used by admin and storefront (a theme's own favicon wins on the storefront). |
+| Accent colour        | Sidebar brand colour (`--sidebar-brand`); hex only.                                                |
+| Login logo + message | Shown on the sign-in page (e.g. "Staff sign-in only").                                             |
 
 SVG is not accepted (it can carry scripts). Files go to the media disk under `branding/`; replacing or removing
 a file deletes the old one. Branding is shared to every Inertia page as `branding` (URLs only).
 
 ## 2. Email (SMTP)
 
-| Setting | Notes |
-|---|---|
-| Mail delivery | `Use server default (.env)` or `SMTP`. |
-| Host, port, encryption | Encryption `tls`, `ssl` or none; port 1–65535. |
-| Username | Plain text. |
-| Password | Encrypted with the app key (`Crypt::encryptString`). Never sent back to the browser: the form shows "A password is saved"; leaving the field empty keeps it; "Remove password" clears it. |
-| From address, from name | Used by every store email. Reply-to optional. |
-| Send a test email | Sends synchronously to an address the admin types (default: their own) using the values just saved; shows success or the mail server's error (credentials masked). Rate-limited (5 per minute). |
+| Setting                 | Notes                                                                                                                                                                                           |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mail delivery           | `Use server default (.env)` or `SMTP`.                                                                                                                                                          |
+| Host, port, encryption  | Encryption `tls`, `ssl` or none; port 1–65535.                                                                                                                                                  |
+| Username                | Plain text.                                                                                                                                                                                     |
+| Password                | Encrypted with the app key (`Crypt::encryptString`). Never sent back to the browser: the form shows "A password is saved"; leaving the field empty keeps it; "Remove password" clears it.       |
+| From address, from name | Used by every store email. Reply-to optional.                                                                                                                                                   |
+| Send a test email       | Sends synchronously to an address the admin types (default: their own) using the values just saved; shows success or the mail server's error (credentials masked). Rate-limited (5 per minute). |
 
 Runtime: a `MailSettings` service applies the saved values to `mail.default`, `mail.mailers.smtp.*` and
 `mail.from` when the app boots and again before each queued job (queue workers are long-running), and purges the
@@ -53,12 +53,12 @@ re-entered.
 
 ## 3. Maintenance mode
 
-| Setting | Notes |
-|---|---|
-| Storefront closed | On/off. |
-| Headline, message | Shown on a simple branded page (503 with `Retry-After`). |
-| Reopens at | Optional date and time, shown on the page and used for `Retry-After`. |
-| Allowed IP addresses | Optional list; these visitors see the store normally. |
+| Setting              | Notes                                                                 |
+| -------------------- | --------------------------------------------------------------------- |
+| Storefront closed    | On/off.                                                               |
+| Headline, message    | Shown on a simple branded page (503 with `Retry-After`).              |
+| Reopens at           | Optional date and time, shown on the page and used for `Retry-After`. |
+| Allowed IP addresses | Optional list; these visitors see the store normally.                 |
 
 Only the storefront closes. Staff signed in to the admin see the store with a "Maintenance mode is on" bar. The
 admin, sign-in, password reset, payment-provider webhooks and return URLs, health checks, theme assets and the
@@ -66,12 +66,12 @@ sitemap's robots response keep working.
 
 ## 4. Security (`settings.advanced`)
 
-| Setting | Notes |
-|---|---|
+| Setting                      | Notes                                                                                                                                                                                    |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Require two-factor for staff | Staff accounts without 2FA are sent to their security settings until they enable it (the owner is warned before turning this on without 2FA themselves; saving is refused in that case). |
-| Session lifetime | Minutes, 15–1440 (default from `.env`). |
-| Sign-in attempts | Attempts per minute before a lockout, 3–20 (Fortify login limiter). |
-| Minimum password length | 8–64, applied to new and changed passwords. |
+| Session lifetime             | Minutes, 15–1440 (default from `.env`).                                                                                                                                                  |
+| Sign-in attempts             | Attempts per minute before a lockout, 3–20 (Fortify login limiter).                                                                                                                      |
+| Minimum password length      | 8–64, applied to new and changed passwords.                                                                                                                                              |
 
 ## 5. Social & scripts
 

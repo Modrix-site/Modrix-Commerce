@@ -8,7 +8,7 @@ Relay Electronics uses the platform extension renderer and commerce actions, wit
 | Home               | home.after_featured via enabled Apps section                                                                                                                                         |
 | Catalog            | catalog.before_products via PlaceSlot; catalog.after_products via Apps/page.slots                                                                                                    |
 | Product cards      | product.card with current product; ProductLabels from backend                                                                                                                        |
-| Product            | product.after_title, product.after_price, product.after_add_to_cart, product.after_description in the module tab; product.after_details through the wide product module area                                        |
+| Product            | product.after_title, product.after_price, product.after_add_to_cart, product.after_description in the module tab; product.after_details through the wide product module area         |
 | Sales              | shared variant pricing, flash-sale SaleNotice, labels, adjusted prices from server                                                                                                   |
 | Cart               | PlatformCartPage preserves cart.after_lines, cart.after_totals, shipping progress, cross-sells, taxes, fees and discount rows                                                        |
 | Checkout           | native platform checkout/payment quote, checkout.payment_method, checkout.after_summary, checkout.before_place_order                                                                 |

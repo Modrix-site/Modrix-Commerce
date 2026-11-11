@@ -54,8 +54,8 @@ export default function BuyTogetherSaveWidget({
     add_bundle_url,
 }: Props) {
     // Companion items checked by default
-    const [selectedCompanionIds, setSelectedCompanionIds] = useState<number[]>(() =>
-        items.map((i) => i.variant_id)
+    const [selectedCompanionIds, setSelectedCompanionIds] = useState<number[]>(
+        () => items.map((i) => i.variant_id),
     );
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -63,14 +63,16 @@ export default function BuyTogetherSaveWidget({
         setSelectedCompanionIds((prev) =>
             prev.includes(variantId)
                 ? prev.filter((id) => id !== variantId)
-                : [...prev, variantId]
+                : [...prev, variantId],
         );
     };
 
     // Calculate dynamic pricing based on selections
     const pricing = useMemo(() => {
         let original = main_item.price;
-        const selectedItems = items.filter((i) => selectedCompanionIds.includes(i.variant_id));
+        const selectedItems = items.filter((i) =>
+            selectedCompanionIds.includes(i.variant_id),
+        );
 
         for (const item of selectedItems) {
             original += item.price;
@@ -122,7 +124,7 @@ export default function BuyTogetherSaveWidget({
             {
                 preserveScroll: true,
                 onFinish: () => setIsSubmitting(false),
-            }
+            },
         );
     };
 
@@ -144,7 +146,9 @@ export default function BuyTogetherSaveWidget({
                             )}
                         </div>
                         {subheading && (
-                            <p className="mt-1 text-sm text-muted-foreground">{subheading}</p>
+                            <p className="mt-1 text-sm text-muted-foreground">
+                                {subheading}
+                            </p>
                         )}
                     </div>
                 </div>
@@ -167,7 +171,7 @@ export default function BuyTogetherSaveWidget({
                             )}
                             <Badge
                                 variant="secondary"
-                                className="absolute bottom-1 left-1 text-[10px] uppercase font-bold"
+                                className="absolute bottom-1 left-1 text-[10px] font-bold uppercase"
                             >
                                 This item
                             </Badge>
@@ -182,20 +186,29 @@ export default function BuyTogetherSaveWidget({
 
                     {/* Companion Items with Plus Separator */}
                     {items.map((item) => {
-                        const isChecked = selectedCompanionIds.includes(item.variant_id);
+                        const isChecked = selectedCompanionIds.includes(
+                            item.variant_id,
+                        );
 
                         return (
-                            <div key={item.id} className="flex items-center gap-3">
+                            <div
+                                key={item.id}
+                                className="flex items-center gap-3"
+                            >
                                 <div className="flex size-8 items-center justify-center rounded-full bg-muted font-bold text-muted-foreground">
                                     <Plus className="size-4" />
                                 </div>
 
                                 <div
                                     className={cn(
-                                        'flex flex-col items-center rounded-lg border bg-card p-3 text-center shadow-xs transition-all hover:shadow-sm sm:w-44 cursor-pointer',
-                                        isChecked ? 'border-emerald-500/60 ring-1 ring-emerald-500/20' : 'opacity-60 border-dashed'
+                                        'flex cursor-pointer flex-col items-center rounded-lg border bg-card p-3 text-center shadow-xs transition-all hover:shadow-sm sm:w-44',
+                                        isChecked
+                                            ? 'border-emerald-500/60 ring-1 ring-emerald-500/20'
+                                            : 'border-dashed opacity-60',
                                     )}
-                                    onClick={() => toggleCompanion(item.variant_id)}
+                                    onClick={() =>
+                                        toggleCompanion(item.variant_id)
+                                    }
                                 >
                                     <div className="relative size-24 shrink-0 overflow-hidden rounded-md bg-muted/40 sm:size-28">
                                         {item.image ? (
@@ -212,7 +225,11 @@ export default function BuyTogetherSaveWidget({
                                         <div className="absolute top-1.5 right-1.5 rounded-sm bg-background/80 p-0.5 shadow-xs">
                                             <Checkbox
                                                 checked={isChecked}
-                                                onCheckedChange={() => toggleCompanion(item.variant_id)}
+                                                onCheckedChange={() =>
+                                                    toggleCompanion(
+                                                        item.variant_id,
+                                                    )
+                                                }
                                             />
                                         </div>
                                     </div>
@@ -248,11 +265,14 @@ export default function BuyTogetherSaveWidget({
                         {pricing.hasSavings ? (
                             <div className="mt-1 flex items-center justify-center gap-1.5 text-sm font-semibold text-emerald-600 sm:justify-start">
                                 <Tag className="size-4" />
-                                <span>You Save: {formatPrice(pricing.savings)}</span>
+                                <span>
+                                    You Save: {formatPrice(pricing.savings)}
+                                </span>
                             </div>
                         ) : (
                             <span className="mt-1 text-xs text-muted-foreground">
-                                Select at least one companion product to unlock bundle savings!
+                                Select at least one companion product to unlock
+                                bundle savings!
                             </span>
                         )}
                     </div>

@@ -88,7 +88,6 @@ class VoltMarketThemeTest extends TestCase
         $this->get('/cart')->assertInertia(fn (Assert $page) => $page->where('storefront.themeSections.main.0.type', 'main-cart')->where('cart.item_count', 2));
     }
 
-
     public function test_sticky_header_can_be_toggled_in_the_live_editor(): void
     {
         $theme = app(ThemeRepository::class)->find('modrixcommerce/voltmarket');

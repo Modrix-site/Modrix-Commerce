@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
-import { ArrowRight, ArrowUp, Instagram, Facebook, Youtube } from 'lucide-react';
+import {
+    ArrowRight,
+    ArrowUp,
+    Instagram,
+    Facebook,
+    Youtube,
+} from 'lucide-react';
 import type { ThemeSectionProps } from '@/components/storefront/theme-sections';
 import { PlaceSlot } from '@/components/extensions/place-slot';
 import { str } from '../components';
@@ -39,7 +45,7 @@ export default function Footer({ section }: ThemeSectionProps) {
                                     'Considered essentials. Lasting stories.',
                                 )}
                             </h2>
-                            <p className="text-neutral-500 text-sm max-w-md leading-relaxed">
+                            <p className="max-w-md text-sm leading-relaxed text-neutral-500">
                                 {str(
                                     s.intro_text,
                                     'Discover objects that bring intention to everyday life.',
@@ -55,7 +61,7 @@ export default function Footer({ section }: ThemeSectionProps) {
                                         'Join our newsletter',
                                     )}
                                 </p>
-                                <p className="text-neutral-500 text-sm">
+                                <p className="text-sm text-neutral-500">
                                     {str(
                                         s.newsletter_text,
                                         'Be the first to discover new collections and stories.',
@@ -94,7 +100,7 @@ export default function Footer({ section }: ThemeSectionProps) {
                                 </form>
                                 {subscribed && (
                                     <p
-                                        className="text-xs text-neutral-800 mt-2 font-medium"
+                                        className="mt-2 text-xs font-medium text-neutral-800"
                                         role="status"
                                     >
                                         {str(
@@ -141,7 +147,7 @@ export default function Footer({ section }: ThemeSectionProps) {
                         str(s.social_youtube)) && (
                         <div className="at-footer-col">
                             <h3>{str(s.social_heading, 'Follow us')}</h3>
-                            <div className="flex items-center gap-3 mt-2">
+                            <div className="mt-2 flex items-center gap-3">
                                 {str(s.social_instagram) && (
                                     <a
                                         href={str(s.social_instagram)}
@@ -198,7 +204,7 @@ export default function Footer({ section }: ThemeSectionProps) {
                             <button
                                 type="button"
                                 onClick={scrollToTop}
-                                className="inline-flex items-center gap-1.5 uppercase tracking-wider text-[11px] hover:text-black"
+                                className="inline-flex items-center gap-1.5 text-[11px] tracking-wider uppercase hover:text-black"
                             >
                                 <span>{str(s.top_label, 'Back to top')}</span>
                                 <ArrowUp size={13} />

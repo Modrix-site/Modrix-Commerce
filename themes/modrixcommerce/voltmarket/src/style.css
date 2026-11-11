@@ -2234,7 +2234,9 @@
 }
 @media (prefers-reduced-motion: no-preference) {
     .vm-header .vm-head-top {
-        transition: min-height 0.2s ease, padding 0.2s ease;
+        transition:
+            min-height 0.2s ease,
+            padding 0.2s ease;
     }
 }
 

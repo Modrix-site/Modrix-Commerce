@@ -34,7 +34,7 @@ class LoginSessionsController extends Controller
             $query->where('is_revoked', true);
         }
 
-        if (!empty($search)) {
+        if (! empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where('ip_address', 'like', "%{$search}%")
                     ->orWhere('city', 'like', "%{$search}%")

@@ -86,9 +86,9 @@ final class EasebuzzGateway implements PaymentGateway
             throw new GatewayException('Easebuzz Merchant Key or Salt is missing.');
         }
 
-        $txnid = 'EB_' . $payment->id . '_' . substr(hash_hmac('sha256', (string) $payment->id, (string) config('app.key')), 0, 10);
+        $txnid = 'EB_'.$payment->id.'_'.substr(hash_hmac('sha256', (string) $payment->id, (string) config('app.key')), 0, 10);
         $amount = number_format((float) $payment->money()->toDisplayDecimal(), 2, '.', '');
-        $productinfo = 'Order ' . ($order->number ?? $order->id);
+        $productinfo = 'Order '.($order->number ?? $order->id);
         $firstname = $order->shippingAddress?->first_name ?? $order->customer?->first_name ?? 'Customer';
         $email = $order->email;
         $phone = preg_replace('/[^0-9]/', '', (string) ($order->phone ?? ''));
@@ -114,7 +114,7 @@ final class EasebuzzGateway implements PaymentGateway
         try {
             $response = $this->api->initiatePayment($params);
         } catch (Throwable $e) {
-            throw new GatewayException('Failed to initiate Easebuzz payment: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Failed to initiate Easebuzz payment: '.$e->getMessage(), 0, $e);
         }
 
         $accessKey = (string) ($response['data'] ?? '');
@@ -166,7 +166,7 @@ final class EasebuzzGateway implements PaymentGateway
         try {
             $response = $this->api->retrieveTransaction($txnid, $amount, $email, $phone);
         } catch (Throwable $e) {
-            throw new GatewayException('Could not retrieve payment status from Easebuzz: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Could not retrieve payment status from Easebuzz: '.$e->getMessage(), 0, $e);
         }
 
         return $this->buildPaymentUpdate($response, $txnid);
@@ -249,7 +249,7 @@ final class EasebuzzGateway implements PaymentGateway
         try {
             $response = $this->api->refund($txnid, $phone, $email, $originalAmount, $refundAmount);
         } catch (Throwable $e) {
-            throw new GatewayException('Easebuzz refund request failed: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Easebuzz refund request failed: '.$e->getMessage(), 0, $e);
         }
 
         $status = ($response['status'] ?? false) ? RefundUpdate::SUCCEEDED : RefundUpdate::FAILED;

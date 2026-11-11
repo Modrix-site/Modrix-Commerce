@@ -5,6 +5,7 @@
 **Goal:** a tabbed theme customizer (General, Header, Homepage, Catalog, Product, Cart, Footer) with store-wide and per-page font, price and button styles.
 
 **Architecture:**
+
 - `CustomizerTabs` (PHP) puts every design field in a tab, and the customize controller sends it along.
 - `ThemeStyleFields` adds the `style.{area}.{prop}` fields to the shared schema and writes CSS rules only for values a merchant set.
     - General rules are scoped to `.storefront`; page rules to `.storefront[data-page="{area}"]`.
@@ -48,6 +49,7 @@
     7. anything else → general.
 
     An explicit field `tab` (one of the seven) wins.
+
 - **`data-page` mapping:**
     - `storefront/home` → home;
     - `storefront/listing` → catalog;
@@ -74,10 +76,12 @@
 ### Task 1: Tab assignment
 
 **Files:**
+
 - Create: `app/Core/Themes/CustomizerTabs.php`, `tests/Feature/Themes/CustomizerTabsTest.php`
 - Modify (pair): `app/Http/Controllers/Admin/ThemeController.php`, adding `'tab' => CustomizerTabs::for($key, $field)` to each field in `customize()`.
 
 **Interfaces:**
+
 - **Produces:**
     - `CustomizerTabs::TABS` (key → label, in order);
     - `CustomizerTabs::for(string $key, array $field): string`. An explicit `$field['tab']` wins when valid. A `style.{area}.` key maps its area (`general` → general). Otherwise the group rules apply.
@@ -93,11 +97,13 @@
 ### Task 2: Style fields and CSS
 
 **Files:**
+
 - Create: `app/Core/Themes/ThemeStyleFields.php`, `tests/Feature/Themes/ThemeStyleFieldsTest.php`
 - Modify (pair): `app/Core/Themes/ThemeSchema.php`, so `designFields()` also returns `ThemeStyleFields::fields()`
 - Modify (pair): `app/Core/Themes/ThemeCss.php`, so `build()` appends `ThemeStyleFields::css($design)`
 
 **Interfaces:**
+
 - **Produces:**
     - `ThemeStyleFields::AREAS`;
     - `ThemeStyleFields::fields(): array<string, array>`, with types font, select or color, group "Fonts and buttons", and a `tab` set from the area;
@@ -117,6 +123,7 @@
 ### Task 3: Storefront wiring
 
 **Files:**
+
 - Modify (pair, separate working-tree and HEAD sets): `resources/js/layouts/storefront-layout.tsx`, adding `data-page` on the `.storefront` root from `usePage().component`.
 - Modify (committed): add `store-button` and `store-price` / `store-price-sale` classes to:
     - the default product page add-to-cart button and price;
@@ -129,6 +136,7 @@
 ### Task 4: Tabbed customizer
 
 **Files:**
+
 - Create: `resources/js/components/admin/themes/customizer-tabs.tsx` (the tab bar with an error dot and a customised count per tab)
 - Modify (pair, separate working-tree and HEAD sets): `resources/js/pages/admin/themes/customize.tsx`
     - **Tab state:** lives on the page, from `?tab=` (default `general`) and kept in the URL with `history.replaceState`.

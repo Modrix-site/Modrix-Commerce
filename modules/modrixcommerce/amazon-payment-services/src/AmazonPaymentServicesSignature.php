@@ -36,7 +36,7 @@ final class AmazonPaymentServicesSignature
             $concatenated .= "{$key}={$value}";
         }
 
-        $rawString = $phrase . $concatenated . $phrase;
+        $rawString = $phrase.$concatenated.$phrase;
         $hashAlgo = strtolower(trim($algorithm)) === 'sha512' ? 'sha512' : 'sha256';
 
         return hash($hashAlgo, $rawString);

@@ -1,12 +1,6 @@
 import { Form, Link, usePage } from '@inertiajs/react';
 import './style.css';
-import {
-    Heart,
-    X,
-    ShoppingBag,
-    ArrowRight,
-    Check,
-} from 'lucide-react';
+import { Heart, X, ShoppingBag, ArrowRight, Check } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 import type { ProductCard } from '@/types';
@@ -135,7 +129,10 @@ export function QuickAdd({ product }: { product: ProductCard }) {
     }
     if (!product.variant_id) {
         return (
-            <Link className="at-btn at-btn-secondary" href={'/p/' + product.slug}>
+            <Link
+                className="at-btn at-btn-secondary"
+                href={'/p/' + product.slug}
+            >
                 {str(labels?.options_label, 'Choose options')}
             </Link>
         );
@@ -213,10 +210,7 @@ export function Card({
                     aria-pressed={isSaved}
                     onClick={() => toggleSaved('wishlist', toSaved(p))}
                 >
-                    <Heart
-                        size={17}
-                        fill={isSaved ? 'currentColor' : 'none'}
-                    />
+                    <Heart size={17} fill={isSaved ? 'currentColor' : 'none'} />
                 </button>
                 {discount > 0 && (
                     <span className="at-badge at-badge-sale">−{discount}%</span>
@@ -230,7 +224,9 @@ export function Card({
                         {p.brand.name}
                     </Link>
                 ) : (
-                    <span className="at-card-brand">{storefront?.storeName}</span>
+                    <span className="at-card-brand">
+                        {storefront?.storeName}
+                    </span>
                 )}
                 <h3>
                     <Link href={'/p/' + p.slug}>{p.name}</Link>
@@ -239,7 +235,9 @@ export function Card({
                 <p className="at-card-price">
                     {p.has_variants ? 'From ' : ''}
                     {p.price?.formatted ?? 'Price unavailable'}
-                    {p.compare_at_price && <s>{p.compare_at_price.formatted}</s>}
+                    {p.compare_at_price && (
+                        <s>{p.compare_at_price.formatted}</s>
+                    )}
                 </p>
                 <SaleTag sale={p.sale} className="at-card-sale" />
                 {quickAdd && (
@@ -303,7 +301,10 @@ function WishlistDrawerModal({ onClose }: { onClose: () => void }) {
                     <div className="at-empty-state">
                         <Heart size={36} strokeWidth={1.2} />
                         <h3>Your favourites list is empty</h3>
-                        <p>Save items with the heart icon while browsing to view them here.</p>
+                        <p>
+                            Save items with the heart icon while browsing to
+                            view them here.
+                        </p>
                         <Link
                             className="at-btn at-btn-primary"
                             href="/search"
@@ -335,7 +336,9 @@ function WishlistDrawerModal({ onClose }: { onClose: () => void }) {
                                     >
                                         {p.name}
                                     </Link>
-                                    <p className="at-drawer-item-price">{p.price}</p>
+                                    <p className="at-drawer-item-price">
+                                        {p.price}
+                                    </p>
                                 </div>
                                 <button
                                     className="at-icon-btn"

@@ -38,7 +38,9 @@ export default function Header({ section }: ThemeSectionProps) {
             return;
         }
         const onScroll = () => {
-            setCompact((current) => (current ? window.scrollY > 40 : window.scrollY > 160));
+            setCompact((current) =>
+                current ? window.scrollY > 40 : window.scrollY > 160,
+            );
         };
         window.addEventListener('scroll', onScroll, { passive: true });
         return () => window.removeEventListener('scroll', onScroll);
@@ -47,7 +49,10 @@ export default function Header({ section }: ThemeSectionProps) {
     const handleSearchSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setSearchOpen(false);
-        router.get('/search', searchQuery.trim() ? { q: searchQuery.trim() } : {});
+        router.get(
+            '/search',
+            searchQuery.trim() ? { q: searchQuery.trim() } : {},
+        );
     };
 
     return (
@@ -76,24 +81,25 @@ export default function Header({ section }: ThemeSectionProps) {
                         <Menu size={20} />
                     </button>
 
-                    {s.show_language !== false && (storefront?.locales?.length ?? 0) > 1 && (
-                        <select
-                            aria-label="Language"
-                            value={storefront?.locale}
-                            className="bg-transparent border-none text-[11px] uppercase tracking-wider cursor-pointer"
-                            onChange={(e) => {
-                                const u = new URL(window.location.href);
-                                u.searchParams.set('lang', e.target.value);
-                                router.get(u.pathname + u.search);
-                            }}
-                        >
-                            {storefront?.locales.map((l) => (
-                                <option key={l.code} value={l.code}>
-                                    {l.name}
-                                </option>
-                            ))}
-                        </select>
-                    )}
+                    {s.show_language !== false &&
+                        (storefront?.locales?.length ?? 0) > 1 && (
+                            <select
+                                aria-label="Language"
+                                value={storefront?.locale}
+                                className="cursor-pointer border-none bg-transparent text-[11px] tracking-wider uppercase"
+                                onChange={(e) => {
+                                    const u = new URL(window.location.href);
+                                    u.searchParams.set('lang', e.target.value);
+                                    router.get(u.pathname + u.search);
+                                }}
+                            >
+                                {storefront?.locales.map((l) => (
+                                    <option key={l.code} value={l.code}>
+                                        {l.name}
+                                    </option>
+                                ))}
+                            </select>
+                        )}
 
                     <span className="hidden sm:inline">AE / AED</span>
                 </div>
@@ -143,7 +149,9 @@ export default function Header({ section }: ThemeSectionProps) {
                         >
                             <Heart size={18} />
                             {saved.length > 0 && (
-                                <span className="at-icon-count">{saved.length}</span>
+                                <span className="at-icon-count">
+                                    {saved.length}
+                                </span>
                             )}
                         </button>
                     )}
@@ -155,7 +163,9 @@ export default function Header({ section }: ThemeSectionProps) {
                     >
                         <ShoppingBag size={18} />
                         {(storefront?.cartCount ?? 0) > 0 && (
-                            <span className="at-icon-count">{storefront?.cartCount}</span>
+                            <span className="at-icon-count">
+                                {storefront?.cartCount}
+                            </span>
                         )}
                     </Link>
 
@@ -185,22 +195,25 @@ export default function Header({ section }: ThemeSectionProps) {
 
             {/* Dropdown Search Bar */}
             {searchOpen && (
-                <div className="at-frame py-3 border-t border-neutral-200 bg-white">
+                <div className="at-frame border-t border-neutral-200 bg-white py-3">
                     <form
                         onSubmit={handleSearchSubmit}
-                        className="flex items-center gap-3 max-w-2xl mx-auto"
+                        className="mx-auto flex max-w-2xl items-center gap-3"
                     >
                         <input
                             type="search"
                             autoFocus
-                            placeholder={str(s.search_placeholder, 'Search the collection')}
+                            placeholder={str(
+                                s.search_placeholder,
+                                'Search the collection',
+                            )}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="flex-1 py-2 px-3 border border-neutral-300 text-sm focus:outline-none focus:border-neutral-900"
+                            className="flex-1 border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-900 focus:outline-none"
                         />
                         <button
                             type="submit"
-                            className="at-btn at-btn-primary px-5 h-[38px] bg-black text-white hover:bg-neutral-800"
+                            className="at-btn at-btn-primary h-[38px] bg-black px-5 text-white hover:bg-neutral-800"
                         >
                             <Search size={14} className="mr-1 inline" />
                             Search
@@ -223,9 +236,9 @@ export default function Header({ section }: ThemeSectionProps) {
                         className="fixed inset-0 bg-black/40 backdrop-blur-sm"
                         onClick={() => setMobileNavOpen(false)}
                     />
-                    <div className="relative w-4/5 max-w-xs bg-white h-full shadow-2xl flex flex-col p-6 z-10">
-                        <div className="flex justify-between items-center pb-4 border-b border-neutral-200 mb-6">
-                            <span className="font-medium tracking-widest text-sm uppercase">
+                    <div className="relative z-10 flex h-full w-4/5 max-w-xs flex-col bg-white p-6 shadow-2xl">
+                        <div className="mb-6 flex items-center justify-between border-b border-neutral-200 pb-4">
+                            <span className="text-sm font-medium tracking-widest uppercase">
                                 {str(s.brand, 'ATELIER')}
                             </span>
                             <button
@@ -242,7 +255,7 @@ export default function Header({ section }: ThemeSectionProps) {
                                     key={b.id}
                                     href={str(b.settings.link, '/search')}
                                     onClick={() => setMobileNavOpen(false)}
-                                    className="text-sm uppercase tracking-wider py-2 border-b border-neutral-100"
+                                    className="border-b border-neutral-100 py-2 text-sm tracking-wider uppercase"
                                 >
                                     {str(b.settings.label)}
                                 </Link>

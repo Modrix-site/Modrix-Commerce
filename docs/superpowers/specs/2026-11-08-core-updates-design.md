@@ -13,14 +13,14 @@ hosts the releases.
 
 ## Decisions
 
-| Question | Decision |
-|---|---|
-| Version source | `App\Core\Platform::VERSION` (already used by manifests and backups). No VERSION file. |
-| Who may list / download | Listing is public, signed metadata. Download needs the store's Modrix Cloud **connection token** (bearer). Unconnected stores see the update and are told to connect. |
-| Where the updater lives | Core: `app/Core/Updates/*`. Works when the Cloud Connector module is disabled or broken. |
-| How install runs | Detached `php artisan ecomodular:core-update <run>` process; the page polls a status row. Also runnable over SSH. |
+| Question                | Decision                                                                                                                                                                                                                                      |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Version source          | `App\Core\Platform::VERSION` (already used by manifests and backups). No VERSION file.                                                                                                                                                        |
+| Who may list / download | Listing is public, signed metadata. Download needs the store's Modrix Cloud **connection token** (bearer). Unconnected stores see the update and are told to connect.                                                                         |
+| Where the updater lives | Core: `app/Core/Updates/*`. Works when the Cloud Connector module is disabled or broken.                                                                                                                                                      |
+| How install runs        | Detached `php artisan ecomodular:core-update <run>` process; the page polls a status row. Also runnable over SSH.                                                                                                                             |
 | What a release replaces | Core code only. Never `.env`, `storage/`, `modules/`, `themes/`, `public/storage`, `bootstrap/cache`, or database files (`database/` itself is not managed, only its code subfolders). Bundled extensions keep updating through Modrix Cloud. |
-| Cloud server | Changes go into the ModrixCloud app only. The legacy in-repo `app/Domains/Marketplace` server is not touched. |
+| Cloud server            | Changes go into the ModrixCloud app only. The legacy in-repo `app/Domains/Marketplace` server is not touched.                                                                                                                                 |
 
 ## 1. Version display (core)
 
@@ -92,13 +92,31 @@ size, sha256 prefix, Publish and Withdraw buttons.
 ### API (`/api/marketplace/v1`, throttled like the rest)
 
 - `GET core/releases?current=<v>&php=<v>` (public)
-  ```json
-  {"releases": [{"id": 3, "version": "1.1.0", "min_php": "8.3",
-    "notes": "…", "published_at": "2026-11-08T10:00:00+00:00",
-    "verification": {"metadata": {"kind": "core", "release_id": 3,
-      "version": "1.1.0", "min_php": "8.3", "sha256": "…", "size": 12345,
-      "key_id": "…"}, "signature": "…"}}]}
-  ```
+    ```json
+    {
+        "releases": [
+            {
+                "id": 3,
+                "version": "1.1.0",
+                "min_php": "8.3",
+                "notes": "…",
+                "published_at": "2026-11-08T10:00:00+00:00",
+                "verification": {
+                    "metadata": {
+                        "kind": "core",
+                        "release_id": 3,
+                        "version": "1.1.0",
+                        "min_php": "8.3",
+                        "sha256": "…",
+                        "size": 12345,
+                        "key_id": "…"
+                    },
+                    "signature": "…"
+                }
+            }
+        ]
+    }
+    ```
 - `POST core/downloads {release_id, instance_id}` with
   `Authorization: Bearer <connection token>`.
   No / revoked token → 401 `{"error": "not_connected"}`; unknown or not
@@ -132,41 +150,42 @@ The JSON above is the contract both test suites pin.
   needs_attention (bool: a `failed` run whose rollback could not undo
   everything), actor_id, timestamps.
 - **`CoreUpdater::run(CoreUpdateRun)`** (command `ecomodular:core-update {run}`):
-  1. cache lock `ecomodular:core-update`; one run at a time;
-  2. re-verify the stored metadata (signature, kind, version > current,
-     min_php);
-  3. request a download link (needs the connection), download, compare size
-     and sha256;
-  4. extract into `storage/app/private/core-updates/tmp/<random>` with safe
-     entry checks (every write checked, entry sizes must match); the
-     extracted `app/Core/Platform.php` must declare the signed version and
-     `vendor/autoload.php` must exist; refuse when the resolved
-     `database.connections.sqlite.database` file lies inside a managed path;
-  5. zip the current managed paths to
-     `storage/app/private/core-updates/core-<old version>-<timestamp>.zip`
-     (slow, no downtime yet);
-  6. `artisan down` (maintenance mode, with a secret bypass);
-  7. database backup with `Backups::create(withFiles: false)`, taken in
-     maintenance mode so no write can follow it (the update never touches
-     storage, modules or themes; code is covered by step 5);
-  8. per managed path: rename current to `<path>.old-<rand>`, move the new
-     one in;
-  9. `artisan migrate --force` and `optimize:clear` in a fresh PHP process
-     from the updates root (so the new code runs);
-  10. `artisan up` (if it fails, delete `storage/framework/down` and say so
-      in the message); delete the `.old-*` paths; clear
-      `core_update.available` when it is not newer than the installed
-      version; status `completed`.
+    1. cache lock `ecomodular:core-update`; one run at a time;
+    2. re-verify the stored metadata (signature, kind, version > current,
+       min_php);
+    3. request a download link (needs the connection), download, compare size
+       and sha256;
+    4. extract into `storage/app/private/core-updates/tmp/<random>` with safe
+       entry checks (every write checked, entry sizes must match); the
+       extracted `app/Core/Platform.php` must declare the signed version and
+       `vendor/autoload.php` must exist; refuse when the resolved
+       `database.connections.sqlite.database` file lies inside a managed path;
+    5. zip the current managed paths to
+       `storage/app/private/core-updates/core-<old version>-<timestamp>.zip`
+       (slow, no downtime yet);
+    6. `artisan down` (maintenance mode, with a secret bypass);
+    7. database backup with `Backups::create(withFiles: false)`, taken in
+       maintenance mode so no write can follow it (the update never touches
+       storage, modules or themes; code is covered by step 5);
+    8. per managed path: rename current to `<path>.old-<rand>`, move the new
+       one in;
+    9. `artisan migrate --force` and `optimize:clear` in a fresh PHP process
+       from the updates root (so the new code runs);
+    10. `artisan up` (if it fails, delete `storage/framework/down` and say so
+        in the message); delete the `.old-*` paths; clear
+        `core_update.available` when it is not newer than the installed
+        version; status `completed`.
 
-  On failure before step 8: nothing changed; status `failed`. On failure in
-  steps 8–9: move the `.old-*` paths back, restore the database from the
-  step 7 backup (`Backups::restore` database part), `artisan up`, status
-  `rolled_back`; if that undo has problems, status `failed` with
-  `needs_attention`. Maintenance mode is always lifted in a `finally`.
-  A run that loses the cache lock is failed only while it is still `queued`.
-  Every outcome writes `UpdateHistory` (type `core`, extension_name
-  `modrixcommerce/core`, action `update`) and audit `core.update_completed`,
-  `core.update_failed` or `core.update_rolled_back`.
+    On failure before step 8: nothing changed; status `failed`. On failure in
+    steps 8–9: move the `.old-*` paths back, restore the database from the
+    step 7 backup (`Backups::restore` database part), `artisan up`, status
+    `rolled_back`; if that undo has problems, status `failed` with
+    `needs_attention`. Maintenance mode is always lifted in a `finally`.
+    A run that loses the cache lock is failed only while it is still `queued`.
+    Every outcome writes `UpdateHistory` (type `core`, extension_name
+    `modrixcommerce/core`, action `update`) and audit `core.update_completed`,
+    `core.update_failed` or `core.update_rolled_back`.
+
 - **Updates root** `ecomodular.updates.root` (default `base_path()`) and the
   PHP CLI binary `ecomodular.updates.php` (default empty: `PHP_BINARY` from
   the CLI, otherwise the CLI found by `PhpExecutableFinder` / `PHP_BINDIR`,
@@ -203,6 +222,7 @@ metadata, list filters by current/php/status, download needs a connection,
 the link is single-use, withdrawn releases are not served.
 
 ecomodular:
+
 - `CorePackageCommandTest`: zip includes managed paths, excludes the
   forbidden ones.
 - `CoreUpdateCheckTest`: stores a verified newer release; ignores bad

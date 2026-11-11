@@ -5,6 +5,7 @@ namespace EcoModular\FraudDetection\Models;
 use App\Domains\Customers\Models\Customer;
 use App\Domains\Orders\Models\Order;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -37,8 +38,8 @@ use Illuminate\Support\Carbon;
  * @property-read Order $order
  * @property-read Customer|null $customer
  * @property-read User|null $reviewer
- * @property-read \Illuminate\Database\Eloquent\Collection<int, FraudReview> $reviews
- * @property-read \Illuminate\Database\Eloquent\Collection<int, FraudNotification> $notifications
+ * @property-read Collection<int, FraudReview> $reviews
+ * @property-read Collection<int, FraudNotification> $notifications
  */
 class FraudScore extends Model
 {

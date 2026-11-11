@@ -104,12 +104,12 @@ final class PaybyApi
             }
 
             // Probe by querying a dummy order number
-            $response = $this->queryOrder('PROBE_TEST_' . time());
+            $response = $this->queryOrder('PROBE_TEST_'.time());
 
             if (isset($response['head']['respCode'])) {
                 return [
                     'success' => true,
-                    'message' => 'Connected successfully to PayBy (' . ($this->settings->testMode() ? 'UAT' : 'Production') . ').',
+                    'message' => 'Connected successfully to PayBy ('.($this->settings->testMode() ? 'UAT' : 'Production').').',
                 ];
             }
 
@@ -148,10 +148,10 @@ final class PaybyApi
         try {
             $sign = $this->signature->sign($bodyJson, $privateKey);
         } catch (Throwable $e) {
-            throw new GatewayException('Failed to sign PayBy request: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Failed to sign PayBy request: '.$e->getMessage(), 0, $e);
         }
 
-        $url = $this->baseUrl() . $path;
+        $url = $this->baseUrl().$path;
 
         try {
             $response = Http::timeout(self::TIMEOUT_SECONDS)
@@ -168,13 +168,13 @@ final class PaybyApi
             throw new GatewayException('Network error connecting to PayBy API.', 0, $e);
         } catch (Throwable $e) {
             Log::error('PayBy unexpected request error', ['url' => $url, 'error' => $e->getMessage()]);
-            throw new GatewayException('Error communicating with PayBy: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Error communicating with PayBy: '.$e->getMessage(), 0, $e);
         }
 
         if ($response->failed()) {
             $status = $response->status();
             $body = $response->json();
-            $msg = $body['head']['respMsg'] ?? ('HTTP ' . $status . ' error');
+            $msg = $body['head']['respMsg'] ?? ('HTTP '.$status.' error');
             Log::warning('PayBy API error response', ['path' => $path, 'status' => $status, 'body' => $body]);
             throw new GatewayException("PayBy API error ({$status}): {$msg}");
         }

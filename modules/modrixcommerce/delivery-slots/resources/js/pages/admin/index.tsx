@@ -1,10 +1,24 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { Calendar, Clock, FileText, Filter, ListPlus, Settings, Truck } from 'lucide-react';
+import {
+    Calendar,
+    Clock,
+    FileText,
+    Filter,
+    ListPlus,
+    Settings,
+    Truck,
+} from 'lucide-react';
 import { useState } from 'react';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {
     Table,
@@ -68,7 +82,9 @@ export default function DeliverySlotsAdminIndex({
 }: Props) {
     const [dateFrom, setDateFrom] = useState(filters.date_from);
     const [dateTo, setDateTo] = useState(filters.date_to);
-    const [slotId, setSlotId] = useState<string>(filters.slot_id ? String(filters.slot_id) : '');
+    const [slotId, setSlotId] = useState<string>(
+        filters.slot_id ? String(filters.slot_id) : '',
+    );
 
     const handleFilter = (e: React.FormEvent) => {
         e.preventDefault();
@@ -79,7 +95,7 @@ export default function DeliverySlotsAdminIndex({
                 date_to: dateTo,
                 slot_id: slotId || undefined,
             },
-            { preserveState: true }
+            { preserveState: true },
         );
     };
 
@@ -99,7 +115,7 @@ export default function DeliverySlotsAdminIndex({
                 date_to: toStr,
                 slot_id: slotId || undefined,
             },
-            { preserveState: true }
+            { preserveState: true },
         );
     };
 
@@ -144,7 +160,9 @@ export default function DeliverySlotsAdminIndex({
                                 </div>
                                 <Truck className="size-5 text-sky-500" />
                             </div>
-                            <p className="mt-1 text-xs text-muted-foreground">From today forward</p>
+                            <p className="mt-1 text-xs text-muted-foreground">
+                                From today forward
+                            </p>
                         </CardContent>
                     </Card>
 
@@ -161,7 +179,9 @@ export default function DeliverySlotsAdminIndex({
                                 </div>
                                 <Calendar className="size-5 text-amber-500" />
                             </div>
-                            <p className="mt-1 text-xs text-muted-foreground">Requiring fulfillment today</p>
+                            <p className="mt-1 text-xs text-muted-foreground">
+                                Requiring fulfillment today
+                            </p>
                         </CardContent>
                     </Card>
 
@@ -173,10 +193,14 @@ export default function DeliverySlotsAdminIndex({
                         </CardHeader>
                         <CardContent>
                             <div className="flex items-center justify-between">
-                                <div className="text-2xl font-bold">{stats.active_slots}</div>
+                                <div className="text-2xl font-bold">
+                                    {stats.active_slots}
+                                </div>
                                 <Clock className="size-5 text-muted-foreground" />
                             </div>
-                            <p className="mt-1 text-xs text-muted-foreground">Configured delivery slots</p>
+                            <p className="mt-1 text-xs text-muted-foreground">
+                                Configured delivery slots
+                            </p>
                         </CardContent>
                     </Card>
                 </div>
@@ -184,19 +208,28 @@ export default function DeliverySlotsAdminIndex({
                 {/* Filters */}
                 <Card>
                     <CardContent className="p-4">
-                        <form onSubmit={handleFilter} className="flex flex-wrap items-end gap-3">
+                        <form
+                            onSubmit={handleFilter}
+                            className="flex flex-wrap items-end gap-3"
+                        >
                             <div className="space-y-1">
-                                <span className="text-xs font-medium text-muted-foreground">From Date</span>
+                                <span className="text-xs font-medium text-muted-foreground">
+                                    From Date
+                                </span>
                                 <Input
                                     type="date"
                                     value={dateFrom}
-                                    onChange={(e) => setDateFrom(e.target.value)}
+                                    onChange={(e) =>
+                                        setDateFrom(e.target.value)
+                                    }
                                     className="h-9 w-36 text-xs"
                                 />
                             </div>
 
                             <div className="space-y-1">
-                                <span className="text-xs font-medium text-muted-foreground">To Date</span>
+                                <span className="text-xs font-medium text-muted-foreground">
+                                    To Date
+                                </span>
                                 <Input
                                     type="date"
                                     value={dateTo}
@@ -206,7 +239,9 @@ export default function DeliverySlotsAdminIndex({
                             </div>
 
                             <div className="space-y-1">
-                                <span className="text-xs font-medium text-muted-foreground">Slot</span>
+                                <span className="text-xs font-medium text-muted-foreground">
+                                    Slot
+                                </span>
                                 <select
                                     value={slotId}
                                     onChange={(e) => setSlotId(e.target.value)}
@@ -253,19 +288,24 @@ export default function DeliverySlotsAdminIndex({
                 {/* Schedule Table */}
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-base font-semibold">Scheduled Deliveries</CardTitle>
+                        <CardTitle className="text-base font-semibold">
+                            Scheduled Deliveries
+                        </CardTitle>
                         <CardDescription>
-                            Orders booked for the selected date range ({filters.date_from} to{' '}
-                            {filters.date_to}).
+                            Orders booked for the selected date range (
+                            {filters.date_from} to {filters.date_to}).
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="p-0">
                         {schedules.length === 0 ? (
                             <div className="flex flex-col items-center justify-center p-12 text-center">
                                 <Truck className="size-10 text-muted-foreground/40" />
-                                <h3 className="mt-3 text-sm font-semibold">No deliveries scheduled</h3>
+                                <h3 className="mt-3 text-sm font-semibold">
+                                    No deliveries scheduled
+                                </h3>
                                 <p className="mt-1 text-xs text-muted-foreground">
-                                    No customer orders have delivery booked in this date range.
+                                    No customer orders have delivery booked in
+                                    this date range.
                                 </p>
                             </div>
                         ) : (
@@ -278,13 +318,15 @@ export default function DeliverySlotsAdminIndex({
                                         <TableHead>Customer</TableHead>
                                         <TableHead>Instructions</TableHead>
                                         <TableHead>Status</TableHead>
-                                        <TableHead className="text-right">Total</TableHead>
+                                        <TableHead className="text-right">
+                                            Total
+                                        </TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {schedules.map((row) => (
                                         <TableRow key={row.id}>
-                                            <TableCell className="font-medium text-xs whitespace-nowrap">
+                                            <TableCell className="text-xs font-medium whitespace-nowrap">
                                                 {row.formatted_date}
                                             </TableCell>
                                             <TableCell className="text-xs whitespace-nowrap">
@@ -306,29 +348,42 @@ export default function DeliverySlotsAdminIndex({
                                                         {row.order_number}
                                                     </Link>
                                                 ) : (
-                                                    <span>{row.order_number}</span>
+                                                    <span>
+                                                        {row.order_number}
+                                                    </span>
                                                 )}
                                             </TableCell>
                                             <TableCell className="text-xs">
-                                                <div className="font-medium">{row.customer_name}</div>
+                                                <div className="font-medium">
+                                                    {row.customer_name}
+                                                </div>
                                                 <div className="text-[11px] text-muted-foreground">
-                                                    {row.customer_phone || row.customer_email || '-'}
+                                                    {row.customer_phone ||
+                                                        row.customer_email ||
+                                                        '-'}
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="text-xs max-w-[200px]">
+                                            <TableCell className="max-w-[200px] text-xs">
                                                 {row.delivery_instructions ? (
                                                     <div className="flex items-start gap-1 text-[11px] text-muted-foreground italic">
                                                         <FileText className="mt-0.5 size-3 shrink-0 text-sky-500" />
                                                         <span className="line-clamp-2">
-                                                            {row.delivery_instructions}
+                                                            {
+                                                                row.delivery_instructions
+                                                            }
                                                         </span>
                                                     </div>
                                                 ) : (
-                                                    <span className="text-[11px] text-muted-foreground">-</span>
+                                                    <span className="text-[11px] text-muted-foreground">
+                                                        -
+                                                    </span>
                                                 )}
                                             </TableCell>
                                             <TableCell className="text-xs">
-                                                <Badge variant="outline" className="text-[10px] uppercase">
+                                                <Badge
+                                                    variant="outline"
+                                                    className="text-[10px] uppercase"
+                                                >
                                                     {row.order_status}
                                                 </Badge>
                                             </TableCell>

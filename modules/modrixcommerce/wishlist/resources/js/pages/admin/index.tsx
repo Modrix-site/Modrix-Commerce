@@ -3,7 +3,13 @@ import { Heart, Settings, TrendingUp, Users } from 'lucide-react';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import {
     Table,
     TableBody,
@@ -41,7 +47,11 @@ type Props = {
     };
 };
 
-export default function WishlistAdminIndex({ stats, top_products, settings }: Props) {
+export default function WishlistAdminIndex({
+    stats,
+    top_products,
+    settings,
+}: Props) {
     return (
         <>
             <Head title="Wishlist Analytics" />
@@ -73,9 +83,11 @@ export default function WishlistAdminIndex({ stats, top_products, settings }: Pr
                                 <div className="text-2xl font-bold text-rose-600">
                                     {stats.total_saved_items}
                                 </div>
-                                <Heart className="size-5 text-rose-500 fill-rose-500/20" />
+                                <Heart className="size-5 fill-rose-500/20 text-rose-500" />
                             </div>
-                            <p className="mt-1 text-xs text-muted-foreground">Across all customer lists</p>
+                            <p className="mt-1 text-xs text-muted-foreground">
+                                Across all customer lists
+                            </p>
                         </CardContent>
                     </Card>
 
@@ -86,8 +98,12 @@ export default function WishlistAdminIndex({ stats, top_products, settings }: Pr
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{stats.total_wishlists}</div>
-                            <p className="mt-1 text-xs text-muted-foreground">Combined guest & accounts</p>
+                            <div className="text-2xl font-bold">
+                                {stats.total_wishlists}
+                            </div>
+                            <p className="mt-1 text-xs text-muted-foreground">
+                                Combined guest & accounts
+                            </p>
                         </CardContent>
                     </Card>
 
@@ -99,7 +115,9 @@ export default function WishlistAdminIndex({ stats, top_products, settings }: Pr
                         </CardHeader>
                         <CardContent>
                             <div className="flex items-center justify-between">
-                                <div className="text-2xl font-bold">{stats.customer_wishlists}</div>
+                                <div className="text-2xl font-bold">
+                                    {stats.customer_wishlists}
+                                </div>
                                 <Users className="size-4 text-muted-foreground" />
                             </div>
                             <p className="mt-1 text-xs text-muted-foreground">
@@ -116,12 +134,20 @@ export default function WishlistAdminIndex({ stats, top_products, settings }: Pr
                         </CardHeader>
                         <CardContent>
                             <div className="flex items-center gap-2">
-                                <Badge variant={settings.enabled ? 'default' : 'secondary'}>
+                                <Badge
+                                    variant={
+                                        settings.enabled
+                                            ? 'default'
+                                            : 'secondary'
+                                    }
+                                >
                                     {settings.enabled ? 'Enabled' : 'Disabled'}
                                 </Badge>
                             </div>
                             <p className="mt-1 text-xs text-muted-foreground">
-                                {settings.require_login ? 'Sign-in required' : 'Guest saves enabled'}
+                                {settings.require_login
+                                    ? 'Sign-in required'
+                                    : 'Guest saves enabled'}
                             </p>
                         </CardContent>
                     </Card>
@@ -134,7 +160,8 @@ export default function WishlistAdminIndex({ stats, top_products, settings }: Pr
                             <div>
                                 <CardTitle>Most Wishlisted Products</CardTitle>
                                 <CardDescription>
-                                    Items with highest shopper interest and future purchase intent.
+                                    Items with highest shopper interest and
+                                    future purchase intent.
                                 </CardDescription>
                             </div>
                             <TrendingUp className="size-5 text-muted-foreground" />
@@ -144,9 +171,12 @@ export default function WishlistAdminIndex({ stats, top_products, settings }: Pr
                         {top_products.length === 0 ? (
                             <div className="py-12 text-center">
                                 <Heart className="mx-auto size-10 text-muted-foreground/30" />
-                                <h3 className="mt-3 text-base font-semibold">No saved items recorded yet</h3>
+                                <h3 className="mt-3 text-base font-semibold">
+                                    No saved items recorded yet
+                                </h3>
                                 <p className="mt-1 text-sm text-muted-foreground">
-                                    When shoppers tap the wishlist button, their saved items will appear here.
+                                    When shoppers tap the wishlist button, their
+                                    saved items will appear here.
                                 </p>
                             </div>
                         ) : (
@@ -157,8 +187,12 @@ export default function WishlistAdminIndex({ stats, top_products, settings }: Pr
                                             <TableHead>Product</TableHead>
                                             <TableHead>SKU</TableHead>
                                             <TableHead>Price</TableHead>
-                                            <TableHead className="text-right">Wishlist Saves</TableHead>
-                                            <TableHead className="text-right">Action</TableHead>
+                                            <TableHead className="text-right">
+                                                Wishlist Saves
+                                            </TableHead>
+                                            <TableHead className="text-right">
+                                                Action
+                                            </TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -169,7 +203,9 @@ export default function WishlistAdminIndex({ stats, top_products, settings }: Pr
                                                         <div className="size-10 shrink-0 overflow-hidden rounded-md bg-muted">
                                                             {p.image ? (
                                                                 <img
-                                                                    src={p.image}
+                                                                    src={
+                                                                        p.image
+                                                                    }
                                                                     alt={p.name}
                                                                     className="size-full object-cover"
                                                                 />
@@ -184,16 +220,28 @@ export default function WishlistAdminIndex({ stats, top_products, settings }: Pr
                                                         </span>
                                                     </div>
                                                 </TableCell>
-                                                <TableCell className="font-mono text-xs">{p.sku}</TableCell>
-                                                <TableCell>{p.price_formatted}</TableCell>
+                                                <TableCell className="font-mono text-xs">
+                                                    {p.sku}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {p.price_formatted}
+                                                </TableCell>
                                                 <TableCell className="text-right">
                                                     <Badge className="bg-rose-100 font-bold text-rose-800 dark:bg-rose-950 dark:text-rose-200">
-                                                        {p.saves_count} {p.saves_count === 1 ? 'save' : 'saves'}
+                                                        {p.saves_count}{' '}
+                                                        {p.saves_count === 1
+                                                            ? 'save'
+                                                            : 'saves'}
                                                     </Badge>
                                                 </TableCell>
                                                 <TableCell className="text-right">
-                                                    <Link href={`/admin/catalog/products/${p.id}/edit`}>
-                                                        <Button variant="ghost" size="sm">
+                                                    <Link
+                                                        href={`/admin/catalog/products/${p.id}/edit`}
+                                                    >
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                        >
                                                             Inspect
                                                         </Button>
                                                     </Link>

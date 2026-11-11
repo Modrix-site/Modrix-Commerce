@@ -21,9 +21,12 @@ export default function EasebuzzHandoff({
             <Head title="Connecting to Easebuzz..." />
             <main className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center gap-4 px-4 py-16 text-center">
                 <Loader2 className="size-8 animate-spin text-primary" />
-                <h1 className="text-xl font-semibold">Redirecting to Easebuzz</h1>
+                <h1 className="text-xl font-semibold">
+                    Redirecting to Easebuzz
+                </h1>
                 <p className="text-sm text-muted-foreground">
-                    Order {orderNumber} is being forwarded. Please wait while we transfer you securely to Easebuzz to complete your payment.
+                    Order {orderNumber} is being forwarded. Please wait while we
+                    transfer you securely to Easebuzz to complete your payment.
                 </p>
                 <a
                     href={checkoutUrl}

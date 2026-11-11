@@ -47,24 +47,27 @@ export default function Hero({ section }: ThemeSectionProps) {
                             </Link>
                         );
                     })}
-                    {tags.length === 0 && section.blocks
-                        .filter((b) => b.type === 'category')
-                        .map((b) => {
-                            const Icon =
-                                icons[
-                                    str(b.settings.icon) as keyof typeof icons
-                                ] ?? Baby;
-                            return (
-                                <Link
-                                    key={b.id}
-                                    href={str(b.settings.link) || '/search'}
-                                    {...blockAttributes(b)}
-                                >
-                                    <Icon size={16} />
-                                    {str(b.settings.label)}
-                                </Link>
-                            );
-                        })}
+                    {tags.length === 0 &&
+                        section.blocks
+                            .filter((b) => b.type === 'category')
+                            .map((b) => {
+                                const Icon =
+                                    icons[
+                                        str(
+                                            b.settings.icon,
+                                        ) as keyof typeof icons
+                                    ] ?? Baby;
+                                return (
+                                    <Link
+                                        key={b.id}
+                                        href={str(b.settings.link) || '/search'}
+                                        {...blockAttributes(b)}
+                                    >
+                                        <Icon size={16} />
+                                        {str(b.settings.label)}
+                                    </Link>
+                                );
+                            })}
                 </nav>
             </aside>
             <div className="bl-baby-main">

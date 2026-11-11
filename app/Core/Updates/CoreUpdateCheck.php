@@ -2,6 +2,7 @@
 
 namespace App\Core\Updates;
 
+use App\Core\Platform;
 use App\Core\Settings\SettingsRepository;
 
 /**
@@ -20,7 +21,7 @@ final class CoreUpdateCheck
     public function run(): ?array
     {
         try {
-            $items = $this->client->releases(\App\Core\Platform::VERSION, PHP_VERSION);
+            $items = $this->client->releases(Platform::VERSION, PHP_VERSION);
         } catch (CoreUpdateError $e) {
             $this->settings->set('core_update.last_error', $e->getMessage());
             $this->settings->set('core_update.checked_at', now()->toIso8601String());

@@ -3,7 +3,6 @@
 namespace EcoModular\PhonePe;
 
 use App\Domains\Payments\Gateway\GatewayException;
-use App\Domains\Pricing\Money;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Throwable;
@@ -112,7 +111,7 @@ final class PhonePeApi
         }
 
         try {
-            $this->checkStatus('TEST_PROBE_' . time());
+            $this->checkStatus('TEST_PROBE_'.time());
         } catch (GatewayException $e) {
             $msg = strtolower($e->getMessage());
             // A transaction not found response confirms the signature and Merchant ID passed authentication!
@@ -144,11 +143,11 @@ final class PhonePeApi
                 ->connectTimeout(5)
                 ->timeout(20)
                 ->withoutRedirecting()
-                ->post($this->baseUrl() . $endpoint, $body);
+                ->post($this->baseUrl().$endpoint, $body);
         } catch (ConnectionException) {
             throw new GatewayException('Could not connect to PhonePe. Please try again.', retryable: true);
         } catch (Throwable $e) {
-            throw new GatewayException('PhonePe API request failed: ' . mb_substr($e->getMessage(), 0, 150));
+            throw new GatewayException('PhonePe API request failed: '.mb_substr($e->getMessage(), 0, 150));
         }
 
         $json = $response->json();
@@ -179,11 +178,11 @@ final class PhonePeApi
                 ->connectTimeout(5)
                 ->timeout(20)
                 ->withoutRedirecting()
-                ->get($this->baseUrl() . $endpoint);
+                ->get($this->baseUrl().$endpoint);
         } catch (ConnectionException) {
             throw new GatewayException('Could not connect to PhonePe. Please try again.', retryable: true);
         } catch (Throwable $e) {
-            throw new GatewayException('PhonePe API request failed: ' . mb_substr($e->getMessage(), 0, 150));
+            throw new GatewayException('PhonePe API request failed: '.mb_substr($e->getMessage(), 0, 150));
         }
 
         $json = $response->json();

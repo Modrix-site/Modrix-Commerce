@@ -2,10 +2,7 @@
     "name": "Shop grid and filters",
     "limit": 1,
     "enabled_on": {
-        "templates": [
-            "collection",
-            "search"
-        ]
+        "templates": ["collection", "search"]
     },
     "settings": [
         {

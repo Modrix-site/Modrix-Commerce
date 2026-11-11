@@ -111,12 +111,12 @@ final class PayuApi
                 throw new GatewayException('PayU Merchant Key and Salt must be configured.');
             }
 
-            $response = $this->verifyPayment('PROBE_TEST_' . time());
+            $response = $this->verifyPayment('PROBE_TEST_'.time());
 
             if (isset($response['status'])) {
                 return [
                     'success' => true,
-                    'message' => 'Connected successfully to PayU India (' . ($this->settings->testMode() ? 'Test Environment' : 'Production') . ').',
+                    'message' => 'Connected successfully to PayU India ('.($this->settings->testMode() ? 'Test Environment' : 'Production').').',
                 ];
             }
 
@@ -151,7 +151,7 @@ final class PayuApi
             throw new GatewayException('Network error connecting to PayU service.', 0, $e);
         } catch (Throwable $e) {
             Log::error('PayU post service error', ['url' => $url, 'error' => $e->getMessage()]);
-            throw new GatewayException('Failed to communicate with PayU service: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Failed to communicate with PayU service: '.$e->getMessage(), 0, $e);
         }
 
         if ($response->failed()) {
@@ -167,7 +167,7 @@ final class PayuApi
             if (is_array($data)) {
                 return $data;
             }
-            throw new GatewayException('PayU response could not be parsed as JSON: ' . substr($response->body(), 0, 100));
+            throw new GatewayException('PayU response could not be parsed as JSON: '.substr($response->body(), 0, 100));
         }
 
         return $decoded;

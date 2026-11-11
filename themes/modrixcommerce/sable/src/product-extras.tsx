@@ -1,8 +1,8 @@
-import { router } from "@inertiajs/react";
-import { useEffect, useState } from "react";
-import { Gift } from "lucide-react";
-import type { SlotItem } from "@/components/extensions/extension-slot";
-import type { MoneyValue } from "@/types";
+import { router } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
+import { Gift } from 'lucide-react';
+import type { SlotItem } from '@/components/extensions/extension-slot';
+import type { MoneyValue } from '@/types';
 type Addon = {
     id: number;
     name: string;
@@ -15,23 +15,28 @@ type AddonProps = { productId: number; toggleUrl: string; addons: Addon[] };
 export function isFreeServiceSlot(item: SlotItem): boolean {
     const addons = item.props.addons as Addon[] | undefined;
     return (
-        item.component.endsWith("/ProductAddons") &&
+        item.component.endsWith('/ProductAddons') &&
         Array.isArray(addons) &&
         addons.length > 0 &&
         addons.every(
             (a) =>
-                a.type === "service" && Number(a.price.display_amount ?? a.price.amount ?? 0) === 0,
+                a.type === 'service' &&
+                Number(a.price.display_amount ?? a.price.amount ?? 0) === 0,
         )
     );
 }
 export function GiftOptions({ item }: { item: SlotItem }) {
-    const { productId, toggleUrl, addons } = item.props as unknown as AddonProps;
+    const { productId, toggleUrl, addons } =
+        item.props as unknown as AddonProps;
     const [pending, setPending] = useState<number | null>(null);
     const [selected, setSelected] = useState<Record<number, boolean>>(() =>
         Object.fromEntries(addons.map((a) => [a.id, a.selected])),
     );
     useEffect(
-        () => setSelected(Object.fromEntries(addons.map((a) => [a.id, a.selected]))),
+        () =>
+            setSelected(
+                Object.fromEntries(addons.map((a) => [a.id, a.selected])),
+            ),
         [addons],
     );
     return (
@@ -52,7 +57,11 @@ export function GiftOptions({ item }: { item: SlotItem }) {
                                 {
                                     preserveScroll: true,
                                     preserveState: true,
-                                    onError: () => setSelected({ ...selected, [addon.id]: !next }),
+                                    onError: () =>
+                                        setSelected({
+                                            ...selected,
+                                            [addon.id]: !next,
+                                        }),
                                     onFinish: () => setPending(null),
                                 },
                             );
@@ -60,7 +69,9 @@ export function GiftOptions({ item }: { item: SlotItem }) {
                     />
                     <span>
                         <strong>{addon.name}</strong>
-                        {addon.description && <small>{addon.description}</small>}
+                        {addon.description && (
+                            <small>{addon.description}</small>
+                        )}
                     </span>
                     <Gift size={43} strokeWidth={1} />
                 </label>

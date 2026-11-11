@@ -5,6 +5,7 @@
 **Goal:** Merchants can duplicate products, change many products at once, pick related products and upsells, and sell downloadable files without shipping.
 
 **Architecture:**
+
 - Everything is core: there is no module.
 - **Related products:** a `product_relations` table and a `ProductRelations` service.
 - **Digital products:**
@@ -71,6 +72,7 @@
 ### Task 1: Related products and upsells
 
 **Files:**
+
 - Create: `database/migrations/2026_10_26_000001_create_product_relations_table.php`
 - Create: `app/Domains/Catalog/ProductRelations.php`
 - Modify:
@@ -86,6 +88,7 @@
 - Test: `tests/Feature/Catalog/ProductRelationsTest.php`
 
 **Interfaces:**
+
 - **Produces:**
     - table `product_relations(id, product_id FK cascade, related_product_id FK cascade, type string(16), position unsigned small int, timestamps, unique(product_id, related_product_id, type))`;
     - `Product::relatedProducts(): BelongsToMany` and `Product::upsellProducts(): BelongsToMany`, both on `product_relations`, filtered by type and ordered by `position`;
@@ -115,6 +118,7 @@
 ### Task 2: Digital product flag and files (admin)
 
 **Files:**
+
 - Create:
     - `database/migrations/2026_10_26_000002_add_digital_products.php`, which adds `products.is_digital` bool default false and creates `product_files`;
     - `app/Domains/Catalog/Models/ProductFile.php`;
@@ -129,6 +133,7 @@
 - Test: `tests/Feature/Catalog/ProductFilesTest.php`
 
 **Interfaces:**
+
 - **Produces:**
     - `product_files(id, product_id FK cascade, name string(160), disk string(32), path string, size unsigned big int, mime string(120) nullable, position unsigned small int, timestamps)`;
     - `ProductFile` with `deleting` hook that removes the stored file;
@@ -157,6 +162,7 @@
 ### Task 3: Checkout without shipping for digital carts
 
 **Files:**
+
 - Modify:
     - `app/Domains/Checkout/Pricing/PricedCart.php` (`requiresShipping(): bool`, included in `toArray()` as `requires_shipping`);
     - `app/Domains/Checkout/Pricing/Steps/ShippingStep.php`;
@@ -166,6 +172,7 @@
 - Test: `tests/Feature/Checkout/DigitalCheckoutTest.php`
 
 **Interfaces:**
+
 - **Produces:**
     - `PricedCart::requiresShipping(): bool` is true if any `purchasableLines()` line has `$line->variant->product->is_digital === false`.
     - When it is false, `ShippingStep::apply` sets `shippingOptions = [['code' => 'digital', 'label' => 'No shipping needed', 'amount' => zero]]`, `shipping` to that option and `shippingTotal` to zero, whatever the destination.
@@ -185,6 +192,7 @@
 ### Task 4: Download grants and the download route
 
 **Files:**
+
 - Create:
     - migration `2026_10_26_000003_create_download_grants.php` (`download_grants` and `download_logs`);
     - `app/Domains/Downloads/Models/DownloadGrant.php` and `DownloadLog.php`;
@@ -200,6 +208,7 @@
 - Test: `tests/Feature/Downloads/DownloadGrantsTest.php`
 
 **Interfaces:**
+
 - **Produces:**
     - `download_grants(id, order_id FK cascade, order_item_id FK cascade, product_file_id FK cascade, token char(40) unique, downloads uint default 0, max_downloads uint nullable, expires_at timestamp nullable, revoked_at timestamp nullable, timestamps, unique(order_item_id, product_file_id))`;
     - `download_logs(id, download_grant_id FK cascade, ip string(45), user_agent string(255) nullable, created_at)`.
@@ -240,6 +249,7 @@
 ### Task 5: Showing downloads (email, order pages, admin)
 
 **Files:**
+
 - Modify:
     - `app/Http/Presenters/OrderPresenter.php` (`forCustomer` adds `downloads`; `forAdmin` adds `downloads`);
     - `resources/views/mail/orders/order.blade.php` (a downloads list for the `paid` kind);
@@ -251,6 +261,7 @@
 - Test: `tests/Feature/Downloads/DownloadDeliveryTest.php`
 
 **Interfaces:**
+
 - **Produces:**
     - presenter item shape `{id, file: string, product: string, url: string|null, downloads: int, max_downloads: int|null, expires_at: string|null, usable: bool}` (`url` is null when not usable);
     - admin routes, all `orders.update`, `scopeBindings`:
@@ -272,6 +283,7 @@
 ### Task 6: Product bulk actions
 
 **Files:**
+
 - Create:
     - `app/Domains/Catalog/Actions/ProductBulkActions.php`;
     - `app/Domains/Catalog/BulkResult.php`;
@@ -284,6 +296,7 @@
 - Test: `tests/Feature/Catalog/ProductBulkActionsTest.php`
 
 **Interfaces:**
+
 - **Produces:**
     - `BulkResult { int $updated; list<array{id:int, name:string, reason:string}> $skipped }`;
     - `ProductBulkActions::run(string $action, list<int> $ids, array $input, User $actor): BulkResult`, with the actions exactly as in the spec table: `publish`, `draft`, `archive`, `add_category`, `remove_category`, `set_brand`, `add_tags`, `remove_tags`, `feature`, `unfeature`, `adjust_prices`, `set_stock`, `delete`.
@@ -324,6 +337,7 @@
 ### Task 7: Duplicate product
 
 **Files:**
+
 - Create: `app/Domains/Catalog/Actions/DuplicateProduct.php`
 - Modify:
     - `app/Http/Controllers/Admin/Catalog/ProductController.php` (`duplicate`);
@@ -333,6 +347,7 @@
 - Test: `tests/Feature/Catalog/DuplicateProductTest.php`
 
 **Interfaces:**
+
 - **Produces:**
     - `DuplicateProduct::handle(Product $source, User $actor): Product`, which copies everything listed in spec §1. Files are copied with `Storage::disk('local')->copy()` to the new product's `downloads/{newId}/` folder.
     - `DuplicateProduct::uniqueSlug(string $base): string` and `uniqueSku(string $sku): string`, both static and used only here.
@@ -355,6 +370,7 @@
 ### Task 8: Docs, full check and review
 
 **Files:**
+
 - Modify: `docs/architecture/decisions.md` (ADR-048, "Product tools and digital products"), `CHANGELOG.md` (an "Added (product tools)" section).
 
 - [ ] **Step 1: ADR-048** records the decisions:

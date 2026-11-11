@@ -35,7 +35,7 @@ class GeoLocationService
 
         foreach ($headers as $header) {
             $val = $request->header($header);
-            if (!empty($val) && strlen($val) === 2 && ctype_alpha($val)) {
+            if (! empty($val) && strlen($val) === 2 && ctype_alpha($val)) {
                 $country = strtoupper($val);
                 break;
             }
@@ -52,7 +52,7 @@ class GeoLocationService
             $coords = self::COUNTRY_COORDINATES[$country];
             $lat = $coords['lat'];
             $lon = $coords['lon'];
-            if (!$city) {
+            if (! $city) {
                 $city = $coords['city'];
             }
         }

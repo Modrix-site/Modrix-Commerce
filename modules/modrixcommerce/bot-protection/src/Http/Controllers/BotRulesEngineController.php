@@ -91,13 +91,13 @@ class BotRulesEngineController extends Controller
 
     public function toggle(BotSecurityRule $rule): RedirectResponse
     {
-        $rule->is_active = !$rule->is_active;
+        $rule->is_active = ! $rule->is_active;
         $rule->save();
 
         Cache::forget('bot_active_security_rules');
-        BotAuditLog::record("Toggled Security Rule {$rule->name} (" . ($rule->is_active ? 'Active' : 'Disabled') . ")", 'bot_security_rule', (string) $rule->id);
+        BotAuditLog::record("Toggled Security Rule {$rule->name} (".($rule->is_active ? 'Active' : 'Disabled').')', 'bot_security_rule', (string) $rule->id);
 
-        return back()->with('success', "Rule '{$rule->name}' " . ($rule->is_active ? 'enabled' : 'disabled') . ".");
+        return back()->with('success', "Rule '{$rule->name}' ".($rule->is_active ? 'enabled' : 'disabled').'.');
     }
 
     public function destroy(BotSecurityRule $rule): RedirectResponse

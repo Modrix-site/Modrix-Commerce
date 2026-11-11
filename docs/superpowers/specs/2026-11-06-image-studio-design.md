@@ -21,11 +21,11 @@ Success means:
 
 ## Decisions (agreed with the user)
 
-| Question | Decision |
-|---|---|
-| Background removal engine | Built-in pure PHP/GD "edge" driver by default; optional remove.bg API driver. |
-| When processing runs | Both: queued job on new uploads, plus a bulk admin action and artisan command for existing images. |
-| Originals / serving | Originals kept untouched. A small core URL seam lets the module serve the variant; disabling the module or reverting restores the original instantly. |
+| Question                  | Decision                                                                                                                                              |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Background removal engine | Built-in pure PHP/GD "edge" driver by default; optional remove.bg API driver.                                                                         |
+| When processing runs      | Both: queued job on new uploads, plus a bulk admin action and artisan command for existing images.                                                    |
+| Originals / serving       | Originals kept untouched. A small core URL seam lets the module serve the variant; disabling the module or reverting restores the original instantly. |
 
 Constraints: the dev PHP (8.4, `C:\php84`) has GD with WebP support and no
 Imagick, so GD is the only image library assumed. The dev server is
@@ -73,18 +73,18 @@ bound with `scoped()` so queue workers and tests do not see stale entries.
 
 Migration `create_image_studio_variants_table`:
 
-| column | type | notes |
-|---|---|---|
-| id | bigint pk | |
-| product_image_id | fk → product_images, unique, cascade delete | |
-| status | string(16) | `pending`, `processing`, `done`, `failed`, `skipped` |
-| disk | string | same disk as the original |
-| path | string nullable | `products/{product_id}/studio/{random40}.webp` |
-| driver | string(32) nullable | `gd-edge` / `removebg` / `none` (WebP only) |
-| error | string(500) nullable | reason for `failed` / `skipped` |
-| bytes_before, bytes_after | unsigned int nullable | for "bytes saved" |
-| width, height | unsigned int nullable | |
-| timestamps | | |
+| column                    | type                                        | notes                                                |
+| ------------------------- | ------------------------------------------- | ---------------------------------------------------- |
+| id                        | bigint pk                                   |                                                      |
+| product_image_id          | fk → product_images, unique, cascade delete |                                                      |
+| status                    | string(16)                                  | `pending`, `processing`, `done`, `failed`, `skipped` |
+| disk                      | string                                      | same disk as the original                            |
+| path                      | string nullable                             | `products/{product_id}/studio/{random40}.webp`       |
+| driver                    | string(32) nullable                         | `gd-edge` / `removebg` / `none` (WebP only)          |
+| error                     | string(500) nullable                        | reason for `failed` / `skipped`                      |
+| bytes_before, bytes_after | unsigned int nullable                       | for "bytes saved"                                    |
+| width, height             | unsigned int nullable                       |                                                      |
+| timestamps                |                                             |                                                      |
 
 Model `EcoModular\ImageStudio\Models\ImageVariant`.
 
@@ -132,7 +132,7 @@ interface BackgroundRemover
 3. **Flood fill from the edges**: breadth-first over a visited bitmap
    (`SplFixedArray` / packed string), seeded from every border pixel within
    tolerance, expanding to 4-neighbours whose colour distance to the median
-   is within tolerance. Only background *connected to the edge* is removed,
+   is within tolerance. Only background _connected to the edge_ is removed,
    so a white product interior that does not touch the edge survives.
 4. **Feather**: for background pixels bordering foreground, and foreground
    pixels within `feather_px` of background, set partial alpha by distance,
@@ -168,10 +168,10 @@ never sent back to the browser (the page only shows whether a key is set).
   it creates a `pending` variant row and dispatches the job
   (`afterCommit`). `StoreProductImage` is not modified.
 - **Admin bulk actions** (POST, CSRF, `can:image_studio.manage`):
-  - *Process all*: queues every product image without a `done` variant.
-  - *Retry failed/skipped*: queues those rows again.
-  - *Revert all*: deletes all variants and their files.
-  - Per image: *Process / Reprocess* and *Revert*.
+    - _Process all_: queues every product image without a `done` variant.
+    - _Retry failed/skipped_: queues those rows again.
+    - _Revert all_: deletes all variants and their files.
+    - Per image: _Process / Reprocess_ and _Revert_.
 - **Artisan** `image-studio:process {--all} {--product=*} {--force} {--sync}`:
   `--all` queues every unprocessed image, `--product` limits to product ids,
   `--force` includes `done` ones, `--sync` processes inline in the CLI
@@ -180,15 +180,15 @@ never sent back to the browser (the page only shows whether a key is set).
 
 ## 5. Settings (module.json)
 
-| key | type | default | notes |
-|---|---|---|---|
-| enabled | boolean | true | master switch for serving variants and auto-processing |
-| process_on_upload | boolean | true | |
-| remove_background | boolean | true | off = WebP conversion only |
-| driver | select | `gd-edge` | `gd-edge`, `removebg` |
-| tolerance | integer 1–100 | 18 | gd-edge only (`visible_when` driver) |
-| feather_px | integer 0–4 | 1 | gd-edge only |
-| webp_quality | integer 40–100 | 82 | |
+| key               | type           | default   | notes                                                  |
+| ----------------- | -------------- | --------- | ------------------------------------------------------ |
+| enabled           | boolean        | true      | master switch for serving variants and auto-processing |
+| process_on_upload | boolean        | true      |                                                        |
+| remove_background | boolean        | true      | off = WebP conversion only                             |
+| driver            | select         | `gd-edge` | `gd-edge`, `removebg`                                  |
+| tolerance         | integer 1–100  | 18        | gd-edge only (`visible_when` driver)                   |
+| feather_px        | integer 0–4    | 1         | gd-edge only                                           |
+| webp_quality      | integer 40–100 | 82        |                                                        |
 
 When `enabled` is false the resolver returns null (originals served) and
 uploads are not queued; existing variants are kept.

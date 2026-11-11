@@ -143,7 +143,7 @@ class FraudDashboardService
             ->map(fn (FraudScore $s) => [
                 'id' => $s->id,
                 'order_id' => $s->order_id,
-                'order_number' => $s->order?->number ?? '#' . $s->order_id,
+                'order_number' => $s->order?->number ?? '#'.$s->order_id,
                 'customer_email' => $s->customer_email,
                 'total_score' => $s->total_score,
                 'risk_level' => $s->risk_level,

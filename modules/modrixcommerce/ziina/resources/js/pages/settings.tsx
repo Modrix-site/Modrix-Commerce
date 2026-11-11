@@ -76,7 +76,11 @@ export default function ZiinaSettingsPage({
                     description="Licensed by the Central Bank of the UAE. Accept Apple Pay, Google Pay, and cards in AED."
                     actions={
                         <div className="flex items-center gap-2">
-                            <Badge variant={settings.test_mode ? 'secondary' : 'default'}>
+                            <Badge
+                                variant={
+                                    settings.test_mode ? 'secondary' : 'default'
+                                }
+                            >
                                 {settings.test_mode ? 'Test Mode' : 'Live Mode'}
                             </Badge>
                             {settings.ready && (
@@ -102,13 +106,17 @@ export default function ZiinaSettingsPage({
                                 : 'Set up Ziina Payment Gateway'}
                         </CardTitle>
                         <CardDescription>
-                            Configure your API token from the Ziina Merchant Portal.
+                            Configure your API token from the Ziina Merchant
+                            Portal.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <ul className="grid gap-2 text-sm">
                             {checks.map(([done, label]) => (
-                                <li key={label} className="flex items-center gap-2">
+                                <li
+                                    key={label}
+                                    className="flex items-center gap-2"
+                                >
                                     {done ? (
                                         <CircleCheck className="size-4 shrink-0 text-primary" />
                                     ) : (
@@ -126,7 +134,8 @@ export default function ZiinaSettingsPage({
                         <CardHeader>
                             <CardTitle>API Credentials</CardTitle>
                             <CardDescription>
-                                Generated in your Ziina Merchant Dashboard under Settings &gt; Developers.
+                                Generated in your Ziina Merchant Dashboard under
+                                Settings &gt; Developers.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4 md:grid-cols-2">
@@ -145,8 +154,14 @@ export default function ZiinaSettingsPage({
                                     type="password"
                                     autoComplete="new-password"
                                     value={form.data.api_key}
-                                    onChange={(e) => form.setData('api_key', e.target.value)}
-                                    placeholder={settings.has_api_key ? '••••••••••••••••' : 'Ziina API Token'}
+                                    onChange={(e) =>
+                                        form.setData('api_key', e.target.value)
+                                    }
+                                    placeholder={
+                                        settings.has_api_key
+                                            ? '••••••••••••••••'
+                                            : 'Ziina API Token'
+                                    }
                                 />
                             </FormField>
 
@@ -165,8 +180,17 @@ export default function ZiinaSettingsPage({
                                     type="password"
                                     autoComplete="new-password"
                                     value={form.data.webhook_secret}
-                                    onChange={(e) => form.setData('webhook_secret', e.target.value)}
-                                    placeholder={settings.has_webhook_secret ? '••••••••••••••••' : 'Webhook Secret'}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'webhook_secret',
+                                            e.target.value,
+                                        )
+                                    }
+                                    placeholder={
+                                        settings.has_webhook_secret
+                                            ? '••••••••••••••••'
+                                            : 'Webhook Secret'
+                                    }
                                 />
                             </FormField>
 
@@ -179,7 +203,9 @@ export default function ZiinaSettingsPage({
                                 <Input
                                     id="label"
                                     value={form.data.label}
-                                    onChange={(e) => form.setData('label', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData('label', e.target.value)
+                                    }
                                 />
                             </FormField>
 
@@ -197,7 +223,9 @@ export default function ZiinaSettingsPage({
                                             'currencies',
                                             e.target.value
                                                 .split(',')
-                                                .map((c) => c.trim().toUpperCase())
+                                                .map((c) =>
+                                                    c.trim().toUpperCase(),
+                                                )
                                                 .filter(Boolean),
                                         )
                                     }
@@ -209,10 +237,19 @@ export default function ZiinaSettingsPage({
                                     <Checkbox
                                         id="test_mode"
                                         checked={form.data.test_mode}
-                                        onCheckedChange={(checked) => form.setData('test_mode', Boolean(checked))}
+                                        onCheckedChange={(checked) =>
+                                            form.setData(
+                                                'test_mode',
+                                                Boolean(checked),
+                                            )
+                                        }
                                     />
-                                    <label htmlFor="test_mode" className="text-sm font-medium leading-none">
-                                        Enable Test Mode (creates payment intents with test=true)
+                                    <label
+                                        htmlFor="test_mode"
+                                        className="text-sm leading-none font-medium"
+                                    >
+                                        Enable Test Mode (creates payment
+                                        intents with test=true)
                                     </label>
                                 </div>
 
@@ -220,10 +257,19 @@ export default function ZiinaSettingsPage({
                                     <Checkbox
                                         id="enabled"
                                         checked={form.data.enabled}
-                                        onCheckedChange={(checked) => form.setData('enabled', Boolean(checked))}
+                                        onCheckedChange={(checked) =>
+                                            form.setData(
+                                                'enabled',
+                                                Boolean(checked),
+                                            )
+                                        }
                                     />
-                                    <label htmlFor="enabled" className="text-sm font-medium leading-none">
-                                        Enable Ziina Payment Gateway for customer checkout
+                                    <label
+                                        htmlFor="enabled"
+                                        className="text-sm leading-none font-medium"
+                                    >
+                                        Enable Ziina Payment Gateway for
+                                        customer checkout
                                     </label>
                                 </div>
                             </div>
@@ -234,21 +280,28 @@ export default function ZiinaSettingsPage({
                         <CardHeader>
                             <CardTitle>Webhook & Response URLs</CardTitle>
                             <CardDescription>
-                                Register these URLs in your Ziina Merchant Dashboard under Webhooks.
+                                Register these URLs in your Ziina Merchant
+                                Dashboard under Webhooks.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4">
                             <div>
-                                <label className="text-xs font-semibold uppercase text-muted-foreground">
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">
                                     Return Response URL
                                 </label>
                                 <div className="mt-1 flex items-center gap-2">
-                                    <Input readOnly value={responseUrl} className="font-mono text-xs" />
+                                    <Input
+                                        readOnly
+                                        value={responseUrl}
+                                        className="font-mono text-xs"
+                                    />
                                     <Button
                                         type="button"
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => copyResponse(responseUrl)}
+                                        onClick={() =>
+                                            copyResponse(responseUrl)
+                                        }
                                     >
                                         <Copy className="size-4" />
                                     </Button>
@@ -256,11 +309,15 @@ export default function ZiinaSettingsPage({
                             </div>
 
                             <div>
-                                <label className="text-xs font-semibold uppercase text-muted-foreground">
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">
                                     Webhook Notification URL
                                 </label>
                                 <div className="mt-1 flex items-center gap-2">
-                                    <Input readOnly value={webhookUrl} className="font-mono text-xs" />
+                                    <Input
+                                        readOnly
+                                        value={webhookUrl}
+                                        className="font-mono text-xs"
+                                    />
                                     <Button
                                         type="button"
                                         variant="outline"

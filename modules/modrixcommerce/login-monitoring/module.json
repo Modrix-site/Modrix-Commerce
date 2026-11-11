@@ -129,9 +129,18 @@
             "default": "risk_based",
             "options": [
                 { "value": "optional", "label": "Optional (User choice)" },
-                { "value": "risk_based", "label": "Risk-Based (Triggered on unfamiliar device/location)" },
-                { "value": "staff_only", "label": "Enforce for Staff & Admin accounts only" },
-                { "value": "all_users", "label": "Strict (Enforce for all users)" }
+                {
+                    "value": "risk_based",
+                    "label": "Risk-Based (Triggered on unfamiliar device/location)"
+                },
+                {
+                    "value": "staff_only",
+                    "label": "Enforce for Staff & Admin accounts only"
+                },
+                {
+                    "value": "all_users",
+                    "label": "Strict (Enforce for all users)"
+                }
             ]
         },
         {

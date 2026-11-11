@@ -101,7 +101,7 @@ export default function HearthCatalog({
                 ))}
             </nav>
             <div className="hearth-catalog-toolbar">
-                {(catalogSettings.filters && show('catalog_filters')) && (
+                {catalogSettings.filters && show('catalog_filters') && (
                     <button
                         className="hearth-primary"
                         aria-expanded={open}
@@ -139,7 +139,7 @@ export default function HearthCatalog({
                     <option value="name">Name</option>
                 </select>
             </div>
-            {open && (catalogSettings.filters && show('catalog_filters')) && (
+            {open && catalogSettings.filters && show('catalog_filters') && (
                 <aside
                     id="hearth-filter-panel"
                     className="hearth-filter-panel"

@@ -15,7 +15,7 @@ final class CashfreeSignature
 {
     public function calculate(string $payload, string $timestamp, string $secretKey): string
     {
-        $signedPayload = $timestamp . $payload;
+        $signedPayload = $timestamp.$payload;
 
         return base64_encode(hash_hmac('sha256', $signedPayload, $secretKey, true));
     }

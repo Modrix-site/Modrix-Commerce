@@ -19,7 +19,7 @@ class LoginPrecheckMiddleware
             $email = (string) $request->input('email');
             $ip = $request->ip() ?? '127.0.0.1';
 
-            if (!empty($email) && ($lockout = $this->tracker->isLockedOut($email, $ip))) {
+            if (! empty($email) && ($lockout = $this->tracker->isLockedOut($email, $ip))) {
                 $minutesRemaining = max(1, now()->diffInMinutes($lockout->locked_until));
 
                 if ($request->expectsJson() || $request->is('api/*')) {

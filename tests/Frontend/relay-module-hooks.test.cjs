@@ -75,7 +75,10 @@ function load(file) {
                 return { blockAttributes: () => ({}) };
             if (name.includes('/place-slot'))
                 return {
-                    usePlaceItems: place => place==='product.after_description' ? [{component:place,props:{}}] : [],
+                    usePlaceItems: (place) =>
+                        place === 'product.after_description'
+                            ? [{ component: place, props: {} }]
+                            : [],
                     PlaceSlot: ({ place, extraProps }) =>
                         marker(place, extraProps?.product?.id ?? ''),
                 };
@@ -89,7 +92,8 @@ function load(file) {
             if (name.includes('/sale-notice'))
                 return {
                     SaleNotice: ({ sale }) => marker('sale', sale?.name ?? ''),
-                    SaleTag: ({ sale }) => sale ? marker('sale-tag', sale.name) : null,
+                    SaleTag: ({ sale }) =>
+                        sale ? marker('sale-tag', sale.name) : null,
                 };
             if (name.includes('/variant-selector'))
                 return { VariantSelector: () => null };
@@ -110,9 +114,16 @@ function load(file) {
             if (name.includes('/CartController'))
                 return { default: { store: { form: () => ({}) } } };
             if (name.includes('/use-store-theme'))
-                return { useStoreTheme: () => ({ theme: { settings: {}, layout:{container:'wide'} } }) };
+                return {
+                    useStoreTheme: () => ({
+                        theme: { settings: {}, layout: { container: 'wide' } },
+                    }),
+                };
             if (name.includes('/store-menu'))
-                return { StoreMenuTree: () => null, themeMenus: () => ({ footer: [] }) };
+                return {
+                    StoreMenuTree: () => null,
+                    themeMenus: () => ({ footer: [] }),
+                };
             if (name.includes('/ui/sheet'))
                 return Object.fromEntries(
                     [
@@ -223,7 +234,7 @@ test('product module places, labels and flash-sale notices survive theme renderi
         selected: {},
         breadcrumbs: [],
         related: [],
-        slots: [{component:"legacy-product-details",props:{}}],
+        slots: [{ component: 'legacy-product-details', props: {} }],
     });
     for (const place of [
         'product.after_title',
@@ -329,9 +340,27 @@ test('all page-slot templates ship an enabled app section for arbitrary installe
 
 test('theme layout retains the platform shell around checkout, account, orders and global overlays', () => {
     const Layout = load(path.join(theme, 'src/layout.tsx')).default;
-    for (const page of ['checkout.payment_method', 'checkout.after_summary', 'checkout.before_place_order', 'order.confirmation', 'account.order']) {
-        const DefaultLayout = ({ children }) => React.createElement('main', null, marker('storefront.overlay'), children);
-        const html = renderToStaticMarkup(React.createElement(Layout, { DefaultLayout }, marker(page, 'Core module content')));
+    for (const page of [
+        'checkout.payment_method',
+        'checkout.after_summary',
+        'checkout.before_place_order',
+        'order.confirmation',
+        'account.order',
+    ]) {
+        const DefaultLayout = ({ children }) =>
+            React.createElement(
+                'main',
+                null,
+                marker('storefront.overlay'),
+                children,
+            );
+        const html = renderToStaticMarkup(
+            React.createElement(
+                Layout,
+                { DefaultLayout },
+                marker(page, 'Core module content'),
+            ),
+        );
         once(html, 'storefront.overlay');
         once(html, page);
         assert.match(html, /Core module content/);

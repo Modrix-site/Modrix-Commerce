@@ -55,14 +55,27 @@ type Props = {
     };
 };
 
-export default function TieredPricingIndex({ rules, settings, stats, urls }: Props) {
+export default function TieredPricingIndex({
+    rules,
+    settings,
+    stats,
+    urls,
+}: Props) {
     const handleToggle = (id: number) => {
-        router.post(`/admin/m/modrixcommerce/tiered-pricing/${id}/toggle`, {}, { preserveScroll: true });
+        router.post(
+            `/admin/m/modrixcommerce/tiered-pricing/${id}/toggle`,
+            {},
+            { preserveScroll: true },
+        );
     };
 
     const handleDelete = (id: number) => {
-        if (confirm('Are you sure you want to delete this tiered pricing rule?')) {
-            router.delete(`/admin/m/modrixcommerce/tiered-pricing/${id}`, { preserveScroll: true });
+        if (
+            confirm('Are you sure you want to delete this tiered pricing rule?')
+        ) {
+            router.delete(`/admin/m/modrixcommerce/tiered-pricing/${id}`, {
+                preserveScroll: true,
+            });
         }
     };
 
@@ -83,7 +96,10 @@ export default function TieredPricingIndex({ rules, settings, stats, urls }: Pro
                                 </Button>
                             </Link>
                             <Link href="/admin/m/modrixcommerce/tiered-pricing/create">
-                                <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+                                <Button
+                                    size="sm"
+                                    className="bg-blue-600 text-white hover:bg-blue-700"
+                                >
                                     <Plus className="mr-2 size-4" />
                                     New Tiered Rule
                                 </Button>
@@ -101,8 +117,12 @@ export default function TieredPricingIndex({ rules, settings, stats, urls }: Pro
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{stats.total_rules}</div>
-                            <p className="text-xs text-muted-foreground">Configured volume discount rules</p>
+                            <div className="text-2xl font-bold">
+                                {stats.total_rules}
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                                Configured volume discount rules
+                            </p>
                         </CardContent>
                     </Card>
 
@@ -113,8 +133,12 @@ export default function TieredPricingIndex({ rules, settings, stats, urls }: Pro
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-blue-600">{stats.active_rules}</div>
-                            <p className="text-xs text-muted-foreground">Live on storefront products</p>
+                            <div className="text-2xl font-bold text-blue-600">
+                                {stats.active_rules}
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                                Live on storefront products
+                            </p>
                         </CardContent>
                     </Card>
 
@@ -126,12 +150,20 @@ export default function TieredPricingIndex({ rules, settings, stats, urls }: Pro
                         </CardHeader>
                         <CardContent>
                             <div className="flex items-center gap-2">
-                                <Badge variant={settings.enabled ? 'default' : 'secondary'}>
+                                <Badge
+                                    variant={
+                                        settings.enabled
+                                            ? 'default'
+                                            : 'secondary'
+                                    }
+                                >
                                     {settings.enabled ? 'Active' : 'Disabled'}
                                 </Badge>
                             </div>
                             <p className="mt-1 text-xs text-muted-foreground">
-                                {settings.enabled ? 'Volume tables showing on products' : 'Module is globally disabled'}
+                                {settings.enabled
+                                    ? 'Volume tables showing on products'
+                                    : 'Module is globally disabled'}
                             </p>
                         </CardContent>
                     </Card>
@@ -146,12 +178,21 @@ export default function TieredPricingIndex({ rules, settings, stats, urls }: Pro
                         {rules.data.length === 0 ? (
                             <div className="flex flex-col items-center justify-center py-12 text-center">
                                 <Layers className="size-12 text-muted-foreground/40" />
-                                <h3 className="mt-4 text-base font-semibold">No tiered pricing rules yet</h3>
+                                <h3 className="mt-4 text-base font-semibold">
+                                    No tiered pricing rules yet
+                                </h3>
                                 <p className="mt-1 text-sm text-muted-foreground">
-                                    Create your first quantity-break rule to encourage bulk orders.
+                                    Create your first quantity-break rule to
+                                    encourage bulk orders.
                                 </p>
-                                <Link href="/admin/m/modrixcommerce/tiered-pricing/create" className="mt-4">
-                                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+                                <Link
+                                    href="/admin/m/modrixcommerce/tiered-pricing/create"
+                                    className="mt-4"
+                                >
+                                    <Button
+                                        size="sm"
+                                        className="bg-blue-600 text-white hover:bg-blue-700"
+                                    >
                                         <Plus className="mr-2 size-4" />
                                         Create Rule
                                     </Button>
@@ -168,7 +209,9 @@ export default function TieredPricingIndex({ rules, settings, stats, urls }: Pro
                                             <TableHead>Tiers</TableHead>
                                             <TableHead>Priority</TableHead>
                                             <TableHead>Status</TableHead>
-                                            <TableHead className="text-right">Actions</TableHead>
+                                            <TableHead className="text-right">
+                                                Actions
+                                            </TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -176,47 +219,73 @@ export default function TieredPricingIndex({ rules, settings, stats, urls }: Pro
                                             <TableRow key={rule.id}>
                                                 <TableCell className="font-medium">
                                                     <div>
-                                                        <span className="font-semibold text-foreground">{rule.title}</span>
+                                                        <span className="font-semibold text-foreground">
+                                                            {rule.title}
+                                                        </span>
                                                         {rule.description && (
-                                                            <p className="text-xs text-muted-foreground line-clamp-1">
-                                                                {rule.description}
+                                                            <p className="line-clamp-1 text-xs text-muted-foreground">
+                                                                {
+                                                                    rule.description
+                                                                }
                                                             </p>
                                                         )}
                                                     </div>
                                                 </TableCell>
                                                 <TableCell>
-                                                    <Badge variant="outline" className="capitalize">
-                                                        {rule.applies_to === 'all'
+                                                    <Badge
+                                                        variant="outline"
+                                                        className="capitalize"
+                                                    >
+                                                        {rule.applies_to ===
+                                                        'all'
                                                             ? 'All Products'
                                                             : `${rule.applies_to} (${rule.target_ids.length})`}
                                                     </Badge>
                                                 </TableCell>
                                                 <TableCell>
-                                                    <Badge variant="secondary" className="capitalize">
-                                                        {rule.discount_type === 'percent' ? '% Off' : 'Fixed / Unit'}
+                                                    <Badge
+                                                        variant="secondary"
+                                                        className="capitalize"
+                                                    >
+                                                        {rule.discount_type ===
+                                                        'percent'
+                                                            ? '% Off'
+                                                            : 'Fixed / Unit'}
                                                     </Badge>
                                                 </TableCell>
                                                 <TableCell>
                                                     <div className="flex flex-wrap gap-1">
-                                                        {rule.tiers.map((t, idx) => (
-                                                            <span
-                                                                key={idx}
-                                                                className="rounded bg-muted px-1.5 py-0.5 text-[11px] font-mono text-muted-foreground"
-                                                            >
-                                                                {t.min_qty}
-                                                                {t.max_qty ? `-${t.max_qty}` : '+'}:{' '}
-                                                                {rule.discount_type === 'percent'
-                                                                    ? `${t.discount}%`
-                                                                    : `$${t.discount}`}
-                                                            </span>
-                                                        ))}
+                                                        {rule.tiers.map(
+                                                            (t, idx) => (
+                                                                <span
+                                                                    key={idx}
+                                                                    className="rounded bg-muted px-1.5 py-0.5 font-mono text-[11px] text-muted-foreground"
+                                                                >
+                                                                    {t.min_qty}
+                                                                    {t.max_qty
+                                                                        ? `-${t.max_qty}`
+                                                                        : '+'}
+                                                                    :{' '}
+                                                                    {rule.discount_type ===
+                                                                    'percent'
+                                                                        ? `${t.discount}%`
+                                                                        : `$${t.discount}`}
+                                                                </span>
+                                                            ),
+                                                        )}
                                                     </div>
                                                 </TableCell>
-                                                <TableCell className="font-mono text-xs">{rule.priority}</TableCell>
+                                                <TableCell className="font-mono text-xs">
+                                                    {rule.priority}
+                                                </TableCell>
                                                 <TableCell>
                                                     <button
                                                         type="button"
-                                                        onClick={() => handleToggle(rule.id)}
+                                                        onClick={() =>
+                                                            handleToggle(
+                                                                rule.id,
+                                                            )
+                                                        }
                                                         className="cursor-pointer"
                                                     >
                                                         {rule.is_active ? (
@@ -224,7 +293,9 @@ export default function TieredPricingIndex({ rules, settings, stats, urls }: Pro
                                                                 Active
                                                             </Badge>
                                                         ) : (
-                                                            <Badge variant="secondary">Inactive</Badge>
+                                                            <Badge variant="secondary">
+                                                                Inactive
+                                                            </Badge>
                                                         )}
                                                     </button>
                                                 </TableCell>
@@ -233,14 +304,21 @@ export default function TieredPricingIndex({ rules, settings, stats, urls }: Pro
                                                         <Link
                                                             href={`/admin/m/modrixcommerce/tiered-pricing/${rule.id}/edit`}
                                                         >
-                                                            <Button variant="outline" size="sm">
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                            >
                                                                 Edit
                                                             </Button>
                                                         </Link>
                                                         <Button
                                                             variant="ghost"
                                                             size="sm"
-                                                            onClick={() => handleDelete(rule.id)}
+                                                            onClick={() =>
+                                                                handleDelete(
+                                                                    rule.id,
+                                                                )
+                                                            }
                                                             className="text-destructive hover:text-destructive"
                                                         >
                                                             <Trash2 className="size-4" />

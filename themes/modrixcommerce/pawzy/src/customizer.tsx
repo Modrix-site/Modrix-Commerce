@@ -57,10 +57,9 @@ export default function PawzyCustomizer({
                         {theme.state === 'active'
                             ? 'Saved changes appear on your live storefront.'
                             : 'Preview your changes before activating this theme.'}{' '}
-                        Open Home and use Pawzy hero for the banner copy,
-                        image, colors, height and layout. Homepage arranges
-                        the sections below it. Navigation holds the menu
-                        links.
+                        Open Home and use Pawzy hero for the banner copy, image,
+                        colors, height and layout. Homepage arranges the
+                        sections below it. Navigation holds the menu links.
                     </p>
                 </section>
                 {design.ignored.length > 0 && (

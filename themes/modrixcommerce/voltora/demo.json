@@ -15,9 +15,7 @@
             "stock": 10,
             "short_description": "Optional Voltora demonstration product.",
             "description": "Theme demo content. Replace specifications, warranty and delivery terms before selling.",
-            "categories": [
-                "voltora-electronics"
-            ],
+            "categories": ["voltora-electronics"],
             "image": "assets/phone-photo.jpg"
         },
         {
@@ -29,9 +27,7 @@
             "stock": 10,
             "short_description": "Optional Voltora demonstration product.",
             "description": "Theme demo content. Replace specifications, warranty and delivery terms before selling.",
-            "categories": [
-                "voltora-electronics"
-            ],
+            "categories": ["voltora-electronics"],
             "image": "assets/laptop-photo.jpg"
         },
         {
@@ -43,9 +39,7 @@
             "stock": 10,
             "short_description": "Optional Voltora demonstration product.",
             "description": "Theme demo content. Replace specifications, warranty and delivery terms before selling.",
-            "categories": [
-                "voltora-electronics"
-            ],
+            "categories": ["voltora-electronics"],
             "image": "assets/headphones-photo.jpg"
         },
         {
@@ -57,9 +51,7 @@
             "stock": 10,
             "short_description": "Optional Voltora demonstration product.",
             "description": "Theme demo content. Replace specifications, warranty and delivery terms before selling.",
-            "categories": [
-                "voltora-electronics"
-            ],
+            "categories": ["voltora-electronics"],
             "image": "assets/watch-photo.jpg"
         },
         {
@@ -71,9 +63,7 @@
             "stock": 10,
             "short_description": "Optional Voltora demonstration product.",
             "description": "Theme demo content. Replace specifications, warranty and delivery terms before selling.",
-            "categories": [
-                "voltora-electronics"
-            ],
+            "categories": ["voltora-electronics"],
             "image": "assets/headphones-photo.jpg"
         },
         {
@@ -85,9 +75,7 @@
             "stock": 10,
             "short_description": "Optional Voltora demonstration product.",
             "description": "Theme demo content. Replace specifications, warranty and delivery terms before selling.",
-            "categories": [
-                "voltora-electronics"
-            ],
+            "categories": ["voltora-electronics"],
             "image": "assets/kitchen-photo.jpg"
         }
     ]

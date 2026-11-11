@@ -28,14 +28,18 @@ export default function CashfreeHandoff({
     amount: string;
     currency: string;
 }) {
-    const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
+    const [status, setStatus] = useState<'loading' | 'ready' | 'error'>(
+        'loading',
+    );
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const checkoutTriggered = useRef(false);
 
     const triggerCheckout = () => {
         if (!window.Cashfree) {
             setStatus('error');
-            setErrorMessage('Cashfree payments SDK could not be loaded. Please refresh or check your internet connection.');
+            setErrorMessage(
+                'Cashfree payments SDK could not be loaded. Please refresh or check your internet connection.',
+            );
             return;
         }
 
@@ -49,12 +53,17 @@ export default function CashfreeHandoff({
                 .then((result) => {
                     if (result?.error) {
                         setStatus('error');
-                        setErrorMessage(result.error.message || 'Payment initiation failed.');
+                        setErrorMessage(
+                            result.error.message ||
+                                'Payment initiation failed.',
+                        );
                     }
                 })
                 .catch((err) => {
                     setStatus('error');
-                    setErrorMessage(err?.message || 'Payment could not be started.');
+                    setErrorMessage(
+                        err?.message || 'Payment could not be started.',
+                    );
                 });
         } catch (e: any) {
             setStatus('error');
@@ -100,15 +109,23 @@ export default function CashfreeHandoff({
                 {status !== 'error' ? (
                     <>
                         <Loader2 className="size-8 animate-spin text-primary" />
-                        <h1 className="text-xl font-semibold">Connecting to Cashfree Payments</h1>
+                        <h1 className="text-xl font-semibold">
+                            Connecting to Cashfree Payments
+                        </h1>
                         <p className="text-sm text-muted-foreground">
-                            Order {orderNumber} ({amount} {currency}) is ready. Launching secure payment via UPI, Cards, Net Banking, or Wallets...
+                            Order {orderNumber} ({amount} {currency}) is ready.
+                            Launching secure payment via UPI, Cards, Net
+                            Banking, or Wallets...
                         </p>
                     </>
                 ) : (
                     <>
-                        <h1 className="text-xl font-semibold text-destructive">Payment Setup Error</h1>
-                        <p className="text-sm text-muted-foreground">{errorMessage}</p>
+                        <h1 className="text-xl font-semibold text-destructive">
+                            Payment Setup Error
+                        </h1>
+                        <p className="text-sm text-muted-foreground">
+                            {errorMessage}
+                        </p>
                         <button
                             type="button"
                             onClick={triggerCheckout}

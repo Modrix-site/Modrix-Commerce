@@ -23,11 +23,9 @@ export default function TelrFrame({
                         Pay securely
                     </h1>
                     <p className="mt-1 text-sm text-muted-foreground">
-                        {orderNumber
-                            ? `Order ${orderNumber}. `
-                            : ''}
-                        Card details are entered on Telr&apos;s secure form
-                        and are not stored by this store.
+                        {orderNumber ? `Order ${orderNumber}. ` : ''}
+                        Card details are entered on Telr&apos;s secure form and
+                        are not stored by this store.
                     </p>
                 </div>
                 <div className="overflow-x-auto rounded-lg border bg-card">

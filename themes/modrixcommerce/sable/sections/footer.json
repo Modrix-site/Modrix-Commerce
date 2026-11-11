@@ -151,9 +151,7 @@
         }
     ],
     "enabled_on": {
-        "groups": [
-            "footer"
-        ]
+        "groups": ["footer"]
     },
     "limit": 1,
     "max_blocks": 24

@@ -83,9 +83,18 @@
             "default": "medium",
             "options": [
                 { "value": "low", "label": "Low (Standard shop protection)" },
-                { "value": "medium", "label": "Medium (Balanced detection, recommended)" },
-                { "value": "high", "label": "High (Strict, flash sales & high threat)" },
-                { "value": "paranoid", "label": "Paranoid (Lockdown, challenge all unrecognized)" }
+                {
+                    "value": "medium",
+                    "label": "Medium (Balanced detection, recommended)"
+                },
+                {
+                    "value": "high",
+                    "label": "High (Strict, flash sales & high threat)"
+                },
+                {
+                    "value": "paranoid",
+                    "label": "Paranoid (Lockdown, challenge all unrecognized)"
+                }
             ]
         },
         {
@@ -113,10 +122,22 @@
             "help": "Select which challenge mechanism to use when visitors need verification.",
             "default": "custom_interactive",
             "options": [
-                { "value": "custom_interactive", "label": "Interactive Security Verification (Built-in, No external keys needed)" },
-                { "value": "turnstile", "label": "Cloudflare Turnstile (Recommended)" },
-                { "value": "recaptcha_v2", "label": "Google reCAPTCHA v2 (Checkbox)" },
-                { "value": "recaptcha_v3", "label": "Google reCAPTCHA v3 (Invisible)" },
+                {
+                    "value": "custom_interactive",
+                    "label": "Interactive Security Verification (Built-in, No external keys needed)"
+                },
+                {
+                    "value": "turnstile",
+                    "label": "Cloudflare Turnstile (Recommended)"
+                },
+                {
+                    "value": "recaptcha_v2",
+                    "label": "Google reCAPTCHA v2 (Checkbox)"
+                },
+                {
+                    "value": "recaptcha_v3",
+                    "label": "Google reCAPTCHA v3 (Invisible)"
+                },
                 { "value": "hcaptcha", "label": "hCaptcha" }
             ]
         },

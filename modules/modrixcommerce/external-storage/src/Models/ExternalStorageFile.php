@@ -15,11 +15,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ExternalStorageFile extends Model
 {
     public const TYPE_PHOTO = 'photo';
+
     public const TYPE_VIDEO = 'video';
+
     public const TYPE_DOCUMENT = 'document';
 
     public const STATUS_SYNCED = 'synced';
+
     public const STATUS_PENDING = 'pending';
+
     public const STATUS_FAILED = 'failed';
 
     protected $table = 'external_storage_files';

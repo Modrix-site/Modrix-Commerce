@@ -19,10 +19,7 @@ export default function AuthSimpleLayout({
     return (
         <div className="admin-shell flex min-h-svh bg-[#f8f9fb] dark:bg-background">
             <aside className="relative hidden w-[46%] max-w-3xl shrink-0 flex-col justify-between bg-[#090909] px-12 py-10 text-white lg:flex">
-                <Link
-                    href={home()}
-                    className="flex w-fit items-center gap-3"
-                >
+                <Link href={home()} className="flex w-fit items-center gap-3">
                     <BrandTile logo={logo} name={panel} />
                     <span className="grid">
                         <span className="text-sm font-semibold text-[#e4e7ec]">
@@ -39,9 +36,7 @@ export default function AuthSimpleLayout({
                         {t('Store admin')}
                     </p>
                     <h2 className="mt-3 text-4xl leading-tight font-semibold tracking-tight">
-                        {t(
-                            'Sign in to manage orders, products and payments.',
-                        )}
+                        {t('Sign in to manage orders, products and payments.')}
                     </h2>
                 </div>
 

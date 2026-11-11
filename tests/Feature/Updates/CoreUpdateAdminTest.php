@@ -14,6 +14,7 @@ use App\Core\Updates\CoreUpdateRun;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Schema;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\Support\CoreReleaseFixtures;
 use Tests\TestCase;
@@ -68,14 +69,14 @@ class CoreUpdateAdminTest extends TestCase
     {
         $this->storeAvailable();
         $this->connect();
-        \Illuminate\Support\Facades\Schema::drop('core_update_runs');
+        Schema::drop('core_update_runs');
 
         $this->actingAs($this->owner())->get(route('admin.system.status'))
             ->assertOk()->assertInertia(fn (Assert $page) => $page
-                ->where('coreUpdate.available.version', '1.1.0')
-                ->where('coreUpdate.active_run', null)
-                ->where('coreUpdate.runs', [])
-                ->where('coreUpdate.can_install', false));
+            ->where('coreUpdate.available.version', '1.1.0')
+            ->where('coreUpdate.active_run', null)
+            ->where('coreUpdate.runs', [])
+            ->where('coreUpdate.can_install', false));
     }
 
     public function test_status_page_shows_available_update(): void
@@ -85,15 +86,15 @@ class CoreUpdateAdminTest extends TestCase
 
         $this->actingAs($this->owner())->get(route('admin.system.status'))
             ->assertOk()->assertInertia(fn (Assert $page) => $page
-                ->where('coreUpdate.available.version', '1.1.0')
-                ->where('coreUpdate.available.min_php', '8.3')
-                ->missing('coreUpdate.available.item')
-                ->missing('coreUpdate.available.verification')
-                ->where('coreUpdate.connected', true)
-                ->where('coreUpdate.can_install', true)
-                ->where('coreUpdate.active_run', null)
-                ->has('coreUpdate.runs', 0)
-                ->has('coreUpdate.current'));
+            ->where('coreUpdate.available.version', '1.1.0')
+            ->where('coreUpdate.available.min_php', '8.3')
+            ->missing('coreUpdate.available.item')
+            ->missing('coreUpdate.available.verification')
+            ->where('coreUpdate.connected', true)
+            ->where('coreUpdate.can_install', true)
+            ->where('coreUpdate.active_run', null)
+            ->has('coreUpdate.runs', 0)
+            ->has('coreUpdate.current'));
     }
 
     public function test_status_page_cannot_install_when_not_connected(): void

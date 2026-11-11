@@ -22,7 +22,9 @@ export default function PawzyLayout({
                     '--pawzy-hero-title': `${Number(s.hero_title_size ?? 58)}px`,
                     '--pawzy-hero-title-mobile': `${Number(s.hero_mobile_title_size ?? 34)}px`,
                     '--pawzy-hero-image-width': `${Number(s.hero_image_width ?? 52)}%`,
-                    '--pawzy-hero-image-fit': String(s.hero_image_fit ?? 'cover'),
+                    '--pawzy-hero-image-fit': String(
+                        s.hero_image_fit ?? 'cover',
+                    ),
                     '--pawzy-hero-content-width': `${Number(s.hero_content_width ?? 43)}%`,
                     '--pawzy-hero-radius': `${Number(s.hero_radius ?? 22)}px`,
                     '--pawzy-hero-shade': String(s.hero_shade ?? '#000000'),

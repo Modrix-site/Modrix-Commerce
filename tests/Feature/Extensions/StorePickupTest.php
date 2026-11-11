@@ -4,22 +4,25 @@ namespace Tests\Feature\Extensions;
 
 use App\Core\Extensions\Models\Extension;
 use App\Core\Extensions\ModuleManager;
-use App\Core\Extensions\ModuleRepository;
 use App\Core\Extensions\ModuleState;
 use App\Core\Extensions\StorefrontSlots;
+use App\Core\Settings\SettingsRepository;
+use App\Domains\Cart\Models\Cart;
 use App\Domains\Checkout\CheckoutData;
-use App\Domains\Checkout\CheckoutValidators;
 use App\Domains\Checkout\Pricing\CartPricer;
+use App\Domains\Checkout\Pricing\PricedCart;
+use App\Domains\Checkout\Pricing\PricingContext;
 use App\Domains\Orders\Enums\FulfillmentStatus;
 use App\Domains\Orders\Enums\OrderStatus;
 use App\Domains\Orders\Enums\PaymentStatus;
 use App\Domains\Orders\Events\CartCheckedOut;
-use App\Domains\Orders\Events\OrderPlaced;
 use App\Domains\Orders\Models\Order;
+use App\Domains\Orders\OrderDisplayStatus;
 use App\Domains\Pricing\Money;
 use App\Domains\Shipping\ShippingRates;
 use App\Domains\Shipping\ShippingRequest;
 use App\Models\User;
+use EcoModular\StorePickup\Listeners\RecordOrderPickup;
 use EcoModular\StorePickup\Models\OrderPickup;
 use EcoModular\StorePickup\Models\PickupBranch;
 use EcoModular\StorePickup\StorePickupCheckoutValidator;
@@ -39,6 +42,7 @@ class StorePickupTest extends TestCase
     private const MODULE = 'modrixcommerce/store-pickup';
 
     private ModuleManager $modules;
+
     private User $owner;
 
     protected function setUp(): void
@@ -77,7 +81,7 @@ class StorePickupTest extends TestCase
     private function createOrder(): Order
     {
         return Order::query()->forceCreate([
-            'number' => 'ORD-' . str_pad((string) (Order::query()->count() + 1), 6, '0', STR_PAD_LEFT),
+            'number' => 'ORD-'.str_pad((string) (Order::query()->count() + 1), 6, '0', STR_PAD_LEFT),
             'email' => 'customer@example.com',
             'phone' => '+1234567890',
             'currency' => 'AED',
@@ -194,7 +198,7 @@ class StorePickupTest extends TestCase
 
         $validator = app(StorePickupCheckoutValidator::class);
 
-        $priced = new \App\Domains\Checkout\Pricing\PricedCart('AED', []);
+        $priced = new PricedCart('AED', []);
 
         // Without selecting a branch, unified store_pickup should fail validation
         session()->forget('store_pickup_selection');
@@ -224,7 +228,7 @@ class StorePickupTest extends TestCase
             phone: '+971500000000',
             shippingAddress: ['country_code' => 'AE', 'city' => 'Dubai', 'first_name' => 'Jane', 'last_name' => 'Doe', 'address1' => 'Street 1'],
             billingAddress: null,
-            shippingMethod: 'pickup_' . $b2->id,
+            shippingMethod: 'pickup_'.$b2->id,
             paymentMethod: 'manual',
             customerNote: null,
             idempotencyKey: 'token-456',
@@ -335,7 +339,7 @@ class StorePickupTest extends TestCase
 
         $order->refresh();
         $this->assertSame('ready_for_pickup', $order->display_status);
-        $this->assertSame('ready_for_pickup', \App\Domains\Orders\OrderDisplayStatus::forCustomer($order)->value);
+        $this->assertSame('ready_for_pickup', OrderDisplayStatus::forCustomer($order)->value);
 
         // 2. Mark as picked up
         $res2 = $this->actingAs($this->owner)->post(route('admin.modrixcommerce.store-pickup.orders.status', $pickup->id), [
@@ -349,7 +353,7 @@ class StorePickupTest extends TestCase
 
         $order->refresh();
         $this->assertSame('picked_up', $order->display_status);
-        $this->assertSame('picked_up', \App\Domains\Orders\OrderDisplayStatus::forCustomer($order)->value);
+        $this->assertSame('picked_up', OrderDisplayStatus::forCustomer($order)->value);
     }
 
     public function test_admin_index_renders_pickup_dashboard(): void
@@ -406,19 +410,19 @@ class StorePickupTest extends TestCase
         $variant = $this->sellable('100.00');
         $this->addToCart($variant);
 
-        $cart = \App\Domains\Cart\Models\Cart::query()->firstOrFail();
+        $cart = Cart::query()->firstOrFail();
         $this->assertNotNull($cart);
 
         // Enable Cash on Delivery with fee
-        $repo = app(\App\Core\Settings\SettingsRepository::class);
+        $repo = app(SettingsRepository::class);
         $repo->set('payments.cash_on_delivery.enabled', true);
         $repo->set('payments.cash_on_delivery.fee_enabled', true);
         $repo->set('payments.cash_on_delivery.fee_amount', '10.00');
 
-        $pricer = app(\App\Domains\Checkout\Pricing\CartPricer::class);
+        $pricer = app(CartPricer::class);
 
         // 1. When regular delivery is used with COD, fee applies
-        $deliveryContext = new \App\Domains\Checkout\Pricing\PricingContext(
+        $deliveryContext = new PricingContext(
             shippingMethod: 'standard',
             paymentMethod: 'cash_on_delivery',
             countryCode: 'US',
@@ -427,7 +431,7 @@ class StorePickupTest extends TestCase
         $this->assertSame('10.00', $pricedDelivery->paymentFeeTotal->toDisplayDecimal());
 
         // 2. When store_pickup is used with COD, fee is waived
-        $pickupContext = new \App\Domains\Checkout\Pricing\PricingContext(
+        $pickupContext = new PricingContext(
             shippingMethod: 'store_pickup',
             paymentMethod: 'cash_on_delivery',
             countryCode: 'US',
@@ -442,7 +446,7 @@ class StorePickupTest extends TestCase
         $variant = $this->sellable('50.00');
         $this->addToCart($variant);
 
-        $repo = app(\App\Core\Settings\SettingsRepository::class);
+        $repo = app(SettingsRepository::class);
         $repo->set('payments.cash_on_delivery.enabled', true);
         $repo->set('payments.cash_on_delivery.fee_enabled', true);
         $repo->set('payments.cash_on_delivery.fee_amount', '10.00');
@@ -472,7 +476,7 @@ class StorePickupTest extends TestCase
         $variant = $this->sellable('50.00');
         $this->addToCart($variant);
 
-        $repo = app(\App\Core\Settings\SettingsRepository::class);
+        $repo = app(SettingsRepository::class);
         $repo->set('payments.cash_on_delivery.enabled', true);
         $repo->set('payments.bank_transfer.enabled', true);
         $repo->set('store_pickup.cod_behavior', 'hide');
@@ -494,7 +498,7 @@ class StorePickupTest extends TestCase
         $variant = $this->sellable('50.00');
         $this->addToCart($variant);
 
-        $repo = app(\App\Core\Settings\SettingsRepository::class);
+        $repo = app(SettingsRepository::class);
         $repo->set('payments.cash_on_delivery.enabled', true);
         $repo->set('payments.cash_on_delivery.fee_enabled', true);
         $repo->set('payments.cash_on_delivery.fee_amount', '10.00');
@@ -522,7 +526,7 @@ class StorePickupTest extends TestCase
         $branch = $this->createBranch(['name' => 'Dubai Mall']);
         session(['store_pickup_selection' => ['branch_id' => $branch->id]]);
 
-        $repo = app(\App\Core\Settings\SettingsRepository::class);
+        $repo = app(SettingsRepository::class);
         $repo->set('store_pickup.cod_behavior', 'pay_in_store');
         $repo->set('store_pickup.pay_in_store_label', 'Pay in store');
 
@@ -548,7 +552,7 @@ class StorePickupTest extends TestCase
             'placed_at' => now(),
         ]);
 
-        $listener = app(\EcoModular\StorePickup\Listeners\RecordOrderPickup::class);
+        $listener = app(RecordOrderPickup::class);
         $listener->handle($order->id);
 
         $order->refresh();

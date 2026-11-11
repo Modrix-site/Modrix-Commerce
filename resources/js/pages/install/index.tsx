@@ -1,9 +1,9 @@
-import { Head } from "@inertiajs/react";
-import { ChecksList } from "@/components/admin/checks-list";
-import { DatabaseStep } from "@/components/install/database-step";
-import { OwnerStep } from "@/components/install/owner-step";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Head } from '@inertiajs/react';
+import { ChecksList } from '@/components/admin/checks-list';
+import { DatabaseStep } from '@/components/install/database-step';
+import { OwnerStep } from '@/components/install/owner-step';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type {
     ConnectionTestResult,
     CurrencyOption,
@@ -11,14 +11,14 @@ import type {
     InstallProof,
     InstallStep,
     RequirementCheck,
-} from "@/types";
+} from '@/types';
 
 type Props = {
     mode: InstallMode;
     step: InstallStep;
     checks: RequirementCheck[];
     ready: boolean;
-    databaseProblem: "not_configured" | "unreachable" | "not_migrated" | null;
+    databaseProblem: 'not_configured' | 'unreachable' | 'not_migrated' | null;
     servedFromPublic: boolean;
     proof: InstallProof;
     connectionTest: ConnectionTestResult | null;
@@ -29,11 +29,11 @@ type Props = {
     tokenLocation: string;
 };
 
-const PROBLEMS: Record<NonNullable<Props["databaseProblem"]>, string> = {
-    not_configured: "No database is configured. Set the DB_* variables.",
-    unreachable: "The configured database cannot be reached.",
+const PROBLEMS: Record<NonNullable<Props['databaseProblem']>, string> = {
+    not_configured: 'No database is configured. Set the DB_* variables.',
+    unreachable: 'The configured database cannot be reached.',
     not_migrated:
-        "Migrations have not run. Add php artisan migrate --force to your deploy script.",
+        'Migrations have not run. Add php artisan migrate --force to your deploy script.',
 };
 
 function StepIndicator({
@@ -44,15 +44,15 @@ function StepIndicator({
     step: InstallStep;
 }) {
     const steps: { key: InstallStep; label: string }[] =
-        mode === "manual"
+        mode === 'manual'
             ? [
-                  { key: "requirements", label: "Requirements" },
-                  { key: "database", label: "Database" },
-                  { key: "owner", label: "Owner" },
+                  { key: 'requirements', label: 'Requirements' },
+                  { key: 'database', label: 'Database' },
+                  { key: 'owner', label: 'Owner' },
               ]
             : [
-                  { key: "requirements", label: "Requirements" },
-                  { key: "owner", label: "Owner" },
+                  { key: 'requirements', label: 'Requirements' },
+                  { key: 'owner', label: 'Owner' },
               ];
     const current = steps.findIndex((s) => s.key === step);
 
@@ -61,13 +61,13 @@ function StepIndicator({
             {steps.map((s, index) => (
                 <li
                     key={s.key}
-                    aria-current={index === current ? "step" : undefined}
+                    aria-current={index === current ? 'step' : undefined}
                     className={
                         index === current
-                            ? "font-medium text-foreground"
+                            ? 'font-medium text-foreground'
                             : index < current
-                              ? "text-muted-foreground line-through"
-                              : "text-muted-foreground"
+                              ? 'text-muted-foreground line-through'
+                              : 'text-muted-foreground'
                     }
                 >
                     {index + 1}. {s.label}
@@ -98,10 +98,10 @@ export default function Install(props: Props) {
                         Install Modrix Commerce
                     </h1>
                     <p className="text-sm text-muted-foreground">
-                        {mode === "auto"
-                            ? "Your hosting platform provides the database. Create the owner account to finish."
-                            : "Check the server, connect your database, then create the owner account."}{" "}
-                        You can also install from the command line with{" "}
+                        {mode === 'auto'
+                            ? 'Your hosting platform provides the database. Create the owner account to finish.'
+                            : 'Check the server, connect your database, then create the owner account.'}{' '}
+                        You can also install from the command line with{' '}
                         <code className="rounded bg-muted px-1">
                             php artisan ecomodular:install
                         </code>
@@ -119,7 +119,7 @@ export default function Install(props: Props) {
                     </CardContent>
                 </Card>
 
-                {mode === "manual" && !servedFromPublic && (
+                {mode === 'manual' && !servedFromPublic && (
                     <Alert variant="destructive">
                         <AlertTitle>Wrong document root</AlertTitle>
                         <AlertDescription>
@@ -130,7 +130,7 @@ export default function Install(props: Props) {
                     </Alert>
                 )}
 
-                {mode === "auto" && databaseProblem && (
+                {mode === 'auto' && databaseProblem && (
                     <Alert variant="destructive">
                         <AlertTitle>Database not ready</AlertTitle>
                         <AlertDescription>
@@ -151,8 +151,8 @@ export default function Install(props: Props) {
                     </Alert>
                 )}
 
-                {step === "requirements" &&
-                    mode === "manual" &&
+                {step === 'requirements' &&
+                    mode === 'manual' &&
                     servedFromPublic && (
                         <Alert variant="destructive">
                             <AlertTitle>Installation blocked</AlertTitle>
@@ -163,14 +163,14 @@ export default function Install(props: Props) {
                         </Alert>
                     )}
 
-                {step === "database" && (
+                {step === 'database' && (
                     <DatabaseStep
                         tokenLocation={props.tokenLocation}
                         connectionTest={props.connectionTest}
                     />
                 )}
 
-                {step === "owner" &&
+                {step === 'owner' &&
                     (ready ? (
                         <OwnerStep
                             proof={props.proof}

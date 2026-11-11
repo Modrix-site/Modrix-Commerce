@@ -15,7 +15,7 @@ export default function Story({ section }: ThemeSectionProps) {
             <div className="at-frame">
                 <div className="at-story">
                     {!isImageRight && (
-                        <div className="overflow-hidden h-full min-h-[460px]">
+                        <div className="h-full min-h-[460px] overflow-hidden">
                             {str(s.image) && (
                                 <img
                                     src={assetUrl(s.image)}
@@ -31,7 +31,9 @@ export default function Story({ section }: ThemeSectionProps) {
                         {str(s.eyebrow) && (
                             <p className="at-eyebrow">{str(s.eyebrow)}</p>
                         )}
-                        <h2>{str(s.heading, 'Companions for every journey')}</h2>
+                        <h2>
+                            {str(s.heading, 'Companions for every journey')}
+                        </h2>
                         <p>{str(s.text)}</p>
                         <Link
                             href={str(s.link, '/search')}
@@ -43,7 +45,7 @@ export default function Story({ section }: ThemeSectionProps) {
                     </div>
 
                     {isImageRight && (
-                        <div className="overflow-hidden h-full min-h-[460px]">
+                        <div className="h-full min-h-[460px] overflow-hidden">
                             {str(s.image) && (
                                 <img
                                     src={assetUrl(s.image)}

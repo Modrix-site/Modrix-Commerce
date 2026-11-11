@@ -107,9 +107,12 @@ export default function ReturnRequest({
                                             <span>
                                                 {item.name}
                                                 <span className="block text-xs text-muted-foreground">
-                                                    {t(':count can be returned', {
-                                                        count: item.returnable,
-                                                    })}
+                                                    {t(
+                                                        ':count can be returned',
+                                                        {
+                                                            count: item.returnable,
+                                                        },
+                                                    )}
                                                 </span>
                                             </span>
                                             <input

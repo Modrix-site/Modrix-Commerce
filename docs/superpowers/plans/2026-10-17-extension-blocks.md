@@ -57,6 +57,7 @@
 ### Task 1: Places, blocks and placement
 
 **Files:**
+
 - Modify: `app/Core/Extensions/StorefrontSlots.php` (pairs; HEAD's `SLOTS` list is shorter, so it gets its own SLOTS pair):
     - new places in `SLOTS`;
     - `PLACES` (movable place → `['label' => …, 'tab' => …]`);
@@ -71,6 +72,7 @@
 - Test: `tests/Feature/Extensions/StorefrontBlocksTest.php`
 
 **Interfaces:**
+
 - **Produces:**
     - `StorefrontSlots::block(string $module, string $key, string $label, string $component, array $places, string $default, Closure $props, int $order = 100): void`;
     - `StorefrontSlots::blocks(): list<array{id: string, module: string, key: string, label: string, component: string, places: list<string>, default: string}>`;
@@ -98,6 +100,7 @@
 ### Task 2: Endpoints and customizer data
 
 **Files:**
+
 - Create:
     - `app/Http/Controllers/Admin/ExtensionBlocksController.php`: `update(Request)`, at `PUT admin/themes/blocks`, named `themes.blocks.update`;
     - `app/Http/Controllers/Admin/ExtensionTabSettingsController.php`: `update(Request, string $module)`, at `PUT admin/themes/extension-settings/{module}`, where `module` is `vendor/name` with a `/` in it, named `themes.extension-settings.update`;
@@ -125,6 +128,7 @@
 ### Task 3: Customizer UI
 
 **Files:**
+
 - Create:
     - `resources/js/components/admin/themes/extension-blocks-card.tsx`: rows with name and module, an on/off `Switch`, a place `Select` (labels, plus "(Homepage)"-style tab suffix for other pages), up/down buttons, and "Save blocks" (`useForm` PUT);
     - `resources/js/components/admin/themes/extension-settings-card.tsx`: groups by module; fields rendered by type (boolean, string, text, integer, select, email), with one save per module.
@@ -136,6 +140,7 @@
 ### Task 4: Storefront places
 
 **Files:**
+
 - Modify (committed where HEAD has the anchor, otherwise working tree only):
     - `HandleInertiaRequests` or `ShareStorefrontData` (pair): shared `storefront.cardBlocks` = `render('product.card', [])` (lazy);
     - `ProductController::show`, `CatalogController` (listing), `CartController::show` and `CheckoutController::show` (pairs): props `placeSlots` = `{place: render(place, context)}` for that page's movable places;
@@ -158,6 +163,7 @@
 ### Task 5: Bundled modules
 
 **Files (each module's provider and `module.json`; committed only for files that are committed today, the rest working tree only):**
+
 - Product reviews: `block('modrixcommerce/product-reviews', 'reviews', 'Product reviews', 'ProductReviews', ['product.after_details', 'product.after_description'], 'product.after_details', …)`, plus the setting `show_summary` (boolean, default true, `tab: product`).
 - Tabby and Tamara: `promo` blocks for the product page `['product.after_price', 'product.after_add_to_cart']`, defaulting to their current place (`product.after_details` stays allowed and remains the default), plus `show_product_promo` (`tab: product`). The cart promo stays as registered.
 - Frequently bought together: `['product.after_details', 'product.after_add_to_cart']`, plus `limit` (integer, `tab: product`) where a matching setting exists; otherwise add one.

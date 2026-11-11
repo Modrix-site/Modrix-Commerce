@@ -23,8 +23,5 @@
             "block_order": []
         }
     },
-    "order": [
-        "main",
-        "apps"
-    ]
+    "order": ["main", "apps"]
 }

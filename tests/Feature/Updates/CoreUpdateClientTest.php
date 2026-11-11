@@ -7,6 +7,7 @@ use App\Core\Settings\SecretSettings;
 use App\Core\Settings\SettingsRepository;
 use App\Core\Updates\CoreUpdateClient;
 use App\Core\Updates\CoreUpdateError;
+use EcoModular\CloudConnector\CloudClient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
@@ -138,8 +139,8 @@ class CoreUpdateClientTest extends TestCase
         $this->enableBundledModule('modrixcommerce/cloud-connector');
         config(['ecomodular.marketplace.trusted_keys' => ['extra-key', TrustedKeys::OFFICIAL]]);
 
-        $this->assertSame(TrustedKeys::OFFICIAL, \EcoModular\CloudConnector\CloudClient::TRUSTED_KEY);
+        $this->assertSame(TrustedKeys::OFFICIAL, CloudClient::TRUSTED_KEY);
         $this->assertSame([TrustedKeys::OFFICIAL, 'extra-key'], TrustedKeys::all());
-        $this->assertSame(TrustedKeys::all(), app(\EcoModular\CloudConnector\CloudClient::class)->trustedKeys());
+        $this->assertSame(TrustedKeys::all(), app(CloudClient::class)->trustedKeys());
     }
 }

@@ -1,8 +1,8 @@
-import { ExtensionSlot } from "@/components/extensions/extension-slot";
-import { useStoreTheme } from "@/hooks/use-store-theme";
-import { GiftOptions, isFreeServiceSlot } from "../product-extras";
-import { Form } from "@inertiajs/react";
-import { useId, useState } from "react";
+import { ExtensionSlot } from '@/components/extensions/extension-slot';
+import { useStoreTheme } from '@/hooks/use-store-theme';
+import { GiftOptions, isFreeServiceSlot } from '../product-extras';
+import { Form } from '@inertiajs/react';
+import { useId, useState } from 'react';
 import {
     ArrowLeft,
     ArrowRight,
@@ -19,31 +19,31 @@ import {
     ShieldCheck,
     MessageCircle,
     ZoomIn,
-} from "lucide-react";
-import CartController from "@/actions/App/Http/Controllers/Storefront/CartController";
-import { BuyNowButton } from "@/components/storefront/buy-now-button";
-import { PlaceSlot, usePlaceItems } from "@/components/extensions/place-slot";
-import { ProductDescription } from "@/components/storefront/product-description";
-import { ProductLabels } from "@/components/storefront/product-labels";
-import { VariantSelector } from "@/components/storefront/variant-selector";
+} from 'lucide-react';
+import CartController from '@/actions/App/Http/Controllers/Storefront/CartController';
+import { BuyNowButton } from '@/components/storefront/buy-now-button';
+import { PlaceSlot, usePlaceItems } from '@/components/extensions/place-slot';
+import { ProductDescription } from '@/components/storefront/product-description';
+import { ProductLabels } from '@/components/storefront/product-labels';
+import { VariantSelector } from '@/components/storefront/variant-selector';
 import {
     Dialog,
     DialogContent,
     DialogDescription,
     DialogTitle,
     DialogTrigger,
-} from "@/components/ui/dialog";
-import InputError from "@/components/input-error";
-import { StoreMenuLink as Link } from "@/components/storefront/store-menu-link";
+} from '@/components/ui/dialog';
+import InputError from '@/components/input-error';
+import { StoreMenuLink as Link } from '@/components/storefront/store-menu-link';
 import {
     blockAttributes,
     type ThemeSectionProps,
     type ThemeSectionData,
-} from "@/components/storefront/theme-sections";
-import type { ThemeProductProps } from "@/lib/theme-pages";
-import type { ProductCard } from "@/types";
-import { SableCard } from "../card";
-import { str } from "../utils";
+} from '@/components/storefront/theme-sections';
+import type { ThemeProductProps } from '@/lib/theme-pages';
+import type { ProductCard } from '@/types';
+import { SableCard } from '../card';
+import { str } from '../utils';
 const icons = {
     document: ClipboardList,
     tag: Tag,
@@ -61,14 +61,20 @@ export default function MainProduct({
         <ProductDetails key={page.product.id} section={section} page={page} />
     ) : null;
 }
-function ProductDetails({ section, page }: { section: ThemeSectionData; page: ThemeProductProps }) {
+function ProductDetails({
+    section,
+    page,
+}: {
+    section: ThemeSectionData;
+    page: ThemeProductProps;
+}) {
     const { product, variant, imageIndex, onImage, selected, onOption } = page;
     const s = section.settings;
     const [quantity, setQuantity] = useState(1);
     const id = useId();
-    const formId = id + "-purchase";
-    const promotions = usePlaceItems("product.after_price");
-    const afterAdd = usePlaceItems("product.after_add_to_cart");
+    const formId = id + '-purchase';
+    const promotions = usePlaceItems('product.after_price');
+    const afterAdd = usePlaceItems('product.after_add_to_cart');
     const { theme } = useStoreTheme();
     const showBuy =
         s.show_buy !== false &&
@@ -77,7 +83,9 @@ function ProductDetails({ section, page }: { section: ThemeSectionData; page: Th
     const photo = product.images[imageIndex] ?? product.images[0];
     const maximum = Math.max(1, Math.min(variant?.available ?? 99, 99));
     const count = Math.min(Math.max(1, quantity), maximum);
-    const fallback = (s.recommendations as { products?: ProductCard[] } | null)?.products ?? [];
+    const fallback =
+        (s.recommendations as { products?: ProductCard[] } | null)?.products ??
+        [];
     const recommendations = [
         ...new Map(
             [...(page.related ?? []), ...fallback]
@@ -94,7 +102,7 @@ function ProductDetails({ section, page }: { section: ThemeSectionData; page: Th
                             <button
                                 type="button"
                                 className="sa-detail-media"
-                                aria-label={"Enlarge " + product.name}
+                                aria-label={'Enlarge ' + product.name}
                             >
                                 {photo ? (
                                     <img
@@ -110,11 +118,18 @@ function ProductDetails({ section, page }: { section: ThemeSectionData; page: Th
                             </button>
                         </DialogTrigger>
                         <DialogContent className="sa-image-dialog">
-                            <DialogTitle className="sr-only">{product.name}</DialogTitle>
+                            <DialogTitle className="sr-only">
+                                {product.name}
+                            </DialogTitle>
                             <DialogDescription className="sr-only">
                                 Enlarged product image
                             </DialogDescription>
-                            {photo && <img src={photo.url} alt={photo.alt ?? product.name} />}
+                            {photo && (
+                                <img
+                                    src={photo.url}
+                                    alt={photo.alt ?? product.name}
+                                />
+                            )}
                         </DialogContent>
                     </Dialog>
                     {product.images.length > 1 && (
@@ -124,7 +139,9 @@ function ProductDetails({ section, page }: { section: ThemeSectionData; page: Th
                                 aria-label="Previous product image"
                                 onClick={() =>
                                     onImage(
-                                        (imageIndex + product.images.length - 1) %
+                                        (imageIndex +
+                                            product.images.length -
+                                            1) %
                                             product.images.length,
                                     )
                                 }
@@ -135,7 +152,7 @@ function ProductDetails({ section, page }: { section: ThemeSectionData; page: Th
                                 <button
                                     key={img.id}
                                     type="button"
-                                    aria-label={"Show product image " + (i + 1)}
+                                    aria-label={'Show product image ' + (i + 1)}
                                     aria-pressed={i === imageIndex}
                                     onClick={() => onImage(i)}
                                 >
@@ -145,7 +162,12 @@ function ProductDetails({ section, page }: { section: ThemeSectionData; page: Th
                             <button
                                 type="button"
                                 aria-label="Next product image"
-                                onClick={() => onImage((imageIndex + 1) % product.images.length)}
+                                onClick={() =>
+                                    onImage(
+                                        (imageIndex + 1) %
+                                            product.images.length,
+                                    )
+                                }
                             >
                                 <ArrowRight size={16} />
                             </button>
@@ -156,22 +178,31 @@ function ProductDetails({ section, page }: { section: ThemeSectionData; page: Th
                     <h1>{product.name}</h1>
                     <PlaceSlot place="product.after_title" />
                     <p className="sa-detail-price">
-                        {variant?.price?.formatted ?? "Choose options to see the price."}
-                        {variant?.compare_at_price && <s>{variant.compare_at_price.formatted}</s>}
+                        {variant?.price?.formatted ??
+                            'Choose options to see the price.'}
+                        {variant?.compare_at_price && (
+                            <s>{variant.compare_at_price.formatted}</s>
+                        )}
                     </p>
-                    {str(s.tax_note) && <p className="sa-detail-note">{str(s.tax_note)}</p>}
+                    {str(s.tax_note) && (
+                        <p className="sa-detail-note">{str(s.tax_note)}</p>
+                    )}
                     <div className="sa-detail-options">
                         {product.options.map((option) => (
                             <div
                                 key={option.id}
                                 className={
-                                    option.display_type === "swatches" ? "sa-color-options" : ""
+                                    option.display_type === 'swatches'
+                                        ? 'sa-color-options'
+                                        : ''
                                 }
                             >
                                 <VariantSelector
                                     option={option}
                                     value={selected[option.id]}
-                                    onChange={(value) => onOption(option.id, value)}
+                                    onChange={(value) =>
+                                        onOption(option.id, value)
+                                    }
                                 />
                             </div>
                         ))}
@@ -185,7 +216,9 @@ function ProductDetails({ section, page }: { section: ThemeSectionData; page: Th
                                 <button
                                     type="button"
                                     aria-label="Decrease quantity"
-                                    disabled={count <= 1 || !variant.purchasable}
+                                    disabled={
+                                        count <= 1 || !variant.purchasable
+                                    }
                                     onClick={() => setQuantity(count - 1)}
                                 >
                                     <Minus size={14} />
@@ -198,13 +231,17 @@ function ProductDetails({ section, page }: { section: ThemeSectionData; page: Th
                                     min="1"
                                     max={maximum}
                                     value={count}
-                                    onChange={(e) => setQuantity(Number(e.target.value) || 1)}
+                                    onChange={(e) =>
+                                        setQuantity(Number(e.target.value) || 1)
+                                    }
                                     disabled={!variant.purchasable}
                                 />
                                 <button
                                     type="button"
                                     aria-label="Increase quantity"
-                                    disabled={count >= maximum || !variant.purchasable}
+                                    disabled={
+                                        count >= maximum || !variant.purchasable
+                                    }
                                     onClick={() => setQuantity(count + 1)}
                                 >
                                     <Plus size={14} />
@@ -212,23 +249,34 @@ function ProductDetails({ section, page }: { section: ThemeSectionData; page: Th
                             </div>
                             <div className="sa-product-promotions">
                                 <ExtensionSlot
-                                    items={promotions.filter((i) => !isFreeServiceSlot(i))}
+                                    items={promotions.filter(
+                                        (i) => !isFreeServiceSlot(i),
+                                    )}
                                 />
                             </div>
-                            {s.show_assurances !== false && promotions.length === 0 && (
-                                <div className="sa-assurance-grid">
-                                    <div>
-                                        <ShieldCheck size={17} />
-                                        <strong>{str(s.assurance_one)}</strong>
-                                        <span>{str(s.assurance_one_text)}</span>
+                            {s.show_assurances !== false &&
+                                promotions.length === 0 && (
+                                    <div className="sa-assurance-grid">
+                                        <div>
+                                            <ShieldCheck size={17} />
+                                            <strong>
+                                                {str(s.assurance_one)}
+                                            </strong>
+                                            <span>
+                                                {str(s.assurance_one_text)}
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <MessageCircle size={17} />
+                                            <strong>
+                                                {str(s.assurance_two)}
+                                            </strong>
+                                            <span>
+                                                {str(s.assurance_two_text)}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <MessageCircle size={17} />
-                                        <strong>{str(s.assurance_two)}</strong>
-                                        <span>{str(s.assurance_two_text)}</span>
-                                    </div>
-                                </div>
-                            )}
+                                )}
                             {gifts.map((item) => (
                                 <GiftOptions key={item.key} item={item} />
                             ))}
@@ -240,17 +288,24 @@ function ProductDetails({ section, page }: { section: ThemeSectionData; page: Th
                             >
                                 {({ processing, errors }) => (
                                     <>
-                                        <input type="hidden" name="variant_id" value={variant.id} />
+                                        <input
+                                            type="hidden"
+                                            name="variant_id"
+                                            value={variant.id}
+                                        />
                                         <button
                                             type="submit"
                                             className="sa-detail-add"
-                                            disabled={processing || !variant.purchasable}
+                                            disabled={
+                                                processing ||
+                                                !variant.purchasable
+                                            }
                                         >
                                             {processing
-                                                ? "Adding…"
+                                                ? 'Adding…'
                                                 : variant.purchasable
                                                   ? str(s.add_label)
-                                                  : "Sold out"}
+                                                  : 'Sold out'}
                                         </button>
                                         {showBuy && variant.purchasable && (
                                             <BuyNowButton
@@ -261,45 +316,62 @@ function ProductDetails({ section, page }: { section: ThemeSectionData; page: Th
                                             />
                                         )}
                                         <InputError
-                                            message={errors.quantity ?? errors.variant_id}
+                                            message={
+                                                errors.quantity ??
+                                                errors.variant_id
+                                            }
                                         />
-                                        {variant.message && !variant.purchasable && (
-                                            <p className="sa-detail-note" role="status">
-                                                {variant.message}
-                                            </p>
-                                        )}
+                                        {variant.message &&
+                                            !variant.purchasable && (
+                                                <p
+                                                    className="sa-detail-note"
+                                                    role="status"
+                                                >
+                                                    {variant.message}
+                                                </p>
+                                            )}
                                         {s.show_sku === true && (
-                                            <p className="sa-detail-note">SKU: {variant.sku}</p>
+                                            <p className="sa-detail-note">
+                                                SKU: {variant.sku}
+                                            </p>
                                         )}
                                     </>
                                 )}
                             </Form>
                         </div>
                     ) : (
-                        <p className="sa-detail-note">This combination is unavailable.</p>
+                        <p className="sa-detail-note">
+                            This combination is unavailable.
+                        </p>
                     )}
-                    {str(s.payment_label) && showBuy && variant?.purchasable && (
-                        <button
-                            type="button"
-                            form={formId}
-                            className="sa-payment-link"
-                            onClick={(e) => {
-                                const form = e.currentTarget.form;
-                                const flag =
-                                    form?.querySelector<HTMLInputElement>('input[name="buy_now"]');
-                                if (form && flag) {
-                                    flag.value = "1";
-                                    form.requestSubmit();
-                                    window.setTimeout(() => {
-                                        flag.value = "";
-                                    }, 0);
-                                }
-                            }}
-                        >
-                            {str(s.payment_label)}
-                        </button>
-                    )}
-                    <ExtensionSlot items={afterAdd.filter((i) => !isFreeServiceSlot(i))} />
+                    {str(s.payment_label) &&
+                        showBuy &&
+                        variant?.purchasable && (
+                            <button
+                                type="button"
+                                form={formId}
+                                className="sa-payment-link"
+                                onClick={(e) => {
+                                    const form = e.currentTarget.form;
+                                    const flag =
+                                        form?.querySelector<HTMLInputElement>(
+                                            'input[name="buy_now"]',
+                                        );
+                                    if (form && flag) {
+                                        flag.value = '1';
+                                        form.requestSubmit();
+                                        window.setTimeout(() => {
+                                            flag.value = '';
+                                        }, 0);
+                                    }
+                                }}
+                            >
+                                {str(s.payment_label)}
+                            </button>
+                        )}
+                    <ExtensionSlot
+                        items={afterAdd.filter((i) => !isFreeServiceSlot(i))}
+                    />
                     <div className="sa-product-information">
                         {product.description && (
                             <details>
@@ -314,21 +386,33 @@ function ProductDetails({ section, page }: { section: ThemeSectionData; page: Th
                             </details>
                         )}
                         {section.blocks
-                            .filter((b) => str(b.settings.heading) && str(b.settings.body))
+                            .filter(
+                                (b) =>
+                                    str(b.settings.heading) &&
+                                    str(b.settings.body),
+                            )
                             .map((b) => {
                                 const Icon =
-                                    icons[str(b.settings.icon) as keyof typeof icons] ?? Package;
+                                    icons[
+                                        str(
+                                            b.settings.icon,
+                                        ) as keyof typeof icons
+                                    ] ?? Package;
                                 return (
                                     <details key={b.id} {...blockAttributes(b)}>
                                         <summary>
                                             <Icon size={20} />
-                                            <span>{str(b.settings.heading)}</span>
+                                            <span>
+                                                {str(b.settings.heading)}
+                                            </span>
                                             <ChevronDown size={14} />
                                         </summary>
                                         <div className="sa-information-body">
                                             <p>{str(b.settings.body)}</p>
                                             {str(b.settings.link) && (
-                                                <Link href={str(b.settings.link)}>
+                                                <Link
+                                                    href={str(b.settings.link)}
+                                                >
                                                     {str(b.settings.link_label)}
                                                 </Link>
                                             )}
@@ -345,7 +429,11 @@ function ProductDetails({ section, page }: { section: ThemeSectionData; page: Th
                     <h2>{str(s.related_heading)}</h2>
                     <div className="sa-related-grid">
                         {recommendations.map((p) => (
-                            <SableCard key={p.id} product={p} label={str(s.add_label)} />
+                            <SableCard
+                                key={p.id}
+                                product={p}
+                                label={str(s.add_label)}
+                            />
                         ))}
                     </div>
                 </section>

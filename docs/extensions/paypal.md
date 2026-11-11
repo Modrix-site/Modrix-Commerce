@@ -21,12 +21,12 @@ You can also copy `modules/modrixcommerce/paypal` into place and enable it from 
 
 ## Configure
 
-| Field | Value |
-| --- | --- |
-| Mode | Sandbox calls `https://api-m.sandbox.paypal.com`. Live calls `https://api-m.paypal.com`. |
-| Client ID | REST app client ID from the PayPal developer dashboard. |
-| Secret | REST app secret. Stored encrypted. |
-| Webhook ID | The ID PayPal assigns when you add the webhook. Used to verify each delivery. |
+| Field      | Value                                                                                    |
+| ---------- | ---------------------------------------------------------------------------------------- |
+| Mode       | Sandbox calls `https://api-m.sandbox.paypal.com`. Live calls `https://api-m.paypal.com`. |
+| Client ID  | REST app client ID from the PayPal developer dashboard.                                  |
+| Secret     | REST app secret. Stored encrypted.                                                       |
+| Webhook ID | The ID PayPal assigns when you add the webhook. Used to verify each delivery.            |
 
 Live mode refuses a return address that is not `https://`. Sandbox can use the local store for the customer's return. PayPal itself cannot call `http://localhost`, so webhooks need a public `https://` `APP_URL`.
 

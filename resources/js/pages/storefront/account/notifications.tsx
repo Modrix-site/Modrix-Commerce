@@ -29,7 +29,9 @@ export default function AccountNotifications({
             <Head title={t('Notifications')} />
             <AccountLayout
                 title={t('Notifications')}
-                description={t('Updates about your orders, payments and returns.')}
+                description={t(
+                    'Updates about your orders, payments and returns.',
+                )}
                 actions={
                     unread && (
                         <Button
@@ -49,64 +51,62 @@ export default function AccountNotifications({
                     )
                 }
             >
-                    {notifications.data.length === 0 ? (
-                        <AccountEmpty
-                            icon={Bell}
-                            title={t('No notifications yet.')}
-                        />
-                    ) : (
-                        <ul className="grid divide-y overflow-hidden rounded-xl border bg-card">
-                            {notifications.data.map((raw) => {
-                                const item = translate(raw);
+                {notifications.data.length === 0 ? (
+                    <AccountEmpty
+                        icon={Bell}
+                        title={t('No notifications yet.')}
+                    />
+                ) : (
+                    <ul className="grid divide-y overflow-hidden rounded-xl border bg-card">
+                        {notifications.data.map((raw) => {
+                            const item = translate(raw);
 
-                                return (
-                                    <li key={item.id}>
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                router.post(
-                                                    AccountNotificationController.open.url(
-                                                        item.id,
-                                                    ),
-                                                )
-                                            }
-                                            className={cn(
-                                                'flex w-full items-start gap-3 p-4 text-left hover:bg-muted/40',
-                                                !item.read && 'bg-primary/5',
-                                            )}
-                                        >
-                                            <NotificationIcon
-                                                icon={item.icon}
-                                                className="mt-1 text-muted-foreground"
-                                            />
-                                            <span className="grid min-w-0 flex-1">
-                                                <span className="font-medium">
-                                                    {item.title}
-                                                </span>
-                                                <span className="text-sm text-muted-foreground">
-                                                    {item.body}
-                                                </span>
-                                                <span className="text-xs text-muted-foreground">
-                                                    {item.created_at &&
-                                                        formatDate(
-                                                            item.created_at,
-                                                        )}
+                            return (
+                                <li key={item.id}>
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            router.post(
+                                                AccountNotificationController.open.url(
+                                                    item.id,
+                                                ),
+                                            )
+                                        }
+                                        className={cn(
+                                            'flex w-full items-start gap-3 p-4 text-left hover:bg-muted/40',
+                                            !item.read && 'bg-primary/5',
+                                        )}
+                                    >
+                                        <NotificationIcon
+                                            icon={item.icon}
+                                            className="mt-1 text-muted-foreground"
+                                        />
+                                        <span className="grid min-w-0 flex-1">
+                                            <span className="font-medium">
+                                                {item.title}
+                                            </span>
+                                            <span className="text-sm text-muted-foreground">
+                                                {item.body}
+                                            </span>
+                                            <span className="text-xs text-muted-foreground">
+                                                {item.created_at &&
+                                                    formatDate(item.created_at)}
+                                            </span>
+                                        </span>
+                                        {!item.read && (
+                                            <span className="mt-2 size-2 shrink-0 rounded-full bg-primary">
+                                                <span className="sr-only">
+                                                    {t('Unread')}
                                                 </span>
                                             </span>
-                                            {!item.read && (
-                                                <span className="mt-2 size-2 shrink-0 rounded-full bg-primary">
-                                                    <span className="sr-only">
-                                                        {t('Unread')}
-                                                    </span>
-                                                </span>
-                                            )}
-                                        </button>
-                                    </li>
-                                );
-                            })}
-                        </ul>
-                    )}
-                    <AccountPager page={notifications} />
+                                        )}
+                                    </button>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                )}
+                <AccountPager page={notifications} />
             </AccountLayout>
         </>
     );

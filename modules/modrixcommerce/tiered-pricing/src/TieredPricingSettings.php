@@ -17,19 +17,19 @@ final class TieredPricingSettings
 
     public function enabled(): bool
     {
-        return (bool) $this->settings->get(self::PREFIX . '.enabled', true);
+        return (bool) $this->settings->get(self::PREFIX.'.enabled', true);
     }
 
     public function tableHeading(): string
     {
-        $val = $this->settings->get(self::PREFIX . '.table_heading');
+        $val = $this->settings->get(self::PREFIX.'.table_heading');
 
         return is_string($val) && trim($val) !== '' ? trim($val) : 'Buy in Bulk & Save';
     }
 
     public function tableSubheading(): string
     {
-        $val = $this->settings->get(self::PREFIX . '.table_subheading');
+        $val = $this->settings->get(self::PREFIX.'.table_subheading');
 
         return is_string($val) && trim($val) !== ''
             ? trim($val)
@@ -38,12 +38,12 @@ final class TieredPricingSettings
 
     public function showSavingsBadge(): bool
     {
-        return (bool) $this->settings->get(self::PREFIX . '.show_savings_badge', true);
+        return (bool) $this->settings->get(self::PREFIX.'.show_savings_badge', true);
     }
 
     public function highlightActiveTier(): bool
     {
-        return (bool) $this->settings->get(self::PREFIX . '.highlight_active_tier', true);
+        return (bool) $this->settings->get(self::PREFIX.'.highlight_active_tier', true);
     }
 
     /**
@@ -66,23 +66,23 @@ final class TieredPricingSettings
     public function save(array $input): void
     {
         if (array_key_exists('enabled', $input)) {
-            $this->settings->set(self::PREFIX . '.enabled', (bool) $input['enabled']);
+            $this->settings->set(self::PREFIX.'.enabled', (bool) $input['enabled']);
         }
 
         if (array_key_exists('table_heading', $input)) {
-            $this->settings->set(self::PREFIX . '.table_heading', trim((string) $input['table_heading']));
+            $this->settings->set(self::PREFIX.'.table_heading', trim((string) $input['table_heading']));
         }
 
         if (array_key_exists('table_subheading', $input)) {
-            $this->settings->set(self::PREFIX . '.table_subheading', trim((string) $input['table_subheading']));
+            $this->settings->set(self::PREFIX.'.table_subheading', trim((string) $input['table_subheading']));
         }
 
         if (array_key_exists('show_savings_badge', $input)) {
-            $this->settings->set(self::PREFIX . '.show_savings_badge', (bool) $input['show_savings_badge']);
+            $this->settings->set(self::PREFIX.'.show_savings_badge', (bool) $input['show_savings_badge']);
         }
 
         if (array_key_exists('highlight_active_tier', $input)) {
-            $this->settings->set(self::PREFIX . '.highlight_active_tier', (bool) $input['highlight_active_tier']);
+            $this->settings->set(self::PREFIX.'.highlight_active_tier', (bool) $input['highlight_active_tier']);
         }
     }
 }

@@ -71,6 +71,7 @@ All notable changes to this project are documented here. The format follows [Kee
     - delete, and export the selection to CSV.
 
     Products that cannot change are listed in the result.
+
 - **Related products and upsells:** picked in the editor (up to 12 each). The product page shows "Customers also bought" and "You may also like", falling back to products from the same category.
 - **Digital products:**
     - **Editor:** a "Digital product (no shipping)" switch, with files (up to 10, 500 MB each) stored privately.

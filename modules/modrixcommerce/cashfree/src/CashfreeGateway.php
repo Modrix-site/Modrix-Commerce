@@ -79,8 +79,8 @@ final class CashfreeGateway implements PaymentGateway
             throw new GatewayException("Cashfree Payments is not configured for currency {$payment->currency}.");
         }
 
-        $orderId = 'CF-' . $payment->id . '-' . substr(hash_hmac('sha256', (string) $payment->id, (string) config('app.key')), 0, 16);
-        $responseUrl = route('modrixcommerce.cashfree.response') . '?order_id=' . $orderId;
+        $orderId = 'CF-'.$payment->id.'-'.substr(hash_hmac('sha256', (string) $payment->id, (string) config('app.key')), 0, 16);
+        $responseUrl = route('modrixcommerce.cashfree.response').'?order_id='.$orderId;
         $webhookUrl = route('webhooks.payments', self::CODE);
 
         $customerPhone = preg_replace('/[^0-9]/', '', (string) ($order->phone ?? ''));
@@ -93,7 +93,7 @@ final class CashfreeGateway implements PaymentGateway
             'order_amount' => (float) $payment->money()->toDisplayDecimal(),
             'order_currency' => $payment->currency,
             'customer_details' => [
-                'customer_id' => 'cust_' . ($order->user_id ?? 'guest_' . $order->id),
+                'customer_id' => 'cust_'.($order->user_id ?? 'guest_'.$order->id),
                 'customer_email' => mb_substr($order->email ?? '', 0, 254),
                 'customer_phone' => mb_substr($customerPhone, -10),
                 'customer_name' => mb_substr($order->customer_name ?? 'Customer', 0, 100),
@@ -107,7 +107,7 @@ final class CashfreeGateway implements PaymentGateway
         try {
             $response = $this->api->createOrder($body);
         } catch (Throwable $e) {
-            throw new GatewayException('Failed to initiate Cashfree payment: ' . $e->getMessage());
+            throw new GatewayException('Failed to initiate Cashfree payment: '.$e->getMessage());
         }
 
         $paymentSessionId = (string) ($response['payment_session_id'] ?? '');
@@ -146,7 +146,7 @@ final class CashfreeGateway implements PaymentGateway
         try {
             $order = $this->api->getOrder($sessionRef);
         } catch (Throwable $e) {
-            throw new GatewayException('Could not retrieve payment from Cashfree: ' . $e->getMessage());
+            throw new GatewayException('Could not retrieve payment from Cashfree: '.$e->getMessage());
         }
 
         $status = strtoupper((string) ($order['order_status'] ?? ''));
@@ -274,7 +274,7 @@ final class CashfreeGateway implements PaymentGateway
     public function refund(Payment $payment, Money $amount, string $idempotencyKey): RefundUpdate
     {
         $orderId = (string) $payment->provider_reference;
-        $refundId = 'CF-REF-' . substr($idempotencyKey, 0, 20);
+        $refundId = 'CF-REF-'.substr($idempotencyKey, 0, 20);
 
         $body = [
             'refund_id' => $refundId,
@@ -285,7 +285,7 @@ final class CashfreeGateway implements PaymentGateway
         try {
             $response = $this->api->refund($orderId, $body);
         } catch (Throwable $e) {
-            throw new GatewayException('Cashfree refund request failed: ' . $e->getMessage());
+            throw new GatewayException('Cashfree refund request failed: '.$e->getMessage());
         }
 
         $statusStr = strtoupper((string) ($response['refund_status'] ?? ''));

@@ -1,34 +1,34 @@
 /* Voltora: MagicPath merrily-hour-1817, published revision 456415732427804672. */
-.storefront[data-theme="modrixcommerce/voltora"] {
+.storefront[data-theme='modrixcommerce/voltora'] {
     font: 14px var(--font-sans);
     color: var(--foreground);
     background: var(--background);
     --voltora-width: 1140px;
     --voltora-gap: 28px;
 }
-.storefront[data-theme="modrixcommerce/voltora"] :is(h1, h2, h3) {
+.storefront[data-theme='modrixcommerce/voltora'] :is(h1, h2, h3) {
     font-family: var(--font-heading);
     font-weight: 800;
     line-height: 1.25;
 }
-.storefront[data-theme="modrixcommerce/voltora"] h1 {
+.storefront[data-theme='modrixcommerce/voltora'] h1 {
     font-size: 28px;
 }
-.storefront[data-theme="modrixcommerce/voltora"] h2 {
+.storefront[data-theme='modrixcommerce/voltora'] h2 {
     font-size: 23px;
 }
-.storefront[data-theme="modrixcommerce/voltora"] h3 {
+.storefront[data-theme='modrixcommerce/voltora'] h3 {
     font-size: 16px;
 }
-.storefront[data-theme="modrixcommerce/voltora"] button {
+.storefront[data-theme='modrixcommerce/voltora'] button {
     cursor: pointer;
     font-family: inherit;
 }
-.storefront[data-theme="modrixcommerce/voltora"] button:disabled {
+.storefront[data-theme='modrixcommerce/voltora'] button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
-.storefront[data-theme="modrixcommerce/voltora"]
+.storefront[data-theme='modrixcommerce/voltora']
     :is(a, button, input, select):focus-visible {
     outline: 2px solid var(--primary);
     outline-offset: 3px;
@@ -39,27 +39,33 @@
     margin-inline: auto;
     padding-block: 20px 50px;
 }
-.storefront[data-theme="modrixcommerce/voltora"] .voltora-header {
+.storefront[data-theme='modrixcommerce/voltora'] .voltora-header {
     background: var(--voltora-bar-bg, var(--accent)) !important;
     color: var(--voltora-bar-fg, var(--accent-foreground));
     z-index: 30;
 }
-.storefront[data-theme="modrixcommerce/voltora"]
+.storefront[data-theme='modrixcommerce/voltora']
     .voltora-header-top
-    :is(.voltora-logo, .voltora-preferences, .voltora-preferences a, .voltora-preferences select, .voltora-preferences span) {
+    :is(
+        .voltora-logo,
+        .voltora-preferences,
+        .voltora-preferences a,
+        .voltora-preferences select,
+        .voltora-preferences span
+    ) {
     color: var(--voltora-bar-fg, var(--accent-foreground)) !important;
 }
-.storefront[data-theme="modrixcommerce/voltora"] .voltora-search button {
+.storefront[data-theme='modrixcommerce/voltora'] .voltora-search button {
     color: var(--primary) !important;
 }
-.storefront[data-theme="modrixcommerce/voltora"] .voltora-search input {
+.storefront[data-theme='modrixcommerce/voltora'] .voltora-search input {
     color: var(--foreground) !important;
 }
-.storefront[data-theme="modrixcommerce/voltora"] .voltora-preferences option {
+.storefront[data-theme='modrixcommerce/voltora'] .voltora-preferences option {
     color: var(--foreground);
     background: var(--background);
 }
-.voltora-header[data-sticky="true"] {
+.voltora-header[data-sticky='true'] {
     position: sticky;
     top: 0;
 }
@@ -127,7 +133,7 @@
     align-items: center;
     gap: 6px;
 }
-.storefront[data-theme="modrixcommerce/voltora"] .voltora-nav {
+.storefront[data-theme='modrixcommerce/voltora'] .voltora-nav {
     border-bottom: 1px solid var(--border);
     display: flex;
     gap: 25px;
@@ -139,10 +145,10 @@
     color: var(--voltora-nav-fg, var(--foreground)) !important;
     padding: 10px 15px;
 }
-.storefront[data-theme="modrixcommerce/voltora"] .voltora-nav a {
+.storefront[data-theme='modrixcommerce/voltora'] .voltora-nav a {
     color: inherit !important;
 }
-.storefront[data-theme="modrixcommerce/voltora"] .voltora-nav a:hover {
+.storefront[data-theme='modrixcommerce/voltora'] .voltora-nav a:hover {
     color: var(--primary) !important;
 }
 .voltora-location {
@@ -182,7 +188,7 @@
 .voltora-hero small {
     font-size: 12px;
 }
-.storefront[data-theme="modrixcommerce/voltora"] .voltora-hero h1 {
+.storefront[data-theme='modrixcommerce/voltora'] .voltora-hero h1 {
     font-size: 38px;
     line-height: 1.15;
     margin: 10px 0;
@@ -246,7 +252,7 @@
 .voltora-tile > div {
     padding: 14px;
 }
-.storefront[data-theme="modrixcommerce/voltora"] .voltora-tile h2 {
+.storefront[data-theme='modrixcommerce/voltora'] .voltora-tile h2 {
     font-size: 16px;
     margin-bottom: 7px;
 }
@@ -272,7 +278,7 @@
     border-radius: 5px;
     background: #e6e6e6;
 }
-.voltora-tabs button[aria-selected="true"] {
+.voltora-tabs button[aria-selected='true'] {
     background: var(--primary);
     color: var(--primary-foreground);
 }
@@ -288,7 +294,7 @@
     object-fit: cover;
     border-radius: 5px;
 }
-.storefront[data-theme="modrixcommerce/voltora"] .voltora-split h2 {
+.storefront[data-theme='modrixcommerce/voltora'] .voltora-split h2 {
     font-size: 30px;
     margin: 14px 0;
 }
@@ -497,7 +503,7 @@
     font-size: 12px;
     padding: 8px 12px;
 }
-.voltora-catalog-body[data-filters="true"] {
+.voltora-catalog-body[data-filters='true'] {
     display: grid;
     grid-template-columns: 210px minmax(0, 1fr);
     gap: 25px;
@@ -528,7 +534,7 @@
     font-weight: 700;
     margin-bottom: 10px;
 }
-.voltora-filter-panel input[type="number"],
+.voltora-filter-panel input[type='number'],
 .voltora-filter-panel select {
     width: 100%;
     max-width: 100%;
@@ -584,7 +590,7 @@
     flex-shrink: 0;
     padding: 4px;
 }
-.voltora-thumbnails button[aria-pressed="true"] {
+.voltora-thumbnails button[aria-pressed='true'] {
     border-color: var(--primary);
     box-shadow: 0 0 0 1px var(--primary);
 }
@@ -601,7 +607,7 @@
     font-size: 12px;
     color: var(--muted-foreground);
 }
-.storefront[data-theme="modrixcommerce/voltora"] .voltora-product-info h1 {
+.storefront[data-theme='modrixcommerce/voltora'] .voltora-product-info h1 {
     font-size: 23px;
 }
 .voltora-purchase {
@@ -740,7 +746,7 @@
     font-size: 16px !important;
     margin-bottom: 15px;
 }
-.voltora-newsletter input[type="email"] {
+.voltora-newsletter input[type='email'] {
     background: white;
     border-radius: 4px;
 }
@@ -849,7 +855,7 @@
         padding: 40px 25px;
         max-width: 95%;
     }
-    .storefront[data-theme="modrixcommerce/voltora"] .voltora-hero h1 {
+    .storefront[data-theme='modrixcommerce/voltora'] .voltora-hero h1 {
         font-size: 30px;
         max-width: 400px;
     }
@@ -900,7 +906,7 @@
         font-size: 15px;
         gap: 20px;
     }
-    .voltora-catalog-body[data-filters="true"] {
+    .voltora-catalog-body[data-filters='true'] {
         grid-template-columns: 1fr;
     }
     .voltora-filter-panel {

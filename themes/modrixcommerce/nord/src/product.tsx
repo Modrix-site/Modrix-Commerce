@@ -77,7 +77,10 @@ export default function NordProduct({
                     >
                         {gallery.length ? (
                             gallery.map((image, i) => (
-                                <div className="nd-gallery-cell store-zoom" key={image.id}>
+                                <div
+                                    className="nd-gallery-cell store-zoom"
+                                    key={image.id}
+                                >
                                     {i === 0 && (
                                         <ProductLabels
                                             labels={product.labels}
@@ -295,7 +298,9 @@ export default function NordProduct({
                     <PlaceSlot place="product.after_add_to_cart" />
                     <StockNote
                         mode={productSettings.stock_note}
-                        quantity={variant?.purchasable ? variant.available : null}
+                        quantity={
+                            variant?.purchasable ? variant.available : null
+                        }
                     />
                     {variant && productSettings.show_sku && (
                         <p className="nd-product-sku">SKU: {variant.sku}</p>
@@ -326,7 +331,7 @@ export default function NordProduct({
                                       content: (
                                           <ProductDescription
                                               product={product}
-                                              className='nd-description'
+                                              className="nd-description"
                                           />
                                       ),
                                   },

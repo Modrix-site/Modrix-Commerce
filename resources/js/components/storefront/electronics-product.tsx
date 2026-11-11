@@ -276,10 +276,7 @@ export function ElectronicsProduct({
             <section className="electronics-product-section">
                 <h2>More information</h2>
                 {product.description ? (
-                    <ProductDescription
-                        product={product}
-                        className="text-sm"
-                    />
+                    <ProductDescription product={product} className="text-sm" />
                 ) : (
                     <p className="text-sm whitespace-pre-line">
                         {product.short_description}

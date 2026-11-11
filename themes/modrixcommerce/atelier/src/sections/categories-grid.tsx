@@ -12,7 +12,10 @@ export default function CategoriesGrid({ section }: ThemeSectionProps) {
     const cols = Number(s.columns) || 4;
     const height = Number(s.image_height) || 280;
 
-    const useStore = mode === 'store' && Array.isArray(storefront?.categories) && storefront.categories.length > 0;
+    const useStore =
+        mode === 'store' &&
+        Array.isArray(storefront?.categories) &&
+        storefront.categories.length > 0;
 
     return (
         <section className="at-section">
@@ -45,7 +48,7 @@ export default function CategoriesGrid({ section }: ThemeSectionProps) {
                                               loading="lazy"
                                           />
                                       ) : (
-                                          <div className="w-full h-full flex items-center justify-center text-xs text-neutral-400">
+                                          <div className="flex h-full w-full items-center justify-center text-xs text-neutral-400">
                                               {cat.name}
                                           </div>
                                       )}
@@ -70,7 +73,10 @@ export default function CategoriesGrid({ section }: ThemeSectionProps) {
                                       {str(b.settings.image) && (
                                           <img
                                               src={assetUrl(b.settings.image)}
-                                              alt={str(b.settings.alt, str(b.settings.label))}
+                                              alt={str(
+                                                  b.settings.alt,
+                                                  str(b.settings.label),
+                                              )}
                                               loading="lazy"
                                           />
                                       )}

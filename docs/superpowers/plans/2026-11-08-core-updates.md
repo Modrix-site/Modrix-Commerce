@@ -37,6 +37,7 @@
 ### Task 1: Core release storage and signing service
 
 **Files:**
+
 - Create: `database/migrations/2026_11_08_000001_create_core_releases.php` (`core_releases`, `core_download_tokens` per spec §3 Data)
 - Create: `app/Models/CoreRelease.php`, `app/Models/CoreDownloadToken.php` (PK `token_hash`, non-incrementing, like `DownloadToken`)
 - Create: `app/Services/CoreReleases.php`, `app/Services/CoreReleaseException.php`
@@ -45,20 +46,21 @@
 - Test: `tests/Feature/CoreReleasesTest.php`
 
 **Interfaces:**
+
 - Produces:
-  - `CoreRelease` constants `DRAFT='draft'`, `PUBLISHED='published'`, `WITHDRAWN='withdrawn'`; casts `signed_metadata` array, `published_at` datetime, `size` int.
-  - `CoreReleases::upload(string $zipPath, string $version, ?string $notes, string $minPhp): CoreRelease` (throws `CoreReleaseException` with a user message)
-  - `CoreReleases::publish(CoreRelease $r): CoreRelease`, `withdraw(CoreRelease $r): void`
-  - `CoreReleases::newerThan(?string $current, ?string $php): Collection<CoreRelease>` (published, newest first)
-  - `CoreReleases::payload(CoreRelease $r): array` — `{id, version, min_php, notes, published_at, verification: {metadata, signature}}`
-  - `CoreReleases::path(CoreRelease $r): string`
+    - `CoreRelease` constants `DRAFT='draft'`, `PUBLISHED='published'`, `WITHDRAWN='withdrawn'`; casts `signed_metadata` array, `published_at` datetime, `size` int.
+    - `CoreReleases::upload(string $zipPath, string $version, ?string $notes, string $minPhp): CoreRelease` (throws `CoreReleaseException` with a user message)
+    - `CoreReleases::publish(CoreRelease $r): CoreRelease`, `withdraw(CoreRelease $r): void`
+    - `CoreReleases::newerThan(?string $current, ?string $php): Collection<CoreRelease>` (published, newest first)
+    - `CoreReleases::payload(CoreRelease $r): array` — `{id, version, min_php, notes, published_at, verification: {metadata, signature}}`
+    - `CoreReleases::path(CoreRelease $r): string`
 
 - [ ] **Step 1: Write failing tests** in `CoreReleasesTest` (RefreshDatabase, Fixtures):
-  - `test_upload_stores_a_draft` — `upload(coreZip('1.1.0'), '1.1.0', 'Notes', '8.3')` → status `draft`, sha256 = `hash_file` of stored file, file exists at `path()`.
-  - `test_upload_refuses_wrong_declared_version` — zip says `1.0.9`, version `1.1.0` → `CoreReleaseException`.
-  - `test_upload_refuses_missing_vendor_autoload`, `test_upload_refuses_duplicate_version`, `test_upload_refuses_invalid_semver` (`'abc'`), `test_upload_refuses_unsafe_entries` (extra entry `../evil.php`).
-  - `test_publish_signs_verifiable_metadata` — after `publish`, `Signing::verify($r->signed_metadata, $r->signature, [app(SigningKey::class)->publicKey()])` true; metadata `kind` = `core`, `min_php` = `8.3`, `release_id` = id.
-  - `test_newer_than_filters` — published 1.1.0 (min 8.3), 1.2.0 (min 9.0), draft 1.3.0, withdrawn 1.0.5: `newerThan('1.0.0','8.4.1')` → [`1.1.0`]; `newerThan(null, null)` → [`1.2.0`,`1.1.0`].
+    - `test_upload_stores_a_draft` — `upload(coreZip('1.1.0'), '1.1.0', 'Notes', '8.3')` → status `draft`, sha256 = `hash_file` of stored file, file exists at `path()`.
+    - `test_upload_refuses_wrong_declared_version` — zip says `1.0.9`, version `1.1.0` → `CoreReleaseException`.
+    - `test_upload_refuses_missing_vendor_autoload`, `test_upload_refuses_duplicate_version`, `test_upload_refuses_invalid_semver` (`'abc'`), `test_upload_refuses_unsafe_entries` (extra entry `../evil.php`).
+    - `test_publish_signs_verifiable_metadata` — after `publish`, `Signing::verify($r->signed_metadata, $r->signature, [app(SigningKey::class)->publicKey()])` true; metadata `kind` = `core`, `min_php` = `8.3`, `release_id` = id.
+    - `test_newer_than_filters` — published 1.1.0 (min 8.3), 1.2.0 (min 9.0), draft 1.3.0, withdrawn 1.0.5: `newerThan('1.0.0','8.4.1')` → [`1.1.0`]; `newerThan(null, null)` → [`1.2.0`,`1.1.0`].
 - [ ] **Step 2:** `php artisan test --filter=CoreReleasesTest` → FAIL (class not found).
 - [ ] **Step 3:** Implement migration, models, service. Declared-version check: read `app/Core/Platform.php` from the zip, regex `/const\s+VERSION\s*=\s*'([^']+)'/`. Semver validity via `Composer\Semver\VersionParser::normalize` in try/catch. Store at `<marketplace.storage>/core/<version>.zip`. `min_php` must match `/^\d+\.\d+(\.\d+)?$/`; compare with `version_compare`.
 - [ ] **Step 4:** Rerun → PASS.
@@ -66,6 +68,7 @@
 ### Task 2: Admin "Core releases" page
 
 **Files:**
+
 - Create: `app/Http/Controllers/Admin/CoreReleaseController.php` (`index`, `store`, `publish`, `withdraw`)
 - Create: `resources/views/admin/core.blade.php` (follow `admin/updates.blade.php` style)
 - Modify: `routes/web.php` inside the `EnsureAdmin` group: `GET core` (`admin.core`), `POST core`, `POST core/{release}/publish`, `POST core/{release}/withdraw`
@@ -80,6 +83,7 @@
 ### Task 3: Core release API
 
 **Files:**
+
 - Create: `app/Http/Controllers/Api/CoreReleaseController.php` (`index`, `request`, `download`)
 - Modify: `routes/api.php` (`core/releases` → `api.core.releases`, `core/downloads` → `api.core.downloads` throttle 20,1, `core/download/{token}` → `api.core.download`)
 - Test: `tests/Feature/Api/CoreReleaseApiTest.php`
@@ -87,10 +91,10 @@
 **Interfaces:** Consumes `CoreReleases::newerThan/payload/path`, `Connections::authenticate(?string $token): ?StoreConnection`, `ApiError::validate/response`. Response JSON exactly per spec §3 API.
 
 - [ ] **Step 1: Failing tests:**
-  - `test_lists_newer_published_releases` — `GET /api/marketplace/v1/core/releases?current=1.0.0&php=8.4.0` → `releases.0.version` = `1.1.0`, `releases.0.verification.metadata.kind` = `core`.
-  - `test_download_requires_a_connection` — no bearer → 401 `error=not_connected`; revoked connection → 401.
-  - `test_connected_store_downloads_once` — use the connection helper pattern from `ConnectionApiTest::connected()`; POST → `url`; GET url → 200, body sha256 = release sha256; GET again → 410 `link_expired`.
-  - `test_withdrawn_release_is_not_served` — link issued, then withdraw → GET 410; POST for withdrawn → 404 `release_not_found`.
+    - `test_lists_newer_published_releases` — `GET /api/marketplace/v1/core/releases?current=1.0.0&php=8.4.0` → `releases.0.version` = `1.1.0`, `releases.0.verification.metadata.kind` = `core`.
+    - `test_download_requires_a_connection` — no bearer → 401 `error=not_connected`; revoked connection → 401.
+    - `test_connected_store_downloads_once` — use the connection helper pattern from `ConnectionApiTest::connected()`; POST → `url`; GET url → 200, body sha256 = release sha256; GET again → 410 `link_expired`.
+    - `test_withdrawn_release_is_not_served` — link issued, then withdraw → GET 410; POST for withdrawn → 404 `release_not_found`.
 - [ ] **Step 2:** Run → FAIL. **Step 3:** Implement (token claim in a transaction with `lockForUpdate`, like `DownloadController::download`). **Step 4:** Run → PASS; also run full ModrixCloud suite `php artisan test` → no new failures.
 
 ---
@@ -100,6 +104,7 @@
 ### Task 4: Version display
 
 **Files:**
+
 - Modify: `app/Http/Middleware/HandleInertiaRequests.php` (share `'platform' => ['version' => Platform::VERSION]`)
 - Modify: `app/Http/Controllers/Admin/SystemStatusController.php` (first environment row `['label' => 'Modrix Commerce', 'value' => Platform::VERSION]`)
 - Modify: `resources/js/components/app-sidebar.tsx` (footer text `v{platform.version}` under `NavUser`, muted, hidden when collapsed); `resources/js/types` shared props type
@@ -111,6 +116,7 @@
 ### Task 5: Trusted keys in core, update client and config
 
 **Files:**
+
 - Create: `app/Core/Marketplace/TrustedKeys.php` — `TrustedKeys::OFFICIAL` (value moved from `CloudClient::TRUSTED_KEY`), `static all(): list<string>` (official + `ecomodular.marketplace.trusted_keys`, unique)
 - Modify: `modules/modrixcommerce/cloud-connector/src/CloudClient.php` — `TRUSTED_KEY = TrustedKeys::OFFICIAL`; `trustedKeys()` returns `TrustedKeys::all()`
 - Create: `app/Core/Updates/CoreUpdateClient.php`, `app/Core/Updates/CoreUpdateError.php` (`RuntimeException`, `bool $notConnected`)
@@ -118,6 +124,7 @@
 - Test: `tests/Feature/Updates/CoreUpdateClientTest.php`
 
 **Interfaces — Produces:**
+
 - `CoreUpdateClient::connected(): bool`
 - `CoreUpdateClient::releases(string $current, string $php): list<array>` (raw items; throws `CoreUpdateError`)
 - `CoreUpdateClient::requestDownload(int $releaseId): array{url: string}` (throws `CoreUpdateError(notConnected: true)` without a token or on 401)
@@ -129,6 +136,7 @@
 ### Task 6: Update check, schedule and health
 
 **Files:**
+
 - Create: `app/Core/Updates/CoreReleaseVerifier.php` — `verify(array $item): ?array` returns metadata + `notes`/`published_at` when signature (via `TrustedKeys::all()`), `kind`, sha256 format, int size, version > `Platform::VERSION` and `version_compare(PHP_VERSION, min_php, '>=')` all hold; else null. Takes current version as optional param `verify(array $item, ?string $current = null)` for tests.
 - Create: `app/Core/Updates/CoreUpdateCheck.php` — `run(): ?array` stores `core_update.available` (newest verified), `core_update.checked_at`, clears/sets `core_update.last_error`; `available(): ?array`
 - Create: `app/Console/Commands/CoreCheckCommand.php` (`ecomodular:core-check`)
@@ -144,6 +152,7 @@ Test helper (shared with Tasks 7–8): `tests/Support/CoreReleaseFixtures.php` t
 ### Task 7: Packaging command and the installer
 
 **Files:**
+
 - Create: `database/migrations/2026_11_08_000001_create_core_update_runs_table.php`
 - Create: `app/Core/Updates/CoreUpdateRun.php` (model, status constants per spec, `release` json cast, `isActive(): bool` for non-terminal statuses)
 - Create: `app/Core/Updates/CorePackage.php` — `build(string $root, string $output): string` (managed paths, exclusions per spec §2); `static safeEntry(string $name): bool`
@@ -153,6 +162,7 @@ Test helper (shared with Tasks 7–8): `tests/Support/CoreReleaseFixtures.php` t
 - Test: `tests/Feature/Updates/CorePackageCommandTest.php`, `tests/Feature/Updates/CoreUpdaterTest.php`
 
 **Interfaces — Produces:**
+
 - `CoreUpdater::run(CoreUpdateRun $run): CoreUpdateRun` (never throws; terminal status `completed|failed|rolled_back`)
 - `public ?Closure $runArtisan` — `fn (string $root, array $args): int`; default runs `[config('ecomodular.updates.php'), $root.'/artisan', ...$args]` via `Process::path($root)->timeout(1800)->run()`. Tests set it to call `Artisan::call` with `--path`/`--realpath` for the scratch `database/migrations`.
 - Consumes: `CoreUpdateClient`, `CoreReleaseVerifier`, `Backups::create(withFiles: false)` / `Backups::restore`-equivalent database import, `AuditLogger::record`, `UpdateHistory`.
@@ -160,18 +170,19 @@ Test helper (shared with Tasks 7–8): `tests/Support/CoreReleaseFixtures.php` t
 Algorithm per spec §4 steps 1–10. Rollback restores database by importing the step-5 dump: add `Backups::restoreDatabase(string $path): void` (extract + `importDatabase`, no files, no migrate) — small public method in `app/Core/Operations/Backups.php`. Maintenance mode via `$this->runArtisan($root, ['down', '--secret=...'])` in production; in tests the closure calls `Artisan::call('down')`; `up` always in `finally`.
 
 - [ ] **Step 1: Failing tests** (scratch root under `storage/framework/testing/core-root-<rand>`, config `ecomodular.updates.root` → scratch, containing every managed path with an old `app/Core/Platform.php` at `1.0.0` and a marker file):
-  - `CorePackageCommandTest::test_package_contains_managed_paths_only` — scratch root also has `.env`, `storage/x`, `modules/a/module.json`, `themes/b/theme.json`, `node_modules/y`, `tests/z`; zip lists `app/Core/Platform.php`, `vendor/autoload.php`, `artisan`; none of the excluded.
-  - `test_installs_a_verified_release` — release zip has `Platform.php` at `1.1.0` + migration `database/migrations/2026_12_01_000000_create_core_probe_table.php`; `Http::fake` for `core/downloads` and the URL → zip bytes. Asserts: run `completed`; scratch `Platform.php` contains `1.1.0`; `Schema::hasTable('core_probe')`; `UpdateHistory` row (type `core`, success true, from `1.0.0`, to `1.1.0`); audit `core.update_completed`; no `.old-*` left; maintenance off; `.env`/`storage` marker untouched.
-  - `test_checksum_mismatch_leaves_files_untouched` → `failed`, scratch `Platform.php` still `1.0.0`, no backup taken.
-  - `test_version_mismatch_inside_package_is_refused` → signed `1.1.0`, zip declares `1.2.0` → `failed`.
-  - `test_unsafe_entry_is_refused_before_any_change` → zip with `../x.php` → `failed`, file outside root not created.
-  - `test_failed_migration_rolls_back_code_and_database` → migration throws after creating a table; asserts `rolled_back`, `Platform.php` back to `1.0.0`, table absent, a pre-existing row still present, maintenance off, audit `core.update_rolled_back`.
-  - `test_not_connected_fails_with_connect_message` → `failed`, message contains `Connect`.
+    - `CorePackageCommandTest::test_package_contains_managed_paths_only` — scratch root also has `.env`, `storage/x`, `modules/a/module.json`, `themes/b/theme.json`, `node_modules/y`, `tests/z`; zip lists `app/Core/Platform.php`, `vendor/autoload.php`, `artisan`; none of the excluded.
+    - `test_installs_a_verified_release` — release zip has `Platform.php` at `1.1.0` + migration `database/migrations/2026_12_01_000000_create_core_probe_table.php`; `Http::fake` for `core/downloads` and the URL → zip bytes. Asserts: run `completed`; scratch `Platform.php` contains `1.1.0`; `Schema::hasTable('core_probe')`; `UpdateHistory` row (type `core`, success true, from `1.0.0`, to `1.1.0`); audit `core.update_completed`; no `.old-*` left; maintenance off; `.env`/`storage` marker untouched.
+    - `test_checksum_mismatch_leaves_files_untouched` → `failed`, scratch `Platform.php` still `1.0.0`, no backup taken.
+    - `test_version_mismatch_inside_package_is_refused` → signed `1.1.0`, zip declares `1.2.0` → `failed`.
+    - `test_unsafe_entry_is_refused_before_any_change` → zip with `../x.php` → `failed`, file outside root not created.
+    - `test_failed_migration_rolls_back_code_and_database` → migration throws after creating a table; asserts `rolled_back`, `Platform.php` back to `1.0.0`, table absent, a pre-existing row still present, maintenance off, audit `core.update_rolled_back`.
+    - `test_not_connected_fails_with_connect_message` → `failed`, message contains `Connect`.
 - [ ] **Step 2:** `php artisan test tests/Feature/Updates` → FAIL. **Step 3:** Implement. **Step 4:** PASS.
 
 ### Task 8: Admin endpoints, permission and System status card
 
 **Files:**
+
 - Modify: `app/Core/Authorization/CorePermissions.php` (`system.update` => `Install core updates`, owner role)
 - Create: `app/Http/Controllers/Admin/CoreUpdateController.php` — `check` (POST `admin/system/core-update/check`, `can:system.view`), `start` (POST `admin/system/core-update`, `can:system.update`), `show` (GET `admin/system/core-update/{run}`, JSON `{status, message, to_version}`)
 - Create: `app/Core/Updates/CoreUpdateLauncher.php` — `launch(CoreUpdateRun $run): void` starts `ecomodular:core-update {id}` detached (`Process::start`; Windows `cmd /c start /B`). Bound in container so tests swap it with a fake that calls `CoreUpdater::run` synchronously.
@@ -180,10 +191,10 @@ Algorithm per spec §4 steps 1–10. Rollback restores database by importing the
 - Test: `tests/Feature/Updates/CoreUpdateAdminTest.php`, plus `tests/Feature/Updates/CoreUpdateEndToEndTest.php`
 
 - [ ] **Step 1: Failing tests:**
-  - `test_status_page_shows_available_update` — setting `core_update.available` → `coreUpdate.available.version` = `1.1.0`.
-  - `test_staff_without_permission_cannot_install` → 403.
-  - `test_second_install_is_refused_while_one_is_running` — an existing `downloading` run → POST start → session error, no new run.
-  - `CoreUpdateEndToEndTest::test_check_then_install_from_admin` — `Http::fake` serves `core/releases` (signed item built from a real zip), `core/downloads`, the download URL; owner POST check → available; POST start (fake launcher runs synchronously) → GET show → `completed`; scratch `Platform.php` at new version; history + audit present.
+    - `test_status_page_shows_available_update` — setting `core_update.available` → `coreUpdate.available.version` = `1.1.0`.
+    - `test_staff_without_permission_cannot_install` → 403.
+    - `test_second_install_is_refused_while_one_is_running` — an existing `downloading` run → POST start → session error, no new run.
+    - `CoreUpdateEndToEndTest::test_check_then_install_from_admin` — `Http::fake` serves `core/releases` (signed item built from a real zip), `core/downloads`, the download URL; owner POST check → available; POST start (fake launcher runs synchronously) → GET show → `completed`; scratch `Platform.php` at new version; history + audit present.
 - [ ] **Step 2:** FAIL. **Step 3:** Implement. **Step 4:** PASS; `npm run build` ok; open `/admin/system` on localhost:8017 and check the card and version render.
 
 ### Task 9: Docs and full verification

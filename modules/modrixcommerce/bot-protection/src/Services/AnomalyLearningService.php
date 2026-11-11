@@ -54,7 +54,7 @@ class AnomalyLearningService
     public function getAdaptiveRiskModifier(string $ip): int
     {
         $profile = BotScore::query()->where('ip_address', $ip)->first();
-        if (!$profile) {
+        if (! $profile) {
             return 0;
         }
 

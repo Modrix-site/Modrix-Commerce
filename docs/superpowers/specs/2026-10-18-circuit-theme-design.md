@@ -10,14 +10,14 @@ text, image, color, menu and section is editable in the customizer, on desktop a
 
 ## Ground rules
 
-- **Original work.** Circuit copies the reference's *layout and look*, not its files. No images, logos, CSS, markup
+- **Original work.** Circuit copies the reference's _layout and look_, not its files. No images, logos, CSS, markup
   or scripts are taken from the reference store (it is a paid theme). Brand logos (Microsoft, Samsung, Sony, Dell,
   ASUS) and Apple product photos are not shipped.
 - **Images:** free stock photos under a licence that allows redistribution (Unsplash or Pexels licence), one per
   demo slot, credited in `themes/modrixcommerce/circuit/assets/CREDITS.md` (photographer, source URL, licence).
   Downloads are listed for approval before they happen. The store's own products always show their own images.
 - **Fonts:** an open-licensed (OFL) font that matches the reference's geometric sans as closely as possible,
-  bundled as woff2 with its licence file (like Voltora's Nunito Sans). Candidate: *Instrument Sans*. If the
+  bundled as woff2 with its licence file (like Voltora's Nunito Sans). Candidate: _Instrument Sans_. If the
   merchant saves the reference page source into the project, the exact font family and color values are read from
   it; otherwise they are matched from the screenshots.
 - **No invented signals.** The reference shows "17 sold in last 18 hours" and "39 people are viewing". Circuit shows
@@ -27,15 +27,15 @@ text, image, color, menu and section is editable in the customizer, on desktop a
 
 ## Look (from the screenshots)
 
-| Token | Value (to confirm) | Used for |
-|---|---|---|
-| Header / announcement background | deep navy `#14102a` | announcement bar, main header |
-| Accent | coral red `#e5484d` | sale badges, prices on sale, Subscribe, "Buy Theme"-style highlight link |
-| Success | green `#1f9d55` | "Limited stock" badge |
-| Text | `#111111`, muted `#6b6b76` | body, meta |
-| Surface | `#ffffff`, light panel `#f4f4f6` | page, footer, filter panels |
-| Radius | pills 999px on search, buttons 999px (Add to cart, Subscribe), cards 8px | |
-| Type | geometric sans; titles 600–700, small UI text 13–14px, section titles ~22px | |
+| Token                            | Value (to confirm)                                                          | Used for                                                                 |
+| -------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Header / announcement background | deep navy `#14102a`                                                         | announcement bar, main header                                            |
+| Accent                           | coral red `#e5484d`                                                         | sale badges, prices on sale, Subscribe, "Buy Theme"-style highlight link |
+| Success                          | green `#1f9d55`                                                             | "Limited stock" badge                                                    |
+| Text                             | `#111111`, muted `#6b6b76`                                                  | body, meta                                                               |
+| Surface                          | `#ffffff`, light panel `#f4f4f6`                                            | page, footer, filter panels                                              |
+| Radius                           | pills 999px on search, buttons 999px (Add to cart, Subscribe), cards 8px    |                                                                          |
+| Type                             | geometric sans; titles 600–700, small UI text 13–14px, section titles ~22px |                                                                          |
 
 ## Header (all pages)
 
@@ -62,7 +62,7 @@ text, image, color, menu and section is editable in the customizer, on desktop a
 9. Image + product spotlight ("Small Size Big Sound") with a product card and dots. → `image_with_text`
 10. Service features (three icons: free shipping, free returns, support). → theme settings
 11. "Online Support 24/7": call / chat / email cards. → theme settings
-Extension places: `home.after_featured` after section 7.
+    Extension places: `home.after_featured` after section 7.
 
 ## Catalog (collection, brand, search)
 

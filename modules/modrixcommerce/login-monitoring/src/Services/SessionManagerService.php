@@ -23,7 +23,7 @@ class SessionManagerService
     public function revokeSession(string $sessionId): bool
     {
         $session = LoginUserSession::query()->where('session_id', $sessionId)->first();
-        if (!$session) {
+        if (! $session) {
             return false;
         }
 

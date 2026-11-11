@@ -86,9 +86,9 @@ final class PayuGateway implements PaymentGateway
             throw new GatewayException('PayU Merchant Key or Salt is missing.');
         }
 
-        $txnid = 'PAYU_' . $payment->id . '_' . substr(hash_hmac('sha256', (string) $payment->id, (string) config('app.key')), 0, 10);
+        $txnid = 'PAYU_'.$payment->id.'_'.substr(hash_hmac('sha256', (string) $payment->id, (string) config('app.key')), 0, 10);
         $amount = number_format((float) $payment->money()->toDisplayDecimal(), 2, '.', '');
-        $productinfo = 'Order ' . ($order->number ?? $order->id);
+        $productinfo = 'Order '.($order->number ?? $order->id);
         $firstname = $order->shippingAddress?->first_name ?? $order->customer?->first_name ?? 'Customer';
         $email = $order->email;
         $phone = $order->phone ?? '';
@@ -153,7 +153,7 @@ final class PayuGateway implements PaymentGateway
         try {
             $response = $this->api->verifyPayment($txnid);
         } catch (Throwable $e) {
-            throw new GatewayException('Could not retrieve payment status from PayU: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Could not retrieve payment status from PayU: '.$e->getMessage(), 0, $e);
         }
 
         return $this->buildPaymentUpdate($response, $txnid);
@@ -234,7 +234,7 @@ final class PayuGateway implements PaymentGateway
                 $details = $statusData['transaction_details'][$txnid] ?? [];
                 $mihpayid = (string) ($details['mihpayid'] ?? '');
             } catch (Throwable $e) {
-                throw new GatewayException('Failed to discover PayU mihpayid for refund: ' . $e->getMessage(), 0, $e);
+                throw new GatewayException('Failed to discover PayU mihpayid for refund: '.$e->getMessage(), 0, $e);
             }
         }
 
@@ -242,13 +242,13 @@ final class PayuGateway implements PaymentGateway
             throw new GatewayException('No PayU mihpayid found for refund.');
         }
 
-        $token = 'REF_' . substr($idempotencyKey, 0, 18);
+        $token = 'REF_'.substr($idempotencyKey, 0, 18);
         $refundAmount = number_format((float) $amount->toDisplayDecimal(), 2, '.', '');
 
         try {
             $response = $this->api->refund($mihpayid, $token, $refundAmount);
         } catch (Throwable $e) {
-            throw new GatewayException('PayU refund request failed: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('PayU refund request failed: '.$e->getMessage(), 0, $e);
         }
 
         $statusNum = $response['status'] ?? 0;

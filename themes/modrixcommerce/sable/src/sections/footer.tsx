@@ -1,8 +1,11 @@
-import { usePage, router } from "@inertiajs/react";
-import { Instagram, Facebook, Youtube, Globe, LockKeyhole } from "lucide-react";
-import { StoreMenuLink as Link } from "@/components/storefront/store-menu-link";
-import { blockAttributes, type ThemeSectionProps } from "@/components/storefront/theme-sections";
-import { str } from "../utils";
+import { usePage, router } from '@inertiajs/react';
+import { Instagram, Facebook, Youtube, Globe, LockKeyhole } from 'lucide-react';
+import { StoreMenuLink as Link } from '@/components/storefront/store-menu-link';
+import {
+    blockAttributes,
+    type ThemeSectionProps,
+} from '@/components/storefront/theme-sections';
+import { str } from '../utils';
 const socialIcons = {
     instagram: Instagram,
     facebook: Facebook,
@@ -13,10 +16,16 @@ const socialIcons = {
 export default function Footer({ section }: ThemeSectionProps) {
     const s = section.settings;
     const { storefront } = usePage().props;
-    const links = section.blocks.filter((b) => b.type === "link" && str(b.settings.link));
+    const links = section.blocks.filter(
+        (b) => b.type === 'link' && str(b.settings.link),
+    );
     const groups = [...new Set(links.map((b) => str(b.settings.group)))];
-    const socials = section.blocks.filter((b) => b.type === "social" && str(b.settings.link));
-    const payments = section.blocks.filter((b) => b.type === "payment" && str(b.settings.label));
+    const socials = section.blocks.filter(
+        (b) => b.type === 'social' && str(b.settings.link),
+    );
+    const payments = section.blocks.filter(
+        (b) => b.type === 'payment' && str(b.settings.label),
+    );
     return (
         <footer className="sa-footer" style={{ background: str(s.background) }}>
             <div className="sa-commerce-frame sa-footer-grid">
@@ -26,9 +35,13 @@ export default function Footer({ section }: ThemeSectionProps) {
                     </Link>
                     {str(s.address) && <p>{str(s.address)}</p>}
                     {str(s.body) && <p>{str(s.body)}</p>}
-                    {str(s.email) && <a href={"mailto:" + str(s.email)}>{str(s.email)}</a>}
+                    {str(s.email) && (
+                        <a href={'mailto:' + str(s.email)}>{str(s.email)}</a>
+                    )}
                     {str(s.phone) && (
-                        <a href={"tel:" + str(s.phone).replace(/[^\d+]/g, "")}>{str(s.phone)}</a>
+                        <a href={'tel:' + str(s.phone).replace(/[^\d+]/g, '')}>
+                            {str(s.phone)}
+                        </a>
                     )}
                 </div>
                 {groups.map((g) => (
@@ -51,7 +64,9 @@ export default function Footer({ section }: ThemeSectionProps) {
             <div className="sa-footer-socials">
                 {socials.map((b) => {
                     const Icon =
-                        socialIcons[str(b.settings.network) as keyof typeof socialIcons] ?? Globe;
+                        socialIcons[
+                            str(b.settings.network) as keyof typeof socialIcons
+                        ] ?? Globe;
                     return (
                         <Link
                             key={b.id}
@@ -71,18 +86,25 @@ export default function Footer({ section }: ThemeSectionProps) {
                             {str(s.language_label)}
                             <select
                                 aria-label="Store language"
-                                value={storefront?.locale ?? "en"}
+                                value={storefront?.locale ?? 'en'}
                                 onChange={(e) => {
                                     const u = new URL(window.location.href);
-                                    u.searchParams.set("lang", e.target.value);
-                                    router.get(u.pathname + u.search, {}, { preserveScroll: true });
+                                    u.searchParams.set('lang', e.target.value);
+                                    router.get(
+                                        u.pathname + u.search,
+                                        {},
+                                        { preserveScroll: true },
+                                    );
                                 }}
                             >
                                 {(storefront?.locales?.length
                                     ? storefront.locales
-                                    : [{ code: "en", name: "English" }]
+                                    : [{ code: 'en', name: 'English' }]
                                 ).map((locale) => (
-                                    <option key={locale.code} value={locale.code}>
+                                    <option
+                                        key={locale.code}
+                                        value={locale.code}
+                                    >
                                         {locale.name}
                                     </option>
                                 ))}

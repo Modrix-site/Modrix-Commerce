@@ -42,30 +42,29 @@ export default function Addresses({
                     )
                 }
             >
+                {editing === 'new' && (
+                    <AddressForm
+                        countries={countries}
+                        onCancel={() => setEditing(null)}
+                    />
+                )}
 
-                    {editing === 'new' && (
-                        <AddressForm
-                            countries={countries}
-                            onCancel={() => setEditing(null)}
-                        />
-                    )}
-
-                    <ul className="grid gap-4 sm:grid-cols-2">
-                        {addresses.map((address) =>
-                            editing === address.id ? (
-                                <li key={address.id} className="sm:col-span-2">
-                                    <AddressForm
-                                        address={address}
-                                        countries={countries}
-                                        onCancel={() => setEditing(null)}
-                                    />
-                                </li>
-                            ) : (
-                                <li
-                                    key={address.id}
-                                    className="grid content-between gap-4 rounded-xl border bg-card p-5"
-                                >
-                                    <div className="grid gap-3">
+                <ul className="grid gap-4 sm:grid-cols-2">
+                    {addresses.map((address) =>
+                        editing === address.id ? (
+                            <li key={address.id} className="sm:col-span-2">
+                                <AddressForm
+                                    address={address}
+                                    countries={countries}
+                                    onCancel={() => setEditing(null)}
+                                />
+                            </li>
+                        ) : (
+                            <li
+                                key={address.id}
+                                className="grid content-between gap-4 rounded-xl border bg-card p-5"
+                            >
+                                <div className="grid gap-3">
                                     <div className="flex items-start justify-between gap-3">
                                         <span className="flex items-center gap-2 font-medium">
                                             <MapPin
@@ -111,40 +110,38 @@ export default function Addresses({
                                             </>
                                         )}
                                     </address>
-                                    </div>
-                                    <div className="flex gap-2 border-t pt-4">
+                                </div>
+                                <div className="flex gap-2 border-t pt-4">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => setEditing(address.id)}
+                                    >
+                                        {t('Edit')}
+                                    </Button>
+                                    <Form
+                                        {...AccountController.destroyAddress.form(
+                                            address.id,
+                                        )}
+                                        onBefore={() =>
+                                            window.confirm(
+                                                t('Remove this address?'),
+                                            )
+                                        }
+                                    >
                                         <Button
-                                            variant="outline"
+                                            type="submit"
+                                            variant="ghost"
                                             size="sm"
-                                            onClick={() =>
-                                                setEditing(address.id)
-                                            }
                                         >
-                                            {t('Edit')}
+                                            {t('Remove')}
                                         </Button>
-                                        <Form
-                                            {...AccountController.destroyAddress.form(
-                                                address.id,
-                                            )}
-                                            onBefore={() =>
-                                                window.confirm(
-                                                    t('Remove this address?'),
-                                                )
-                                            }
-                                        >
-                                            <Button
-                                                type="submit"
-                                                variant="ghost"
-                                                size="sm"
-                                            >
-                                                {t('Remove')}
-                                            </Button>
-                                        </Form>
-                                    </div>
-                                </li>
-                            ),
-                        )}
-                    </ul>
+                                    </Form>
+                                </div>
+                            </li>
+                        ),
+                    )}
+                </ul>
             </AccountLayout>
         </>
     );

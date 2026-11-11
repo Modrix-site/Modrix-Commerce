@@ -5,7 +5,6 @@ namespace EcoModular\LoginMonitoring\Http\Controllers;
 use App\Http\Controllers\Controller;
 use EcoModular\LoginMonitoring\Models\LoginAllowedIp;
 use EcoModular\LoginMonitoring\Models\LoginAuditLog;
-use EcoModular\LoginMonitoring\Models\LoginBlockedIp;
 use EcoModular\LoginMonitoring\Models\LoginEvent;
 use EcoModular\LoginMonitoring\Services\SessionManagerService;
 use Illuminate\Http\RedirectResponse;
@@ -31,7 +30,7 @@ class LoginSuspiciousQueueController extends Controller
             })
             ->orderByDesc('created_at');
 
-        if (!empty($search)) {
+        if (! empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where('email', 'like', "%{$search}%")
                     ->orWhere('ip_address', 'like', "%{$search}%");
@@ -89,6 +88,7 @@ class LoginSuspiciousQueueController extends Controller
 
         if ($event->user_id) {
             $this->sessionManager->revokeAllUserSessions($event->user_id);
+
             return back()->with('success', "Force-logged out all active sessions for {$event->email}.");
         }
 

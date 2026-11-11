@@ -26,14 +26,14 @@ marketplace server code untouched.
 
 Stores call `{MARKETPLACE_URL}/api/marketplace/v1/` with JSON:
 
-| Endpoint | Request | Response |
-|---|---|---|
-| `GET catalog` | — | `{products: [...]}` |
-| `POST licenses/activate` | `key, instance_id, domain?, platform_version` | `{token, signature}` |
-| `POST licenses/check` | `key, instance_id` | `{token, signature}` |
-| `POST licenses/deactivate` | `key, instance_id` | `{ok: true}` |
-| `POST updates` | `key, instance_id, installed_version?, platform_version` | `{release?: {...}, signature?}` |
-| `POST downloads` | `key, instance_id, release_id` | `{url, expires_at, release}` |
+| Endpoint                   | Request                                                  | Response                        |
+| -------------------------- | -------------------------------------------------------- | ------------------------------- |
+| `GET catalog`              | —                                                        | `{products: [...]}`             |
+| `POST licenses/activate`   | `key, instance_id, domain?, platform_version`            | `{token, signature}`            |
+| `POST licenses/check`      | `key, instance_id`                                       | `{token, signature}`            |
+| `POST licenses/deactivate` | `key, instance_id`                                       | `{ok: true}`                    |
+| `POST updates`             | `key, instance_id, installed_version?, platform_version` | `{release?: {...}, signature?}` |
+| `POST downloads`           | `key, instance_id, release_id`                           | `{url, expires_at, release}`    |
 
 Errors: non-2xx with `{error, message}`; 5xx means "temporarily unavailable".
 The token is the same shape as today (`schema: 1, license_id, product,
@@ -126,9 +126,9 @@ connected stores keep working.
 - `php artisan marketplace:install` — migrates, creates the signing key if
   missing and the first admin (prompted). `/admin/setup` remains for web setup
   when no admin exists.
-- Shared hosting: document root `public/`, `.env` (APP_URL, DB_*, MAIL_*),
+- Shared hosting: document root `public/`, `.env` (APP_URL, DB__, MAIL__),
   `php artisan migrate --force`, optional cron `* * * * * php artisan
-  schedule:run` (prunes expired download tokens).
+schedule:run` (prunes expired download tokens).
 - `docs/DEPLOY.md` covers cPanel/shared hosting and a VPS (Nginx + PHP-FPM).
 
 ## Admin

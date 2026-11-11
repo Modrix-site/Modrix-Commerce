@@ -5,10 +5,10 @@ Connects a store to **Modrix Cloud**, the official catalog of Modrix Commerce th
 ## What it adds
 
 - **Admin → Modrix Cloud**:
-  - Every published theme and extension, with search and filters.
-  - **Connect**: link the store to a Modrix Cloud account. Free and purchased packages then install in one click, and the account's licenses are added automatically; a license active on another store offers **Move here**.
-  - **Add license key** for keys bought without an account.
-  - Install and update with signature, size and checksum verification, and restore previous files from the install history.
+    - Every published theme and extension, with search and filters.
+    - **Connect**: link the store to a Modrix Cloud account. Free and purchased packages then install in one click, and the account's licenses are added automatically; a license active on another store offers **Move here**.
+    - **Add license key** for keys bought without an account.
+    - Install and update with signature, size and checksum verification, and restore previous files from the install history.
 - A daily `modrix:cloud:check` that refreshes license status and looks for updates. It never disables anything.
 
 ## Security

@@ -18,9 +18,9 @@ The platform owner (Eleydo) publishes official extensions. Since Phase 8, verifi
 
 ## Two roles (ADR-033)
 
-| Role                   | Where                                                               | What it does                                                                                                                                                                                                            |
-| ---------------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Marketplace server** | The platform owner's instance, `ECOMODULAR_MARKETPLACE_SERVER=true` | Catalog, release review and signing, marketplace checkout (the owner's own Stripe account), licenses, activations, the license API and signed downloads. Off by default: its routes return 404 on every merchant store. |
+| Role                      | Where                                                                                 | What it does                                                                                                                                                                                                                          |
+| ------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Marketplace server**    | The platform owner's instance, `ECOMODULAR_MARKETPLACE_SERVER=true`                   | Catalog, release review and signing, marketplace checkout (the owner's own Stripe account), licenses, activations, the license API and signed downloads. Off by default: its routes return 404 on every merchant store.               |
 | **Modrix Cloud** (client) | Every store: Admin → Modrix Cloud, from the bundled **Modrix Cloud Connector** module | Connect the store to a Modrix Cloud account, browse the catalog, install free and owned packages in one click, activate license keys, install and update packages after verification, restore previous files, see the update history. |
 
 ## Buying and using a license
@@ -56,7 +56,6 @@ The license API returns a **signed token** (Ed25519) valid for `ECOMODULAR_MARKE
 | New activations, downloads, updates | Yes, with a clear error when unreachable      |
 
 The daily `modrix:cloud:check` command (scheduled by the Modrix Cloud Connector) refreshes every license. If the token's validity plus `ECOMODULAR_MARKETPLACE_GRACE_DAYS` (14) has passed without a successful check, the admin shows a warning. That is all: installed files keep working.
-
 
 ## Connecting a store
 
@@ -132,12 +131,12 @@ Nothing is disabled automatically. The merchant updates, or disables the extensi
 
 Store (client):
 
-| Variable                              | Default                              | Purpose                                      |
-| ------------------------------------- | ------------------------------------ | -------------------------------------------- |
+| Variable                              | Default                                 | Purpose                                      |
+| ------------------------------------- | --------------------------------------- | -------------------------------------------- |
 | `ECOMODULAR_MARKETPLACE_URL`          | `https://cloud-apps.modrixcommerce.com` | Marketplace server                           |
-| `ECOMODULAR_MARKETPLACE_TRUSTED_KEYS` | (empty)                              | Comma-separated Ed25519 public keys (base64) |
-| `ECOMODULAR_MARKETPLACE_GRACE_DAYS`   | `14`                                 | Days after token expiry before the warning   |
-| `ECOMODULAR_MARKETPLACE_TIMEOUT`      | `10`                                 | HTTP timeout in seconds                      |
+| `ECOMODULAR_MARKETPLACE_TRUSTED_KEYS` | (empty)                                 | Comma-separated Ed25519 public keys (base64) |
+| `ECOMODULAR_MARKETPLACE_GRACE_DAYS`   | `14`                                    | Days after token expiry before the warning   |
+| `ECOMODULAR_MARKETPLACE_TIMEOUT`      | `10`                                    | HTTP timeout in seconds                      |
 
 Marketplace server only:
 

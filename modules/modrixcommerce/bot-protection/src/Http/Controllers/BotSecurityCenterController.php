@@ -51,7 +51,7 @@ class BotSecurityCenterController extends Controller
     public function toggleLockdown(Request $request): RedirectResponse
     {
         $current = (bool) Cache::get('bot_lockdown_mode', false);
-        $new = !$current;
+        $new = ! $current;
         Cache::put('bot_lockdown_mode', $new, 86400);
 
         BotAuditLog::record(

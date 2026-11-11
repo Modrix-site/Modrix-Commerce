@@ -31,27 +31,27 @@ php artisan key:generate
 
 ### Environment variables
 
-| Variable                                            | Production value                 | Notes                                                                        |
-| --------------------------------------------------- | -------------------------------- | ---------------------------------------------------------------------------- |
-| `APP_ENV`                                           | `production`                     |                                                                              |
-| `APP_DEBUG`                                         | `false`                          | `true` exposes secrets on error pages; the health check fails on it          |
-| `APP_KEY`                                           | generated                        | Decrypts stored credentials and 2FA secrets. Keep a copy in a secret manager |
-| `APP_URL`                                           | `https://shop.example.com`       | Must be HTTPS                                                                |
-| `DB_CONNECTION`, `DB_*`                             | MySQL credentials                |                                                                              |
-| `CACHE_STORE`, `QUEUE_CONNECTION`, `SESSION_DRIVER` | `redis`                          |                                                                              |
-| `SESSION_SECURE_COOKIE`                             | `true`                           |                                                                              |
-| `AUTH_PASSWORD_TIMEOUT`                             | `1800` or lower                  | Password confirmation window for sensitive admin actions                     |
-| `MAIL_*`                                            | your SMTP provider               | Order and account emails                                                     |
-| `LOG_STACK`, `LOG_LEVEL`, `LOG_DAILY_DAYS`          | `daily`, `warning`, `14`         | Rotated, size-bounded logs                                                   |
-| `ECOMODULAR_MEDIA_DISK`                             | `public` or `s3`                 | With `s3`, set the `AWS_*` variables and `AWS_URL` for the CDN               |
-| `ECOMODULAR_CSP`                                    | `enforce`                        | `report-only` while testing a custom CDN or integration                      |
-| `ECOMODULAR_CSP_IMG_SOURCES`                        | empty                            | Extra image origins, comma-separated                                         |
-| `ECOMODULAR_WEB_INSTALLER`                          | `false` after installing via CLI | The `/install` pages return 404                                              |
+| Variable                                            | Production value                 | Notes                                                                                    |
+| --------------------------------------------------- | -------------------------------- | ---------------------------------------------------------------------------------------- |
+| `APP_ENV`                                           | `production`                     |                                                                                          |
+| `APP_DEBUG`                                         | `false`                          | `true` exposes secrets on error pages; the health check fails on it                      |
+| `APP_KEY`                                           | generated                        | Decrypts stored credentials and 2FA secrets. Keep a copy in a secret manager             |
+| `APP_URL`                                           | `https://shop.example.com`       | Must be HTTPS                                                                            |
+| `DB_CONNECTION`, `DB_*`                             | MySQL credentials                |                                                                                          |
+| `CACHE_STORE`, `QUEUE_CONNECTION`, `SESSION_DRIVER` | `redis`                          |                                                                                          |
+| `SESSION_SECURE_COOKIE`                             | `true`                           |                                                                                          |
+| `AUTH_PASSWORD_TIMEOUT`                             | `1800` or lower                  | Password confirmation window for sensitive admin actions                                 |
+| `MAIL_*`                                            | your SMTP provider               | Order and account emails                                                                 |
+| `LOG_STACK`, `LOG_LEVEL`, `LOG_DAILY_DAYS`          | `daily`, `warning`, `14`         | Rotated, size-bounded logs                                                               |
+| `ECOMODULAR_MEDIA_DISK`                             | `public` or `s3`                 | With `s3`, set the `AWS_*` variables and `AWS_URL` for the CDN                           |
+| `ECOMODULAR_CSP`                                    | `enforce`                        | `report-only` while testing a custom CDN or integration                                  |
+| `ECOMODULAR_CSP_IMG_SOURCES`                        | empty                            | Extra image origins, comma-separated                                                     |
+| `ECOMODULAR_WEB_INSTALLER`                          | `false` after installing via CLI | The `/install` pages return 404                                                          |
 | `ECOMODULAR_INSTALL_MODE`                           | `detect`                         | `auto` or `manual` force the installer mode; see [deployment modes](deployment-modes.md) |
-| `ECOMODULAR_HEALTH_TOKEN`                           | long random string               | Unlocks per-check details on `/health`                                       |
-| `ECOMODULAR_BACKUP_PASSWORD`                        | long random string               | AES-256 for backup archives; store it in the secret manager too              |
-| `ECOMODULAR_BACKUP_SCHEDULE`, `_KEEP`               | `02:30`, `7`                     | Daily backup time and retention                                              |
-| `ECOMODULAR_MARKETPLACE_TRUSTED_KEYS`               | the publisher's public key       | Only needed to install marketplace packages                                  |
+| `ECOMODULAR_HEALTH_TOKEN`                           | long random string               | Unlocks per-check details on `/health`                                                   |
+| `ECOMODULAR_BACKUP_PASSWORD`                        | long random string               | AES-256 for backup archives; store it in the secret manager too                          |
+| `ECOMODULAR_BACKUP_SCHEDULE`, `_KEEP`               | `02:30`, `7`                     | Daily backup time and retention                                                          |
+| `ECOMODULAR_MARKETPLACE_TRUSTED_KEYS`               | the publisher's public key       | Only needed to install marketplace packages                                              |
 
 Stripe keys are entered in Admin → Payments and stored encrypted; they never go in `.env`.
 

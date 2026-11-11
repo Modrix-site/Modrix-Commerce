@@ -126,9 +126,7 @@
         }
     ],
     "enabled_on": {
-        "groups": [
-            "footer"
-        ]
+        "groups": ["footer"]
     },
     "limit": 1
 }

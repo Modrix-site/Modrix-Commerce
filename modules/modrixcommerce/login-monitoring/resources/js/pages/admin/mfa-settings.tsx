@@ -48,7 +48,11 @@ type Props = {
     mfaConfigs: PaginatedMfaConfigs;
 };
 
-export default function MfaSettings({ currentPolicy, stats, mfaConfigs }: Props) {
+export default function MfaSettings({
+    currentPolicy,
+    stats,
+    mfaConfigs,
+}: Props) {
     const [policy, setPolicy] = useState(currentPolicy || 'risk_based');
     const safeConfigs = Array.isArray(mfaConfigs?.data) ? mfaConfigs.data : [];
 
@@ -59,8 +63,14 @@ export default function MfaSettings({ currentPolicy, stats, mfaConfigs }: Props)
     };
 
     const handleResetMfa = (userId: number, email: string) => {
-        if (confirm(`Reset MFA credentials for ${email}? The user will be required to set up MFA anew upon next login.`)) {
-            router.post(`/admin/m/modrixcommerce/login-monitoring/mfa/reset/${userId}`);
+        if (
+            confirm(
+                `Reset MFA credentials for ${email}? The user will be required to set up MFA anew upon next login.`,
+            )
+        ) {
+            router.post(
+                `/admin/m/modrixcommerce/login-monitoring/mfa/reset/${userId}`,
+            );
         }
     };
 
@@ -74,34 +84,52 @@ export default function MfaSettings({ currentPolicy, stats, mfaConfigs }: Props)
             />
 
             {/* Adoption Stats */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-6">
+            <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <Card className="border border-border/60 shadow-sm">
-                    <CardContent className="p-4 flex items-center justify-between">
+                    <CardContent className="flex items-center justify-between p-4">
                         <div>
-                            <span className="text-xs font-semibold text-muted-foreground uppercase">Total Registered Accounts</span>
-                            <div className="mt-1 text-2xl font-bold text-foreground">{stats?.total_users || 0}</div>
+                            <span className="text-xs font-semibold text-muted-foreground uppercase">
+                                Total Registered Accounts
+                            </span>
+                            <div className="mt-1 text-2xl font-bold text-foreground">
+                                {stats?.total_users || 0}
+                            </div>
                         </div>
-                        <div className="rounded-lg bg-blue-500/10 p-2 text-blue-600"><Users className="h-5 w-5" /></div>
+                        <div className="rounded-lg bg-blue-500/10 p-2 text-blue-600">
+                            <Users className="h-5 w-5" />
+                        </div>
                     </CardContent>
                 </Card>
 
                 <Card className="border border-border/60 shadow-sm">
-                    <CardContent className="p-4 flex items-center justify-between">
+                    <CardContent className="flex items-center justify-between p-4">
                         <div>
-                            <span className="text-xs font-semibold text-muted-foreground uppercase">MFA Protected Users</span>
-                            <div className="mt-1 text-2xl font-bold text-emerald-600 dark:text-emerald-400">{stats?.mfa_enabled_users || 0}</div>
+                            <span className="text-xs font-semibold text-muted-foreground uppercase">
+                                MFA Protected Users
+                            </span>
+                            <div className="mt-1 text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                                {stats?.mfa_enabled_users || 0}
+                            </div>
                         </div>
-                        <div className="rounded-lg bg-emerald-500/10 p-2 text-emerald-600"><ShieldCheck className="h-5 w-5" /></div>
+                        <div className="rounded-lg bg-emerald-500/10 p-2 text-emerald-600">
+                            <ShieldCheck className="h-5 w-5" />
+                        </div>
                     </CardContent>
                 </Card>
 
                 <Card className="border border-border/60 shadow-sm">
-                    <CardContent className="p-4 flex items-center justify-between">
+                    <CardContent className="flex items-center justify-between p-4">
                         <div>
-                            <span className="text-xs font-semibold text-muted-foreground uppercase">Store Adoption Rate</span>
-                            <div className="mt-1 text-2xl font-bold text-purple-600 dark:text-purple-400">{stats?.adoption_rate || 0}%</div>
+                            <span className="text-xs font-semibold text-muted-foreground uppercase">
+                                Store Adoption Rate
+                            </span>
+                            <div className="mt-1 text-2xl font-bold text-purple-600 dark:text-purple-400">
+                                {stats?.adoption_rate || 0}%
+                            </div>
                         </div>
-                        <div className="rounded-lg bg-purple-500/10 p-2 text-purple-600"><Key className="h-5 w-5" /></div>
+                        <div className="rounded-lg bg-purple-500/10 p-2 text-purple-600">
+                            <Key className="h-5 w-5" />
+                        </div>
                     </CardContent>
                 </Card>
             </div>
@@ -109,22 +137,27 @@ export default function MfaSettings({ currentPolicy, stats, mfaConfigs }: Props)
             {/* Global MFA Policy Card */}
             <Card className="mb-6 border border-border/60 shadow-sm">
                 <CardContent className="p-6">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/40 mb-6">
+                    <div className="mb-6 flex flex-col justify-between gap-4 border-b border-border/40 pb-4 sm:flex-row sm:items-center">
                         <div>
-                            <h3 className="font-semibold text-base flex items-center gap-2">
+                            <h3 className="flex items-center gap-2 text-base font-semibold">
                                 <Shield className="h-4 w-4 text-emerald-600" />
                                 MFA Enforcement Policy
                             </h3>
                             <p className="text-xs text-muted-foreground">
-                                Define under what conditions users and staff must complete multi-factor verification.
+                                Define under what conditions users and staff
+                                must complete multi-factor verification.
                             </p>
                         </div>
-                        <Button onClick={handleSavePolicy} size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs">
+                        <Button
+                            onClick={handleSavePolicy}
+                            size="sm"
+                            className="bg-emerald-600 text-xs text-white hover:bg-emerald-700"
+                        >
                             Save Policy Changes
                         </Button>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                         {[
                             {
                                 id: 'risk_based',
@@ -163,8 +196,10 @@ export default function MfaSettings({ currentPolicy, stats, mfaConfigs }: Props)
                                             : 'border-border/60 bg-card hover:bg-muted/40'
                                     }`}
                                 >
-                                    <div className="flex items-center justify-between mb-2">
-                                        <Icon className={`h-5 w-5 ${isSelected ? 'text-emerald-600' : 'text-muted-foreground'}`} />
+                                    <div className="mb-2 flex items-center justify-between">
+                                        <Icon
+                                            className={`h-5 w-5 ${isSelected ? 'text-emerald-600' : 'text-muted-foreground'}`}
+                                        />
                                         <input
                                             type="radio"
                                             name="mfa_policy"
@@ -173,8 +208,12 @@ export default function MfaSettings({ currentPolicy, stats, mfaConfigs }: Props)
                                             className="h-4 w-4 text-emerald-600"
                                         />
                                     </div>
-                                    <h4 className="font-semibold text-xs text-foreground mb-1">{item.title}</h4>
-                                    <p className="text-[11px] text-muted-foreground leading-relaxed">{item.desc}</p>
+                                    <h4 className="mb-1 text-xs font-semibold text-foreground">
+                                        {item.title}
+                                    </h4>
+                                    <p className="text-[11px] leading-relaxed text-muted-foreground">
+                                        {item.desc}
+                                    </p>
                                 </div>
                             );
                         })}
@@ -185,70 +224,106 @@ export default function MfaSettings({ currentPolicy, stats, mfaConfigs }: Props)
             {/* Active User MFA Configurations */}
             <Card className="border border-border/60 shadow-sm">
                 <CardContent className="p-6">
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="mb-4 flex items-center justify-between">
                         <div>
-                            <h3 className="font-semibold text-base flex items-center gap-2">
+                            <h3 className="flex items-center gap-2 text-base font-semibold">
                                 <Smartphone className="h-4 w-4 text-emerald-600" />
                                 Configured User MFA Registry
                             </h3>
-                            <p className="text-xs text-muted-foreground">List of users with enabled or registered authentication factors.</p>
+                            <p className="text-xs text-muted-foreground">
+                                List of users with enabled or registered
+                                authentication factors.
+                            </p>
                         </div>
                     </div>
 
                     <div className="overflow-x-auto">
                         <table className="w-full text-xs">
                             <thead>
-                                <tr className="border-b border-border/60 text-muted-foreground text-left">
-                                    <th className="pb-2.5 font-medium">Account / User</th>
-                                    <th className="pb-2.5 font-medium">MFA Status</th>
-                                    <th className="pb-2.5 font-medium">Primary Method</th>
-                                    <th className="pb-2.5 font-medium">Backup Phone</th>
-                                    <th className="pb-2.5 font-medium">Last Authenticated</th>
-                                    <th className="pb-2.5 font-medium text-right">Actions</th>
+                                <tr className="border-b border-border/60 text-left text-muted-foreground">
+                                    <th className="pb-2.5 font-medium">
+                                        Account / User
+                                    </th>
+                                    <th className="pb-2.5 font-medium">
+                                        MFA Status
+                                    </th>
+                                    <th className="pb-2.5 font-medium">
+                                        Primary Method
+                                    </th>
+                                    <th className="pb-2.5 font-medium">
+                                        Backup Phone
+                                    </th>
+                                    <th className="pb-2.5 font-medium">
+                                        Last Authenticated
+                                    </th>
+                                    <th className="pb-2.5 text-right font-medium">
+                                        Actions
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border/30">
                                 {safeConfigs.length === 0 ? (
                                     <tr>
-                                        <td colSpan={6} className="py-8 text-center text-muted-foreground">
-                                            No user MFA configurations registered yet.
+                                        <td
+                                            colSpan={6}
+                                            className="py-8 text-center text-muted-foreground"
+                                        >
+                                            No user MFA configurations
+                                            registered yet.
                                         </td>
                                     </tr>
                                 ) : (
                                     safeConfigs.map((cfg) => (
-                                        <tr key={cfg.id} className="hover:bg-muted/30 transition">
+                                        <tr
+                                            key={cfg.id}
+                                            className="transition hover:bg-muted/30"
+                                        >
                                             <td className="py-3">
-                                                <div className="font-semibold text-foreground">{cfg.user_name}</div>
-                                                <div className="text-[11px] text-muted-foreground">{cfg.user_email}</div>
+                                                <div className="font-semibold text-foreground">
+                                                    {cfg.user_name}
+                                                </div>
+                                                <div className="text-[11px] text-muted-foreground">
+                                                    {cfg.user_email}
+                                                </div>
                                             </td>
                                             <td className="py-3">
                                                 {cfg.mfa_enabled ? (
-                                                    <Badge className="bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 font-medium">
+                                                    <Badge className="border-emerald-500/20 bg-emerald-500/15 font-medium text-emerald-600 dark:text-emerald-400">
                                                         Enabled
                                                     </Badge>
                                                 ) : (
-                                                    <Badge variant="outline" className="text-muted-foreground">
+                                                    <Badge
+                                                        variant="outline"
+                                                        className="text-muted-foreground"
+                                                    >
                                                         Disabled
                                                     </Badge>
                                                 )}
                                             </td>
-                                            <td className="py-3 capitalize font-medium text-foreground">
-                                                {cfg.mfa_type || 'Authenticator App'}
+                                            <td className="py-3 font-medium text-foreground capitalize">
+                                                {cfg.mfa_type ||
+                                                    'Authenticator App'}
                                             </td>
                                             <td className="py-3 font-mono text-muted-foreground">
                                                 {cfg.phone_number || 'None'}
                                             </td>
-                                            <td className="py-3 text-muted-foreground whitespace-nowrap">
+                                            <td className="py-3 whitespace-nowrap text-muted-foreground">
                                                 {cfg.last_used_at}
                                             </td>
                                             <td className="py-3 text-right">
                                                 <Button
                                                     size="sm"
                                                     variant="ghost"
-                                                    onClick={() => handleResetMfa(cfg.user_id, cfg.user_email)}
-                                                    className="h-7 px-2 text-xs text-rose-600 hover:text-rose-700 hover:bg-rose-500/10"
+                                                    onClick={() =>
+                                                        handleResetMfa(
+                                                            cfg.user_id,
+                                                            cfg.user_email,
+                                                        )
+                                                    }
+                                                    className="h-7 px-2 text-xs text-rose-600 hover:bg-rose-500/10 hover:text-rose-700"
                                                 >
-                                                    <RotateCcw className="h-3 w-3 mr-1" /> Reset MFA
+                                                    <RotateCcw className="mr-1 h-3 w-3" />{' '}
+                                                    Reset MFA
                                                 </Button>
                                             </td>
                                         </tr>
@@ -260,16 +335,22 @@ export default function MfaSettings({ currentPolicy, stats, mfaConfigs }: Props)
 
                     {/* Pagination */}
                     {mfaConfigs && mfaConfigs.last_page > 1 && (
-                        <div className="flex items-center justify-between p-4 border-t border-border/50 text-xs mt-4">
+                        <div className="mt-4 flex items-center justify-between border-t border-border/50 p-4 text-xs">
                             <span className="text-muted-foreground">
-                                Page {mfaConfigs.current_page} of {mfaConfigs.last_page} ({mfaConfigs.total} total)
+                                Page {mfaConfigs.current_page} of{' '}
+                                {mfaConfigs.last_page} ({mfaConfigs.total}{' '}
+                                total)
                             </span>
                             <div className="flex items-center gap-2">
                                 {mfaConfigs.prev_page_url && (
                                     <Button
                                         size="sm"
                                         variant="outline"
-                                        onClick={() => router.get(mfaConfigs.prev_page_url!)}
+                                        onClick={() =>
+                                            router.get(
+                                                mfaConfigs.prev_page_url!,
+                                            )
+                                        }
                                         className="h-7 text-xs"
                                     >
                                         Previous
@@ -279,7 +360,11 @@ export default function MfaSettings({ currentPolicy, stats, mfaConfigs }: Props)
                                     <Button
                                         size="sm"
                                         variant="outline"
-                                        onClick={() => router.get(mfaConfigs.next_page_url!)}
+                                        onClick={() =>
+                                            router.get(
+                                                mfaConfigs.next_page_url!,
+                                            )
+                                        }
                                         className="h-7 text-xs"
                                     >
                                         Next

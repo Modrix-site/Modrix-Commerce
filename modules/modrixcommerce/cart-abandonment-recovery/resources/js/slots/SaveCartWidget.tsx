@@ -26,8 +26,11 @@ export default function SaveCartWidget({ submitUrl }: Props) {
 
         try {
             const csrfToken =
-                (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content ||
-                '';
+                (
+                    document.querySelector(
+                        'meta[name="csrf-token"]',
+                    ) as HTMLMetaElement
+                )?.content || '';
 
             const response = await fetch(submitUrl, {
                 method: 'POST',
@@ -43,10 +46,14 @@ export default function SaveCartWidget({ submitUrl }: Props) {
             const data = await response.json();
 
             if (response.ok && data.success) {
-                setSuccessMessage(data.message || 'Cart link sent to your email!');
+                setSuccessMessage(
+                    data.message || 'Cart link sent to your email!',
+                );
                 setEmail('');
             } else {
-                setErrorMessage(data.message || 'Failed to save cart. Please try again.');
+                setErrorMessage(
+                    data.message || 'Failed to save cart. Please try again.',
+                );
             }
         } catch {
             setErrorMessage('Connection error. Please try again.');
@@ -56,17 +63,18 @@ export default function SaveCartWidget({ submitUrl }: Props) {
     }
 
     return (
-        <div className="rounded-xl border bg-card p-4 shadow-sm text-card-foreground">
+        <div className="rounded-xl border bg-card p-4 text-card-foreground shadow-sm">
             <div className="flex items-start gap-3">
-                <div className="rounded-full bg-primary/10 p-2 text-primary shrink-0 mt-0.5">
+                <div className="mt-0.5 shrink-0 rounded-full bg-primary/10 p-2 text-primary">
                     <Mail className="size-4" />
                 </div>
                 <div className="space-y-1">
                     <h3 className="text-sm font-semibold text-foreground">
                         Save Your Cart For Later
                     </h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed">
-                        Need time to decide? Enter your email and we'll send you a link to pick up your order right where you left off.
+                    <p className="text-xs leading-relaxed text-muted-foreground">
+                        Need time to decide? Enter your email and we'll send you
+                        a link to pick up your order right where you left off.
                     </p>
                 </div>
             </div>
@@ -90,11 +98,13 @@ export default function SaveCartWidget({ submitUrl }: Props) {
                         type="submit"
                         size="sm"
                         disabled={loading}
-                        className="h-9 px-3 text-xs font-semibold shrink-0"
+                        className="h-9 shrink-0 px-3 text-xs font-semibold"
                     >
-                        {loading ? 'Sending...' : (
+                        {loading ? (
+                            'Sending...'
+                        ) : (
                             <>
-                                <Send className="size-3 mr-1.5" /> Send Cart
+                                <Send className="mr-1.5 size-3" /> Send Cart
                             </>
                         )}
                     </Button>
@@ -102,7 +112,7 @@ export default function SaveCartWidget({ submitUrl }: Props) {
             )}
 
             {errorMessage && (
-                <p className="mt-2 text-xs text-destructive font-medium">
+                <p className="mt-2 text-xs font-medium text-destructive">
                     {errorMessage}
                 </p>
             )}

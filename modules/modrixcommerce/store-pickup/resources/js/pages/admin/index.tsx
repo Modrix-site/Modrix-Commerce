@@ -154,7 +154,9 @@ export default function StorePickupAdmin({
 }: Props) {
     const [searchVal, setSearchVal] = useState(filters.search || '');
     const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
-    const [branchFilter, setBranchFilter] = useState(filters.branch_id || 'all');
+    const [branchFilter, setBranchFilter] = useState(
+        filters.branch_id || 'all',
+    );
 
     // Modals
     const [branchModalOpen, setBranchModalOpen] = useState(false);
@@ -178,7 +180,11 @@ export default function StorePickupAdmin({
         setSearchVal('');
         setStatusFilter('all');
         setBranchFilter('all');
-        router.get(urls.index, {}, { preserveState: true, preserveScroll: true });
+        router.get(
+            urls.index,
+            {},
+            { preserveState: true, preserveScroll: true },
+        );
     };
 
     // Branch Form
@@ -194,7 +200,8 @@ export default function StorePickupAdmin({
         phone: '',
         email: '',
         pickup_hours: 'Mon-Sat 10:00 - 20:00',
-        instructions: 'Please present your Order # and valid photo ID upon arrival.',
+        instructions:
+            'Please present your Order # and valid photo ID upon arrival.',
         prep_time: 'Ready in 2-4 hours',
         fee: 0,
         is_active: true,
@@ -215,7 +222,8 @@ export default function StorePickupAdmin({
             phone: '',
             email: '',
             pickup_hours: 'Mon-Sat 10:00 - 20:00',
-            instructions: 'Please present your Order # and valid photo ID upon arrival.',
+            instructions:
+                'Please present your Order # and valid photo ID upon arrival.',
             prep_time: 'Ready in 2-4 hours',
             fee: 0,
             is_active: true,
@@ -256,7 +264,9 @@ export default function StorePickupAdmin({
         instructions: settings.instructions,
         cod_behavior: settings.cod_behavior || 'pay_in_store',
         pay_in_store_label: settings.pay_in_store_label || 'Pay in store',
-        pay_in_store_instructions: settings.pay_in_store_instructions || 'Pay in store (cash or card) when you collect your order.',
+        pay_in_store_instructions:
+            settings.pay_in_store_instructions ||
+            'Pay in store (cash or card) when you collect your order.',
     });
 
     // Update order status quick action
@@ -278,7 +288,7 @@ export default function StorePickupAdmin({
                     className="flex flex-1 flex-wrap items-center gap-3"
                 >
                     <div className="relative min-w-[220px] flex-1 sm:max-w-xs">
-                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Search className="absolute top-2.5 left-3 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder="Search order #, customer, branch..."
                             value={searchVal}
@@ -292,9 +302,15 @@ export default function StorePickupAdmin({
                             onChange={(e) => setStatusFilter(e.target.value)}
                         >
                             <option value="all">All Pickup Statuses</option>
-                            <option value="pending_prep">Preparing Order</option>
-                            <option value="ready_for_pickup">Ready for Pickup</option>
-                            <option value="picked_up">Picked Up / Completed</option>
+                            <option value="pending_prep">
+                                Preparing Order
+                            </option>
+                            <option value="ready_for_pickup">
+                                Ready for Pickup
+                            </option>
+                            <option value="picked_up">
+                                Picked Up / Completed
+                            </option>
                             <option value="cancelled">Cancelled</option>
                         </NativeSelect>
                     </div>
@@ -339,24 +355,31 @@ export default function StorePickupAdmin({
                 <div className="overflow-hidden rounded-xl border bg-card shadow-xs">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm">
-                            <thead className="border-b bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                            <thead className="border-b bg-muted/40 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                                 <tr>
                                     <th className="px-4 py-3">Order</th>
                                     <th className="px-4 py-3">Pickup Branch</th>
-                                    <th className="px-4 py-3">Collector & Schedule</th>
+                                    <th className="px-4 py-3">
+                                        Collector & Schedule
+                                    </th>
                                     <th className="px-4 py-3">Status</th>
-                                    <th className="px-4 py-3 text-right">Actions</th>
+                                    <th className="px-4 py-3 text-right">
+                                        Actions
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border">
                                 {orders.data.map((order) => (
-                                    <tr key={order.id} className="hover:bg-muted/30 transition-colors">
+                                    <tr
+                                        key={order.id}
+                                        className="transition-colors hover:bg-muted/30"
+                                    >
                                         <td className="px-4 py-3">
-                                            <div className="font-medium text-foreground flex items-center gap-1.5">
+                                            <div className="flex items-center gap-1.5 font-medium text-foreground">
                                                 {order.order_url ? (
                                                     <Link
                                                         href={order.order_url}
-                                                        className="hover:underline flex items-center gap-1 text-primary"
+                                                        className="flex items-center gap-1 text-primary hover:underline"
                                                     >
                                                         {order.order_number}
                                                         <ExternalLink className="h-3 w-3" />
@@ -365,49 +388,70 @@ export default function StorePickupAdmin({
                                                     order.order_number
                                                 )}
                                             </div>
-                                            <div className="text-xs text-muted-foreground mt-0.5">
-                                                {order.customer_email || 'Guest customer'}
+                                            <div className="mt-0.5 text-xs text-muted-foreground">
+                                                {order.customer_email ||
+                                                    'Guest customer'}
                                             </div>
                                             {order.grand_total && (
-                                                <div className="text-xs font-semibold mt-1">
-                                                    {order.currency} {Number(order.grand_total).toFixed(2)}
+                                                <div className="mt-1 text-xs font-semibold">
+                                                    {order.currency}{' '}
+                                                    {Number(
+                                                        order.grand_total,
+                                                    ).toFixed(2)}
                                                 </div>
                                             )}
                                         </td>
                                         <td className="px-4 py-3">
-                                            <div className="font-semibold text-foreground flex items-center gap-1">
+                                            <div className="flex items-center gap-1 font-semibold text-foreground">
                                                 <Store className="h-3.5 w-3.5 text-primary" />
                                                 <span>{order.branch_name}</span>
                                             </div>
-                                            <div className="text-xs text-muted-foreground max-w-xs truncate mt-0.5">
+                                            <div className="mt-0.5 max-w-xs truncate text-xs text-muted-foreground">
                                                 {order.branch_address}
                                             </div>
                                             {order.branch_phone && (
-                                                <div className="text-xs text-muted-foreground mt-0.5">
+                                                <div className="mt-0.5 text-xs text-muted-foreground">
                                                     Tel: {order.branch_phone}
                                                 </div>
                                             )}
                                         </td>
                                         <td className="px-4 py-3 text-xs">
                                             {order.collector_name ? (
-                                                <div className="flex items-center gap-1 text-foreground font-medium">
+                                                <div className="flex items-center gap-1 font-medium text-foreground">
                                                     <UserCheck className="h-3.5 w-3.5 text-blue-500" />
-                                                    <span>Collector: {order.collector_name}</span>
+                                                    <span>
+                                                        Collector:{' '}
+                                                        {order.collector_name}
+                                                    </span>
                                                     {order.collector_phone && (
-                                                        <span className="text-muted-foreground">({order.collector_phone})</span>
+                                                        <span className="text-muted-foreground">
+                                                            (
+                                                            {
+                                                                order.collector_phone
+                                                            }
+                                                            )
+                                                        </span>
                                                     )}
                                                 </div>
                                             ) : (
-                                                <div className="text-muted-foreground">Buyer collecting</div>
+                                                <div className="text-muted-foreground">
+                                                    Buyer collecting
+                                                </div>
                                             )}
                                             {order.pickup_date && (
-                                                <div className="flex items-center gap-1 text-muted-foreground mt-1">
+                                                <div className="mt-1 flex items-center gap-1 text-muted-foreground">
                                                     <Calendar className="h-3 w-3" />
-                                                    <span>Date: {order.pickup_date} {order.pickup_time ? `(${order.pickup_time})` : ''}</span>
+                                                    <span>
+                                                        Date:{' '}
+                                                        {order.pickup_date}{' '}
+                                                        {order.pickup_time
+                                                            ? `(${order.pickup_time})`
+                                                            : ''}
+                                                    </span>
                                                 </div>
                                             )}
                                             {order.customer_notes && (
-                                                <div className="text-xs text-muted-foreground italic mt-1 max-w-xs truncate">
+                                                <div className="mt-1 max-w-xs truncate text-xs text-muted-foreground italic">
                                                     "{order.customer_notes}"
                                                 </div>
                                             )}
@@ -425,38 +469,62 @@ export default function StorePickupAdmin({
                                                 {order.badge.label}
                                             </Badge>
                                             {order.ready_at && (
-                                                <div className="text-xs text-muted-foreground mt-1">
-                                                    Ready: {new Date(order.ready_at).toLocaleDateString()}
+                                                <div className="mt-1 text-xs text-muted-foreground">
+                                                    Ready:{' '}
+                                                    {new Date(
+                                                        order.ready_at,
+                                                    ).toLocaleDateString()}
                                                 </div>
                                             )}
                                             {order.picked_up_at && (
-                                                <div className="text-xs text-muted-foreground mt-1">
-                                                    Collected: {new Date(order.picked_up_at).toLocaleDateString()}
+                                                <div className="mt-1 text-xs text-muted-foreground">
+                                                    Collected:{' '}
+                                                    {new Date(
+                                                        order.picked_up_at,
+                                                    ).toLocaleDateString()}
                                                 </div>
                                             )}
                                         </td>
                                         <td className="px-4 py-3 text-right">
                                             <div className="flex items-center justify-end gap-1.5">
-                                                {order.status === 'pending_prep' && (
+                                                {order.status ===
+                                                    'pending_prep' && (
                                                     <Button
                                                         size="sm"
-                                                        onClick={() => handleUpdateStatus(order, 'ready_for_pickup')}
-                                                        className="h-8 text-xs bg-emerald-600 hover:bg-emerald-700 text-white"
+                                                        onClick={() =>
+                                                            handleUpdateStatus(
+                                                                order,
+                                                                'ready_for_pickup',
+                                                            )
+                                                        }
+                                                        className="h-8 bg-emerald-600 text-xs text-white hover:bg-emerald-700"
                                                     >
-                                                        <CheckCircle2 className="mr-1 h-3.5 w-3.5" /> Mark Ready
+                                                        <CheckCircle2 className="mr-1 h-3.5 w-3.5" />{' '}
+                                                        Mark Ready
                                                     </Button>
                                                 )}
-                                                {order.status === 'ready_for_pickup' && (
+                                                {order.status ===
+                                                    'ready_for_pickup' && (
                                                     <Button
                                                         size="sm"
-                                                        onClick={() => handleUpdateStatus(order, 'picked_up')}
-                                                        className="h-8 text-xs bg-primary text-primary-foreground"
+                                                        onClick={() =>
+                                                            handleUpdateStatus(
+                                                                order,
+                                                                'picked_up',
+                                                            )
+                                                        }
+                                                        className="h-8 bg-primary text-xs text-primary-foreground"
                                                     >
-                                                        <PackageCheck className="mr-1 h-3.5 w-3.5" /> Mark Picked Up
+                                                        <PackageCheck className="mr-1 h-3.5 w-3.5" />{' '}
+                                                        Mark Picked Up
                                                     </Button>
                                                 )}
-                                                {order.status === 'picked_up' && (
-                                                    <Badge variant="secondary" className="text-xs">
+                                                {order.status ===
+                                                    'picked_up' && (
+                                                    <Badge
+                                                        variant="secondary"
+                                                        className="text-xs"
+                                                    >
                                                         Completed
                                                     </Badge>
                                                 )}
@@ -477,9 +545,12 @@ export default function StorePickupAdmin({
         <div className="space-y-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h3 className="text-base font-semibold">Store & Branch Locations</h3>
+                    <h3 className="text-base font-semibold">
+                        Store & Branch Locations
+                    </h3>
                     <p className="text-sm text-muted-foreground">
-                        Manage your physical stores, retail outlets, and pickup counters.
+                        Manage your physical stores, retail outlets, and pickup
+                        counters.
                     </p>
                 </div>
                 <Button size="sm" onClick={openCreateBranchModal}>
@@ -493,7 +564,8 @@ export default function StorePickupAdmin({
                     description="Add at least one retail store or pickup point so customers can choose in-store collection during checkout."
                     action={
                         <Button size="sm" onClick={openCreateBranchModal}>
-                            <Plus className="mr-1.5 h-4 w-4" /> Add your first branch
+                            <Plus className="mr-1.5 h-4 w-4" /> Add your first
+                            branch
                         </Button>
                     }
                 />
@@ -501,55 +573,96 @@ export default function StorePickupAdmin({
                 <div className="overflow-hidden rounded-xl border bg-card shadow-xs">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm">
-                            <thead className="border-b bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                            <thead className="border-b bg-muted/40 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                                 <tr>
-                                    <th className="px-4 py-3">Branch Location</th>
-                                    <th className="px-4 py-3">Address & City</th>
-                                    <th className="px-4 py-3">Operating Hours & Contact</th>
-                                    <th className="px-4 py-3 text-center">Pickup Orders</th>
-                                    <th className="px-4 py-3 text-center">Status</th>
-                                    <th className="px-4 py-3 text-right">Actions</th>
+                                    <th className="px-4 py-3">
+                                        Branch Location
+                                    </th>
+                                    <th className="px-4 py-3">
+                                        Address & City
+                                    </th>
+                                    <th className="px-4 py-3">
+                                        Operating Hours & Contact
+                                    </th>
+                                    <th className="px-4 py-3 text-center">
+                                        Pickup Orders
+                                    </th>
+                                    <th className="px-4 py-3 text-center">
+                                        Status
+                                    </th>
+                                    <th className="px-4 py-3 text-right">
+                                        Actions
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border">
                                 {branches.map((b) => (
-                                    <tr key={b.id} className="hover:bg-muted/30 transition-colors">
+                                    <tr
+                                        key={b.id}
+                                        className="transition-colors hover:bg-muted/30"
+                                    >
                                         <td className="px-4 py-3">
-                                            <div className="font-semibold text-foreground flex items-center gap-1.5">
+                                            <div className="flex items-center gap-1.5 font-semibold text-foreground">
                                                 <Store className="h-4 w-4 text-primary" />
                                                 <span>{b.name}</span>
                                             </div>
-                                            <div className="text-xs text-muted-foreground font-mono mt-0.5">
+                                            <div className="mt-0.5 font-mono text-xs text-muted-foreground">
                                                 Code: {b.code}
                                             </div>
-                                            <div className="text-xs text-muted-foreground mt-0.5">
-                                                {b.prep_time} · {b.fee === 0 ? 'Free pickup' : `Fee: $${b.fee.toFixed(2)}`}
+                                            <div className="mt-0.5 text-xs text-muted-foreground">
+                                                {b.prep_time} ·{' '}
+                                                {b.fee === 0
+                                                    ? 'Free pickup'
+                                                    : `Fee: $${b.fee.toFixed(2)}`}
                                             </div>
                                         </td>
                                         <td className="px-4 py-3 text-xs">
-                                            <div className="font-medium text-foreground">{b.address_line1}</div>
-                                            {b.address_line2 && <div>{b.address_line2}</div>}
+                                            <div className="font-medium text-foreground">
+                                                {b.address_line1}
+                                            </div>
+                                            {b.address_line2 && (
+                                                <div>{b.address_line2}</div>
+                                            )}
                                             <div className="text-muted-foreground">
-                                                {b.city}, {b.region ? `${b.region}, ` : ''}{b.country_code}
+                                                {b.city},{' '}
+                                                {b.region
+                                                    ? `${b.region}, `
+                                                    : ''}
+                                                {b.country_code}
                                             </div>
                                         </td>
                                         <td className="px-4 py-3 text-xs text-muted-foreground">
                                             <div>{b.pickup_hours}</div>
-                                            {b.phone && <div className="mt-0.5">Tel: {b.phone}</div>}
-                                            {b.email && <div>Email: {b.email}</div>}
+                                            {b.phone && (
+                                                <div className="mt-0.5">
+                                                    Tel: {b.phone}
+                                                </div>
+                                            )}
+                                            {b.email && (
+                                                <div>Email: {b.email}</div>
+                                            )}
                                         </td>
                                         <td className="px-4 py-3 text-center">
                                             <Badge variant="secondary">
-                                                {b.orders_count} order{b.orders_count !== 1 ? 's' : ''}
+                                                {b.orders_count} order
+                                                {b.orders_count !== 1
+                                                    ? 's'
+                                                    : ''}
                                             </Badge>
                                         </td>
                                         <td className="px-4 py-3 text-center">
                                             {b.is_active ? (
-                                                <Badge variant="outline" className="border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs">
+                                                <Badge
+                                                    variant="outline"
+                                                    className="border-emerald-500/30 text-xs text-emerald-600 dark:text-emerald-400"
+                                                >
                                                     ● Active
                                                 </Badge>
                                             ) : (
-                                                <Badge variant="secondary" className="text-xs text-muted-foreground">
+                                                <Badge
+                                                    variant="secondary"
+                                                    className="text-xs text-muted-foreground"
+                                                >
                                                     Inactive
                                                 </Badge>
                                             )}
@@ -559,7 +672,9 @@ export default function StorePickupAdmin({
                                                 <Button
                                                     size="sm"
                                                     variant="ghost"
-                                                    onClick={() => openEditBranchModal(b)}
+                                                    onClick={() =>
+                                                        openEditBranchModal(b)
+                                                    }
                                                     className="h-8 px-2 text-xs"
                                                 >
                                                     <Edit className="h-3.5 w-3.5" />
@@ -567,7 +682,9 @@ export default function StorePickupAdmin({
                                                 <Form
                                                     action={b.delete_url}
                                                     method="delete"
-                                                    options={{ preserveScroll: true }}
+                                                    options={{
+                                                        preserveScroll: true,
+                                                    }}
                                                 >
                                                     <Button
                                                         size="sm"
@@ -592,35 +709,49 @@ export default function StorePickupAdmin({
 
     // TAB 3: SETTINGS
     const settingsTab = (
-        <div className="space-y-6 max-w-3xl">
+        <div className="max-w-3xl space-y-6">
             <form
                 onSubmit={(e) => {
                     e.preventDefault();
-                    settingsForm.post(urls.save_settings, { preserveScroll: true });
+                    settingsForm.post(urls.save_settings, {
+                        preserveScroll: true,
+                    });
                 }}
             >
                 <Card className="py-4 shadow-xs">
                     <CardHeader>
-                        <CardTitle className="text-base">Store Pickup Configuration</CardTitle>
+                        <CardTitle className="text-base">
+                            Store Pickup Configuration
+                        </CardTitle>
                         <CardDescription className="text-xs">
-                            Configure how store pickup is presented to customers during checkout.
+                            Configure how store pickup is presented to customers
+                            during checkout.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="flex items-center justify-between rounded-lg border p-3">
                             <div className="space-y-0.5">
-                                <Label htmlFor="enabled" className="text-sm font-medium">
+                                <Label
+                                    htmlFor="enabled"
+                                    className="text-sm font-medium"
+                                >
                                     Enable In-Store Pickup
                                 </Label>
                                 <p className="text-xs text-muted-foreground">
-                                    Allows shoppers to select store pickup at checkout.
+                                    Allows shoppers to select store pickup at
+                                    checkout.
                                 </p>
                             </div>
                             <input
                                 id="enabled"
                                 type="checkbox"
                                 checked={settingsForm.data.enabled}
-                                onChange={(e) => settingsForm.setData('enabled', e.target.checked)}
+                                onChange={(e) =>
+                                    settingsForm.setData(
+                                        'enabled',
+                                        e.target.checked,
+                                    )
+                                }
                                 className="h-4 w-4 rounded border-input"
                             />
                         </div>
@@ -634,42 +765,68 @@ export default function StorePickupAdmin({
                             <Input
                                 id="shipping_label"
                                 value={settingsForm.data.shipping_label}
-                                onChange={(e) => settingsForm.setData('shipping_label', e.target.value)}
+                                onChange={(e) =>
+                                    settingsForm.setData(
+                                        'shipping_label',
+                                        e.target.value,
+                                    )
+                                }
                             />
                         </FormField>
 
                         <div className="flex items-center justify-between rounded-lg border p-3">
                             <div className="space-y-0.5">
-                                <Label htmlFor="allow_alternative_collector" className="text-sm font-medium">
+                                <Label
+                                    htmlFor="allow_alternative_collector"
+                                    className="text-sm font-medium"
+                                >
                                     Allow Alternative Collector
                                 </Label>
                                 <p className="text-xs text-muted-foreground">
-                                    Permit customers to authorize another person to pick up their order.
+                                    Permit customers to authorize another person
+                                    to pick up their order.
                                 </p>
                             </div>
                             <input
                                 id="allow_alternative_collector"
                                 type="checkbox"
-                                checked={settingsForm.data.allow_alternative_collector}
-                                onChange={(e) => settingsForm.setData('allow_alternative_collector', e.target.checked)}
+                                checked={
+                                    settingsForm.data
+                                        .allow_alternative_collector
+                                }
+                                onChange={(e) =>
+                                    settingsForm.setData(
+                                        'allow_alternative_collector',
+                                        e.target.checked,
+                                    )
+                                }
                                 className="h-4 w-4 rounded border-input"
                             />
                         </div>
 
                         <div className="flex items-center justify-between rounded-lg border p-3">
                             <div className="space-y-0.5">
-                                <Label htmlFor="allow_schedule" className="text-sm font-medium">
+                                <Label
+                                    htmlFor="allow_schedule"
+                                    className="text-sm font-medium"
+                                >
                                     Allow Preferred Pickup Scheduling
                                 </Label>
                                 <p className="text-xs text-muted-foreground">
-                                    Customers can specify preferred pickup date and time window.
+                                    Customers can specify preferred pickup date
+                                    and time window.
                                 </p>
                             </div>
                             <input
                                 id="allow_schedule"
                                 type="checkbox"
                                 checked={settingsForm.data.allow_schedule}
-                                onChange={(e) => settingsForm.setData('allow_schedule', e.target.checked)}
+                                onChange={(e) =>
+                                    settingsForm.setData(
+                                        'allow_schedule',
+                                        e.target.checked,
+                                    )
+                                }
                                 className="h-4 w-4 rounded border-input"
                             />
                         </div>
@@ -684,17 +841,26 @@ export default function StorePickupAdmin({
                                 id="instructions"
                                 rows={3}
                                 value={settingsForm.data.instructions}
-                                onChange={(e) => settingsForm.setData('instructions', e.target.value)}
+                                onChange={(e) =>
+                                    settingsForm.setData(
+                                        'instructions',
+                                        e.target.value,
+                                    )
+                                }
                             />
                         </FormField>
 
-                        <div className="rounded-lg border p-4 space-y-4 bg-muted/20">
+                        <div className="space-y-4 rounded-lg border bg-muted/20 p-4">
                             <div>
-                                <Label htmlFor="cod_behavior" className="text-sm font-semibold text-foreground">
+                                <Label
+                                    htmlFor="cod_behavior"
+                                    className="text-sm font-semibold text-foreground"
+                                >
                                     Cash on Delivery & Payment Handling
                                 </Label>
-                                <p className="text-xs text-muted-foreground mt-0.5">
-                                    Configure how Cash on Delivery behaves when in-store or branch pickup is chosen.
+                                <p className="mt-0.5 text-xs text-muted-foreground">
+                                    Configure how Cash on Delivery behaves when
+                                    in-store or branch pickup is chosen.
                                 </p>
                             </div>
 
@@ -707,41 +873,78 @@ export default function StorePickupAdmin({
                                 <select
                                     id="cod_behavior"
                                     value={settingsForm.data.cod_behavior}
-                                    onChange={(e) => settingsForm.setData('cod_behavior', e.target.value)}
+                                    onChange={(e) =>
+                                        settingsForm.setData(
+                                            'cod_behavior',
+                                            e.target.value,
+                                        )
+                                    }
                                     className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs"
                                 >
-                                    <option value="pay_in_store">Change to "Pay in store" (Recommended - courier fee waived)</option>
-                                    <option value="hide">Hide Cash on Delivery (only allow prepaid online / bank transfer)</option>
-                                    <option value="keep">Keep Cash on Delivery as-is (standard courier fee applies)</option>
+                                    <option value="pay_in_store">
+                                        Change to "Pay in store" (Recommended -
+                                        courier fee waived)
+                                    </option>
+                                    <option value="hide">
+                                        Hide Cash on Delivery (only allow
+                                        prepaid online / bank transfer)
+                                    </option>
+                                    <option value="keep">
+                                        Keep Cash on Delivery as-is (standard
+                                        courier fee applies)
+                                    </option>
                                 </select>
                             </FormField>
 
-                            {settingsForm.data.cod_behavior === 'pay_in_store' && (
-                                <div className="space-y-4 pt-2 border-t">
+                            {settingsForm.data.cod_behavior ===
+                                'pay_in_store' && (
+                                <div className="space-y-4 border-t pt-2">
                                     <FormField
                                         id="pay_in_store_label"
                                         label="Pay in Store Title"
-                                        error={settingsForm.errors.pay_in_store_label}
+                                        error={
+                                            settingsForm.errors
+                                                .pay_in_store_label
+                                        }
                                         hint="Payment option label shown at checkout (default: 'Pay in store')."
                                     >
                                         <Input
                                             id="pay_in_store_label"
-                                            value={settingsForm.data.pay_in_store_label}
-                                            onChange={(e) => settingsForm.setData('pay_in_store_label', e.target.value)}
+                                            value={
+                                                settingsForm.data
+                                                    .pay_in_store_label
+                                            }
+                                            onChange={(e) =>
+                                                settingsForm.setData(
+                                                    'pay_in_store_label',
+                                                    e.target.value,
+                                                )
+                                            }
                                         />
                                     </FormField>
 
                                     <FormField
                                         id="pay_in_store_instructions"
                                         label="Pay in Store Instructions"
-                                        error={settingsForm.errors.pay_in_store_instructions}
+                                        error={
+                                            settingsForm.errors
+                                                .pay_in_store_instructions
+                                        }
                                         hint="Instructions displayed to the customer under the Pay in store option."
                                     >
                                         <Textarea
                                             id="pay_in_store_instructions"
                                             rows={2}
-                                            value={settingsForm.data.pay_in_store_instructions}
-                                            onChange={(e) => settingsForm.setData('pay_in_store_instructions', e.target.value)}
+                                            value={
+                                                settingsForm.data
+                                                    .pay_in_store_instructions
+                                            }
+                                            onChange={(e) =>
+                                                settingsForm.setData(
+                                                    'pay_in_store_instructions',
+                                                    e.target.value,
+                                                )
+                                            }
                                         />
                                     </FormField>
                                 </div>
@@ -749,9 +952,14 @@ export default function StorePickupAdmin({
                         </div>
                     </CardContent>
 
-                    <CardFooter className="border-t pt-4 flex justify-end">
-                        <Button type="submit" disabled={settingsForm.processing}>
-                            {settingsForm.processing ? 'Saving...' : 'Save Settings'}
+                    <CardFooter className="flex justify-end border-t pt-4">
+                        <Button
+                            type="submit"
+                            disabled={settingsForm.processing}
+                        >
+                            {settingsForm.processing
+                                ? 'Saving...'
+                                : 'Save Settings'}
                         </Button>
                     </CardFooter>
                 </Card>
@@ -772,65 +980,75 @@ export default function StorePickupAdmin({
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
                     <div className="rounded-xl border bg-card p-4 shadow-xs">
                         <div className="flex items-center justify-between text-muted-foreground">
-                            <span className="text-xs font-medium uppercase tracking-wider">
+                            <span className="text-xs font-medium tracking-wider uppercase">
                                 Total Pickups
                             </span>
                             <Store className="h-4 w-4" />
                         </div>
-                        <div className="mt-2 text-2xl font-bold">{counts.total_orders}</div>
-                        <div className="text-xs text-muted-foreground mt-0.5">
+                        <div className="mt-2 text-2xl font-bold">
+                            {counts.total_orders}
+                        </div>
+                        <div className="mt-0.5 text-xs text-muted-foreground">
                             Orders collected
                         </div>
                     </div>
 
                     <div className="rounded-xl border bg-card p-4 shadow-xs">
                         <div className="flex items-center justify-between text-muted-foreground">
-                            <span className="text-xs font-medium uppercase tracking-wider">
+                            <span className="text-xs font-medium tracking-wider uppercase">
                                 Preparing
                             </span>
                             <Clock className="h-4 w-4 text-amber-500" />
                         </div>
-                        <div className="mt-2 text-2xl font-bold">{counts.pending}</div>
-                        <div className="text-xs text-muted-foreground mt-0.5">
+                        <div className="mt-2 text-2xl font-bold">
+                            {counts.pending}
+                        </div>
+                        <div className="mt-0.5 text-xs text-muted-foreground">
                             Needs preparation
                         </div>
                     </div>
 
                     <div className="rounded-xl border bg-card p-4 shadow-xs">
                         <div className="flex items-center justify-between text-muted-foreground">
-                            <span className="text-xs font-medium uppercase tracking-wider">
+                            <span className="text-xs font-medium tracking-wider uppercase">
                                 Ready for Pickup
                             </span>
                             <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                         </div>
-                        <div className="mt-2 text-2xl font-bold">{counts.ready}</div>
-                        <div className="text-xs text-muted-foreground mt-0.5">
+                        <div className="mt-2 text-2xl font-bold">
+                            {counts.ready}
+                        </div>
+                        <div className="mt-0.5 text-xs text-muted-foreground">
                             Waiting for customer
                         </div>
                     </div>
 
                     <div className="rounded-xl border bg-card p-4 shadow-xs">
                         <div className="flex items-center justify-between text-muted-foreground">
-                            <span className="text-xs font-medium uppercase tracking-wider">
+                            <span className="text-xs font-medium tracking-wider uppercase">
                                 Completed
                             </span>
                             <PackageCheck className="h-4 w-4 text-blue-500" />
                         </div>
-                        <div className="mt-2 text-2xl font-bold">{counts.picked_up}</div>
-                        <div className="text-xs text-muted-foreground mt-0.5">
+                        <div className="mt-2 text-2xl font-bold">
+                            {counts.picked_up}
+                        </div>
+                        <div className="mt-0.5 text-xs text-muted-foreground">
                             Customer collected
                         </div>
                     </div>
 
                     <div className="rounded-xl border bg-card p-4 shadow-xs">
                         <div className="flex items-center justify-between text-muted-foreground">
-                            <span className="text-xs font-medium uppercase tracking-wider">
+                            <span className="text-xs font-medium tracking-wider uppercase">
                                 Branches
                             </span>
                             <Building2 className="h-4 w-4 text-purple-500" />
                         </div>
-                        <div className="mt-2 text-2xl font-bold">{counts.active_branches}</div>
-                        <div className="text-xs text-muted-foreground mt-0.5">
+                        <div className="mt-2 text-2xl font-bold">
+                            {counts.active_branches}
+                        </div>
+                        <div className="mt-0.5 text-xs text-muted-foreground">
                             Active locations
                         </div>
                     </div>
@@ -844,7 +1062,8 @@ export default function StorePickupAdmin({
                             id: 'orders',
                             label: (
                                 <span className="flex items-center gap-1.5">
-                                    <PackageCheck className="h-4 w-4" /> Pickup Orders ({counts.total_orders})
+                                    <PackageCheck className="h-4 w-4" /> Pickup
+                                    Orders ({counts.total_orders})
                                 </span>
                             ),
                             content: ordersTab,
@@ -853,7 +1072,8 @@ export default function StorePickupAdmin({
                             id: 'branches',
                             label: (
                                 <span className="flex items-center gap-1.5">
-                                    <Building2 className="h-4 w-4" /> Branches & Locations ({counts.branches})
+                                    <Building2 className="h-4 w-4" /> Branches &
+                                    Locations ({counts.branches})
                                 </span>
                             ),
                             content: branchesTab,
@@ -871,14 +1091,20 @@ export default function StorePickupAdmin({
                 />
 
                 {/* Modal: Add / Edit Branch */}
-                <Dialog open={branchModalOpen} onOpenChange={setBranchModalOpen}>
-                    <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto">
+                <Dialog
+                    open={branchModalOpen}
+                    onOpenChange={setBranchModalOpen}
+                >
+                    <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-xl">
                         <DialogHeader>
                             <DialogTitle>
-                                {editingBranch ? 'Edit Branch Location' : 'Add Pickup Branch Location'}
+                                {editingBranch
+                                    ? 'Edit Branch Location'
+                                    : 'Add Pickup Branch Location'}
                             </DialogTitle>
                             <DialogDescription>
-                                Set branch contact details, address, pickup hours, and preparation lead time.
+                                Set branch contact details, address, pickup
+                                hours, and preparation lead time.
                             </DialogDescription>
                         </DialogHeader>
 
@@ -887,11 +1113,13 @@ export default function StorePickupAdmin({
                                 e.preventDefault();
                                 if (editingBranch) {
                                     branchForm.put(editingBranch.update_url, {
-                                        onSuccess: () => setBranchModalOpen(false),
+                                        onSuccess: () =>
+                                            setBranchModalOpen(false),
                                     });
                                 } else {
                                     branchForm.post(urls.store_branch, {
-                                        onSuccess: () => setBranchModalOpen(false),
+                                        onSuccess: () =>
+                                            setBranchModalOpen(false),
                                     });
                                 }
                             }}
@@ -907,7 +1135,12 @@ export default function StorePickupAdmin({
                                         id="branch_name"
                                         required
                                         value={branchForm.data.name}
-                                        onChange={(e) => branchForm.setData('name', e.target.value)}
+                                        onChange={(e) =>
+                                            branchForm.setData(
+                                                'name',
+                                                e.target.value,
+                                            )
+                                        }
                                         placeholder="e.g. Downtown Mall Flagship"
                                     />
                                 </FormField>
@@ -921,7 +1154,12 @@ export default function StorePickupAdmin({
                                     <Input
                                         id="branch_code"
                                         value={branchForm.data.code}
-                                        onChange={(e) => branchForm.setData('code', e.target.value)}
+                                        onChange={(e) =>
+                                            branchForm.setData(
+                                                'code',
+                                                e.target.value,
+                                            )
+                                        }
                                         placeholder="downtown-flagship"
                                     />
                                 </FormField>
@@ -936,7 +1174,12 @@ export default function StorePickupAdmin({
                                     id="branch_address1"
                                     required
                                     value={branchForm.data.address_line1}
-                                    onChange={(e) => branchForm.setData('address_line1', e.target.value)}
+                                    onChange={(e) =>
+                                        branchForm.setData(
+                                            'address_line1',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="123 Retail Boulevard, Suite 100"
                                 />
                             </FormField>
@@ -952,7 +1195,12 @@ export default function StorePickupAdmin({
                                             id="branch_city"
                                             required
                                             value={branchForm.data.city}
-                                            onChange={(e) => branchForm.setData('city', e.target.value)}
+                                            onChange={(e) =>
+                                                branchForm.setData(
+                                                    'city',
+                                                    e.target.value,
+                                                )
+                                            }
                                             placeholder="Dubai"
                                         />
                                     </FormField>
@@ -966,7 +1214,12 @@ export default function StorePickupAdmin({
                                         <Input
                                             id="branch_region"
                                             value={branchForm.data.region}
-                                            onChange={(e) => branchForm.setData('region', e.target.value)}
+                                            onChange={(e) =>
+                                                branchForm.setData(
+                                                    'region',
+                                                    e.target.value,
+                                                )
+                                            }
                                             placeholder="Dubai"
                                         />
                                     </FormField>
@@ -980,10 +1233,18 @@ export default function StorePickupAdmin({
                                         <NativeSelect
                                             id="branch_country"
                                             value={branchForm.data.country_code}
-                                            onChange={(e) => branchForm.setData('country_code', e.target.value)}
+                                            onChange={(e) =>
+                                                branchForm.setData(
+                                                    'country_code',
+                                                    e.target.value,
+                                                )
+                                            }
                                         >
                                             {countries.map((c) => (
-                                                <option key={c.value} value={c.value}>
+                                                <option
+                                                    key={c.value}
+                                                    value={c.value}
+                                                >
                                                     {c.label}
                                                 </option>
                                             ))}
@@ -1001,7 +1262,12 @@ export default function StorePickupAdmin({
                                     <Input
                                         id="branch_phone"
                                         value={branchForm.data.phone}
-                                        onChange={(e) => branchForm.setData('phone', e.target.value)}
+                                        onChange={(e) =>
+                                            branchForm.setData(
+                                                'phone',
+                                                e.target.value,
+                                            )
+                                        }
                                         placeholder="+971 4 000 0000"
                                     />
                                 </FormField>
@@ -1015,7 +1281,12 @@ export default function StorePickupAdmin({
                                         id="branch_email"
                                         type="email"
                                         value={branchForm.data.email}
-                                        onChange={(e) => branchForm.setData('email', e.target.value)}
+                                        onChange={(e) =>
+                                            branchForm.setData(
+                                                'email',
+                                                e.target.value,
+                                            )
+                                        }
                                         placeholder="branch@store.com"
                                     />
                                 </FormField>
@@ -1030,7 +1301,12 @@ export default function StorePickupAdmin({
                                     <Input
                                         id="branch_hours"
                                         value={branchForm.data.pickup_hours}
-                                        onChange={(e) => branchForm.setData('pickup_hours', e.target.value)}
+                                        onChange={(e) =>
+                                            branchForm.setData(
+                                                'pickup_hours',
+                                                e.target.value,
+                                            )
+                                        }
                                         placeholder="Mon-Sat 10:00 - 20:00"
                                     />
                                 </FormField>
@@ -1043,7 +1319,12 @@ export default function StorePickupAdmin({
                                     <Input
                                         id="branch_prep"
                                         value={branchForm.data.prep_time}
-                                        onChange={(e) => branchForm.setData('prep_time', e.target.value)}
+                                        onChange={(e) =>
+                                            branchForm.setData(
+                                                'prep_time',
+                                                e.target.value,
+                                            )
+                                        }
                                         placeholder="Ready in 2 hours"
                                     />
                                 </FormField>
@@ -1053,7 +1334,11 @@ export default function StorePickupAdmin({
                                 <FormField
                                     id="branch_fee"
                                     label="Pickup Fee (0 for Free)"
-                                    error={branchForm.errors.fee ? String(branchForm.errors.fee) : undefined}
+                                    error={
+                                        branchForm.errors.fee
+                                            ? String(branchForm.errors.fee)
+                                            : undefined
+                                    }
                                 >
                                     <Input
                                         id="branch_fee"
@@ -1061,7 +1346,12 @@ export default function StorePickupAdmin({
                                         step="0.01"
                                         min="0"
                                         value={branchForm.data.fee}
-                                        onChange={(e) => branchForm.setData('fee', Number(e.target.value))}
+                                        onChange={(e) =>
+                                            branchForm.setData(
+                                                'fee',
+                                                Number(e.target.value),
+                                            )
+                                        }
                                     />
                                 </FormField>
 
@@ -1070,10 +1360,18 @@ export default function StorePickupAdmin({
                                         id="branch_active"
                                         type="checkbox"
                                         checked={branchForm.data.is_active}
-                                        onChange={(e) => branchForm.setData('is_active', e.target.checked)}
+                                        onChange={(e) =>
+                                            branchForm.setData(
+                                                'is_active',
+                                                e.target.checked,
+                                            )
+                                        }
                                         className="h-4 w-4 rounded border-input"
                                     />
-                                    <Label htmlFor="branch_active" className="cursor-pointer">
+                                    <Label
+                                        htmlFor="branch_active"
+                                        className="cursor-pointer"
+                                    >
                                         Branch is Active & Accepting Pickups
                                     </Label>
                                 </div>
@@ -1089,7 +1387,12 @@ export default function StorePickupAdmin({
                                     id="branch_instructions"
                                     rows={2}
                                     value={branchForm.data.instructions}
-                                    onChange={(e) => branchForm.setData('instructions', e.target.value)}
+                                    onChange={(e) =>
+                                        branchForm.setData(
+                                            'instructions',
+                                            e.target.value,
+                                        )
+                                    }
                                 />
                             </FormField>
 
@@ -1101,7 +1404,10 @@ export default function StorePickupAdmin({
                                 >
                                     Cancel
                                 </Button>
-                                <Button type="submit" disabled={branchForm.processing}>
+                                <Button
+                                    type="submit"
+                                    disabled={branchForm.processing}
+                                >
                                     {branchForm.processing
                                         ? 'Saving...'
                                         : editingBranch

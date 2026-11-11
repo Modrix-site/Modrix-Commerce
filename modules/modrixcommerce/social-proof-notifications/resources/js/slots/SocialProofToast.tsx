@@ -1,4 +1,11 @@
-import { CheckCircle2, Flame, ShoppingBag, Sparkles, X, Zap } from 'lucide-react';
+import {
+    CheckCircle2,
+    Flame,
+    ShoppingBag,
+    Sparkles,
+    X,
+    Zap,
+} from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 export type ToastItem = {
@@ -77,7 +84,9 @@ export default function SocialProofToast({
     // Check session dismissal state
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            const isDismissed = sessionStorage.getItem('modrix_social_proof_dismissed') === 'true';
+            const isDismissed =
+                sessionStorage.getItem('modrix_social_proof_dismissed') ===
+                'true';
             if (isDismissed) {
                 setDismissed(true);
             }
@@ -100,7 +109,11 @@ export default function SocialProofToast({
     }, [isEnabled, dismissed, feed]);
 
     function showNextNotification() {
-        if (dismissed || shownCountRef.current >= maxPerSession || feed.length === 0) {
+        if (
+            dismissed ||
+            shownCountRef.current >= maxPerSession ||
+            feed.length === 0
+        ) {
             return;
         }
 
@@ -111,15 +124,22 @@ export default function SocialProofToast({
         const currentItem = feed[currentIndex % feed.length];
         if (currentItem && currentItem.id < 800000) {
             try {
-                const token = (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content;
-                fetch(`/m/modrixcommerce/social-proof-notifications/track/impression/${currentItem.id}`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': token || '',
-                        Accept: 'application/json',
+                const token = (
+                    document.querySelector(
+                        'meta[name="csrf-token"]',
+                    ) as HTMLMetaElement
+                )?.content;
+                fetch(
+                    `/m/modrixcommerce/social-proof-notifications/track/impression/${currentItem.id}`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': token || '',
+                            Accept: 'application/json',
+                        },
+                        credentials: 'same-origin',
                     },
-                    credentials: 'same-origin',
-                }).catch(() => {});
+                ).catch(() => {});
             } catch {
                 // Non-blocking telemetry
             }
@@ -151,15 +171,22 @@ export default function SocialProofToast({
         // Record click
         if (item.id < 800000) {
             try {
-                const token = (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content;
-                fetch(`/m/modrixcommerce/social-proof-notifications/track/click/${item.id}`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': token || '',
-                        Accept: 'application/json',
+                const token = (
+                    document.querySelector(
+                        'meta[name="csrf-token"]',
+                    ) as HTMLMetaElement
+                )?.content;
+                fetch(
+                    `/m/modrixcommerce/social-proof-notifications/track/click/${item.id}`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': token || '',
+                            Accept: 'application/json',
+                        },
+                        credentials: 'same-origin',
                     },
-                    credentials: 'same-origin',
-                }).catch(() => {});
+                ).catch(() => {});
             } catch {
                 // Non-blocking telemetry
             }
@@ -187,80 +214,88 @@ export default function SocialProofToast({
 
     // Theme container styling
     const themeClasses = {
-        modern_white: 'bg-white text-gray-900 border border-gray-200/80 shadow-2xl shadow-gray-950/10',
-        dark_luxury: 'bg-gray-900/95 text-white border border-gray-800 shadow-2xl shadow-black/40 backdrop-blur-md',
-        minimal_glass: 'bg-white/85 dark:bg-gray-900/85 backdrop-blur-xl text-gray-900 dark:text-white border border-white/40 dark:border-gray-800/60 shadow-2xl',
+        modern_white:
+            'bg-white text-gray-900 border border-gray-200/80 shadow-2xl shadow-gray-950/10',
+        dark_luxury:
+            'bg-gray-900/95 text-white border border-gray-800 shadow-2xl shadow-black/40 backdrop-blur-md',
+        minimal_glass:
+            'bg-white/85 dark:bg-gray-900/85 backdrop-blur-xl text-gray-900 dark:text-white border border-white/40 dark:border-gray-800/60 shadow-2xl',
     }[themeStyle];
 
-    const isUrgency = currentItem.type === 'low_stock' || currentItem.type === 'product_viewers';
+    const isUrgency =
+        currentItem.type === 'low_stock' ||
+        currentItem.type === 'product_viewers';
 
     return (
         <div
-            className={`fixed z-50 pointer-events-none transition-all duration-500 ease-out ${positionClasses} ${
+            className={`pointer-events-none fixed z-50 transition-all duration-500 ease-out ${positionClasses} ${
                 hideOnMobile ? 'hidden sm:block' : 'block'
             } ${
                 visible
-                    ? 'opacity-100 translate-y-0 scale-100'
-                    : 'opacity-0 translate-y-3 scale-95 pointer-events-none'
+                    ? 'translate-y-0 scale-100 opacity-100'
+                    : 'pointer-events-none translate-y-3 scale-95 opacity-0'
             }`}
             style={{ maxWidth: '380px' }}
         >
             <div
                 onClick={() => handleClickNotification(currentItem)}
-                className={`pointer-events-auto group relative flex items-center gap-3.5 p-3 sm:p-3.5 rounded-2xl cursor-pointer select-none transition-transform duration-200 hover:scale-[1.02] active:scale-[0.99] ${themeClasses}`}
+                className={`group pointer-events-auto relative flex cursor-pointer items-center gap-3.5 rounded-2xl p-3 transition-transform duration-200 select-none hover:scale-[1.02] active:scale-[0.99] sm:p-3.5 ${themeClasses}`}
                 role="alert"
                 aria-live="polite"
             >
                 {/* Product Image / Icon Thumbnail */}
-                <div className="relative shrink-0 w-13 h-13 sm:w-14 sm:h-14 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200/60 dark:border-gray-700/60 flex items-center justify-center">
+                <div className="relative flex h-13 w-13 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-gray-200/60 bg-gray-100 sm:h-14 sm:w-14 dark:border-gray-700/60 dark:bg-gray-800">
                     {currentItem.productImageUrl ? (
                         <img
                             src={currentItem.productImageUrl}
                             alt={currentItem.productName}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                     ) : isUrgency ? (
-                        <div className="w-full h-full flex items-center justify-center bg-amber-500/10 text-amber-600">
-                            <Flame className="w-6 h-6 animate-pulse" />
+                        <div className="flex h-full w-full items-center justify-center bg-amber-500/10 text-amber-600">
+                            <Flame className="h-6 w-6 animate-pulse" />
                         </div>
                     ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400">
-                            <ShoppingBag className="w-6 h-6" />
+                        <div className="flex h-full w-full items-center justify-center bg-indigo-50 text-indigo-600 dark:bg-indigo-950/50 dark:text-indigo-400">
+                            <ShoppingBag className="h-6 w-6" />
                         </div>
                     )}
 
                     {/* Live Pulse Badge Dot */}
-                    <span className="absolute bottom-1 right-1 flex h-2.5 w-2.5">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                    <span className="absolute right-1 bottom-1 flex h-2.5 w-2.5">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
                     </span>
                 </div>
 
                 {/* Content Details */}
-                <div className="flex-1 min-w-0 pr-4">
-                    <div className="flex items-center gap-1.5 text-xs font-semibold leading-tight mb-0.5">
+                <div className="min-w-0 flex-1 pr-4">
+                    <div className="mb-0.5 flex items-center gap-1.5 text-xs leading-tight font-semibold">
                         <span className="truncate">{currentItem.headline}</span>
                         {currentItem.isVerified && (
-                            <span className="inline-flex items-center text-emerald-600 dark:text-emerald-400 shrink-0" title="Verified Customer Purchase">
-                                <CheckCircle2 className="w-3.5 h-3.5" />
+                            <span
+                                className="inline-flex shrink-0 items-center text-emerald-600 dark:text-emerald-400"
+                                title="Verified Customer Purchase"
+                            >
+                                <CheckCircle2 className="h-3.5 w-3.5" />
                             </span>
                         )}
                         {isUrgency && (
-                            <span className="inline-flex items-center text-amber-500 shrink-0">
-                                <Zap className="w-3.5 h-3.5 fill-current" />
+                            <span className="inline-flex shrink-0 items-center text-amber-500">
+                                <Zap className="h-3.5 w-3.5 fill-current" />
                             </span>
                         )}
                     </div>
 
-                    <p className="text-xs text-gray-600 dark:text-gray-300 line-clamp-2 leading-relaxed">
+                    <p className="line-clamp-2 text-xs leading-relaxed text-gray-600 dark:text-gray-300">
                         {currentItem.subtitle}
                     </p>
 
-                    <div className="flex items-center gap-2 mt-1 text-[11px] text-gray-400 dark:text-gray-500">
+                    <div className="mt-1 flex items-center gap-2 text-[11px] text-gray-400 dark:text-gray-500">
                         <span>{currentItem.timeAgo}</span>
                         <span>•</span>
-                        <span className="inline-flex items-center gap-0.5 text-indigo-600 dark:text-indigo-400 font-medium group-hover:underline">
-                            <Sparkles className="w-3 h-3" />
+                        <span className="inline-flex items-center gap-0.5 font-medium text-indigo-600 group-hover:underline dark:text-indigo-400">
+                            <Sparkles className="h-3 w-3" />
                             <span>View product</span>
                         </span>
                     </div>
@@ -272,9 +307,9 @@ export default function SocialProofToast({
                         type="button"
                         onClick={handleDismiss}
                         aria-label="Dismiss notification"
-                        className="absolute top-2 right-2 p-1 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                        className="absolute top-2 right-2 rounded-full p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-200"
                     >
-                        <X className="w-3.5 h-3.5" />
+                        <X className="h-3.5 w-3.5" />
                     </button>
                 )}
             </div>

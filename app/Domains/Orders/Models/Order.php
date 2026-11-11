@@ -10,6 +10,7 @@ use App\Domains\Orders\OrderDisplayStatus;
 use App\Domains\Payments\Models\Payment;
 use App\Domains\Pricing\Money;
 use App\Models\User;
+use EcoModular\StorePickup\Models\OrderPickup;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -199,9 +200,9 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function pickup(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function pickup(): HasOne
     {
-        return $this->hasOne(\EcoModular\StorePickup\Models\OrderPickup::class);
+        return $this->hasOne(OrderPickup::class);
     }
 
     public function money(string $attribute): Money

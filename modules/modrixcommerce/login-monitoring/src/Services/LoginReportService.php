@@ -44,7 +44,7 @@ class LoginReportService
     public function exportCsv(int $days = 30): StreamedResponse
     {
         $breakdown = $this->getDailyBreakdown($days);
-        $filename = "login-monitoring-report-" . now()->format('Y-m-d') . ".csv";
+        $filename = 'login-monitoring-report-'.now()->format('Y-m-d').'.csv';
 
         return response()->stream(function () use ($breakdown) {
             $handle = fopen('php://output', 'w');
@@ -70,7 +70,7 @@ class LoginReportService
     public function exportExcel(int $days = 30): StreamedResponse
     {
         $breakdown = $this->getDailyBreakdown($days);
-        $filename = "login-monitoring-report-" . now()->format('Y-m-d') . ".xls";
+        $filename = 'login-monitoring-report-'.now()->format('Y-m-d').'.xls';
 
         return response()->stream(function () use ($breakdown) {
             echo "Date\tTotal Attempts\tSuccessful Logins\tFailed Logins\tSuspicious Logins\tSecurity Incidents\tAvg Risk Score\n";

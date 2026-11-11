@@ -7,13 +7,7 @@
             "label": "Body size",
             "group": "Typography",
             "tab": "general",
-            "options": [
-                "12",
-                "13",
-                "14",
-                "15",
-                "16"
-            ],
+            "options": ["12", "13", "14", "15", "16"],
             "default": "14"
         },
         "custom.card_size": {
@@ -21,13 +15,7 @@
             "label": "Product card text size",
             "group": "Typography",
             "tab": "general",
-            "options": [
-                "12",
-                "13",
-                "14",
-                "15",
-                "16"
-            ],
+            "options": ["12", "13", "14", "15", "16"],
             "default": "14"
         },
         "custom.heading_size": {
@@ -35,13 +23,7 @@
             "label": "Section heading size",
             "group": "Typography",
             "tab": "general",
-            "options": [
-                "24",
-                "27",
-                "28",
-                "30",
-                "32"
-            ],
+            "options": ["24", "27", "28", "30", "32"],
             "default": "28"
         },
         "custom.product_title_size": {
@@ -49,13 +31,7 @@
             "label": "Product title size",
             "group": "Typography",
             "tab": "product",
-            "options": [
-                "28",
-                "32",
-                "36",
-                "40",
-                "44"
-            ],
+            "options": ["28", "32", "36", "40", "44"],
             "default": "36"
         },
         "custom.sale_color": {
@@ -98,15 +74,7 @@
             "label": "Footer text size",
             "group": "Typography",
             "tab": "general",
-            "options": [
-                "10",
-                "11",
-                "12",
-                "13",
-                "14",
-                "15",
-                "16"
-            ],
+            "options": ["10", "11", "12", "13", "14", "15", "16"],
             "default": "12"
         },
         "custom.nav_size": {
@@ -114,13 +82,7 @@
             "label": "Navigation text size",
             "group": "Typography",
             "tab": "general",
-            "options": [
-                "11",
-                "12",
-                "13",
-                "14",
-                "15"
-            ],
+            "options": ["11", "12", "13", "14", "15"],
             "default": "13"
         },
         "custom.button_size": {
@@ -128,13 +90,7 @@
             "label": "Button text size",
             "group": "Typography",
             "tab": "general",
-            "options": [
-                "10",
-                "11",
-                "12",
-                "13",
-                "14"
-            ],
+            "options": ["10", "11", "12", "13", "14"],
             "default": "11"
         },
         "custom.catalog_title_size": {
@@ -142,13 +98,7 @@
             "label": "Catalog title size",
             "group": "Typography",
             "tab": "general",
-            "options": [
-                "28",
-                "32",
-                "36",
-                "40",
-                "44"
-            ],
+            "options": ["28", "32", "36", "40", "44"],
             "default": "36"
         },
         "custom.card_ratio": {

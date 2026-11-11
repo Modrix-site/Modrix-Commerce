@@ -13,13 +13,13 @@ After either flow completes, the installer locks itself: `/install` returns 404.
 
 ## Decisions
 
-| Topic | Decision |
-| --- | --- |
-| Proof of ownership, auto mode | The merchant types the configured database password (`DB_PASSWORD`). If it is empty, the setup token file is required instead. |
-| Proof of ownership, manual mode | The existing setup token file (`storage/app/private/installer.token`), readable through the control panel's file manager. |
-| Document root | Manual installs require the document root to be `public/`. If the site is served from the project root, the installer blocks and explains how to change the document root. No root forwarder is shipped. |
-| Databases for the manual wizard | MySQL 5.7+ and MariaDB 10.3+. Auto mode accepts any configured, migrated connection. |
-| Mode override | `ECOMODULAR_INSTALL_MODE=detect` (default), `auto` or `manual`. |
+| Topic                           | Decision                                                                                                                                                                                                 |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Proof of ownership, auto mode   | The merchant types the configured database password (`DB_PASSWORD`). If it is empty, the setup token file is required instead.                                                                           |
+| Proof of ownership, manual mode | The existing setup token file (`storage/app/private/installer.token`), readable through the control panel's file manager.                                                                                |
+| Document root                   | Manual installs require the document root to be `public/`. If the site is served from the project root, the installer blocks and explains how to change the document root. No root forwarder is shipped. |
+| Databases for the manual wizard | MySQL 5.7+ and MariaDB 10.3+. Auto mode accepts any configured, migrated connection.                                                                                                                     |
+| Mode override                   | `ECOMODULAR_INSTALL_MODE=detect` (default), `auto` or `manual`.                                                                                                                                          |
 
 ## Existing pieces reused
 
@@ -41,8 +41,8 @@ After either flow completes, the installer locks itself: `/install` returns 404.
 ### `InstallEnvironment` (new, `app/Core/Installation`)
 
 - `mode(): InstallMode`, an enum with `Auto` and `Manual`.
-  - `ECOMODULAR_INSTALL_MODE=auto|manual` forces the mode.
-  - `detect` returns `Auto` when the default connection has a driver and database configured, connects, has a `migrations` table, and `RequirementChecker::pendingMigrations() === 0`. Otherwise `Manual`.
+    - `ECOMODULAR_INSTALL_MODE=auto|manual` forces the mode.
+    - `detect` returns `Auto` when the default connection has a driver and database configured, connects, has a `migrations` table, and `RequirementChecker::pendingMigrations() === 0`. Otherwise `Manual`.
 - `databaseReady(): bool` and `databaseProblem(): ?string`: used to explain why a forced `auto` cannot proceed (not configured, cannot connect, N migrations pending). A forced `auto` never falls back to manual.
 - `servedFromPublic(Request): bool`: true when the front controller is `public/index.php` (by `SCRIPT_FILENAME` resolved against `public_path()`).
 
@@ -72,12 +72,12 @@ The `web` group's appended middleware (`SetStorefrontLocale`, `StorefrontMainten
 
 Routes under `not-installed` and `throttle` on POSTs:
 
-| Route | Purpose |
-| --- | --- |
-| `GET /install` | Renders the wizard for the current mode and step |
-| `POST /install/database/test` | Manual mode: test a connection, return version or error |
-| `POST /install/database` | Manual mode: verify the token, run `DatabaseSetup::apply()` |
-| `POST /install` | Both modes: create the owner and store (existing `store`) |
+| Route                         | Purpose                                                     |
+| ----------------------------- | ----------------------------------------------------------- |
+| `GET /install`                | Renders the wizard for the current mode and step            |
+| `POST /install/database/test` | Manual mode: test a connection, return version or error     |
+| `POST /install/database`      | Manual mode: verify the token, run `DatabaseSetup::apply()` |
+| `POST /install`               | Both modes: create the owner and store (existing `store`)   |
 
 Step logic in `show()`:
 

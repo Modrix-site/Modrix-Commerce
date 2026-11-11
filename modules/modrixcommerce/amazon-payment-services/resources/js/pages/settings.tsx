@@ -1,5 +1,11 @@
 import { Head, router, useForm } from '@inertiajs/react';
-import { CircleAlert, CircleCheck, Copy, ExternalLink, RefreshCw } from 'lucide-react';
+import {
+    CircleAlert,
+    CircleCheck,
+    Copy,
+    ExternalLink,
+    RefreshCw,
+} from 'lucide-react';
 import { FormField, NativeSelect } from '@/components/admin/form-field';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Badge } from '@/components/ui/badge';
@@ -78,8 +84,14 @@ export default function AmazonPaymentServicesSettingsPage({
     const checks: [boolean, string][] = [
         [settings.merchant_identifier !== '', 'Merchant Identifier configured'],
         [settings.access_code_hint !== null, 'Access Code saved encrypted'],
-        [settings.sha_request_phrase_hint !== null, 'SHA Request Phrase saved encrypted'],
-        [settings.sha_response_phrase_hint !== null, 'SHA Response Phrase saved encrypted'],
+        [
+            settings.sha_request_phrase_hint !== null,
+            'SHA Request Phrase saved encrypted',
+        ],
+        [
+            settings.sha_response_phrase_hint !== null,
+            'SHA Response Phrase saved encrypted',
+        ],
         [publicWebhookUrl, 'Store address is served over public HTTPS'],
         [settings.enabled, 'Amazon Payment Services enabled for checkout'],
     ];
@@ -97,7 +109,10 @@ export default function AmazonPaymentServicesSettingsPage({
         const current = form.data.currencies;
         if (current.includes(currency)) {
             if (current.length > 1) {
-                form.setData('currencies', current.filter((c) => c !== currency));
+                form.setData(
+                    'currencies',
+                    current.filter((c) => c !== currency),
+                );
             }
         } else {
             form.setData('currencies', [...current, currency]);
@@ -113,8 +128,14 @@ export default function AmazonPaymentServicesSettingsPage({
                     description="Official payment gateway for the UAE, Saudi Arabia, Egypt, and MENA (formerly PayFort). Accepts cards, Apple Pay, Mada, and KNET with secure hosted checkout."
                     actions={
                         <div className="flex items-center gap-2">
-                            <Badge variant={settings.test_mode ? 'secondary' : 'default'}>
-                                {settings.test_mode ? 'Sandbox / Test mode' : 'Live mode'}
+                            <Badge
+                                variant={
+                                    settings.test_mode ? 'secondary' : 'default'
+                                }
+                            >
+                                {settings.test_mode
+                                    ? 'Sandbox / Test mode'
+                                    : 'Live mode'}
                             </Badge>
                             {settings.ready && (
                                 <Button
@@ -139,13 +160,17 @@ export default function AmazonPaymentServicesSettingsPage({
                                 : 'Set up Amazon Payment Services'}
                         </CardTitle>
                         <CardDescription>
-                            Credentials and endpoints required to accept payments across the UAE and GCC.
+                            Credentials and endpoints required to accept
+                            payments across the UAE and GCC.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <ul className="grid gap-2 text-sm">
                             {checks.map(([done, label]) => (
-                                <li key={label} className="flex items-center gap-2">
+                                <li
+                                    key={label}
+                                    className="flex items-center gap-2"
+                                >
                                     {done ? (
                                         <CircleCheck className="size-4 shrink-0 text-primary" />
                                     ) : (
@@ -163,7 +188,9 @@ export default function AmazonPaymentServicesSettingsPage({
                         <CardHeader>
                             <CardTitle>Account Credentials</CardTitle>
                             <CardDescription>
-                                Found in your Amazon Payment Services back-office under Integration Settings → Security Settings.
+                                Found in your Amazon Payment Services
+                                back-office under Integration Settings →
+                                Security Settings.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4 md:grid-cols-2">
@@ -176,7 +203,12 @@ export default function AmazonPaymentServicesSettingsPage({
                                 <Input
                                     id="merchant_identifier"
                                     value={form.data.merchant_identifier}
-                                    onChange={(e) => form.setData('merchant_identifier', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'merchant_identifier',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="e.g. your_merchant_id"
                                 />
                             </FormField>
@@ -196,8 +228,16 @@ export default function AmazonPaymentServicesSettingsPage({
                                     type="password"
                                     autoComplete="new-password"
                                     value={form.data.access_code}
-                                    onChange={(e) => form.setData('access_code', e.target.value)}
-                                    placeholder={settings.access_code_hint ?? 'Access code from APS dashboard'}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'access_code',
+                                            e.target.value,
+                                        )
+                                    }
+                                    placeholder={
+                                        settings.access_code_hint ??
+                                        'Access code from APS dashboard'
+                                    }
                                 />
                             </FormField>
 
@@ -216,8 +256,16 @@ export default function AmazonPaymentServicesSettingsPage({
                                     type="password"
                                     autoComplete="new-password"
                                     value={form.data.sha_request_phrase}
-                                    onChange={(e) => form.setData('sha_request_phrase', e.target.value)}
-                                    placeholder={settings.sha_request_phrase_hint ?? 'SHA Request Phrase'}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'sha_request_phrase',
+                                            e.target.value,
+                                        )
+                                    }
+                                    placeholder={
+                                        settings.sha_request_phrase_hint ??
+                                        'SHA Request Phrase'
+                                    }
                                 />
                             </FormField>
 
@@ -236,8 +284,16 @@ export default function AmazonPaymentServicesSettingsPage({
                                     type="password"
                                     autoComplete="new-password"
                                     value={form.data.sha_response_phrase}
-                                    onChange={(e) => form.setData('sha_response_phrase', e.target.value)}
-                                    placeholder={settings.sha_response_phrase_hint ?? 'SHA Response Phrase'}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'sha_response_phrase',
+                                            e.target.value,
+                                        )
+                                    }
+                                    placeholder={
+                                        settings.sha_response_phrase_hint ??
+                                        'SHA Response Phrase'
+                                    }
                                 />
                             </FormField>
 
@@ -250,9 +306,18 @@ export default function AmazonPaymentServicesSettingsPage({
                                 <NativeSelect
                                     id="sha_type"
                                     value={form.data.sha_type}
-                                    onChange={(e) => form.setData('sha_type', e.target.value as 'sha256' | 'sha512')}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'sha_type',
+                                            e.target.value as
+                                                | 'sha256'
+                                                | 'sha512',
+                                        )
+                                    }
                                 >
-                                    <option value="sha256">SHA-256 (Recommended)</option>
+                                    <option value="sha256">
+                                        SHA-256 (Recommended)
+                                    </option>
                                     <option value="sha512">SHA-512</option>
                                 </NativeSelect>
                             </FormField>
@@ -266,10 +331,21 @@ export default function AmazonPaymentServicesSettingsPage({
                                 <NativeSelect
                                     id="command"
                                     value={form.data.command}
-                                    onChange={(e) => form.setData('command', e.target.value as 'PURCHASE' | 'AUTHORIZATION')}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'command',
+                                            e.target.value as
+                                                | 'PURCHASE'
+                                                | 'AUTHORIZATION',
+                                        )
+                                    }
                                 >
-                                    <option value="PURCHASE">PURCHASE (Direct Capture)</option>
-                                    <option value="AUTHORIZATION">AUTHORIZATION (Authorize Only)</option>
+                                    <option value="PURCHASE">
+                                        PURCHASE (Direct Capture)
+                                    </option>
+                                    <option value="AUTHORIZATION">
+                                        AUTHORIZATION (Authorize Only)
+                                    </option>
                                 </NativeSelect>
                             </FormField>
                         </CardContent>
@@ -278,7 +354,10 @@ export default function AmazonPaymentServicesSettingsPage({
                     <Card>
                         <CardHeader>
                             <CardTitle>Checkout & Display</CardTitle>
-                            <CardDescription>Configure how Amazon Payment Services appears to shoppers.</CardDescription>
+                            <CardDescription>
+                                Configure how Amazon Payment Services appears to
+                                shoppers.
+                            </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4 md:grid-cols-2">
                             <FormField
@@ -290,7 +369,9 @@ export default function AmazonPaymentServicesSettingsPage({
                                 <Input
                                     id="label"
                                     value={form.data.label}
-                                    onChange={(e) => form.setData('label', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData('label', e.target.value)
+                                    }
                                 />
                             </FormField>
 
@@ -303,7 +384,12 @@ export default function AmazonPaymentServicesSettingsPage({
                                 <NativeSelect
                                     id="language"
                                     value={form.data.language}
-                                    onChange={(e) => form.setData('language', e.target.value as 'en' | 'ar')}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'language',
+                                            e.target.value as 'en' | 'ar',
+                                        )
+                                    }
                                 >
                                     <option value="en">English</option>
                                     <option value="ar">Arabic (العربية)</option>
@@ -314,13 +400,20 @@ export default function AmazonPaymentServicesSettingsPage({
                                 <Checkbox
                                     id="test_mode"
                                     checked={form.data.test_mode}
-                                    onCheckedChange={(checked) => form.setData('test_mode', Boolean(checked))}
+                                    onCheckedChange={(checked) =>
+                                        form.setData(
+                                            'test_mode',
+                                            Boolean(checked),
+                                        )
+                                    }
                                 />
                                 <label
                                     htmlFor="test_mode"
-                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                 >
-                                    Sandbox / Test Mode (uses sbcheckout.payfort.com and test card numbers)
+                                    Sandbox / Test Mode (uses
+                                    sbcheckout.payfort.com and test card
+                                    numbers)
                                 </label>
                             </div>
 
@@ -328,11 +421,16 @@ export default function AmazonPaymentServicesSettingsPage({
                                 <Checkbox
                                     id="enabled"
                                     checked={form.data.enabled}
-                                    onCheckedChange={(checked) => form.setData('enabled', Boolean(checked))}
+                                    onCheckedChange={(checked) =>
+                                        form.setData(
+                                            'enabled',
+                                            Boolean(checked),
+                                        )
+                                    }
                                 />
                                 <label
                                     htmlFor="enabled"
-                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                 >
                                     Enable Amazon Payment Services at checkout
                                 </label>
@@ -344,12 +442,16 @@ export default function AmazonPaymentServicesSettingsPage({
                         <CardHeader>
                             <CardTitle>Supported Currencies</CardTitle>
                             <CardDescription>
-                                Enable currencies supported by your merchant account. Amounts will be correctly converted to minor currency units.
+                                Enable currencies supported by your merchant
+                                account. Amounts will be correctly converted to
+                                minor currency units.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
                             {COMMON_CURRENCIES.map((c) => {
-                                const active = form.data.currencies.includes(c.code);
+                                const active = form.data.currencies.includes(
+                                    c.code,
+                                );
                                 return (
                                     <label
                                         key={c.code}
@@ -357,9 +459,13 @@ export default function AmazonPaymentServicesSettingsPage({
                                     >
                                         <Checkbox
                                             checked={active}
-                                            onCheckedChange={() => toggleCurrency(c.code)}
+                                            onCheckedChange={() =>
+                                                toggleCurrency(c.code)
+                                            }
                                         />
-                                        <span className="text-sm font-medium">{c.label}</span>
+                                        <span className="text-sm font-medium">
+                                            {c.label}
+                                        </span>
                                     </label>
                                 );
                             })}
@@ -370,36 +476,49 @@ export default function AmazonPaymentServicesSettingsPage({
                         <CardHeader>
                             <CardTitle>Webhook & Return URLs</CardTitle>
                             <CardDescription>
-                                Copy these URLs into your Amazon Payment Services back-office.
+                                Copy these URLs into your Amazon Payment
+                                Services back-office.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4">
                             <div>
-                                <label className="text-xs font-semibold uppercase text-muted-foreground">
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">
                                     Return / Response URL (Feedback URL)
                                 </label>
                                 <div className="mt-1 flex items-center gap-2">
-                                    <Input readOnly value={responseUrl} className="font-mono text-xs" />
+                                    <Input
+                                        readOnly
+                                        value={responseUrl}
+                                        className="font-mono text-xs"
+                                    />
                                     <Button
                                         type="button"
                                         variant="outline"
                                         size="icon"
-                                        onClick={() => copyResponse(responseUrl)}
+                                        onClick={() =>
+                                            copyResponse(responseUrl)
+                                        }
                                     >
                                         <Copy className="size-4" />
                                     </Button>
                                 </div>
                                 <p className="mt-1 text-xs text-muted-foreground">
-                                    Set this as the <strong>Redirection Return URL</strong> in your APS Technical Settings.
+                                    Set this as the{' '}
+                                    <strong>Redirection Return URL</strong> in
+                                    your APS Technical Settings.
                                 </p>
                             </div>
 
                             <div>
-                                <label className="text-xs font-semibold uppercase text-muted-foreground">
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">
                                     Direct Transaction Feedback URL (Webhook)
                                 </label>
                                 <div className="mt-1 flex items-center gap-2">
-                                    <Input readOnly value={webhookUrl} className="font-mono text-xs" />
+                                    <Input
+                                        readOnly
+                                        value={webhookUrl}
+                                        className="font-mono text-xs"
+                                    />
                                     <Button
                                         type="button"
                                         variant="outline"
@@ -410,7 +529,12 @@ export default function AmazonPaymentServicesSettingsPage({
                                     </Button>
                                 </div>
                                 <p className="mt-1 text-xs text-muted-foreground">
-                                    Set this as the <strong>Direct Transaction Feedback (Server-to-Server) URL</strong> in your APS Notification Settings.
+                                    Set this as the{' '}
+                                    <strong>
+                                        Direct Transaction Feedback
+                                        (Server-to-Server) URL
+                                    </strong>{' '}
+                                    in your APS Notification Settings.
                                 </p>
                             </div>
                         </CardContent>

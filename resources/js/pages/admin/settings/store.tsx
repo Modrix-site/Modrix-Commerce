@@ -310,11 +310,13 @@ export default function StoreSettings({
                                                             )}
                                                         </NativeSelect>
                                                     </FormField>
-                                                    <div className="sm:col-span-2 border-t pt-4">
+                                                    <div className="border-t pt-4 sm:col-span-2">
                                                         <StoreExtraSettings
                                                             section="currencies"
                                                             profile={profile}
-                                                            countries={countries}
+                                                            countries={
+                                                                countries
+                                                            }
                                                             currencies={
                                                                 currencies
                                                             }

@@ -1,9 +1,7 @@
 {
     "name": "Collection campaign",
     "enabled_on": {
-        "templates": [
-            "collection"
-        ]
+        "templates": ["collection"]
     },
     "settings": [
         {

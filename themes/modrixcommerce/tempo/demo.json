@@ -14,9 +14,7 @@
             "stock": 10,
             "short_description": "Tempo collection",
             "description": "Optional demonstration product. Replace product details and confirm inventory before selling.",
-            "categories": [
-                "tempo-collection"
-            ],
+            "categories": ["tempo-collection"],
             "image": "assets/season.png"
         },
         {
@@ -27,9 +25,7 @@
             "stock": 10,
             "short_description": "Tempo collection",
             "description": "Optional demonstration product. Replace product details and confirm inventory before selling.",
-            "categories": [
-                "tempo-collection"
-            ],
+            "categories": ["tempo-collection"],
             "image": "assets/living.webp"
         },
         {
@@ -40,9 +36,7 @@
             "stock": 10,
             "short_description": "Tempo collection",
             "description": "Optional demonstration product. Replace product details and confirm inventory before selling.",
-            "categories": [
-                "tempo-collection"
-            ],
+            "categories": ["tempo-collection"],
             "image": "assets/active.webp"
         },
         {
@@ -53,9 +47,7 @@
             "stock": 10,
             "short_description": "Tempo collection",
             "description": "Optional demonstration product. Replace product details and confirm inventory before selling.",
-            "categories": [
-                "tempo-collection"
-            ],
+            "categories": ["tempo-collection"],
             "image": "assets/kids.webp"
         },
         {
@@ -66,9 +58,7 @@
             "stock": 10,
             "short_description": "Tempo collection",
             "description": "Optional demonstration product. Replace product details and confirm inventory before selling.",
-            "categories": [
-                "tempo-collection"
-            ],
+            "categories": ["tempo-collection"],
             "image": "assets/beauty.webp"
         }
     ]

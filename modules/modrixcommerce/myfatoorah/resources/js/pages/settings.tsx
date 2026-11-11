@@ -54,7 +54,10 @@ export default function MyFatoorahSettingsPage({
 
     const checks: [boolean, string][] = [
         [settings.has_api_key, 'MyFatoorah API Key saved encrypted'],
-        [settings.has_webhook_secret, 'Webhook secret configured for HMAC verification'],
+        [
+            settings.has_webhook_secret,
+            'Webhook secret configured for HMAC verification',
+        ],
         [publicWebhookUrl, 'Store is served over secure public HTTPS'],
         [settings.enabled, 'MyFatoorah enabled at checkout'],
     ];
@@ -79,11 +82,17 @@ export default function MyFatoorahSettingsPage({
                     actions={
                         <div className="flex items-center gap-2">
                             {settings.ready ? (
-                                <Badge variant="outline" className="border-emerald-500/40 text-emerald-600">
+                                <Badge
+                                    variant="outline"
+                                    className="border-emerald-500/40 text-emerald-600"
+                                >
                                     Ready
                                 </Badge>
                             ) : (
-                                <Badge variant="outline" className="text-muted-foreground">
+                                <Badge
+                                    variant="outline"
+                                    className="text-muted-foreground"
+                                >
                                     Incomplete
                                 </Badge>
                             )}
@@ -109,13 +118,17 @@ export default function MyFatoorahSettingsPage({
                                 : 'Set up MyFatoorah Payments'}
                         </CardTitle>
                         <CardDescription>
-                            Configure your API Token from the MyFatoorah Merchant Portal.
+                            Configure your API Token from the MyFatoorah
+                            Merchant Portal.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <ul className="grid gap-2 text-sm">
                             {checks.map(([done, label]) => (
-                                <li key={label} className="flex items-center gap-2">
+                                <li
+                                    key={label}
+                                    className="flex items-center gap-2"
+                                >
                                     {done ? (
                                         <CircleCheck className="size-4 shrink-0 text-primary" />
                                     ) : (
@@ -133,7 +146,8 @@ export default function MyFatoorahSettingsPage({
                         <CardHeader>
                             <CardTitle>Merchant Credentials</CardTitle>
                             <CardDescription>
-                                Found in your MyFatoorah Portal under Integration Settings / API Keys.
+                                Found in your MyFatoorah Portal under
+                                Integration Settings / API Keys.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4 md:grid-cols-2">
@@ -152,8 +166,14 @@ export default function MyFatoorahSettingsPage({
                                     type="password"
                                     autoComplete="new-password"
                                     value={form.data.api_key}
-                                    onChange={(e) => form.setData('api_key', e.target.value)}
-                                    placeholder={settings.has_api_key ? '••••••••••••••••' : 'MyFatoorah API Token'}
+                                    onChange={(e) =>
+                                        form.setData('api_key', e.target.value)
+                                    }
+                                    placeholder={
+                                        settings.has_api_key
+                                            ? '••••••••••••••••'
+                                            : 'MyFatoorah API Token'
+                                    }
                                 />
                             </FormField>
 
@@ -172,8 +192,17 @@ export default function MyFatoorahSettingsPage({
                                     type="password"
                                     autoComplete="new-password"
                                     value={form.data.webhook_secret}
-                                    onChange={(e) => form.setData('webhook_secret', e.target.value)}
-                                    placeholder={settings.has_webhook_secret ? '••••••••••••••••' : 'Webhook Secret'}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'webhook_secret',
+                                            e.target.value,
+                                        )
+                                    }
+                                    placeholder={
+                                        settings.has_webhook_secret
+                                            ? '••••••••••••••••'
+                                            : 'Webhook Secret'
+                                    }
                                 />
                             </FormField>
 
@@ -186,7 +215,9 @@ export default function MyFatoorahSettingsPage({
                                 <Input
                                     id="label"
                                     value={form.data.label}
-                                    onChange={(e) => form.setData('label', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData('label', e.target.value)
+                                    }
                                 />
                             </FormField>
 
@@ -204,7 +235,9 @@ export default function MyFatoorahSettingsPage({
                                             'currencies',
                                             e.target.value
                                                 .split(',')
-                                                .map((c) => c.trim().toUpperCase())
+                                                .map((c) =>
+                                                    c.trim().toUpperCase(),
+                                                )
                                                 .filter(Boolean),
                                         )
                                     }
@@ -216,10 +249,19 @@ export default function MyFatoorahSettingsPage({
                                     <Checkbox
                                         id="test_mode"
                                         checked={form.data.test_mode}
-                                        onCheckedChange={(checked) => form.setData('test_mode', Boolean(checked))}
+                                        onCheckedChange={(checked) =>
+                                            form.setData(
+                                                'test_mode',
+                                                Boolean(checked),
+                                            )
+                                        }
                                     />
-                                    <label htmlFor="test_mode" className="text-sm font-medium leading-none">
-                                        Enable Test Mode (submits transactions to apitest.myfatoorah.com)
+                                    <label
+                                        htmlFor="test_mode"
+                                        className="text-sm leading-none font-medium"
+                                    >
+                                        Enable Test Mode (submits transactions
+                                        to apitest.myfatoorah.com)
                                     </label>
                                 </div>
 
@@ -227,10 +269,19 @@ export default function MyFatoorahSettingsPage({
                                     <Checkbox
                                         id="enabled"
                                         checked={form.data.enabled}
-                                        onCheckedChange={(checked) => form.setData('enabled', Boolean(checked))}
+                                        onCheckedChange={(checked) =>
+                                            form.setData(
+                                                'enabled',
+                                                Boolean(checked),
+                                            )
+                                        }
                                     />
-                                    <label htmlFor="enabled" className="text-sm font-medium leading-none">
-                                        Enable MyFatoorah Payments for customer checkout
+                                    <label
+                                        htmlFor="enabled"
+                                        className="text-sm leading-none font-medium"
+                                    >
+                                        Enable MyFatoorah Payments for customer
+                                        checkout
                                     </label>
                                 </div>
                             </div>
@@ -241,21 +292,29 @@ export default function MyFatoorahSettingsPage({
                         <CardHeader>
                             <CardTitle>Return & Webhook URLs</CardTitle>
                             <CardDescription>
-                                Set these URLs in your MyFatoorah Portal or rely on automatic redirection.
+                                Set these URLs in your MyFatoorah Portal or rely
+                                on automatic redirection.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4">
                             <div>
-                                <label className="text-xs font-semibold uppercase text-muted-foreground">
-                                    Callback / Response URL (CallBackUrl / ErrorUrl)
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">
+                                    Callback / Response URL (CallBackUrl /
+                                    ErrorUrl)
                                 </label>
                                 <div className="mt-1 flex items-center gap-2">
-                                    <Input readOnly value={responseUrl} className="font-mono text-xs" />
+                                    <Input
+                                        readOnly
+                                        value={responseUrl}
+                                        className="font-mono text-xs"
+                                    />
                                     <Button
                                         type="button"
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => copyResponse(responseUrl)}
+                                        onClick={() =>
+                                            copyResponse(responseUrl)
+                                        }
                                     >
                                         <Copy className="size-4" />
                                     </Button>
@@ -263,11 +322,15 @@ export default function MyFatoorahSettingsPage({
                             </div>
 
                             <div>
-                                <label className="text-xs font-semibold uppercase text-muted-foreground">
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">
                                     Webhook Notification URL
                                 </label>
                                 <div className="mt-1 flex items-center gap-2">
-                                    <Input readOnly value={webhookUrl} className="font-mono text-xs" />
+                                    <Input
+                                        readOnly
+                                        value={webhookUrl}
+                                        className="font-mono text-xs"
+                                    />
                                     <Button
                                         type="button"
                                         variant="outline"

@@ -33,7 +33,9 @@ final class ExternalStorageSettings
     ];
 
     private const SECRET_ACCESS_KEY = 'external_storage.access_key';
+
     private const SECRET_SECRET_KEY = 'external_storage.secret_key';
+
     private const SECRET_API_TOKEN = 'external_storage.api_token';
 
     public function __construct(

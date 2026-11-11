@@ -63,9 +63,7 @@
         }
     ],
     "enabled_on": {
-        "groups": [
-            "header"
-        ]
+        "groups": ["header"]
     },
     "limit": 1,
     "max_blocks": 8

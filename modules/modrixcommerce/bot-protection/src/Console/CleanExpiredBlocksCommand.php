@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Cache;
 class CleanExpiredBlocksCommand extends Command
 {
     protected $signature = 'bot:clean-expired';
+
     protected $description = 'Remove expired temporary IP blocks';
 
     public function handle(): int

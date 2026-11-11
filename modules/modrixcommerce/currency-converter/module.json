@@ -16,10 +16,7 @@
         }
     },
     "provider": "EcoModular\\CurrencyConverter\\CurrencyConverterServiceProvider",
-    "capabilities": [
-        "settings",
-        "scheduled.tasks"
-    ],
+    "capabilities": ["settings", "scheduled.tasks"],
     "settings": [
         {
             "key": "currencies",

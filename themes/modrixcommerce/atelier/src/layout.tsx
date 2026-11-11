@@ -19,8 +19,12 @@ export default function Layout({ DefaultLayout, children }: ThemeLayoutProps) {
                     '--at-footer-size': `${theme?.settings?.footer_size ?? 12}px`,
                     '--at-button-radius': `${theme?.settings?.button_radius ?? 0}px`,
                     '--at-button-height': `${theme?.settings?.button_height ?? 46}px`,
-                    '--at-surface-sunken': String(theme?.settings?.surface_color ?? '#f1f0ed'),
-                    '--at-accent': String(theme?.settings?.accent_color ?? '#79513d'),
+                    '--at-surface-sunken': String(
+                        theme?.settings?.surface_color ?? '#f1f0ed',
+                    ),
+                    '--at-accent': String(
+                        theme?.settings?.accent_color ?? '#79513d',
+                    ),
                     '--at-brand': '#111111',
                     '--at-ink': '#171717',
                     '--at-ink-muted': '#666666',

@@ -22,13 +22,27 @@ export default function AmazonPaymentServicesHandoff({
             <Head title="Connecting to Amazon Payment Services" />
             <main className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center gap-4 px-4 py-16 text-center">
                 <Loader2 className="size-8 animate-spin text-primary" />
-                <h1 className="text-xl font-semibold">Connecting to Amazon Payment Services</h1>
+                <h1 className="text-xl font-semibold">
+                    Connecting to Amazon Payment Services
+                </h1>
                 <p className="text-sm text-muted-foreground">
-                    Order {orderNumber} is being prepared. You will be redirected to Amazon Payment Services shortly to complete your payment securely.
+                    Order {orderNumber} is being prepared. You will be
+                    redirected to Amazon Payment Services shortly to complete
+                    your payment securely.
                 </p>
-                <form ref={form} method="post" action={action} className="w-full">
+                <form
+                    ref={form}
+                    method="post"
+                    action={action}
+                    className="w-full"
+                >
                     {Object.entries(fields).map(([name, value]) => (
-                        <input key={name} type="hidden" name={name} value={value} />
+                        <input
+                            key={name}
+                            type="hidden"
+                            name={name}
+                            value={value}
+                        />
                     ))}
                     <noscript>
                         <button

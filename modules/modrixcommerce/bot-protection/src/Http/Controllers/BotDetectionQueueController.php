@@ -90,7 +90,7 @@ class BotDetectionQueueController extends Controller
             ['ip_address' => $ip],
             [
                 'label' => "Whitelisted from Queue (Event #{$event->id})",
-                'description' => "Marked as trusted visitor by " . (auth()->user()?->name ?? 'Admin'),
+                'description' => 'Marked as trusted visitor by '.(auth()->user()?->name ?? 'Admin'),
                 'created_by' => auth()->user()?->name ?? 'Admin',
             ]
         );

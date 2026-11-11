@@ -8,10 +8,8 @@ use App\Domains\Orders\Models\Order;
 use App\Domains\Payments\Contracts\PaymentGateway;
 use App\Domains\Payments\Gateway\InvalidWebhook;
 use App\Domains\Payments\Gateway\PaymentUpdateKind;
-use App\Domains\Payments\Gateway\RefundUpdate;
 use App\Domains\Payments\Models\Payment;
 use App\Domains\Payments\PaymentMethods;
-use App\Domains\Pricing\Money;
 use EcoModular\PhonePe\PhonePeGateway;
 use EcoModular\PhonePe\PhonePeSettings;
 use EcoModular\PhonePe\PhonePeSignature;
@@ -68,7 +66,7 @@ class PhonePeTest extends TestCase
         $this->assertStringEndsWith('###1', $getSign);
 
         $webhookPayload = json_encode(['response' => 'test_data']);
-        $webhookSig = hash('sha256', $webhookPayload . $saltKey) . '###1';
+        $webhookSig = hash('sha256', $webhookPayload.$saltKey).'###1';
 
         $this->assertTrue($this->signature->verifyWebhook($webhookPayload, $webhookSig, $saltKey, $saltIndex));
         $this->assertFalse($this->signature->verifyWebhook($webhookPayload, 'tampered###1', $saltKey, $saltIndex));
@@ -164,7 +162,7 @@ class PhonePeTest extends TestCase
 
         $session = $this->gateway->createSession($order, $payment, 'https://example.com/return', 'https://example.com/cancel');
 
-        $this->assertStringStartsWith('PHONEPE-' . $payment->id, $session->reference);
+        $this->assertStringStartsWith('PHONEPE-'.$payment->id, $session->reference);
         $this->assertSame('https://mercury-uat.phonepe.com/transact/pg?token=mock_phonepe_token_xyz', $session->redirectUrl);
     }
 
@@ -241,7 +239,7 @@ class PhonePeTest extends TestCase
         ];
 
         $payload = json_encode($eventData);
-        $xVerify = hash('sha256', $payload . $saltKey) . '###' . $saltIndex;
+        $xVerify = hash('sha256', $payload.$saltKey).'###'.$saltIndex;
 
         $verified = $this->gateway->verifyWebhook($payload, ['x-verify' => $xVerify]);
         $this->assertSame('PAYMENT_SUCCESS', $verified['code']);

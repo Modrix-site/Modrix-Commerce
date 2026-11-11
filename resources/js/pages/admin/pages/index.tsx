@@ -25,8 +25,7 @@ const filters = [
 
 export default function Pages({ pages }: { pages: Page[] }) {
     const [search, setSearch] = useState('');
-    const [filter, setFilter] =
-        useState<(typeof filters)[number]['id']>('all');
+    const [filter, setFilter] = useState<(typeof filters)[number]['id']>('all');
     const visible = pages.filter((page) => {
         const matchesSearch = `${page.title} ${page.slug}`
             .toLowerCase()

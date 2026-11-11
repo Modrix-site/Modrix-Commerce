@@ -44,7 +44,9 @@ export default function AdvancedSeoAdmin({
                     title="Search SEO"
                     description="Titles and descriptions are applied on every theme's home page, products, categories, brands and content pages."
                     actions={
-                        <Badge variant={state.enabled ? 'default' : 'secondary'}>
+                        <Badge
+                            variant={state.enabled ? 'default' : 'secondary'}
+                        >
                             {state.enabled ? 'On' : 'Off'}
                         </Badge>
                     }
@@ -54,8 +56,8 @@ export default function AdvancedSeoAdmin({
                     <CardHeader>
                         <CardTitle>Title patterns</CardTitle>
                         <CardDescription>
-                            A title saved on a product, category or page is
-                            kept when that option is on.
+                            A title saved on a product, category or page is kept
+                            when that option is on.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-3 text-sm">
@@ -63,7 +65,9 @@ export default function AdvancedSeoAdmin({
                             <span className="text-muted-foreground">
                                 Home page:{' '}
                             </span>
-                            <span className="font-medium">{state.homeTitle}</span>
+                            <span className="font-medium">
+                                {state.homeTitle}
+                            </span>
                         </p>
                         <p>
                             <span className="text-muted-foreground">
@@ -78,8 +82,15 @@ export default function AdvancedSeoAdmin({
                                 Newest product: {state.sampleProduct}
                             </p>
                         )}
-                        <Button variant="link" size="sm" className="w-fit px-0" asChild>
-                            <a href={settingsUrl}>Edit title and description patterns</a>
+                        <Button
+                            variant="link"
+                            size="sm"
+                            className="w-fit px-0"
+                            asChild
+                        >
+                            <a href={settingsUrl}>
+                                Edit title and description patterns
+                            </a>
                         </Button>
                     </CardContent>
                 </Card>
@@ -89,9 +100,10 @@ export default function AdvancedSeoAdmin({
                         <CardTitle>Google Search Console</CardTitle>
                         <CardDescription>
                             Submit {state.sitemapUrl} and ask Google to crawl
-                            the home page plus the {Math.min(state.productCount, 50)} newest
-                            products. The service account must be an owner of
-                            the property.
+                            the home page plus the{' '}
+                            {Math.min(state.productCount, 50)} newest products.
+                            The service account must be an owner of the
+                            property.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-4">
@@ -111,13 +123,20 @@ export default function AdvancedSeoAdmin({
                         </ul>
                         <div className="flex flex-wrap gap-2">
                             <Button variant="outline" asChild>
-                                <a href={state.sitemapUrl} target="_blank" rel="noreferrer">
+                                <a
+                                    href={state.sitemapUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                >
                                     <ExternalLink /> Open sitemap
                                 </a>
                             </Button>
                             <Form action={submitUrl} method="post">
                                 {({ processing }) => (
-                                    <Button type="submit" disabled={processing || !googleReady}>
+                                    <Button
+                                        type="submit"
+                                        disabled={processing || !googleReady}
+                                    >
                                         Submit sitemap to Google
                                     </Button>
                                 )}

@@ -23,20 +23,28 @@ export default function MainPage({
     if (!p) return null;
 
     const width = str(s.content_width, 'medium');
-    const maxW = width === 'narrow' ? 'max-w-2xl' : width === 'wide' ? 'max-w-5xl' : 'max-w-3xl';
+    const maxW =
+        width === 'narrow'
+            ? 'max-w-2xl'
+            : width === 'wide'
+              ? 'max-w-5xl'
+              : 'max-w-3xl';
 
     return (
         <article className="at-frame at-section">
             <div className={`mx-auto ${maxW}`}>
                 {s.show_title !== false && (
-                    <h1 className="text-3xl font-normal tracking-wide uppercase mb-8 border-b border-neutral-200 pb-4">
+                    <h1 className="mb-8 border-b border-neutral-200 pb-4 text-3xl font-normal tracking-wide uppercase">
                         {p.title}
                     </h1>
                 )}
 
                 <ProductDescription
-                    product={{ description_html: p.content_html, description: p.content }}
-                    className="prose prose-neutral max-w-none text-neutral-700 leading-relaxed space-y-4"
+                    product={{
+                        description_html: p.content_html,
+                        description: p.content,
+                    }}
+                    className="prose prose-neutral max-w-none space-y-4 leading-relaxed text-neutral-700"
                 />
 
                 {p.kind === 'faq' && p.faqs && (
@@ -46,7 +54,10 @@ export default function MainPage({
                                 <summary>{f.question}</summary>
                                 <div className="at-accordion-content">
                                     <ProductDescription
-                                        product={{ description_html: f.answer_html, description: f.answer }}
+                                        product={{
+                                            description_html: f.answer_html,
+                                            description: f.answer,
+                                        }}
                                     />
                                 </div>
                             </details>
@@ -57,4 +68,3 @@ export default function MainPage({
         </article>
     );
 }
-

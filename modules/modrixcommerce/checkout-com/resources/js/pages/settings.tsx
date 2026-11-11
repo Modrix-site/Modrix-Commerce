@@ -108,10 +108,10 @@ export default function CheckoutComSettingsPage({
                         <CardTitle>1. Checkout.com account</CardTitle>
                         <CardDescription>
                             In the Checkout.com dashboard, copy the secret API
-                            key and, for Flow, the public key. Use a sandbox
-                            key (sk_sbox_) with https://api.sandbox.checkout.com.
-                            A processing channel id (pc_) is optional; add it
-                            when the account has more than one channel.
+                            key and, for Flow, the public key. Use a sandbox key
+                            (sk_sbox_) with https://api.sandbox.checkout.com. A
+                            processing channel id (pc_) is optional; add it when
+                            the account has more than one channel.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -227,8 +227,8 @@ export default function CheckoutComSettingsPage({
                                         Accept Google Pay
                                     </label>
                                     <p className="text-sm text-muted-foreground">
-                                        Apple Pay and Google Pay appear when
-                                        the switch is on and the same method is
+                                        Apple Pay and Google Pay appear when the
+                                        switch is on and the same method is
                                         enabled for this processing channel in
                                         the Checkout.com dashboard. Register
                                         this store&apos;s domain for Apple Pay

@@ -63,13 +63,18 @@ type Props = {
     };
 };
 
-export default function SecurityIncidents({ incidents, summary, filters }: Props) {
+export default function SecurityIncidents({
+    incidents,
+    summary,
+    filters,
+}: Props) {
     const [search, setSearch] = useState(filters?.search || '');
     const [status, setStatus] = useState(filters?.status || '');
     const [severity, setSeverity] = useState(filters?.severity || '');
     const [type, setType] = useState(filters?.type || '');
 
-    const [selectedIncident, setSelectedIncident] = useState<IncidentItem | null>(null);
+    const [selectedIncident, setSelectedIncident] =
+        useState<IncidentItem | null>(null);
     const [newStatus, setNewStatus] = useState('resolved');
     const [resolutionNotes, setResolutionNotes] = useState('');
 
@@ -79,46 +84,94 @@ export default function SecurityIncidents({ incidents, summary, filters }: Props
         router.get(
             '/admin/m/modrixcommerce/login-monitoring/incidents',
             { search, status, severity, type },
-            { preserveState: true, replace: true }
+            { preserveState: true, replace: true },
         );
     };
 
     const handleUpdateStatus = () => {
         if (!selectedIncident) return;
-        router.post(`/admin/m/modrixcommerce/login-monitoring/incidents/${selectedIncident.id}/status`, {
-            status: newStatus,
-            resolution_notes: resolutionNotes,
-        }, {
-            onSuccess: () => {
-                setSelectedIncident(null);
-                setResolutionNotes('');
+        router.post(
+            `/admin/m/modrixcommerce/login-monitoring/incidents/${selectedIncident.id}/status`,
+            {
+                status: newStatus,
+                resolution_notes: resolutionNotes,
             },
-        });
+            {
+                onSuccess: () => {
+                    setSelectedIncident(null);
+                    setResolutionNotes('');
+                },
+            },
+        );
     };
 
     const severityBadge = (sev: string) => {
         switch (sev) {
             case 'critical':
-                return <Badge variant="destructive" className="bg-red-600 text-white font-semibold">Critical</Badge>;
+                return (
+                    <Badge
+                        variant="destructive"
+                        className="bg-red-600 font-semibold text-white"
+                    >
+                        Critical
+                    </Badge>
+                );
             case 'high':
-                return <Badge variant="destructive" className="bg-amber-600 text-white font-semibold">High</Badge>;
+                return (
+                    <Badge
+                        variant="destructive"
+                        className="bg-amber-600 font-semibold text-white"
+                    >
+                        High
+                    </Badge>
+                );
             case 'medium':
-                return <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 border-yellow-500/30">Medium</Badge>;
+                return (
+                    <Badge
+                        variant="secondary"
+                        className="border-yellow-500/30 bg-yellow-500/20 text-yellow-600 dark:text-yellow-400"
+                    >
+                        Medium
+                    </Badge>
+                );
             default:
-                return <Badge variant="outline" className="text-blue-600 border-blue-500/30">Low</Badge>;
+                return (
+                    <Badge
+                        variant="outline"
+                        className="border-blue-500/30 text-blue-600"
+                    >
+                        Low
+                    </Badge>
+                );
         }
     };
 
     const statusBadge = (st: string) => {
         switch (st) {
             case 'open':
-                return <Badge className="bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/20 font-medium">Open</Badge>;
+                return (
+                    <Badge className="border-rose-500/20 bg-rose-500/15 font-medium text-rose-600 dark:text-rose-400">
+                        Open
+                    </Badge>
+                );
             case 'investigating':
-                return <Badge className="bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/20 font-medium">Investigating</Badge>;
+                return (
+                    <Badge className="border-amber-500/20 bg-amber-500/15 font-medium text-amber-600 dark:text-amber-400">
+                        Investigating
+                    </Badge>
+                );
             case 'resolved':
-                return <Badge className="bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 font-medium">Resolved</Badge>;
+                return (
+                    <Badge className="border-emerald-500/20 bg-emerald-500/15 font-medium text-emerald-600 dark:text-emerald-400">
+                        Resolved
+                    </Badge>
+                );
             case 'dismissed':
-                return <Badge variant="outline" className="text-muted-foreground">Dismissed</Badge>;
+                return (
+                    <Badge variant="outline" className="text-muted-foreground">
+                        Dismissed
+                    </Badge>
+                );
             default:
                 return <Badge variant="outline">{st}</Badge>;
         }
@@ -136,51 +189,80 @@ export default function SecurityIncidents({ incidents, summary, filters }: Props
                 title="Security Incidents"
                 description="Investigate brute force, credential stuffing, and impossible travel authentication alerts."
                 actions={
-                    <Button variant="outline" size="sm" onClick={() => router.reload()} className="gap-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => router.reload()}
+                        className="gap-2"
+                    >
                         <RefreshCw className="h-4 w-4" /> Refresh
                     </Button>
                 }
             />
 
             {/* KPI Cards */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6">
+            <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <Card className="border border-border/60 shadow-sm">
-                    <CardContent className="p-4 flex items-center justify-between">
+                    <CardContent className="flex items-center justify-between p-4">
                         <div>
-                            <span className="text-xs font-semibold uppercase text-muted-foreground">Open Incidents</span>
-                            <div className="mt-1 text-2xl font-bold text-rose-600 dark:text-rose-400">{summary?.open || 0}</div>
+                            <span className="text-xs font-semibold text-muted-foreground uppercase">
+                                Open Incidents
+                            </span>
+                            <div className="mt-1 text-2xl font-bold text-rose-600 dark:text-rose-400">
+                                {summary?.open || 0}
+                            </div>
                         </div>
-                        <div className="rounded-lg bg-rose-500/10 p-2 text-rose-600"><AlertOctagon className="h-5 w-5" /></div>
+                        <div className="rounded-lg bg-rose-500/10 p-2 text-rose-600">
+                            <AlertOctagon className="h-5 w-5" />
+                        </div>
                     </CardContent>
                 </Card>
 
                 <Card className="border border-border/60 shadow-sm">
-                    <CardContent className="p-4 flex items-center justify-between">
+                    <CardContent className="flex items-center justify-between p-4">
                         <div>
-                            <span className="text-xs font-semibold uppercase text-muted-foreground">Under Investigation</span>
-                            <div className="mt-1 text-2xl font-bold text-amber-600 dark:text-amber-400">{summary?.investigating || 0}</div>
+                            <span className="text-xs font-semibold text-muted-foreground uppercase">
+                                Under Investigation
+                            </span>
+                            <div className="mt-1 text-2xl font-bold text-amber-600 dark:text-amber-400">
+                                {summary?.investigating || 0}
+                            </div>
                         </div>
-                        <div className="rounded-lg bg-amber-500/10 p-2 text-amber-600"><Clock className="h-5 w-5" /></div>
+                        <div className="rounded-lg bg-amber-500/10 p-2 text-amber-600">
+                            <Clock className="h-5 w-5" />
+                        </div>
                     </CardContent>
                 </Card>
 
                 <Card className="border border-border/60 shadow-sm">
-                    <CardContent className="p-4 flex items-center justify-between">
+                    <CardContent className="flex items-center justify-between p-4">
                         <div>
-                            <span className="text-xs font-semibold uppercase text-muted-foreground">Resolved Incidents</span>
-                            <div className="mt-1 text-2xl font-bold text-emerald-600 dark:text-emerald-400">{summary?.resolved || 0}</div>
+                            <span className="text-xs font-semibold text-muted-foreground uppercase">
+                                Resolved Incidents
+                            </span>
+                            <div className="mt-1 text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                                {summary?.resolved || 0}
+                            </div>
                         </div>
-                        <div className="rounded-lg bg-emerald-500/10 p-2 text-emerald-600"><CheckCircle2 className="h-5 w-5" /></div>
+                        <div className="rounded-lg bg-emerald-500/10 p-2 text-emerald-600">
+                            <CheckCircle2 className="h-5 w-5" />
+                        </div>
                     </CardContent>
                 </Card>
 
                 <Card className="border border-border/60 shadow-sm">
-                    <CardContent className="p-4 flex items-center justify-between">
+                    <CardContent className="flex items-center justify-between p-4">
                         <div>
-                            <span className="text-xs font-semibold uppercase text-muted-foreground">Critical Severity</span>
-                            <div className="mt-1 text-2xl font-bold text-red-600">{summary?.critical || 0}</div>
+                            <span className="text-xs font-semibold text-muted-foreground uppercase">
+                                Critical Severity
+                            </span>
+                            <div className="mt-1 text-2xl font-bold text-red-600">
+                                {summary?.critical || 0}
+                            </div>
                         </div>
-                        <div className="rounded-lg bg-red-500/10 p-2 text-red-600"><ShieldAlert className="h-5 w-5" /></div>
+                        <div className="rounded-lg bg-red-500/10 p-2 text-red-600">
+                            <ShieldAlert className="h-5 w-5" />
+                        </div>
                     </CardContent>
                 </Card>
             </div>
@@ -188,16 +270,18 @@ export default function SecurityIncidents({ incidents, summary, filters }: Props
             {/* Filter Toolbar */}
             <Card className="mb-6 border border-border/60 shadow-sm">
                 <CardContent className="p-4">
-                    <div className="flex flex-col md:flex-row gap-3 items-center justify-between">
-                        <div className="flex flex-1 flex-wrap items-center gap-2 w-full md:w-auto">
-                            <div className="relative flex-1 min-w-[200px]">
-                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <div className="flex flex-col items-center justify-between gap-3 md:flex-row">
+                        <div className="flex w-full flex-1 flex-wrap items-center gap-2 md:w-auto">
+                            <div className="relative min-w-[200px] flex-1">
+                                <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     placeholder="Search by email, IP, description..."
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
-                                    onKeyDown={(e) => e.key === 'Enter' && handleFilter()}
-                                    className="pl-9 h-9 text-xs"
+                                    onKeyDown={(e) =>
+                                        e.key === 'Enter' && handleFilter()
+                                    }
+                                    className="h-9 pl-9 text-xs"
                                 />
                             </div>
 
@@ -208,7 +292,9 @@ export default function SecurityIncidents({ incidents, summary, filters }: Props
                             >
                                 <option value="">All Statuses</option>
                                 <option value="open">Open</option>
-                                <option value="investigating">Investigating</option>
+                                <option value="investigating">
+                                    Investigating
+                                </option>
                                 <option value="resolved">Resolved</option>
                                 <option value="dismissed">Dismissed</option>
                             </select>
@@ -232,13 +318,21 @@ export default function SecurityIncidents({ incidents, summary, filters }: Props
                             >
                                 <option value="">All Attack Types</option>
                                 <option value="brute_force">Brute Force</option>
-                                <option value="impossible_travel">Impossible Travel</option>
-                                <option value="credential_stuffing">Credential Stuffing</option>
+                                <option value="impossible_travel">
+                                    Impossible Travel
+                                </option>
+                                <option value="credential_stuffing">
+                                    Credential Stuffing
+                                </option>
                             </select>
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <Button size="sm" onClick={handleFilter} className="text-xs bg-emerald-600 hover:bg-emerald-700 text-white">
+                            <Button
+                                size="sm"
+                                onClick={handleFilter}
+                                className="bg-emerald-600 text-xs text-white hover:bg-emerald-700"
+                            >
                                 Filter
                             </Button>
                         </div>
@@ -252,58 +346,102 @@ export default function SecurityIncidents({ incidents, summary, filters }: Props
                     <div className="overflow-x-auto">
                         <table className="w-full text-xs">
                             <thead>
-                                <tr className="border-b border-border/60 bg-muted/40 text-muted-foreground text-left">
-                                    <th className="py-3 px-4 font-medium">Type</th>
-                                    <th className="py-3 px-4 font-medium">Severity</th>
-                                    <th className="py-3 px-4 font-medium">Status</th>
-                                    <th className="py-3 px-4 font-medium">Account / IP</th>
-                                    <th className="py-3 px-4 font-medium">Description</th>
-                                    <th className="py-3 px-4 font-medium">Logged</th>
-                                    <th className="py-3 px-4 font-medium text-right">Actions</th>
+                                <tr className="border-b border-border/60 bg-muted/40 text-left text-muted-foreground">
+                                    <th className="px-4 py-3 font-medium">
+                                        Type
+                                    </th>
+                                    <th className="px-4 py-3 font-medium">
+                                        Severity
+                                    </th>
+                                    <th className="px-4 py-3 font-medium">
+                                        Status
+                                    </th>
+                                    <th className="px-4 py-3 font-medium">
+                                        Account / IP
+                                    </th>
+                                    <th className="px-4 py-3 font-medium">
+                                        Description
+                                    </th>
+                                    <th className="px-4 py-3 font-medium">
+                                        Logged
+                                    </th>
+                                    <th className="px-4 py-3 text-right font-medium">
+                                        Actions
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border/30">
                                 {safeIncidents.length === 0 ? (
                                     <tr>
-                                        <td colSpan={7} className="py-12 text-center text-muted-foreground">
-                                            No security incidents matching filter criteria.
+                                        <td
+                                            colSpan={7}
+                                            className="py-12 text-center text-muted-foreground"
+                                        >
+                                            No security incidents matching
+                                            filter criteria.
                                         </td>
                                     </tr>
                                 ) : (
                                     safeIncidents.map((incident) => (
-                                        <tr key={incident.id} className="hover:bg-muted/30 transition">
-                                            <td className="py-3.5 px-4 font-medium text-foreground">
-                                                {formatType(incident.incident_type)}
+                                        <tr
+                                            key={incident.id}
+                                            className="transition hover:bg-muted/30"
+                                        >
+                                            <td className="px-4 py-3.5 font-medium text-foreground">
+                                                {formatType(
+                                                    incident.incident_type,
+                                                )}
                                             </td>
-                                            <td className="py-3.5 px-4">
-                                                {severityBadge(incident.severity)}
+                                            <td className="px-4 py-3.5">
+                                                {severityBadge(
+                                                    incident.severity,
+                                                )}
                                             </td>
-                                            <td className="py-3.5 px-4">
+                                            <td className="px-4 py-3.5">
                                                 {statusBadge(incident.status)}
                                             </td>
-                                            <td className="py-3.5 px-4">
-                                                <div className="font-semibold text-foreground">{incident.email}</div>
-                                                <div className="font-mono text-[11px] text-muted-foreground">{incident.ip_address}</div>
+                                            <td className="px-4 py-3.5">
+                                                <div className="font-semibold text-foreground">
+                                                    {incident.email}
+                                                </div>
+                                                <div className="font-mono text-[11px] text-muted-foreground">
+                                                    {incident.ip_address}
+                                                </div>
                                             </td>
-                                            <td className="py-3.5 px-4 max-w-sm">
-                                                <div className="line-clamp-2 text-foreground font-medium">{incident.description}</div>
+                                            <td className="max-w-sm px-4 py-3.5">
+                                                <div className="line-clamp-2 font-medium text-foreground">
+                                                    {incident.description}
+                                                </div>
                                                 {incident.resolved_by && (
-                                                    <div className="text-[10px] text-emerald-600 mt-0.5">
-                                                        Resolved by {incident.resolved_by} on {incident.resolved_at}
+                                                    <div className="mt-0.5 text-[10px] text-emerald-600">
+                                                        Resolved by{' '}
+                                                        {incident.resolved_by}{' '}
+                                                        on{' '}
+                                                        {incident.resolved_at}
                                                     </div>
                                                 )}
                                             </td>
-                                            <td className="py-3.5 px-4 text-muted-foreground whitespace-nowrap">
+                                            <td className="px-4 py-3.5 whitespace-nowrap text-muted-foreground">
                                                 {incident.created_at}
                                             </td>
-                                            <td className="py-3.5 px-4 text-right">
+                                            <td className="px-4 py-3.5 text-right">
                                                 <Button
                                                     size="sm"
                                                     variant="outline"
                                                     onClick={() => {
-                                                        setSelectedIncident(incident);
-                                                        setNewStatus(incident.status === 'open' ? 'resolved' : incident.status);
-                                                        setResolutionNotes(incident.resolution_notes || '');
+                                                        setSelectedIncident(
+                                                            incident,
+                                                        );
+                                                        setNewStatus(
+                                                            incident.status ===
+                                                                'open'
+                                                                ? 'resolved'
+                                                                : incident.status,
+                                                        );
+                                                        setResolutionNotes(
+                                                            incident.resolution_notes ||
+                                                                '',
+                                                        );
                                                     }}
                                                     className="h-7 px-2.5 text-xs"
                                                 >
@@ -319,16 +457,20 @@ export default function SecurityIncidents({ incidents, summary, filters }: Props
 
                     {/* Pagination */}
                     {incidents && incidents.last_page > 1 && (
-                        <div className="flex items-center justify-between p-4 border-t border-border/50 text-xs">
+                        <div className="flex items-center justify-between border-t border-border/50 p-4 text-xs">
                             <span className="text-muted-foreground">
-                                Page {incidents.current_page} of {incidents.last_page} ({incidents.total} total incidents)
+                                Page {incidents.current_page} of{' '}
+                                {incidents.last_page} ({incidents.total} total
+                                incidents)
                             </span>
                             <div className="flex items-center gap-2">
                                 {incidents.prev_page_url && (
                                     <Button
                                         size="sm"
                                         variant="outline"
-                                        onClick={() => router.get(incidents.prev_page_url!)}
+                                        onClick={() =>
+                                            router.get(incidents.prev_page_url!)
+                                        }
                                         className="h-7 text-xs"
                                     >
                                         Previous
@@ -338,7 +480,9 @@ export default function SecurityIncidents({ incidents, summary, filters }: Props
                                     <Button
                                         size="sm"
                                         variant="outline"
-                                        onClick={() => router.get(incidents.next_page_url!)}
+                                        onClick={() =>
+                                            router.get(incidents.next_page_url!)
+                                        }
                                         className="h-7 text-xs"
                                     >
                                         Next
@@ -352,66 +496,110 @@ export default function SecurityIncidents({ incidents, summary, filters }: Props
 
             {/* Manage Incident Modal */}
             {selectedIncident && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
                     <div className="relative w-full max-w-lg rounded-xl border border-border bg-card p-6 shadow-2xl">
-                        <div className="flex items-center justify-between border-b border-border/60 pb-3 mb-4">
+                        <div className="mb-4 flex items-center justify-between border-b border-border/60 pb-3">
                             <div>
-                                <h3 className="font-semibold text-base flex items-center gap-2">
+                                <h3 className="flex items-center gap-2 text-base font-semibold">
                                     <ShieldAlert className="h-4 w-4 text-emerald-600" />
                                     Manage Incident #{selectedIncident.id}
                                 </h3>
-                                <p className="text-xs text-muted-foreground font-mono mt-0.5">{selectedIncident.uuid}</p>
+                                <p className="mt-0.5 font-mono text-xs text-muted-foreground">
+                                    {selectedIncident.uuid}
+                                </p>
                             </div>
-                            <Button size="sm" variant="ghost" onClick={() => setSelectedIncident(null)}>
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => setSelectedIncident(null)}
+                            >
                                 Close
                             </Button>
                         </div>
 
                         <div className="space-y-4 text-xs">
                             <div>
-                                <span className="font-semibold text-muted-foreground">Alert Summary:</span>
-                                <p className="font-medium text-foreground text-sm mt-1">{selectedIncident.description}</p>
+                                <span className="font-semibold text-muted-foreground">
+                                    Alert Summary:
+                                </span>
+                                <p className="mt-1 text-sm font-medium text-foreground">
+                                    {selectedIncident.description}
+                                </p>
                             </div>
 
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                    <span className="text-muted-foreground">Attack Type:</span>
-                                    <p className="font-medium text-foreground">{formatType(selectedIncident.incident_type)}</p>
+                                    <span className="text-muted-foreground">
+                                        Attack Type:
+                                    </span>
+                                    <p className="font-medium text-foreground">
+                                        {formatType(
+                                            selectedIncident.incident_type,
+                                        )}
+                                    </p>
                                 </div>
                                 <div>
-                                    <span className="text-muted-foreground">Severity:</span>
-                                    <div>{severityBadge(selectedIncident.severity)}</div>
+                                    <span className="text-muted-foreground">
+                                        Severity:
+                                    </span>
+                                    <div>
+                                        {severityBadge(
+                                            selectedIncident.severity,
+                                        )}
+                                    </div>
                                 </div>
                                 <div>
-                                    <span className="text-muted-foreground">Account:</span>
-                                    <p className="font-medium text-foreground">{selectedIncident.email}</p>
+                                    <span className="text-muted-foreground">
+                                        Account:
+                                    </span>
+                                    <p className="font-medium text-foreground">
+                                        {selectedIncident.email}
+                                    </p>
                                 </div>
                                 <div>
-                                    <span className="text-muted-foreground">Origin IP:</span>
-                                    <p className="font-mono font-medium">{selectedIncident.ip_address}</p>
+                                    <span className="text-muted-foreground">
+                                        Origin IP:
+                                    </span>
+                                    <p className="font-mono font-medium">
+                                        {selectedIncident.ip_address}
+                                    </p>
                                 </div>
                             </div>
 
                             <div className="space-y-1.5 border-t border-border/40 pt-3">
-                                <label className="font-semibold text-foreground">Update Incident Status:</label>
+                                <label className="font-semibold text-foreground">
+                                    Update Incident Status:
+                                </label>
                                 <select
                                     value={newStatus}
-                                    onChange={(e) => setNewStatus(e.target.value)}
-                                    className="w-full h-9 rounded-md border border-input bg-background px-3 text-xs"
+                                    onChange={(e) =>
+                                        setNewStatus(e.target.value)
+                                    }
+                                    className="h-9 w-full rounded-md border border-input bg-background px-3 text-xs"
                                 >
-                                    <option value="open">Open (Unresolved)</option>
-                                    <option value="investigating">Investigating</option>
+                                    <option value="open">
+                                        Open (Unresolved)
+                                    </option>
+                                    <option value="investigating">
+                                        Investigating
+                                    </option>
                                     <option value="resolved">Resolved</option>
-                                    <option value="dismissed">Dismissed (False Positive)</option>
+                                    <option value="dismissed">
+                                        Dismissed (False Positive)
+                                    </option>
                                 </select>
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="font-semibold text-foreground">Resolution Notes & Findings:</label>
+                                <label className="font-semibold text-foreground">
+                                    Resolution Notes & Findings:
+                                </label>
                                 <textarea
                                     rows={3}
                                     value={resolutionNotes}
-                                    onChange={(e) => setResolutionNotes(e.target.value)}
+                                    onChange={(e) =>
+                                        setResolutionNotes(e.target.value)
+                                    }
                                     placeholder="Document merchant findings, verification steps taken, or root cause..."
                                     className="w-full rounded-md border border-input bg-background p-2.5 text-xs"
                                 />
@@ -419,10 +607,18 @@ export default function SecurityIncidents({ incidents, summary, filters }: Props
                         </div>
 
                         <div className="mt-6 flex items-center justify-end gap-2 border-t border-border/60 pt-4">
-                            <Button size="sm" variant="ghost" onClick={() => setSelectedIncident(null)}>
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => setSelectedIncident(null)}
+                            >
                                 Cancel
                             </Button>
-                            <Button size="sm" onClick={handleUpdateStatus} className="bg-emerald-600 hover:bg-emerald-700 text-white">
+                            <Button
+                                size="sm"
+                                onClick={handleUpdateStatus}
+                                className="bg-emerald-600 text-white hover:bg-emerald-700"
+                            >
                                 Save Status
                             </Button>
                         </div>

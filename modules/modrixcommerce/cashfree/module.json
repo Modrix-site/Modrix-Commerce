@@ -31,9 +31,7 @@
         "pages": "resources/js/pages"
     },
     "content_security": {
-        "script-src": [
-            "https://sdk.cashfree.com"
-        ],
+        "script-src": ["https://sdk.cashfree.com"],
         "frame-src": [
             "https://sandbox.cashfree.com",
             "https://api.cashfree.com"

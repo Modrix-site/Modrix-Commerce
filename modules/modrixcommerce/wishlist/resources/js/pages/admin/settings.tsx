@@ -3,7 +3,13 @@ import { ArrowLeft, Save } from 'lucide-react';
 import { FormEvent } from 'react';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -81,7 +87,8 @@ export default function WishlistSettingsPage({ settings, updateUrl }: Props) {
                         <CardHeader>
                             <CardTitle>Storefront Options</CardTitle>
                             <CardDescription>
-                                Manage how customers interact with wishlists on your store.
+                                Manage how customers interact with wishlists on
+                                your store.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4">
@@ -89,10 +96,19 @@ export default function WishlistSettingsPage({ settings, updateUrl }: Props) {
                                 <Checkbox
                                     id="enabled"
                                     checked={form.data.enabled}
-                                    onCheckedChange={(checked) => form.setData('enabled', Boolean(checked))}
+                                    onCheckedChange={(checked) =>
+                                        form.setData(
+                                            'enabled',
+                                            Boolean(checked),
+                                        )
+                                    }
                                 />
-                                <Label htmlFor="enabled" className="text-sm font-medium">
-                                    Enable Wishlist functionality across the store
+                                <Label
+                                    htmlFor="enabled"
+                                    className="text-sm font-medium"
+                                >
+                                    Enable Wishlist functionality across the
+                                    store
                                 </Label>
                             </div>
 
@@ -101,11 +117,18 @@ export default function WishlistSettingsPage({ settings, updateUrl }: Props) {
                                     id="require_login"
                                     checked={form.data.require_login}
                                     onCheckedChange={(checked) =>
-                                        form.setData('require_login', Boolean(checked))
+                                        form.setData(
+                                            'require_login',
+                                            Boolean(checked),
+                                        )
                                     }
                                 />
-                                <Label htmlFor="require_login" className="text-sm font-medium">
-                                    Require customer login before saving items (disables guest sessions)
+                                <Label
+                                    htmlFor="require_login"
+                                    className="text-sm font-medium"
+                                >
+                                    Require customer login before saving items
+                                    (disables guest sessions)
                                 </Label>
                             </div>
 
@@ -114,11 +137,18 @@ export default function WishlistSettingsPage({ settings, updateUrl }: Props) {
                                     id="allow_sharing"
                                     checked={form.data.allow_sharing}
                                     onCheckedChange={(checked) =>
-                                        form.setData('allow_sharing', Boolean(checked))
+                                        form.setData(
+                                            'allow_sharing',
+                                            Boolean(checked),
+                                        )
                                     }
                                 />
-                                <Label htmlFor="allow_sharing" className="text-sm font-medium">
-                                    Allow shoppers to generate public shareable links for their wishlist
+                                <Label
+                                    htmlFor="allow_sharing"
+                                    className="text-sm font-medium"
+                                >
+                                    Allow shoppers to generate public shareable
+                                    links for their wishlist
                                 </Label>
                             </div>
 
@@ -131,7 +161,12 @@ export default function WishlistSettingsPage({ settings, updateUrl }: Props) {
                                 <Input
                                     id="button_label"
                                     value={form.data.button_label}
-                                    onChange={(e) => form.setData('button_label', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'button_label',
+                                            e.target.value,
+                                        )
+                                    }
                                     required
                                 />
                             </FormField>
@@ -147,7 +182,7 @@ export default function WishlistSettingsPage({ settings, updateUrl }: Props) {
                         <Button
                             type="submit"
                             disabled={form.processing}
-                            className="bg-rose-600 hover:bg-rose-700 text-white"
+                            className="bg-rose-600 text-white hover:bg-rose-700"
                         >
                             <Save className="mr-2 size-4" />
                             Save Settings

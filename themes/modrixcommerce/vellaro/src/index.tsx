@@ -1,14 +1,14 @@
-import { Head } from "@inertiajs/react";
-import { StoreMenuLink as Link } from "@/components/storefront/footer-menus";
-import { ExtensionSlot } from "@/components/extensions/extension-slot";
-import type { HomeProps } from "@/pages/storefront/home";
-import { VellaroRail, useVellaro } from "./components";
-import "./style.css";
+import { Head } from '@inertiajs/react';
+import { StoreMenuLink as Link } from '@/components/storefront/footer-menus';
+import { ExtensionSlot } from '@/components/extensions/extension-slot';
+import type { HomeProps } from '@/pages/storefront/home';
+import { VellaroRail, useVellaro } from './components';
+import './style.css';
 
 export default function VellaroIndex({ sections, slots }: HomeProps) {
     const { storefront, text, show } = useVellaro();
     const rows = sections.filter(
-        (section) => section.type === "featured_products",
+        (section) => section.type === 'featured_products',
     );
     const campaign = (i: number) =>
         show(`banner_${i}_show`) && (
@@ -16,8 +16,8 @@ export default function VellaroIndex({ sections, slots }: HomeProps) {
                 className="vellaro-campaign"
                 key={`campaign-${i}`}
                 style={{
-                    minHeight: `${text("banner_height", "288")}px`,
-                    backgroundImage: `linear-gradient(90deg,rgba(255,255,255,${Number(text("banner_overlay", "95")) / 100}),rgba(255,255,255,.6),transparent),url("${text(`banner_${i}_image`)}")`,
+                    minHeight: `${text('banner_height', '288')}px`,
+                    backgroundImage: `linear-gradient(90deg,rgba(255,255,255,${Number(text('banner_overlay', '95')) / 100}),rgba(255,255,255,.6),transparent),url("${text(`banner_${i}_image`)}")`,
                 }}
             >
                 <div>
@@ -29,9 +29,9 @@ export default function VellaroIndex({ sections, slots }: HomeProps) {
                     <p>{text(`banner_${i}_text`)}</p>
                     <Link
                         className="vellaro-primary"
-                        href={text(`banner_${i}_link`, "/search")}
+                        href={text(`banner_${i}_link`, '/search')}
                     >
-                        {text(`banner_${i}_button`, "Explore collection")}
+                        {text(`banner_${i}_button`, 'Explore collection')}
                     </Link>
                 </div>
             </section>
@@ -48,7 +48,7 @@ export default function VellaroIndex({ sections, slots }: HomeProps) {
         <>
             <Head
                 title={
-                    storefront?.seoTitle || storefront?.storeName || "Vellaro"
+                    storefront?.seoTitle || storefront?.storeName || 'Vellaro'
                 }
             />
             <div className="vellaro-home vellaro-wrap">
@@ -58,16 +58,16 @@ export default function VellaroIndex({ sections, slots }: HomeProps) {
                 {rail(1)}
                 {campaign(3)}
                 {rail(2)}
-                {show("show_collections") && (
+                {show('show_collections') && (
                     <section className="vellaro-collections">
-                        <h2>{text("collections_heading")}</h2>
+                        <h2>{text('collections_heading')}</h2>
                         <div>
                             {[1, 2, 3, 4].map((i) => (
                                 <Link
                                     key={i}
                                     href={text(
                                         `collection_${i}_link`,
-                                        "/search",
+                                        '/search',
                                     )}
                                 >
                                     <img
@@ -88,7 +88,7 @@ export default function VellaroIndex({ sections, slots }: HomeProps) {
                 {campaign(6)}
                 <ExtensionSlot
                     items={slots.filter(
-                        (item) => !item.component.includes("newsletter"),
+                        (item) => !item.component.includes('newsletter'),
                     )}
                 />
             </div>

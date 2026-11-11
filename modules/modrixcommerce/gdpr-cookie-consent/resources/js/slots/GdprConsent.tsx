@@ -73,7 +73,10 @@ export default function GdprConsent({
     const [analytics, setAnalytics] = useState(false);
     const [marketing, setMarketing] = useState(false);
 
-    const submit = (decision: Decision, extra?: { analytics: boolean; marketing: boolean }) => {
+    const submit = (
+        decision: Decision,
+        extra?: { analytics: boolean; marketing: boolean },
+    ) => {
         const token = randomToken();
         const form = new FormData();
         form.set('decision', decision);
@@ -86,7 +89,10 @@ export default function GdprConsent({
 
         fetch(storeUrl, {
             method: 'POST',
-            headers: { 'X-Requested-With': 'XMLHttpRequest', Accept: 'application/json' },
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                Accept: 'application/json',
+            },
             body: form,
         })
             .then((response) => (response.ok ? response.json() : null))
@@ -112,55 +118,84 @@ export default function GdprConsent({
             >
                 {customizing ? (
                     <>
-                        <h2 id="gdpr-consent-title" className="text-lg font-semibold tracking-tight">
+                        <h2
+                            id="gdpr-consent-title"
+                            className="text-lg font-semibold tracking-tight"
+                        >
                             {title}
                         </h2>
                         <div className="grid gap-3 text-sm">
                             <label className="flex items-start gap-2 text-muted-foreground">
                                 <Checkbox checked disabled />
-                                <span>{essentialText || 'Essential — always on.'}</span>
+                                <span>
+                                    {essentialText || 'Essential — always on.'}
+                                </span>
                             </label>
                             <label className="flex items-start gap-2">
                                 <Checkbox
                                     checked={analytics}
-                                    onCheckedChange={(v) => setAnalytics(v === true)}
+                                    onCheckedChange={(v) =>
+                                        setAnalytics(v === true)
+                                    }
                                 />
                                 <span>{analyticsText || 'Analytics'}</span>
                             </label>
                             <label className="flex items-start gap-2">
                                 <Checkbox
                                     checked={marketing}
-                                    onCheckedChange={(v) => setMarketing(v === true)}
+                                    onCheckedChange={(v) =>
+                                        setMarketing(v === true)
+                                    }
                                 />
                                 <span>{marketingText || 'Marketing'}</span>
                             </label>
                         </div>
                         <div className="flex flex-wrap justify-end gap-2">
-                            <Button variant="outline" onClick={() => setCustomizing(false)}>
+                            <Button
+                                variant="outline"
+                                onClick={() => setCustomizing(false)}
+                            >
                                 Back
                             </Button>
-                            <Button onClick={() => submit('customize', { analytics, marketing })}>
+                            <Button
+                                onClick={() =>
+                                    submit('customize', {
+                                        analytics,
+                                        marketing,
+                                    })
+                                }
+                            >
                                 {customizeLabel || 'Save choices'}
                             </Button>
                         </div>
                     </>
                 ) : (
                     <>
-                        <h2 id="gdpr-consent-title" className="text-lg font-semibold tracking-tight">
+                        <h2
+                            id="gdpr-consent-title"
+                            className="text-lg font-semibold tracking-tight"
+                        >
                             {title}
                         </h2>
-                        {body && <p className="text-sm text-muted-foreground">{body}</p>}
+                        {body && (
+                            <p className="text-sm text-muted-foreground">
+                                {body}
+                            </p>
+                        )}
                         {privacyUrl && (
                             <a
                                 href={privacyUrl}
-                                className="text-sm font-medium underline underline-offset-2 text-foreground/80 hover:text-foreground"
+                                className="text-sm font-medium text-foreground/80 underline underline-offset-2 hover:text-foreground"
                             >
                                 Privacy policy
                             </a>
                         )}
                         <div className="flex flex-wrap justify-end gap-2">
                             {allowCustomize && (
-                                <Button variant="outline" onClick={() => setCustomizing(true)}>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setCustomizing(true)}
+                                >
                                     {customizeLabel || 'Customize'}
                                 </Button>
                             )}
@@ -170,7 +205,9 @@ export default function GdprConsent({
                             >
                                 {rejectLabel || 'Reject'}
                             </Button>
-                            <Button onClick={() => submit('accept')}>{acceptLabel || 'Accept all'}</Button>
+                            <Button onClick={() => submit('accept')}>
+                                {acceptLabel || 'Accept all'}
+                            </Button>
                         </div>
                     </>
                 )}

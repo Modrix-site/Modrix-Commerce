@@ -1,21 +1,21 @@
-import { Form, Head } from "@inertiajs/react";
-import { PlaceSlot } from "@/components/extensions/place-slot";
-import { ImageOff } from "lucide-react";
-import CartController from "@/actions/App/Http/Controllers/Storefront/CartController";
-import { StoreMenuLink as Link } from "@/components/storefront/footer-menus";
-import { VariantSelector } from "@/components/storefront/variant-selector";
-import { ExtensionSlot } from "@/components/extensions/extension-slot";
-import { BuyNowButton } from "@/components/storefront/buy-now-button";
-import { StickyAddToCart } from "@/components/storefront/sticky-add-to-cart";
-import { ProductDescription } from "@/components/storefront/product-description";
-import { SaleNotice } from "@/components/storefront/sale-notice";
-import InputError from "@/components/input-error";
-import { DescriptionPanels } from "@/components/storefront/page-settings/description-panels";
-import { StockNote } from "@/components/storefront/page-settings/stock-note";
-import { useStoreSettings } from "@/hooks/use-store-settings";
-import type { ThemeProductProps } from "@/lib/theme-pages";
-import { VoltoraRail, useVoltora } from "./components";
-import "./style.css";
+import { Form, Head } from '@inertiajs/react';
+import { PlaceSlot } from '@/components/extensions/place-slot';
+import { ImageOff } from 'lucide-react';
+import CartController from '@/actions/App/Http/Controllers/Storefront/CartController';
+import { StoreMenuLink as Link } from '@/components/storefront/footer-menus';
+import { VariantSelector } from '@/components/storefront/variant-selector';
+import { ExtensionSlot } from '@/components/extensions/extension-slot';
+import { BuyNowButton } from '@/components/storefront/buy-now-button';
+import { StickyAddToCart } from '@/components/storefront/sticky-add-to-cart';
+import { ProductDescription } from '@/components/storefront/product-description';
+import { SaleNotice } from '@/components/storefront/sale-notice';
+import InputError from '@/components/input-error';
+import { DescriptionPanels } from '@/components/storefront/page-settings/description-panels';
+import { StockNote } from '@/components/storefront/page-settings/stock-note';
+import { useStoreSettings } from '@/hooks/use-store-settings';
+import type { ThemeProductProps } from '@/lib/theme-pages';
+import { VoltoraRail, useVoltora } from './components';
+import './style.css';
 export default function VoltoraProduct({
     product,
     breadcrumbs,
@@ -48,7 +48,7 @@ export default function VoltoraProduct({
                     <Link href="/search">Catalogue</Link>
                     {breadcrumbs.map((item) => (
                         <span key={item.slug}>
-                            {" "}
+                            {' '}
                             / <Link href={`/c/${item.slug}`}>{item.name}</Link>
                         </span>
                     ))}
@@ -58,7 +58,7 @@ export default function VoltoraProduct({
                         <div
                             className="voltora-main-photo store-zoom"
                             style={{
-                                height: `${text("product_image_height", "420")}px`,
+                                height: `${text('product_image_height', '420')}px`,
                             }}
                         >
                             {image ? (
@@ -110,7 +110,7 @@ export default function VoltoraProduct({
                     </div>
                     <aside className="voltora-purchase">
                         <p className="voltora-product-price">
-                            {variant?.price?.formatted ?? "Select an option"}{" "}
+                            {variant?.price?.formatted ?? 'Select an option'}{' '}
                             {variant?.compare_at_price && (
                                 <s>{variant.compare_at_price.formatted}</s>
                             )}
@@ -118,10 +118,10 @@ export default function VoltoraProduct({
                         <p className="voltora-availability">
                             {variant?.purchasable
                                 ? variant.available !== null
-                                    ? "In stock"
-                                    : "Available to order"
+                                    ? 'In stock'
+                                    : 'Available to order'
                                 : variant?.message ||
-                                  "This combination is unavailable."}
+                                  'This combination is unavailable.'}
                         </p>
                         <StickyAddToCart
                             targetId="product-add-to-cart"
@@ -171,13 +171,13 @@ export default function VoltoraProduct({
                                             type="submit"
                                         >
                                             {processing
-                                                ? "ADDING…"
+                                                ? 'ADDING…'
                                                 : variant.purchasable
                                                   ? text(
-                                                        "product_button",
-                                                        "ADD TO BAG",
+                                                        'product_button',
+                                                        'ADD TO BAG',
                                                     )
-                                                  : "UNAVAILABLE"}
+                                                  : 'UNAVAILABLE'}
                                         </button>
                                         {variant.purchasable && (
                                             <BuyNowButton
@@ -186,8 +186,8 @@ export default function VoltoraProduct({
                                                 }
                                                 disabled={processing}
                                                 label={text(
-                                                    "product_buy_now_button",
-                                                    "Buy now",
+                                                    'product_buy_now_button',
+                                                    'Buy now',
                                                 )}
                                                 className="mt-3 rounded-none tracking-[0.12em]"
                                             />
@@ -215,9 +215,9 @@ export default function VoltoraProduct({
                             </small>
                         )}
                         {[
-                            ["Delivery", "delivery_text"],
-                            ["Payment", "payment_text"],
-                            ["Warranty", "warranty_text"],
+                            ['Delivery', 'delivery_text'],
+                            ['Payment', 'payment_text'],
+                            ['Warranty', 'warranty_text'],
                         ].map(([label, key]) => (
                             <details
                                 className="voltora-product-service"
@@ -228,11 +228,11 @@ export default function VoltoraProduct({
                             </details>
                         ))}
                         <p className="voltora-purchase-trust">
-                            {text("product_trust")}
+                            {text('product_trust')}
                         </p>
                     </aside>
                 </div>
-                {show("show_product_details") && (
+                {show('show_product_details') && (
                     <section className="voltora-product-details">
                         <h2>About this product</h2>
                         <div>
@@ -246,8 +246,8 @@ export default function VoltoraProduct({
                                     product.description
                                         ? [
                                               {
-                                                  id: "description",
-                                                  title: "Description",
+                                                  id: 'description',
+                                                  title: 'Description',
                                                   content: (
                                                       <ProductDescription
                                                           product={product}
@@ -275,7 +275,7 @@ export default function VoltoraProduct({
                 />
             )}
             <VoltoraRail
-                title={text("related_heading", "People also viewed")}
+                title={text('related_heading', 'People also viewed')}
                 products={related.filter((item) => item.id !== product.id)}
             />
         </>

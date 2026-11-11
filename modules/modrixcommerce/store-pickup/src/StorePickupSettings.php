@@ -12,7 +12,9 @@ final class StorePickupSettings
     public const PREFIX = 'store_pickup';
 
     public const COD_PAY_IN_STORE = 'pay_in_store';
+
     public const COD_HIDE = 'hide';
+
     public const COD_KEEP = 'keep';
 
     public function __construct(

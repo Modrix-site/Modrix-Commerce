@@ -20,74 +20,74 @@ Core design fields in `ThemeSchema`, one prefix per tab. `CustomizerTabs` maps `
 
 ### Header (`header.*`)
 
-| Key | Type | Options / range | Default |
-|---|---|---|---|
-| `header.logo_height` | integer (px) | 24–96 | theme |
-| `header.background` | color | | theme |
-| `header.text` | color | | theme |
-| `header.search` | select | `bar`, `icon` | theme |
-| `header.menu_align` | select | `left`, `center`, `right` | theme |
-| `header.cart_icon` | select | `bag`, `cart` | theme |
-| `header.cart_count` | boolean | | on |
-| `header.account_link` | boolean | | on |
+| Key                   | Type         | Options / range           | Default |
+| --------------------- | ------------ | ------------------------- | ------- |
+| `header.logo_height`  | integer (px) | 24–96                     | theme   |
+| `header.background`   | color        |                           | theme   |
+| `header.text`         | color        |                           | theme   |
+| `header.search`       | select       | `bar`, `icon`             | theme   |
+| `header.menu_align`   | select       | `left`, `center`, `right` | theme   |
+| `header.cart_icon`    | select       | `bag`, `cart`             | theme   |
+| `header.cart_count`   | boolean      |                           | on      |
+| `header.account_link` | boolean      |                           | on      |
 
 ### Catalog (`catalog.*`)
 
-| Key | Type | Options / range | Default |
-|---|---|---|---|
-| `catalog.columns_desktop` | select | `2`–`5` | theme (falls back to `layout.grid_columns`) |
-| `catalog.columns_mobile` | select | `1`, `2` | `2` |
-| `catalog.per_page` | integer | 12–48, step 4 | 24 |
-| `catalog.default_sort` | select | `StorefrontCatalog::SORTS` | `newest` |
-| `catalog.filters` | boolean | | on |
-| `catalog.image_ratio` | select | `square`, `portrait`, `landscape` | theme |
-| `catalog.hover_image` | boolean | | off |
-| `catalog.quick_add` | boolean | | off |
-| `catalog.badges` | boolean | | on |
-| `catalog.show_brand` | boolean | | off |
+| Key                       | Type    | Options / range                   | Default                                     |
+| ------------------------- | ------- | --------------------------------- | ------------------------------------------- |
+| `catalog.columns_desktop` | select  | `2`–`5`                           | theme (falls back to `layout.grid_columns`) |
+| `catalog.columns_mobile`  | select  | `1`, `2`                          | `2`                                         |
+| `catalog.per_page`        | integer | 12–48, step 4                     | 24                                          |
+| `catalog.default_sort`    | select  | `StorefrontCatalog::SORTS`        | `newest`                                    |
+| `catalog.filters`         | boolean |                                   | on                                          |
+| `catalog.image_ratio`     | select  | `square`, `portrait`, `landscape` | theme                                       |
+| `catalog.hover_image`     | boolean |                                   | off                                         |
+| `catalog.quick_add`       | boolean |                                   | off                                         |
+| `catalog.badges`          | boolean |                                   | on                                          |
+| `catalog.show_brand`      | boolean |                                   | off                                         |
 
 ### Product (`product.*`)
 
-| Key | Type | Options / range | Default |
-|---|---|---|---|
-| `product.thumbnails` | select | `side`, `bottom` | theme |
-| `product.zoom` | boolean | | off |
-| `product.show_sku` | boolean | | off |
-| `product.stock_note` | select | `off`, `low` (≤ 5 left), `always` | `off` |
-| `product.description` | select | `open`, `tabs`, `accordion` | `open` |
-| `product.related` | boolean | | on |
-| `product.related_count` | integer | 2–12 | 4 |
-| `product.upsells` | boolean | | on |
-| `product.quantity` | boolean | | on |
+| Key                     | Type    | Options / range                   | Default |
+| ----------------------- | ------- | --------------------------------- | ------- |
+| `product.thumbnails`    | select  | `side`, `bottom`                  | theme   |
+| `product.zoom`          | boolean |                                   | off     |
+| `product.show_sku`      | boolean |                                   | off     |
+| `product.stock_note`    | select  | `off`, `low` (≤ 5 left), `always` | `off`   |
+| `product.description`   | select  | `open`, `tabs`, `accordion`       | `open`  |
+| `product.related`       | boolean |                                   | on      |
+| `product.related_count` | integer | 2–12                              | 4       |
+| `product.upsells`       | boolean |                                   | on      |
+| `product.quantity`      | boolean |                                   | on      |
 
 ### Cart (`cart.*`)
 
-| Key | Type | Options / range | Default |
-|---|---|---|---|
-| `cart.free_shipping_bar` | boolean | | off |
-| `cart.cross_sells` | boolean | | off |
-| `cart.coupon` | boolean | | on |
-| `cart.trust_badges` | boolean | | off |
-| `cart.continue_link` | boolean | | on |
+| Key                      | Type    | Options / range | Default |
+| ------------------------ | ------- | --------------- | ------- |
+| `cart.free_shipping_bar` | boolean |                 | off     |
+| `cart.cross_sells`       | boolean |                 | off     |
+| `cart.coupon`            | boolean |                 | on      |
+| `cart.trust_badges`      | boolean |                 | off     |
+| `cart.continue_link`     | boolean |                 | on      |
 
 `cart.coupon` replaces the theme-level `cart_show_coupon` the shared cart page reads today; when both exist, the core field wins.
 
 ### Checkout (`checkout.*`)
 
-| Key | Type | Options / range | Default |
-|---|---|---|---|
-| `checkout.summary_side` | select | `right`, `left` | `right` |
-| `checkout.sticky_summary` | boolean | | on |
-| `checkout.company` | boolean | | on |
-| `checkout.address_line2` | boolean | | on |
-| `checkout.phone` | select | `hidden`, `optional`, `required` | `optional` |
-| `checkout.order_note` | boolean | | on |
-| `checkout.terms` | boolean | | off |
-| `checkout.trust_badges` | boolean | | off |
-| `checkout.heading` | string (≤ 60) | | "Checkout" |
-| `checkout.button_label` | string (≤ 40) | | "Place order" |
-| `checkout.summary_images` | boolean | | on |
-| `checkout.coupon` | boolean | | on |
+| Key                       | Type          | Options / range                  | Default       |
+| ------------------------- | ------------- | -------------------------------- | ------------- |
+| `checkout.summary_side`   | select        | `right`, `left`                  | `right`       |
+| `checkout.sticky_summary` | boolean       |                                  | on            |
+| `checkout.company`        | boolean       |                                  | on            |
+| `checkout.address_line2`  | boolean       |                                  | on            |
+| `checkout.phone`          | select        | `hidden`, `optional`, `required` | `optional`    |
+| `checkout.order_note`     | boolean       |                                  | on            |
+| `checkout.terms`          | boolean       |                                  | off           |
+| `checkout.trust_badges`   | boolean       |                                  | off           |
+| `checkout.heading`        | string (≤ 60) |                                  | "Checkout"    |
+| `checkout.button_label`   | string (≤ 40) |                                  | "Place order" |
+| `checkout.summary_images` | boolean       |                                  | on            |
+| `checkout.coupon`         | boolean       |                                  | on            |
 
 Checkout fonts and buttons keep following the Cart tab's "Fonts and buttons" set.
 

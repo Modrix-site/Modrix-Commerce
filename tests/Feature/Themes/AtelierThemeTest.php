@@ -7,7 +7,6 @@ use App\Core\Themes\Sections\ThemeTemplates;
 use App\Core\Themes\ThemeManager;
 use App\Core\Themes\ThemeManifest;
 use App\Core\Themes\ThemeRepository;
-use App\Domains\Catalog\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\File;
 use Inertia\Testing\AssertableInertia as Assert;

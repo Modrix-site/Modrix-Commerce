@@ -31,11 +31,7 @@ export default function SeoTags({
                 <meta name="robots" head-key="robots" content={robots} />
             )}
             {canonical && (
-                <link
-                    rel="canonical"
-                    head-key="canonical"
-                    href={canonical}
-                />
+                <link rel="canonical" head-key="canonical" href={canonical} />
             )}
             {verification && (
                 <meta
@@ -61,7 +57,11 @@ export default function SeoTags({
                 <meta
                     property="og:type"
                     head-key="og:type"
-                    content={jsonLd?.includes('"@type":"Product"') ? 'product' : 'website'}
+                    content={
+                        jsonLd?.includes('"@type":"Product"')
+                            ? 'product'
+                            : 'website'
+                    }
                 />
             )}
             {openGraph && image && (

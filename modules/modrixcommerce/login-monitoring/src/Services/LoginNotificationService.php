@@ -20,37 +20,37 @@ class LoginNotificationService
     public function notifySuspiciousLogin(LoginEvent $event): void
     {
         $this->sendSlackAlert(
-            ":warning: *Suspicious Login Detected*",
+            ':warning: *Suspicious Login Detected*',
             "Account: *{$event->email}*\nIP: `{$event->ip_address}`\nRisk Score: *{$event->risk_score}/100*\nLocation: {$event->city}, {$event->country_code}\nDevice: {$event->browser} on {$event->operating_system}"
         );
 
         $this->sendEmailAlert(
             "[Security Warning] Suspicious Login Detected for {$event->email}",
-            "A high-risk login was detected on your store:\n\n" .
-            "Email: {$event->email}\n" .
-            "IP Address: {$event->ip_address}\n" .
-            "Risk Score: {$event->risk_score}/100\n" .
-            "Threat Level: " . strtoupper($event->threat_level) . "\n" .
-            "Device: {$event->browser} on {$event->operating_system}\n" .
-            "Location: {$event->city}, {$event->country_code}\n" .
-            "Time: " . now()->toDateTimeString() . "\n\n" .
-            "Please review the incident in your Login Monitoring Security Dashboard."
+            "A high-risk login was detected on your store:\n\n".
+            "Email: {$event->email}\n".
+            "IP Address: {$event->ip_address}\n".
+            "Risk Score: {$event->risk_score}/100\n".
+            'Threat Level: '.strtoupper($event->threat_level)."\n".
+            "Device: {$event->browser} on {$event->operating_system}\n".
+            "Location: {$event->city}, {$event->country_code}\n".
+            'Time: '.now()->toDateTimeString()."\n\n".
+            'Please review the incident in your Login Monitoring Security Dashboard.'
         );
     }
 
     public function notifyBruteForceLockout(string $email, string $ip, int $attempts): void
     {
         $this->sendSlackAlert(
-            ":lock: *Account Lockout - Brute Force Detected*",
+            ':lock: *Account Lockout - Brute Force Detected*',
             "Target: *{$email}*\nAttacking IP: `{$ip}`\nConsecutive Failed Attempts: *{$attempts}*\nAction: IP & Account temporarily locked out."
         );
 
         $this->sendEmailAlert(
             "[Security Alert] Brute Force Lockout for {$email}",
-            "Multiple failed login attempts ({$attempts}) have triggered a temporary lockout:\n\n" .
-            "Target Email: {$email}\n" .
-            "IP Address: {$ip}\n" .
-            "Time: " . now()->toDateTimeString()
+            "Multiple failed login attempts ({$attempts}) have triggered a temporary lockout:\n\n".
+            "Target Email: {$email}\n".
+            "IP Address: {$ip}\n".
+            'Time: '.now()->toDateTimeString()
         );
     }
 
@@ -81,7 +81,7 @@ class LoginNotificationService
                 'payload' => ['message' => $message],
             ]);
         } catch (\Throwable $e) {
-            Log::warning('Failed sending Slack login alert: ' . $e->getMessage());
+            Log::warning('Failed sending Slack login alert: '.$e->getMessage());
         }
     }
 
@@ -90,7 +90,7 @@ class LoginNotificationService
         $enabled = (bool) $this->settings->of(self::MODULE, 'email_alerts_enabled', true);
         $recipientsStr = (string) $this->settings->of(self::MODULE, 'alert_emails', '');
 
-        if (!$enabled || empty($recipientsStr)) {
+        if (! $enabled || empty($recipientsStr)) {
             return;
         }
 
@@ -113,7 +113,7 @@ class LoginNotificationService
                 'payload' => ['body' => $body],
             ]);
         } catch (\Throwable $e) {
-            Log::warning('Failed sending login alert email: ' . $e->getMessage());
+            Log::warning('Failed sending login alert email: '.$e->getMessage());
         }
     }
 }

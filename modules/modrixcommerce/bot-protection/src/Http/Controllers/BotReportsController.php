@@ -35,12 +35,14 @@ class BotReportsController extends Controller
     public function exportCsv(Request $request): StreamedResponse
     {
         $days = (int) $request->query('days', 30);
+
         return $this->reportService->exportCsv($days);
     }
 
     public function exportExcel(Request $request): StreamedResponse
     {
         $days = (int) $request->query('days', 30);
+
         return $this->reportService->exportExcel($days);
     }
 }

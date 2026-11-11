@@ -9,6 +9,7 @@ use EcoModular\SocialProofNotifications\Models\SocialProofEvent;
 use EcoModular\SocialProofNotifications\Services\SocialProofService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -48,7 +49,7 @@ class SocialProofAdminController extends Controller
             });
         }
 
-        /** @var \Illuminate\Pagination\LengthAwarePaginator<int, SocialProofEvent> $paginated */
+        /** @var LengthAwarePaginator<int, SocialProofEvent> $paginated */
         $paginated = $query->paginate(20)->withQueryString();
 
         $events = $paginated->through(fn (SocialProofEvent $e) => [

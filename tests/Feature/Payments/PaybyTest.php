@@ -47,44 +47,44 @@ class PaybyTest extends TestCase
         $this->signature = app(PaybySignature::class);
 
         // Pre-generated valid 2048-bit RSA key pair for testing
-        $this->testPrivateKey = "-----BEGIN PRIVATE KEY-----\n" .
-            "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCV/zANYt39Oif1\n" .
-            "ZnCpDTbo852H9uuS/CS9P2MsvSjVwGDS8KWFAdCUuQ4YXSY5ULK/go46KiZ0FAK1\n" .
-            "C4tQb1KDfEdRJpH6jsMxoY4dQhJcDpwd+28gAtWQ9Bc1aruAoe2Kaqs9T46a4h1N\n" .
-            "rR3UFrMZMQEyy9SQ/udt/Qh+Qna/oNO4WJ6VXOa6GSjni5uLEOeBBuUGUgcZN0NT\n" .
-            "EqXja3dhVsiiNyhHz2mUpQeYQ9rUBG0TAkVgqB3mt+ReQt5cTdwpnYCFyAGeSRTH\n" .
-            "2BGCd+RtMZk6NtSWyxIoYEMQVW4Tx2K5NGi0b4+K+cak9lGJNG+f7hLi1SiPFquz\n" .
-            "+v3On+n7AgMBAAECggEANxyRe8GhPcrx5pUSfNKZo8Lq1QuQ56sUFqKlHkmMKOlr\n" .
-            "yeVYc4PErvhFaQdEpZd0bbAa8N0OzuSRUBLjR5T3dM8jZvosdaqhpmktDav6ke9e\n" .
-            "Rhfdbx4LeRxuMJa8ONmGLS7fJwJFq7u7t5ANXyFOAcoDHjZNLk8yGjP3vGhQODzf\n" .
-            "t+YXciuut7i/Pl7x32oBd4/oO1OfWBMvUkwkhdGSsa2jwIh8CrLCcLo9U3ZR1kXw\n" .
-            "qClZiNlLCDCuonaB5fuldl7Ba239zCrTk3O1yM4mbPPme3euQAd0+M9cVFUhq1C+\n" .
-            "JHzoXVba0dZ1bRunRcAbc4RFn2NtVucAHX7FvY7JSQKBgQDHi7jR+kRe53BfN/UN\n" .
-            "dpgIoP7rXF8pX9JncM2k3/tIWNvUEpNnNTl0saTDc3MWpGqSIgg5ahgThAPuFg++\n" .
-            "R1vR+4HHglApxaU0wa+YLr07jjCKIdsegsZiMmXuab5wx+SQ1+XVLmjOjiFn74N7\n" .
-            "PZcuKMmgAb83iFO+iA9Mx5Fn+QKBgQDAbtbCmqtQmqnycLeOyHwzE1LsgUTdWvW2\n" .
-            "qdEiOftaxge6IlXQcZiIgoYnHMw+q33dBiTWE1VMOe81KQLGY8LhFYVPqh9UHvMt\n" .
-            "hOBqsVWdq3b3vpxy+xtLjJ3ctcGH+pwJPa2BjGclxDa8ujB6EumoEBmZDhlHATgF\n" .
-            "Y9qasVRmkwKBgHeES1WQ9WR2cIrHhEHlF1iLvUORFvo8B1SnbrRi5ynE9x3FZn45\n" .
-            "lck8IThjrLoSDjaqpYxl7De8KXJvykwoh2l0n520gnkShUnc/GRFElhaaN5DOu/C\n" .
-            "Wjo0f3LV6Re50j+i4GjYHDQjUwTiozisgiFGksUAZtxHDgmfirJtEb1ZAoGBAIxX\n" .
-            "SaEblB1w7si1k+k6JfpJ+YwqqsKU9+aD6tX/W2VUT4ZcTCF89zV3m8cipYJ/J4fu\n" .
-            "VycZanfxOJeYlUGCuDnXrCXxeG+tMsTbx5+IPVyEFHuSNB9XKwzqPKcel0pIZ0wG\n" .
-            "A2gbsY5Fj3YMhBZDfMzpEQIi2iSCqwyjSmbPNTKpAoGBALIu+sVOiLPT6OdXxm70\n" .
-            "pfGspuxyA7ReRccWo/bBHhjEVYijHysab1oJMSWwraAMwBNsAg16WcLEjQ5x2zS8\n" .
-            "cUYOp8w5wCedJmvrub1dQXREOnPGgJTjOgFqcfHOQ0yqDWgccGeT6q5ZnGuFiPJh\n" .
-            "NiIohTW7EzUxu1gnGUwZgU3M\n" .
-            "-----END PRIVATE KEY-----";
+        $this->testPrivateKey = "-----BEGIN PRIVATE KEY-----\n".
+            "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCV/zANYt39Oif1\n".
+            "ZnCpDTbo852H9uuS/CS9P2MsvSjVwGDS8KWFAdCUuQ4YXSY5ULK/go46KiZ0FAK1\n".
+            "C4tQb1KDfEdRJpH6jsMxoY4dQhJcDpwd+28gAtWQ9Bc1aruAoe2Kaqs9T46a4h1N\n".
+            "rR3UFrMZMQEyy9SQ/udt/Qh+Qna/oNO4WJ6VXOa6GSjni5uLEOeBBuUGUgcZN0NT\n".
+            "EqXja3dhVsiiNyhHz2mUpQeYQ9rUBG0TAkVgqB3mt+ReQt5cTdwpnYCFyAGeSRTH\n".
+            "2BGCd+RtMZk6NtSWyxIoYEMQVW4Tx2K5NGi0b4+K+cak9lGJNG+f7hLi1SiPFquz\n".
+            "+v3On+n7AgMBAAECggEANxyRe8GhPcrx5pUSfNKZo8Lq1QuQ56sUFqKlHkmMKOlr\n".
+            "yeVYc4PErvhFaQdEpZd0bbAa8N0OzuSRUBLjR5T3dM8jZvosdaqhpmktDav6ke9e\n".
+            "Rhfdbx4LeRxuMJa8ONmGLS7fJwJFq7u7t5ANXyFOAcoDHjZNLk8yGjP3vGhQODzf\n".
+            "t+YXciuut7i/Pl7x32oBd4/oO1OfWBMvUkwkhdGSsa2jwIh8CrLCcLo9U3ZR1kXw\n".
+            "qClZiNlLCDCuonaB5fuldl7Ba239zCrTk3O1yM4mbPPme3euQAd0+M9cVFUhq1C+\n".
+            "JHzoXVba0dZ1bRunRcAbc4RFn2NtVucAHX7FvY7JSQKBgQDHi7jR+kRe53BfN/UN\n".
+            "dpgIoP7rXF8pX9JncM2k3/tIWNvUEpNnNTl0saTDc3MWpGqSIgg5ahgThAPuFg++\n".
+            "R1vR+4HHglApxaU0wa+YLr07jjCKIdsegsZiMmXuab5wx+SQ1+XVLmjOjiFn74N7\n".
+            "PZcuKMmgAb83iFO+iA9Mx5Fn+QKBgQDAbtbCmqtQmqnycLeOyHwzE1LsgUTdWvW2\n".
+            "qdEiOftaxge6IlXQcZiIgoYnHMw+q33dBiTWE1VMOe81KQLGY8LhFYVPqh9UHvMt\n".
+            "hOBqsVWdq3b3vpxy+xtLjJ3ctcGH+pwJPa2BjGclxDa8ujB6EumoEBmZDhlHATgF\n".
+            "Y9qasVRmkwKBgHeES1WQ9WR2cIrHhEHlF1iLvUORFvo8B1SnbrRi5ynE9x3FZn45\n".
+            "lck8IThjrLoSDjaqpYxl7De8KXJvykwoh2l0n520gnkShUnc/GRFElhaaN5DOu/C\n".
+            "Wjo0f3LV6Re50j+i4GjYHDQjUwTiozisgiFGksUAZtxHDgmfirJtEb1ZAoGBAIxX\n".
+            "SaEblB1w7si1k+k6JfpJ+YwqqsKU9+aD6tX/W2VUT4ZcTCF89zV3m8cipYJ/J4fu\n".
+            "VycZanfxOJeYlUGCuDnXrCXxeG+tMsTbx5+IPVyEFHuSNB9XKwzqPKcel0pIZ0wG\n".
+            "A2gbsY5Fj3YMhBZDfMzpEQIi2iSCqwyjSmbPNTKpAoGBALIu+sVOiLPT6OdXxm70\n".
+            "pfGspuxyA7ReRccWo/bBHhjEVYijHysab1oJMSWwraAMwBNsAg16WcLEjQ5x2zS8\n".
+            "cUYOp8w5wCedJmvrub1dQXREOnPGgJTjOgFqcfHOQ0yqDWgccGeT6q5ZnGuFiPJh\n".
+            "NiIohTW7EzUxu1gnGUwZgU3M\n".
+            '-----END PRIVATE KEY-----';
 
-        $this->testPublicKey = "-----BEGIN PUBLIC KEY-----\n" .
-            "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlf8wDWLd/Ton9WZwqQ02\n" .
-            "6POdh/brkvwkvT9jLL0o1cBg0vClhQHQlLkOGF0mOVCyv4KOOiomdBQCtQuLUG9S\n" .
-            "g3xHUSaR+o7DMaGOHUISXA6cHftvIALVkPQXNWq7gKHtimqrPU+OmuIdTa0d1Baz\n" .
-            "GTEBMsvUkP7nbf0IfkJ2v6DTuFielVzmuhko54ubixDngQblBlIHGTdDUxKl42t3\n" .
-            "YVbIojcoR89plKUHmEPa1ARtEwJFYKgd5rfkXkLeXE3cKZ2AhcgBnkkUx9gRgnfk\n" .
-            "bTGZOjbUlssSKGBDEFVuE8diuTRotG+PivnGpPZRiTRvn+4S4tUojxars/r9zp/p\n" .
-            "+wIDAQAB\n" .
-            "-----END PUBLIC KEY-----";
+        $this->testPublicKey = "-----BEGIN PUBLIC KEY-----\n".
+            "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlf8wDWLd/Ton9WZwqQ02\n".
+            "6POdh/brkvwkvT9jLL0o1cBg0vClhQHQlLkOGF0mOVCyv4KOOiomdBQCtQuLUG9S\n".
+            "g3xHUSaR+o7DMaGOHUISXA6cHftvIALVkPQXNWq7gKHtimqrPU+OmuIdTa0d1Baz\n".
+            "GTEBMsvUkP7nbf0IfkJ2v6DTuFielVzmuhko54ubixDngQblBlIHGTdDUxKl42t3\n".
+            "YVbIojcoR89plKUHmEPa1ARtEwJFYKgd5rfkXkLeXE3cKZ2AhcgBnkkUx9gRgnfk\n".
+            "bTGZOjbUlssSKGBDEFVuE8diuTRotG+PivnGpPZRiTRvn+4S4tUojxars/r9zp/p\n".
+            "+wIDAQAB\n".
+            '-----END PUBLIC KEY-----';
     }
 
     public function test_gateway_registers_with_payment_methods(): void
@@ -197,7 +197,7 @@ class PaybyTest extends TestCase
 
         $session = $this->gateway->createSession($order, $payment, 'https://example.com/return', 'https://example.com/cancel');
 
-        $this->assertStringStartsWith('PAYBY_' . $payment->id, $session->reference);
+        $this->assertStringStartsWith('PAYBY_'.$payment->id, $session->reference);
         $this->assertSame('https://pay.payby.com/checkout/mock_session_abc', $session->redirectUrl);
     }
 

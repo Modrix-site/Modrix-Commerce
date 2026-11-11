@@ -164,7 +164,10 @@
     display: grid;
     gap: 12px;
 }
-[data-theme='modrixcommerce/nord'] .nd-product-info .nd-purchase-actions button {
+[data-theme='modrixcommerce/nord']
+    .nd-product-info
+    .nd-purchase-actions
+    button {
     min-height: 54px;
     border-radius: 0;
 }
@@ -356,7 +359,8 @@
     [data-theme='modrixcommerce/nord'] .nd-cart > .grid > ul > li {
         padding: 16px;
     }
-    [data-theme='modrixcommerce/nord'][data-component='storefront/checkout'] #main {
+    [data-theme='modrixcommerce/nord'][data-component='storefront/checkout']
+        #main {
         padding: 28px 16px 40px;
     }
     [data-theme='modrixcommerce/nord'][data-component='storefront/checkout']
@@ -376,7 +380,10 @@
     }
 }
 @media (max-width: 360px) {
-    [data-theme='modrixcommerce/nord'] .nd-header-actions > a:first-child > span {
+    [data-theme='modrixcommerce/nord']
+        .nd-header-actions
+        > a:first-child
+        > span {
         display: none;
     }
     [data-theme='modrixcommerce/nord'] .nd-promobar .nd-frame {

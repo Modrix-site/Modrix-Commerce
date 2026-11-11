@@ -23,7 +23,7 @@ class LoginLiveActivityController extends Controller
             ->with('user:id,name,email')
             ->orderByDesc('created_at');
 
-        if (!empty($search)) {
+        if (! empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where('email', 'like', "%{$search}%")
                     ->orWhere('ip_address', 'like', "%{$search}%")
@@ -32,11 +32,11 @@ class LoginLiveActivityController extends Controller
             });
         }
 
-        if (!empty($status) && in_array($status, ['success', 'failed'])) {
+        if (! empty($status) && in_array($status, ['success', 'failed'])) {
             $query->where('status', $status);
         }
 
-        if (!empty($threatLevel) && in_array($threatLevel, ['low', 'medium', 'high', 'critical'])) {
+        if (! empty($threatLevel) && in_array($threatLevel, ['low', 'medium', 'high', 'critical'])) {
             $query->where('threat_level', $threatLevel);
         }
 

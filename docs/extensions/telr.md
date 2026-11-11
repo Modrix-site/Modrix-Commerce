@@ -31,12 +31,12 @@ php artisan ecomodular:package modrixcommerce/telr --output=dist
 
 From the Telr merchant admin (**Integrations**):
 
-| Field in this store | Telr value |
-| --- | --- |
-| Store ID | Numeric store ID. No letters. |
-| Authentication key | Hosted payment page authentication key. Used for `order.json` (create and check). |
+| Field in this store       | Telr value                                                                                                                             |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Store ID                  | Numeric store ID. No letters.                                                                                                          |
+| Authentication key        | Hosted payment page authentication key. Used for `order.json` (create and check).                                                      |
 | Remote authentication key | Optional. Use this only when Telr issued a separate key for the remote API. Leave it blank to refund with the hosted payment page key. |
-| Webhook secret | Secret key Telr uses in the SHA-1 `tran_check` hash on transaction advice. |
+| Webhook secret            | Secret key Telr uses in the SHA-1 `tran_check` hash on transaction advice.                                                             |
 
 All three secrets are stored encrypted. The admin page shows only a hint after you save. Leave a secret field blank to keep the saved value.
 
@@ -84,13 +84,13 @@ and compares SHA-1 with `tran_check`. If Telr has enabled `tran_order` on the ac
 
 Advice for a sale or authorisation does not mark the order paid by itself. The store calls `order.json` with method `check` and applies that result:
 
-| Telr order status | Meaning | This store |
-| --- | --- | --- |
-| 3 | Paid (captured sale) | Paid, when the amount and currency match |
-| 2 | Authorised, not captured (on hold) | Processing |
-| 1 or 4 | Pending / payment requested | Still unpaid |
-| -3 | Declined | Failed |
-| -1, -2, -4 | Expired, cancelled, or replaced | Expired |
+| Telr order status | Meaning                            | This store                               |
+| ----------------- | ---------------------------------- | ---------------------------------------- |
+| 3                 | Paid (captured sale)               | Paid, when the amount and currency match |
+| 2                 | Authorised, not captured (on hold) | Processing                               |
+| 1 or 4            | Pending / payment requested        | Still unpaid                             |
+| -3                | Declined                           | Failed                                   |
+| -1, -2, -4        | Expired, cancelled, or replaced    | Expired                                  |
 
 A reported amount that does not match the order is not marked paid. Staff are asked to check the Telr dashboard.
 

@@ -22,7 +22,7 @@ class BotChallengeController extends Controller
             ->where('status', 'pending')
             ->first();
 
-        if (!$challenge || $challenge->isExpired()) {
+        if (! $challenge || $challenge->isExpired()) {
             return redirect()->to('/')->with('error', 'Challenge expired. Please try again.');
         }
 

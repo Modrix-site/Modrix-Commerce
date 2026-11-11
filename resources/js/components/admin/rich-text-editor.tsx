@@ -26,10 +26,7 @@ import { Toggle } from '@/components/ui/toggle';
 import { cn } from '@/lib/utils';
 
 const escape = (text: string) =>
-    text
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
+    text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 /** Plain text (older descriptions, AI drafts) becomes paragraphs. */
 export function toEditorHtml(value: string | null | undefined): string {

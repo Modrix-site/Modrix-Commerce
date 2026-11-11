@@ -96,14 +96,16 @@ export function AtelierCard({ product }: { product: ProductCard }) {
                             <ImageOff size={28} aria-hidden />
                         </span>
                     )}
-                    {product.image && catalog.hover_image && product.hover_image && (
-                        <img
-                            className="store-card-hover"
-                            src={product.hover_image.url}
-                            alt=""
-                            loading="lazy"
-                        />
-                    )}
+                    {product.image &&
+                        catalog.hover_image &&
+                        product.hover_image && (
+                            <img
+                                className="store-card-hover"
+                                src={product.hover_image.url}
+                                alt=""
+                                loading="lazy"
+                            />
+                        )}
                     <span className="ecom-quick" aria-hidden>
                         View details
                         <ArrowRight size={14} />

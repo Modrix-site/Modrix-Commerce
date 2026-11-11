@@ -1,6 +1,6 @@
-import { PlatformCartPage, type CartProps } from "@/pages/storefront/cart";
-import type { ThemeSectionProps } from "@/components/storefront/theme-sections";
-import { str } from "../utils";
+import { PlatformCartPage, type CartProps } from '@/pages/storefront/cart';
+import type { ThemeSectionProps } from '@/components/storefront/theme-sections';
+import { str } from '../utils';
 export default function MainCart({
     section,
     page,

@@ -55,7 +55,12 @@ type Props = {
     actionUrl: string;
 };
 
-export default function BuyTogetherEdit({ deal, products, categories, actionUrl }: Props) {
+export default function BuyTogetherEdit({
+    deal,
+    products,
+    categories,
+    actionUrl,
+}: Props) {
     const isEdit = deal !== null;
 
     const form = useForm({
@@ -80,7 +85,7 @@ export default function BuyTogetherEdit({ deal, products, categories, actionUrl 
         if (current.includes(productId)) {
             form.setData(
                 'bundle_product_ids',
-                current.filter((id) => id !== productId)
+                current.filter((id) => id !== productId),
             );
         } else {
             form.setData('bundle_product_ids', [...current, productId]);
@@ -98,11 +103,21 @@ export default function BuyTogetherEdit({ deal, products, categories, actionUrl 
 
     return (
         <>
-            <Head title={isEdit ? `Edit Deal: ${deal.title}` : 'New Buy Together & Save Deal'} />
+            <Head
+                title={
+                    isEdit
+                        ? `Edit Deal: ${deal.title}`
+                        : 'New Buy Together & Save Deal'
+                }
+            />
 
             <AdminPage>
                 <PageHeader
-                    title={isEdit ? `Edit Deal: ${deal.title}` : 'Create Bundle Deal'}
+                    title={
+                        isEdit
+                            ? `Edit Deal: ${deal.title}`
+                            : 'Create Bundle Deal'
+                    }
                     description="Configure products and discount offers for this Buy Together & Save combo."
                     actions={
                         <Link href="/admin/m/modrixcommerce/buy-together-save">
@@ -120,7 +135,8 @@ export default function BuyTogetherEdit({ deal, products, categories, actionUrl 
                         <CardHeader>
                             <CardTitle>Deal Information</CardTitle>
                             <CardDescription>
-                                Set the title, marketing badge, and status for this bundle.
+                                Set the title, marketing badge, and status for
+                                this bundle.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4 md:grid-cols-2">
@@ -133,7 +149,9 @@ export default function BuyTogetherEdit({ deal, products, categories, actionUrl 
                                 <Input
                                     id="title"
                                     value={form.data.title}
-                                    onChange={(e) => form.setData('title', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData('title', e.target.value)
+                                    }
                                     placeholder="e.g. Camera + Lens Starter Combo"
                                     required
                                 />
@@ -148,7 +166,12 @@ export default function BuyTogetherEdit({ deal, products, categories, actionUrl 
                                 <Input
                                     id="badge_text"
                                     value={form.data.badge_text}
-                                    onChange={(e) => form.setData('badge_text', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'badge_text',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="e.g. Save 15%"
                                 />
                             </FormField>
@@ -157,9 +180,17 @@ export default function BuyTogetherEdit({ deal, products, categories, actionUrl 
                                 <Checkbox
                                     id="is_active"
                                     checked={form.data.is_active}
-                                    onCheckedChange={(checked) => form.setData('is_active', Boolean(checked))}
+                                    onCheckedChange={(checked) =>
+                                        form.setData(
+                                            'is_active',
+                                            Boolean(checked),
+                                        )
+                                    }
                                 />
-                                <label htmlFor="is_active" className="text-sm font-medium leading-none">
+                                <label
+                                    htmlFor="is_active"
+                                    className="text-sm leading-none font-medium"
+                                >
                                     Enable this deal on product pages
                                 </label>
                             </div>
@@ -171,7 +202,8 @@ export default function BuyTogetherEdit({ deal, products, categories, actionUrl 
                         <CardHeader>
                             <CardTitle>Trigger Target</CardTitle>
                             <CardDescription>
-                                Choose which product pages display this bundle deal.
+                                Choose which product pages display this bundle
+                                deal.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4 md:grid-cols-2">
@@ -183,16 +215,28 @@ export default function BuyTogetherEdit({ deal, products, categories, actionUrl 
                                 <Select
                                     value={form.data.trigger_type}
                                     onValueChange={(val: string) =>
-                                        form.setData('trigger_type', val as 'product' | 'category' | 'all')
+                                        form.setData(
+                                            'trigger_type',
+                                            val as
+                                                | 'product'
+                                                | 'category'
+                                                | 'all',
+                                        )
                                     }
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Select trigger type" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="product">Specific Product</SelectItem>
-                                        <SelectItem value="category">Category</SelectItem>
-                                        <SelectItem value="all">All Products</SelectItem>
+                                        <SelectItem value="product">
+                                            Specific Product
+                                        </SelectItem>
+                                        <SelectItem value="category">
+                                            Category
+                                        </SelectItem>
+                                        <SelectItem value="all">
+                                            All Products
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </FormField>
@@ -205,16 +249,27 @@ export default function BuyTogetherEdit({ deal, products, categories, actionUrl 
                                     hint="Select the product page where this offer is shown."
                                 >
                                     <Select
-                                        value={form.data.trigger_ids[0]?.toString() ?? ''}
-                                        onValueChange={(val) => form.setData('trigger_ids', [parseInt(val, 10)])}
+                                        value={
+                                            form.data.trigger_ids[0]?.toString() ??
+                                            ''
+                                        }
+                                        onValueChange={(val) =>
+                                            form.setData('trigger_ids', [
+                                                parseInt(val, 10),
+                                            ])
+                                        }
                                     >
                                         <SelectTrigger>
                                             <SelectValue placeholder="Choose a product" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {products.map((p) => (
-                                                <SelectItem key={p.id} value={p.id.toString()}>
-                                                    {p.name} {p.sku ? `(${p.sku})` : ''}
+                                                <SelectItem
+                                                    key={p.id}
+                                                    value={p.id.toString()}
+                                                >
+                                                    {p.name}{' '}
+                                                    {p.sku ? `(${p.sku})` : ''}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
@@ -230,15 +285,25 @@ export default function BuyTogetherEdit({ deal, products, categories, actionUrl 
                                     hint="Select the category whose products will show this offer."
                                 >
                                     <Select
-                                        value={form.data.trigger_ids[0]?.toString() ?? ''}
-                                        onValueChange={(val) => form.setData('trigger_ids', [parseInt(val, 10)])}
+                                        value={
+                                            form.data.trigger_ids[0]?.toString() ??
+                                            ''
+                                        }
+                                        onValueChange={(val) =>
+                                            form.setData('trigger_ids', [
+                                                parseInt(val, 10),
+                                            ])
+                                        }
                                     >
                                         <SelectTrigger>
                                             <SelectValue placeholder="Choose a category" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {categories.map((c) => (
-                                                <SelectItem key={c.id} value={c.id.toString()}>
+                                                <SelectItem
+                                                    key={c.id}
+                                                    value={c.id.toString()}
+                                                >
                                                     {c.name}
                                                 </SelectItem>
                                             ))}
@@ -254,30 +319,39 @@ export default function BuyTogetherEdit({ deal, products, categories, actionUrl 
                         <CardHeader>
                             <CardTitle>Bundle Companion Products</CardTitle>
                             <CardDescription>
-                                Select companion products to bundle together with the main product (select 1 to 5 items).
+                                Select companion products to bundle together
+                                with the main product (select 1 to 5 items).
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="max-h-60 overflow-y-auto space-y-2 rounded-md border p-3">
+                            <div className="max-h-60 space-y-2 overflow-y-auto rounded-md border p-3">
                                 {products.map((p) => {
-                                    const isSelected = form.data.bundle_product_ids.includes(p.id);
+                                    const isSelected =
+                                        form.data.bundle_product_ids.includes(
+                                            p.id,
+                                        );
 
                                     return (
                                         <div
                                             key={p.id}
-                                            className="flex items-center space-x-2 rounded-sm p-1.5 hover:bg-muted/50 cursor-pointer"
-                                            onClick={() => toggleBundleProduct(p.id)}
+                                            className="flex cursor-pointer items-center space-x-2 rounded-sm p-1.5 hover:bg-muted/50"
+                                            onClick={() =>
+                                                toggleBundleProduct(p.id)
+                                            }
                                         >
                                             <Checkbox
                                                 id={`prod-${p.id}`}
                                                 checked={isSelected}
-                                                onCheckedChange={() => toggleBundleProduct(p.id)}
+                                                onCheckedChange={() =>
+                                                    toggleBundleProduct(p.id)
+                                                }
                                             />
                                             <label
                                                 htmlFor={`prod-${p.id}`}
-                                                className="text-sm font-medium leading-none cursor-pointer"
+                                                className="cursor-pointer text-sm leading-none font-medium"
                                             >
-                                                {p.name} {p.sku ? `(${p.sku})` : ''}
+                                                {p.name}{' '}
+                                                {p.sku ? `(${p.sku})` : ''}
                                             </label>
                                         </div>
                                     );
@@ -296,7 +370,8 @@ export default function BuyTogetherEdit({ deal, products, categories, actionUrl 
                         <CardHeader>
                             <CardTitle>Bundle Savings Offer</CardTitle>
                             <CardDescription>
-                                Set the discount type and amount applied when buying the items together.
+                                Set the discount type and amount applied when
+                                buying the items together.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4 md:grid-cols-2">
@@ -308,24 +383,39 @@ export default function BuyTogetherEdit({ deal, products, categories, actionUrl 
                                 <Select
                                     value={form.data.discount_type}
                                     onValueChange={(val: string) =>
-                                        form.setData('discount_type', val as 'percent' | 'fixed')
+                                        form.setData(
+                                            'discount_type',
+                                            val as 'percent' | 'fixed',
+                                        )
                                     }
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Discount Type" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="percent">Percentage Off (%)</SelectItem>
-                                        <SelectItem value="fixed">Fixed Amount Off ($ / Currency)</SelectItem>
+                                        <SelectItem value="percent">
+                                            Percentage Off (%)
+                                        </SelectItem>
+                                        <SelectItem value="fixed">
+                                            Fixed Amount Off ($ / Currency)
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </FormField>
 
                             <FormField
                                 id="discount_value"
-                                label={form.data.discount_type === 'percent' ? 'Discount Percentage (%)' : 'Discount Amount'}
+                                label={
+                                    form.data.discount_type === 'percent'
+                                        ? 'Discount Percentage (%)'
+                                        : 'Discount Amount'
+                                }
                                 error={form.errors.discount_value}
-                                hint={form.data.discount_type === 'percent' ? 'e.g. 15 for 15% off' : 'e.g. 25.00'}
+                                hint={
+                                    form.data.discount_type === 'percent'
+                                        ? 'e.g. 15 for 15% off'
+                                        : 'e.g. 25.00'
+                                }
                             >
                                 <Input
                                     id="discount_value"
@@ -333,7 +423,12 @@ export default function BuyTogetherEdit({ deal, products, categories, actionUrl 
                                     step="0.01"
                                     min="0.01"
                                     value={form.data.discount_value}
-                                    onChange={(e) => form.setData('discount_value', parseFloat(e.target.value))}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'discount_value',
+                                            parseFloat(e.target.value),
+                                        )
+                                    }
                                     required
                                 />
                             </FormField>
@@ -348,7 +443,12 @@ export default function BuyTogetherEdit({ deal, products, categories, actionUrl 
                                     id="priority"
                                     type="number"
                                     value={form.data.priority}
-                                    onChange={(e) => form.setData('priority', parseInt(e.target.value, 10))}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'priority',
+                                            parseInt(e.target.value, 10),
+                                        )
+                                    }
                                 />
                             </FormField>
 
@@ -364,7 +464,12 @@ export default function BuyTogetherEdit({ deal, products, categories, actionUrl 
                                     min="2"
                                     max="6"
                                     value={form.data.min_items_required}
-                                    onChange={(e) => form.setData('min_items_required', parseInt(e.target.value, 10))}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'min_items_required',
+                                            parseInt(e.target.value, 10),
+                                        )
+                                    }
                                 />
                             </FormField>
                         </CardContent>
@@ -379,7 +484,7 @@ export default function BuyTogetherEdit({ deal, products, categories, actionUrl 
                         <Button
                             type="submit"
                             disabled={form.processing}
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                            className="bg-emerald-600 text-white hover:bg-emerald-700"
                         >
                             <Save className="mr-2 size-4" />
                             {isEdit ? 'Save Changes' : 'Create Deal'}

@@ -27,31 +27,35 @@ type Props = {
 
 export default function SharedWishlistPage({ wishlist, items }: Props) {
     return (
-        <div className="min-h-screen bg-background py-8 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-background px-4 py-8 sm:px-6 lg:px-8">
             <Head title={`${wishlist.name} - Shared Wishlist`} />
 
             <div className="mx-auto max-w-5xl">
                 {/* Header */}
                 <div className="border-b pb-6 text-center sm:text-left">
-                    <div className="flex items-center justify-center sm:justify-start gap-2">
-                        <Heart className="size-6 text-rose-600 fill-rose-600" />
+                    <div className="flex items-center justify-center gap-2 sm:justify-start">
+                        <Heart className="size-6 fill-rose-600 text-rose-600" />
                         <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
                             {wishlist.name}
                         </h1>
                         <Badge variant="secondary" className="ml-2">
-                            {items.length} {items.length === 1 ? 'item' : 'items'}
+                            {items.length}{' '}
+                            {items.length === 1 ? 'item' : 'items'}
                         </Badge>
                     </div>
                     <p className="mt-1 text-sm text-muted-foreground">
-                        Shared wishlist. Browse the items below and visit the store to place an order.
+                        Shared wishlist. Browse the items below and visit the
+                        store to place an order.
                     </p>
                 </div>
 
                 {items.length === 0 ? (
                     <div className="my-16 text-center">
-                        <p className="text-sm text-muted-foreground">This shared wishlist has no items.</p>
+                        <p className="text-sm text-muted-foreground">
+                            This shared wishlist has no items.
+                        </p>
                         <Link href="/" className="mt-4 inline-block">
-                            <Button className="bg-rose-600 hover:bg-rose-700 text-white">
+                            <Button className="bg-rose-600 text-white hover:bg-rose-700">
                                 <ShoppingBag className="mr-2 size-4" />
                                 Browse Store
                             </Button>
@@ -62,7 +66,10 @@ export default function SharedWishlistPage({ wishlist, items }: Props) {
                         {items.map((item) => (
                             <Card key={item.id} className="overflow-hidden">
                                 <CardContent className="p-4">
-                                    <Link href={`/products/${item.slug}`} className="block">
+                                    <Link
+                                        href={`/products/${item.slug}`}
+                                        className="block"
+                                    >
                                         <div className="aspect-square w-full overflow-hidden rounded-lg bg-muted/40">
                                             {item.image ? (
                                                 <img
@@ -89,8 +96,13 @@ export default function SharedWishlistPage({ wishlist, items }: Props) {
                                             <span className="text-base font-bold text-foreground">
                                                 {item.formatted_price}
                                             </span>
-                                            <Link href={`/products/${item.slug}`}>
-                                                <Button size="sm" variant="outline">
+                                            <Link
+                                                href={`/products/${item.slug}`}
+                                            >
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                >
                                                     View Item
                                                 </Button>
                                             </Link>

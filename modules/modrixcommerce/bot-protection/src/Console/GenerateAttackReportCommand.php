@@ -9,6 +9,7 @@ use Illuminate\Support\Carbon;
 class GenerateAttackReportCommand extends Command
 {
     protected $signature = 'bot:daily-report {--date= : The date to generate for (YYYY-MM-DD)}';
+
     protected $description = 'Generate daily bot threat and attack analysis report';
 
     public function handle(BotReportService $reportService): int

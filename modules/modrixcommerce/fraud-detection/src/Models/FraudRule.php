@@ -87,7 +87,7 @@ class FraudRule extends Model
             'contains' => str_contains(strtolower((string) $fieldValue), strtolower($this->value)),
             'in' => in_array(strtolower((string) $fieldValue), array_map('strtolower', json_decode($this->value, true) ?? []), true),
             'not_in' => ! in_array(strtolower((string) $fieldValue), array_map('strtolower', json_decode($this->value, true) ?? []), true),
-            'matches' => (bool) preg_match('/' . $this->value . '/i', (string) $fieldValue),
+            'matches' => (bool) preg_match('/'.$this->value.'/i', (string) $fieldValue),
             default => false,
         };
     }

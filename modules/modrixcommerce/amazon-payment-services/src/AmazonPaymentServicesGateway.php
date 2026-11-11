@@ -88,7 +88,7 @@ final class AmazonPaymentServicesGateway implements PaymentGateway
             throw new GatewayException('Amazon Payment Services merchant credentials are incomplete.');
         }
 
-        $merchantReference = 'APS-' . $payment->id . '-' . substr(hash_hmac('sha256', (string) $payment->id, (string) config('app.key')), 0, 16);
+        $merchantReference = 'APS-'.$payment->id.'-'.substr(hash_hmac('sha256', (string) $payment->id, (string) config('app.key')), 0, 16);
         $amount = (string) $this->amountHelper->toMinor($payment->money());
         $responseUrl = route('modrixcommerce.amazon-payment-services.response');
 
@@ -139,7 +139,7 @@ final class AmazonPaymentServicesGateway implements PaymentGateway
         try {
             $response = $this->api->checkStatus($sessionRef, $payment->provider_payment_id);
         } catch (Throwable $e) {
-            throw new GatewayException('Could not retrieve payment from Amazon Payment Services: ' . $e->getMessage());
+            throw new GatewayException('Could not retrieve payment from Amazon Payment Services: '.$e->getMessage());
         }
 
         return $this->buildPaymentUpdate($response, $sessionRef);
@@ -222,12 +222,12 @@ final class AmazonPaymentServicesGateway implements PaymentGateway
         $fortId = $payment->provider_payment_id
             ?? throw new GatewayException('Cannot refund: PayFort transaction ID is missing.');
 
-        $refundReference = 'APS-REF-' . substr($idempotencyKey, 0, 20);
+        $refundReference = 'APS-REF-'.substr($idempotencyKey, 0, 20);
 
         try {
             $response = $this->api->refund($refundReference, $fortId, $amount);
         } catch (Throwable $e) {
-            throw new GatewayException('Amazon Payment Services refund failed: ' . $e->getMessage());
+            throw new GatewayException('Amazon Payment Services refund failed: '.$e->getMessage());
         }
 
         $code = (string) ($response['response_code'] ?? '');

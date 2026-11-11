@@ -79,7 +79,7 @@ final class MyFatoorahGateway implements PaymentGateway
             throw new GatewayException("MyFatoorah is not configured for currency {$payment->currency}.");
         }
 
-        $customerRef = 'MF_' . $payment->id . '_' . substr(hash_hmac('sha256', (string) $payment->id, (string) config('app.key')), 0, 10);
+        $customerRef = 'MF_'.$payment->id.'_'.substr(hash_hmac('sha256', (string) $payment->id, (string) config('app.key')), 0, 10);
         $amount = (float) $payment->money()->toDisplayDecimal();
         $responseUrl = route('modrixcommerce.myfatoorah.response');
 
@@ -104,7 +104,7 @@ final class MyFatoorahGateway implements PaymentGateway
         try {
             $response = $this->api->executePayment($payload);
         } catch (Throwable $e) {
-            throw new GatewayException('Failed to initiate MyFatoorah payment: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Failed to initiate MyFatoorah payment: '.$e->getMessage(), 0, $e);
         }
 
         $data = $response['Data'] ?? [];
@@ -162,7 +162,7 @@ final class MyFatoorahGateway implements PaymentGateway
                 $response = $this->api->getPaymentStatus($customerRef, 'InvoiceId');
             }
         } catch (Throwable $e) {
-            throw new GatewayException('Could not retrieve payment status from MyFatoorah: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Could not retrieve payment status from MyFatoorah: '.$e->getMessage(), 0, $e);
         }
 
         return $this->buildPaymentUpdate($response, $customerRef);
@@ -244,9 +244,9 @@ final class MyFatoorahGateway implements PaymentGateway
         $refundAmount = (float) $amount->toDisplayDecimal();
 
         try {
-            $response = $this->api->makeRefund($key, $refundAmount, $payment->currency, 'Refund ' . $idempotencyKey, $keyType);
+            $response = $this->api->makeRefund($key, $refundAmount, $payment->currency, 'Refund '.$idempotencyKey, $keyType);
         } catch (Throwable $e) {
-            throw new GatewayException('MyFatoorah refund request failed: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('MyFatoorah refund request failed: '.$e->getMessage(), 0, $e);
         }
 
         $data = $response['Data'] ?? [];

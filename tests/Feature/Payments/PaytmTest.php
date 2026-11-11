@@ -166,7 +166,7 @@ class PaytmTest extends TestCase
 
         $session = $this->gateway->createSession($order, $payment, 'https://example.com/return', 'https://example.com/cancel');
 
-        $this->assertStringStartsWith('PTM_' . $payment->id, $session->reference);
+        $this->assertStringStartsWith('PTM_'.$payment->id, $session->reference);
         $this->assertStringContainsString('mock_paytm_txn_token_777', $session->redirectUrl);
     }
 

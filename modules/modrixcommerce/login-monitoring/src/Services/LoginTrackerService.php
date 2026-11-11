@@ -6,7 +6,6 @@ use App\Core\Extensions\ModuleSettingsSchema;
 use App\Models\User;
 use EcoModular\LoginMonitoring\Models\LoginEvent;
 use EcoModular\LoginMonitoring\Models\LoginFailedAttempt;
-use EcoModular\LoginMonitoring\Models\LoginSecurityIncident;
 use EcoModular\LoginMonitoring\Models\LoginTrustedDevice;
 use EcoModular\LoginMonitoring\Models\LoginUserSession;
 use Illuminate\Http\Request;

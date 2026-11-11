@@ -98,12 +98,7 @@
                     }
                 }
             },
-            "block_order": [
-                "cat_0",
-                "cat_1",
-                "cat_2",
-                "cat_3"
-            ]
+            "block_order": ["cat_0", "cat_1", "cat_2", "cat_3"]
         },
         "campaign": {
             "type": "campaign-banner",
@@ -182,12 +177,7 @@
                     }
                 }
             },
-            "block_order": [
-                "gift_0",
-                "gift_1",
-                "gift_2",
-                "gift_3"
-            ]
+            "block_order": ["gift_0", "gift_1", "gift_2", "gift_3"]
         },
         "apps": {
             "type": "apps",

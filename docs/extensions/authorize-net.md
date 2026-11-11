@@ -20,12 +20,12 @@ You can also copy `modules/modrixcommerce/authorize-net` into place and enable i
 
 ## Configure
 
-| Field | Value |
-| --- | --- |
-| Mode | Sandbox calls `https://apitest.authorize.net/xml/v1/request.api` and posts the form to `https://test.authorize.net/payment/payment`. Live uses `https://api.authorize.net` and `https://accept.authorize.net`. |
-| API Login ID | From Account → Settings → Security Settings → API Credentials and Keys. |
-| Transaction key | From the same page. Stored encrypted. |
-| Signature key | Hexadecimal key from the same page. Stored encrypted. Used to verify each webhook. |
+| Field           | Value                                                                                                                                                                                                          |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mode            | Sandbox calls `https://apitest.authorize.net/xml/v1/request.api` and posts the form to `https://test.authorize.net/payment/payment`. Live uses `https://api.authorize.net` and `https://accept.authorize.net`. |
+| API Login ID    | From Account → Settings → Security Settings → API Credentials and Keys.                                                                                                                                        |
+| Transaction key | From the same page. Stored encrypted.                                                                                                                                                                          |
+| Signature key   | Hexadecimal key from the same page. Stored encrypted. Used to verify each webhook.                                                                                                                             |
 
 The store currency must be the currency of the Authorize.Net merchant account. Amounts are sent as two-decimal strings. Live mode refuses a return address that is not `https://`. Sandbox can use the local store for the customer's return. Authorize.Net itself cannot call `http://localhost`, so webhooks need a public `https://` `APP_URL`.
 

@@ -17,22 +17,22 @@ final class WishlistSettings
 
     public function enabled(): bool
     {
-        return (bool) $this->settings->get(self::PREFIX . '.enabled', true);
+        return (bool) $this->settings->get(self::PREFIX.'.enabled', true);
     }
 
     public function requireLogin(): bool
     {
-        return (bool) $this->settings->get(self::PREFIX . '.require_login', false);
+        return (bool) $this->settings->get(self::PREFIX.'.require_login', false);
     }
 
     public function allowSharing(): bool
     {
-        return (bool) $this->settings->get(self::PREFIX . '.allow_sharing', true);
+        return (bool) $this->settings->get(self::PREFIX.'.allow_sharing', true);
     }
 
     public function buttonLabel(): string
     {
-        $val = $this->settings->get(self::PREFIX . '.button_label');
+        $val = $this->settings->get(self::PREFIX.'.button_label');
 
         return is_string($val) && trim($val) !== '' ? trim($val) : 'Save to Wishlist';
     }
@@ -56,19 +56,19 @@ final class WishlistSettings
     public function save(array $input): void
     {
         if (array_key_exists('enabled', $input)) {
-            $this->settings->set(self::PREFIX . '.enabled', (bool) $input['enabled']);
+            $this->settings->set(self::PREFIX.'.enabled', (bool) $input['enabled']);
         }
 
         if (array_key_exists('require_login', $input)) {
-            $this->settings->set(self::PREFIX . '.require_login', (bool) $input['require_login']);
+            $this->settings->set(self::PREFIX.'.require_login', (bool) $input['require_login']);
         }
 
         if (array_key_exists('allow_sharing', $input)) {
-            $this->settings->set(self::PREFIX . '.allow_sharing', (bool) $input['allow_sharing']);
+            $this->settings->set(self::PREFIX.'.allow_sharing', (bool) $input['allow_sharing']);
         }
 
         if (array_key_exists('button_label', $input)) {
-            $this->settings->set(self::PREFIX . '.button_label', trim((string) $input['button_label']));
+            $this->settings->set(self::PREFIX.'.button_label', trim((string) $input['button_label']));
         }
     }
 }

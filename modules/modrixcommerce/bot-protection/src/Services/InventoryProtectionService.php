@@ -17,12 +17,12 @@ class InventoryProtectionService
     public function checkInventoryHoarding(Request $request): array
     {
         $enabled = (bool) $this->settings->of(self::MODULE, 'prevent_inventory_hoarding', true);
-        if (!$enabled) {
+        if (! $enabled) {
             return ['is_hoarding' => false, 'score' => 0, 'reason' => null];
         }
 
         $path = $request->path();
-        if (!str_contains($path, 'cart') && !str_contains($path, 'add-to-cart')) {
+        if (! str_contains($path, 'cart') && ! str_contains($path, 'add-to-cart')) {
             return ['is_hoarding' => false, 'score' => 0, 'reason' => null];
         }
 

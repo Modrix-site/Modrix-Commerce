@@ -41,15 +41,15 @@ Build with `--no-dev` and the same PHP major/minor you declare as the minimum, b
 
 Upload validation (the message is shown on the form):
 
-| Rule                                                                               | Limit or message                                                       |
-| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Version is valid semver and not used before                                        | `Enter a valid version such as 1.1.0.` / `Version X already exists.`   |
-| Minimum PHP like `8.3` or `8.3.0`                                                  | `Enter the minimum PHP version as 8.3 or 8.3.0.`                       |
-| Valid zip, up to `marketplace.core_max_mb` (default 200 MB)                        | `Upload a ZIP up to 200 MB.`                                           |
-| No symlinks, backslashes, absolute or `..` paths, at most 50,000 entries           | `The release contains unsafe paths.`                                   |
+| Rule                                                                                      | Limit or message                                                                 |
+| ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Version is valid semver and not used before                                               | `Enter a valid version such as 1.1.0.` / `Version X already exists.`             |
+| Minimum PHP like `8.3` or `8.3.0`                                                         | `Enter the minimum PHP version as 8.3 or 8.3.0.`                                 |
+| Valid zip, up to `marketplace.core_max_mb` (default 200 MB)                               | `Upload a ZIP up to 200 MB.`                                                     |
+| No symlinks, backslashes, absolute or `..` paths, at most 50,000 entries                  | `The release contains unsafe paths.`                                             |
 | No SQLite database files (`*.sqlite`, `*.sqlite3`, `*.db`, `*-journal`, `*-wal`, `*-shm`) | `The release contains a database file (<name>). Build it from a clean checkout.` |
-| Contains `artisan`, `vendor/autoload.php`, `app/Core/Platform.php`                 | `The release must contain <file>.`                                     |
-| `app/Core/Platform.php` declares `VERSION = '<version>'` exactly as entered        | `app/Core/Platform.php must declare VERSION = '<version>'.`            |
+| Contains `artisan`, `vendor/autoload.php`, `app/Core/Platform.php`                        | `The release must contain <file>.`                                               |
+| `app/Core/Platform.php` declares `VERSION = '<version>'` exactly as entered               | `app/Core/Platform.php must declare VERSION = '<version>'.`                      |
 
 A published release cannot be edited. To fix a mistake, withdraw it and publish a new, higher version.
 
@@ -60,9 +60,9 @@ A published release cannot be edited. To fix a mistake, withdraw it and publish 
 - Listing is public and needs no connection. The check keeps only the newest release whose signature verifies (against the official key plus `ECOMODULAR_MARKETPLACE_TRUSTED_KEYS`), whose kind is `core`, whose version is newer and whose minimum PHP is met by the store.
 - The card shows the installed version, the available version with notes and minimum PHP, the last check time or error, and the last 5 runs. A failed check (Modrix Cloud unreachable) is shown as the last error and never breaks the page.
 - **Health check "Core updates"** (Admin → System status, `ecomodular:health`, `/health`):
-  - **failed** when a failed run could not be fully undone (`needs_attention`) and no update has completed since; the detail names the code and database backups to recover from;
-  - **warning** when a run has not progressed for 10 minutes (`CoreUpdateRun::STUCK_MINUTES`), when the last run was rolled back, or `Modrix Commerce X is available` (only versions newer than the installed one count);
-  - otherwise **ok**: `Up to date (checked <time>)`.
+    - **failed** when a failed run could not be fully undone (`needs_attention`) and no update has completed since; the detail names the code and database backups to recover from;
+    - **warning** when a run has not progressed for 10 minutes (`CoreUpdateRun::STUCK_MINUTES`), when the last run was rolled back, or `Modrix Commerce X is available` (only versions newer than the installed one count);
+    - otherwise **ok**: `Up to date (checked <time>)`.
 - After a successful install the stored check result is cleared when it offers the installed (or an older) version, so the card and the health check no longer offer it.
 - **Downloading needs a Modrix Cloud connection** (Admin → Modrix Cloud, the Cloud Connector). Without it the card offers **Connect to Modrix Cloud to download** instead of **Install update**. The updater itself lives in core, so it works even when the Cloud Connector module is disabled, provided the store is connected.
 - The Cloud address is `ECOMODULAR_MARKETPLACE_URL` (default `https://cloud-apps.modrixcommerce.com`).
@@ -105,10 +105,10 @@ If the PHP process is killed (server restart, OOM), the run row stays in a non-f
 
 ## Failure and rollback
 
-| Status        | Meaning                                                                                                                                                                         |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `failed`      | Stopped before the swap (steps 1-7): **nothing was changed**. Typical causes: not connected, checksum mismatch, bad package, SQLite file inside a managed path, backup failed, another update running, no disk space. |
-| `rolled_back` | The swap or migration failed (steps 8-9) and was **undone automatically**. The store runs the previous version.                                                                 |
+| Status                                    | Meaning                                                                                                                                                                                                                                                                                                     |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `failed`                                  | Stopped before the swap (steps 1-7): **nothing was changed**. Typical causes: not connected, checksum mismatch, bad package, SQLite file inside a managed path, backup failed, another update running, no disk space.                                                                                       |
+| `rolled_back`                             | The swap or migration failed (steps 8-9) and was **undone automatically**. The store runs the previous version.                                                                                                                                                                                             |
 | `failed` with "could NOT be fully undone" | An automatic rollback itself had problems (or maintenance mode could not be lifted). The run is flagged `needs_attention`: the card shows a red alert and the health check fails until an update completes. The message lists the problems and names the code and database backups. Follow manual recovery. |
 
 On a rollback the updater, in reverse order, moves each new path aside and puts the `.old-*` copy back, clears `bootstrap/cache`, and, if migrations had started, restores the database from the step 7 backup (`Backups::restoreDatabase`: database only, no file sets, no migrations). Tables and views created after the backup are dropped on MySQL and PostgreSQL. Maintenance mode is always lifted.
@@ -124,18 +124,18 @@ Use this when the message says the update could not be undone, or the site is br
 
 1. **Leftover swap directories:** in the app root, `app.old-xxxxxxxx`, `vendor.old-xxxxxxxx` and similar are the previous code. If the current path is the new, broken one, rename it aside and rename the `.old-*` copy back.
 2. **Code from the snapshot:** if the `.old-*` copies are gone, restore from `storage/app/private/core-updates/core-<version>-<timestamp>.zip`. Its entries are relative to the app root:
-   ```bash
-   cd /var/www/modrix
-   unzip -o storage/app/private/core-updates/core-1.0.0-rc.1-20261108-020500.zip
-   rm -f bootstrap/cache/*.php
-   ```
-   Files the new release added (new directories under `app/`, `database/migrations`) remain. Delete them if they cause trouble, or move the old paths aside first and unzip into clean ones.
+    ```bash
+    cd /var/www/modrix
+    unzip -o storage/app/private/core-updates/core-1.0.0-rc.1-20261108-020500.zip
+    rm -f bootstrap/cache/*.php
+    ```
+    Files the new release added (new directories under `app/`, `database/migrations`) remain. Delete them if they cause trouble, or move the old paths aside first and unzip into clean ones.
 3. **Database:** if migrations ran, restore the database backup named in the run:
-   ```bash
-   php artisan ecomodular:restore ecomodular-backup-20261108-020500-ab12.zip --verify-only
-   php artisan ecomodular:restore ecomodular-backup-20261108-020500-ab12.zip
-   ```
-   See [Backup and Restore](backup-and-restore.md). The full restore also runs `migrate --force`, which on old code is harmless; run `php artisan migrate:status` afterwards.
+    ```bash
+    php artisan ecomodular:restore ecomodular-backup-20261108-020500-ab12.zip --verify-only
+    php artisan ecomodular:restore ecomodular-backup-20261108-020500-ab12.zip
+    ```
+    See [Backup and Restore](backup-and-restore.md). The full restore also runs `migrate --force`, which on old code is harmless; run `php artisan migrate:status` afterwards.
 4. **Bring the site back:** `php artisan up`, then `php artisan optimize:clear`, `php artisan queue:restart` and `php artisan ecomodular:health`.
 
 Keep the code snapshots and update backups until you are confident in the new version. They are not pruned automatically (database backups follow the normal retention).

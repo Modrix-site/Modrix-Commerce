@@ -16,14 +16,14 @@ PhonePe payment gateway integration for India, supporting UPI (PhonePe Intent, Q
 
 1. Obtain your **Merchant ID**, **Salt Key**, and **Salt Index** from the [PhonePe Merchant Portal](https://business.phonepe.com/).
 2. Install and enable the module:
-   ```bash
-   php artisan ecomodular:modules install modrixcommerce/phonepe
-   php artisan ecomodular:modules enable modrixcommerce/phonepe --trust
-   ```
+    ```bash
+    php artisan ecomodular:modules install modrixcommerce/phonepe
+    php artisan ecomodular:modules enable modrixcommerce/phonepe --trust
+    ```
 3. In **Admin → Configuration → PhonePe**, enter your Merchant ID, Salt Key, and Salt Index.
 4. Set the Webhook Callback URL in PhonePe Portal to:
    `https://<your-store>/webhooks/payments/phonepe`
 5. Compile frontend assets:
-   ```bash
-   npm run build
-   ```
+    ```bash
+    npm run build
+    ```

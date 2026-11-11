@@ -1,17 +1,17 @@
-import { Form } from "@inertiajs/react";
-import InstallController from "@/actions/App/Http/Controllers/Install/InstallController";
-import { FormField, NativeSelect } from "@/components/admin/form-field";
-import PasswordInput from "@/components/password-input";
-import { Button } from "@/components/ui/button";
+import { Form } from '@inertiajs/react';
+import InstallController from '@/actions/App/Http/Controllers/Install/InstallController';
+import { FormField, NativeSelect } from '@/components/admin/form-field';
+import PasswordInput from '@/components/password-input';
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import type { CurrencyOption, InstallProof } from "@/types";
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import type { CurrencyOption, InstallProof } from '@/types';
 
 type Props = {
     proof: InstallProof;
@@ -30,7 +30,7 @@ function ProofCard({
     tokenLocation: string;
     errors: Record<string, string>;
 }) {
-    if (proof === "session") {
+    if (proof === 'session') {
         return null;
     }
 
@@ -39,7 +39,7 @@ function ProofCard({
             <CardHeader>
                 <CardTitle>Verify ownership</CardTitle>
                 <CardDescription>
-                    {proof === "database_password" ? (
+                    {proof === 'database_password' ? (
                         <>
                             Enter the database password configured for this app
                             on your hosting platform (DB_PASSWORD). It is only
@@ -47,11 +47,11 @@ function ProofCard({
                         </>
                     ) : (
                         <>
-                            Paste the token from{" "}
+                            Paste the token from{' '}
                             <code className="rounded bg-muted px-1">
                                 {tokenLocation}
-                            </code>{" "}
-                            (open it with your file manager) or run{" "}
+                            </code>{' '}
+                            (open it with your file manager) or run{' '}
                             <code className="rounded bg-muted px-1">
                                 php artisan ecomodular:installer-token
                             </code>
@@ -61,7 +61,7 @@ function ProofCard({
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                {proof === "database_password" ? (
+                {proof === 'database_password' ? (
                     <FormField
                         id="database_password"
                         label="Database password (from your hosting environment)"
@@ -105,9 +105,9 @@ export function OwnerStep({
             {...InstallController.store.form()}
             className="grid gap-6"
             resetOnError={[
-                "password",
-                "password_confirmation",
-                "database_password",
+                'password',
+                'password_confirmation',
+                'database_password',
             ]}
         >
             {({ processing, errors }) => (

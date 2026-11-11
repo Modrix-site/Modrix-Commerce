@@ -15,9 +15,7 @@
         }
     ],
     "enabled_on": {
-        "templates": [
-            "cart"
-        ]
+        "templates": ["cart"]
     },
     "limit": 1
 }

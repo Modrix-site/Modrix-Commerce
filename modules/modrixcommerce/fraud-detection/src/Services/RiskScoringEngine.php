@@ -408,8 +408,8 @@ class RiskScoringEngine
             /** @var FraudRule $rule */
             if ($rule->evaluate($ctx)) {
                 $this->addIndicator(
-                    'custom_rule_' . $rule->id,
-                    'Rule: ' . $rule->name,
+                    'custom_rule_'.$rule->id,
+                    'Rule: '.$rule->name,
                     $rule->score_impact,
                     $rule->description ?? sprintf('Custom rule "%s" matched.', $rule->name)
                 );
@@ -439,6 +439,7 @@ class RiskScoringEngine
         if ($score <= $mediumCeiling) {
             return FraudScore::RISK_MEDIUM;
         }
+
         return FraudScore::RISK_HIGH;
     }
 
@@ -480,9 +481,6 @@ class RiskScoringEngine
         return in_array($domain, $disposableDomains, true);
     }
 
-    /**
-     * @param  object|null  $address
-     */
     private function normalizeAddress(?object $address): ?string
     {
         if (! $address) {

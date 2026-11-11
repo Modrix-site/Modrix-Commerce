@@ -1,19 +1,19 @@
-import { useForm } from "@inertiajs/react";
-import type { FormEvent } from "react";
-import InstallController from "@/actions/App/Http/Controllers/Install/InstallController";
-import { FormField } from "@/components/admin/form-field";
-import PasswordInput from "@/components/password-input";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
+import { useForm } from '@inertiajs/react';
+import type { FormEvent } from 'react';
+import InstallController from '@/actions/App/Http/Controllers/Install/InstallController';
+import { FormField } from '@/components/admin/form-field';
+import PasswordInput from '@/components/password-input';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import type { ConnectionTestResult } from "@/types";
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import type { ConnectionTestResult } from '@/types';
 
 type Props = {
     tokenLocation: string;
@@ -26,18 +26,18 @@ type Props = {
  */
 export function DatabaseStep({ tokenLocation, connectionTest }: Props) {
     const form = useForm({
-        host: "localhost",
-        port: "3306",
-        database: "",
-        username: "",
-        db_password: "",
-        setup_token: "",
+        host: 'localhost',
+        port: '3306',
+        database: '',
+        username: '',
+        db_password: '',
+        setup_token: '',
     });
 
     const save = (event: FormEvent) => {
         event.preventDefault();
         form.submit(InstallController.database(), {
-            onError: () => form.reset("db_password"),
+            onError: () => form.reset('db_password'),
         });
     };
 
@@ -56,7 +56,7 @@ export function DatabaseStep({ tokenLocation, connectionTest }: Props) {
                     <CardDescription>
                         Create a MySQL (5.7+) or MariaDB (10.3+) database and a
                         user with all privileges on it in your control panel,
-                        then enter the details here. The installer saves them in{" "}
+                        then enter the details here. The installer saves them in{' '}
                         <code className="rounded bg-muted px-1">.env</code> and
                         creates the tables.
                     </CardDescription>
@@ -67,7 +67,7 @@ export function DatabaseStep({ tokenLocation, connectionTest }: Props) {
                             id="host"
                             value={form.data.host}
                             onChange={(e) =>
-                                form.setData("host", e.target.value)
+                                form.setData('host', e.target.value)
                             }
                             required
                         />
@@ -78,7 +78,7 @@ export function DatabaseStep({ tokenLocation, connectionTest }: Props) {
                             inputMode="numeric"
                             value={form.data.port}
                             onChange={(e) =>
-                                form.setData("port", e.target.value)
+                                form.setData('port', e.target.value)
                             }
                             required
                         />
@@ -92,7 +92,7 @@ export function DatabaseStep({ tokenLocation, connectionTest }: Props) {
                             id="database"
                             value={form.data.database}
                             onChange={(e) =>
-                                form.setData("database", e.target.value)
+                                form.setData('database', e.target.value)
                             }
                             required
                         />
@@ -107,7 +107,7 @@ export function DatabaseStep({ tokenLocation, connectionTest }: Props) {
                             autoComplete="off"
                             value={form.data.username}
                             onChange={(e) =>
-                                form.setData("username", e.target.value)
+                                form.setData('username', e.target.value)
                             }
                             required
                         />
@@ -122,7 +122,7 @@ export function DatabaseStep({ tokenLocation, connectionTest }: Props) {
                             autoComplete="off"
                             value={form.data.db_password}
                             onChange={(e) =>
-                                form.setData("db_password", e.target.value)
+                                form.setData('db_password', e.target.value)
                             }
                         />
                     </FormField>
@@ -133,10 +133,10 @@ export function DatabaseStep({ tokenLocation, connectionTest }: Props) {
                 <CardHeader>
                     <CardTitle>Setup token</CardTitle>
                     <CardDescription>
-                        To prove you control this server, open{" "}
+                        To prove you control this server, open{' '}
                         <code className="rounded bg-muted px-1">
                             {tokenLocation}
-                        </code>{" "}
+                        </code>{' '}
                         in your control panel's file manager and paste its
                         contents.
                     </CardDescription>
@@ -152,7 +152,7 @@ export function DatabaseStep({ tokenLocation, connectionTest }: Props) {
                             autoComplete="off"
                             value={form.data.setup_token}
                             onChange={(e) =>
-                                form.setData("setup_token", e.target.value)
+                                form.setData('setup_token', e.target.value)
                             }
                             required
                         />
@@ -161,11 +161,11 @@ export function DatabaseStep({ tokenLocation, connectionTest }: Props) {
             </Card>
 
             {connectionTest && (
-                <Alert variant={connectionTest.ok ? "default" : "destructive"}>
+                <Alert variant={connectionTest.ok ? 'default' : 'destructive'}>
                     <AlertTitle>
                         {connectionTest.ok
-                            ? "Connection works"
-                            : "Connection failed"}
+                            ? 'Connection works'
+                            : 'Connection failed'}
                     </AlertTitle>
                     <AlertDescription>
                         {connectionTest.message}
@@ -184,8 +184,8 @@ export function DatabaseStep({ tokenLocation, connectionTest }: Props) {
                 </Button>
                 <Button type="submit" disabled={form.processing}>
                     {form.processing
-                        ? "Creating tables…"
-                        : "Save and create tables"}
+                        ? 'Creating tables…'
+                        : 'Save and create tables'}
                 </Button>
             </div>
         </form>

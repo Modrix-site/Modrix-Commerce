@@ -16,23 +16,23 @@ Extensions (modules) can:
 
 `StorefrontSlots::SLOTS` gains these places (★ new):
 
-| Place | Tab | Context | Movable |
-|---|---|---|---|
-| ★ `header.actions` | header | — | yes |
-| `home.after_featured` | home | — | yes |
-| ★ `catalog.before_products` | catalog | category, brand, query | yes |
-| `catalog.after_products` | catalog | category, brand, query | yes |
-| ★ `product.card` | catalog | — (the card's product is passed on the page) | yes |
-| ★ `product.after_price` | product | product | yes |
-| ★ `product.after_add_to_cart` | product | product | yes |
-| `product.after_details` | product | product | yes |
-| ★ `product.after_description` | product | product | yes |
-| ★ `cart.after_lines` | cart | cart | yes |
-| `cart.after_totals` | cart | cart | yes |
-| `checkout.after_summary` | checkout | cart | yes |
-| ★ `checkout.before_place_order` | checkout | cart | yes |
-| `storefront.footer` | footer | — | yes |
-| `storefront.overlay`, `checkout.payment_method`, `order.confirmation`, `admin.product.sidebar` | — | as today | no (fixed) |
+| Place                                                                                          | Tab      | Context                                      | Movable    |
+| ---------------------------------------------------------------------------------------------- | -------- | -------------------------------------------- | ---------- |
+| ★ `header.actions`                                                                             | header   | —                                            | yes        |
+| `home.after_featured`                                                                          | home     | —                                            | yes        |
+| ★ `catalog.before_products`                                                                    | catalog  | category, brand, query                       | yes        |
+| `catalog.after_products`                                                                       | catalog  | category, brand, query                       | yes        |
+| ★ `product.card`                                                                               | catalog  | — (the card's product is passed on the page) | yes        |
+| ★ `product.after_price`                                                                        | product  | product                                      | yes        |
+| ★ `product.after_add_to_cart`                                                                  | product  | product                                      | yes        |
+| `product.after_details`                                                                        | product  | product                                      | yes        |
+| ★ `product.after_description`                                                                  | product  | product                                      | yes        |
+| ★ `cart.after_lines`                                                                           | cart     | cart                                         | yes        |
+| `cart.after_totals`                                                                            | cart     | cart                                         | yes        |
+| `checkout.after_summary`                                                                       | checkout | cart                                         | yes        |
+| ★ `checkout.before_place_order`                                                                | checkout | cart                                         | yes        |
+| `storefront.footer`                                                                            | footer   | —                                            | yes        |
+| `storefront.overlay`, `checkout.payment_method`, `order.confirmation`, `admin.product.sidebar` | —        | as today                                     | no (fixed) |
 
 `StorefrontSlots::PLACES` maps each movable place to its label (for example "Under the price") and its tab.
 
@@ -85,14 +85,14 @@ Nothing shows on a tab with no blocks and no settings.
 
 ## 7. Bundled modules
 
-| Module | Places (default first) | Setting in a tab |
-|---|---|---|
-| Product reviews | after details, below the description | "Show the review summary" (product) |
-| Tabby | under the price, under add to cart | "Show the instalment note" (product) |
-| Tamara | under the price, under add to cart | "Show the instalment note" (product) |
-| Frequently bought together | after details, under add to cart | "Number of products" (product) |
-| Newsletter (sign-up block) | after featured (home), footer | "Show the sign-up form" (home) |
-| Flash sales | after featured (home), above products (catalog) | — |
+| Module                     | Places (default first)                          | Setting in a tab                     |
+| -------------------------- | ----------------------------------------------- | ------------------------------------ |
+| Product reviews            | after details, below the description            | "Show the review summary" (product)  |
+| Tabby                      | under the price, under add to cart              | "Show the instalment note" (product) |
+| Tamara                     | under the price, under add to cart              | "Show the instalment note" (product) |
+| Frequently bought together | after details, under add to cart                | "Number of products" (product)       |
+| Newsletter (sign-up block) | after featured (home), footer                   | "Show the sign-up form" (home)       |
+| Flash sales                | after featured (home), above products (catalog) | —                                    |
 
 These modules' current places stay their defaults, so an untouched store renders as before.
 

@@ -1,13 +1,13 @@
-import { Head, router } from "@inertiajs/react";
-import { PlaceSlot } from "@/components/extensions/place-slot";
-import { useStoreSettings } from "@/hooks/use-store-settings";
-import { useState } from "react";
-import { SlidersHorizontal } from "lucide-react";
-import type { CSSProperties } from "react";
-import type { ListingProps } from "@/pages/storefront/listing";
-import { StoreMenuLink as Link } from "@/components/storefront/footer-menus";
-import { VoltoraCard, useVoltora } from "./components";
-import "./style.css";
+import { Head, router } from '@inertiajs/react';
+import { PlaceSlot } from '@/components/extensions/place-slot';
+import { useStoreSettings } from '@/hooks/use-store-settings';
+import { useState } from 'react';
+import { SlidersHorizontal } from 'lucide-react';
+import type { CSSProperties } from 'react';
+import type { ListingProps } from '@/pages/storefront/listing';
+import { StoreMenuLink as Link } from '@/components/storefront/footer-menus';
+import { VoltoraCard, useVoltora } from './components';
+import './style.css';
 export default function VoltoraCatalog({
     title,
     description,
@@ -24,8 +24,8 @@ export default function VoltoraCatalog({
     const catalogSettings = useStoreSettings().catalog;
     const { storefront, text, show } = useVoltora();
     const [open, setOpen] = useState(true);
-    const [min, setMin] = useState(String(filters.min_price ?? ""));
-    const [max, setMax] = useState(String(filters.max_price ?? ""));
+    const [min, setMin] = useState(String(filters.min_price ?? ''));
+    const [max, setMax] = useState(String(filters.max_price ?? ''));
     const selectedOptionIds = (filters.options ?? []).map(Number);
     const update = (
         patch: Record<string, string | number | boolean | number[] | undefined>,
@@ -53,8 +53,8 @@ export default function VoltoraCatalog({
             className="voltora-catalog-page voltora-wrap"
             style={
                 {
-                    "--voltora-columns": Number(text("catalog_columns", "4")),
-                    "--voltora-image-height": `${text("catalog_image_height", "280")}px`,
+                    '--voltora-columns': Number(text('catalog_columns', '4')),
+                    '--voltora-image-height': `${text('catalog_image_height', '280')}px`,
                 } as CSSProperties
             }
         >
@@ -69,7 +69,7 @@ export default function VoltoraCatalog({
                 <Link href="/search">Catalogue</Link>
                 {breadcrumbs.map((item) => (
                     <span key={item.slug}>
-                        {" "}
+                        {' '}
                         / <Link href={`/c/${item.slug}`}>{item.name}</Link>
                     </span>
                 ))}
@@ -77,17 +77,17 @@ export default function VoltoraCatalog({
             <h1 className="voltora-catalog-title">
                 {query
                     ? `Search: ${query}`
-                    : title === "All products"
-                      ? text("catalog_heading", "Catalogue")
+                    : title === 'All products'
+                      ? text('catalog_heading', 'Catalogue')
                       : title}
             </h1>
             {description && (
                 <p className="voltora-catalog-description">{description}</p>
             )}
-            {text("catalog_banner") && (
+            {text('catalog_banner') && (
                 <img
                     className="voltora-catalog-banner"
-                    src={text("catalog_banner")}
+                    src={text('catalog_banner')}
                     alt=""
                 />
             )}
@@ -102,7 +102,7 @@ export default function VoltoraCatalog({
                 ))}
             </nav>
             <div className="voltora-catalog-toolbar">
-                {(catalogSettings.filters && show("catalog_filters")) && (
+                {catalogSettings.filters && show('catalog_filters') && (
                     <button
                         className="voltora-primary"
                         aria-expanded={open}
@@ -112,7 +112,7 @@ export default function VoltoraCatalog({
                         <SlidersHorizontal size={14} /> All filters
                     </button>
                 )}
-                {show("catalog_stock_filter") && (
+                {show('catalog_stock_filter') && (
                     <label>
                         <input
                             type="checkbox"
@@ -122,7 +122,7 @@ export default function VoltoraCatalog({
                                     in_stock: e.target.checked ? 1 : undefined,
                                 })
                             }
-                        />{" "}
+                        />{' '}
                         In stock
                     </label>
                 )}
@@ -142,9 +142,11 @@ export default function VoltoraCatalog({
             </div>
             <div
                 className="voltora-catalog-body"
-                data-filters={open && (catalogSettings.filters && show("catalog_filters"))}
+                data-filters={
+                    open && catalogSettings.filters && show('catalog_filters')
+                }
             >
-                {open && (catalogSettings.filters && show("catalog_filters")) && (
+                {open && catalogSettings.filters && show('catalog_filters') && (
                     <aside
                         id="voltora-filter-panel"
                         className="voltora-filter-panel"
@@ -185,7 +187,7 @@ export default function VoltoraCatalog({
                                 Brand
                                 <select
                                     aria-label="Filter by brand"
-                                    value={filters.brand_id ?? ""}
+                                    value={filters.brand_id ?? ''}
                                     onChange={(e) =>
                                         update({
                                             brand_id:
@@ -221,8 +223,8 @@ export default function VoltoraCatalog({
                         ))}
                         <button
                             onClick={() => {
-                                setMin("");
-                                setMax("");
+                                setMin('');
+                                setMax('');
                                 update({
                                     min_price: undefined,
                                     max_price: undefined,

@@ -26,7 +26,11 @@ export default function Hero({ section }: ThemeSectionProps) {
                     {str(s.eyebrow) && (
                         <p className="at-eyebrow">{str(s.eyebrow)}</p>
                     )}
-                    <h1 style={{ fontSize: `clamp(28px, 4vw, ${headingSize}px)` }}>
+                    <h1
+                        style={{
+                            fontSize: `clamp(28px, 4vw, ${headingSize}px)`,
+                        }}
+                    >
                         {str(s.heading, 'The art of everyday.')}
                     </h1>
                     {str(s.text) && (
@@ -37,7 +41,9 @@ export default function Hero({ section }: ThemeSectionProps) {
                             href={str(s.link, '/search')}
                             className="at-btn at-btn-primary bg-black text-white hover:bg-neutral-800"
                         >
-                            <span>{str(s.button, 'Discover the collection')}</span>
+                            <span>
+                                {str(s.button, 'Discover the collection')}
+                            </span>
                             <ArrowRight size={15} className="ml-2 inline" />
                         </Link>
                     </div>

@@ -5,6 +5,7 @@
 **Goal:** an admin notification bell with live toasts and per-staff settings, plus a customer notification bell for order updates.
 
 **Architecture:**
+
 - **Data:** Laravel database notifications on `User`. One `StoreNotification` class carries `{kind, params, url, dedupe}`, and `NotificationKinds` describes each kind (audience, permission, icon, title and body templates).
 - **Delivery:** `StoreNotifier` picks the recipients (permission, preferences, actor excluded, de-duplicated) and channels (database and/or mail).
 - **Triggers:** synchronous listeners on the existing domain events.
@@ -58,6 +59,7 @@
 ### Task 1: Foundation
 
 **Files:**
+
 - Create:
     - migration `2026_10_27_000001_create_notifications_table.php`: Laravel's notifications table plus `users.notification_preferences` JSON (nullable);
     - `app/Notifications/StoreNotification.php`;
@@ -68,6 +70,7 @@
 - Test: `tests/Feature/Notifications/StoreNotifierTest.php`
 
 **Interfaces:**
+
 - `NotificationKinds::all(): array<string, array{audience: 'staff'|'customer', permission: ?string, icon: string, title: string, body: string}>`
 - `NotificationKinds::register(string $kind, array $definition)` (validates permission for staff kinds)
 - `NotificationKinds::render(string $kind, array $params): array{title: string, body: string}`
@@ -91,11 +94,13 @@
 ### Task 2: Event triggers
 
 **Files:**
+
 - Create: `app/Domains/Notifications/Listeners/NotifyStaff.php` and `NotifyCustomer.php` (subscribers)
 - Modify (pair): `app/Providers/CommerceServiceProvider.php` (`Event::subscribe`)
 - Test: `tests/Feature/Notifications/NotificationTriggersTest.php`
 
 **Mapping:**
+
 - **Staff:** OrderPlaced → `order.placed`; OrderPaid → `order.paid`; OrderStatusChanged(`payment_failed`) → `payment.failed`; OrderCancelled; OrderRefunded; InventoryLow → `stock.low` (url: admin product of the variant); CustomerRegistered → `customer.new`.
 - **Customer** (only when `order.user_id` is set): OrderStatusChanged(`confirmed`) and OrderPlaced when the status is confirmed; OrderShipped (params: carrier, tracking); OrderStatusChanged(`out_for_delivery`); OrderDelivered; OrderCancelled; OrderRefunded; OrderStatusChanged(`payment_failed`); OrderPaid with grants → `downloads_ready`.
 - **Params:** `number`, `total` (formatted), `customer` (name), `sku`, `on_hand`.
@@ -112,6 +117,7 @@
 ### Task 3: Admin bell, page, feed and settings
 
 **Files:**
+
 - Create:
     - `app/Http/Controllers/Admin/NotificationController.php`: index, feed, open, markRead, markAllRead, destroy, settings, updateSettings;
     - `resources/js/components/notifications/notification-bell.tsx` (shared bell and dropdown);
@@ -135,6 +141,7 @@
 ### Task 4: Customer bell
 
 **Files:**
+
 - Create: `app/Http/Controllers/Storefront/AccountNotificationController.php` (index, open, markAllRead) and `resources/js/pages/storefront/account/notifications.tsx`
 - Modify:
     - `resources/js/components/storefront/site-header.tsx`: bell in the icons and a menu link;

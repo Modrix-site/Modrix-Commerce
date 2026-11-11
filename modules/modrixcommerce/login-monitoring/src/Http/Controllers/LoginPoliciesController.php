@@ -115,7 +115,7 @@ class LoginPoliciesController extends Controller
             'duration_hours' => ['nullable', 'integer', 'min:1', 'max:8760'],
         ]);
 
-        $expiresAt = !empty($validated['duration_hours']) ? now()->addHours($validated['duration_hours']) : null;
+        $expiresAt = ! empty($validated['duration_hours']) ? now()->addHours($validated['duration_hours']) : null;
 
         LoginBlockedIp::create([
             'ip_address' => $validated['ip_address'],

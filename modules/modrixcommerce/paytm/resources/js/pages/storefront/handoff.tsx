@@ -26,9 +26,15 @@ export default function PaytmHandoff({
                 <Loader2 className="size-8 animate-spin text-primary" />
                 <h1 className="text-xl font-semibold">Redirecting to Paytm</h1>
                 <p className="text-sm text-muted-foreground">
-                    Order {orderId} is being securely forwarded. Please wait while we connect you to Paytm to complete your transaction.
+                    Order {orderId} is being securely forwarded. Please wait
+                    while we connect you to Paytm to complete your transaction.
                 </p>
-                <form ref={form} method="post" action={postUrl} className="w-full">
+                <form
+                    ref={form}
+                    method="post"
+                    action={postUrl}
+                    className="w-full"
+                >
                     <input type="hidden" name="mid" value={mid} />
                     <input type="hidden" name="orderId" value={orderId} />
                     <input type="hidden" name="txnToken" value={txnToken} />

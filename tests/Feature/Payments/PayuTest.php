@@ -181,8 +181,8 @@ class PayuTest extends TestCase
 
         $session = $this->gateway->createSession($order, $payment, 'https://example.com/return', 'https://example.com/cancel');
 
-        $this->assertStringStartsWith('PAYU_' . $payment->id, $session->reference);
-        $this->assertStringContainsString('handoff/' . $payment->id, $session->redirectUrl);
+        $this->assertStringStartsWith('PAYU_'.$payment->id, $session->reference);
+        $this->assertStringContainsString('handoff/'.$payment->id, $session->redirectUrl);
 
         $cached = Cache::get("payu:handoff:{$payment->id}");
         $this->assertIsArray($cached);

@@ -58,7 +58,9 @@ export default function TapSettingsPage({
                     actions={
                         <Badge
                             variant={
-                                settings.mode === 'live' ? 'default' : 'secondary'
+                                settings.mode === 'live'
+                                    ? 'default'
+                                    : 'secondary'
                             }
                         >
                             {settings.mode === 'live'
@@ -101,8 +103,8 @@ export default function TapSettingsPage({
                             In the Tap dashboard, copy the secret key. A key
                             starting with sk_test_ uses the test account. A key
                             starting with sk_live_ charges real payments and
-                            requires https. The public key is not used: the
-                            card form stays on Tap.
+                            requires https. The public key is not used: the card
+                            form stays on Tap.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -175,7 +177,9 @@ export default function TapSettingsPage({
                                             name="secret_key"
                                             type="password"
                                             autoComplete="new-password"
-                                            required={settings.secret_hint === null}
+                                            required={
+                                                settings.secret_hint === null
+                                            }
                                         />
                                     </FormField>
                                     <div>
@@ -196,12 +200,12 @@ export default function TapSettingsPage({
                     <CardHeader>
                         <CardTitle>2. Webhooks</CardTitle>
                         <CardDescription>
-                            Tap posts each charge and refund to the address
-                            sent with the charge. This store also sends the
-                            URL below when it is https. Tap signs the body
-                            with hashstring, using the same secret key. The
-                            store still reads the charge from Tap before
-                            marking it paid.
+                            Tap posts each charge and refund to the address sent
+                            with the charge. This store also sends the URL below
+                            when it is https. Tap signs the body with
+                            hashstring, using the same secret key. The store
+                            still reads the charge from Tap before marking it
+                            paid.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-3">

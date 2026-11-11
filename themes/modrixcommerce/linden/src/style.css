@@ -1758,9 +1758,29 @@
     display: none;
 }
 
-.lv-catalog>div{min-width:0}
+.lv-catalog > div {
+    min-width: 0;
+}
 
-.lv-footer nav>a{color:inherit;font-size:var(--lv-footer-size,12px)}.lv-footer h3{font-size:calc(var(--lv-footer-size,12px) - 2px)}.lv-nav{font-size:var(--lv-nav-size,13px)}.lv-btn{font-size:var(--lv-button-size,11px)}.lv-catalog-intro h1{font-size:var(--lv-catalog-title,36px)}.lv-card-image{aspect-ratio:var(--lv-card-ratio,1/1.12)}
+.lv-footer nav > a {
+    color: inherit;
+    font-size: var(--lv-footer-size, 12px);
+}
+.lv-footer h3 {
+    font-size: calc(var(--lv-footer-size, 12px) - 2px);
+}
+.lv-nav {
+    font-size: var(--lv-nav-size, 13px);
+}
+.lv-btn {
+    font-size: var(--lv-button-size, 11px);
+}
+.lv-catalog-intro h1 {
+    font-size: var(--lv-catalog-title, 36px);
+}
+.lv-card-image {
+    aspect-ratio: var(--lv-card-ratio, 1/1.12);
+}
 
 /* Compact sticky header while scrolling: slimmer logo, search and icon row;
    the menu stays, tightened onto one line. */

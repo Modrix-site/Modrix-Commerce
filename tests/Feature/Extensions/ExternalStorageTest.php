@@ -33,6 +33,7 @@ class ExternalStorageTest extends TestCase
     private const MODULE = 'modrixcommerce/external-storage';
 
     private ModuleManager $modules;
+
     private User $owner;
 
     protected function setUp(): void

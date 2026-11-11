@@ -126,19 +126,10 @@
                     ]
                 },
                 "density": {
-                    "enum": [
-                        "compact",
-                        "comfortable",
-                        "spacious"
-                    ]
+                    "enum": ["compact", "comfortable", "spacious"]
                 },
                 "container": {
-                    "enum": [
-                        "narrow",
-                        "default",
-                        "reference",
-                        "wide"
-                    ]
+                    "enum": ["narrow", "default", "reference", "wide"]
                 },
                 "layout.header": {
                     "enum": [
@@ -150,12 +141,7 @@
                     ]
                 },
                 "layout.footer": {
-                    "enum": [
-                        "simple",
-                        "columns",
-                        "electronics",
-                        "atelier"
-                    ]
+                    "enum": ["simple", "columns", "electronics", "atelier"]
                 },
                 "layout.product_card": {
                     "enum": [
@@ -167,18 +153,10 @@
                     ]
                 },
                 "layout.grid_columns": {
-                    "enum": [
-                        "3",
-                        "4"
-                    ]
+                    "enum": ["3", "4"]
                 },
                 "layout.product_page": {
-                    "enum": [
-                        "split",
-                        "stacked",
-                        "electronics",
-                        "atelier"
-                    ]
+                    "enum": ["split", "stacked", "electronics", "atelier"]
                 },
                 "logo": {
                     "$ref": "#/$defs/image"
@@ -385,13 +363,7 @@
                     ]
                 },
                 "style.general.heading_weight": {
-                    "enum": [
-                        "400",
-                        "500",
-                        "600",
-                        "700",
-                        "800"
-                    ]
+                    "enum": ["400", "500", "600", "700", "800"]
                 },
                 "style.general.heading_color": {
                     "$ref": "#/$defs/color"
@@ -400,14 +372,7 @@
                     "$ref": "#/$defs/font"
                 },
                 "style.general.body_size": {
-                    "enum": [
-                        "13",
-                        "14",
-                        "15",
-                        "16",
-                        "17",
-                        "18"
-                    ]
+                    "enum": ["13", "14", "15", "16", "17", "18"]
                 },
                 "style.general.body_color": {
                     "$ref": "#/$defs/color"
@@ -425,14 +390,7 @@
                     "$ref": "#/$defs/font"
                 },
                 "style.general.button_size": {
-                    "enum": [
-                        "12",
-                        "13",
-                        "14",
-                        "15",
-                        "16",
-                        "18"
-                    ]
+                    "enum": ["12", "13", "14", "15", "16", "18"]
                 },
                 "style.general.button_radius": {
                     "enum": [
@@ -447,14 +405,7 @@
                     ]
                 },
                 "style.general.price_size": {
-                    "enum": [
-                        "14",
-                        "16",
-                        "18",
-                        "20",
-                        "24",
-                        "28"
-                    ]
+                    "enum": ["14", "16", "18", "20", "24", "28"]
                 },
                 "style.general.price_color": {
                     "$ref": "#/$defs/color"
@@ -479,13 +430,7 @@
                     ]
                 },
                 "style.home.heading_weight": {
-                    "enum": [
-                        "400",
-                        "500",
-                        "600",
-                        "700",
-                        "800"
-                    ]
+                    "enum": ["400", "500", "600", "700", "800"]
                 },
                 "style.home.heading_color": {
                     "$ref": "#/$defs/color"
@@ -494,14 +439,7 @@
                     "$ref": "#/$defs/font"
                 },
                 "style.home.body_size": {
-                    "enum": [
-                        "13",
-                        "14",
-                        "15",
-                        "16",
-                        "17",
-                        "18"
-                    ]
+                    "enum": ["13", "14", "15", "16", "17", "18"]
                 },
                 "style.home.body_color": {
                     "$ref": "#/$defs/color"
@@ -519,14 +457,7 @@
                     "$ref": "#/$defs/font"
                 },
                 "style.home.button_size": {
-                    "enum": [
-                        "12",
-                        "13",
-                        "14",
-                        "15",
-                        "16",
-                        "18"
-                    ]
+                    "enum": ["12", "13", "14", "15", "16", "18"]
                 },
                 "style.home.button_radius": {
                     "enum": [
@@ -541,14 +472,7 @@
                     ]
                 },
                 "style.home.price_size": {
-                    "enum": [
-                        "14",
-                        "16",
-                        "18",
-                        "20",
-                        "24",
-                        "28"
-                    ]
+                    "enum": ["14", "16", "18", "20", "24", "28"]
                 },
                 "style.home.price_color": {
                     "$ref": "#/$defs/color"
@@ -573,13 +497,7 @@
                     ]
                 },
                 "style.catalog.heading_weight": {
-                    "enum": [
-                        "400",
-                        "500",
-                        "600",
-                        "700",
-                        "800"
-                    ]
+                    "enum": ["400", "500", "600", "700", "800"]
                 },
                 "style.catalog.heading_color": {
                     "$ref": "#/$defs/color"
@@ -588,14 +506,7 @@
                     "$ref": "#/$defs/font"
                 },
                 "style.catalog.body_size": {
-                    "enum": [
-                        "13",
-                        "14",
-                        "15",
-                        "16",
-                        "17",
-                        "18"
-                    ]
+                    "enum": ["13", "14", "15", "16", "17", "18"]
                 },
                 "style.catalog.body_color": {
                     "$ref": "#/$defs/color"
@@ -613,14 +524,7 @@
                     "$ref": "#/$defs/font"
                 },
                 "style.catalog.button_size": {
-                    "enum": [
-                        "12",
-                        "13",
-                        "14",
-                        "15",
-                        "16",
-                        "18"
-                    ]
+                    "enum": ["12", "13", "14", "15", "16", "18"]
                 },
                 "style.catalog.button_radius": {
                     "enum": [
@@ -635,14 +539,7 @@
                     ]
                 },
                 "style.catalog.price_size": {
-                    "enum": [
-                        "14",
-                        "16",
-                        "18",
-                        "20",
-                        "24",
-                        "28"
-                    ]
+                    "enum": ["14", "16", "18", "20", "24", "28"]
                 },
                 "style.catalog.price_color": {
                     "$ref": "#/$defs/color"
@@ -667,13 +564,7 @@
                     ]
                 },
                 "style.product.heading_weight": {
-                    "enum": [
-                        "400",
-                        "500",
-                        "600",
-                        "700",
-                        "800"
-                    ]
+                    "enum": ["400", "500", "600", "700", "800"]
                 },
                 "style.product.heading_color": {
                     "$ref": "#/$defs/color"
@@ -682,14 +573,7 @@
                     "$ref": "#/$defs/font"
                 },
                 "style.product.body_size": {
-                    "enum": [
-                        "13",
-                        "14",
-                        "15",
-                        "16",
-                        "17",
-                        "18"
-                    ]
+                    "enum": ["13", "14", "15", "16", "17", "18"]
                 },
                 "style.product.body_color": {
                     "$ref": "#/$defs/color"
@@ -707,14 +591,7 @@
                     "$ref": "#/$defs/font"
                 },
                 "style.product.button_size": {
-                    "enum": [
-                        "12",
-                        "13",
-                        "14",
-                        "15",
-                        "16",
-                        "18"
-                    ]
+                    "enum": ["12", "13", "14", "15", "16", "18"]
                 },
                 "style.product.button_radius": {
                     "enum": [
@@ -729,14 +606,7 @@
                     ]
                 },
                 "style.product.price_size": {
-                    "enum": [
-                        "14",
-                        "16",
-                        "18",
-                        "20",
-                        "24",
-                        "28"
-                    ]
+                    "enum": ["14", "16", "18", "20", "24", "28"]
                 },
                 "style.product.price_color": {
                     "$ref": "#/$defs/color"
@@ -761,13 +631,7 @@
                     ]
                 },
                 "style.cart.heading_weight": {
-                    "enum": [
-                        "400",
-                        "500",
-                        "600",
-                        "700",
-                        "800"
-                    ]
+                    "enum": ["400", "500", "600", "700", "800"]
                 },
                 "style.cart.heading_color": {
                     "$ref": "#/$defs/color"
@@ -776,14 +640,7 @@
                     "$ref": "#/$defs/font"
                 },
                 "style.cart.body_size": {
-                    "enum": [
-                        "13",
-                        "14",
-                        "15",
-                        "16",
-                        "17",
-                        "18"
-                    ]
+                    "enum": ["13", "14", "15", "16", "17", "18"]
                 },
                 "style.cart.body_color": {
                     "$ref": "#/$defs/color"
@@ -801,14 +658,7 @@
                     "$ref": "#/$defs/font"
                 },
                 "style.cart.button_size": {
-                    "enum": [
-                        "12",
-                        "13",
-                        "14",
-                        "15",
-                        "16",
-                        "18"
-                    ]
+                    "enum": ["12", "13", "14", "15", "16", "18"]
                 },
                 "style.cart.button_radius": {
                     "enum": [
@@ -823,14 +673,7 @@
                     ]
                 },
                 "style.cart.price_size": {
-                    "enum": [
-                        "14",
-                        "16",
-                        "18",
-                        "20",
-                        "24",
-                        "28"
-                    ]
+                    "enum": ["14", "16", "18", "20", "24", "28"]
                 },
                 "style.cart.price_color": {
                     "$ref": "#/$defs/color"
@@ -850,23 +693,13 @@
                     "$ref": "#/$defs/color"
                 },
                 "header.search": {
-                    "enum": [
-                        "bar",
-                        "icon"
-                    ]
+                    "enum": ["bar", "icon"]
                 },
                 "header.menu_align": {
-                    "enum": [
-                        "left",
-                        "center",
-                        "right"
-                    ]
+                    "enum": ["left", "center", "right"]
                 },
                 "header.cart_icon": {
-                    "enum": [
-                        "bag",
-                        "cart"
-                    ]
+                    "enum": ["bag", "cart"]
                 },
                 "header.cart_count": {
                     "type": "boolean"
@@ -875,18 +708,10 @@
                     "type": "boolean"
                 },
                 "catalog.columns_desktop": {
-                    "enum": [
-                        "2",
-                        "3",
-                        "4",
-                        "5"
-                    ]
+                    "enum": ["2", "3", "4", "5"]
                 },
                 "catalog.columns_mobile": {
-                    "enum": [
-                        "1",
-                        "2"
-                    ]
+                    "enum": ["1", "2"]
                 },
                 "catalog.per_page": {
                     "type": "integer",
@@ -894,22 +719,13 @@
                     "maximum": 48
                 },
                 "catalog.default_sort": {
-                    "enum": [
-                        "newest",
-                        "price_asc",
-                        "price_desc",
-                        "name"
-                    ]
+                    "enum": ["newest", "price_asc", "price_desc", "name"]
                 },
                 "catalog.filters": {
                     "type": "boolean"
                 },
                 "catalog.image_ratio": {
-                    "enum": [
-                        "square",
-                        "portrait",
-                        "landscape"
-                    ]
+                    "enum": ["square", "portrait", "landscape"]
                 },
                 "catalog.hover_image": {
                     "type": "boolean"
@@ -924,10 +740,7 @@
                     "type": "boolean"
                 },
                 "product.thumbnails": {
-                    "enum": [
-                        "side",
-                        "bottom"
-                    ]
+                    "enum": ["side", "bottom"]
                 },
                 "product.zoom": {
                     "type": "boolean"
@@ -936,18 +749,10 @@
                     "type": "boolean"
                 },
                 "product.stock_note": {
-                    "enum": [
-                        "off",
-                        "low",
-                        "always"
-                    ]
+                    "enum": ["off", "low", "always"]
                 },
                 "product.description": {
-                    "enum": [
-                        "open",
-                        "tabs",
-                        "accordion"
-                    ]
+                    "enum": ["open", "tabs", "accordion"]
                 },
                 "product.related": {
                     "type": "boolean"
@@ -979,10 +784,7 @@
                     "type": "boolean"
                 },
                 "checkout.summary_side": {
-                    "enum": [
-                        "right",
-                        "left"
-                    ]
+                    "enum": ["right", "left"]
                 },
                 "checkout.sticky_summary": {
                     "type": "boolean"
@@ -994,11 +796,7 @@
                     "type": "boolean"
                 },
                 "checkout.phone": {
-                    "enum": [
-                        "hidden",
-                        "optional",
-                        "required"
-                    ]
+                    "enum": ["hidden", "optional", "required"]
                 },
                 "checkout.order_note": {
                     "type": "boolean"
@@ -1080,10 +878,7 @@
             "items": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": [
-                    "family",
-                    "file"
-                ],
+                "required": ["family", "file"],
                 "properties": {
                     "family": {
                         "type": "string",
@@ -1097,10 +892,7 @@
                         "pattern": "^\\d{3}( \\d{3})?$"
                     },
                     "style": {
-                        "enum": [
-                            "normal",
-                            "italic"
-                        ]
+                        "enum": ["normal", "italic"]
                     }
                 }
             }
@@ -1114,9 +906,7 @@
                     "maxItems": 32,
                     "items": {
                         "type": "object",
-                        "required": [
-                            "type"
-                        ],
+                        "required": ["type"],
                         "properties": {
                             "type": {
                                 "enum": [
@@ -1146,11 +936,7 @@
             "maxItems": 50,
             "items": {
                 "type": "object",
-                "required": [
-                    "version",
-                    "date",
-                    "notes"
-                ],
+                "required": ["version", "date", "notes"],
                 "properties": {
                     "version": {
                         "type": "string"
@@ -1300,11 +1086,7 @@
         "customizerField": {
             "type": "object",
             "additionalProperties": false,
-            "required": [
-                "type",
-                "label",
-                "default"
-            ],
+            "required": ["type", "label", "default"],
             "properties": {
                 "type": {
                     "enum": [

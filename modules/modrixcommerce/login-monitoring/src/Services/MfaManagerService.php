@@ -34,6 +34,7 @@ class MfaManagerService
 
         // Check if user has voluntarily enabled MFA
         $cfg = LoginMfaConfiguration::query()->where('user_id', $user->id)->first();
+
         return $cfg ? (bool) $cfg->mfa_enabled : false;
     }
 
@@ -61,6 +62,7 @@ class MfaManagerService
 
         if ($expected && hash_equals((string) $expected, trim($code))) {
             Cache::forget($cacheKey);
+
             return true;
         }
 

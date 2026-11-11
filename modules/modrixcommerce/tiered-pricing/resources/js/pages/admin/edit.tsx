@@ -3,7 +3,13 @@ import { ArrowLeft, Plus, Save, Trash2 } from 'lucide-react';
 import { FormEvent } from 'react';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -78,15 +84,25 @@ function FormField({
     );
 }
 
-export default function TieredPricingEdit({ rule, products, categories, actionUrl }: Props) {
+export default function TieredPricingEdit({
+    rule,
+    products,
+    categories,
+    actionUrl,
+}: Props) {
     const isEdit = rule !== null;
 
     const form = useForm({
         title: rule?.title ?? '',
         description: rule?.description ?? '',
-        applies_to: (rule?.applies_to ?? 'product') as 'product' | 'category' | 'all',
+        applies_to: (rule?.applies_to ?? 'product') as
+            | 'product'
+            | 'category'
+            | 'all',
         target_ids: (rule?.target_ids ?? []) as number[],
-        discount_type: (rule?.discount_type ?? 'percent') as 'percent' | 'fixed_per_unit',
+        discount_type: (rule?.discount_type ?? 'percent') as
+            | 'percent'
+            | 'fixed_per_unit',
         tiers: (rule?.tiers && rule.tiers.length > 0
             ? rule.tiers
             : [
@@ -111,10 +127,18 @@ export default function TieredPricingEdit({ rule, products, categories, actionUr
 
     const addTier = () => {
         const lastTier = form.data.tiers[form.data.tiers.length - 1];
-        const nextMin = lastTier ? (lastTier.max_qty ? lastTier.max_qty + 1 : lastTier.min_qty + 5) : 2;
+        const nextMin = lastTier
+            ? lastTier.max_qty
+                ? lastTier.max_qty + 1
+                : lastTier.min_qty + 5
+            : 2;
         form.setData('tiers', [
             ...form.data.tiers,
-            { min_qty: nextMin, max_qty: null, discount: (lastTier?.discount ?? 5) + 5 },
+            {
+                min_qty: nextMin,
+                max_qty: null,
+                discount: (lastTier?.discount ?? 5) + 5,
+            },
         ]);
     };
 
@@ -124,7 +148,7 @@ export default function TieredPricingEdit({ rule, products, categories, actionUr
         }
         form.setData(
             'tiers',
-            form.data.tiers.filter((_, idx) => idx !== index)
+            form.data.tiers.filter((_, idx) => idx !== index),
         );
     };
 
@@ -138,17 +162,29 @@ export default function TieredPricingEdit({ rule, products, categories, actionUr
         const current = form.data.target_ids;
         form.setData(
             'target_ids',
-            current.includes(id) ? current.filter((item) => item !== id) : [...current, id]
+            current.includes(id)
+                ? current.filter((item) => item !== id)
+                : [...current, id],
         );
     };
 
     return (
         <>
-            <Head title={isEdit ? `Edit Rule: ${rule.title}` : 'New Tiered Pricing Rule'} />
+            <Head
+                title={
+                    isEdit
+                        ? `Edit Rule: ${rule.title}`
+                        : 'New Tiered Pricing Rule'
+                }
+            />
 
             <AdminPage>
                 <PageHeader
-                    title={isEdit ? `Edit Rule: ${rule.title}` : 'Create Tiered Pricing Rule'}
+                    title={
+                        isEdit
+                            ? `Edit Rule: ${rule.title}`
+                            : 'Create Tiered Pricing Rule'
+                    }
                     description="Configure quantity-break volume tiers and savings to boost bulk sales."
                     actions={
                         <Link href="/admin/m/modrixcommerce/tiered-pricing">
@@ -166,35 +202,61 @@ export default function TieredPricingEdit({ rule, products, categories, actionUr
                         <CardHeader>
                             <CardTitle>Rule Details</CardTitle>
                             <CardDescription>
-                                Set the rule name, description, priority, and schedule.
+                                Set the rule name, description, priority, and
+                                schedule.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4 md:grid-cols-2">
-                            <FormField id="title" label="Rule Title" error={form.errors.title}>
+                            <FormField
+                                id="title"
+                                label="Rule Title"
+                                error={form.errors.title}
+                            >
                                 <Input
                                     id="title"
                                     value={form.data.title}
-                                    onChange={(e) => form.setData('title', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData('title', e.target.value)
+                                    }
                                     placeholder="e.g. Bulk Buy Savings"
                                     required
                                 />
                             </FormField>
 
-                            <FormField id="priority" label="Priority" error={form.errors.priority} hint="Higher priority rules match first">
+                            <FormField
+                                id="priority"
+                                label="Priority"
+                                error={form.errors.priority}
+                                hint="Higher priority rules match first"
+                            >
                                 <Input
                                     id="priority"
                                     type="number"
                                     value={form.data.priority}
-                                    onChange={(e) => form.setData('priority', parseInt(e.target.value, 10) || 0)}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'priority',
+                                            parseInt(e.target.value, 10) || 0,
+                                        )
+                                    }
                                 />
                             </FormField>
 
                             <div className="md:col-span-2">
-                                <FormField id="description" label="Internal Description" error={form.errors.description}>
+                                <FormField
+                                    id="description"
+                                    label="Internal Description"
+                                    error={form.errors.description}
+                                >
                                     <Input
                                         id="description"
                                         value={form.data.description}
-                                        onChange={(e) => form.setData('description', e.target.value)}
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'description',
+                                                e.target.value,
+                                            )
+                                        }
                                         placeholder="Optional merchant note"
                                     />
                                 </FormField>
@@ -204,9 +266,17 @@ export default function TieredPricingEdit({ rule, products, categories, actionUr
                                 <Checkbox
                                     id="is_active"
                                     checked={form.data.is_active}
-                                    onCheckedChange={(checked) => form.setData('is_active', Boolean(checked))}
+                                    onCheckedChange={(checked) =>
+                                        form.setData(
+                                            'is_active',
+                                            Boolean(checked),
+                                        )
+                                    }
                                 />
-                                <Label htmlFor="is_active" className="text-sm font-medium">
+                                <Label
+                                    htmlFor="is_active"
+                                    className="text-sm font-medium"
+                                >
                                     Enable this tiered pricing rule
                                 </Label>
                             </div>
@@ -218,70 +288,118 @@ export default function TieredPricingEdit({ rule, products, categories, actionUr
                         <CardHeader>
                             <CardTitle>Target Products</CardTitle>
                             <CardDescription>
-                                Select which products or categories this volume discount applies to.
+                                Select which products or categories this volume
+                                discount applies to.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4">
-                            <FormField id="applies_to" label="Applies To" error={form.errors.applies_to}>
+                            <FormField
+                                id="applies_to"
+                                label="Applies To"
+                                error={form.errors.applies_to}
+                            >
                                 <Select
                                     value={form.data.applies_to}
                                     onValueChange={(val: string) =>
-                                        form.setData('applies_to', val as 'product' | 'category' | 'all')
+                                        form.setData(
+                                            'applies_to',
+                                            val as
+                                                | 'product'
+                                                | 'category'
+                                                | 'all',
+                                        )
                                     }
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Select target scope" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="product">Specific Products</SelectItem>
-                                        <SelectItem value="category">Categories</SelectItem>
-                                        <SelectItem value="all">All Products</SelectItem>
+                                        <SelectItem value="product">
+                                            Specific Products
+                                        </SelectItem>
+                                        <SelectItem value="category">
+                                            Categories
+                                        </SelectItem>
+                                        <SelectItem value="all">
+                                            All Products
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </FormField>
 
                             {form.data.applies_to === 'product' && (
                                 <div className="grid gap-2">
-                                    <Label className="text-sm font-medium">Select Products</Label>
-                                    <div className="max-h-60 overflow-y-auto rounded-md border p-3 space-y-2">
+                                    <Label className="text-sm font-medium">
+                                        Select Products
+                                    </Label>
+                                    <div className="max-h-60 space-y-2 overflow-y-auto rounded-md border p-3">
                                         {products.map((p) => (
-                                            <div key={p.id} className="flex items-center space-x-2">
+                                            <div
+                                                key={p.id}
+                                                className="flex items-center space-x-2"
+                                            >
                                                 <Checkbox
                                                     id={`prod-${p.id}`}
-                                                    checked={form.data.target_ids.includes(p.id)}
-                                                    onCheckedChange={() => toggleTarget(p.id)}
+                                                    checked={form.data.target_ids.includes(
+                                                        p.id,
+                                                    )}
+                                                    onCheckedChange={() =>
+                                                        toggleTarget(p.id)
+                                                    }
                                                 />
-                                                <Label htmlFor={`prod-${p.id}`} className="text-xs cursor-pointer">
-                                                    {p.name} <span className="text-muted-foreground">({p.sku})</span>
+                                                <Label
+                                                    htmlFor={`prod-${p.id}`}
+                                                    className="cursor-pointer text-xs"
+                                                >
+                                                    {p.name}{' '}
+                                                    <span className="text-muted-foreground">
+                                                        ({p.sku})
+                                                    </span>
                                                 </Label>
                                             </div>
                                         ))}
                                     </div>
                                     {form.errors.target_ids && (
-                                        <p className="text-xs text-destructive">{form.errors.target_ids}</p>
+                                        <p className="text-xs text-destructive">
+                                            {form.errors.target_ids}
+                                        </p>
                                     )}
                                 </div>
                             )}
 
                             {form.data.applies_to === 'category' && (
                                 <div className="grid gap-2">
-                                    <Label className="text-sm font-medium">Select Categories</Label>
-                                    <div className="max-h-60 overflow-y-auto rounded-md border p-3 space-y-2">
+                                    <Label className="text-sm font-medium">
+                                        Select Categories
+                                    </Label>
+                                    <div className="max-h-60 space-y-2 overflow-y-auto rounded-md border p-3">
                                         {categories.map((c) => (
-                                            <div key={c.id} className="flex items-center space-x-2">
+                                            <div
+                                                key={c.id}
+                                                className="flex items-center space-x-2"
+                                            >
                                                 <Checkbox
                                                     id={`cat-${c.id}`}
-                                                    checked={form.data.target_ids.includes(c.id)}
-                                                    onCheckedChange={() => toggleTarget(c.id)}
+                                                    checked={form.data.target_ids.includes(
+                                                        c.id,
+                                                    )}
+                                                    onCheckedChange={() =>
+                                                        toggleTarget(c.id)
+                                                    }
                                                 />
-                                                <Label htmlFor={`cat-${c.id}`} className="text-xs cursor-pointer">
+                                                <Label
+                                                    htmlFor={`cat-${c.id}`}
+                                                    className="cursor-pointer text-xs"
+                                                >
                                                     {c.name}
                                                 </Label>
                                             </div>
                                         ))}
                                     </div>
                                     {form.errors.target_ids && (
-                                        <p className="text-xs text-destructive">{form.errors.target_ids}</p>
+                                        <p className="text-xs text-destructive">
+                                            {form.errors.target_ids}
+                                        </p>
                                     )}
                                 </div>
                             )}
@@ -292,9 +410,12 @@ export default function TieredPricingEdit({ rule, products, categories, actionUr
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between">
                             <div>
-                                <CardTitle>Quantity Tiers & Discounts</CardTitle>
+                                <CardTitle>
+                                    Quantity Tiers & Discounts
+                                </CardTitle>
                                 <CardDescription>
-                                    Define the minimum quantity thresholds and discounts.
+                                    Define the minimum quantity thresholds and
+                                    discounts.
                                 </CardDescription>
                             </div>
                             <Button
@@ -308,19 +429,31 @@ export default function TieredPricingEdit({ rule, products, categories, actionUr
                             </Button>
                         </CardHeader>
                         <CardContent className="grid gap-4">
-                            <FormField id="discount_type" label="Discount Type" error={form.errors.discount_type}>
+                            <FormField
+                                id="discount_type"
+                                label="Discount Type"
+                                error={form.errors.discount_type}
+                            >
                                 <Select
                                     value={form.data.discount_type}
                                     onValueChange={(val: string) =>
-                                        form.setData('discount_type', val as 'percent' | 'fixed_per_unit')
+                                        form.setData(
+                                            'discount_type',
+                                            val as 'percent' | 'fixed_per_unit',
+                                        )
                                     }
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Discount Type" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="percent">Percentage Off Each Unit (%)</SelectItem>
-                                        <SelectItem value="fixed_per_unit">Fixed Amount Off Each Unit ($ / Currency)</SelectItem>
+                                        <SelectItem value="percent">
+                                            Percentage Off Each Unit (%)
+                                        </SelectItem>
+                                        <SelectItem value="fixed_per_unit">
+                                            Fixed Amount Off Each Unit ($ /
+                                            Currency)
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </FormField>
@@ -329,23 +462,34 @@ export default function TieredPricingEdit({ rule, products, categories, actionUr
                                 {form.data.tiers.map((tier, idx) => (
                                     <div
                                         key={idx}
-                                        className="flex flex-wrap items-center gap-3 rounded-lg border p-3 bg-muted/20"
+                                        className="flex flex-wrap items-center gap-3 rounded-lg border bg-muted/20 p-3"
                                     >
                                         <div className="w-28">
-                                            <Label className="text-xs text-muted-foreground">Min Qty</Label>
+                                            <Label className="text-xs text-muted-foreground">
+                                                Min Qty
+                                            </Label>
                                             <Input
                                                 type="number"
                                                 min="2"
                                                 value={tier.min_qty}
                                                 onChange={(e) =>
-                                                    updateTier(idx, 'min_qty', parseInt(e.target.value, 10) || 2)
+                                                    updateTier(
+                                                        idx,
+                                                        'min_qty',
+                                                        parseInt(
+                                                            e.target.value,
+                                                            10,
+                                                        ) || 2,
+                                                    )
                                                 }
                                                 required
                                             />
                                         </div>
 
                                         <div className="w-28">
-                                            <Label className="text-xs text-muted-foreground">Max Qty (optional)</Label>
+                                            <Label className="text-xs text-muted-foreground">
+                                                Max Qty (optional)
+                                            </Label>
                                             <Input
                                                 type="number"
                                                 min={tier.min_qty}
@@ -355,7 +499,13 @@ export default function TieredPricingEdit({ rule, products, categories, actionUr
                                                     updateTier(
                                                         idx,
                                                         'max_qty',
-                                                        e.target.value !== '' ? parseInt(e.target.value, 10) : null
+                                                        e.target.value !== ''
+                                                            ? parseInt(
+                                                                  e.target
+                                                                      .value,
+                                                                  10,
+                                                              )
+                                                            : null,
                                                     )
                                                 }
                                             />
@@ -363,7 +513,8 @@ export default function TieredPricingEdit({ rule, products, categories, actionUr
 
                                         <div className="w-36">
                                             <Label className="text-xs text-muted-foreground">
-                                                {form.data.discount_type === 'percent'
+                                                {form.data.discount_type ===
+                                                'percent'
                                                     ? 'Discount (%)'
                                                     : 'Discount per Unit'}
                                             </Label>
@@ -373,7 +524,13 @@ export default function TieredPricingEdit({ rule, products, categories, actionUr
                                                 min="0.01"
                                                 value={tier.discount}
                                                 onChange={(e) =>
-                                                    updateTier(idx, 'discount', parseFloat(e.target.value) || 0)
+                                                    updateTier(
+                                                        idx,
+                                                        'discount',
+                                                        parseFloat(
+                                                            e.target.value,
+                                                        ) || 0,
+                                                    )
                                                 }
                                                 required
                                             />
@@ -385,7 +542,9 @@ export default function TieredPricingEdit({ rule, products, categories, actionUr
                                                 variant="ghost"
                                                 size="sm"
                                                 onClick={() => removeTier(idx)}
-                                                disabled={form.data.tiers.length <= 1}
+                                                disabled={
+                                                    form.data.tiers.length <= 1
+                                                }
                                                 className="text-destructive hover:text-destructive"
                                             >
                                                 <Trash2 className="size-4" />
@@ -406,7 +565,7 @@ export default function TieredPricingEdit({ rule, products, categories, actionUr
                         <Button
                             type="submit"
                             disabled={form.processing}
-                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                            className="bg-blue-600 text-white hover:bg-blue-700"
                         >
                             <Save className="mr-2 size-4" />
                             {isEdit ? 'Save Changes' : 'Create Rule'}

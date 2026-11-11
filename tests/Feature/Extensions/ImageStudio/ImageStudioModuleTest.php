@@ -4,6 +4,7 @@ namespace Tests\Feature\Extensions\ImageStudio;
 
 use App\Core\Extensions\ModuleRepository;
 use App\Core\Extensions\ModuleSettingsSchema;
+use App\Core\Settings\SecretSettings;
 use App\Core\Settings\SettingsRepository;
 use EcoModular\ImageStudio\Models\ImageVariant;
 use EcoModular\ImageStudio\Support\ImageStudioSettings;
@@ -119,7 +120,7 @@ class ImageStudioModuleTest extends TestCase
         // Another process (the admin request) saves new values with its own repository.
         $other = new SettingsRepository($this->app->make('cache.store'));
         $other->setMany(['extension.modrixcommerce.image-studio.tolerance' => 40]);
-        app(\App\Core\Settings\SecretSettings::class)->put('image_studio.removebg_api_key', 'k-123456789');
+        app(SecretSettings::class)->put('image_studio.removebg_api_key', 'k-123456789');
 
         // What the queue worker does between jobs.
         app()->forgetScopedInstances();

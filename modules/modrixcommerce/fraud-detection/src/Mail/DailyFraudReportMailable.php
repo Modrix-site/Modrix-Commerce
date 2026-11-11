@@ -22,7 +22,7 @@ class DailyFraudReportMailable extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '📊 Daily Fraud Detection Summary — ' . now()->toFormattedDateString(),
+            subject: '📊 Daily Fraud Detection Summary — '.now()->toFormattedDateString(),
         );
     }
 

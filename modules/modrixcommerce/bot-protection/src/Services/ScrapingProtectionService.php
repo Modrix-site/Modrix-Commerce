@@ -17,7 +17,7 @@ class ScrapingProtectionService
     public function isScrapingAttempt(Request $request): array
     {
         $enabled = (bool) $this->settings->of(self::MODULE, 'anti_scraping_enabled', true);
-        if (!$enabled) {
+        if (! $enabled) {
             return ['is_scraper' => false, 'score' => 0, 'reason' => null];
         }
 

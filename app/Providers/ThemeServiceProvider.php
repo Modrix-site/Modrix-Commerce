@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Core\Localization\ContentTranslations;
 use App\Core\Localization\TranslationDrafts;
+use App\Core\Themes\Sections\ThemeTemplates;
 use App\Core\Themes\StorefrontLinks;
 use App\Core\Themes\ThemeCustomizations;
 use App\Core\Themes\ThemeManifestValidator;
@@ -26,6 +27,6 @@ class ThemeServiceProvider extends ServiceProvider
         $this->app->singleton(ThemeRepository::class);
         $this->app->singleton(ThemeCustomizations::class);
         $this->app->singleton(ThemeResolver::class);
-        $this->app->singleton(\App\Core\Themes\Sections\ThemeTemplates::class);
+        $this->app->singleton(ThemeTemplates::class);
     }
 }

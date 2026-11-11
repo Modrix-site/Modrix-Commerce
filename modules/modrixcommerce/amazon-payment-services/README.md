@@ -17,16 +17,16 @@ Amazon Payment Services (formerly PayFort) hosted checkout gateway for the Unite
 
 1. Obtain your **Merchant Identifier**, **Access Code**, **SHA Request Phrase**, and **SHA Response Phrase** from your Amazon Payment Services back-office under **Integration Settings** → **Security Settings**.
 2. Enable the module under **Admin → Extensions** or run:
-   ```bash
-   php artisan ecomodular:modules install modrixcommerce/amazon-payment-services
-   php artisan ecomodular:modules enable modrixcommerce/amazon-payment-services --trust
-   ```
+    ```bash
+    php artisan ecomodular:modules install modrixcommerce/amazon-payment-services
+    php artisan ecomodular:modules enable modrixcommerce/amazon-payment-services --trust
+    ```
 3. Open **Admin → Configuration → Amazon Payment Services** and fill in your merchant credentials.
 4. Set the **Feedback / Return URL** in your APS back-office to:
    `https://<your-store>/m/modrixcommerce/amazon-payment-services/response`
 5. Set the **Webhook / Direct Transaction Feedback URL** to:
    `https://<your-store>/webhooks/payments/amazon-payment-services`
 6. Rebuild frontend assets:
-   ```bash
-   npm run build
-   ```
+    ```bash
+    npm run build
+    ```

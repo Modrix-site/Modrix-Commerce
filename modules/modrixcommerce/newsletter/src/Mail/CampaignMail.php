@@ -53,7 +53,7 @@ class CampaignMail extends Mailable
 
     private function renderEmailTemplate(string $body): string
     {
-        $preheader = $this->previewText ? '<span style="display:none;font-size:0px;line-height:0px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">' . e($this->previewText) . '</span>' : '';
+        $preheader = $this->previewText ? '<span style="display:none;font-size:0px;line-height:0px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">'.e($this->previewText).'</span>' : '';
 
         return <<<HTML
 <!DOCTYPE html>
@@ -108,6 +108,7 @@ HTML;
     }
 }
 
-function esc_url(string $url): string {
+function esc_url(string $url): string
+{
     return htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
 }

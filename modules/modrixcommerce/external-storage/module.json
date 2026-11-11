@@ -185,10 +185,7 @@
             "help": "Required for Cloudflare R2 and Cloudflare REST API. Copy your 32-character Account ID from the Cloudflare Dashboard -> R2 Object Storage overview sidebar.",
             "max_length": 191,
             "visible_when": {
-                "provider": [
-                    "cloudflare_r2",
-                    "cloudflare_api"
-                ]
+                "provider": ["cloudflare_r2", "cloudflare_api"]
             }
         },
         {

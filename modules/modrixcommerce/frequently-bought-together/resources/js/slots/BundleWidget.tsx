@@ -1,9 +1,9 @@
-import { Form } from "@inertiajs/react";
-import { Check, Plus } from "lucide-react";
-import { useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { cn } from "@/lib/utils";
+import { Form } from '@inertiajs/react';
+import { Check, Plus } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { cn } from '@/lib/utils';
 
 type Price = {
     formatted: string;
@@ -124,8 +124,8 @@ export default function BundleWidget({
                         <li
                             key={item.id}
                             className={cn(
-                                "flex items-center gap-3 rounded-[var(--radius)] border bg-background p-3",
-                                checked && "ring-1 ring-primary",
+                                'flex items-center gap-3 rounded-[var(--radius)] border bg-background p-3',
+                                checked && 'ring-1 ring-primary',
                             )}
                         >
                             <Checkbox
@@ -199,7 +199,7 @@ export default function BundleWidget({
                         </Button>
                         {showSavings && total !== null && (
                             <span className="text-sm text-muted-foreground">
-                                {variant ? "Bundle total: " : "Extras total: "}
+                                {variant ? 'Bundle total: ' : 'Extras total: '}
                                 <span className="font-semibold text-foreground">
                                     {total}
                                 </span>

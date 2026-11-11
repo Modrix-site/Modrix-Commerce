@@ -7,10 +7,8 @@ use EcoModular\LoginMonitoring\Models\LoginAllowedIp;
 use EcoModular\LoginMonitoring\Models\LoginAuditLog;
 use EcoModular\LoginMonitoring\Models\LoginBlockedIp;
 use EcoModular\LoginMonitoring\Models\LoginEvent;
-use EcoModular\LoginMonitoring\Models\LoginFailedAttempt;
 use EcoModular\LoginMonitoring\Models\LoginMfaConfiguration;
 use EcoModular\LoginMonitoring\Models\LoginSecurityIncident;
-use EcoModular\LoginMonitoring\Models\LoginTrustedDevice;
 use EcoModular\LoginMonitoring\Models\LoginUserSession;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
@@ -64,16 +62,16 @@ class LoginMonitoringDemoSeeder extends Seeder
             LoginMfaConfiguration::firstOrCreate(['user_id' => $user->id], [
                 'mfa_enabled' => $idx % 2 === 0,
                 'mfa_type' => $idx === 0 ? 'authenticator' : 'email_otp',
-                'phone_number' => '+1 (555) 234-567' . $idx,
+                'phone_number' => '+1 (555) 234-567'.$idx,
                 'last_used_at' => now()->subHours($idx * 5 + 1),
             ]);
         }
 
         // 4. Seed Active Sessions
         foreach ($users as $idx => $user) {
-            LoginUserSession::firstOrCreate(['session_id' => 'sess_' . $user->id . '_active'], [
+            LoginUserSession::firstOrCreate(['session_id' => 'sess_'.$user->id.'_active'], [
                 'user_id' => $user->id,
-                'ip_address' => '192.168.1.' . (10 + $idx),
+                'ip_address' => '192.168.1.'.(10 + $idx),
                 'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36',
                 'device_type' => $idx % 2 === 0 ? 'desktop' : 'mobile',
                 'browser' => $idx % 2 === 0 ? 'Chrome' : 'Safari',
@@ -119,12 +117,12 @@ class LoginMonitoringDemoSeeder extends Seeder
                     'event_uuid' => (string) Str::uuid(),
                     'user_id' => $targetUser->id,
                     'email' => $targetUser->email,
-                    'ip_address' => '203.0.113.' . rand(10, 240),
+                    'ip_address' => '203.0.113.'.rand(10, 240),
                     'status' => $isFailed ? 'failed' : 'success',
                     'failure_reason' => $isFailed ? 'Invalid credentials provided' : null,
                     'risk_score' => $riskScore,
                     'threat_level' => $riskScore >= 80 ? 'critical' : ($riskScore >= 50 ? 'high' : ($riskScore >= 25 ? 'medium' : 'low')),
-                    'device_fingerprint' => hash('sha256', $dev['browser'] . $dev['os'] . rand(1, 5)),
+                    'device_fingerprint' => hash('sha256', $dev['browser'].$dev['os'].rand(1, 5)),
                     'device_type' => $dev['type'],
                     'browser' => $dev['browser'],
                     'operating_system' => $dev['os'],
@@ -162,7 +160,7 @@ class LoginMonitoringDemoSeeder extends Seeder
             'ip_address' => '203.0.113.88',
             'severity' => 'critical',
             'status' => 'investigating',
-            'description' => "Impossible travel: New York to London (5,570 km) within 15 minutes",
+            'description' => 'Impossible travel: New York to London (5,570 km) within 15 minutes',
             'metadata' => ['distance_km' => 5570, 'speed_kmh' => 22280],
         ]);
 

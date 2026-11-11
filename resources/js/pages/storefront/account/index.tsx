@@ -85,7 +85,7 @@ function Shortcut({
     return (
         <Link
             href={href}
-            className="flex items-center gap-3 rounded-lg p-2 -mx-2 transition-colors hover:bg-muted"
+            className="-mx-2 flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-muted"
         >
             <span className="grid size-9 shrink-0 place-items-center rounded-full bg-muted">
                 <Icon className="size-4" aria-hidden />

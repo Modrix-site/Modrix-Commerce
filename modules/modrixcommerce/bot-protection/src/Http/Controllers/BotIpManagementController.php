@@ -73,7 +73,7 @@ class BotIpManagementController extends Controller
             'expires_days' => 'nullable|integer|min:1|max:365',
         ]);
 
-        $expiresAt = !empty($validated['expires_days']) ? now()->addDays($validated['expires_days']) : null;
+        $expiresAt = ! empty($validated['expires_days']) ? now()->addDays($validated['expires_days']) : null;
 
         BotBlockedIp::updateOrCreate(
             ['ip_address' => trim($validated['ip_address'])],

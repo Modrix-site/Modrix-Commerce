@@ -30,50 +30,62 @@ export default function AccountOrder({
                     date: formatDate(order.placed_at),
                 })}
             >
-            <div className="grid gap-8">
-            <DownloadList downloads={order.downloads} />
-            <OrderView order={order} />
-            <ExtensionSlot items={returnSlots} />
-            {order.documents &&
-                (order.documents.invoice ||
-                    order.documents.receipts.length > 0) && (
-                    <section className="grid gap-3">
-                        <h2 className="text-lg font-semibold">
-                            {t('Documents')}
-                        </h2>
-                        <ul className="grid divide-y rounded-lg border text-sm sm:max-w-md">
-                            {order.documents.invoice && (
-                                <li>
-                                    <DocumentLink
-                                        href={order.documents.invoice.url}
-                                        icon={<FileText className="size-4" />}
-                                        label={t('Invoice :number', {
-                                            number: order.documents.invoice
-                                                .number,
-                                        })}
-                                    />
-                                </li>
-                            )}
-                            {order.documents.receipts.map((receipt) => (
-                                <li key={receipt.id}>
-                                    <DocumentLink
-                                        href={receipt.url}
-                                        icon={<Receipt className="size-4" />}
-                                        label={t('Payment receipt (:amount)', {
-                                            amount: receipt.amount.formatted,
-                                        })}
-                                        detail={
-                                            receipt.paid_at
-                                                ? formatDate(receipt.paid_at)
-                                                : undefined
-                                        }
-                                    />
-                                </li>
-                            ))}
-                        </ul>
-                    </section>
-                )}
-            </div>
+                <div className="grid gap-8">
+                    <DownloadList downloads={order.downloads} />
+                    <OrderView order={order} />
+                    <ExtensionSlot items={returnSlots} />
+                    {order.documents &&
+                        (order.documents.invoice ||
+                            order.documents.receipts.length > 0) && (
+                            <section className="grid gap-3">
+                                <h2 className="text-lg font-semibold">
+                                    {t('Documents')}
+                                </h2>
+                                <ul className="grid divide-y rounded-lg border text-sm sm:max-w-md">
+                                    {order.documents.invoice && (
+                                        <li>
+                                            <DocumentLink
+                                                href={
+                                                    order.documents.invoice.url
+                                                }
+                                                icon={
+                                                    <FileText className="size-4" />
+                                                }
+                                                label={t('Invoice :number', {
+                                                    number: order.documents
+                                                        .invoice.number,
+                                                })}
+                                            />
+                                        </li>
+                                    )}
+                                    {order.documents.receipts.map((receipt) => (
+                                        <li key={receipt.id}>
+                                            <DocumentLink
+                                                href={receipt.url}
+                                                icon={
+                                                    <Receipt className="size-4" />
+                                                }
+                                                label={t(
+                                                    'Payment receipt (:amount)',
+                                                    {
+                                                        amount: receipt.amount
+                                                            .formatted,
+                                                    },
+                                                )}
+                                                detail={
+                                                    receipt.paid_at
+                                                        ? formatDate(
+                                                              receipt.paid_at,
+                                                          )
+                                                        : undefined
+                                                }
+                                            />
+                                        </li>
+                                    ))}
+                                </ul>
+                            </section>
+                        )}
+                </div>
             </AccountLayout>
         </>
     );

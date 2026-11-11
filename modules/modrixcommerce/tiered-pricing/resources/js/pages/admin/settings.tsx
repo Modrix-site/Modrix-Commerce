@@ -3,7 +3,13 @@ import { ArrowLeft, Save } from 'lucide-react';
 import { FormEvent } from 'react';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -46,7 +52,10 @@ function FormField({
     );
 }
 
-export default function TieredPricingSettingsPage({ settings, updateUrl }: Props) {
+export default function TieredPricingSettingsPage({
+    settings,
+    updateUrl,
+}: Props) {
     const form = useForm({
         enabled: settings.enabled,
         table_heading: settings.table_heading,
@@ -83,7 +92,8 @@ export default function TieredPricingSettingsPage({ settings, updateUrl }: Props
                         <CardHeader>
                             <CardTitle>General Display Settings</CardTitle>
                             <CardDescription>
-                                Manage how quantity-break tables appear on your product pages.
+                                Manage how quantity-break tables appear on your
+                                product pages.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4">
@@ -91,9 +101,17 @@ export default function TieredPricingSettingsPage({ settings, updateUrl }: Props
                                 <Checkbox
                                     id="enabled"
                                     checked={form.data.enabled}
-                                    onCheckedChange={(checked) => form.setData('enabled', Boolean(checked))}
+                                    onCheckedChange={(checked) =>
+                                        form.setData(
+                                            'enabled',
+                                            Boolean(checked),
+                                        )
+                                    }
                                 />
-                                <Label htmlFor="enabled" className="text-sm font-medium">
+                                <Label
+                                    htmlFor="enabled"
+                                    className="text-sm font-medium"
+                                >
                                     Enable Tiered Pricing on the storefront
                                 </Label>
                             </div>
@@ -107,7 +125,12 @@ export default function TieredPricingSettingsPage({ settings, updateUrl }: Props
                                 <Input
                                     id="table_heading"
                                     value={form.data.table_heading}
-                                    onChange={(e) => form.setData('table_heading', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'table_heading',
+                                            e.target.value,
+                                        )
+                                    }
                                     required
                                 />
                             </FormField>
@@ -121,7 +144,12 @@ export default function TieredPricingSettingsPage({ settings, updateUrl }: Props
                                 <Input
                                     id="table_subheading"
                                     value={form.data.table_subheading}
-                                    onChange={(e) => form.setData('table_subheading', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'table_subheading',
+                                            e.target.value,
+                                        )
+                                    }
                                 />
                             </FormField>
 
@@ -130,11 +158,18 @@ export default function TieredPricingSettingsPage({ settings, updateUrl }: Props
                                     id="show_savings_badge"
                                     checked={form.data.show_savings_badge}
                                     onCheckedChange={(checked) =>
-                                        form.setData('show_savings_badge', Boolean(checked))
+                                        form.setData(
+                                            'show_savings_badge',
+                                            Boolean(checked),
+                                        )
                                     }
                                 />
-                                <Label htmlFor="show_savings_badge" className="text-sm font-medium">
-                                    Display savings percentage badges on each tier box
+                                <Label
+                                    htmlFor="show_savings_badge"
+                                    className="text-sm font-medium"
+                                >
+                                    Display savings percentage badges on each
+                                    tier box
                                 </Label>
                             </div>
 
@@ -143,11 +178,18 @@ export default function TieredPricingSettingsPage({ settings, updateUrl }: Props
                                     id="highlight_active_tier"
                                     checked={form.data.highlight_active_tier}
                                     onCheckedChange={(checked) =>
-                                        form.setData('highlight_active_tier', Boolean(checked))
+                                        form.setData(
+                                            'highlight_active_tier',
+                                            Boolean(checked),
+                                        )
                                     }
                                 />
-                                <Label htmlFor="highlight_active_tier" className="text-sm font-medium">
-                                    Dynamically highlight the tier matching the shopper's quantity input
+                                <Label
+                                    htmlFor="highlight_active_tier"
+                                    className="text-sm font-medium"
+                                >
+                                    Dynamically highlight the tier matching the
+                                    shopper's quantity input
                                 </Label>
                             </div>
                         </CardContent>
@@ -162,7 +204,7 @@ export default function TieredPricingSettingsPage({ settings, updateUrl }: Props
                         <Button
                             type="submit"
                             disabled={form.processing}
-                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                            className="bg-blue-600 text-white hover:bg-blue-700"
                         >
                             <Save className="mr-2 size-4" />
                             Save Settings

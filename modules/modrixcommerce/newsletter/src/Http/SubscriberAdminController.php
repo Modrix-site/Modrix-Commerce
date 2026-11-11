@@ -53,7 +53,7 @@ class SubscriberAdminController extends Controller
         if ($search !== '') {
             $query->where(function ($q) use ($search) {
                 $q->where('email', 'like', "%{$search}%")
-                  ->orWhere('name', 'like', "%{$search}%");
+                    ->orWhere('name', 'like', "%{$search}%");
             });
         }
 
@@ -201,7 +201,7 @@ class SubscriberAdminController extends Controller
 
         foreach ($subscribers as $s) {
             $existing = (array) ($s->groups ?? []);
-            if ($data['action'] === 'add' && !in_array($data['group_slug'], $existing, true)) {
+            if ($data['action'] === 'add' && ! in_array($data['group_slug'], $existing, true)) {
                 $existing[] = $data['group_slug'];
             } elseif ($data['action'] === 'remove') {
                 $existing = array_values(array_filter($existing, fn ($g) => $g !== $data['group_slug']));
@@ -223,12 +223,12 @@ class SubscriberAdminController extends Controller
             'color' => ['nullable', 'string', 'max:30'],
         ]);
 
-        $slug = Str::slug(!empty($data['slug']) ? $data['slug'] : $data['name']);
+        $slug = Str::slug(! empty($data['slug']) ? $data['slug'] : $data['name']);
         if ($slug === '') {
-            $slug = 'group-' . Str::random(6);
+            $slug = 'group-'.Str::random(6);
         }
         if (NewsletterGroup::query()->where('slug', $slug)->exists()) {
-            $slug .= '-' . Str::random(4);
+            $slug .= '-'.Str::random(4);
         }
 
         $group = NewsletterGroup::create([
@@ -326,7 +326,7 @@ class SubscriberAdminController extends Controller
 
         try {
             Mail::to($data['test_email'])->send(new CampaignMail(
-                campaignSubject: '[PREVIEW] ' . $campaign->subject,
+                campaignSubject: '[PREVIEW] '.$campaign->subject,
                 contentHtml: $campaign->content_html,
                 previewText: $campaign->preview_text,
                 subscriber: null,
@@ -336,7 +336,7 @@ class SubscriberAdminController extends Controller
 
             Inertia::flash('toast', ['type' => 'success', 'message' => "Test preview email delivered to {$data['test_email']}."]);
         } catch (\Throwable $e) {
-            Inertia::flash('toast', ['type' => 'error', 'message' => 'Delivery failed: ' . $mailSettings->describeFailure($e)]);
+            Inertia::flash('toast', ['type' => 'error', 'message' => 'Delivery failed: '.$mailSettings->describeFailure($e)]);
         }
 
         return back();
@@ -361,6 +361,7 @@ class SubscriberAdminController extends Controller
 
         if ($total === 0) {
             Inertia::flash('toast', ['type' => 'warning', 'message' => 'No active subscribers found in the selected target segment.']);
+
             return back();
         }
 
@@ -406,7 +407,7 @@ class SubscriberAdminController extends Controller
         if ($failed > 0 && $sent === 0) {
             Inertia::flash('toast', ['type' => 'error', 'message' => "Campaign broadcasting failed: {$lastError}"]);
         } else {
-            Inertia::flash('toast', ['type' => 'success', 'message' => "Campaign \"{$campaign->title}\" sent to {$sent} subscriber(s)." . ($failed > 0 ? " ({$failed} failed)" : '')]);
+            Inertia::flash('toast', ['type' => 'success', 'message' => "Campaign \"{$campaign->title}\" sent to {$sent} subscriber(s).".($failed > 0 ? " ({$failed} failed)" : '')]);
         }
 
         return back();
@@ -437,7 +438,7 @@ class SubscriberAdminController extends Controller
             'reply_to' => $data['reply_to'] ?? '',
         ]);
 
-        if (!empty($data['password'])) {
+        if (! empty($data['password'])) {
             $general->setMailPassword($data['password']);
         }
 
@@ -445,6 +446,7 @@ class SubscriberAdminController extends Controller
         $audit->record('newsletter.smtp_configured', null, ['driver' => $data['driver'], 'host' => $data['host'] ?? '']);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'App Core SMTP settings saved and connected.']);
+
         return back();
     }
 
@@ -460,7 +462,7 @@ class SubscriberAdminController extends Controller
             $mailSettings->sendTest($data['to']);
             Inertia::flash('toast', ['type' => 'success', 'message' => "SMTP test email successfully delivered to {$data['to']}."]);
         } catch (\Throwable $e) {
-            Inertia::flash('toast', ['type' => 'error', 'message' => 'SMTP test failed: ' . $mailSettings->describeFailure($e)]);
+            Inertia::flash('toast', ['type' => 'error', 'message' => 'SMTP test failed: '.$mailSettings->describeFailure($e)]);
         }
 
         return back();

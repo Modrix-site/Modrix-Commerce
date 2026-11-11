@@ -98,15 +98,23 @@ function useOperation(initial: Operation | null, initialBackups: Backup[]) {
             try {
                 // During a restore the store is in maintenance: the bypass
                 // link sets the cookie that lets these requests through.
-                if (operation?.secret && bypassed.current !== operation.secret) {
-                    await fetch(`/${operation.secret}`, { credentials: 'same-origin' });
+                if (
+                    operation?.secret &&
+                    bypassed.current !== operation.secret
+                ) {
+                    await fetch(`/${operation.secret}`, {
+                        credentials: 'same-origin',
+                    });
                     bypassed.current = operation.secret;
                 }
 
-                const response = await fetch(BackupSettingsController.status.url(), {
-                    headers: { Accept: 'application/json' },
-                    credentials: 'same-origin',
-                });
+                const response = await fetch(
+                    BackupSettingsController.status.url(),
+                    {
+                        headers: { Accept: 'application/json' },
+                        credentials: 'same-origin',
+                    },
+                );
 
                 if (response.status === 401 || response.redirected) {
                     // The restored database has its own sessions.
@@ -147,7 +155,9 @@ export default function Backups(props: Props) {
         props.operation,
         props.backups,
     );
-    const [scheduleOn, setScheduleOn] = useState(props.settings.schedule !== '');
+    const [scheduleOn, setScheduleOn] = useState(
+        props.settings.schedule !== '',
+    );
     const [deleting, setDeleting] = useState<Backup | null>(null);
     const [restoring, setRestoring] = useState<Backup | null>(null);
     const [confirmName, setConfirmName] = useState('');
@@ -167,13 +177,17 @@ export default function Backups(props: Props) {
 
                 {signedOut && (
                     <Alert>
-                        <AlertTitle>Restore finished or your session ended</AlertTitle>
+                        <AlertTitle>
+                            Restore finished or your session ended
+                        </AlertTitle>
                         <AlertDescription>
-                            The restored database has its own accounts and sessions.{' '}
+                            The restored database has its own accounts and
+                            sessions.{' '}
                             <a className="underline" href="/login">
                                 Sign in again
                             </a>{' '}
-                            with the credentials that existed when the backup was made.
+                            with the credentials that existed when the backup
+                            was made.
                         </AlertDescription>
                     </Alert>
                 )}
@@ -199,7 +213,9 @@ export default function Backups(props: Props) {
                     </Alert>
                 )}
 
-                {operation && <OperationNotice operation={operation} stuck={stuck} />}
+                {operation && (
+                    <OperationNotice operation={operation} stuck={stuck} />
+                )}
 
                 <div className="grid gap-5 lg:grid-cols-2">
                     <Card>
@@ -217,14 +233,20 @@ export default function Backups(props: Props) {
                             >
                                 {({ processing, errors }) => (
                                     <>
-                                        <h2 className="font-medium">Schedule</h2>
+                                        <h2 className="font-medium">
+                                            Schedule
+                                        </h2>
                                         <div className="flex items-center gap-2">
                                             <Checkbox
                                                 id="schedule_on"
                                                 checked={scheduleOn}
-                                                onCheckedChange={(v) => setScheduleOn(v === true)}
+                                                onCheckedChange={(v) =>
+                                                    setScheduleOn(v === true)
+                                                }
                                             />
-                                            <Label htmlFor="schedule_on">Back up every day</Label>
+                                            <Label htmlFor="schedule_on">
+                                                Back up every day
+                                            </Label>
                                         </div>
                                         <FormField
                                             id="schedule"
@@ -237,17 +259,34 @@ export default function Backups(props: Props) {
                                                 name="schedule"
                                                 type="time"
                                                 disabled={!scheduleOn}
-                                                defaultValue={props.settings.schedule || props.env_defaults.schedule || '02:30'}
+                                                defaultValue={
+                                                    props.settings.schedule ||
+                                                    props.env_defaults
+                                                        .schedule ||
+                                                    '02:30'
+                                                }
                                             />
                                         </FormField>
-                                        <FormField id="with_files" label="Contents" error={errors.with_files}>
+                                        <FormField
+                                            id="with_files"
+                                            label="Contents"
+                                            error={errors.with_files}
+                                        >
                                             <NativeSelect
                                                 id="with_files"
                                                 name="with_files"
-                                                defaultValue={props.settings.with_files ? '1' : '0'}
+                                                defaultValue={
+                                                    props.settings.with_files
+                                                        ? '1'
+                                                        : '0'
+                                                }
                                             >
-                                                <option value="1">Database and files</option>
-                                                <option value="0">Database only</option>
+                                                <option value="1">
+                                                    Database and files
+                                                </option>
+                                                <option value="0">
+                                                    Database only
+                                                </option>
                                             </NativeSelect>
                                         </FormField>
                                         <FormField
@@ -262,7 +301,9 @@ export default function Backups(props: Props) {
                                                 type="number"
                                                 min={1}
                                                 max={100}
-                                                defaultValue={props.settings.keep}
+                                                defaultValue={
+                                                    props.settings.keep
+                                                }
                                             />
                                         </FormField>
                                         <p className="text-sm text-muted-foreground">
@@ -271,7 +312,10 @@ export default function Backups(props: Props) {
                                                 : 'Scheduled backups are off.'}
                                         </p>
                                         <div>
-                                            <Button type="submit" disabled={processing}>
+                                            <Button
+                                                type="submit"
+                                                disabled={processing}
+                                            >
                                                 Save schedule
                                             </Button>
                                         </div>
@@ -286,24 +330,46 @@ export default function Backups(props: Props) {
                             <Form
                                 {...BackupSettingsController.store.form()}
                                 options={{ preserveScroll: true }}
-                                transform={(data) => ({ with_files: data.with_files === '1' })}
+                                transform={(data) => ({
+                                    with_files: data.with_files === '1',
+                                })}
                                 className="grid gap-4"
                             >
                                 {({ processing, errors }) => (
                                     <>
-                                        <h2 className="font-medium">Back up now</h2>
-                                        <FormField id="now_with_files" label="Contents" error={errors.with_files}>
-                                            <NativeSelect id="now_with_files" name="with_files" defaultValue="0">
-                                                <option value="0">Database only</option>
-                                                <option value="1">Database and files</option>
+                                        <h2 className="font-medium">
+                                            Back up now
+                                        </h2>
+                                        <FormField
+                                            id="now_with_files"
+                                            label="Contents"
+                                            error={errors.with_files}
+                                        >
+                                            <NativeSelect
+                                                id="now_with_files"
+                                                name="with_files"
+                                                defaultValue="0"
+                                            >
+                                                <option value="0">
+                                                    Database only
+                                                </option>
+                                                <option value="1">
+                                                    Database and files
+                                                </option>
                                             </NativeSelect>
                                         </FormField>
                                         <p className="text-sm text-muted-foreground">
-                                            Runs on the queue worker; this page shows its progress.
+                                            Runs on the queue worker; this page
+                                            shows its progress.
                                         </p>
                                         <div>
-                                            <Button type="submit" disabled={processing || isBusy}>
-                                                {isBusy ? 'Operation in progress…' : 'Back up now'}
+                                            <Button
+                                                type="submit"
+                                                disabled={processing || isBusy}
+                                            >
+                                                {isBusy
+                                                    ? 'Operation in progress…'
+                                                    : 'Back up now'}
                                             </Button>
                                         </div>
                                     </>
@@ -316,7 +382,9 @@ export default function Backups(props: Props) {
                 <Card>
                     <CardContent>
                         {backups.length === 0 ? (
-                            <p className="text-sm text-muted-foreground">No backups yet.</p>
+                            <p className="text-sm text-muted-foreground">
+                                No backups yet.
+                            </p>
                         ) : (
                             <Table>
                                 <TableHeader>
@@ -326,15 +394,23 @@ export default function Backups(props: Props) {
                                         <TableHead>Size</TableHead>
                                         <TableHead>Encrypted</TableHead>
                                         <TableHead>Contents</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
+                                        <TableHead className="text-right">
+                                            Actions
+                                        </TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {backups.map((backup) => (
                                         <TableRow key={backup.name}>
-                                            <TableCell className="font-mono text-xs break-all">{backup.name}</TableCell>
-                                            <TableCell>{formatDate(backup.created_at)}</TableCell>
-                                            <TableCell>{formatSize(backup.size)}</TableCell>
+                                            <TableCell className="font-mono text-xs break-all">
+                                                {backup.name}
+                                            </TableCell>
+                                            <TableCell>
+                                                {formatDate(backup.created_at)}
+                                            </TableCell>
+                                            <TableCell>
+                                                {formatSize(backup.size)}
+                                            </TableCell>
                                             <TableCell>
                                                 {backup.encrypted
                                                     ? backup.readable
@@ -353,16 +429,31 @@ export default function Backups(props: Props) {
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
-                                                    <Button asChild size="sm" variant="secondary">
-                                                        <a href={BackupSettingsController.download.url(backup.name)}>Download</a>
+                                                    <Button
+                                                        asChild
+                                                        size="sm"
+                                                        variant="secondary"
+                                                    >
+                                                        <a
+                                                            href={BackupSettingsController.download.url(
+                                                                backup.name,
+                                                            )}
+                                                        >
+                                                            Download
+                                                        </a>
                                                     </Button>
                                                     <Button
                                                         size="sm"
                                                         variant="secondary"
-                                                        disabled={isBusy || !backup.readable}
+                                                        disabled={
+                                                            isBusy ||
+                                                            !backup.readable
+                                                        }
                                                         onClick={() => {
                                                             setConfirmName('');
-                                                            setRestoring(backup);
+                                                            setRestoring(
+                                                                backup,
+                                                            );
                                                         }}
                                                     >
                                                         Restore
@@ -370,8 +461,14 @@ export default function Backups(props: Props) {
                                                     <Button
                                                         size="sm"
                                                         variant="destructive"
-                                                        disabled={isBusy && operation?.backup === backup.name}
-                                                        onClick={() => setDeleting(backup)}
+                                                        disabled={
+                                                            isBusy &&
+                                                            operation?.backup ===
+                                                                backup.name
+                                                        }
+                                                        onClick={() =>
+                                                            setDeleting(backup)
+                                                        }
                                                     >
                                                         Delete
                                                     </Button>
@@ -386,24 +483,35 @@ export default function Backups(props: Props) {
                 </Card>
             </AdminPage>
 
-            <Dialog open={deleting !== null} onOpenChange={(open) => !open && setDeleting(null)}>
+            <Dialog
+                open={deleting !== null}
+                onOpenChange={(open) => !open && setDeleting(null)}
+            >
                 <DialogContent>
                     <DialogTitle>Delete backup?</DialogTitle>
                     <DialogDescription>
-                        {deleting?.name} is deleted from this server permanently.
+                        {deleting?.name} is deleted from this server
+                        permanently.
                     </DialogDescription>
                     <DialogFooter className="gap-2">
                         <DialogClose asChild>
-                            <Button type="button" variant="secondary">Cancel</Button>
+                            <Button type="button" variant="secondary">
+                                Cancel
+                            </Button>
                         </DialogClose>
                         <Button
                             variant="destructive"
                             onClick={() =>
                                 deleting &&
-                                router.delete(BackupSettingsController.destroy.url(deleting.name), {
-                                    preserveScroll: true,
-                                    onFinish: () => setDeleting(null),
-                                })
+                                router.delete(
+                                    BackupSettingsController.destroy.url(
+                                        deleting.name,
+                                    ),
+                                    {
+                                        preserveScroll: true,
+                                        onFinish: () => setDeleting(null),
+                                    },
+                                )
                             }
                         >
                             Delete
@@ -412,20 +520,30 @@ export default function Backups(props: Props) {
                 </DialogContent>
             </Dialog>
 
-            <Dialog open={restoring !== null} onOpenChange={(open) => !open && setRestoring(null)}>
+            <Dialog
+                open={restoring !== null}
+                onOpenChange={(open) => !open && setRestoring(null)}
+            >
                 <DialogContent>
                     <DialogTitle>Restore this backup?</DialogTitle>
                     <DialogDescription>
-                        The database{restoring?.includes_files ? ', media, uploads, modules and themes are' : ' is'}{' '}
-                        replaced with the backup from {restoring && formatDate(restoring.created_at)}. A
-                        database-only backup of the current state is taken first. The store is in
-                        maintenance mode while it runs, and everyone is signed out: afterwards, sign in
-                        with the accounts as they were in that backup.
+                        The database
+                        {restoring?.includes_files
+                            ? ', media, uploads, modules and themes are'
+                            : ' is'}{' '}
+                        replaced with the backup from{' '}
+                        {restoring && formatDate(restoring.created_at)}. A
+                        database-only backup of the current state is taken
+                        first. The store is in maintenance mode while it runs,
+                        and everyone is signed out: afterwards, sign in with the
+                        accounts as they were in that backup.
                     </DialogDescription>
                     {restoring && (
                         <Form
                             key={restoring.name}
-                            {...BackupSettingsController.restore.form(restoring.name)}
+                            {...BackupSettingsController.restore.form(
+                                restoring.name,
+                            )}
                             options={{ preserveScroll: true }}
                             onSuccess={() => setRestoring(null)}
                             className="grid gap-4"
@@ -442,18 +560,28 @@ export default function Backups(props: Props) {
                                             name="confirm_name"
                                             autoComplete="off"
                                             value={confirmName}
-                                            onChange={(e) => setConfirmName(e.target.value)}
+                                            onChange={(e) =>
+                                                setConfirmName(e.target.value)
+                                            }
                                         />
                                     </FormField>
                                     <InputError message={errors.backup} />
                                     <DialogFooter className="gap-2">
                                         <DialogClose asChild>
-                                            <Button type="button" variant="secondary">Cancel</Button>
+                                            <Button
+                                                type="button"
+                                                variant="secondary"
+                                            >
+                                                Cancel
+                                            </Button>
                                         </DialogClose>
                                         <Button
                                             type="submit"
                                             variant="destructive"
-                                            disabled={processing || confirmName !== restoring.name}
+                                            disabled={
+                                                processing ||
+                                                confirmName !== restoring.name
+                                            }
                                         >
                                             Restore
                                         </Button>
@@ -468,14 +596,24 @@ export default function Backups(props: Props) {
     );
 }
 
-function OperationNotice({ operation, stuck }: { operation: Operation; stuck: boolean }) {
-    const what = operation.type === 'restore' ? `Restore of ${operation.backup}` : 'Backup';
+function OperationNotice({
+    operation,
+    stuck,
+}: {
+    operation: Operation;
+    stuck: boolean;
+}) {
+    const what =
+        operation.type === 'restore'
+            ? `Restore of ${operation.backup}`
+            : 'Backup';
 
     if (operation.state === 'queued' || operation.state === 'running') {
         return (
             <Alert>
                 <AlertTitle>
-                    {what} {operation.state === 'queued' ? 'queued' : 'running'}…
+                    {what} {operation.state === 'queued' ? 'queued' : 'running'}
+                    …
                 </AlertTitle>
                 <AlertDescription>
                     {operation.type === 'restore'
@@ -484,8 +622,9 @@ function OperationNotice({ operation, stuck }: { operation: Operation; stuck: bo
                     {stuck && (
                         <>
                             {' '}
-                            It has not started after two minutes: no queue worker seems to be running. Start one
-                            with <code>php artisan queue:work</code>.
+                            It has not started after two minutes: no queue
+                            worker seems to be running. Start one with{' '}
+                            <code>php artisan queue:work</code>.
                         </>
                     )}
                 </AlertDescription>
@@ -501,8 +640,13 @@ function OperationNotice({ operation, stuck }: { operation: Operation; stuck: bo
                     <p>{operation.message}</p>
                     {operation.recovery && operation.recovery.length > 0 && (
                         <>
-                            <p>The store stays in maintenance mode. To recover, run on the server:</p>
-                            <pre className="mt-1 text-xs whitespace-pre-wrap">{operation.recovery.join('\n')}</pre>
+                            <p>
+                                The store stays in maintenance mode. To recover,
+                                run on the server:
+                            </p>
+                            <pre className="mt-1 text-xs whitespace-pre-wrap">
+                                {operation.recovery.join('\n')}
+                            </pre>
                         </>
                     )}
                 </AlertDescription>

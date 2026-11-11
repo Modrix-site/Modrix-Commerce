@@ -1,6 +1,14 @@
 import { Form, Link } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
-import { Minus, Plus, Maximize2, X, Check, Heart, ChevronDown } from 'lucide-react';
+import {
+    Minus,
+    Plus,
+    Maximize2,
+    X,
+    Check,
+    Heart,
+    ChevronDown,
+} from 'lucide-react';
 import '../style.css';
 import CartController from '@/actions/App/Http/Controllers/Storefront/CartController';
 import type { ThemeSectionProps } from '@/components/storefront/theme-sections';
@@ -14,7 +22,14 @@ import { StickyAddToCart } from '@/components/storefront/sticky-add-to-cart';
 import { ProductLabels } from '@/components/storefront/product-labels';
 import { SaleNotice } from '@/components/storefront/sale-notice';
 import InputError from '@/components/input-error';
-import { Card, str, rememberViewed, toggleSaved, useDeviceList, toSaved } from '../components';
+import {
+    Card,
+    str,
+    rememberViewed,
+    toggleSaved,
+    useDeviceList,
+    toSaved,
+} from '../components';
 
 type Props = ThemeSectionProps<Record<string, unknown>, ThemeProductProps>;
 
@@ -35,7 +50,10 @@ function Product({ section, page }: Props) {
     const isSaved = saved.some((x) => x.id === product.id);
 
     const max = variant?.available ?? 999;
-    const count = Math.max(1, Math.min(Math.max(1, max), Math.floor(quantity) || 1));
+    const count = Math.max(
+        1,
+        Math.min(Math.max(1, max), Math.floor(quantity) || 1),
+    );
     const image = product.images[imageIndex] ?? product.images[0];
     const related = page.related ?? [];
 
@@ -85,7 +103,11 @@ function Product({ section, page }: Props) {
 
             <div
                 className="at-product-layout"
-                style={{ '--at-gallery-w': `${galleryWidth}%` } as React.CSSProperties}
+                style={
+                    {
+                        '--at-gallery-w': `${galleryWidth}%`,
+                    } as React.CSSProperties
+                }
             >
                 {/* Product Gallery */}
                 <div className="at-gallery">
@@ -97,7 +119,9 @@ function Product({ section, page }: Props) {
                                 fetchPriority="high"
                             />
                         ) : (
-                            <div className="text-neutral-400 text-sm">Image not available</div>
+                            <div className="text-sm text-neutral-400">
+                                Image not available
+                            </div>
                         )}
                         {image && (
                             <button
@@ -131,7 +155,7 @@ function Product({ section, page }: Props) {
 
                 {/* Sticky Purchase Panel */}
                 <div className="at-product-summary">
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="mb-2 flex items-center justify-between">
                         <ProductLabels labels={product.labels} />
                         {s.show_wishlist !== false && (
                             <button
@@ -147,7 +171,8 @@ function Product({ section, page }: Props) {
                                         image: product.images[0]?.url ?? '',
                                         price: variant?.price?.formatted ?? '',
                                         stock: variant?.purchasable ?? false,
-                                        description: product.short_description ?? '',
+                                        description:
+                                            product.short_description ?? '',
                                     })
                                 }
                             >
@@ -160,17 +185,26 @@ function Product({ section, page }: Props) {
                     </div>
 
                     <h1>{product.name}</h1>
-                    <PlaceSlot place="product.after_title" extraProps={{ variant }} />
+                    <PlaceSlot
+                        place="product.after_title"
+                        extraProps={{ variant }}
+                    />
 
                     <SaleNotice sale={product.sale} />
 
                     <div className="at-product-price-box">
-                        <span>{variant?.price?.formatted ?? str(s.choose_label, 'Choose options')}</span>
+                        <span>
+                            {variant?.price?.formatted ??
+                                str(s.choose_label, 'Choose options')}
+                        </span>
                         {variant?.compare_at_price && (
                             <s>{variant.compare_at_price.formatted}</s>
                         )}
                     </div>
-                    <PlaceSlot place="product.after_price" extraProps={{ variant }} />
+                    <PlaceSlot
+                        place="product.after_price"
+                        extraProps={{ variant }}
+                    />
 
                     {product.short_description && (
                         <p className="at-product-short-desc">
@@ -179,7 +213,7 @@ function Product({ section, page }: Props) {
                     )}
 
                     {s.show_sku !== false && variant?.sku && (
-                        <p className="text-xs uppercase tracking-wider text-neutral-400 mb-4">
+                        <p className="mb-4 text-xs tracking-wider text-neutral-400 uppercase">
                             SKU: {variant.sku}
                         </p>
                     )}
@@ -198,7 +232,7 @@ function Product({ section, page }: Props) {
 
                     <div id="at-product-purchase">
                         {product.options.length > 0 && (
-                            <div className="space-y-4 mb-6">
+                            <div className="mb-6 space-y-4">
                                 {product.options.map((o) => (
                                     <VariantSelector
                                         key={o.id}
@@ -228,7 +262,7 @@ function Product({ section, page }: Props) {
                                             value={count}
                                         />
 
-                                        <div className="at-product-actions flex flex-col sm:flex-row items-stretch gap-3 my-4">
+                                        <div className="at-product-actions my-4 flex flex-col items-stretch gap-3 sm:flex-row">
                                             {s.show_quantity !== false && (
                                                 <div className="at-quantity-picker shrink-0">
                                                     <button
@@ -236,7 +270,12 @@ function Product({ section, page }: Props) {
                                                         aria-label="Decrease quantity"
                                                         disabled={count <= 1}
                                                         onClick={() =>
-                                                            setQuantity(Math.max(1, count - 1))
+                                                            setQuantity(
+                                                                Math.max(
+                                                                    1,
+                                                                    count - 1,
+                                                                ),
+                                                            )
                                                         }
                                                     >
                                                         <Minus size={14} />
@@ -248,7 +287,12 @@ function Product({ section, page }: Props) {
                                                         max={max}
                                                         value={count}
                                                         onChange={(e) =>
-                                                            setQuantity(Number(e.target.value))
+                                                            setQuantity(
+                                                                Number(
+                                                                    e.target
+                                                                        .value,
+                                                                ),
+                                                            )
                                                         }
                                                     />
                                                     <button
@@ -256,7 +300,9 @@ function Product({ section, page }: Props) {
                                                         aria-label="Increase quantity"
                                                         disabled={count >= max}
                                                         onClick={() =>
-                                                            setQuantity(count + 1)
+                                                            setQuantity(
+                                                                count + 1,
+                                                            )
                                                         }
                                                     >
                                                         <Plus size={14} />
@@ -266,34 +312,57 @@ function Product({ section, page }: Props) {
 
                                             <button
                                                 type="submit"
-                                                className="at-btn at-btn-primary flex-1 sm:w-auto bg-black text-white hover:bg-neutral-800"
-                                                disabled={processing || !variant.purchasable}
+                                                className="at-btn at-btn-primary flex-1 bg-black text-white hover:bg-neutral-800 sm:w-auto"
+                                                disabled={
+                                                    processing ||
+                                                    !variant.purchasable
+                                                }
                                             >
                                                 {processing
-                                                    ? str(s.adding_label, 'Adding…')
+                                                    ? str(
+                                                          s.adding_label,
+                                                          'Adding…',
+                                                      )
                                                     : !variant.purchasable
-                                                      ? str(s.sold_label, 'Currently unavailable')
-                                                      : str(s.add_label, 'Add to bag')}
+                                                      ? str(
+                                                            s.sold_label,
+                                                            'Currently unavailable',
+                                                        )
+                                                      : str(
+                                                            s.add_label,
+                                                            'Add to bag',
+                                                        )}
                                             </button>
 
                                             {s.show_buy_now !== false && (
                                                 <BuyNowButton
-                                                    showBuyButton={product.show_buy_button}
-                                                    disabled={processing || !variant.purchasable}
-                                                    label={str(s.buy_label, 'Buy now')}
-                                                    className="at-btn at-btn-secondary flex-1 sm:w-auto !rounded-none !h-[var(--at-button-height,46px)] !border-black !text-black hover:!bg-black hover:!text-white bg-white"
+                                                    showBuyButton={
+                                                        product.show_buy_button
+                                                    }
+                                                    disabled={
+                                                        processing ||
+                                                        !variant.purchasable
+                                                    }
+                                                    label={str(
+                                                        s.buy_label,
+                                                        'Buy now',
+                                                    )}
+                                                    className="at-btn at-btn-secondary !h-[var(--at-button-height,46px)] flex-1 !rounded-none !border-black bg-white !text-black hover:!bg-black hover:!text-white sm:w-auto"
                                                 />
                                             )}
                                         </div>
 
                                         <InputError
-                                            message={errors.variant_id ?? errors.quantity}
+                                            message={
+                                                errors.variant_id ??
+                                                errors.quantity
+                                            }
                                         />
                                     </>
                                 )}
                             </Form>
                         ) : (
-                            <p className="text-sm text-neutral-500 mb-4">
+                            <p className="mb-4 text-sm text-neutral-500">
                                 {str(s.choose_label, 'Choose options')}
                             </p>
                         )}
@@ -335,7 +404,12 @@ function Product({ section, page }: Props) {
                         {str(s.delivery_text) && (
                             <details className="at-accordion">
                                 <summary>
-                                    <span>{str(s.delivery_heading, 'Delivery & returns')}</span>
+                                    <span>
+                                        {str(
+                                            s.delivery_heading,
+                                            'Delivery & returns',
+                                        )}
+                                    </span>
                                     <ChevronDown size={15} />
                                 </summary>
                                 <div className="at-accordion-content">
@@ -347,7 +421,12 @@ function Product({ section, page }: Props) {
                         {str(s.services_text) && (
                             <details className="at-accordion">
                                 <summary>
-                                    <span>{str(s.services_heading, 'Care & services')}</span>
+                                    <span>
+                                        {str(
+                                            s.services_heading,
+                                            'Care & services',
+                                        )}
+                                    </span>
                                     <ChevronDown size={15} />
                                 </summary>
                                 <div className="at-accordion-content">
@@ -378,7 +457,9 @@ function Product({ section, page }: Props) {
                 {related.length > 0 && (
                     <div className="mt-16">
                         <div className="at-section-head">
-                            <h2>{str(s.related_heading, 'You may also like')}</h2>
+                            <h2>
+                                {str(s.related_heading, 'You may also like')}
+                            </h2>
                         </div>
                         <div className="at-product-grid">
                             {related
@@ -396,13 +477,13 @@ function Product({ section, page }: Props) {
                 <dialog
                     ref={zoomDialog}
                     aria-label="Enlarged product image"
-                    className="p-6 bg-white max-w-4xl max-h-[90vh] shadow-2xl backdrop:bg-black/50"
+                    className="max-h-[90vh] max-w-4xl bg-white p-6 shadow-2xl backdrop:bg-black/50"
                     onClose={() => setZoom(false)}
                     onClick={(e) => {
                         if (e.target === zoomDialog.current) setZoom(false);
                     }}
                 >
-                    <div className="flex justify-end mb-2">
+                    <div className="mb-2 flex justify-end">
                         <button
                             type="button"
                             className="at-icon-btn"
@@ -414,7 +495,7 @@ function Product({ section, page }: Props) {
                     <img
                         src={image.url}
                         alt={image.alt ?? product.name}
-                        className="max-h-[75vh] w-auto mx-auto object-contain"
+                        className="mx-auto max-h-[75vh] w-auto object-contain"
                     />
                 </dialog>
             )}

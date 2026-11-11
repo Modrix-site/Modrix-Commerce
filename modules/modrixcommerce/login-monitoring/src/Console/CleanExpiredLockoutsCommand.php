@@ -9,6 +9,7 @@ use Illuminate\Console\Command;
 class CleanExpiredLockoutsCommand extends Command
 {
     protected $signature = 'login-monitoring:clean-expired';
+
     protected $description = 'Clean expired lockouts, temporary blocks, and expired sessions';
 
     public function handle(): int

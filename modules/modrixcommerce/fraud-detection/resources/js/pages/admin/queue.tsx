@@ -87,19 +87,19 @@ function riskBadge(level: string) {
     switch (level) {
         case 'high':
             return (
-                <Badge className="bg-red-500/15 text-red-700 hover:bg-red-500/25 border-red-200 dark:text-red-400">
+                <Badge className="border-red-200 bg-red-500/15 text-red-700 hover:bg-red-500/25 dark:text-red-400">
                     <ShieldAlert className="mr-1 size-3" /> High
                 </Badge>
             );
         case 'medium':
             return (
-                <Badge className="bg-amber-500/15 text-amber-700 hover:bg-amber-500/25 border-amber-200 dark:text-amber-400">
+                <Badge className="border-amber-200 bg-amber-500/15 text-amber-700 hover:bg-amber-500/25 dark:text-amber-400">
                     <AlertTriangle className="mr-1 size-3" /> Medium
                 </Badge>
             );
         case 'low':
             return (
-                <Badge className="bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/25 border-emerald-200 dark:text-emerald-400">
+                <Badge className="border-emerald-200 bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/25 dark:text-emerald-400">
                     <ShieldCheck className="mr-1 size-3" /> Low
                 </Badge>
             );
@@ -111,23 +111,51 @@ function riskBadge(level: string) {
 function statusBadge(status: string) {
     switch (status) {
         case 'approved':
-            return <Badge className="bg-emerald-500/15 text-emerald-700 border-emerald-200 dark:text-emerald-400"><CheckCircle2 className="mr-1 size-3" /> Approved</Badge>;
+            return (
+                <Badge className="border-emerald-200 bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
+                    <CheckCircle2 className="mr-1 size-3" /> Approved
+                </Badge>
+            );
         case 'rejected':
-            return <Badge className="bg-red-500/15 text-red-700 border-red-200 dark:text-red-400"><XCircle className="mr-1 size-3" /> Rejected</Badge>;
+            return (
+                <Badge className="border-red-200 bg-red-500/15 text-red-700 dark:text-red-400">
+                    <XCircle className="mr-1 size-3" /> Rejected
+                </Badge>
+            );
         case 'under_review':
-            return <Badge className="bg-blue-500/15 text-blue-700 border-blue-200 dark:text-blue-400"><Eye className="mr-1 size-3" /> Under Review</Badge>;
+            return (
+                <Badge className="border-blue-200 bg-blue-500/15 text-blue-700 dark:text-blue-400">
+                    <Eye className="mr-1 size-3" /> Under Review
+                </Badge>
+            );
         case 'pending':
-            return <Badge className="bg-amber-500/15 text-amber-700 border-amber-200 dark:text-amber-400"><Clock className="mr-1 size-3" /> Pending</Badge>;
+            return (
+                <Badge className="border-amber-200 bg-amber-500/15 text-amber-700 dark:text-amber-400">
+                    <Clock className="mr-1 size-3" /> Pending
+                </Badge>
+            );
         default:
             return <Badge variant="outline">{status}</Badge>;
     }
 }
 
 function ScoreCircle({ score }: { score: number }) {
-    const color = score >= 66 ? 'text-red-600 dark:text-red-400' : score >= 31 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400';
-    const bg = score >= 66 ? 'bg-red-500/10' : score >= 31 ? 'bg-amber-500/10' : 'bg-emerald-500/10';
+    const color =
+        score >= 66
+            ? 'text-red-600 dark:text-red-400'
+            : score >= 31
+              ? 'text-amber-600 dark:text-amber-400'
+              : 'text-emerald-600 dark:text-emerald-400';
+    const bg =
+        score >= 66
+            ? 'bg-red-500/10'
+            : score >= 31
+              ? 'bg-amber-500/10'
+              : 'bg-emerald-500/10';
     return (
-        <div className={`flex size-10 shrink-0 items-center justify-center rounded-full ${bg}`}>
+        <div
+            className={`flex size-10 shrink-0 items-center justify-center rounded-full ${bg}`}
+        >
             <span className={`text-sm font-bold ${color}`}>{score}</span>
         </div>
     );
@@ -135,25 +163,48 @@ function ScoreCircle({ score }: { score: number }) {
 
 export default function FraudQueue({ fraudScores, filters }: Props) {
     const [search, setSearch] = useState(filters.search || '');
-    const [selectedOrder, setSelectedOrder] = useState<FraudScoreRow | null>(null);
+    const [selectedOrder, setSelectedOrder] = useState<FraudScoreRow | null>(
+        null,
+    );
     const [actionNotes, setActionNotes] = useState('');
     const [actionLoading, setActionLoading] = useState(false);
 
     function handleSearch(e: React.FormEvent) {
         e.preventDefault();
-        router.get(window.location.pathname, { status: filters.status, risk_level: filters.risk_level, search, sort: filters.sort }, { preserveState: true });
+        router.get(
+            window.location.pathname,
+            {
+                status: filters.status,
+                risk_level: filters.risk_level,
+                search,
+                sort: filters.sort,
+            },
+            { preserveState: true },
+        );
     }
 
     function handleFilter(key: string, value: string) {
-        router.get(window.location.pathname, { ...filters, [key]: value, search: filters.search }, { preserveState: true });
+        router.get(
+            window.location.pathname,
+            { ...filters, [key]: value, search: filters.search },
+            { preserveState: true },
+        );
     }
 
     function handleAction(url: string) {
         setActionLoading(true);
-        router.post(url, { notes: actionNotes }, {
-            preserveScroll: true,
-            onFinish: () => { setActionLoading(false); setSelectedOrder(null); setActionNotes(''); },
-        });
+        router.post(
+            url,
+            { notes: actionNotes },
+            {
+                preserveScroll: true,
+                onFinish: () => {
+                    setActionLoading(false);
+                    setSelectedOrder(null);
+                    setActionNotes('');
+                },
+            },
+        );
     }
 
     const statusFilters = [
@@ -181,21 +232,24 @@ export default function FraudQueue({ fraudScores, filters }: Props) {
                 />
 
                 {/* Filters */}
-                <div className="flex flex-wrap items-center gap-3 mb-4">
-                    <form onSubmit={handleSearch} className="flex items-center gap-2">
+                <div className="mb-4 flex flex-wrap items-center gap-3">
+                    <form
+                        onSubmit={handleSearch}
+                        className="flex items-center gap-2"
+                    >
                         <div className="relative">
-                            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                            <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 placeholder="Search email, IP, order..."
                                 value={search}
-                                onChange={e => setSearch(e.target.value)}
-                                className="pl-10 w-64"
+                                onChange={(e) => setSearch(e.target.value)}
+                                className="w-64 pl-10"
                             />
                         </div>
                     </form>
 
                     <div className="flex items-center gap-1 rounded-lg border bg-background p-0.5">
-                        {statusFilters.map(f => (
+                        {statusFilters.map((f) => (
                             <button
                                 key={f.value}
                                 onClick={() => handleFilter('status', f.value)}
@@ -211,10 +265,12 @@ export default function FraudQueue({ fraudScores, filters }: Props) {
                     </div>
 
                     <div className="flex items-center gap-1 rounded-lg border bg-background p-0.5">
-                        {riskFilters.map(f => (
+                        {riskFilters.map((f) => (
                             <button
                                 key={f.value}
-                                onClick={() => handleFilter('risk_level', f.value)}
+                                onClick={() =>
+                                    handleFilter('risk_level', f.value)
+                                }
                                 className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                                     filters.risk_level === f.value
                                         ? 'bg-foreground text-background shadow-sm'
@@ -227,11 +283,20 @@ export default function FraudQueue({ fraudScores, filters }: Props) {
                     </div>
 
                     <button
-                        onClick={() => handleFilter('sort', filters.sort === 'highest_score' ? 'newest' : 'highest_score')}
-                        className="flex items-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+                        onClick={() =>
+                            handleFilter(
+                                'sort',
+                                filters.sort === 'highest_score'
+                                    ? 'newest'
+                                    : 'highest_score',
+                            )
+                        }
+                        className="flex items-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
                     >
                         <SortDesc className="size-3" />
-                        {filters.sort === 'highest_score' ? 'Highest Score' : 'Newest'}
+                        {filters.sort === 'highest_score'
+                            ? 'Highest Score'
+                            : 'Newest'}
                     </button>
                 </div>
 
@@ -244,51 +309,110 @@ export default function FraudQueue({ fraudScores, filters }: Props) {
                 ) : (
                     <div className="space-y-2">
                         {fraudScores.data.map((score) => (
-                            <Card key={score.id} className="transition-shadow hover:shadow-md">
+                            <Card
+                                key={score.id}
+                                className="transition-shadow hover:shadow-md"
+                            >
                                 <CardContent className="p-4">
                                     <div className="flex items-center gap-4">
-                                        <ScoreCircle score={score.total_score} />
+                                        <ScoreCircle
+                                            score={score.total_score}
+                                        />
 
                                         <div className="min-w-0 flex-1">
                                             <div className="flex flex-wrap items-center gap-2">
-                                                <Link href={score.detail_url} className="text-sm font-semibold hover:underline">
+                                                <Link
+                                                    href={score.detail_url}
+                                                    className="text-sm font-semibold hover:underline"
+                                                >
                                                     {score.order_number}
                                                 </Link>
                                                 {riskBadge(score.risk_level)}
-                                                {statusBadge(score.review_status)}
-                                                {score.is_vpn && <Badge variant="outline" className="text-[10px]">VPN</Badge>}
-                                                {score.is_disposable_email && <Badge variant="outline" className="text-[10px]">Disposable</Badge>}
-                                                {score.address_mismatch && <Badge variant="outline" className="text-[10px]">Addr Mismatch</Badge>}
+                                                {statusBadge(
+                                                    score.review_status,
+                                                )}
+                                                {score.is_vpn && (
+                                                    <Badge
+                                                        variant="outline"
+                                                        className="text-[10px]"
+                                                    >
+                                                        VPN
+                                                    </Badge>
+                                                )}
+                                                {score.is_disposable_email && (
+                                                    <Badge
+                                                        variant="outline"
+                                                        className="text-[10px]"
+                                                    >
+                                                        Disposable
+                                                    </Badge>
+                                                )}
+                                                {score.address_mismatch && (
+                                                    <Badge
+                                                        variant="outline"
+                                                        className="text-[10px]"
+                                                    >
+                                                        Addr Mismatch
+                                                    </Badge>
+                                                )}
                                             </div>
                                             <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
                                                 <span className="flex items-center gap-1">
-                                                    <Mail className="size-3" /> {score.customer_email}
+                                                    <Mail className="size-3" />{' '}
+                                                    {score.customer_email}
                                                 </span>
                                                 {score.ip_address && (
                                                     <span className="flex items-center gap-1">
-                                                        <Globe className="size-3" /> {score.ip_address}
+                                                        <Globe className="size-3" />{' '}
+                                                        {score.ip_address}
                                                     </span>
                                                 )}
-                                                <span>{score.order_total} {score.currency}</span>
-                                                <span>{score.indicators_count} indicators</span>
+                                                <span>
+                                                    {score.order_total}{' '}
+                                                    {score.currency}
+                                                </span>
+                                                <span>
+                                                    {score.indicators_count}{' '}
+                                                    indicators
+                                                </span>
                                                 <span>{score.created_at}</span>
                                             </div>
                                         </div>
 
                                         <div className="flex shrink-0 items-center gap-1">
-                                            {score.review_status !== 'approved' && (
-                                                <Button size="sm" variant="ghost" className="text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
-                                                    onClick={() => { setSelectedOrder(score); setActionNotes(''); }}>
+                                            {score.review_status !==
+                                                'approved' && (
+                                                <Button
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    className="text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
+                                                    onClick={() => {
+                                                        setSelectedOrder(score);
+                                                        setActionNotes('');
+                                                    }}
+                                                >
                                                     <CheckCircle2 className="size-4" />
                                                 </Button>
                                             )}
-                                            {score.review_status !== 'rejected' && (
-                                                <Button size="sm" variant="ghost" className="text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
-                                                    onClick={() => { setSelectedOrder(score); setActionNotes(''); }}>
+                                            {score.review_status !==
+                                                'rejected' && (
+                                                <Button
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    className="text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
+                                                    onClick={() => {
+                                                        setSelectedOrder(score);
+                                                        setActionNotes('');
+                                                    }}
+                                                >
                                                     <XCircle className="size-4" />
                                                 </Button>
                                             )}
-                                            <Button size="sm" variant="ghost" asChild>
+                                            <Button
+                                                size="sm"
+                                                variant="ghost"
+                                                asChild
+                                            >
                                                 <Link href={score.detail_url}>
                                                     <Eye className="size-4" />
                                                 </Link>
@@ -305,7 +429,8 @@ export default function FraudQueue({ fraudScores, filters }: Props) {
                 {fraudScores.last_page > 1 && (
                     <div className="mt-4 flex items-center justify-between">
                         <span className="text-xs text-muted-foreground">
-                            Page {fraudScores.current_page} of {fraudScores.last_page} ({fraudScores.total} total)
+                            Page {fraudScores.current_page} of{' '}
+                            {fraudScores.last_page} ({fraudScores.total} total)
                         </span>
                         <div className="flex items-center gap-1">
                             {fraudScores.links.map((link, i) => {
@@ -317,10 +442,12 @@ export default function FraudQueue({ fraudScores, filters }: Props) {
                                         preserveState
                                         className={`rounded-md px-3 py-1.5 text-xs transition-colors ${
                                             link.active
-                                                ? 'bg-foreground text-background font-semibold'
+                                                ? 'bg-foreground font-semibold text-background'
                                                 : 'text-muted-foreground hover:bg-muted'
                                         }`}
-                                        dangerouslySetInnerHTML={{ __html: link.label }}
+                                        dangerouslySetInnerHTML={{
+                                            __html: link.label,
+                                        }}
                                     />
                                 );
                             })}
@@ -330,37 +457,54 @@ export default function FraudQueue({ fraudScores, filters }: Props) {
             </AdminPage>
 
             {/* Action Dialog */}
-            <Dialog open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
+            <Dialog
+                open={!!selectedOrder}
+                onOpenChange={() => setSelectedOrder(null)}
+            >
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Review Order {selectedOrder?.order_number}</DialogTitle>
+                        <DialogTitle>
+                            Review Order {selectedOrder?.order_number}
+                        </DialogTitle>
                         <DialogDescription>
-                            Risk Score: {selectedOrder?.total_score}/100 · {selectedOrder?.indicators_count} indicators
+                            Risk Score: {selectedOrder?.total_score}/100 ·{' '}
+                            {selectedOrder?.indicators_count} indicators
                         </DialogDescription>
                     </DialogHeader>
 
                     {selectedOrder && (
                         <div className="space-y-4">
                             {/* Indicators Summary */}
-                            <div className="max-h-48 overflow-y-auto space-y-2">
+                            <div className="max-h-48 space-y-2 overflow-y-auto">
                                 {selectedOrder.indicators.map((ind, i) => (
-                                    <div key={i} className="flex items-start gap-2 rounded border p-2 text-xs">
+                                    <div
+                                        key={i}
+                                        className="flex items-start gap-2 rounded border p-2 text-xs"
+                                    >
                                         <span className="shrink-0 rounded bg-red-100 px-1.5 py-0.5 font-semibold text-red-700 dark:bg-red-900/30 dark:text-red-400">
                                             +{ind.score}
                                         </span>
                                         <div>
-                                            <span className="font-medium">{ind.label}</span>
-                                            <p className="text-muted-foreground mt-0.5">{ind.details}</p>
+                                            <span className="font-medium">
+                                                {ind.label}
+                                            </span>
+                                            <p className="mt-0.5 text-muted-foreground">
+                                                {ind.details}
+                                            </p>
                                         </div>
                                     </div>
                                 ))}
                             </div>
 
                             <div>
-                                <label className="text-sm font-medium mb-1 block">Notes (optional)</label>
+                                <label className="mb-1 block text-sm font-medium">
+                                    Notes (optional)
+                                </label>
                                 <textarea
                                     value={actionNotes}
-                                    onChange={e => setActionNotes(e.target.value)}
+                                    onChange={(e) =>
+                                        setActionNotes(e.target.value)
+                                    }
                                     rows={3}
                                     className="w-full rounded-md border bg-background px-3 py-2 text-sm"
                                     placeholder="Add investigation notes..."
@@ -369,27 +513,34 @@ export default function FraudQueue({ fraudScores, filters }: Props) {
 
                             <div className="flex items-center gap-2">
                                 <Button
-                                    onClick={() => handleAction(selectedOrder.approve_url)}
+                                    onClick={() =>
+                                        handleAction(selectedOrder.approve_url)
+                                    }
                                     disabled={actionLoading}
-                                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
+                                    className="flex-1 bg-emerald-600 text-white hover:bg-emerald-700"
                                 >
-                                    <CheckCircle2 className="size-4 mr-2" /> Approve
+                                    <CheckCircle2 className="mr-2 size-4" />{' '}
+                                    Approve
                                 </Button>
                                 <Button
-                                    onClick={() => handleAction(selectedOrder.reject_url)}
+                                    onClick={() =>
+                                        handleAction(selectedOrder.reject_url)
+                                    }
                                     disabled={actionLoading}
                                     variant="destructive"
                                     className="flex-1"
                                 >
-                                    <XCircle className="size-4 mr-2" /> Reject
+                                    <XCircle className="mr-2 size-4" /> Reject
                                 </Button>
                                 <Button
-                                    onClick={() => handleAction(selectedOrder.review_url)}
+                                    onClick={() =>
+                                        handleAction(selectedOrder.review_url)
+                                    }
                                     disabled={actionLoading}
                                     variant="outline"
                                     className="flex-1"
                                 >
-                                    <Eye className="size-4 mr-2" /> Review
+                                    <Eye className="mr-2 size-4" /> Review
                                 </Button>
                             </div>
                         </div>

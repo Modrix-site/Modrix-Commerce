@@ -23,14 +23,14 @@ You can also copy `modules/modrixcommerce/checkout-com` into place and enable it
 
 ## Configure
 
-| Field | Value |
-| --- | --- |
-| API base URL | Sandbox: `https://api.sandbox.checkout.com`. Live: `https://api.checkout.com`. An account prefix such as `https://prefix.api.sandbox.checkout.com` is accepted. |
-| Secret key | `sk_sbox_…` for sandbox, `sk_…` for live. Stored encrypted. A sandbox key is refused when the API URL is live, and the reverse. |
-| Public key | Required for Flow. `pk_sbox_…` or `pk_…`, matching the secret key's environment. Used in the browser. |
-| Processing channel | Optional `pc_…`. Send it when the account has more than one channel. |
-| Display | **Hosted payment page** (default) or **Flow**. |
-| Webhook signature key | From Developers → Webhooks in the Checkout.com dashboard. Stored encrypted. |
+| Field                 | Value                                                                                                                                                           |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| API base URL          | Sandbox: `https://api.sandbox.checkout.com`. Live: `https://api.checkout.com`. An account prefix such as `https://prefix.api.sandbox.checkout.com` is accepted. |
+| Secret key            | `sk_sbox_…` for sandbox, `sk_…` for live. Stored encrypted. A sandbox key is refused when the API URL is live, and the reverse.                                 |
+| Public key            | Required for Flow. `pk_sbox_…` or `pk_…`, matching the secret key's environment. Used in the browser.                                                           |
+| Processing channel    | Optional `pc_…`. Send it when the account has more than one channel.                                                                                            |
+| Display               | **Hosted payment page** (default) or **Flow**.                                                                                                                  |
+| Webhook signature key | From Developers → Webhooks in the Checkout.com dashboard. Stored encrypted.                                                                                     |
 
 Checkout.com cannot reach `http://localhost`. Set `APP_URL` to the store's public `https://` address before relying on webhooks. The return from the hosted page still works on localhost because the customer comes back in the browser; the store then asks Checkout.com for the payment.
 
@@ -59,13 +59,13 @@ A billing country (ISO 3166-1 alpha-2) is required. It is taken from the order's
 
 ### Status map
 
-| Checkout.com | This store |
-| --- | --- |
-| Captured, Partially Refunded, Refunded, Paid | Paid |
-| Authorized, Partially Captured | Still processing; the order is not fulfilled |
-| Declined | Failed |
-| Canceled, Voided, Expired | Expired |
-| Pending, Payment Pending | Waiting |
+| Checkout.com                                 | This store                                   |
+| -------------------------------------------- | -------------------------------------------- |
+| Captured, Partially Refunded, Refunded, Paid | Paid                                         |
+| Authorized, Partially Captured               | Still processing; the order is not fulfilled |
+| Declined                                     | Failed                                       |
+| Canceled, Voided, Expired                    | Expired                                      |
+| Pending, Payment Pending                     | Waiting                                      |
 
 ## Refunds
 

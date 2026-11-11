@@ -22,7 +22,7 @@ class RulesEngineService
     public function evaluateRules(Request $request): ?array
     {
         $rules = $this->getActiveRules();
-        $path = '/' . ltrim($request->path(), '/');
+        $path = '/'.ltrim($request->path(), '/');
         $userAgent = (string) $request->userAgent();
         $ip = $request->ip() ?? '127.0.0.1';
 
@@ -47,36 +47,36 @@ class RulesEngineService
     private function matchesConditions(Request $request, array $conditions, string $path, string $userAgent, string $ip): bool
     {
         // 1. Path pattern match
-        if (!empty($conditions['path_pattern'])) {
+        if (! empty($conditions['path_pattern'])) {
             $pattern = $conditions['path_pattern'];
             $isRegex = str_starts_with($pattern, '/') && str_ends_with($pattern, '/');
             if ($isRegex) {
-                if (!preg_match($pattern, $path)) {
+                if (! preg_match($pattern, $path)) {
                     return false;
                 }
             } else {
-                if (!fnmatch($pattern, $path)) {
+                if (! fnmatch($pattern, $path)) {
                     return false;
                 }
             }
         }
 
         // 2. HTTP method match
-        if (!empty($conditions['methods']) && is_array($conditions['methods'])) {
-            if (!in_array(strtoupper($request->method()), array_map('strtoupper', $conditions['methods']), true)) {
+        if (! empty($conditions['methods']) && is_array($conditions['methods'])) {
+            if (! in_array(strtoupper($request->method()), array_map('strtoupper', $conditions['methods']), true)) {
                 return false;
             }
         }
 
         // 3. User-Agent regex match
-        if (!empty($conditions['user_agent_regex'])) {
-            if (!@preg_match($conditions['user_agent_regex'], $userAgent)) {
+        if (! empty($conditions['user_agent_regex'])) {
+            if (! @preg_match($conditions['user_agent_regex'], $userAgent)) {
                 return false;
             }
         }
 
         // 4. Missing required header
-        if (!empty($conditions['missing_header'])) {
+        if (! empty($conditions['missing_header'])) {
             if ($request->hasHeader($conditions['missing_header'])) {
                 return false;
             }

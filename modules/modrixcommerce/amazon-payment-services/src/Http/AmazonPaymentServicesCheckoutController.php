@@ -52,7 +52,7 @@ class AmazonPaymentServicesCheckoutController extends Controller
         try {
             $event = $gateway->verifyWebhook($payload, []);
         } catch (InvalidWebhook $e) {
-            abort(400, 'Invalid Amazon Payment Services signature: ' . $e->getMessage());
+            abort(400, 'Invalid Amazon Payment Services signature: '.$e->getMessage());
         }
 
         $inbox->receive($gateway, $payload, []);

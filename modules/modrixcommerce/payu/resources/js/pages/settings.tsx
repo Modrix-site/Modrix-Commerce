@@ -77,8 +77,14 @@ export default function PayuSettingsPage({
                     description="Accept cards, UPI, Net Banking across all Indian banks, and Wallets using PayU India."
                     actions={
                         <div className="flex items-center gap-2">
-                            <Badge variant={settings.test_mode ? 'secondary' : 'default'}>
-                                {settings.test_mode ? 'Test Mode (test.payu.in)' : 'Production (secure.payu.in)'}
+                            <Badge
+                                variant={
+                                    settings.test_mode ? 'secondary' : 'default'
+                                }
+                            >
+                                {settings.test_mode
+                                    ? 'Test Mode (test.payu.in)'
+                                    : 'Production (secure.payu.in)'}
                             </Badge>
                             {settings.ready && (
                                 <Button
@@ -103,13 +109,17 @@ export default function PayuSettingsPage({
                                 : 'Set up PayU Payments'}
                         </CardTitle>
                         <CardDescription>
-                            Configure your Merchant Key and Salt from the PayU Dashboard.
+                            Configure your Merchant Key and Salt from the PayU
+                            Dashboard.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <ul className="grid gap-2 text-sm">
                             {checks.map(([done, label]) => (
-                                <li key={label} className="flex items-center gap-2">
+                                <li
+                                    key={label}
+                                    className="flex items-center gap-2"
+                                >
                                     {done ? (
                                         <CircleCheck className="size-4 shrink-0 text-primary" />
                                     ) : (
@@ -127,7 +137,8 @@ export default function PayuSettingsPage({
                         <CardHeader>
                             <CardTitle>Merchant Credentials</CardTitle>
                             <CardDescription>
-                                Found in your PayU Dashboard under Integration Details / API Credentials.
+                                Found in your PayU Dashboard under Integration
+                                Details / API Credentials.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4 md:grid-cols-2">
@@ -140,7 +151,12 @@ export default function PayuSettingsPage({
                                 <Input
                                     id="merchant_key"
                                     value={form.data.merchant_key}
-                                    onChange={(e) => form.setData('merchant_key', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'merchant_key',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="e.g. YOUR_MERCHANT_KEY"
                                 />
                             </FormField>
@@ -160,8 +176,14 @@ export default function PayuSettingsPage({
                                     type="password"
                                     autoComplete="new-password"
                                     value={form.data.salt}
-                                    onChange={(e) => form.setData('salt', e.target.value)}
-                                    placeholder={settings.has_salt ? '••••••••••••••••' : 'PayU Merchant Salt'}
+                                    onChange={(e) =>
+                                        form.setData('salt', e.target.value)
+                                    }
+                                    placeholder={
+                                        settings.has_salt
+                                            ? '••••••••••••••••'
+                                            : 'PayU Merchant Salt'
+                                    }
                                 />
                             </FormField>
 
@@ -174,7 +196,9 @@ export default function PayuSettingsPage({
                                 <Input
                                     id="label"
                                     value={form.data.label}
-                                    onChange={(e) => form.setData('label', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData('label', e.target.value)
+                                    }
                                 />
                             </FormField>
 
@@ -192,7 +216,9 @@ export default function PayuSettingsPage({
                                             'currencies',
                                             e.target.value
                                                 .split(',')
-                                                .map((c) => c.trim().toUpperCase())
+                                                .map((c) =>
+                                                    c.trim().toUpperCase(),
+                                                )
                                                 .filter(Boolean),
                                         )
                                     }
@@ -204,10 +230,19 @@ export default function PayuSettingsPage({
                                     <Checkbox
                                         id="test_mode"
                                         checked={form.data.test_mode}
-                                        onCheckedChange={(checked) => form.setData('test_mode', Boolean(checked))}
+                                        onCheckedChange={(checked) =>
+                                            form.setData(
+                                                'test_mode',
+                                                Boolean(checked),
+                                            )
+                                        }
                                     />
-                                    <label htmlFor="test_mode" className="text-sm font-medium leading-none">
-                                        Enable Test Mode (submits transactions to test.payu.in)
+                                    <label
+                                        htmlFor="test_mode"
+                                        className="text-sm leading-none font-medium"
+                                    >
+                                        Enable Test Mode (submits transactions
+                                        to test.payu.in)
                                     </label>
                                 </div>
 
@@ -215,10 +250,19 @@ export default function PayuSettingsPage({
                                     <Checkbox
                                         id="enabled"
                                         checked={form.data.enabled}
-                                        onCheckedChange={(checked) => form.setData('enabled', Boolean(checked))}
+                                        onCheckedChange={(checked) =>
+                                            form.setData(
+                                                'enabled',
+                                                Boolean(checked),
+                                            )
+                                        }
                                     />
-                                    <label htmlFor="enabled" className="text-sm font-medium leading-none">
-                                        Enable PayU Payments for customer checkout
+                                    <label
+                                        htmlFor="enabled"
+                                        className="text-sm leading-none font-medium"
+                                    >
+                                        Enable PayU Payments for customer
+                                        checkout
                                     </label>
                                 </div>
                             </div>
@@ -229,21 +273,28 @@ export default function PayuSettingsPage({
                         <CardHeader>
                             <CardTitle>Return & Webhook URLs</CardTitle>
                             <CardDescription>
-                                Set these URLs in your PayU Dashboard or use default callback routing.
+                                Set these URLs in your PayU Dashboard or use
+                                default callback routing.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4">
                             <div>
-                                <label className="text-xs font-semibold uppercase text-muted-foreground">
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">
                                     Callback / Response URL (surl / furl)
                                 </label>
                                 <div className="mt-1 flex items-center gap-2">
-                                    <Input readOnly value={responseUrl} className="font-mono text-xs" />
+                                    <Input
+                                        readOnly
+                                        value={responseUrl}
+                                        className="font-mono text-xs"
+                                    />
                                     <Button
                                         type="button"
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => copyResponse(responseUrl)}
+                                        onClick={() =>
+                                            copyResponse(responseUrl)
+                                        }
                                     >
                                         <Copy className="size-4" />
                                     </Button>
@@ -251,11 +302,15 @@ export default function PayuSettingsPage({
                             </div>
 
                             <div>
-                                <label className="text-xs font-semibold uppercase text-muted-foreground">
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">
                                     Webhook Notification URL
                                 </label>
                                 <div className="mt-1 flex items-center gap-2">
-                                    <Input readOnly value={webhookUrl} className="font-mono text-xs" />
+                                    <Input
+                                        readOnly
+                                        value={webhookUrl}
+                                        className="font-mono text-xs"
+                                    />
                                     <Button
                                         type="button"
                                         variant="outline"

@@ -53,7 +53,7 @@ class FraudQueueController extends Controller
         $fraudScores = $query->paginate(25)->withQueryString()->through(fn (FraudScore $s) => [
             'id' => $s->id,
             'order_id' => $s->order_id,
-            'order_number' => $s->order?->number ?? '#' . $s->order_id,
+            'order_number' => $s->order?->number ?? '#'.$s->order_id,
             'customer_email' => $s->customer_email,
             'customer_id' => $s->customer_id,
             'total_score' => $s->total_score,
@@ -72,11 +72,11 @@ class FraudQueueController extends Controller
             'reviewed_at' => $s->reviewed_at?->diffForHumans(),
             'created_at' => $s->created_at?->diffForHumans(),
             'created_date' => $s->created_at?->toFormattedDateString(),
-            'approve_url' => route(self::ROUTE . 'approve', $s),
-            'reject_url' => route(self::ROUTE . 'reject', $s),
-            'review_url' => route(self::ROUTE . 'review', $s),
-            'note_url' => route(self::ROUTE . 'note', $s),
-            'detail_url' => route(self::ROUTE . 'show', $s),
+            'approve_url' => route(self::ROUTE.'approve', $s),
+            'reject_url' => route(self::ROUTE.'reject', $s),
+            'review_url' => route(self::ROUTE.'review', $s),
+            'note_url' => route(self::ROUTE.'note', $s),
+            'detail_url' => route(self::ROUTE.'show', $s),
         ]);
 
         return Inertia::render('module/modrixcommerce/fraud-detection/admin/queue', [
@@ -103,7 +103,7 @@ class FraudQueueController extends Controller
             'fraudScore' => [
                 'id' => $fraudScore->id,
                 'order_id' => $fraudScore->order_id,
-                'order_number' => $fraudScore->order?->number ?? '#' . $fraudScore->order_id,
+                'order_number' => $fraudScore->order?->number ?? '#'.$fraudScore->order_id,
                 'customer_email' => $fraudScore->customer_email,
                 'customer_id' => $fraudScore->customer_id,
                 'total_score' => $fraudScore->total_score,
@@ -125,10 +125,10 @@ class FraudQueueController extends Controller
                 'reviewed_at' => $fraudScore->reviewed_at?->toFormattedDateString(),
                 'created_at' => $fraudScore->created_at?->diffForHumans(),
                 'created_date' => $fraudScore->created_at?->toFormattedDateString(),
-                'approve_url' => route(self::ROUTE . 'approve', $fraudScore),
-                'reject_url' => route(self::ROUTE . 'reject', $fraudScore),
-                'review_url' => route(self::ROUTE . 'review', $fraudScore),
-                'note_url' => route(self::ROUTE . 'note', $fraudScore),
+                'approve_url' => route(self::ROUTE.'approve', $fraudScore),
+                'reject_url' => route(self::ROUTE.'reject', $fraudScore),
+                'review_url' => route(self::ROUTE.'review', $fraudScore),
+                'note_url' => route(self::ROUTE.'note', $fraudScore),
             ],
             'reviews' => $fraudScore->reviews->map(fn ($r) => [
                 'id' => $r->id,

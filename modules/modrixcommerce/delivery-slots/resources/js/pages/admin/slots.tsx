@@ -12,7 +12,13 @@ import { useState } from 'react';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import {
     Dialog,
     DialogClose,
@@ -119,7 +125,11 @@ export default function DeliverySlotsAdminSlots({ slots, urls }: Props) {
     };
 
     const handleToggle = (slot: SlotData) => {
-        router.post(`${urls.slots}/${slot.id}/toggle`, {}, { preserveScroll: true });
+        router.post(
+            `${urls.slots}/${slot.id}/toggle`,
+            {},
+            { preserveScroll: true },
+        );
     };
 
     const handleDelete = (slot: SlotData) => {
@@ -133,7 +143,7 @@ export default function DeliverySlotsAdminSlots({ slots, urls }: Props) {
         if (current.includes(dayVal)) {
             setData(
                 'days_of_week',
-                current.filter((d) => d !== dayVal)
+                current.filter((d) => d !== dayVal),
             );
         } else {
             setData('days_of_week', [...current, dayVal].sort());
@@ -166,21 +176,30 @@ export default function DeliverySlotsAdminSlots({ slots, urls }: Props) {
 
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-base font-semibold">Active Windows</CardTitle>
+                        <CardTitle className="text-base font-semibold">
+                            Active Windows
+                        </CardTitle>
                         <CardDescription>
-                            Each window represents an available delivery slot selectable by customers at
-                            checkout.
+                            Each window represents an available delivery slot
+                            selectable by customers at checkout.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="p-0">
                         {slots.length === 0 ? (
                             <div className="flex flex-col items-center justify-center p-12 text-center">
                                 <Clock className="size-10 text-muted-foreground/40" />
-                                <h3 className="mt-3 text-sm font-semibold">No delivery slots created</h3>
+                                <h3 className="mt-3 text-sm font-semibold">
+                                    No delivery slots created
+                                </h3>
                                 <p className="mt-1 text-xs text-muted-foreground">
-                                    Create your first time slot to enable scheduled deliveries.
+                                    Create your first time slot to enable
+                                    scheduled deliveries.
                                 </p>
-                                <Button size="sm" onClick={openCreateDialog} className="mt-4">
+                                <Button
+                                    size="sm"
+                                    onClick={openCreateDialog}
+                                    className="mt-4"
+                                >
                                     <Plus className="mr-1.5 size-4" />
                                     Add Time Slot
                                 </Button>
@@ -197,22 +216,28 @@ export default function DeliverySlotsAdminSlots({ slots, urls }: Props) {
                                         <TableHead>Fee</TableHead>
                                         <TableHead>Total Orders</TableHead>
                                         <TableHead>Status</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
+                                        <TableHead className="text-right">
+                                            Actions
+                                        </TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {slots.map((slot) => (
                                         <TableRow key={slot.id}>
-                                            <TableCell className="font-semibold text-xs text-foreground">
+                                            <TableCell className="text-xs font-semibold text-foreground">
                                                 {slot.name}
                                             </TableCell>
                                             <TableCell className="text-xs whitespace-nowrap">
-                                                {slot.start_time} - {slot.end_time}
+                                                {slot.start_time} -{' '}
+                                                {slot.end_time}
                                             </TableCell>
                                             <TableCell className="text-xs">
                                                 <div className="flex gap-1">
                                                     {DAYS.map((d) => {
-                                                        const active = slot.days_of_week.includes(d.value);
+                                                        const active =
+                                                            slot.days_of_week.includes(
+                                                                d.value,
+                                                            );
                                                         return (
                                                             <span
                                                                 key={d.value}
@@ -232,10 +257,14 @@ export default function DeliverySlotsAdminSlots({ slots, urls }: Props) {
                                                 {slot.cutoff_hours}h before
                                             </TableCell>
                                             <TableCell className="text-xs">
-                                                {slot.max_orders > 0 ? `${slot.max_orders} / day` : 'Unlimited'}
+                                                {slot.max_orders > 0
+                                                    ? `${slot.max_orders} / day`
+                                                    : 'Unlimited'}
                                             </TableCell>
                                             <TableCell className="text-xs">
-                                                {slot.fee > 0 ? `$${slot.fee.toFixed(2)}` : 'Free'}
+                                                {slot.fee > 0
+                                                    ? `$${slot.fee.toFixed(2)}`
+                                                    : 'Free'}
                                             </TableCell>
                                             <TableCell className="text-xs font-semibold">
                                                 {slot.total_bookings}
@@ -246,17 +275,25 @@ export default function DeliverySlotsAdminSlots({ slots, urls }: Props) {
                                                     variant="ghost"
                                                     size="sm"
                                                     className="h-7 px-2 text-xs"
-                                                    onClick={() => handleToggle(slot)}
+                                                    onClick={() =>
+                                                        handleToggle(slot)
+                                                    }
                                                 >
                                                     <Badge
-                                                        variant={slot.is_active ? 'default' : 'secondary'}
+                                                        variant={
+                                                            slot.is_active
+                                                                ? 'default'
+                                                                : 'secondary'
+                                                        }
                                                         className={
                                                             slot.is_active
                                                                 ? 'bg-emerald-600 hover:bg-emerald-700'
                                                                 : 'bg-muted text-muted-foreground'
                                                         }
                                                     >
-                                                        {slot.is_active ? 'Active' : 'Disabled'}
+                                                        {slot.is_active
+                                                            ? 'Active'
+                                                            : 'Disabled'}
                                                     </Badge>
                                                 </Button>
                                             </TableCell>
@@ -266,7 +303,9 @@ export default function DeliverySlotsAdminSlots({ slots, urls }: Props) {
                                                         variant="ghost"
                                                         size="icon"
                                                         className="size-8"
-                                                        onClick={() => openEditDialog(slot)}
+                                                        onClick={() =>
+                                                            openEditDialog(slot)
+                                                        }
                                                     >
                                                         <Edit2 className="size-3.5 text-muted-foreground" />
                                                     </Button>
@@ -274,7 +313,9 @@ export default function DeliverySlotsAdminSlots({ slots, urls }: Props) {
                                                         variant="ghost"
                                                         size="icon"
                                                         className="size-8 text-destructive hover:text-destructive"
-                                                        onClick={() => handleDelete(slot)}
+                                                        onClick={() =>
+                                                            handleDelete(slot)
+                                                        }
                                                     >
                                                         <Trash2 className="size-3.5" />
                                                     </Button>
@@ -293,10 +334,13 @@ export default function DeliverySlotsAdminSlots({ slots, urls }: Props) {
                     <DialogContent className="max-w-md">
                         <DialogHeader>
                             <DialogTitle>
-                                {editingSlot ? `Edit Slot: ${editingSlot.name}` : 'Create Delivery Slot'}
+                                {editingSlot
+                                    ? `Edit Slot: ${editingSlot.name}`
+                                    : 'Create Delivery Slot'}
                             </DialogTitle>
                             <DialogDescription>
-                                Set window times, operating days, and daily capacity limits.
+                                Set window times, operating days, and daily
+                                capacity limits.
                             </DialogDescription>
                         </DialogHeader>
 
@@ -308,63 +352,89 @@ export default function DeliverySlotsAdminSlots({ slots, urls }: Props) {
                                 <Input
                                     id="slot-name"
                                     value={data.name}
-                                    onChange={(e) => setData('name', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('name', e.target.value)
+                                    }
                                     placeholder="e.g. Morning Delivery (9 AM - 1 PM)"
                                     className="text-xs"
                                     required
                                 />
                                 {errors.name && (
-                                    <p className="text-xs text-destructive">{errors.name}</p>
+                                    <p className="text-xs text-destructive">
+                                        {errors.name}
+                                    </p>
                                 )}
                             </div>
 
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="space-y-1">
-                                    <Label htmlFor="start-time" className="text-xs">
+                                    <Label
+                                        htmlFor="start-time"
+                                        className="text-xs"
+                                    >
                                         Start Time
                                     </Label>
                                     <Input
                                         id="start-time"
                                         type="time"
                                         value={data.start_time}
-                                        onChange={(e) => setData('start_time', e.target.value)}
+                                        onChange={(e) =>
+                                            setData(
+                                                'start_time',
+                                                e.target.value,
+                                            )
+                                        }
                                         className="text-xs"
                                         required
                                     />
                                     {errors.start_time && (
-                                        <p className="text-xs text-destructive">{errors.start_time}</p>
+                                        <p className="text-xs text-destructive">
+                                            {errors.start_time}
+                                        </p>
                                     )}
                                 </div>
 
                                 <div className="space-y-1">
-                                    <Label htmlFor="end-time" className="text-xs">
+                                    <Label
+                                        htmlFor="end-time"
+                                        className="text-xs"
+                                    >
                                         End Time
                                     </Label>
                                     <Input
                                         id="end-time"
                                         type="time"
                                         value={data.end_time}
-                                        onChange={(e) => setData('end_time', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('end_time', e.target.value)
+                                        }
                                         className="text-xs"
                                         required
                                     />
                                     {errors.end_time && (
-                                        <p className="text-xs text-destructive">{errors.end_time}</p>
+                                        <p className="text-xs text-destructive">
+                                            {errors.end_time}
+                                        </p>
                                     )}
                                 </div>
                             </div>
 
                             <div className="space-y-1">
-                                <Label className="text-xs">Operating Days of Week</Label>
+                                <Label className="text-xs">
+                                    Operating Days of Week
+                                </Label>
                                 <div className="flex gap-1.5 pt-1">
                                     {DAYS.map((d) => {
-                                        const isSelected = data.days_of_week.includes(d.value);
+                                        const isSelected =
+                                            data.days_of_week.includes(d.value);
                                         return (
                                             <button
                                                 key={d.value}
                                                 type="button"
-                                                onClick={() => toggleDay(d.value)}
-                                                className={`flex size-9 items-center justify-center rounded-md border text-xs font-semibold transition-all cursor-pointer ${
+                                                onClick={() =>
+                                                    toggleDay(d.value)
+                                                }
+                                                className={`flex size-9 cursor-pointer items-center justify-center rounded-md border text-xs font-semibold transition-all ${
                                                     isSelected
                                                         ? 'border-sky-600 bg-sky-600 text-white'
                                                         : 'border-border bg-card text-muted-foreground hover:bg-muted'
@@ -379,7 +449,10 @@ export default function DeliverySlotsAdminSlots({ slots, urls }: Props) {
 
                             <div className="grid grid-cols-3 gap-3">
                                 <div className="space-y-1">
-                                    <Label htmlFor="cutoff-hours" className="text-xs">
+                                    <Label
+                                        htmlFor="cutoff-hours"
+                                        className="text-xs"
+                                    >
                                         Cutoff (Hrs)
                                     </Label>
                                     <Input
@@ -388,13 +461,21 @@ export default function DeliverySlotsAdminSlots({ slots, urls }: Props) {
                                         min={0}
                                         max={72}
                                         value={data.cutoff_hours}
-                                        onChange={(e) => setData('cutoff_hours', parseInt(e.target.value) || 0)}
+                                        onChange={(e) =>
+                                            setData(
+                                                'cutoff_hours',
+                                                parseInt(e.target.value) || 0,
+                                            )
+                                        }
                                         className="text-xs"
                                     />
                                 </div>
 
                                 <div className="space-y-1">
-                                    <Label htmlFor="max-orders" className="text-xs">
+                                    <Label
+                                        htmlFor="max-orders"
+                                        className="text-xs"
+                                    >
                                         Max Orders
                                     </Label>
                                     <Input
@@ -402,13 +483,21 @@ export default function DeliverySlotsAdminSlots({ slots, urls }: Props) {
                                         type="number"
                                         min={0}
                                         value={data.max_orders}
-                                        onChange={(e) => setData('max_orders', parseInt(e.target.value) || 0)}
+                                        onChange={(e) =>
+                                            setData(
+                                                'max_orders',
+                                                parseInt(e.target.value) || 0,
+                                            )
+                                        }
                                         className="text-xs"
                                     />
                                 </div>
 
                                 <div className="space-y-1">
-                                    <Label htmlFor="slot-fee" className="text-xs">
+                                    <Label
+                                        htmlFor="slot-fee"
+                                        className="text-xs"
+                                    >
                                         Fee ($)
                                     </Label>
                                     <Input
@@ -417,7 +506,12 @@ export default function DeliverySlotsAdminSlots({ slots, urls }: Props) {
                                         step="0.5"
                                         min={0}
                                         value={data.fee}
-                                        onChange={(e) => setData('fee', parseFloat(e.target.value) || 0)}
+                                        onChange={(e) =>
+                                            setData(
+                                                'fee',
+                                                parseFloat(e.target.value) || 0,
+                                            )
+                                        }
                                         className="text-xs"
                                     />
                                 </div>
@@ -428,22 +522,39 @@ export default function DeliverySlotsAdminSlots({ slots, urls }: Props) {
                                     id="slot-active"
                                     type="checkbox"
                                     checked={data.is_active}
-                                    onChange={(e) => setData('is_active', e.target.checked)}
+                                    onChange={(e) =>
+                                        setData('is_active', e.target.checked)
+                                    }
                                     className="size-4 rounded border-input"
                                 />
-                                <Label htmlFor="slot-active" className="text-xs font-normal">
+                                <Label
+                                    htmlFor="slot-active"
+                                    className="text-xs font-normal"
+                                >
                                     Activate this slot immediately for customers
                                 </Label>
                             </div>
 
                             <DialogFooter className="gap-2 pt-3">
                                 <DialogClose asChild>
-                                    <Button type="button" variant="outline" size="sm">
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                    >
                                         Cancel
                                     </Button>
                                 </DialogClose>
-                                <Button type="submit" size="sm" disabled={processing}>
-                                    {processing ? 'Saving...' : editingSlot ? 'Update Slot' : 'Create Slot'}
+                                <Button
+                                    type="submit"
+                                    size="sm"
+                                    disabled={processing}
+                                >
+                                    {processing
+                                        ? 'Saving...'
+                                        : editingSlot
+                                          ? 'Update Slot'
+                                          : 'Create Slot'}
                                 </Button>
                             </DialogFooter>
                         </form>

@@ -194,8 +194,8 @@ export default function StripeSettingsPage({
                                     Checkout only while the matching switch is
                                     on. Also enable each wallet in the Stripe
                                     Dashboard and register this store&apos;s
-                                    domain. A restricted key needs permission
-                                    to manage payment method configurations.
+                                    domain. A restricted key needs permission to
+                                    manage payment method configurations.
                                 </p>
                                 <div className="flex flex-wrap gap-2">
                                     <Button type="submit" disabled={processing}>

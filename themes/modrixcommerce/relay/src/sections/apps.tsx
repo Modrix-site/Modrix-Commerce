@@ -1,6 +1,6 @@
-import { ExtensionSlot } from "@/components/extensions/extension-slot";
-import type { SlotItem } from "@/components/extensions/extension-slot";
-import type { ThemeSectionProps } from "@/components/storefront/theme-sections";
+import { ExtensionSlot } from '@/components/extensions/extension-slot';
+import type { SlotItem } from '@/components/extensions/extension-slot';
+import type { ThemeSectionProps } from '@/components/storefront/theme-sections';
 export default function Apps({
     page,
 }: ThemeSectionProps<
@@ -9,8 +9,8 @@ export default function Apps({
 >) {
     if (
         page &&
-        (Object.prototype.hasOwnProperty.call(page, "product") ||
-            Object.prototype.hasOwnProperty.call(page, "cart"))
+        (Object.prototype.hasOwnProperty.call(page, 'product') ||
+            Object.prototype.hasOwnProperty.call(page, 'cart'))
     )
         return null;
     return (

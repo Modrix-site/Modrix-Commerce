@@ -144,7 +144,7 @@ final class AmazonPaymentServicesApi
         }
 
         try {
-            $response = $this->checkStatus('TEST-PROBE-' . time());
+            $response = $this->checkStatus('TEST-PROBE-'.time());
             $responseCode = (string) ($response['response_code'] ?? '');
 
             // 12000 = success query, or 12044 = transaction not found (both prove authentication succeeded)
@@ -153,7 +153,7 @@ final class AmazonPaymentServicesApi
             }
 
             if (isset($response['response_message'])) {
-                throw new GatewayException('APS: ' . mb_substr((string) $response['response_message'], 0, 200));
+                throw new GatewayException('APS: '.mb_substr((string) $response['response_message'], 0, 200));
             }
         } catch (GatewayException $e) {
             // If the query returns "Transaction not found", credentials and signatures are valid!
@@ -183,7 +183,7 @@ final class AmazonPaymentServicesApi
         } catch (ConnectionException) {
             throw new GatewayException('Could not connect to Amazon Payment Services. Please try again.', retryable: true);
         } catch (Throwable $e) {
-            throw new GatewayException('Could not reach Amazon Payment Services: ' . mb_substr($e->getMessage(), 0, 150));
+            throw new GatewayException('Could not reach Amazon Payment Services: '.mb_substr($e->getMessage(), 0, 150));
         }
 
         $json = $response->json();

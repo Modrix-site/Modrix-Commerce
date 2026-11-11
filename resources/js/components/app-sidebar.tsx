@@ -150,7 +150,9 @@ export function AppSidebar() {
 
             <SidebarFooter className="p-2">
                 <NavUser />
-                <p className="px-2 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">v{platform.version}</p>
+                <p className="px-2 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
+                    v{platform.version}
+                </p>
             </SidebarFooter>
         </Sidebar>
     );

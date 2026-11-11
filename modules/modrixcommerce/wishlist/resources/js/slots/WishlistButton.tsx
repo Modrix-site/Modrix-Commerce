@@ -32,7 +32,7 @@ export default function WishlistButton({
             {
                 preserveScroll: true,
                 onFinish: () => setSubmitting(false),
-            }
+            },
         );
     };
 
@@ -45,10 +45,10 @@ export default function WishlistButton({
                 onClick={handleToggle}
                 disabled={submitting}
                 className={cn(
-                    'w-full sm:w-auto transition-colors cursor-pointer',
+                    'w-full cursor-pointer transition-colors sm:w-auto',
                     is_wishlisted
                         ? 'border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300'
-                        : 'hover:border-rose-300 hover:text-rose-600'
+                        : 'hover:border-rose-300 hover:text-rose-600',
                 )}
             >
                 {submitting ? (
@@ -57,7 +57,9 @@ export default function WishlistButton({
                     <Heart
                         className={cn(
                             'mr-2 size-4 transition-transform',
-                            is_wishlisted ? 'fill-rose-600 text-rose-600 scale-110' : 'text-muted-foreground'
+                            is_wishlisted
+                                ? 'scale-110 fill-rose-600 text-rose-600'
+                                : 'text-muted-foreground',
                         )}
                     />
                 )}

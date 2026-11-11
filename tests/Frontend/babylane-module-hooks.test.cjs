@@ -108,7 +108,11 @@ function load(file) {
             if (name.includes('/CartController'))
                 return { default: { store: { form: () => ({}) } } };
             if (name.includes('/use-store-theme'))
-                return { useStoreTheme: () => ({ theme: { settings: {}, layout:{container:'wide'} } }) };
+                return {
+                    useStoreTheme: () => ({
+                        theme: { settings: {}, layout: { container: 'wide' } },
+                    }),
+                };
             if (name.includes('/store-menu'))
                 return { StoreMenuTree: () => null };
             if (name.includes('/ui/sheet'))
@@ -325,9 +329,27 @@ test('all page-slot templates ship an enabled app section for arbitrary installe
 
 test('theme layout retains the platform shell around checkout, account, orders and global overlays', () => {
     const Layout = load(path.join(theme, 'src/layout.tsx')).default;
-    for (const page of ['checkout.payment_method', 'checkout.after_summary', 'checkout.before_place_order', 'order.confirmation', 'account.order']) {
-        const DefaultLayout = ({ children }) => React.createElement('main', null, marker('storefront.overlay'), children);
-        const html = renderToStaticMarkup(React.createElement(Layout, { DefaultLayout }, marker(page, 'Core module content')));
+    for (const page of [
+        'checkout.payment_method',
+        'checkout.after_summary',
+        'checkout.before_place_order',
+        'order.confirmation',
+        'account.order',
+    ]) {
+        const DefaultLayout = ({ children }) =>
+            React.createElement(
+                'main',
+                null,
+                marker('storefront.overlay'),
+                children,
+            );
+        const html = renderToStaticMarkup(
+            React.createElement(
+                Layout,
+                { DefaultLayout },
+                marker(page, 'Core module content'),
+            ),
+        );
         once(html, 'storefront.overlay');
         once(html, page);
         assert.match(html, /Core module content/);

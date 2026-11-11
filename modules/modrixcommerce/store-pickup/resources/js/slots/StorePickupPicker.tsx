@@ -84,7 +84,8 @@ export default function StorePickupPicker({
     shipping_method,
 }: Props) {
     const [selectedBranchId, setSelectedBranchId] = useState<number | null>(
-        initialSelection?.branch_id ?? (branches.length === 1 ? branches[0].id : null),
+        initialSelection?.branch_id ??
+            (branches.length === 1 ? branches[0].id : null),
     );
     const [collectorEnabled, setCollectorEnabled] = useState(
         Boolean(initialSelection?.collector_name),
@@ -101,9 +102,7 @@ export default function StorePickupPicker({
     const [pickupTime, setPickupTime] = useState(
         initialSelection?.pickup_time || '',
     );
-    const [notes, setNotes] = useState(
-        initialSelection?.customer_notes || '',
-    );
+    const [notes, setNotes] = useState(initialSelection?.customer_notes || '');
 
     const [isSaving, setIsSaving] = useState(false);
     const [saveSuccess, setSaveSuccess] = useState<string | null>(
@@ -194,7 +193,9 @@ export default function StorePickupPicker({
 
             const card =
                 codRadio.closest<HTMLElement>('.rounded-lg.border') ||
-                codRadio.closest<HTMLElement>('[class*="rounded"][class*="border"]') ||
+                codRadio.closest<HTMLElement>(
+                    '[class*="rounded"][class*="border"]',
+                ) ||
                 codRadio.closest<HTMLElement>('div');
             if (!card) {
                 return;
@@ -217,7 +218,9 @@ export default function StorePickupPicker({
                 }
                 const text = clone.textContent?.trim();
                 card.dataset.origCodLabel =
-                    text && text !== pay_in_store_label ? text : 'Cash on delivery';
+                    text && text !== pay_in_store_label
+                        ? text
+                        : 'Cash on delivery';
             }
             if (!card.dataset.origCodInstructions && instructionsSpan) {
                 const text = instructionsSpan.textContent?.trim();
@@ -232,9 +235,10 @@ export default function StorePickupPicker({
                 if (cod_behavior === 'hide') {
                     card.style.display = 'none';
                     if (codRadio.checked) {
-                        const fallbackRadio = document.querySelector<HTMLInputElement>(
-                            'input[name="payment_method"]:not([value="cash_on_delivery"]):not([disabled])',
-                        );
+                        const fallbackRadio =
+                            document.querySelector<HTMLInputElement>(
+                                'input[name="payment_method"]:not([value="cash_on_delivery"]):not([disabled])',
+                            );
                         if (fallbackRadio) {
                             fallbackRadio.click();
                         }
@@ -242,7 +246,10 @@ export default function StorePickupPicker({
                 } else if (cod_behavior === 'pay_in_store') {
                     card.style.display = '';
                     if (labelSpan) {
-                        setLabel(labelSpan, pay_in_store_label || 'Pay in store');
+                        setLabel(
+                            labelSpan,
+                            pay_in_store_label || 'Pay in store',
+                        );
                     }
                     if (instructionsSpan) {
                         setText(
@@ -259,7 +266,10 @@ export default function StorePickupPicker({
                 // Standard delivery: restore Cash on Delivery with courier fee
                 card.style.display = '';
                 if (labelSpan) {
-                    setLabel(labelSpan, card.dataset.origCodLabel || 'Cash on delivery');
+                    setLabel(
+                        labelSpan,
+                        card.dataset.origCodLabel || 'Cash on delivery',
+                    );
                 }
                 if (instructionsSpan) {
                     setText(
@@ -276,7 +286,11 @@ export default function StorePickupPicker({
             // Sync courier fee row in order totals summary
             const summaryDts = document.querySelectorAll<HTMLElement>('dl dt');
             summaryDts.forEach((dt) => {
-                if (dt.textContent?.toLowerCase().includes('cash on delivery fee')) {
+                if (
+                    dt.textContent
+                        ?.toLowerCase()
+                        .includes('cash on delivery fee')
+                ) {
                     const row =
                         dt.closest<HTMLElement>('div.flex.justify-between') ||
                         dt.parentElement;
@@ -291,8 +305,9 @@ export default function StorePickupPicker({
         // The observer is paused while syncing, so its own writes can't re-trigger it
         // (that loop froze the checkout with "Page not responding").
         const paymentSection =
-            document.querySelector('section[aria-labelledby="payment-heading"]') ||
-            document.getElementById('payment-heading')?.closest('section');
+            document.querySelector(
+                'section[aria-labelledby="payment-heading"]',
+            ) || document.getElementById('payment-heading')?.closest('section');
         let observer: MutationObserver | null = null;
         const run = () => {
             observer?.disconnect();
@@ -300,7 +315,10 @@ export default function StorePickupPicker({
                 syncPaymentOption();
             } finally {
                 if (observer && paymentSection) {
-                    observer.observe(paymentSection, { childList: true, subtree: true });
+                    observer.observe(paymentSection, {
+                        childList: true,
+                        subtree: true,
+                    });
                 }
             }
         };
@@ -314,7 +332,12 @@ export default function StorePickupPicker({
                 observer.disconnect();
             }
         };
-    }, [isPickupActive, cod_behavior, pay_in_store_label, pay_in_store_instructions]);
+    }, [
+        isPickupActive,
+        cod_behavior,
+        pay_in_store_label,
+        pay_in_store_instructions,
+    ]);
 
     if (!enabled || branches.length === 0) {
         return null;
@@ -349,7 +372,14 @@ export default function StorePickupPicker({
         if (radio && !radio.checked) {
             radio.click();
         }
-        await submitSelection(branchId, collectorName, collectorPhone, pickupDate, pickupTime, notes);
+        await submitSelection(
+            branchId,
+            collectorName,
+            collectorPhone,
+            pickupDate,
+            pickupTime,
+            notes,
+        );
     };
 
     const submitSelection = async (
@@ -364,7 +394,10 @@ export default function StorePickupPicker({
         setErrorMessage(null);
 
         try {
-            const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+            const token =
+                document
+                    .querySelector('meta[name="csrf-token"]')
+                    ?.getAttribute('content') || '';
             const res = await fetch(select_url, {
                 method: 'POST',
                 headers: {
@@ -385,10 +418,15 @@ export default function StorePickupPicker({
 
             const data = await res.json();
             if (res.ok && data.success) {
-                setSaveSuccess(`Pickup confirmed at ${data.branch?.name || 'selected branch'}`);
+                setSaveSuccess(
+                    `Pickup confirmed at ${data.branch?.name || 'selected branch'}`,
+                );
                 try {
                     const currentUrl = new URL(window.location.href);
-                    currentUrl.searchParams.set('shipping_method', 'store_pickup');
+                    currentUrl.searchParams.set(
+                        'shipping_method',
+                        'store_pickup',
+                    );
                     window.history.replaceState({}, '', currentUrl.toString());
                 } catch {
                     // ignore
@@ -400,7 +438,9 @@ export default function StorePickupPicker({
                     },
                 });
             } else {
-                setErrorMessage(data.message || 'Failed to save store pickup selection.');
+                setErrorMessage(
+                    data.message || 'Failed to save store pickup selection.',
+                );
             }
         } catch {
             setErrorMessage('Network error while saving pickup branch.');
@@ -412,7 +452,10 @@ export default function StorePickupPicker({
     const handleClear = async () => {
         setIsSaving(true);
         try {
-            const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+            const token =
+                document
+                    .querySelector('meta[name="csrf-token"]')
+                    ?.getAttribute('content') || '';
             await fetch(clear_url, {
                 method: 'POST',
                 headers: {
@@ -446,7 +489,10 @@ export default function StorePickupPicker({
                     </div>
                     {selectedBranch && (
                         <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="border-emerald-500 text-emerald-600 bg-emerald-50 text-xs">
+                            <Badge
+                                variant="outline"
+                                className="border-emerald-500 bg-emerald-50 text-xs text-emerald-600"
+                            >
                                 Location Selected
                             </Badge>
                             <Button
@@ -462,7 +508,8 @@ export default function StorePickupPicker({
                     )}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                    Choose your nearest store or retail branch to collect your order in person.
+                    Choose your nearest store or retail branch to collect your
+                    order in person.
                 </p>
             </CardHeader>
 
@@ -485,20 +532,22 @@ export default function StorePickupPicker({
                             >
                                 <div className="space-y-1">
                                     <div className="flex items-start justify-between gap-2">
-                                        <div className="flex items-center gap-1.5 font-medium text-sm text-foreground">
-                                            <MapPin className="h-4 w-4 text-primary shrink-0" />
+                                        <div className="flex items-center gap-1.5 text-sm font-medium text-foreground">
+                                            <MapPin className="h-4 w-4 shrink-0 text-primary" />
                                             <span>{branch.name}</span>
                                         </div>
-                                        <span className="text-xs font-semibold tabular-nums text-foreground">
-                                            {Number(branch.fee) === 0 ? 'Free' : `+${branch.fee}`}
+                                        <span className="text-xs font-semibold text-foreground tabular-nums">
+                                            {Number(branch.fee) === 0
+                                                ? 'Free'
+                                                : `+${branch.fee}`}
                                         </span>
                                     </div>
-                                    <p className="text-xs text-muted-foreground line-clamp-2">
+                                    <p className="line-clamp-2 text-xs text-muted-foreground">
                                         {branch.full_address}
                                     </p>
                                 </div>
 
-                                <div className="mt-3 flex flex-wrap items-center gap-2 pt-2 border-t border-border/40 text-[11px] text-muted-foreground">
+                                <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border/40 pt-2 text-[11px] text-muted-foreground">
                                     <span className="flex items-center gap-1">
                                         <Clock className="h-3 w-3" />
                                         {branch.prep_time || 'Ready in 2 hours'}
@@ -520,16 +569,25 @@ export default function StorePickupPicker({
                     <div className="space-y-3 rounded-md border border-border/60 bg-background p-3 text-xs">
                         <div className="flex items-start justify-between">
                             <div>
-                                <span className="font-semibold text-foreground">Selected: </span>
-                                <span className="font-medium text-primary">{selectedBranch.name}</span>
-                                <span className="text-muted-foreground"> ({selectedBranch.city})</span>
+                                <span className="font-semibold text-foreground">
+                                    Selected:{' '}
+                                </span>
+                                <span className="font-medium text-primary">
+                                    {selectedBranch.name}
+                                </span>
+                                <span className="text-muted-foreground">
+                                    {' '}
+                                    ({selectedBranch.city})
+                                </span>
                             </div>
-                            <span className="text-muted-foreground">{selectedBranch.pickup_hours}</span>
+                            <span className="text-muted-foreground">
+                                {selectedBranch.pickup_hours}
+                            </span>
                         </div>
 
                         {selectedBranch.instructions && (
-                            <div className="flex items-start gap-1.5 text-muted-foreground bg-muted/40 p-2 rounded">
-                                <Info className="h-3.5 w-3.5 shrink-0 mt-0.5 text-primary" />
+                            <div className="flex items-start gap-1.5 rounded bg-muted/40 p-2 text-muted-foreground">
+                                <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
                                 <span>{selectedBranch.instructions}</span>
                             </div>
                         )}
@@ -538,9 +596,11 @@ export default function StorePickupPicker({
                         {cod_behavior === 'pay_in_store' && (
                             <div className="flex items-center justify-between rounded-md border border-emerald-200 bg-emerald-50/70 p-2.5 text-xs text-emerald-900 dark:border-emerald-900/50 dark:bg-emerald-950/20 dark:text-emerald-300">
                                 <div className="flex items-center gap-2">
-                                    <CreditCard className="h-4 w-4 text-emerald-600 shrink-0" />
+                                    <CreditCard className="h-4 w-4 shrink-0 text-emerald-600" />
                                     <span>
-                                        <strong>{pay_in_store_label}:</strong> Courier delivery fee is waived. You can pay by card or cash at the counter.
+                                        <strong>{pay_in_store_label}:</strong>{' '}
+                                        Courier delivery fee is waived. You can
+                                        pay by card or cash at the counter.
                                     </span>
                                 </div>
                             </div>
@@ -548,54 +608,87 @@ export default function StorePickupPicker({
 
                         {/* Alternative Collector */}
                         {allow_collector && (
-                            <div className="pt-2 border-t border-border/40 space-y-2">
-                                <label className="flex items-center gap-2 cursor-pointer select-none">
+                            <div className="space-y-2 border-t border-border/40 pt-2">
+                                <label className="flex cursor-pointer items-center gap-2 select-none">
                                     <input
                                         type="checkbox"
                                         checked={collectorEnabled}
-                                        onChange={(e) => setCollectorEnabled(e.target.checked)}
+                                        onChange={(e) =>
+                                            setCollectorEnabled(
+                                                e.target.checked,
+                                            )
+                                        }
                                         className="rounded border-border"
                                     />
                                     <span className="flex items-center gap-1.5 font-medium text-foreground">
                                         <UserCheck className="h-3.5 w-3.5 text-primary" />
-                                        Someone else will collect this order (Authorized Person)
+                                        Someone else will collect this order
+                                        (Authorized Person)
                                     </span>
                                 </label>
 
                                 {collectorEnabled && (
-                                    <div className="grid gap-2 sm:grid-cols-2 pt-1 pl-5">
+                                    <div className="grid gap-2 pt-1 pl-5 sm:grid-cols-2">
                                         <div>
-                                            <Label htmlFor="collector_name" className="text-[11px]">
+                                            <Label
+                                                htmlFor="collector_name"
+                                                className="text-[11px]"
+                                            >
                                                 Collector Full Name
                                             </Label>
                                             <Input
                                                 id="collector_name"
                                                 size={1}
                                                 value={collectorName}
-                                                onChange={(e) => setCollectorName(e.target.value)}
+                                                onChange={(e) =>
+                                                    setCollectorName(
+                                                        e.target.value,
+                                                    )
+                                                }
                                                 onBlur={() =>
                                                     selectedBranchId &&
-                                                    submitSelection(selectedBranchId, collectorName, collectorPhone, pickupDate, pickupTime, notes)
+                                                    submitSelection(
+                                                        selectedBranchId,
+                                                        collectorName,
+                                                        collectorPhone,
+                                                        pickupDate,
+                                                        pickupTime,
+                                                        notes,
+                                                    )
                                                 }
                                                 placeholder="e.g. John Doe"
-                                                className="h-8 text-xs mt-1"
+                                                className="mt-1 h-8 text-xs"
                                             />
                                         </div>
                                         <div>
-                                            <Label htmlFor="collector_phone" className="text-[11px]">
+                                            <Label
+                                                htmlFor="collector_phone"
+                                                className="text-[11px]"
+                                            >
                                                 Collector Phone
                                             </Label>
                                             <Input
                                                 id="collector_phone"
                                                 size={1}
                                                 value={collectorPhone}
-                                                onChange={(e) => setCollectorPhone(e.target.value)}
+                                                onChange={(e) =>
+                                                    setCollectorPhone(
+                                                        e.target.value,
+                                                    )
+                                                }
                                                 onBlur={() =>
                                                     selectedBranchId &&
-                                                    submitSelection(selectedBranchId, collectorName, collectorPhone, pickupDate, pickupTime, notes)
+                                                    submitSelection(
+                                                        selectedBranchId,
+                                                        collectorName,
+                                                        collectorPhone,
+                                                        pickupDate,
+                                                        pickupTime,
+                                                        notes,
+                                                    )
                                                 }
                                                 placeholder="+971 50 000 0000"
-                                                className="h-8 text-xs mt-1"
+                                                className="mt-1 h-8 text-xs"
                                             />
                                         </div>
                                     </div>
@@ -605,9 +698,12 @@ export default function StorePickupPicker({
 
                         {/* Preferred pickup schedule */}
                         {allow_schedule && (
-                            <div className="grid gap-2 sm:grid-cols-2 pt-2 border-t border-border/40">
+                            <div className="grid gap-2 border-t border-border/40 pt-2 sm:grid-cols-2">
                                 <div>
-                                    <Label htmlFor="pickup_date" className="text-[11px] flex items-center gap-1">
+                                    <Label
+                                        htmlFor="pickup_date"
+                                        className="flex items-center gap-1 text-[11px]"
+                                    >
                                         <Calendar className="h-3 w-3 text-primary" />
                                         Preferred Pickup Date
                                     </Label>
@@ -615,18 +711,32 @@ export default function StorePickupPicker({
                                         id="pickup_date"
                                         type="date"
                                         value={pickupDate}
-                                        min={new Date().toISOString().split('T')[0]}
+                                        min={
+                                            new Date()
+                                                .toISOString()
+                                                .split('T')[0]
+                                        }
                                         onChange={(e) => {
                                             setPickupDate(e.target.value);
                                             if (selectedBranchId) {
-                                                submitSelection(selectedBranchId, collectorName, collectorPhone, e.target.value, pickupTime, notes);
+                                                submitSelection(
+                                                    selectedBranchId,
+                                                    collectorName,
+                                                    collectorPhone,
+                                                    e.target.value,
+                                                    pickupTime,
+                                                    notes,
+                                                );
                                             }
                                         }}
-                                        className="h-8 text-xs mt-1"
+                                        className="mt-1 h-8 text-xs"
                                     />
                                 </div>
                                 <div>
-                                    <Label htmlFor="pickup_time" className="text-[11px] flex items-center gap-1">
+                                    <Label
+                                        htmlFor="pickup_time"
+                                        className="flex items-center gap-1 text-[11px]"
+                                    >
                                         <Clock className="h-3 w-3 text-primary" />
                                         Preferred Time Window
                                     </Label>
@@ -636,35 +746,50 @@ export default function StorePickupPicker({
                                         onChange={(e) => {
                                             setPickupTime(e.target.value);
                                             if (selectedBranchId) {
-                                                submitSelection(selectedBranchId, collectorName, collectorPhone, pickupDate, e.target.value, notes);
+                                                submitSelection(
+                                                    selectedBranchId,
+                                                    collectorName,
+                                                    collectorPhone,
+                                                    pickupDate,
+                                                    e.target.value,
+                                                    notes,
+                                                );
                                             }
                                         }}
-                                        className="h-8 text-xs mt-1 w-full rounded-md border border-input bg-transparent px-3 py-1 shadow-xs"
+                                        className="mt-1 h-8 w-full rounded-md border border-input bg-transparent px-3 py-1 text-xs shadow-xs"
                                     >
-                                        <option value="">Any time during operating hours</option>
-                                        <option value="morning">Morning (Opening - 12:00)</option>
-                                        <option value="afternoon">Afternoon (12:00 - 17:00)</option>
-                                        <option value="evening">Evening (17:00 - Closing)</option>
+                                        <option value="">
+                                            Any time during operating hours
+                                        </option>
+                                        <option value="morning">
+                                            Morning (Opening - 12:00)
+                                        </option>
+                                        <option value="afternoon">
+                                            Afternoon (12:00 - 17:00)
+                                        </option>
+                                        <option value="evening">
+                                            Evening (17:00 - Closing)
+                                        </option>
                                     </select>
                                 </div>
                             </div>
                         )}
 
                         {saveSuccess && (
-                            <div className="flex items-center gap-1.5 text-emerald-600 font-medium text-[11px] pt-1">
+                            <div className="flex items-center gap-1.5 pt-1 text-[11px] font-medium text-emerald-600">
                                 <CheckCircle2 className="h-3.5 w-3.5" />
                                 <span>{saveSuccess}</span>
                             </div>
                         )}
 
                         {errorMessage && (
-                            <div className="flex items-center gap-1.5 text-destructive font-medium text-[11px] pt-1">
+                            <div className="flex items-center gap-1.5 pt-1 text-[11px] font-medium text-destructive">
                                 <span>{errorMessage}</span>
                             </div>
                         )}
 
                         {isSaving && (
-                            <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] pt-1">
+                            <div className="flex items-center gap-1.5 pt-1 text-[11px] text-muted-foreground">
                                 <Loader2 className="h-3 w-3 animate-spin" />
                                 <span>Saving pickup preferences...</span>
                             </div>

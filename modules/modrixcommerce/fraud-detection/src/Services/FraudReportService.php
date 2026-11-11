@@ -2,8 +2,8 @@
 
 namespace EcoModular\FraudDetection\Services;
 
+use Carbon\Carbon;
 use EcoModular\FraudDetection\Models\FraudScore;
-use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FraudReportService
@@ -13,7 +13,7 @@ class FraudReportService
      */
     public function getDailySummary(?string $date = null): array
     {
-        $date = $date ? \Carbon\Carbon::parse($date) : now();
+        $date = $date ? Carbon::parse($date) : now();
 
         $scores = FraudScore::query()
             ->whereDate('created_at', $date)
@@ -84,14 +84,14 @@ class FraudReportService
                 $query->where('created_at', '>=', $from);
             }
             if ($to) {
-                $query->where('created_at', '<=', $to . ' 23:59:59');
+                $query->where('created_at', '<=', $to.' 23:59:59');
             }
 
             $query->chunk(500, function ($chunk) use ($out) {
                 foreach ($chunk as $score) {
                     /** @var FraudScore $score */
                     $indicators = is_array($score->indicators)
-                        ? implode('; ', array_map(fn ($i) => ($i['label'] ?? '') . ' (+' . ($i['score'] ?? 0) . ')', $score->indicators))
+                        ? implode('; ', array_map(fn ($i) => ($i['label'] ?? '').' (+'.($i['score'] ?? 0).')', $score->indicators))
                         : '';
 
                     fputcsv($out, array_map(self::safe(...), [
@@ -119,7 +119,7 @@ class FraudReportService
             });
 
             fclose($out);
-        }, 'fraud-report-' . now()->format('Y-m-d') . '.csv', [
+        }, 'fraud-report-'.now()->format('Y-m-d').'.csv', [
             'Content-Type' => 'text/csv; charset=UTF-8',
         ]);
     }
@@ -151,14 +151,14 @@ class FraudReportService
                 $query->where('created_at', '>=', $from);
             }
             if ($to) {
-                $query->where('created_at', '<=', $to . ' 23:59:59');
+                $query->where('created_at', '<=', $to.' 23:59:59');
             }
 
             $query->chunk(500, function ($chunk) use ($out) {
                 foreach ($chunk as $score) {
                     /** @var FraudScore $score */
                     $indicators = is_array($score->indicators)
-                        ? implode('; ', array_map(fn ($i) => ($i['label'] ?? '') . ' (+' . ($i['score'] ?? 0) . ')', $score->indicators))
+                        ? implode('; ', array_map(fn ($i) => ($i['label'] ?? '').' (+'.($i['score'] ?? 0).')', $score->indicators))
                         : '';
 
                     fputcsv($out, array_map(self::safe(...), [
@@ -186,13 +186,13 @@ class FraudReportService
             });
 
             fclose($out);
-        }, 'fraud-report-' . now()->format('Y-m-d') . '.xls', [
+        }, 'fraud-report-'.now()->format('Y-m-d').'.xls', [
             'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
         ]);
     }
 
     private static function safe(string $value): string
     {
-        return $value !== '' && in_array($value[0], ['=', '+', '-', '@', "\t", "\r"], true) ? "'" . $value : $value;
+        return $value !== '' && in_array($value[0], ['=', '+', '-', '@', "\t", "\r"], true) ? "'".$value : $value;
     }
 }

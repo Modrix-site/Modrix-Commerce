@@ -129,7 +129,7 @@ class BotReportService
         $breakdown = $this->getDailyBreakdown($days);
         $headers = [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="bot-protection-report-' . now()->format('Y-m-d') . '.csv"',
+            'Content-Disposition' => 'attachment; filename="bot-protection-report-'.now()->format('Y-m-d').'.csv"',
         ];
 
         return response()->stream(function () use ($breakdown) {
@@ -169,7 +169,7 @@ class BotReportService
     {
         // Deliver clean XML-compatible spreadsheet format for Excel
         $breakdown = $this->getDailyBreakdown($days);
-        $filename = "bot-protection-report-" . now()->format('Y-m-d') . ".xls";
+        $filename = 'bot-protection-report-'.now()->format('Y-m-d').'.xls';
 
         return response()->stream(function () use ($breakdown) {
             echo "Date\tTotal Requests\tHuman Requests\tBot Requests\tBlocked\tChallenged\tScraping\tCredential Stuffing\tCheckout Abuse\tAvg Score\n";

@@ -7,7 +7,9 @@
 }
 
 .at-shell {
-    --at-font: 'Jost', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --at-font:
+        'Jost', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+        Roboto, sans-serif;
     --at-brand: var(--primary, #111111);
     --at-accent: var(--accent, #79513d);
     --at-canvas: var(--background, #ffffff);
@@ -235,7 +237,10 @@ button.at-btn.store-button-outline:hover:not(:disabled) {
     transition: transform 0.2s ease;
 }
 
-.at-shell .theme-section[data-theme-area='header']:has(> .at-header[data-sticky='true']) {
+.at-shell
+    .theme-section[data-theme-area='header']:has(
+        > .at-header[data-sticky='true']
+    ) {
     position: sticky;
     top: 0;
     z-index: 50;

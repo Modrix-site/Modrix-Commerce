@@ -70,8 +70,8 @@ class TieredPricingResolver
                 : "Buy {$min}+";
 
             $badgeLabel = $rule->discount_type === 'percent'
-                ? 'Save ' . rtrim(rtrim(number_format($discount, 2), '0'), '.') . '%'
-                : 'Save ' . $unitDiscount->format() . '/ea';
+                ? 'Save '.rtrim(rtrim(number_format($discount, 2), '0'), '.').'%'
+                : 'Save '.$unitDiscount->format().'/ea';
 
             $formattedTiers[] = [
                 'min_qty' => $min,

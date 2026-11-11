@@ -16,14 +16,14 @@ Cashfree Payments gateway for India supporting UPI (Google Pay, PhonePe, Paytm, 
 
 1. Obtain your **App ID** and **Secret Key** from your [Cashfree Merchant Dashboard](https://merchant.cashfree.com/merchants/login) under **Developers** → **API Keys**.
 2. Install and enable the module:
-   ```bash
-   php artisan ecomodular:modules install modrixcommerce/cashfree
-   php artisan ecomodular:modules enable modrixcommerce/cashfree --trust
-   ```
+    ```bash
+    php artisan ecomodular:modules install modrixcommerce/cashfree
+    php artisan ecomodular:modules enable modrixcommerce/cashfree --trust
+    ```
 3. In **Admin → Configuration → Cashfree Payments**, enter your App ID and Secret Key.
 4. Set the Webhook URL in Cashfree Developer Settings to:
    `https://<your-store>/webhooks/payments/cashfree`
 5. Compile frontend assets:
-   ```bash
-   npm run build
-   ```
+    ```bash
+    npm run build
+    ```

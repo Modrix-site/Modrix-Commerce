@@ -1,5 +1,12 @@
 import { Head, router } from '@inertiajs/react';
-import { Image as ImageIcon, KeyRound, RefreshCw, RotateCcw, Sparkles, Undo2 } from 'lucide-react';
+import {
+    Image as ImageIcon,
+    KeyRound,
+    RefreshCw,
+    RotateCcw,
+    Sparkles,
+    Undo2,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { EmptyState } from '@/components/admin/empty-state';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
@@ -49,7 +56,14 @@ type Props = {
     filters: { status: string };
 };
 
-const FILTERS = ['unprocessed', 'pending', 'processing', 'done', 'failed', 'skipped'];
+const FILTERS = [
+    'unprocessed',
+    'pending',
+    'processing',
+    'done',
+    'failed',
+    'skipped',
+];
 
 const STATUS_STYLES: Record<string, string> = {
     unprocessed: 'bg-gray-100 text-gray-600',
@@ -86,21 +100,34 @@ function Thumb({ src, label }: { src: string | null; label: string }) {
     return (
         <div className="flex-1">
             <div
-                className="aspect-square rounded-md border border-gray-200 overflow-hidden flex items-center justify-center"
+                className="flex aspect-square items-center justify-center overflow-hidden rounded-md border border-gray-200"
                 style={checkerboard}
             >
                 {src ? (
-                    <img src={src} alt={label} loading="lazy" className="max-h-full max-w-full object-contain" />
+                    <img
+                        src={src}
+                        alt={label}
+                        loading="lazy"
+                        className="max-h-full max-w-full object-contain"
+                    />
                 ) : (
                     <span className="text-[10px] text-gray-400">-</span>
                 )}
             </div>
-            <p className="text-[10px] text-gray-500 mt-1 text-center uppercase tracking-wider">{label}</p>
+            <p className="mt-1 text-center text-[10px] tracking-wider text-gray-500 uppercase">
+                {label}
+            </p>
         </div>
     );
 }
 
-export default function ImageStudioAdminIndex({ stats, hasRemoveBgKey, driver, images, filters }: Props) {
+export default function ImageStudioAdminIndex({
+    stats,
+    hasRemoveBgKey,
+    driver,
+    images,
+    filters,
+}: Props) {
     const [revertAllOpen, setRevertAllOpen] = useState(false);
     const [keyInput, setKeyInput] = useState('');
     const [busy, setBusy] = useState(false);
@@ -120,11 +147,19 @@ export default function ImageStudioAdminIndex({ stats, hasRemoveBgKey, driver, i
 
     function post(path: string) {
         setBusy(true);
-        router.post(`${BASE}/${path}`, {}, { preserveScroll: true, onFinish: () => setBusy(false) });
+        router.post(
+            `${BASE}/${path}`,
+            {},
+            { preserveScroll: true, onFinish: () => setBusy(false) },
+        );
     }
 
     function filterBy(status: string) {
-        router.get(BASE, { status: status === filters.status ? '' : status }, { preserveState: true });
+        router.get(
+            BASE,
+            { status: status === filters.status ? '' : status },
+            { preserveState: true },
+        );
     }
 
     function saveKey(e: React.FormEvent) {
@@ -132,12 +167,16 @@ export default function ImageStudioAdminIndex({ stats, hasRemoveBgKey, driver, i
         router.put(
             `${BASE}/removebg-key`,
             { key: keyInput },
-            { preserveScroll: true, onSuccess: () => setKeyInput('') }
+            { preserveScroll: true, onSuccess: () => setKeyInput('') },
         );
     }
 
     function clearKey() {
-        router.put(`${BASE}/removebg-key`, { key: '' }, { preserveScroll: true });
+        router.put(
+            `${BASE}/removebg-key`,
+            { key: '' },
+            { preserveScroll: true },
+        );
     }
 
     const statCards: Array<[string, number]> = [
@@ -157,8 +196,14 @@ export default function ImageStudioAdminIndex({ stats, hasRemoveBgKey, driver, i
                 description="Transparent-background WebP versions of product images. Originals are never changed."
                 actions={
                     <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm" disabled={busy} onClick={() => post('retry')} className="gap-1.5">
-                            <RefreshCw className="w-3.5 h-3.5" />
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={busy}
+                            onClick={() => post('retry')}
+                            className="gap-1.5"
+                        >
+                            <RefreshCw className="h-3.5 w-3.5" />
                             <span>Retry failed/skipped</span>
                         </Button>
                         <Button
@@ -168,62 +213,96 @@ export default function ImageStudioAdminIndex({ stats, hasRemoveBgKey, driver, i
                             onClick={() => setRevertAllOpen(true)}
                             className="gap-1.5"
                         >
-                            <Undo2 className="w-3.5 h-3.5" />
+                            <Undo2 className="h-3.5 w-3.5" />
                             <span>Revert all</span>
                         </Button>
-                        <Button size="sm" disabled={busy} onClick={() => post('process-all')} className="gap-1.5">
-                            <Sparkles className="w-3.5 h-3.5" />
+                        <Button
+                            size="sm"
+                            disabled={busy}
+                            onClick={() => post('process-all')}
+                            className="gap-1.5"
+                        >
+                            <Sparkles className="h-3.5 w-3.5" />
                             <span>Process all</span>
                         </Button>
                     </div>
                 }
             />
 
-            <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-4">
+            <div className="mb-4 grid grid-cols-2 gap-4 lg:grid-cols-6">
                 {statCards.map(([label, value]) => (
                     <Card key={label} className="border-gray-200/80 shadow-xs">
                         <CardContent className="p-4">
-                            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">{label}</p>
-                            <h3 className="text-2xl font-bold text-gray-900 mt-1">{value}</h3>
+                            <p className="text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                {label}
+                            </p>
+                            <h3 className="mt-1 text-2xl font-bold text-gray-900">
+                                {value}
+                            </h3>
                         </CardContent>
                     </Card>
                 ))}
                 <Card className="border-gray-200/80 shadow-xs">
                     <CardContent className="p-4">
-                        <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Saved</p>
-                        <h3 className="text-2xl font-bold text-gray-900 mt-1">{formatBytes(stats.bytes_saved)}</h3>
+                        <p className="text-xs font-medium tracking-wider text-gray-500 uppercase">
+                            Saved
+                        </p>
+                        <h3 className="mt-1 text-2xl font-bold text-gray-900">
+                            {formatBytes(stats.bytes_saved)}
+                        </h3>
                     </CardContent>
                 </Card>
             </div>
 
-            <p className="text-xs text-gray-500 mb-5">
-                Queued images are processed by the queue worker. Run <code>php artisan queue:work</code> or{' '}
+            <p className="mb-5 text-xs text-gray-500">
+                Queued images are processed by the queue worker. Run{' '}
+                <code>php artisan queue:work</code> or{' '}
                 <code>php artisan image-studio:process --all --sync</code>.
             </p>
 
-            <div className="bg-white rounded-xl border border-gray-200/80 p-4 mb-5 shadow-xs">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="mb-5 rounded-xl border border-gray-200/80 bg-white p-4 shadow-xs">
+                <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
                     <div className="flex items-center gap-2 text-sm">
-                        <KeyRound className="w-4 h-4 text-gray-500" />
-                        <span className="font-medium text-gray-900">remove.bg API key</span>
-                        <Badge variant="outline">{hasRemoveBgKey ? 'Key set' : 'Not set'}</Badge>
-                        <span className="text-xs text-gray-500">Engine in use: {driver}</span>
+                        <KeyRound className="h-4 w-4 text-gray-500" />
+                        <span className="font-medium text-gray-900">
+                            remove.bg API key
+                        </span>
+                        <Badge variant="outline">
+                            {hasRemoveBgKey ? 'Key set' : 'Not set'}
+                        </Badge>
+                        <span className="text-xs text-gray-500">
+                            Engine in use: {driver}
+                        </span>
                     </div>
-                    <form onSubmit={saveKey} className="flex items-center gap-2">
+                    <form
+                        onSubmit={saveKey}
+                        className="flex items-center gap-2"
+                    >
                         <Input
                             type="password"
                             autoComplete="off"
                             value={keyInput}
                             onChange={(e) => setKeyInput(e.target.value)}
-                            placeholder={hasRemoveBgKey ? 'Replace key' : 'Paste key'}
+                            placeholder={
+                                hasRemoveBgKey ? 'Replace key' : 'Paste key'
+                            }
                             maxLength={200}
-                            className="h-8 text-xs w-56"
+                            className="h-8 w-56 text-xs"
                         />
-                        <Button type="submit" size="sm" disabled={keyInput.trim() === ''}>
+                        <Button
+                            type="submit"
+                            size="sm"
+                            disabled={keyInput.trim() === ''}
+                        >
                             {hasRemoveBgKey ? 'Replace' : 'Save'}
                         </Button>
                         {hasRemoveBgKey && (
-                            <Button type="button" variant="ghost" size="sm" onClick={clearKey}>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={clearKey}
+                            >
                                 Clear
                             </Button>
                         )}
@@ -231,13 +310,13 @@ export default function ImageStudioAdminIndex({ stats, hasRemoveBgKey, driver, i
                 </div>
             </div>
 
-            <div className="flex flex-wrap gap-2 mb-4">
+            <div className="mb-4 flex flex-wrap gap-2">
                 {FILTERS.map((status) => (
                     <button
                         key={status}
                         type="button"
                         onClick={() => filterBy(status)}
-                        className={`px-3 py-1 rounded-full text-xs font-semibold capitalize transition-colors ${
+                        className={`rounded-full px-3 py-1 text-xs font-semibold capitalize transition-colors ${
                             filters.status === status
                                 ? 'bg-gray-900 text-white'
                                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -255,51 +334,91 @@ export default function ImageStudioAdminIndex({ stats, hasRemoveBgKey, driver, i
                     description="No product images match this filter."
                 />
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                     {images.data.map((image) => (
-                        <Card key={image.id} className="border-gray-200/80 shadow-xs">
-                            <CardContent className="p-4 space-y-3">
+                        <Card
+                            key={image.id}
+                            className="border-gray-200/80 shadow-xs"
+                        >
+                            <CardContent className="space-y-3 p-4">
                                 <div className="flex gap-3">
-                                    <Thumb src={image.originalUrl} label="Original" />
-                                    <Thumb src={image.variantUrl} label="Studio" />
+                                    <Thumb
+                                        src={image.originalUrl}
+                                        label="Original"
+                                    />
+                                    <Thumb
+                                        src={image.variantUrl}
+                                        label="Studio"
+                                    />
                                 </div>
                                 <div className="flex items-start justify-between gap-2">
-                                    <p className="text-sm font-medium text-gray-900 truncate" title={image.productName}>
-                                        {image.productName || `Image #${image.id}`}
+                                    <p
+                                        className="truncate text-sm font-medium text-gray-900"
+                                        title={image.productName}
+                                    >
+                                        {image.productName ||
+                                            `Image #${image.id}`}
                                     </p>
                                     <span
-                                        className={`px-2 py-0.5 rounded-full text-[11px] font-semibold capitalize ${
-                                            STATUS_STYLES[image.status] ?? STATUS_STYLES.unprocessed
+                                        className={`rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${
+                                            STATUS_STYLES[image.status] ??
+                                            STATUS_STYLES.unprocessed
                                         }`}
                                     >
                                         {image.status}
                                     </span>
                                 </div>
-                                {image.error && <p className="text-xs text-rose-600 break-words">{image.error}</p>}
-                                {image.status === 'done' && image.bytesBefore !== null && image.bytesAfter !== null && (
-                                    <p className="text-xs text-gray-500">
-                                        {formatBytes(image.bytesBefore)} to {formatBytes(image.bytesAfter)} (saved{' '}
-                                        {formatBytes(Math.max(0, image.bytesBefore - image.bytesAfter))})
+                                {image.error && (
+                                    <p className="text-xs break-words text-rose-600">
+                                        {image.error}
                                     </p>
                                 )}
+                                {image.status === 'done' &&
+                                    image.bytesBefore !== null &&
+                                    image.bytesAfter !== null && (
+                                        <p className="text-xs text-gray-500">
+                                            {formatBytes(image.bytesBefore)} to{' '}
+                                            {formatBytes(image.bytesAfter)}{' '}
+                                            (saved{' '}
+                                            {formatBytes(
+                                                Math.max(
+                                                    0,
+                                                    image.bytesBefore -
+                                                        image.bytesAfter,
+                                                ),
+                                            )}
+                                            )
+                                        </p>
+                                    )}
                                 <div className="flex gap-2">
                                     <Button
                                         variant="outline"
                                         size="sm"
                                         className="gap-1.5"
                                         onClick={() =>
-                                            router.post(`${BASE}/images/${image.id}/process`, {}, { preserveScroll: true })
+                                            router.post(
+                                                `${BASE}/images/${image.id}/process`,
+                                                {},
+                                                { preserveScroll: true },
+                                            )
                                         }
                                     >
-                                        <RotateCcw className="w-3.5 h-3.5" />
-                                        <span>{image.status === 'unprocessed' ? 'Process' : 'Reprocess'}</span>
+                                        <RotateCcw className="h-3.5 w-3.5" />
+                                        <span>
+                                            {image.status === 'unprocessed'
+                                                ? 'Process'
+                                                : 'Reprocess'}
+                                        </span>
                                     </Button>
                                     {image.status !== 'unprocessed' && (
                                         <Button
                                             variant="ghost"
                                             size="sm"
                                             onClick={() =>
-                                                router.delete(`${BASE}/images/${image.id}`, { preserveScroll: true })
+                                                router.delete(
+                                                    `${BASE}/images/${image.id}`,
+                                                    { preserveScroll: true },
+                                                )
                                             }
                                         >
                                             Revert
@@ -313,15 +432,27 @@ export default function ImageStudioAdminIndex({ stats, hasRemoveBgKey, driver, i
             )}
 
             {images.links.length > 3 && (
-                <div className="flex flex-wrap gap-1 mt-5">
+                <div className="mt-5 flex flex-wrap gap-1">
                     {images.links.map((link, i) => (
                         <button
                             key={i}
                             type="button"
                             disabled={!link.url}
-                            onClick={() => link.url && router.get(link.url, {}, { preserveState: true, preserveScroll: true })}
-                            className={`px-3 py-1 rounded text-xs ${
-                                link.active ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600'
+                            onClick={() =>
+                                link.url &&
+                                router.get(
+                                    link.url,
+                                    {},
+                                    {
+                                        preserveState: true,
+                                        preserveScroll: true,
+                                    },
+                                )
+                            }
+                            className={`rounded px-3 py-1 text-xs ${
+                                link.active
+                                    ? 'bg-gray-900 text-white'
+                                    : 'bg-gray-100 text-gray-600'
                             } disabled:opacity-40`}
                             dangerouslySetInnerHTML={{ __html: link.label }}
                         />
@@ -334,11 +465,16 @@ export default function ImageStudioAdminIndex({ stats, hasRemoveBgKey, driver, i
                     <DialogHeader>
                         <DialogTitle>Revert all images?</DialogTitle>
                         <DialogDescription>
-                            This deletes every processed version. The storefront goes back to the original images.
+                            This deletes every processed version. The storefront
+                            goes back to the original images.
                         </DialogDescription>
                     </DialogHeader>
                     <div className="flex justify-end gap-2 pt-2">
-                        <Button variant="outline" size="sm" onClick={() => setRevertAllOpen(false)}>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setRevertAllOpen(false)}
+                        >
                             Cancel
                         </Button>
                         <Button

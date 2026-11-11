@@ -225,10 +225,7 @@ export default function RefundManagementIndex({
                                     setProcessOrder(refundableOrders[0])
                                 }
                             >
-                                <PlusCircle
-                                    className="size-4"
-                                    aria-hidden
-                                />
+                                <PlusCircle className="size-4" aria-hidden />
                                 Process refund
                             </Button>
                         ) : null
@@ -302,27 +299,30 @@ export default function RefundManagementIndex({
 
                     {activeTab === 'refunds' && (
                         <div className="flex flex-wrap gap-1.5">
-                            {(['all', 'completed', 'pending', 'failed'] as const).map(
-                                (item) => (
-                                    <Button
-                                        key={item}
-                                        asChild
-                                        size="sm"
-                                        variant={
-                                            status === item
-                                                ? 'secondary'
-                                                : 'ghost'
-                                        }
+                            {(
+                                [
+                                    'all',
+                                    'completed',
+                                    'pending',
+                                    'failed',
+                                ] as const
+                            ).map((item) => (
+                                <Button
+                                    key={item}
+                                    asChild
+                                    size="sm"
+                                    variant={
+                                        status === item ? 'secondary' : 'ghost'
+                                    }
+                                >
+                                    <Link
+                                        href={`/admin/m/modrixcommerce/refund-management?status=${item}`}
                                     >
-                                        <Link
-                                            href={`/admin/m/modrixcommerce/refund-management?status=${item}`}
-                                        >
-                                            {item.charAt(0).toUpperCase() +
-                                                item.slice(1)}
-                                        </Link>
-                                    </Button>
-                                ),
-                            )}
+                                        {item.charAt(0).toUpperCase() +
+                                            item.slice(1)}
+                                    </Link>
+                                </Button>
+                            ))}
                         </div>
                     )}
                 </div>
@@ -608,7 +608,7 @@ function RefundsTable({
                                         </Form>
                                     )}
                                 </TableCell>
-                                <TableCell className="text-right align-top font-semibold whitespace-nowrap tabular-nums text-destructive">
+                                <TableCell className="text-right align-top font-semibold whitespace-nowrap text-destructive tabular-nums">
                                     −{refund.amount}
                                 </TableCell>
                                 <TableCell className="text-right align-top whitespace-nowrap">
@@ -820,7 +820,7 @@ function RefundableOrdersTable({
                                 <TableCell className="text-right tabular-nums">
                                     {order.paid_total}
                                 </TableCell>
-                                <TableCell className="text-right tabular-nums text-muted-foreground">
+                                <TableCell className="text-right text-muted-foreground tabular-nums">
                                     {order.refunded_total}
                                 </TableCell>
                                 <TableCell className="text-right font-semibold tabular-nums">
@@ -1013,7 +1013,7 @@ function ProcessRefundDialog({
 
                             {mode === 'items' && (
                                 <div className="grid gap-3 rounded-md border p-3">
-                                    <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                                    <div className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                                         Select items & restock quantities
                                     </div>
                                     {order.items.map((item) => (

@@ -57,7 +57,10 @@ export default function NGeniusSettingsPage({
     });
 
     const checks: [boolean, string][] = [
-        [Boolean(settings.outlet_id), 'N-Genius Outlet Reference ID configured'],
+        [
+            Boolean(settings.outlet_id),
+            'N-Genius Outlet Reference ID configured',
+        ],
         [settings.has_api_key, 'Service Account API Key saved securely'],
         [publicWebhookUrl, 'Store is served over secure public HTTPS'],
         [settings.enabled, 'Network International enabled at checkout'],
@@ -81,8 +84,14 @@ export default function NGeniusSettingsPage({
                     description="Network International N-Genius payment gateway for UAE and the Middle East with hosted checkout, 3DS, Apple Pay, card payments, and refunds."
                     actions={
                         <div className="flex items-center gap-2">
-                            <Badge variant={settings.test_mode ? 'secondary' : 'default'}>
-                                {settings.test_mode ? 'Sandbox / Test Mode' : 'Live / Production'}
+                            <Badge
+                                variant={
+                                    settings.test_mode ? 'secondary' : 'default'
+                                }
+                            >
+                                {settings.test_mode
+                                    ? 'Sandbox / Test Mode'
+                                    : 'Live / Production'}
                             </Badge>
                             {settings.ready && (
                                 <Button
@@ -107,13 +116,17 @@ export default function NGeniusSettingsPage({
                                 : 'Set up Network International (N-Genius)'}
                         </CardTitle>
                         <CardDescription>
-                            Enter your Outlet Reference ID and Service Account API Key from the Network International portal.
+                            Enter your Outlet Reference ID and Service Account
+                            API Key from the Network International portal.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <ul className="grid gap-2 text-sm">
                             {checks.map(([done, label]) => (
-                                <li key={label} className="flex items-center gap-2">
+                                <li
+                                    key={label}
+                                    className="flex items-center gap-2"
+                                >
                                     {done ? (
                                         <CircleCheck className="size-4 shrink-0 text-primary" />
                                     ) : (
@@ -131,7 +144,8 @@ export default function NGeniusSettingsPage({
                         <CardHeader>
                             <CardTitle>API Credentials & Outlet</CardTitle>
                             <CardDescription>
-                                Supplied in your Network International merchant portal under Developer / Integration settings.
+                                Supplied in your Network International merchant
+                                portal under Developer / Integration settings.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4 md:grid-cols-2">
@@ -144,7 +158,12 @@ export default function NGeniusSettingsPage({
                                 <Input
                                     id="outlet_id"
                                     value={form.data.outlet_id}
-                                    onChange={(e) => form.setData('outlet_id', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'outlet_id',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="e.g. 5240212f-9d95-46f3-..."
                                 />
                             </FormField>
@@ -164,8 +183,14 @@ export default function NGeniusSettingsPage({
                                     type="password"
                                     autoComplete="new-password"
                                     value={form.data.api_key}
-                                    onChange={(e) => form.setData('api_key', e.target.value)}
-                                    placeholder={settings.has_api_key ? '••••••••••••••••' : 'N-Genius API Key'}
+                                    onChange={(e) =>
+                                        form.setData('api_key', e.target.value)
+                                    }
+                                    placeholder={
+                                        settings.has_api_key
+                                            ? '••••••••••••••••'
+                                            : 'N-Genius API Key'
+                                    }
                                 />
                             </FormField>
 
@@ -184,8 +209,17 @@ export default function NGeniusSettingsPage({
                                     type="password"
                                     autoComplete="new-password"
                                     value={form.data.webhook_secret}
-                                    onChange={(e) => form.setData('webhook_secret', e.target.value)}
-                                    placeholder={settings.has_webhook_secret ? '••••••••••••••••' : 'Optional Webhook Secret'}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'webhook_secret',
+                                            e.target.value,
+                                        )
+                                    }
+                                    placeholder={
+                                        settings.has_webhook_secret
+                                            ? '••••••••••••••••'
+                                            : 'Optional Webhook Secret'
+                                    }
                                 />
                             </FormField>
 
@@ -198,7 +232,9 @@ export default function NGeniusSettingsPage({
                                 <Input
                                     id="action"
                                     value={form.data.action}
-                                    onChange={(e) => form.setData('action', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData('action', e.target.value)
+                                    }
                                     placeholder="PURCHASE or AUTH"
                                 />
                             </FormField>
@@ -212,7 +248,9 @@ export default function NGeniusSettingsPage({
                                 <Input
                                     id="label"
                                     value={form.data.label}
-                                    onChange={(e) => form.setData('label', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData('label', e.target.value)
+                                    }
                                 />
                             </FormField>
 
@@ -230,7 +268,9 @@ export default function NGeniusSettingsPage({
                                             'currencies',
                                             e.target.value
                                                 .split(',')
-                                                .map((c) => c.trim().toUpperCase())
+                                                .map((c) =>
+                                                    c.trim().toUpperCase(),
+                                                )
                                                 .filter(Boolean),
                                         )
                                     }
@@ -242,10 +282,19 @@ export default function NGeniusSettingsPage({
                                     <Checkbox
                                         id="test_mode"
                                         checked={form.data.test_mode}
-                                        onCheckedChange={(checked) => form.setData('test_mode', Boolean(checked))}
+                                        onCheckedChange={(checked) =>
+                                            form.setData(
+                                                'test_mode',
+                                                Boolean(checked),
+                                            )
+                                        }
                                     />
-                                    <label htmlFor="test_mode" className="text-sm font-medium leading-none">
-                                        Enable Sandbox Mode (tests against api-gateway.sandbox.ngenius-payments.com)
+                                    <label
+                                        htmlFor="test_mode"
+                                        className="text-sm leading-none font-medium"
+                                    >
+                                        Enable Sandbox Mode (tests against
+                                        api-gateway.sandbox.ngenius-payments.com)
                                     </label>
                                 </div>
 
@@ -253,10 +302,19 @@ export default function NGeniusSettingsPage({
                                     <Checkbox
                                         id="enabled"
                                         checked={form.data.enabled}
-                                        onCheckedChange={(checked) => form.setData('enabled', Boolean(checked))}
+                                        onCheckedChange={(checked) =>
+                                            form.setData(
+                                                'enabled',
+                                                Boolean(checked),
+                                            )
+                                        }
                                     />
-                                    <label htmlFor="enabled" className="text-sm font-medium leading-none">
-                                        Enable Network International (N-Genius) payment gateway for customer checkout
+                                    <label
+                                        htmlFor="enabled"
+                                        className="text-sm leading-none font-medium"
+                                    >
+                                        Enable Network International (N-Genius)
+                                        payment gateway for customer checkout
                                     </label>
                                 </div>
                             </div>
@@ -267,21 +325,29 @@ export default function NGeniusSettingsPage({
                         <CardHeader>
                             <CardTitle>Webhook & Response URLs</CardTitle>
                             <CardDescription>
-                                Register these URLs in your Network International portal under Outlet / Webhook notifications.
+                                Register these URLs in your Network
+                                International portal under Outlet / Webhook
+                                notifications.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4">
                             <div>
-                                <label className="text-xs font-semibold uppercase text-muted-foreground">
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">
                                     Return Response URL
                                 </label>
                                 <div className="mt-1 flex items-center gap-2">
-                                    <Input readOnly value={responseUrl} className="font-mono text-xs" />
+                                    <Input
+                                        readOnly
+                                        value={responseUrl}
+                                        className="font-mono text-xs"
+                                    />
                                     <Button
                                         type="button"
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => copyResponse(responseUrl)}
+                                        onClick={() =>
+                                            copyResponse(responseUrl)
+                                        }
                                     >
                                         <Copy className="size-4" />
                                     </Button>
@@ -289,11 +355,15 @@ export default function NGeniusSettingsPage({
                             </div>
 
                             <div>
-                                <label className="text-xs font-semibold uppercase text-muted-foreground">
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">
                                     Webhook Notification URL
                                 </label>
                                 <div className="mt-1 flex items-center gap-2">
-                                    <Input readOnly value={webhookUrl} className="font-mono text-xs" />
+                                    <Input
+                                        readOnly
+                                        value={webhookUrl}
+                                        className="font-mono text-xs"
+                                    />
                                     <Button
                                         type="button"
                                         variant="outline"

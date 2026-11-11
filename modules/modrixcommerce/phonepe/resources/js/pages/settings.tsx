@@ -79,8 +79,14 @@ export default function PhonePeSettingsPage({
                     description="India's leading payments platform. Accept UPI (PhonePe Intent, QR code, Collect), Google Pay, Net Banking across all banks, and Cards."
                     actions={
                         <div className="flex items-center gap-2">
-                            <Badge variant={settings.test_mode ? 'secondary' : 'default'}>
-                                {settings.test_mode ? 'UAT / Sandbox mode' : 'Production mode'}
+                            <Badge
+                                variant={
+                                    settings.test_mode ? 'secondary' : 'default'
+                                }
+                            >
+                                {settings.test_mode
+                                    ? 'UAT / Sandbox mode'
+                                    : 'Production mode'}
                             </Badge>
                             {settings.ready && (
                                 <Button
@@ -105,13 +111,17 @@ export default function PhonePeSettingsPage({
                                 : 'Set up PhonePe'}
                         </CardTitle>
                         <CardDescription>
-                            Configure your Merchant ID and Salt Key from the PhonePe Business dashboard.
+                            Configure your Merchant ID and Salt Key from the
+                            PhonePe Business dashboard.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <ul className="grid gap-2 text-sm">
                             {checks.map(([done, label]) => (
-                                <li key={label} className="flex items-center gap-2">
+                                <li
+                                    key={label}
+                                    className="flex items-center gap-2"
+                                >
                                     {done ? (
                                         <CircleCheck className="size-4 shrink-0 text-primary" />
                                     ) : (
@@ -129,7 +139,8 @@ export default function PhonePeSettingsPage({
                         <CardHeader>
                             <CardTitle>Account Credentials</CardTitle>
                             <CardDescription>
-                                Supplied by PhonePe Merchant Onboarding or Developer Settings.
+                                Supplied by PhonePe Merchant Onboarding or
+                                Developer Settings.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4 md:grid-cols-2">
@@ -142,7 +153,12 @@ export default function PhonePeSettingsPage({
                                 <Input
                                     id="merchant_id"
                                     value={form.data.merchant_id}
-                                    onChange={(e) => form.setData('merchant_id', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'merchant_id',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="e.g. PGTESTPAYUAT"
                                 />
                             </FormField>
@@ -162,8 +178,13 @@ export default function PhonePeSettingsPage({
                                     type="password"
                                     autoComplete="new-password"
                                     value={form.data.salt_key}
-                                    onChange={(e) => form.setData('salt_key', e.target.value)}
-                                    placeholder={settings.salt_key_hint ?? 'PhonePe Salt Key'}
+                                    onChange={(e) =>
+                                        form.setData('salt_key', e.target.value)
+                                    }
+                                    placeholder={
+                                        settings.salt_key_hint ??
+                                        'PhonePe Salt Key'
+                                    }
                                 />
                             </FormField>
 
@@ -176,7 +197,12 @@ export default function PhonePeSettingsPage({
                                 <Input
                                     id="salt_index"
                                     value={form.data.salt_index}
-                                    onChange={(e) => form.setData('salt_index', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'salt_index',
+                                            e.target.value,
+                                        )
+                                    }
                                 />
                             </FormField>
 
@@ -189,7 +215,9 @@ export default function PhonePeSettingsPage({
                                 <Input
                                     id="label"
                                     value={form.data.label}
-                                    onChange={(e) => form.setData('label', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData('label', e.target.value)
+                                    }
                                 />
                             </FormField>
 
@@ -198,13 +226,19 @@ export default function PhonePeSettingsPage({
                                     <Checkbox
                                         id="test_mode"
                                         checked={form.data.test_mode}
-                                        onCheckedChange={(checked) => form.setData('test_mode', Boolean(checked))}
+                                        onCheckedChange={(checked) =>
+                                            form.setData(
+                                                'test_mode',
+                                                Boolean(checked),
+                                            )
+                                        }
                                     />
                                     <label
                                         htmlFor="test_mode"
-                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                        className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                     >
-                                        Sandbox / UAT Mode (uses api-preprod.phonepe.com for testing)
+                                        Sandbox / UAT Mode (uses
+                                        api-preprod.phonepe.com for testing)
                                     </label>
                                 </div>
 
@@ -212,11 +246,16 @@ export default function PhonePeSettingsPage({
                                     <Checkbox
                                         id="enabled"
                                         checked={form.data.enabled}
-                                        onCheckedChange={(checked) => form.setData('enabled', Boolean(checked))}
+                                        onCheckedChange={(checked) =>
+                                            form.setData(
+                                                'enabled',
+                                                Boolean(checked),
+                                            )
+                                        }
                                     />
                                     <label
                                         htmlFor="enabled"
-                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                        className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                     >
                                         Enable PhonePe at checkout
                                     </label>
@@ -229,16 +268,21 @@ export default function PhonePeSettingsPage({
                         <CardHeader>
                             <CardTitle>Webhook & Return URLs</CardTitle>
                             <CardDescription>
-                                Set these endpoints in your PhonePe merchant profile.
+                                Set these endpoints in your PhonePe merchant
+                                profile.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4">
                             <div>
-                                <label className="text-xs font-semibold uppercase text-muted-foreground">
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">
                                     Server-to-Server Callback URL (Webhook)
                                 </label>
                                 <div className="mt-1 flex items-center gap-2">
-                                    <Input readOnly value={webhookUrl} className="font-mono text-xs" />
+                                    <Input
+                                        readOnly
+                                        value={webhookUrl}
+                                        className="font-mono text-xs"
+                                    />
                                     <Button
                                         type="button"
                                         variant="outline"
@@ -249,27 +293,35 @@ export default function PhonePeSettingsPage({
                                     </Button>
                                 </div>
                                 <p className="mt-1 text-xs text-muted-foreground">
-                                    Register this in the PhonePe Portal as your server callback notification endpoint.
+                                    Register this in the PhonePe Portal as your
+                                    server callback notification endpoint.
                                 </p>
                             </div>
 
                             <div>
-                                <label className="text-xs font-semibold uppercase text-muted-foreground">
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">
                                     Browser Redirect / Return URL
                                 </label>
                                 <div className="mt-1 flex items-center gap-2">
-                                    <Input readOnly value={responseUrl} className="font-mono text-xs" />
+                                    <Input
+                                        readOnly
+                                        value={responseUrl}
+                                        className="font-mono text-xs"
+                                    />
                                     <Button
                                         type="button"
                                         variant="outline"
                                         size="icon"
-                                        onClick={() => copyResponse(responseUrl)}
+                                        onClick={() =>
+                                            copyResponse(responseUrl)
+                                        }
                                     >
                                         <Copy className="size-4" />
                                     </Button>
                                 </div>
                                 <p className="mt-1 text-xs text-muted-foreground">
-                                    The module passes this dynamically per checkout; no manual configuration needed.
+                                    The module passes this dynamically per
+                                    checkout; no manual configuration needed.
                                 </p>
                             </div>
                         </CardContent>

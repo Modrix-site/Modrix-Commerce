@@ -5,6 +5,7 @@
 **Goal:** Header, Catalog, Product, Cart and a new Checkout customizer tab with page settings that every one of the 11 themes follows.
 
 **Architecture:**
+
 - The settings are core design fields defined in one new class, `PageSettingFields`.
 - They are stored store-wide, so they survive theme switches.
 - The storefront receives them as `theme.pages`, already resolved.
@@ -56,6 +57,7 @@
 ### Task 1: Fields, tabs and storage
 
 **Files:**
+
 - Create: `app/Core/Themes/PageSettingFields.php`
 - Modify:
     - `app/Core/Themes/ThemeSchema.php` (pair): `designFields()` appends `+ PageSettingFields::fields()`; `builtinDesign()` appends `+ array_fill_keys(array_keys(PageSettingFields::fields()), '')`;
@@ -68,6 +70,7 @@
 - Test: `tests/Unit/PageSettingFieldsTest.php`, `tests/Feature/Themes/PageSettingsStorageTest.php`; `tests/Unit/ThemeSchemaTest.php` must stay green.
 
 **Interfaces:**
+
 - **Produces:**
     - `PageSettingFields::fields(): array<string, array>`: field definitions with `type`, `label`, `group` (`Header page`, `Catalog page`, `Product page`, `Cart page`, `Checkout page`), `options`/`min`/`max`/`max` length;
     - `PageSettingFields::isPageKey(string $key): bool`;
@@ -137,6 +140,7 @@ Expected: PASS.
 ### Task 2: Catalog page size and default sort
 
 **Files:**
+
 - Modify: `app/Http/Controllers/Storefront/CatalogController.php` (pairs; HEAD and working tree differ):
     - the three `listing(...)` calls pass `perPage: $pages['catalog']['per_page']`;
     - `sort()` falls back to `$pages['catalog']['default_sort']` instead of `'newest'`;
@@ -144,6 +148,7 @@ Expected: PASS.
 - Test: `tests/Feature/Storefront/CatalogPageSettingsTest.php`
 
 **Interfaces:**
+
 - **Consumes:** `PageSettingFields::resolve()`, `storefront.theme.pages` (Task 1).
 
 - [ ] **Step 1: Write the failing tests**
@@ -160,6 +165,7 @@ Expected: PASS.
 ### Task 3: Checkout field rules
 
 **Files:**
+
 - Create: `app/Domains/Checkout/CheckoutFieldRules.php`
 - Modify: `app/Http/Controllers/Storefront/CheckoutController.php` (pair):
     - `store()` merges `CheckoutFieldRules::rules($pages['checkout'])` into the validation;
@@ -168,6 +174,7 @@ Expected: PASS.
 - Test: `tests/Feature/Checkout/CheckoutPageSettingsTest.php`
 
 **Interfaces:**
+
 - **Produces:**
     - `CheckoutFieldRules::rules(array $checkout): array`: `phone` becomes `['required', 'string', 'max:40']` when `required`; `terms` becomes `['accepted']` when `terms` is on;
     - `CheckoutFieldRules::clean(array $validated, array $checkout): array`: removes `phone` (hidden), `customer_note` (off), `shipping.company`/`billing.company` (off), `shipping.line2`/`billing.line2` (off);
@@ -189,11 +196,13 @@ Expected: PASS.
 ### Task 4: Cart data (free shipping, cross-sells)
 
 **Files:**
+
 - Create: `app/Domains/Checkout/FreeShippingProgress.php`, `app/Domains/Catalog/CartCrossSells.php`
 - Modify: `app/Http/Controllers/Storefront/CartController.php` (pair): `show()` adds `'freeShipping' => $pages['cart']['free_shipping_bar'] ? FreeShippingProgress::for(...) : null` and `'crossSells' => $pages['cart']['cross_sells'] ? CartCrossSells::for(...) : []`.
 - Test: `tests/Feature/Storefront/CartPageSettingsTest.php`
 
 **Interfaces:**
+
 - **Produces:**
     - `FreeShippingProgress::for(PricedCart $cart, ?string $country): ?array{threshold: array{amount: string, formatted: string}, remaining: array{amount: string, formatted: string}}`:
         - uses the lowest `free_over` among active methods that ship to `$country` (any active method when `$country` is null);
@@ -221,6 +230,7 @@ Expected: PASS.
 ### Task 5: Storefront building blocks and the shared pages
 
 **Files:**
+
 - Create:
     - `resources/js/hooks/use-store-settings.ts`: `useStoreSettings(): PageSettings`, read from `storefront.theme.pages`, falling back to the defaults when the prop is missing;
     - `resources/js/components/storefront/page-settings/`:
@@ -259,6 +269,7 @@ Expected: PASS.
     - then the catalog and product page at 375 px.
 
     Reset the settings afterwards.
+
 - [ ] **Step 6: Commit** "Page settings: storefront building blocks and shared pages".
 
 ---
@@ -266,10 +277,12 @@ Expected: PASS.
 ### Task 6: Own-page themes (working tree only)
 
 **Files (working tree only):**
+
 - `themes/modrixcommerce/{nord,voltora,vellaro,hearth}/src/{header,catalog,product,cart}.tsx` and `style.css`;
 - `resources/js/components/storefront/atelier-chrome.tsx` and `electronics-chrome.tsx`.
 
 **Interfaces:**
+
 - **Consumes:** `useStoreSettings()` and the Task 5 components.
 
 - [ ] **Step 1:** In each theme, use the hook and components for every setting:
@@ -279,6 +292,7 @@ Expected: PASS.
     - cart: bar, cross-sells, coupon, trust, continue link.
 
     Each theme maps them onto its own class names in its `style.css`. Checkout is shared by all themes, so Task 5 already covers it.
+
 - [ ] **Step 2: Gates** (types and build). The theme builds must pass.
 - [ ] **Step 3: Browser:** in Nord and Voltora preview, check one setting per tab. Vellaro and Hearth share Nord's structure: check catalog columns and the product description mode there.
 - [ ] **Step 4:** No commit; record the touched files for the final report.

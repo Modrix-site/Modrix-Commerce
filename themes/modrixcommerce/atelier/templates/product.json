@@ -31,9 +31,7 @@
                     }
                 }
             },
-            "block_order": [
-                "specs"
-            ]
+            "block_order": ["specs"]
         },
         "apps": {
             "type": "apps",
@@ -44,8 +42,5 @@
             "block_order": []
         }
     },
-    "order": [
-        "main",
-        "apps"
-    ]
+    "order": ["main", "apps"]
 }

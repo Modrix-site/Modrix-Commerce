@@ -40,7 +40,7 @@ final class EasebuzzApi
 
     public function initiateUrl(): string
     {
-        return $this->payBaseUrl() . '/payment/initiateLink';
+        return $this->payBaseUrl().'/payment/initiateLink';
     }
 
     public function checkoutUrl(string $accessKey): string
@@ -49,7 +49,7 @@ final class EasebuzzApi
             return $accessKey;
         }
 
-        return $this->payBaseUrl() . '/pay/' . $accessKey;
+        return $this->payBaseUrl().'/pay/'.$accessKey;
     }
 
     /**
@@ -104,7 +104,7 @@ final class EasebuzzApi
             throw new GatewayException('Network error connecting to Easebuzz service.', 0, $e);
         } catch (Throwable $e) {
             Log::error('Easebuzz initiate payment error', ['url' => $url, 'error' => $e->getMessage()]);
-            throw new GatewayException('Failed to initiate Easebuzz payment: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Failed to initiate Easebuzz payment: '.$e->getMessage(), 0, $e);
         }
 
         if ($response->failed()) {
@@ -117,7 +117,7 @@ final class EasebuzzApi
         if (! is_array($decoded)) {
             $decoded = json_decode($response->body(), true);
             if (! is_array($decoded)) {
-                throw new GatewayException('Easebuzz response could not be parsed as JSON: ' . substr($response->body(), 0, 100));
+                throw new GatewayException('Easebuzz response could not be parsed as JSON: '.substr($response->body(), 0, 100));
             }
         }
 
@@ -156,7 +156,7 @@ final class EasebuzzApi
             'hash' => $hash,
         ];
 
-        $url = $this->dashboardBaseUrl() . '/transaction/v1/retrieve';
+        $url = $this->dashboardBaseUrl().'/transaction/v1/retrieve';
 
         return $this->postDashboard($url, $params);
     }
@@ -189,7 +189,7 @@ final class EasebuzzApi
             'hash' => $hash,
         ];
 
-        $url = $this->dashboardBaseUrl() . '/transaction/v1/refund';
+        $url = $this->dashboardBaseUrl().'/transaction/v1/refund';
 
         return $this->postDashboard($url, $params);
     }
@@ -208,7 +208,7 @@ final class EasebuzzApi
             }
 
             $response = $this->retrieveTransaction(
-                'PROBE_TEST_' . time(),
+                'PROBE_TEST_'.time(),
                 '1.00',
                 'probe@example.com',
                 '9999999999',
@@ -217,7 +217,7 @@ final class EasebuzzApi
             if (isset($response['status'])) {
                 return [
                     'success' => true,
-                    'message' => 'Connected successfully to Easebuzz India (' . ($this->settings->testMode() ? 'Test Environment' : 'Production') . ').',
+                    'message' => 'Connected successfully to Easebuzz India ('.($this->settings->testMode() ? 'Test Environment' : 'Production').').',
                 ];
             }
 
@@ -250,7 +250,7 @@ final class EasebuzzApi
             throw new GatewayException('Network error connecting to Easebuzz service.', 0, $e);
         } catch (Throwable $e) {
             Log::error('Easebuzz dashboard service error', ['url' => $url, 'error' => $e->getMessage()]);
-            throw new GatewayException('Failed to communicate with Easebuzz service: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Failed to communicate with Easebuzz service: '.$e->getMessage(), 0, $e);
         }
 
         if ($response->failed()) {
@@ -263,7 +263,7 @@ final class EasebuzzApi
         if (! is_array($decoded)) {
             $decoded = json_decode($response->body(), true);
             if (! is_array($decoded)) {
-                throw new GatewayException('Easebuzz response could not be parsed as JSON: ' . substr($response->body(), 0, 100));
+                throw new GatewayException('Easebuzz response could not be parsed as JSON: '.substr($response->body(), 0, 100));
             }
         }
 

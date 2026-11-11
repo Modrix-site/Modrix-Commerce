@@ -18,6 +18,7 @@ use App\Support\Like;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 /**
  * Read model for the storefront: visible products, search, sorting and
@@ -198,7 +199,7 @@ final class StorefrontCatalog
         return [
             'name' => $tag,
             'label' => mb_convert_case($tag, MB_CASE_TITLE, 'UTF-8'),
-            'slug' => \Illuminate\Support\Str::slug($tag) ?: md5($tag),
+            'slug' => Str::slug($tag) ?: md5($tag),
             'url' => '/search?'.http_build_query(['tag' => $tag], '', '&', PHP_QUERY_RFC3986),
             'count' => $count,
         ];

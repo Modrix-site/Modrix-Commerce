@@ -43,9 +43,14 @@ function Section({ section, first }: { section: HomeSection; first: boolean }) {
             return typeof value === 'string' && value !== '' ? value : fallback;
         };
         const eyebrow = first
-            ? setting('hero_eyebrow', text('eyebrow') || 'For your favourite companion')
+            ? setting(
+                  'hero_eyebrow',
+                  text('eyebrow') || 'For your favourite companion',
+              )
             : text('eyebrow') || 'For your favourite companion';
-        const heading = first ? setting('hero_heading', text('heading')) : text('heading');
+        const heading = first
+            ? setting('hero_heading', text('heading'))
+            : text('heading');
         const body = first ? setting('hero_body', text('body')) : text('body');
         const buttonLabel = first
             ? setting('hero_button_label', text('button_label'))
@@ -54,7 +59,9 @@ function Section({ section, first }: { section: HomeSection; first: boolean }) {
             ? setting('hero_button_link', text('button_link') || '/search')
             : text('button_link') || '/search';
         const secondLabel = first ? setting('hero_button_2_label', '') : '';
-        const secondLink = first ? setting('hero_button_2_link', '/search') : '/search';
+        const secondLink = first
+            ? setting('hero_button_2_link', '/search')
+            : '/search';
         const image = first
             ? setting('hero_image', section.data.image ?? '')
             : section.data.image;
@@ -69,9 +76,15 @@ function Section({ section, first }: { section: HomeSection; first: boolean }) {
             <section
                 className={`pawzy-campaign ${first ? 'pawzy-hero' : ''}`}
                 data-position={String(hero.hero_text_position ?? 'left')}
-                data-valign={first ? String(hero.hero_valign ?? 'center') : 'center'}
-                data-image={first ? String(hero.hero_image_layout ?? 'side') : 'side'}
-                data-bleed={first && hero.hero_full_bleed === true ? 'true' : 'false'}
+                data-valign={
+                    first ? String(hero.hero_valign ?? 'center') : 'center'
+                }
+                data-image={
+                    first ? String(hero.hero_image_layout ?? 'side') : 'side'
+                }
+                data-bleed={
+                    first && hero.hero_full_bleed === true ? 'true' : 'false'
+                }
                 style={
                     {
                         backgroundColor: background,

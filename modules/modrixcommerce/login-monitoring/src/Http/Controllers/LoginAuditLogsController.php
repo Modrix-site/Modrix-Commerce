@@ -17,7 +17,7 @@ class LoginAuditLogsController extends Controller
 
         $query = LoginAuditLog::query()->orderByDesc('created_at');
 
-        if (!empty($search)) {
+        if (! empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where('action', 'like', "%{$search}%")
                     ->orWhere('user_name', 'like', "%{$search}%")
@@ -26,7 +26,7 @@ class LoginAuditLogsController extends Controller
             });
         }
 
-        if (!empty($action)) {
+        if (! empty($action)) {
             $query->where('action', 'like', "%{$action}%");
         }
 

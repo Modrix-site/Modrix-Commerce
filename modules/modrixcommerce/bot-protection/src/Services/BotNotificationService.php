@@ -31,7 +31,7 @@ class BotNotificationService
 
         try {
             Http::post($webhookUrl, [
-                'text' => ":rotating_light: *Bot Protection Alert*: Attack spike detected on store!",
+                'text' => ':rotating_light: *Bot Protection Alert*: Attack spike detected on store!',
                 'blocks' => [
                     [
                         'type' => 'section',
@@ -52,7 +52,7 @@ class BotNotificationService
                 ],
             ]);
         } catch (\Throwable $e) {
-            Log::warning('Failed sending Slack bot alert: ' . $e->getMessage());
+            Log::warning('Failed sending Slack bot alert: '.$e->getMessage());
         }
     }
 
@@ -72,7 +72,7 @@ class BotNotificationService
                 'timestamp' => now()->toIso8601String(),
             ]);
         } catch (\Throwable $e) {
-            Log::warning('Failed sending custom webhook bot alert: ' . $e->getMessage());
+            Log::warning('Failed sending custom webhook bot alert: '.$e->getMessage());
         }
     }
 
@@ -81,7 +81,7 @@ class BotNotificationService
         $enabled = (bool) $this->settings->of(self::MODULE, 'email_alerts_enabled', true);
         $recipientsStr = (string) $this->settings->of(self::MODULE, 'alert_emails', '');
 
-        if (!$enabled || empty($recipientsStr)) {
+        if (! $enabled || empty($recipientsStr)) {
             return;
         }
 
@@ -92,19 +92,19 @@ class BotNotificationService
 
         try {
             Mail::raw(
-                "Security Alert: Bot Attack Spike Detected\n\n" .
-                "Blocked Requests (last 5 min): {$blockedCount}\n" .
-                "Top Attacking IP: {$topIp}\n" .
-                "Primary Threat Vector: {$threatType}\n" .
-                "Timestamp: " . now()->toDateTimeString() . "\n\n" .
-                "Visit your Admin Security Center to review active incidents.",
+                "Security Alert: Bot Attack Spike Detected\n\n".
+                "Blocked Requests (last 5 min): {$blockedCount}\n".
+                "Top Attacking IP: {$topIp}\n".
+                "Primary Threat Vector: {$threatType}\n".
+                'Timestamp: '.now()->toDateTimeString()."\n\n".
+                'Visit your Admin Security Center to review active incidents.',
                 function ($message) use ($recipients) {
                     $message->to($recipients)
                         ->subject('[Security Alert] Bot Attack Spike Mitigated');
                 }
             );
         } catch (\Throwable $e) {
-            Log::warning('Failed sending bot alert email: ' . $e->getMessage());
+            Log::warning('Failed sending bot alert email: '.$e->getMessage());
         }
     }
 }

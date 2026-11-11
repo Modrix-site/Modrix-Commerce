@@ -1,33 +1,33 @@
 /* Vellaro reference: MagicPath sharp-creek-3741, revision 457377712647077889. All rules are isolated to this theme. */
-.storefront[data-theme="modrixcommerce/vellaro"] {
+.storefront[data-theme='modrixcommerce/vellaro'] {
     color: var(--foreground);
     background: var(--background);
     font: 16px var(--font-sans);
     --vellaro-width: 1240px;
     --vellaro-gap: 72px;
 }
-.storefront[data-theme="modrixcommerce/vellaro"] h1,
-.storefront[data-theme="modrixcommerce/vellaro"] h2 {
+.storefront[data-theme='modrixcommerce/vellaro'] h1,
+.storefront[data-theme='modrixcommerce/vellaro'] h2 {
     font-family: var(--font-heading);
     font-weight: 400;
     line-height: 1.15;
 }
-.storefront[data-theme="modrixcommerce/vellaro"] h1 {
+.storefront[data-theme='modrixcommerce/vellaro'] h1 {
     font-size: 40px;
 }
-.storefront[data-theme="modrixcommerce/vellaro"] h2 {
+.storefront[data-theme='modrixcommerce/vellaro'] h2 {
     font-size: 30px;
 }
-.storefront[data-theme="modrixcommerce/vellaro"] button {
+.storefront[data-theme='modrixcommerce/vellaro'] button {
     cursor: pointer;
 }
-.storefront[data-theme="modrixcommerce/vellaro"] button:disabled {
+.storefront[data-theme='modrixcommerce/vellaro'] button:disabled {
     cursor: not-allowed;
     opacity: 0.5;
 }
-.storefront[data-theme="modrixcommerce/vellaro"] a:focus-visible,
-.storefront[data-theme="modrixcommerce/vellaro"] button:focus-visible,
-.storefront[data-theme="modrixcommerce/vellaro"] input:focus-visible {
+.storefront[data-theme='modrixcommerce/vellaro'] a:focus-visible,
+.storefront[data-theme='modrixcommerce/vellaro'] button:focus-visible,
+.storefront[data-theme='modrixcommerce/vellaro'] input:focus-visible {
     outline: 2px solid var(--primary);
     outline-offset: 4px;
 }
@@ -175,7 +175,7 @@
     max-width: var(--vellaro-width);
     margin: auto;
 }
-.storefront[data-theme="modrixcommerce/vellaro"] .vellaro-hero h1 {
+.storefront[data-theme='modrixcommerce/vellaro'] .vellaro-hero h1 {
     font-size: 48px;
     max-width: 670px;
     margin-bottom: 10px;
@@ -183,16 +183,16 @@
 .vellaro-hero p {
     font-size: 16px;
 }
-.vellaro-hero[data-position="center"] {
+.vellaro-hero[data-position='center'] {
     text-align: center;
 }
-.vellaro-hero[data-position="center"] h1 {
+.vellaro-hero[data-position='center'] h1 {
     margin-inline: auto;
 }
-.vellaro-hero[data-position="right"] {
+.vellaro-hero[data-position='right'] {
     text-align: end;
 }
-.vellaro-hero[data-position="right"] h1 {
+.vellaro-hero[data-position='right'] h1 {
     margin-inline-start: auto;
 }
 .vellaro-outline {
@@ -402,7 +402,7 @@
     top: 0;
     padding: 5px;
 }
-.vellaro-save[aria-pressed="true"] {
+.vellaro-save[aria-pressed='true'] {
     color: var(--primary);
 }
 .vellaro-promotions {
@@ -421,7 +421,7 @@
     background-size: cover;
     background-position: center;
 }
-.vellaro-promotions > a[data-light="true"] {
+.vellaro-promotions > a[data-light='true'] {
     color: var(--foreground);
 }
 .vellaro-promotions h2 {
@@ -545,7 +545,7 @@
     gap: 8px;
     align-items: center;
 }
-.vellaro-filter-panel input[type="number"],
+.vellaro-filter-panel input[type='number'],
 .vellaro-filter-panel select {
     max-width: 180px;
     border: 1px solid var(--border);
@@ -603,7 +603,7 @@
     padding: 4px;
     border: 1px solid transparent;
 }
-.vellaro-thumbnails button[aria-pressed="true"] {
+.vellaro-thumbnails button[aria-pressed='true'] {
     border-color: var(--primary);
 }
 .vellaro-thumbnails img {
@@ -771,7 +771,7 @@
     line-height: 1.6;
     max-width: 420px;
 }
-.vellaro-newsletter input[type="email"] {
+.vellaro-newsletter input[type='email'] {
     background: transparent;
     color: inherit;
     border: 1px solid #ffffff80;
@@ -817,10 +817,10 @@
     }
 }
 @media (max-width: 767px) {
-    .storefront[data-theme="modrixcommerce/vellaro"] h1 {
+    .storefront[data-theme='modrixcommerce/vellaro'] h1 {
         font-size: 32px;
     }
-    .storefront[data-theme="modrixcommerce/vellaro"] h2 {
+    .storefront[data-theme='modrixcommerce/vellaro'] h2 {
         font-size: 27px;
     }
     .vellaro-wrap {
@@ -992,17 +992,17 @@
 }
 
 /* Vellaro: MagicPath sharp-creek-3741, revision 457377712647077889. */
-.storefront[data-theme="modrixcommerce/vellaro"] {
+.storefront[data-theme='modrixcommerce/vellaro'] {
     font-size: 14px;
     --vellaro-width: 1800px;
     --vellaro-gap: 32px;
 }
-.storefront[data-theme="modrixcommerce/vellaro"] h1,
-.storefront[data-theme="modrixcommerce/vellaro"] h2 {
+.storefront[data-theme='modrixcommerce/vellaro'] h1,
+.storefront[data-theme='modrixcommerce/vellaro'] h2 {
     font-family: var(--font-heading);
     font-weight: 600;
 }
-.storefront[data-theme="modrixcommerce/vellaro"] h2 {
+.storefront[data-theme='modrixcommerce/vellaro'] h2 {
     font-size: 20px;
 }
 .vellaro-wrap {
@@ -1074,8 +1074,8 @@
 .vellaro-campaign > div {
     max-width: 55%;
 }
-.storefront[data-theme="modrixcommerce/vellaro"] .vellaro-campaign h1,
-.storefront[data-theme="modrixcommerce/vellaro"] .vellaro-campaign h2 {
+.storefront[data-theme='modrixcommerce/vellaro'] .vellaro-campaign h1,
+.storefront[data-theme='modrixcommerce/vellaro'] .vellaro-campaign h2 {
     font-size: 48px;
     text-transform: uppercase;
     letter-spacing: 0.025em;
@@ -1217,7 +1217,7 @@
     padding: 8px 12px;
     font-size: 12px;
 }
-.vellaro-catalog-body[data-filters="true"] {
+.vellaro-catalog-body[data-filters='true'] {
     display: grid;
     grid-template-columns: 220px minmax(0, 1fr);
     gap: 32px;
@@ -1375,8 +1375,8 @@
     .vellaro-campaign > div {
         max-width: 85%;
     }
-    .storefront[data-theme="modrixcommerce/vellaro"] .vellaro-campaign h1,
-    .storefront[data-theme="modrixcommerce/vellaro"] .vellaro-campaign h2 {
+    .storefront[data-theme='modrixcommerce/vellaro'] .vellaro-campaign h1,
+    .storefront[data-theme='modrixcommerce/vellaro'] .vellaro-campaign h2 {
         font-size: 30px;
     }
     .vellaro-rail {
@@ -1390,7 +1390,7 @@
         font-size: 14px;
         padding: 24px 12px 12px;
     }
-    .vellaro-catalog-body[data-filters="true"] {
+    .vellaro-catalog-body[data-filters='true'] {
         grid-template-columns: 1fr;
         gap: 20px;
     }

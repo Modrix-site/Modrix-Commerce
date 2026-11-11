@@ -2,16 +2,15 @@
 
 namespace Tests\Feature\Extensions;
 
+use App\Core\Extensions\Models\Extension;
 use App\Core\Extensions\ModuleManager;
 use App\Models\User;
 use EcoModular\BotProtection\Models\BotAllowedIp;
 use EcoModular\BotProtection\Models\BotAttackReport;
 use EcoModular\BotProtection\Models\BotBlockedIp;
-use EcoModular\BotProtection\Models\BotEvent;
 use EcoModular\BotProtection\Models\BotSecurityRule;
 use EcoModular\BotProtection\Services\BotDetectionEngine;
 use EcoModular\BotProtection\Services\BotReportService;
-use EcoModular\BotProtection\Services\TrafficMonitoringService;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
@@ -40,7 +39,7 @@ class BotProtectionTest extends TestCase
 
     public function test_module_installs_and_enables_successfully(): void
     {
-        $extension = \App\Core\Extensions\Models\Extension::query()->where('name', self::MODULE)->first();
+        $extension = Extension::query()->where('name', self::MODULE)->first();
         $this->assertNotNull($extension);
         $this->assertEquals('enabled', $extension->state->value);
     }

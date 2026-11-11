@@ -50,7 +50,7 @@ class DeviceParserService
         }
 
         // Generate persistent device fingerprint
-        $fingerprint = hash('sha256', "{$browser}:{$os}:{$deviceType}:" . substr($ua, 0, 100));
+        $fingerprint = hash('sha256', "{$browser}:{$os}:{$deviceType}:".substr($ua, 0, 100));
 
         return [
             'browser' => $browser,

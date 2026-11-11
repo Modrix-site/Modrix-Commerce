@@ -10,7 +10,7 @@ export default function WishlistHeaderIcon({ count, wishlist_url }: Props) {
     return (
         <Link
             href={wishlist_url}
-            className="relative inline-flex items-center justify-center rounded-md p-2 text-foreground/80 hover:text-foreground transition-colors"
+            className="relative inline-flex items-center justify-center rounded-md p-2 text-foreground/80 transition-colors hover:text-foreground"
             aria-label={`Wishlist, ${count} items`}
         >
             <Heart className="size-5" />

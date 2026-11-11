@@ -31,15 +31,15 @@ Staff see what needs attention (new orders, payments, low stock…) in a bell in
 
 ## 2. Staff kinds
 
-| Kind              | Trigger                                                 | Permission       | Link              |
-| ----------------- | ------------------------------------------------------- | ---------------- | ----------------- |
-| `order.placed`    | `OrderPlaced`                                           | `orders.view`    | admin order       |
-| `order.paid`      | `OrderPaid`                                             | `orders.view`    | admin order       |
-| `payment.failed`  | `OrderStatusChanged` kind `payment_failed`              | `orders.view`    | admin order       |
-| `order.cancelled` | `OrderCancelled`                                        | `orders.view`    | admin order       |
-| `order.refunded`  | `OrderRefunded`                                         | `orders.view`    | admin order       |
-| `stock.low`       | `InventoryLow`                                          | `inventory.view` | admin product     |
-| `customer.new`    | `CustomerRegistered`                                    | `customers.view` | admin customer    |
+| Kind              | Trigger                                    | Permission       | Link           |
+| ----------------- | ------------------------------------------ | ---------------- | -------------- |
+| `order.placed`    | `OrderPlaced`                              | `orders.view`    | admin order    |
+| `order.paid`      | `OrderPaid`                                | `orders.view`    | admin order    |
+| `payment.failed`  | `OrderStatusChanged` kind `payment_failed` | `orders.view`    | admin order    |
+| `order.cancelled` | `OrderCancelled`                           | `orders.view`    | admin order    |
+| `order.refunded`  | `OrderRefunded`                            | `orders.view`    | admin order    |
+| `stock.low`       | `InventoryLow`                             | `inventory.view` | admin product  |
+| `customer.new`    | `CustomerRegistered`                       | `customers.view` | admin customer |
 
 The staff member who caused an event (e.g. recorded a refund) is not notified about it.
 
@@ -47,16 +47,16 @@ The staff member who caused an event (e.g. recorded a refund) is not notified ab
 
 The order must belong to a customer account; guests keep their emails.
 
-| Kind                       | Trigger                                                              | Link             |
-| -------------------------- | -------------------------------------------------------------------- | ---------------- |
-| `customer.order_confirmed` | `OrderStatusChanged` `confirmed`, or `OrderPlaced` when it is confirmed at once | account order |
-| `customer.order_shipped`   | `OrderShipped` (carrier and tracking in params)                      | account order    |
-| `customer.out_for_delivery`| `OrderStatusChanged` `out_for_delivery`                              | account order    |
-| `customer.delivered`       | `OrderDelivered`                                                     | account order    |
-| `customer.cancelled`       | `OrderCancelled`                                                     | account order    |
-| `customer.refunded`        | `OrderRefunded`                                                      | account order    |
-| `customer.payment_failed`  | `OrderStatusChanged` `payment_failed`                                | account order    |
-| `customer.downloads_ready` | `OrderPaid` when the order has download links                        | account order    |
+| Kind                        | Trigger                                                                         | Link          |
+| --------------------------- | ------------------------------------------------------------------------------- | ------------- |
+| `customer.order_confirmed`  | `OrderStatusChanged` `confirmed`, or `OrderPlaced` when it is confirmed at once | account order |
+| `customer.order_shipped`    | `OrderShipped` (carrier and tracking in params)                                 | account order |
+| `customer.out_for_delivery` | `OrderStatusChanged` `out_for_delivery`                                         | account order |
+| `customer.delivered`        | `OrderDelivered`                                                                | account order |
+| `customer.cancelled`        | `OrderCancelled`                                                                | account order |
+| `customer.refunded`         | `OrderRefunded`                                                                 | account order |
+| `customer.payment_failed`   | `OrderStatusChanged` `payment_failed`                                           | account order |
+| `customer.downloads_ready`  | `OrderPaid` when the order has download links                                   | account order |
 
 Customers have no settings in this version; these are their own order updates.
 

@@ -4,7 +4,7 @@
 
 **Goal:** Rebuild `marketplace-catalog/` as a standard Laravel 13 app with migrations, Eloquent models, the unchanged store license API, a Stripe webhook, a legacy importer, Blade pages and an install command, deployable on ordinary hosting.
 
-**Architecture:** New code lives in `app/` (namespace `Marketplace\`), `database/migrations`, `routes/{web,api}.php` and `resources/views`. During the build the old catch-all route to `src/front.php` stays registered *last* as a fallback; the cut-over task removes it and `src/` once every page and endpoint has a Laravel route. Data moves from the old `storage/catalog.sqlite` with an import command at cut-over.
+**Architecture:** New code lives in `app/` (namespace `Marketplace\`), `database/migrations`, `routes/{web,api}.php` and `resources/views`. During the build the old catch-all route to `src/front.php` stays registered _last_ as a fallback; the cut-over task removes it and `src/` once every page and endpoint has a Laravel route. Data moves from the old `storage/catalog.sqlite` with an import command at cut-over.
 
 **Tech Stack:** Laravel 13, PHP ≥ 8.3, composer/semver, PHPUnit 12, Blade + plain CSS, ext-sodium, MySQL/MariaDB or SQLite.
 
@@ -36,6 +36,7 @@
 ### Task 1: Laravel skeleton and test harness
 
 **Files:**
+
 - Modify: `composer.json` (require `ext-sodium`; require-dev `phpunit/phpunit:^12`, `fakerphp/faker`, `mockery/mockery`; autoload-dev `Tests\\` → `tests/`)
 - Create: `config/{app,auth,cache,filesystems,logging,mail,queue,session,services,marketplace}.php`, `phpunit.xml`, `tests/TestCase.php`, `tests/Feature/HealthTest.php`
 - Modify: `.env.example` (APP_URL, DB_CONNECTION=sqlite, DB_DATABASE, SESSION_DRIVER=database, CACHE_STORE=database, QUEUE_CONNECTION=database, MAIL_*)
@@ -52,6 +53,7 @@
 ### Task 2: Migrations and models
 
 **Files:**
+
 - Create: `database/migrations/2026_10_24_0000{01..10}_*.php` for `users`, `password_reset_tokens`+`sessions`+`cache`+`jobs`, `settings`, `categories`+`category_package`, `packages`, `package_releases`, `submissions`, `orders`, `licenses`+`license_activations`, `download_tokens`, `webhook_events` — columns exactly as the spec's Data model; indexed strings ≤ 191 chars.
 - Create: `app/Models/{User,Setting,Category,Package,PackageRelease,Submission,Order,License,LicenseActivation,DownloadToken,WebhookEvent}.php`
 - Create: `database/seeders/CategorySeeder.php` (the six categories from `src/Store.php`: electronics, fashion, home-living, payments, marketing, operations).
@@ -68,10 +70,12 @@
 ### Task 3: Signing key and license service
 
 **Files:**
+
 - Create: `app/Services/Signing.php` (copied, see Global Constraints), `app/Services/SigningKey.php`, `app/Services/Licensing.php`
 - Test: `tests/Feature/LicensingTest.php`, `tests/Unit/SigningCompatibilityTest.php`
 
 **Interfaces:**
+
 - `SigningKey::secret(): string` (creates and stores the key pair on first use under setting `signing_secret`, secret), `SigningKey::publicKey(): string`, `SigningKey::keyId(): string`.
 - `Licensing::issue(User $user, Package $package, string $type): License` — one stable key per (user, package); key format `MRX-` + 4 groups of 5 uppercase base32 chars.
 - `Licensing::token(License $license, string $instanceId): array{token: array, signature: string}` — token fields exactly as the spec.
@@ -85,6 +89,7 @@
 ### Task 4: Store license API — activate, check, deactivate, catalog
 
 **Files:**
+
 - Create: `routes/api.php` (prefix `api/marketplace/v1`, `throttle:60,1`), `app/Http/Controllers/Api/LicenseController.php`, `app/Http/Controllers/Api/CatalogController.php`, `app/Http/Controllers/Api/ApiError.php` (helper returning `{error, message}`)
 - Test: `tests/Feature/Api/LicenseApiTest.php`, `tests/Feature/Api/CatalogApiTest.php`
 
@@ -99,6 +104,7 @@
 ### Task 5: Releases, updates and downloads
 
 **Files:**
+
 - Create: `app/Services/Releases.php`, `app/Http/Controllers/Api/UpdateController.php`, `app/Http/Controllers/Api/DownloadController.php`, `app/Console/Commands/PruneDownloadTokens.php` (scheduled hourly in `routes/console.php`)
 - Test: `tests/Feature/Api/UpdatesAndDownloadsTest.php`
 
@@ -111,6 +117,7 @@
 ### Task 6: Stripe checkout and webhook
 
 **Files:**
+
 - Create: `app/Services/StripeGateway.php`, `app/Http/Controllers/CheckoutController.php`, `app/Http/Controllers/StripeWebhookController.php`, `app/Mail/LicenseIssued.php` + `resources/views/mail/license-issued.blade.php`
 - Modify: `routes/web.php` (`POST /checkout/{package:slug}`, `GET /checkout/success`, `POST /stripe/webhook` without CSRF)
 - Test: `tests/Feature/StripeTest.php`
@@ -124,6 +131,7 @@
 ### Task 7: Legacy import and install command
 
 **Files:**
+
 - Create: `app/Console/Commands/ImportLegacy.php` (`marketplace:import-legacy {path=storage/catalog.sqlite}`), `app/Console/Commands/Install.php` (`marketplace:install`), `app/Services/LegacyImporter.php`
 - Test: `tests/Feature/LegacyImportTest.php` with fixture `tests/fixtures/legacy.sqlite` built in the test from the CREATE statements in `src/Store.php`
 
@@ -136,6 +144,7 @@
 ### Task 8: Pages — catalog, accounts, admin
 
 **Files:**
+
 - Create: `resources/views/layouts/{site,admin}.blade.php`, `resources/views/catalog/{index,show}.blade.php`, `resources/views/auth/{login,register}.blade.php`, `resources/views/account/{index,licenses}.blade.php`, `resources/views/admin/{login,setup,overview,packages/index,packages/edit,submissions/index,submissions/show,categories,licenses,orders,settings}.blade.php`, `resources/views/publish/{submit,update,submissions}.blade.php`
 - Create: controllers `app/Http/Controllers/{CatalogController,AuthController,AccountController,PublishController,DownloadController}.php`, `app/Http/Controllers/Admin/{AuthController,OverviewController,PackageController,SubmissionController,CategoryController,LicenseController,OrderController,SettingsController}.php`; middleware `EnsureAdmin`.
 - Reuse: `public/{catalog,account,marketplace}.css` and `.js` (same class names as `src/front.php` so the look is unchanged).
@@ -150,6 +159,7 @@
 ### Task 9: Cut-over and deployment guide
 
 **Files:**
+
 - Modify: `bootstrap/app.php` (remove the `src/front.php` fallback), `README.md` (new setup/import steps)
 - Delete: `src/`, `public/router.php` (if only used by the old front controller), `tests/workflow.php`
 - Create: `docs/DEPLOY.md` (cPanel/shared hosting: upload, document root `public/`, `.env`, `composer install --no-dev`, `php artisan migrate --force`, `marketplace:install` or `/admin/setup`, `marketplace:import-legacy`, cron; VPS: Nginx + PHP-FPM sample config; MySQL 5.7+/MariaDB 10.3+ or SQLite; backups of DB and `storage/app/private`)

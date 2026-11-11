@@ -14,7 +14,10 @@ type Props = {
     videos: VideoItem[];
 };
 
-export default function ProductExternalMediaSlot({ productName, videos }: Props) {
+export default function ProductExternalMediaSlot({
+    productName,
+    videos,
+}: Props) {
     const [activeIndex, setActiveIndex] = useState(0);
 
     if (!videos || videos.length === 0) {
@@ -25,7 +28,7 @@ export default function ProductExternalMediaSlot({ productName, videos }: Props)
 
     return (
         <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
-            <div className="flex items-center justify-between gap-3 mb-4">
+            <div className="mb-4 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5">
                     <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sky-50 text-sky-600">
                         <Film className="h-5 w-5" />
@@ -41,7 +44,7 @@ export default function ProductExternalMediaSlot({ productName, videos }: Props)
                 </div>
             </div>
 
-            <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-950 aspect-video">
+            <div className="aspect-video overflow-hidden rounded-xl border border-slate-200 bg-slate-950">
                 <video
                     key={activeVideo.url}
                     src={activeVideo.url}
@@ -49,12 +52,17 @@ export default function ProductExternalMediaSlot({ productName, videos }: Props)
                     preload="metadata"
                     className="h-full w-full object-contain"
                 >
-                    <source src={activeVideo.url} type={activeVideo.mime_type} />
+                    <source
+                        src={activeVideo.url}
+                        type={activeVideo.mime_type}
+                    />
                 </video>
             </div>
 
             <div className="mt-2.5 flex items-center justify-between text-xs text-slate-600">
-                <span className="font-medium text-slate-800">{activeVideo.title}</span>
+                <span className="font-medium text-slate-800">
+                    {activeVideo.title}
+                </span>
                 <span className="text-[11px] text-slate-400">
                     Streamed via {activeVideo.provider_label}
                 </span>

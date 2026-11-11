@@ -60,7 +60,7 @@ final class PaybySignature
             return $trimmed;
         }
 
-        return "-----BEGIN RSA PRIVATE KEY-----\n" . wordwrap($trimmed, 64, "\n", true) . "\n-----END RSA PRIVATE KEY-----";
+        return "-----BEGIN RSA PRIVATE KEY-----\n".wordwrap($trimmed, 64, "\n", true)."\n-----END RSA PRIVATE KEY-----";
     }
 
     private function formatPublicKey(string $key): string
@@ -70,6 +70,6 @@ final class PaybySignature
             return $trimmed;
         }
 
-        return "-----BEGIN PUBLIC KEY-----\n" . wordwrap($trimmed, 64, "\n", true) . "\n-----END PUBLIC KEY-----";
+        return "-----BEGIN PUBLIC KEY-----\n".wordwrap($trimmed, 64, "\n", true)."\n-----END PUBLIC KEY-----";
     }
 }

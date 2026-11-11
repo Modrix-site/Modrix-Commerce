@@ -79,8 +79,14 @@ export default function PaytmSettingsPage({
                     description="Accept Paytm UPI, Paytm Wallet, Net Banking, and Cards with Paytm's All-in-One Payment Gateway."
                     actions={
                         <div className="flex items-center gap-2">
-                            <Badge variant={settings.test_mode ? 'secondary' : 'default'}>
-                                {settings.test_mode ? 'Staging / Test Mode' : 'Production Mode'}
+                            <Badge
+                                variant={
+                                    settings.test_mode ? 'secondary' : 'default'
+                                }
+                            >
+                                {settings.test_mode
+                                    ? 'Staging / Test Mode'
+                                    : 'Production Mode'}
                             </Badge>
                             {settings.ready && (
                                 <Button
@@ -105,13 +111,17 @@ export default function PaytmSettingsPage({
                                 : 'Set up Paytm Payment Gateway'}
                         </CardTitle>
                         <CardDescription>
-                            Configure your Merchant ID (MID) and Merchant Key from the Paytm Dashboard.
+                            Configure your Merchant ID (MID) and Merchant Key
+                            from the Paytm Dashboard.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <ul className="grid gap-2 text-sm">
                             {checks.map(([done, label]) => (
-                                <li key={label} className="flex items-center gap-2">
+                                <li
+                                    key={label}
+                                    className="flex items-center gap-2"
+                                >
                                     {done ? (
                                         <CircleCheck className="size-4 shrink-0 text-primary" />
                                     ) : (
@@ -129,7 +139,8 @@ export default function PaytmSettingsPage({
                         <CardHeader>
                             <CardTitle>Merchant Credentials</CardTitle>
                             <CardDescription>
-                                Supplied in your Paytm Dashboard under Developer Settings &gt; API Keys.
+                                Supplied in your Paytm Dashboard under Developer
+                                Settings &gt; API Keys.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4 md:grid-cols-2">
@@ -142,7 +153,9 @@ export default function PaytmSettingsPage({
                                 <Input
                                     id="mid"
                                     value={form.data.mid}
-                                    onChange={(e) => form.setData('mid', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData('mid', e.target.value)
+                                    }
                                     placeholder="e.g. YOUR_MID_HERE"
                                 />
                             </FormField>
@@ -162,8 +175,17 @@ export default function PaytmSettingsPage({
                                     type="password"
                                     autoComplete="new-password"
                                     value={form.data.merchant_key}
-                                    onChange={(e) => form.setData('merchant_key', e.target.value)}
-                                    placeholder={settings.has_merchant_key ? '••••••••••••••••' : 'Paytm Merchant Key'}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'merchant_key',
+                                            e.target.value,
+                                        )
+                                    }
+                                    placeholder={
+                                        settings.has_merchant_key
+                                            ? '••••••••••••••••'
+                                            : 'Paytm Merchant Key'
+                                    }
                                 />
                             </FormField>
 
@@ -176,7 +198,9 @@ export default function PaytmSettingsPage({
                                 <Input
                                     id="website"
                                     value={form.data.website}
-                                    onChange={(e) => form.setData('website', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData('website', e.target.value)
+                                    }
                                     placeholder="WEBSTAGING or DEFAULT"
                                 />
                             </FormField>
@@ -190,7 +214,9 @@ export default function PaytmSettingsPage({
                                 <Input
                                     id="label"
                                     value={form.data.label}
-                                    onChange={(e) => form.setData('label', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData('label', e.target.value)
+                                    }
                                 />
                             </FormField>
 
@@ -208,7 +234,9 @@ export default function PaytmSettingsPage({
                                             'currencies',
                                             e.target.value
                                                 .split(',')
-                                                .map((c) => c.trim().toUpperCase())
+                                                .map((c) =>
+                                                    c.trim().toUpperCase(),
+                                                )
                                                 .filter(Boolean),
                                         )
                                     }
@@ -220,10 +248,19 @@ export default function PaytmSettingsPage({
                                     <Checkbox
                                         id="test_mode"
                                         checked={form.data.test_mode}
-                                        onCheckedChange={(checked) => form.setData('test_mode', Boolean(checked))}
+                                        onCheckedChange={(checked) =>
+                                            form.setData(
+                                                'test_mode',
+                                                Boolean(checked),
+                                            )
+                                        }
                                     />
-                                    <label htmlFor="test_mode" className="text-sm font-medium leading-none">
-                                        Enable Staging Mode (tests against securegw-stage.paytm.in)
+                                    <label
+                                        htmlFor="test_mode"
+                                        className="text-sm leading-none font-medium"
+                                    >
+                                        Enable Staging Mode (tests against
+                                        securegw-stage.paytm.in)
                                     </label>
                                 </div>
 
@@ -231,10 +268,19 @@ export default function PaytmSettingsPage({
                                     <Checkbox
                                         id="enabled"
                                         checked={form.data.enabled}
-                                        onCheckedChange={(checked) => form.setData('enabled', Boolean(checked))}
+                                        onCheckedChange={(checked) =>
+                                            form.setData(
+                                                'enabled',
+                                                Boolean(checked),
+                                            )
+                                        }
                                     />
-                                    <label htmlFor="enabled" className="text-sm font-medium leading-none">
-                                        Enable Paytm Payment Gateway for customer checkout
+                                    <label
+                                        htmlFor="enabled"
+                                        className="text-sm leading-none font-medium"
+                                    >
+                                        Enable Paytm Payment Gateway for
+                                        customer checkout
                                     </label>
                                 </div>
                             </div>
@@ -245,21 +291,28 @@ export default function PaytmSettingsPage({
                         <CardHeader>
                             <CardTitle>Webhook & Response URLs</CardTitle>
                             <CardDescription>
-                                Register these URLs in your Paytm Dashboard under Webhooks / Notifications.
+                                Register these URLs in your Paytm Dashboard
+                                under Webhooks / Notifications.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4">
                             <div>
-                                <label className="text-xs font-semibold uppercase text-muted-foreground">
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">
                                     Callback / Response URL
                                 </label>
                                 <div className="mt-1 flex items-center gap-2">
-                                    <Input readOnly value={responseUrl} className="font-mono text-xs" />
+                                    <Input
+                                        readOnly
+                                        value={responseUrl}
+                                        className="font-mono text-xs"
+                                    />
                                     <Button
                                         type="button"
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => copyResponse(responseUrl)}
+                                        onClick={() =>
+                                            copyResponse(responseUrl)
+                                        }
                                     >
                                         <Copy className="size-4" />
                                     </Button>
@@ -267,11 +320,15 @@ export default function PaytmSettingsPage({
                             </div>
 
                             <div>
-                                <label className="text-xs font-semibold uppercase text-muted-foreground">
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">
                                     Webhook Notification URL
                                 </label>
                                 <div className="mt-1 flex items-center gap-2">
-                                    <Input readOnly value={webhookUrl} className="font-mono text-xs" />
+                                    <Input
+                                        readOnly
+                                        value={webhookUrl}
+                                        className="font-mono text-xs"
+                                    />
                                     <Button
                                         type="button"
                                         variant="outline"

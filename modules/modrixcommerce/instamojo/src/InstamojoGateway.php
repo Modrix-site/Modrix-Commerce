@@ -79,12 +79,12 @@ final class InstamojoGateway implements PaymentGateway
         }
 
         $amount = number_format((float) $payment->money()->toDisplayDecimal(), 2, '.', '');
-        $callbackUrl = route('modrixcommerce.instamojo.response') . '?payment_id=' . $payment->id;
+        $callbackUrl = route('modrixcommerce.instamojo.response').'?payment_id='.$payment->id;
         $webhookUrl = route('webhooks.payments', self::CODE);
 
         $params = [
             'amount' => $amount,
-            'purpose' => 'Order ' . ($order->number ?? $order->id),
+            'purpose' => 'Order '.($order->number ?? $order->id),
             'buyer_name' => $order->shippingAddress?->first_name ?? $order->customer?->first_name ?? 'Customer',
             'email' => $order->email,
             'phone' => $order->phone ?? '',
@@ -98,7 +98,7 @@ final class InstamojoGateway implements PaymentGateway
         try {
             $response = $this->api->createPaymentRequest($params);
         } catch (Throwable $e) {
-            throw new GatewayException('Failed to create Instamojo payment request: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Failed to create Instamojo payment request: '.$e->getMessage(), 0, $e);
         }
 
         $requestData = $response['payment_request'] ?? [];
@@ -133,7 +133,7 @@ final class InstamojoGateway implements PaymentGateway
         try {
             $response = $this->api->getPaymentRequest($requestId);
         } catch (Throwable $e) {
-            throw new GatewayException('Could not retrieve payment status from Instamojo: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Could not retrieve payment status from Instamojo: '.$e->getMessage(), 0, $e);
         }
 
         return $this->buildPaymentUpdate($response, $requestId);
@@ -223,7 +223,7 @@ final class InstamojoGateway implements PaymentGateway
                         $paymentId = (string) $payments[0]['payment_id'];
                     }
                 } catch (Throwable $e) {
-                    throw new GatewayException('Could not discover Instamojo payment ID for refund: ' . $e->getMessage(), 0, $e);
+                    throw new GatewayException('Could not discover Instamojo payment ID for refund: '.$e->getMessage(), 0, $e);
                 }
             }
         }
@@ -237,11 +237,11 @@ final class InstamojoGateway implements PaymentGateway
         try {
             $response = $this->api->refund($paymentId, 'RFD', 'Merchant refund via Modrix Commerce', $refundAmount);
         } catch (Throwable $e) {
-            throw new GatewayException('Instamojo refund request failed: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Instamojo refund request failed: '.$e->getMessage(), 0, $e);
         }
 
         $refundData = $response['refund'] ?? [];
-        $refundId = (string) ($refundData['id'] ?? ('ref_' . substr($idempotencyKey, 0, 18)));
+        $refundId = (string) ($refundData['id'] ?? ('ref_'.substr($idempotencyKey, 0, 18)));
         $statusStr = strtolower((string) ($refundData['status'] ?? 'refunded'));
 
         $status = match ($statusStr) {

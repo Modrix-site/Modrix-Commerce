@@ -80,8 +80,14 @@ export default function PaybySettingsPage({
                     description="Accept cards, Botim wallet, Apple Pay, and QR code payments in the UAE with PayBy."
                     actions={
                         <div className="flex items-center gap-2">
-                            <Badge variant={settings.test_mode ? 'secondary' : 'default'}>
-                                {settings.test_mode ? 'UAT / Sandbox' : 'Live / Production'}
+                            <Badge
+                                variant={
+                                    settings.test_mode ? 'secondary' : 'default'
+                                }
+                            >
+                                {settings.test_mode
+                                    ? 'UAT / Sandbox'
+                                    : 'Live / Production'}
                             </Badge>
                             {settings.ready && (
                                 <Button
@@ -106,13 +112,17 @@ export default function PaybySettingsPage({
                                 : 'Set up PayBy (Astra Tech)'}
                         </CardTitle>
                         <CardDescription>
-                            Configure your Partner ID and RSA cryptographic keys from the PayBy Merchant Portal.
+                            Configure your Partner ID and RSA cryptographic keys
+                            from the PayBy Merchant Portal.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <ul className="grid gap-2 text-sm">
                             {checks.map(([done, label]) => (
-                                <li key={label} className="flex items-center gap-2">
+                                <li
+                                    key={label}
+                                    className="flex items-center gap-2"
+                                >
                                     {done ? (
                                         <CircleCheck className="size-4 shrink-0 text-primary" />
                                     ) : (
@@ -128,9 +138,12 @@ export default function PaybySettingsPage({
                 <form onSubmit={handleSubmit} className="grid gap-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Merchant Credentials &amp; RSA Keys</CardTitle>
+                            <CardTitle>
+                                Merchant Credentials &amp; RSA Keys
+                            </CardTitle>
                             <CardDescription>
-                                Generated under API Keys in your PayBy merchant dashboard.
+                                Generated under API Keys in your PayBy merchant
+                                dashboard.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4 md:grid-cols-2">
@@ -143,7 +156,12 @@ export default function PaybySettingsPage({
                                 <Input
                                     id="partner_id"
                                     value={form.data.partner_id}
-                                    onChange={(e) => form.setData('partner_id', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'partner_id',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="e.g. 200000018128"
                                 />
                             </FormField>
@@ -157,7 +175,9 @@ export default function PaybySettingsPage({
                                 <Input
                                     id="label"
                                     value={form.data.label}
-                                    onChange={(e) => form.setData('label', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData('label', e.target.value)
+                                    }
                                 />
                             </FormField>
 
@@ -176,8 +196,17 @@ export default function PaybySettingsPage({
                                         id="private_key"
                                         rows={4}
                                         value={form.data.private_key}
-                                        onChange={(e) => form.setData('private_key', e.target.value)}
-                                        placeholder={settings.has_private_key ? '••••••••••••••••' : '-----BEGIN RSA PRIVATE KEY-----...'}
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'private_key',
+                                                e.target.value,
+                                            )
+                                        }
+                                        placeholder={
+                                            settings.has_private_key
+                                                ? '••••••••••••••••'
+                                                : '-----BEGIN RSA PRIVATE KEY-----...'
+                                        }
                                         className="font-mono text-xs"
                                     />
                                 </FormField>
@@ -198,8 +227,17 @@ export default function PaybySettingsPage({
                                         id="payby_public_key"
                                         rows={3}
                                         value={form.data.payby_public_key}
-                                        onChange={(e) => form.setData('payby_public_key', e.target.value)}
-                                        placeholder={settings.has_payby_public_key ? '••••••••••••••••' : '-----BEGIN PUBLIC KEY-----...'}
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'payby_public_key',
+                                                e.target.value,
+                                            )
+                                        }
+                                        placeholder={
+                                            settings.has_payby_public_key
+                                                ? '••••••••••••••••'
+                                                : '-----BEGIN PUBLIC KEY-----...'
+                                        }
                                         className="font-mono text-xs"
                                     />
                                 </FormField>
@@ -219,7 +257,9 @@ export default function PaybySettingsPage({
                                             'currencies',
                                             e.target.value
                                                 .split(',')
-                                                .map((c) => c.trim().toUpperCase())
+                                                .map((c) =>
+                                                    c.trim().toUpperCase(),
+                                                )
                                                 .filter(Boolean),
                                         )
                                     }
@@ -231,10 +271,19 @@ export default function PaybySettingsPage({
                                     <Checkbox
                                         id="test_mode"
                                         checked={form.data.test_mode}
-                                        onCheckedChange={(checked) => form.setData('test_mode', Boolean(checked))}
+                                        onCheckedChange={(checked) =>
+                                            form.setData(
+                                                'test_mode',
+                                                Boolean(checked),
+                                            )
+                                        }
                                     />
-                                    <label htmlFor="test_mode" className="text-sm font-medium leading-none">
-                                        Enable UAT / Sandbox Mode (tests against uat.test2pay.com)
+                                    <label
+                                        htmlFor="test_mode"
+                                        className="text-sm leading-none font-medium"
+                                    >
+                                        Enable UAT / Sandbox Mode (tests against
+                                        uat.test2pay.com)
                                     </label>
                                 </div>
 
@@ -242,10 +291,19 @@ export default function PaybySettingsPage({
                                     <Checkbox
                                         id="enabled"
                                         checked={form.data.enabled}
-                                        onCheckedChange={(checked) => form.setData('enabled', Boolean(checked))}
+                                        onCheckedChange={(checked) =>
+                                            form.setData(
+                                                'enabled',
+                                                Boolean(checked),
+                                            )
+                                        }
                                     />
-                                    <label htmlFor="enabled" className="text-sm font-medium leading-none">
-                                        Enable PayBy payment gateway for customer checkout
+                                    <label
+                                        htmlFor="enabled"
+                                        className="text-sm leading-none font-medium"
+                                    >
+                                        Enable PayBy payment gateway for
+                                        customer checkout
                                     </label>
                                 </div>
                             </div>
@@ -256,21 +314,28 @@ export default function PaybySettingsPage({
                         <CardHeader>
                             <CardTitle>Webhook &amp; Return URLs</CardTitle>
                             <CardDescription>
-                                Register these URLs in your PayBy developer settings or application profile.
+                                Register these URLs in your PayBy developer
+                                settings or application profile.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4">
                             <div>
-                                <label className="text-xs font-semibold uppercase text-muted-foreground">
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">
                                     Return Response URL
                                 </label>
                                 <div className="mt-1 flex items-center gap-2">
-                                    <Input readOnly value={responseUrl} className="font-mono text-xs" />
+                                    <Input
+                                        readOnly
+                                        value={responseUrl}
+                                        className="font-mono text-xs"
+                                    />
                                     <Button
                                         type="button"
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => copyResponse(responseUrl)}
+                                        onClick={() =>
+                                            copyResponse(responseUrl)
+                                        }
                                     >
                                         <Copy className="size-4" />
                                     </Button>
@@ -278,11 +343,15 @@ export default function PaybySettingsPage({
                             </div>
 
                             <div>
-                                <label className="text-xs font-semibold uppercase text-muted-foreground">
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">
                                     Webhook Notification URL
                                 </label>
                                 <div className="mt-1 flex items-center gap-2">
-                                    <Input readOnly value={webhookUrl} className="font-mono text-xs" />
+                                    <Input
+                                        readOnly
+                                        value={webhookUrl}
+                                        className="font-mono text-xs"
+                                    />
                                     <Button
                                         type="button"
                                         variant="outline"

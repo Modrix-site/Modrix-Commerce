@@ -20,7 +20,7 @@ class MonitorFailedLogin
     public function handle(Failed $event): void
     {
         $enabled = (bool) $this->settings->of(self::MODULE, 'enabled', true);
-        if (!$enabled) {
+        if (! $enabled) {
             return;
         }
 

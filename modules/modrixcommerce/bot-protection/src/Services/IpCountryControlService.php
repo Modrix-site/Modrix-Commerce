@@ -40,13 +40,14 @@ class IpCountryControlService
         $blocked = BotBlockedIp::query()
             ->where(function ($q) {
                 $q->whereNull('expires_at')
-                  ->orWhere('expires_at', '>', now());
+                    ->orWhere('expires_at', '>', now());
             })
             ->get();
 
         foreach ($blocked as $entry) {
             if ($this->matchIp($ip, $entry->ip_address, $entry->cidr_mask)) {
                 $entry->increment('hit_count');
+
                 return $entry;
             }
         }
@@ -66,7 +67,7 @@ class IpCountryControlService
 
         foreach ($headers as $header) {
             $value = $request->header($header);
-            if (!empty($value) && strlen($value) === 2 && ctype_alpha($value)) {
+            if (! empty($value) && strlen($value) === 2 && ctype_alpha($value)) {
                 return strtoupper($value);
             }
         }
@@ -88,6 +89,7 @@ class IpCountryControlService
             if (is_array($setting)) {
                 return array_map('strtoupper', $setting);
             }
+
             return array_map('trim', explode(',', strtoupper((string) $setting)));
         });
 
@@ -97,7 +99,7 @@ class IpCountryControlService
     public function isCloudHostingAsn(Request $request): bool
     {
         $blockCloud = (bool) $this->settings->of(self::MODULE, 'block_cloud_hosting_asn', false);
-        if (!$blockCloud) {
+        if (! $blockCloud) {
             return false;
         }
 
@@ -136,7 +138,7 @@ class IpCountryControlService
                 $cidr = (int) $cidr;
             }
 
-            if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) || !filter_var($target, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            if (! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) || ! filter_var($target, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
                 return false;
             }
 

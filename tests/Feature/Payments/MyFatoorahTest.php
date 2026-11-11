@@ -149,14 +149,14 @@ class MyFatoorahTest extends TestCase
                 'Data' => [
                     'InvoiceId' => 889900,
                     'PaymentURL' => 'https://portaltest.myfatoorah.com/Payment/Invoice/889900',
-                    'CustomerReference' => 'MF_' . $payment->id,
+                    'CustomerReference' => 'MF_'.$payment->id,
                 ],
             ], 200),
         ]);
 
         $session = $this->gateway->createSession($order, $payment, 'https://example.com/return', 'https://example.com/cancel');
 
-        $this->assertStringStartsWith('MF_' . $payment->id, $session->reference);
+        $this->assertStringStartsWith('MF_'.$payment->id, $session->reference);
         $this->assertSame('https://portaltest.myfatoorah.com/Payment/Invoice/889900', $session->redirectUrl);
 
         $cachedHandoff = Cache::get("myfatoorah:handoff:{$payment->id}");

@@ -171,7 +171,9 @@ export default function NewsletterAdmin({
     // Filter controls
     const [searchVal, setSearchVal] = useState(filters.search || '');
     const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
-    const [segmentFilter, setSegmentFilter] = useState(filters.segment || 'all');
+    const [segmentFilter, setSegmentFilter] = useState(
+        filters.segment || 'all',
+    );
 
     const handleFilterSubmit = (e: FormEvent) => {
         e.preventDefault();
@@ -190,7 +192,11 @@ export default function NewsletterAdmin({
         setSearchVal('');
         setStatusFilter('all');
         setSegmentFilter('all');
-        router.get(urls.index, {}, { preserveState: true, preserveScroll: true });
+        router.get(
+            urls.index,
+            {},
+            { preserveState: true, preserveScroll: true },
+        );
     };
 
     // Add subscriber form
@@ -225,7 +231,12 @@ export default function NewsletterAdmin({
         title: '',
         subject: '',
         preview_text: '',
-        target_type: 'all' as 'all' | 'active' | 'customers' | 'leads' | 'group',
+        target_type: 'all' as
+            | 'all'
+            | 'active'
+            | 'customers'
+            | 'leads'
+            | 'group',
         target_group: '',
         content_html: '',
     });
@@ -303,27 +314,35 @@ export default function NewsletterAdmin({
             campaignForm.setData((prev) => ({
                 ...prev,
                 title: prev.title || 'Flash Sale Announcement',
-                subject: prev.subject || '⚡ 48-Hour Weekend Flash Sale Starts Now',
+                subject:
+                    prev.subject || '⚡ 48-Hour Weekend Flash Sale Starts Now',
                 preview_text:
-                    prev.preview_text || 'Save up to 40% on curated bestsellers this weekend.',
+                    prev.preview_text ||
+                    'Save up to 40% on curated bestsellers this weekend.',
                 content_html: `<h2>Weekend Flash Sale is Live!</h2>\n<p>Hi {{name}},</p>\n<p>For a strictly limited time, enjoy exclusive savings of up to <strong>40% OFF</strong> across our most popular catalog collections.</p>\n<div style="background:#f4f4f5;border-radius:8px;padding:20px;margin:20px 0;text-align:center;">\n  <h3 style="margin-top:0;">Use Promo Code: FLASH40</h3>\n  <p style="margin-bottom:0;color:#71717a;">Valid on all eligible purchases through Sunday midnight.</p>\n</div>\n<p style="text-align:center;"><a href="{{store_name}}" style="display:inline-block;padding:14px 28px;background-color:#09090b;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:600;">Shop the Sale Now</a></p>`,
             }));
         } else if (type === 'vip') {
             campaignForm.setData((prev) => ({
                 ...prev,
                 title: prev.title || 'VIP Member Exclusive',
-                subject: prev.subject || '✨ A special thank you for our valued customer',
+                subject:
+                    prev.subject ||
+                    '✨ A special thank you for our valued customer',
                 preview_text:
-                    prev.preview_text || 'Early access to upcoming private collections.',
+                    prev.preview_text ||
+                    'Early access to upcoming private collections.',
                 content_html: `<h2>Private Early Access for VIPs</h2>\n<p>Dear {{name}},</p>\n<p>As one of our most valued patrons at {{store_name}}, you are receiving priority early access to our unreleased series before the public release next week.</p>\n<p>Your support means the world to our artisans and team. Click below to preview the catalog before stocks sell out:</p>\n<p><a href="{{store_name}}" style="display:inline-block;padding:12px 24px;background-color:#0ea5e9;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:600;">Access VIP Preview</a></p>`,
             }));
         } else {
             campaignForm.setData((prev) => ({
                 ...prev,
                 title: prev.title || 'Monthly Edition',
-                subject: prev.subject || '🗞️ What is new at {{store_name}} this month',
+                subject:
+                    prev.subject ||
+                    '🗞️ What is new at {{store_name}} this month',
                 preview_text:
-                    prev.preview_text || 'Stories, design notes, and new releases.',
+                    prev.preview_text ||
+                    'Stories, design notes, and new releases.',
                 content_html: `<h2>Stories & Discoveries</h2>\n<p>Hello {{name}},</p>\n<p>Welcome to this month's digest from {{store_name}}. We've been working behind the scenes on new designs and improving our customer experience.</p>\n<p>Here are the highlights:</p>\n<ul>\n  <li><strong>Craftsmanship & Sourcing:</strong> How we select each material.</li>\n  <li><strong>Community Spotlight:</strong> Real setups from our customers.</li>\n  <li><strong>Sneak Peek:</strong> What is coming in our next drop.</li>\n</ul>\n<p>Read the complete story on our storefront blog.</p>`,
             }));
         }
@@ -339,7 +358,7 @@ export default function NewsletterAdmin({
                     className="flex flex-1 flex-wrap items-center gap-3"
                 >
                     <div className="relative min-w-[220px] flex-1 sm:max-w-xs">
-                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Search className="absolute top-2.5 left-3 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder="Search by email or name..."
                             value={searchVal}
@@ -395,7 +414,10 @@ export default function NewsletterAdmin({
                             variant="outline"
                             size="sm"
                             onClick={() => {
-                                bulkGroupForm.setData('subscriber_ids', selectedIds);
+                                bulkGroupForm.setData(
+                                    'subscriber_ids',
+                                    selectedIds,
+                                );
                                 setBulkGroupOpen(true);
                             }}
                             className="border-primary/40 text-primary"
@@ -415,7 +437,8 @@ export default function NewsletterAdmin({
                     </Button>
                     <Button variant="outline" size="sm" asChild>
                         <a href={exportUrl}>
-                            <Download className="mr-1.5 h-3.5 w-3.5" /> Export CSV
+                            <Download className="mr-1.5 h-3.5 w-3.5" /> Export
+                            CSV
                         </a>
                     </Button>
                 </div>
@@ -431,13 +454,14 @@ export default function NewsletterAdmin({
                 <div className="overflow-hidden rounded-xl border bg-card shadow-xs">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm">
-                            <thead className="border-b bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                            <thead className="border-b bg-muted/40 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                                 <tr>
                                     <th className="w-10 px-4 py-3 text-center">
                                         <input
                                             type="checkbox"
                                             checked={
-                                                selectedIds.length === subscribers.length &&
+                                                selectedIds.length ===
+                                                    subscribers.length &&
                                                 subscribers.length > 0
                                             }
                                             onChange={toggleSelectAll}
@@ -446,15 +470,23 @@ export default function NewsletterAdmin({
                                         />
                                     </th>
                                     <th className="px-4 py-3">Subscriber</th>
-                                    <th className="px-4 py-3">Audience Groups</th>
-                                    <th className="px-4 py-3">Source & Consent</th>
+                                    <th className="px-4 py-3">
+                                        Audience Groups
+                                    </th>
+                                    <th className="px-4 py-3">
+                                        Source & Consent
+                                    </th>
                                     <th className="px-4 py-3">Status</th>
-                                    <th className="px-4 py-3 text-right">Actions</th>
+                                    <th className="px-4 py-3 text-right">
+                                        Actions
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border">
                                 {subscribers.map((s) => {
-                                    const isSelected = selectedIds.includes(s.id);
+                                    const isSelected = selectedIds.includes(
+                                        s.id,
+                                    );
                                     return (
                                         <tr
                                             key={s.id}
@@ -466,7 +498,9 @@ export default function NewsletterAdmin({
                                                 <input
                                                     type="checkbox"
                                                     checked={isSelected}
-                                                    onChange={() => toggleSelectOne(s.id)}
+                                                    onChange={() =>
+                                                        toggleSelectOne(s.id)
+                                                    }
                                                     className="h-4 w-4 rounded border-input"
                                                     aria-label={`Select ${s.email}`}
                                                 />
@@ -483,11 +517,15 @@ export default function NewsletterAdmin({
                                             </td>
                                             <td className="px-4 py-3">
                                                 <div className="flex flex-wrap items-center gap-1.5">
-                                                    {s.groups && s.groups.length > 0 ? (
+                                                    {s.groups &&
+                                                    s.groups.length > 0 ? (
                                                         s.groups.map((slug) => {
-                                                            const grp = groups.find(
-                                                                (g) => g.slug === slug,
-                                                            );
+                                                            const grp =
+                                                                groups.find(
+                                                                    (g) =>
+                                                                        g.slug ===
+                                                                        slug,
+                                                                );
                                                             return (
                                                                 <Badge
                                                                     key={slug}
@@ -501,7 +539,9 @@ export default function NewsletterAdmin({
                                                                             : undefined
                                                                     }
                                                                 >
-                                                                    {grp ? grp.name : slug}
+                                                                    {grp
+                                                                        ? grp.name
+                                                                        : slug}
                                                                 </Badge>
                                                             );
                                                         })
@@ -513,7 +553,9 @@ export default function NewsletterAdmin({
                                                     <button
                                                         type="button"
                                                         onClick={() =>
-                                                            openEditSubscriberGroups(s)
+                                                            openEditSubscriberGroups(
+                                                                s,
+                                                            )
                                                         }
                                                         className="inline-flex h-5 items-center rounded px-1.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
                                                         title="Assign or remove groups"
@@ -524,7 +566,7 @@ export default function NewsletterAdmin({
                                                 </div>
                                             </td>
                                             <td className="px-4 py-3 text-xs text-muted-foreground">
-                                                <div className="capitalize font-medium text-foreground">
+                                                <div className="font-medium text-foreground capitalize">
                                                     {s.source === 'order'
                                                         ? '🛍️ Customer (Order)'
                                                         : s.source === 'footer'
@@ -533,20 +575,23 @@ export default function NewsletterAdmin({
                                                             ? '🏠 Home page'
                                                             : '👤 Admin registered'}
                                                 </div>
-                                                <div>Since {s.consented_at}</div>
+                                                <div>
+                                                    Since {s.consented_at}
+                                                </div>
                                             </td>
                                             <td className="px-4 py-3">
                                                 {s.unsubscribed_at ? (
                                                     <Badge
                                                         variant="outline"
-                                                        className="border-destructive/30 text-destructive text-xs"
+                                                        className="border-destructive/30 text-xs text-destructive"
                                                     >
-                                                        Unsubscribed {s.unsubscribed_at}
+                                                        Unsubscribed{' '}
+                                                        {s.unsubscribed_at}
                                                     </Badge>
                                                 ) : (
                                                     <Badge
                                                         variant="outline"
-                                                        className="border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs"
+                                                        className="border-emerald-500/30 bg-emerald-500/10 text-xs text-emerald-600 dark:text-emerald-400"
                                                     >
                                                         ● Active
                                                     </Badge>
@@ -558,7 +603,9 @@ export default function NewsletterAdmin({
                                                         size="sm"
                                                         variant="ghost"
                                                         onClick={() =>
-                                                            openEditSubscriberGroups(s)
+                                                            openEditSubscriberGroups(
+                                                                s,
+                                                            )
                                                         }
                                                         className="h-8 px-2 text-xs"
                                                     >
@@ -568,7 +615,9 @@ export default function NewsletterAdmin({
                                                     <Form
                                                         action={s.delete_url}
                                                         method="delete"
-                                                        options={{ preserveScroll: true }}
+                                                        options={{
+                                                            preserveScroll: true,
+                                                        }}
                                                     >
                                                         <Button
                                                             size="sm"
@@ -589,9 +638,13 @@ export default function NewsletterAdmin({
                     </div>
                     <div className="flex items-center justify-between border-t bg-muted/20 px-4 py-3 text-xs text-muted-foreground">
                         <div>
-                            Showing {subscribers.length} of {counts.total} subscribers
+                            Showing {subscribers.length} of {counts.total}{' '}
+                            subscribers
                         </div>
-                        <div>Tip: Export carries full GDPR consent proofs and tokens.</div>
+                        <div>
+                            Tip: Export carries full GDPR consent proofs and
+                            tokens.
+                        </div>
                     </div>
                 </div>
             )}
@@ -603,10 +656,12 @@ export default function NewsletterAdmin({
         <div className="space-y-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h3 className="text-base font-semibold">Audience Segments & Groups</h3>
+                    <h3 className="text-base font-semibold">
+                        Audience Segments & Groups
+                    </h3>
                     <p className="text-sm text-muted-foreground">
-                        Group customers and leads into targeted segments to run focused marketing
-                        campaigns.
+                        Group customers and leads into targeted segments to run
+                        focused marketing campaigns.
                     </p>
                 </div>
                 <Button
@@ -616,7 +671,8 @@ export default function NewsletterAdmin({
                         setCreateGroupOpen(true);
                     }}
                 >
-                    <FolderPlus className="mr-1.5 h-4 w-4" /> Create Custom Group
+                    <FolderPlus className="mr-1.5 h-4 w-4" /> Create Custom
+                    Group
                 </Button>
             </div>
 
@@ -624,38 +680,43 @@ export default function NewsletterAdmin({
             <div className="grid gap-4 sm:grid-cols-3">
                 <Card className="border-l-4 border-l-blue-500 py-4 shadow-xs">
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-semibold flex items-center justify-between">
+                        <CardTitle className="flex items-center justify-between text-sm font-semibold">
                             <span>All Active Subscribers</span>
                             <Badge variant="secondary">{counts.active}</Badge>
                         </CardTitle>
                         <CardDescription className="text-xs">
-                            Dynamic segment including all valid subscribers with active consent.
+                            Dynamic segment including all valid subscribers with
+                            active consent.
                         </CardDescription>
                     </CardHeader>
                 </Card>
 
                 <Card className="border-l-4 border-l-emerald-500 py-4 shadow-xs">
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-semibold flex items-center justify-between">
+                        <CardTitle className="flex items-center justify-between text-sm font-semibold">
                             <span>Store Customers</span>
-                            <Badge variant="secondary">{counts.customers}</Badge>
+                            <Badge variant="secondary">
+                                {counts.customers}
+                            </Badge>
                         </CardTitle>
                         <CardDescription className="text-xs">
-                            Subscribers converted directly during checkout and purchase.
+                            Subscribers converted directly during checkout and
+                            purchase.
                         </CardDescription>
                     </CardHeader>
                 </Card>
 
                 <Card className="border-l-4 border-l-purple-500 py-4 shadow-xs">
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-semibold flex items-center justify-between">
+                        <CardTitle className="flex items-center justify-between text-sm font-semibold">
                             <span>Storefront Leads</span>
                             <Badge variant="secondary">
                                 {Math.max(0, counts.active - counts.customers)}
                             </Badge>
                         </CardTitle>
                         <CardDescription className="text-xs">
-                            Visitors who signed up via home banner or footer newsletter blocks.
+                            Visitors who signed up via home banner or footer
+                            newsletter blocks.
                         </CardDescription>
                     </CardHeader>
                 </Card>
@@ -664,15 +725,19 @@ export default function NewsletterAdmin({
             {/* Custom Groups Table */}
             <div className="rounded-xl border bg-card shadow-xs">
                 <div className="border-b px-4 py-3">
-                    <h4 className="text-sm font-medium">Custom Audience Groups</h4>
+                    <h4 className="text-sm font-medium">
+                        Custom Audience Groups
+                    </h4>
                 </div>
                 {groups.length === 0 ? (
                     <div className="p-8 text-center">
-                        <Tag className="mx-auto h-8 w-8 text-muted-foreground/50 mb-2" />
-                        <h4 className="text-sm font-medium">No custom groups created yet</h4>
-                        <p className="text-xs text-muted-foreground max-w-sm mx-auto mt-1 mb-4">
-                            Organize your audience by interest, VIP status, seasonal campaigns, or
-                            loyalty tiers.
+                        <Tag className="mx-auto mb-2 h-8 w-8 text-muted-foreground/50" />
+                        <h4 className="text-sm font-medium">
+                            No custom groups created yet
+                        </h4>
+                        <p className="mx-auto mt-1 mb-4 max-w-sm text-xs text-muted-foreground">
+                            Organize your audience by interest, VIP status,
+                            seasonal campaigns, or loyalty tiers.
                         </p>
                         <Button
                             size="sm"
@@ -682,52 +747,72 @@ export default function NewsletterAdmin({
                                 setCreateGroupOpen(true);
                             }}
                         >
-                            <Plus className="mr-1 h-3.5 w-3.5" /> Create your first group
+                            <Plus className="mr-1 h-3.5 w-3.5" /> Create your
+                            first group
                         </Button>
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm">
-                            <thead className="border-b bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                            <thead className="border-b bg-muted/40 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                                 <tr>
                                     <th className="px-4 py-3">Group Name</th>
-                                    <th className="px-4 py-3">Slug Identifier</th>
+                                    <th className="px-4 py-3">
+                                        Slug Identifier
+                                    </th>
                                     <th className="px-4 py-3">Description</th>
-                                    <th className="px-4 py-3 text-center">Subscribers</th>
-                                    <th className="px-4 py-3 text-right">Actions</th>
+                                    <th className="px-4 py-3 text-center">
+                                        Subscribers
+                                    </th>
+                                    <th className="px-4 py-3 text-right">
+                                        Actions
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border">
                                 {groups.map((g) => (
-                                    <tr key={g.id} className="hover:bg-muted/30">
+                                    <tr
+                                        key={g.id}
+                                        className="hover:bg-muted/30"
+                                    >
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-2">
                                                 <span
-                                                    className="h-3.5 w-3.5 rounded-full shrink-0 shadow-xs"
-                                                    style={{ backgroundColor: g.color }}
+                                                    className="h-3.5 w-3.5 shrink-0 rounded-full shadow-xs"
+                                                    style={{
+                                                        backgroundColor:
+                                                            g.color,
+                                                    }}
                                                 />
                                                 <span className="font-medium text-foreground">
                                                     {g.name}
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="px-4 py-3 text-xs font-mono text-muted-foreground">
+                                        <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
                                             {g.slug}
                                         </td>
-                                        <td className="px-4 py-3 text-xs text-muted-foreground max-w-xs truncate">
+                                        <td className="max-w-xs truncate px-4 py-3 text-xs text-muted-foreground">
                                             {g.description || '—'}
                                         </td>
                                         <td className="px-4 py-3 text-center">
-                                            <Badge variant="secondary" className="font-normal">
+                                            <Badge
+                                                variant="secondary"
+                                                className="font-normal"
+                                            >
                                                 {g.subscribers_count} member
-                                                {g.subscribers_count !== 1 ? 's' : ''}
+                                                {g.subscribers_count !== 1
+                                                    ? 's'
+                                                    : ''}
                                             </Badge>
                                         </td>
                                         <td className="px-4 py-3 text-right">
                                             <Form
                                                 action={g.delete_url}
                                                 method="delete"
-                                                options={{ preserveScroll: true }}
+                                                options={{
+                                                    preserveScroll: true,
+                                                }}
                                             >
                                                 <Button
                                                     size="sm"
@@ -754,10 +839,12 @@ export default function NewsletterAdmin({
         <div className="space-y-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h3 className="text-base font-semibold">Email Campaigns & Broadcasts</h3>
+                    <h3 className="text-base font-semibold">
+                        Email Campaigns & Broadcasts
+                    </h3>
                     <p className="text-sm text-muted-foreground">
-                        Compose responsive emails, preview in real time, and broadcast them to targeted
-                        customer segments.
+                        Compose responsive emails, preview in real time, and
+                        broadcast them to targeted customer segments.
                     </p>
                 </div>
                 <Button size="sm" onClick={() => openCreateCampaignModal()}>
@@ -770,7 +857,10 @@ export default function NewsletterAdmin({
                     title="No marketing campaigns yet"
                     description="Create your first email campaign to announce product launches, seasonal flash sales, or news updates."
                     action={
-                        <Button size="sm" onClick={() => openCreateCampaignModal()}>
+                        <Button
+                            size="sm"
+                            onClick={() => openCreateCampaignModal()}
+                        >
                             <Plus className="mr-1.5 h-4 w-4" /> Create Campaign
                         </Button>
                     }
@@ -788,7 +878,10 @@ export default function NewsletterAdmin({
                                     : `Group: ${groups.find((g) => g.slug === c.target_group)?.name || c.target_group}`;
 
                         return (
-                            <Card key={c.id} className="py-4 shadow-xs hover:border-primary/30 transition-colors">
+                            <Card
+                                key={c.id}
+                                className="py-4 shadow-xs transition-colors hover:border-primary/30"
+                            >
                                 <CardHeader className="pb-3">
                                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                                         <div>
@@ -797,39 +890,50 @@ export default function NewsletterAdmin({
                                                     {c.title}
                                                 </CardTitle>
                                                 {c.status === 'draft' && (
-                                                    <Badge variant="secondary" className="text-xs">
+                                                    <Badge
+                                                        variant="secondary"
+                                                        className="text-xs"
+                                                    >
                                                         Draft
                                                     </Badge>
                                                 )}
                                                 {c.status === 'sent' && (
                                                     <Badge
                                                         variant="outline"
-                                                        className="border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs"
+                                                        className="border-emerald-500/30 bg-emerald-500/10 text-xs text-emerald-600 dark:text-emerald-400"
                                                     >
-                                                        <CheckCircle2 className="mr-1 h-3 w-3 inline" /> Sent
+                                                        <CheckCircle2 className="mr-1 inline h-3 w-3" />{' '}
+                                                        Sent
                                                     </Badge>
                                                 )}
                                                 {c.status === 'failed' && (
                                                     <Badge
                                                         variant="outline"
-                                                        className="border-destructive/30 bg-destructive/10 text-destructive text-xs"
+                                                        className="border-destructive/30 bg-destructive/10 text-xs text-destructive"
                                                     >
-                                                        <XCircle className="mr-1 h-3 w-3 inline" /> Failed
+                                                        <XCircle className="mr-1 inline h-3 w-3" />{' '}
+                                                        Failed
                                                     </Badge>
                                                 )}
                                             </div>
-                                            <CardDescription className="text-xs mt-1">
-                                                Subject: <strong className="text-foreground">{c.subject}</strong>
+                                            <CardDescription className="mt-1 text-xs">
+                                                Subject:{' '}
+                                                <strong className="text-foreground">
+                                                    {c.subject}
+                                                </strong>
                                                 {c.preview_text && (
-                                                    <span className="text-muted-foreground ml-2">
+                                                    <span className="ml-2 text-muted-foreground">
                                                         · {c.preview_text}
                                                     </span>
                                                 )}
                                             </CardDescription>
                                         </div>
 
-                                        <div className="flex items-center gap-2 shrink-0">
-                                            <Badge variant="outline" className="text-xs font-normal">
+                                        <div className="flex shrink-0 items-center gap-2">
+                                            <Badge
+                                                variant="outline"
+                                                className="text-xs font-normal"
+                                            >
                                                 Target: {targetLabel}
                                             </Badge>
                                         </div>
@@ -841,7 +945,11 @@ export default function NewsletterAdmin({
                                         {c.status === 'sent' && (
                                             <>
                                                 <div>
-                                                    Sent to: <strong className="text-foreground">{c.sent_count}</strong> recipient(s)
+                                                    Sent to:{' '}
+                                                    <strong className="text-foreground">
+                                                        {c.sent_count}
+                                                    </strong>{' '}
+                                                    recipient(s)
                                                 </div>
                                                 {c.failed_count > 0 && (
                                                     <div className="text-destructive">
@@ -849,15 +957,25 @@ export default function NewsletterAdmin({
                                                     </div>
                                                 )}
                                                 <div>
-                                                    Sent on: {c.sent_at ? new Date(c.sent_at).toLocaleString() : '—'}
+                                                    Sent on:{' '}
+                                                    {c.sent_at
+                                                        ? new Date(
+                                                              c.sent_at,
+                                                          ).toLocaleString()
+                                                        : '—'}
                                                 </div>
                                             </>
                                         )}
                                         {c.status === 'draft' && (
-                                            <div>Created on {new Date(c.created_at).toLocaleDateString()}</div>
+                                            <div>
+                                                Created on{' '}
+                                                {new Date(
+                                                    c.created_at,
+                                                ).toLocaleDateString()}
+                                            </div>
                                         )}
                                         {c.last_error && (
-                                            <div className="text-destructive flex items-center gap-1">
+                                            <div className="flex items-center gap-1 text-destructive">
                                                 <AlertCircle className="h-3.5 w-3.5" />
                                                 <span>{c.last_error}</span>
                                             </div>
@@ -865,15 +983,18 @@ export default function NewsletterAdmin({
                                     </div>
                                 </CardContent>
 
-                                <CardFooter className="pt-2 border-t flex flex-wrap items-center justify-between gap-2">
+                                <CardFooter className="flex flex-wrap items-center justify-between gap-2 border-t pt-2">
                                     <div className="flex items-center gap-2">
                                         <Button
                                             size="sm"
                                             variant="outline"
-                                            onClick={() => setPreviewCampaign(c)}
+                                            onClick={() =>
+                                                setPreviewCampaign(c)
+                                            }
                                             className="h-8 text-xs"
                                         >
-                                            <Eye className="mr-1.5 h-3.5 w-3.5" /> Preview HTML
+                                            <Eye className="mr-1.5 h-3.5 w-3.5" />{' '}
+                                            Preview HTML
                                         </Button>
                                         <Button
                                             size="sm"
@@ -887,7 +1008,8 @@ export default function NewsletterAdmin({
                                             }}
                                             className="h-8 text-xs"
                                         >
-                                            <Send className="mr-1.5 h-3.5 w-3.5" /> Send Test
+                                            <Send className="mr-1.5 h-3.5 w-3.5" />{' '}
+                                            Send Test
                                         </Button>
                                     </div>
 
@@ -895,18 +1017,24 @@ export default function NewsletterAdmin({
                                         <Button
                                             size="sm"
                                             variant="ghost"
-                                            onClick={() => openCreateCampaignModal(c)}
+                                            onClick={() =>
+                                                openCreateCampaignModal(c)
+                                            }
                                             className="h-8 text-xs"
                                         >
                                             Edit
                                         </Button>
                                         <Button
                                             size="sm"
-                                            onClick={() => setBroadcastConfirmCampaign(c)}
-                                            className="h-8 text-xs bg-primary text-primary-foreground"
+                                            onClick={() =>
+                                                setBroadcastConfirmCampaign(c)
+                                            }
+                                            className="h-8 bg-primary text-xs text-primary-foreground"
                                         >
                                             <Send className="mr-1.5 h-3.5 w-3.5" />
-                                            {c.status === 'sent' ? 'Resend Broadcast' : 'Broadcast Now'}
+                                            {c.status === 'sent'
+                                                ? 'Resend Broadcast'
+                                                : 'Broadcast Now'}
                                         </Button>
                                         <Form
                                             action={c.delete_url}
@@ -934,30 +1062,35 @@ export default function NewsletterAdmin({
 
     // TAB 4: SMTP CONFIGURATION
     const smtpTab = (
-        <div className="space-y-6 max-w-4xl">
+        <div className="max-w-4xl space-y-6">
             {/* Status overview */}
             <Card className="py-4 shadow-xs">
                 <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                         <div className="space-y-1">
-                            <CardTitle className="text-base flex items-center gap-2">
+                            <CardTitle className="flex items-center gap-2 text-base">
                                 <span>App Core SMTP Connection</span>
                                 {smtp.is_connected ? (
                                     <Badge
                                         variant="outline"
-                                        className="border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-normal"
+                                        className="border-emerald-500/30 bg-emerald-500/10 text-xs font-normal text-emerald-600 dark:text-emerald-400"
                                     >
                                         ● Connected ({smtp.host}:{smtp.port})
                                     </Badge>
                                 ) : (
-                                    <Badge variant="secondary" className="text-xs font-normal">
+                                    <Badge
+                                        variant="secondary"
+                                        className="text-xs font-normal"
+                                    >
                                         Server Default Mailer
                                     </Badge>
                                 )}
                             </CardTitle>
                             <CardDescription className="text-xs">
-                                Modrix Commerce connects directly to the platform's core SMTP service
-                                (<code>App\Core\Settings\MailSettings</code>) for reliable transactional and marketing delivery.
+                                Modrix Commerce connects directly to the
+                                platform's core SMTP service (
+                                <code>App\Core\Settings\MailSettings</code>) for
+                                reliable transactional and marketing delivery.
                             </CardDescription>
                         </div>
                     </div>
@@ -973,9 +1106,13 @@ export default function NewsletterAdmin({
             >
                 <Card className="py-4 shadow-xs">
                     <CardHeader>
-                        <CardTitle className="text-base">SMTP Server Configuration</CardTitle>
+                        <CardTitle className="text-base">
+                            SMTP Server Configuration
+                        </CardTitle>
                         <CardDescription className="text-xs">
-                            Enter your mail provider's SMTP credentials (e.g. Amazon SES, Postmark, Mailgun, SendGrid, Mailpit, or custom SMTP).
+                            Enter your mail provider's SMTP credentials (e.g.
+                            Amazon SES, Postmark, Mailgun, SendGrid, Mailpit, or
+                            custom SMTP).
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -989,11 +1126,18 @@ export default function NewsletterAdmin({
                                     id="driver"
                                     value={smtpForm.data.driver}
                                     onChange={(e) =>
-                                        smtpForm.setData('driver', e.target.value as 'smtp' | 'env')
+                                        smtpForm.setData(
+                                            'driver',
+                                            e.target.value as 'smtp' | 'env',
+                                        )
                                     }
                                 >
-                                    <option value="smtp">Custom SMTP Server (Recommended)</option>
-                                    <option value="env">Server Default (.env)</option>
+                                    <option value="smtp">
+                                        Custom SMTP Server (Recommended)
+                                    </option>
+                                    <option value="env">
+                                        Server Default (.env)
+                                    </option>
                                 </NativeSelect>
                             </FormField>
 
@@ -1008,13 +1152,20 @@ export default function NewsletterAdmin({
                                     onChange={(e) =>
                                         smtpForm.setData(
                                             'encryption',
-                                            e.target.value as 'tls' | 'ssl' | 'none',
+                                            e.target.value as
+                                                | 'tls'
+                                                | 'ssl'
+                                                | 'none',
                                         )
                                     }
                                 >
-                                    <option value="tls">TLS (STARTTLS - Port 587)</option>
+                                    <option value="tls">
+                                        TLS (STARTTLS - Port 587)
+                                    </option>
                                     <option value="ssl">SSL (Port 465)</option>
-                                    <option value="none">None (Local / Development)</option>
+                                    <option value="none">
+                                        None (Local / Development)
+                                    </option>
                                 </NativeSelect>
                             </FormField>
                         </div>
@@ -1030,7 +1181,12 @@ export default function NewsletterAdmin({
                                     <Input
                                         id="host"
                                         value={smtpForm.data.host}
-                                        onChange={(e) => smtpForm.setData('host', e.target.value)}
+                                        onChange={(e) =>
+                                            smtpForm.setData(
+                                                'host',
+                                                e.target.value,
+                                            )
+                                        }
                                         placeholder="smtp.example.com"
                                     />
                                 </FormField>
@@ -1040,14 +1196,21 @@ export default function NewsletterAdmin({
                                 <FormField
                                     id="port"
                                     label="Port"
-                                    error={smtpForm.errors.port ? String(smtpForm.errors.port) : undefined}
+                                    error={
+                                        smtpForm.errors.port
+                                            ? String(smtpForm.errors.port)
+                                            : undefined
+                                    }
                                 >
                                     <Input
                                         id="port"
                                         type="number"
                                         value={smtpForm.data.port}
                                         onChange={(e) =>
-                                            smtpForm.setData('port', Number(e.target.value))
+                                            smtpForm.setData(
+                                                'port',
+                                                Number(e.target.value),
+                                            )
                                         }
                                     />
                                 </FormField>
@@ -1064,7 +1227,12 @@ export default function NewsletterAdmin({
                                     id="username"
                                     autoComplete="off"
                                     value={smtpForm.data.username}
-                                    onChange={(e) => smtpForm.setData('username', e.target.value)}
+                                    onChange={(e) =>
+                                        smtpForm.setData(
+                                            'username',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="apikey or user@example.com"
                                 />
                             </FormField>
@@ -1084,8 +1252,15 @@ export default function NewsletterAdmin({
                                     type="password"
                                     autoComplete="new-password"
                                     value={smtpForm.data.password}
-                                    onChange={(e) => smtpForm.setData('password', e.target.value)}
-                                    placeholder={smtp.has_password ? '••••••••••••' : ''}
+                                    onChange={(e) =>
+                                        smtpForm.setData(
+                                            'password',
+                                            e.target.value,
+                                        )
+                                    }
+                                    placeholder={
+                                        smtp.has_password ? '••••••••••••' : ''
+                                    }
                                 />
                             </FormField>
                         </div>
@@ -1102,7 +1277,10 @@ export default function NewsletterAdmin({
                                     type="email"
                                     value={smtpForm.data.from_address}
                                     onChange={(e) =>
-                                        smtpForm.setData('from_address', e.target.value)
+                                        smtpForm.setData(
+                                            'from_address',
+                                            e.target.value,
+                                        )
                                     }
                                     placeholder="newsletter@yourstore.com"
                                 />
@@ -1117,7 +1295,12 @@ export default function NewsletterAdmin({
                                 <Input
                                     id="from_name"
                                     value={smtpForm.data.from_name}
-                                    onChange={(e) => smtpForm.setData('from_name', e.target.value)}
+                                    onChange={(e) =>
+                                        smtpForm.setData(
+                                            'from_name',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="Your Store Name"
                                 />
                             </FormField>
@@ -1133,15 +1316,19 @@ export default function NewsletterAdmin({
                                 id="reply_to"
                                 type="email"
                                 value={smtpForm.data.reply_to}
-                                onChange={(e) => smtpForm.setData('reply_to', e.target.value)}
+                                onChange={(e) =>
+                                    smtpForm.setData('reply_to', e.target.value)
+                                }
                                 placeholder="support@yourstore.com"
                             />
                         </FormField>
                     </CardContent>
 
-                    <CardFooter className="border-t pt-4 flex justify-end">
+                    <CardFooter className="flex justify-end border-t pt-4">
                         <Button type="submit" disabled={smtpForm.processing}>
-                            {smtpForm.processing ? 'Saving...' : 'Save App Core SMTP Settings'}
+                            {smtpForm.processing
+                                ? 'Saving...'
+                                : 'Save App Core SMTP Settings'}
                         </Button>
                     </CardFooter>
                 </Card>
@@ -1156,13 +1343,17 @@ export default function NewsletterAdmin({
             >
                 <Card className="py-4 shadow-xs">
                     <CardHeader>
-                        <CardTitle className="text-base">Send SMTP Test Email</CardTitle>
+                        <CardTitle className="text-base">
+                            Send SMTP Test Email
+                        </CardTitle>
                         <CardDescription className="text-xs">
-                            Verify that your App Core SMTP configuration connects cleanly and delivers emails before running campaigns.
+                            Verify that your App Core SMTP configuration
+                            connects cleanly and delivers emails before running
+                            campaigns.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className="flex flex-col gap-3 sm:flex-row sm:items-end max-w-md">
+                        <div className="flex max-w-md flex-col gap-3 sm:flex-row sm:items-end">
                             <div className="flex-1">
                                 <FormField
                                     id="test_to"
@@ -1173,7 +1364,12 @@ export default function NewsletterAdmin({
                                         id="test_to"
                                         type="email"
                                         value={smtpTestForm.data.to}
-                                        onChange={(e) => smtpTestForm.setData('to', e.target.value)}
+                                        onChange={(e) =>
+                                            smtpTestForm.setData(
+                                                'to',
+                                                e.target.value,
+                                            )
+                                        }
                                         placeholder="admin@example.com"
                                         required
                                     />
@@ -1185,7 +1381,9 @@ export default function NewsletterAdmin({
                                 disabled={smtpTestForm.processing}
                             >
                                 <Send className="mr-1.5 h-3.5 w-3.5" />
-                                {smtpTestForm.processing ? 'Delivering...' : 'Send Test Email'}
+                                {smtpTestForm.processing
+                                    ? 'Delivering...'
+                                    : 'Send Test Email'}
                             </Button>
                         </div>
                     </CardContent>
@@ -1207,70 +1405,80 @@ export default function NewsletterAdmin({
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
                     <div className="rounded-xl border bg-card p-4 shadow-xs">
                         <div className="flex items-center justify-between text-muted-foreground">
-                            <span className="text-xs font-medium uppercase tracking-wider">
+                            <span className="text-xs font-medium tracking-wider uppercase">
                                 Subscribers
                             </span>
                             <Users className="h-4 w-4" />
                         </div>
-                        <div className="mt-2 text-2xl font-bold">{counts.total}</div>
-                        <div className="text-xs text-muted-foreground mt-0.5">
+                        <div className="mt-2 text-2xl font-bold">
+                            {counts.total}
+                        </div>
+                        <div className="mt-0.5 text-xs text-muted-foreground">
                             {counts.active} active
                         </div>
                     </div>
 
                     <div className="rounded-xl border bg-card p-4 shadow-xs">
                         <div className="flex items-center justify-between text-muted-foreground">
-                            <span className="text-xs font-medium uppercase tracking-wider">
+                            <span className="text-xs font-medium tracking-wider uppercase">
                                 Active Rate
                             </span>
                             <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                         </div>
                         <div className="mt-2 text-2xl font-bold">
                             {counts.total > 0
-                                ? Math.round((counts.active / counts.total) * 100)
+                                ? Math.round(
+                                      (counts.active / counts.total) * 100,
+                                  )
                                 : 100}
                             %
                         </div>
-                        <div className="text-xs text-muted-foreground mt-0.5">
+                        <div className="mt-0.5 text-xs text-muted-foreground">
                             {counts.unsubscribed} unsubscribed
                         </div>
                     </div>
 
                     <div className="rounded-xl border bg-card p-4 shadow-xs">
                         <div className="flex items-center justify-between text-muted-foreground">
-                            <span className="text-xs font-medium uppercase tracking-wider">
+                            <span className="text-xs font-medium tracking-wider uppercase">
                                 Store Buyers
                             </span>
                             <Tag className="h-4 w-4 text-blue-500" />
                         </div>
-                        <div className="mt-2 text-2xl font-bold">{counts.customers}</div>
-                        <div className="text-xs text-muted-foreground mt-0.5">
+                        <div className="mt-2 text-2xl font-bold">
+                            {counts.customers}
+                        </div>
+                        <div className="mt-0.5 text-xs text-muted-foreground">
                             From order checkouts
                         </div>
                     </div>
 
                     <div className="rounded-xl border bg-card p-4 shadow-xs">
                         <div className="flex items-center justify-between text-muted-foreground">
-                            <span className="text-xs font-medium uppercase tracking-wider">
+                            <span className="text-xs font-medium tracking-wider uppercase">
                                 Groups
                             </span>
                             <FolderPlus className="h-4 w-4 text-purple-500" />
                         </div>
-                        <div className="mt-2 text-2xl font-bold">{groups.length}</div>
-                        <div className="text-xs text-muted-foreground mt-0.5">
+                        <div className="mt-2 text-2xl font-bold">
+                            {groups.length}
+                        </div>
+                        <div className="mt-0.5 text-xs text-muted-foreground">
                             Custom segments
                         </div>
                     </div>
 
                     <div className="rounded-xl border bg-card p-4 shadow-xs">
                         <div className="flex items-center justify-between text-muted-foreground">
-                            <span className="text-xs font-medium uppercase tracking-wider">
+                            <span className="text-xs font-medium tracking-wider uppercase">
                                 Campaigns
                             </span>
                             <Mail className="h-4 w-4 text-amber-500" />
                         </div>
-                        <div className="mt-2 text-2xl font-bold">{campaigns.length}</div>
-                        <div className="text-xs text-muted-foreground mt-0.5">
+                        <div className="mt-2 text-2xl font-bold">
+                            {campaigns.length}
+                        </div>
+                        <div className="mt-0.5 text-xs text-muted-foreground">
                             Broadcasts created
                         </div>
                     </div>
@@ -1284,7 +1492,8 @@ export default function NewsletterAdmin({
                             id: 'subscribers',
                             label: (
                                 <span className="flex items-center gap-1.5">
-                                    <Users className="h-4 w-4" /> Subscribers ({counts.total})
+                                    <Users className="h-4 w-4" /> Subscribers (
+                                    {counts.total})
                                 </span>
                             ),
                             content: subscribersTab,
@@ -1293,7 +1502,8 @@ export default function NewsletterAdmin({
                             id: 'groups',
                             label: (
                                 <span className="flex items-center gap-1.5">
-                                    <Tag className="h-4 w-4" /> Audience Groups ({groups.length})
+                                    <Tag className="h-4 w-4" /> Audience Groups
+                                    ({groups.length})
                                 </span>
                             ),
                             content: groupsTab,
@@ -1302,7 +1512,8 @@ export default function NewsletterAdmin({
                             id: 'campaigns',
                             label: (
                                 <span className="flex items-center gap-1.5">
-                                    <Mail className="h-4 w-4" /> Campaigns ({campaigns.length})
+                                    <Mail className="h-4 w-4" /> Campaigns (
+                                    {campaigns.length})
                                 </span>
                             ),
                             content: campaignsTab,
@@ -1311,7 +1522,8 @@ export default function NewsletterAdmin({
                             id: 'smtp',
                             label: (
                                 <span className="flex items-center gap-1.5">
-                                    <Settings className="h-4 w-4" /> SMTP Settings
+                                    <Settings className="h-4 w-4" /> SMTP
+                                    Settings
                                     {smtp.is_connected && (
                                         <span className="h-2 w-2 rounded-full bg-emerald-500" />
                                     )}
@@ -1323,19 +1535,24 @@ export default function NewsletterAdmin({
                 />
 
                 {/* MODAL: ADD SUBSCRIBER */}
-                <Dialog open={addSubscriberOpen} onOpenChange={setAddSubscriberOpen}>
+                <Dialog
+                    open={addSubscriberOpen}
+                    onOpenChange={setAddSubscriberOpen}
+                >
                     <DialogContent className="sm:max-w-md">
                         <DialogHeader>
                             <DialogTitle>Add Subscriber</DialogTitle>
                             <DialogDescription>
-                                Manually register a new subscriber with explicit consent.
+                                Manually register a new subscriber with explicit
+                                consent.
                             </DialogDescription>
                         </DialogHeader>
                         <form
                             onSubmit={(e) => {
                                 e.preventDefault();
                                 addSubForm.post(urls.store_subscriber, {
-                                    onSuccess: () => setAddSubscriberOpen(false),
+                                    onSuccess: () =>
+                                        setAddSubscriberOpen(false),
                                 });
                             }}
                             className="space-y-4"
@@ -1350,7 +1567,12 @@ export default function NewsletterAdmin({
                                     type="email"
                                     required
                                     value={addSubForm.data.email}
-                                    onChange={(e) => addSubForm.setData('email', e.target.value)}
+                                    onChange={(e) =>
+                                        addSubForm.setData(
+                                            'email',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="customer@example.com"
                                 />
                             </FormField>
@@ -1363,7 +1585,12 @@ export default function NewsletterAdmin({
                                 <Input
                                     id="new_sub_name"
                                     value={addSubForm.data.name}
-                                    onChange={(e) => addSubForm.setData('name', e.target.value)}
+                                    onChange={(e) =>
+                                        addSubForm.setData(
+                                            'name',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="Jane Doe"
                                 />
                             </FormField>
@@ -1373,18 +1600,30 @@ export default function NewsletterAdmin({
                                     <Label>Assign Audience Groups</Label>
                                     <div className="flex flex-wrap gap-2">
                                         {groups.map((g) => {
-                                            const checked = addSubForm.data.groups.includes(g.slug);
+                                            const checked =
+                                                addSubForm.data.groups.includes(
+                                                    g.slug,
+                                                );
                                             return (
                                                 <button
                                                     key={g.id}
                                                     type="button"
                                                     onClick={() => {
-                                                        const cur = addSubForm.data.groups;
+                                                        const cur =
+                                                            addSubForm.data
+                                                                .groups;
                                                         addSubForm.setData(
                                                             'groups',
                                                             checked
-                                                                ? cur.filter((x) => x !== g.slug)
-                                                                : [...cur, g.slug],
+                                                                ? cur.filter(
+                                                                      (x) =>
+                                                                          x !==
+                                                                          g.slug,
+                                                                  )
+                                                                : [
+                                                                      ...cur,
+                                                                      g.slug,
+                                                                  ],
                                                         );
                                                     }}
                                                     className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${
@@ -1409,8 +1648,13 @@ export default function NewsletterAdmin({
                                 >
                                     Cancel
                                 </Button>
-                                <Button type="submit" disabled={addSubForm.processing}>
-                                    {addSubForm.processing ? 'Saving...' : 'Add Subscriber'}
+                                <Button
+                                    type="submit"
+                                    disabled={addSubForm.processing}
+                                >
+                                    {addSubForm.processing
+                                        ? 'Saving...'
+                                        : 'Add Subscriber'}
                                 </Button>
                             </DialogFooter>
                         </form>
@@ -1420,7 +1664,9 @@ export default function NewsletterAdmin({
                 {/* MODAL: EDIT SUBSCRIBER GROUPS */}
                 <Dialog
                     open={editGroupsSubscriber !== null}
-                    onOpenChange={(open) => !open && setEditGroupsSubscriber(null)}
+                    onOpenChange={(open) =>
+                        !open && setEditGroupsSubscriber(null)
+                    }
                 >
                     <DialogContent className="sm:max-w-md">
                         <DialogHeader>
@@ -1440,7 +1686,8 @@ export default function NewsletterAdmin({
                                     editSubGroupsForm.post(
                                         editGroupsSubscriber.update_groups_url,
                                         {
-                                            onSuccess: () => setEditGroupsSubscriber(null),
+                                            onSuccess: () =>
+                                                setEditGroupsSubscriber(null),
                                         },
                                     );
                                 }}
@@ -1448,18 +1695,20 @@ export default function NewsletterAdmin({
                             >
                                 {groups.length === 0 ? (
                                     <p className="text-xs text-muted-foreground">
-                                        No custom groups created yet. Create groups in the
-                                        "Audience Groups" tab.
+                                        No custom groups created yet. Create
+                                        groups in the "Audience Groups" tab.
                                     </p>
                                 ) : (
                                     <div className="grid gap-2">
                                         {groups.map((g) => {
                                             const checked =
-                                                editSubGroupsForm.data.groups.includes(g.slug);
+                                                editSubGroupsForm.data.groups.includes(
+                                                    g.slug,
+                                                );
                                             return (
                                                 <label
                                                     key={g.id}
-                                                    className={`flex items-center justify-between rounded-lg border p-2.5 text-sm cursor-pointer transition-colors ${
+                                                    className={`flex cursor-pointer items-center justify-between rounded-lg border p-2.5 text-sm transition-colors ${
                                                         checked
                                                             ? 'border-primary/50 bg-primary/5'
                                                             : 'hover:bg-muted/30'
@@ -1468,7 +1717,10 @@ export default function NewsletterAdmin({
                                                     <div className="flex items-center gap-2">
                                                         <span
                                                             className="h-3 w-3 rounded-full"
-                                                            style={{ backgroundColor: g.color }}
+                                                            style={{
+                                                                backgroundColor:
+                                                                    g.color,
+                                                            }}
                                                         />
                                                         <span className="font-medium">
                                                             {g.name}
@@ -1479,14 +1731,21 @@ export default function NewsletterAdmin({
                                                         checked={checked}
                                                         onChange={() => {
                                                             const cur =
-                                                                editSubGroupsForm.data.groups;
+                                                                editSubGroupsForm
+                                                                    .data
+                                                                    .groups;
                                                             editSubGroupsForm.setData(
                                                                 'groups',
                                                                 checked
                                                                     ? cur.filter(
-                                                                          (x) => x !== g.slug,
+                                                                          (x) =>
+                                                                              x !==
+                                                                              g.slug,
                                                                       )
-                                                                    : [...cur, g.slug],
+                                                                    : [
+                                                                          ...cur,
+                                                                          g.slug,
+                                                                      ],
                                                             );
                                                         }}
                                                         className="h-4 w-4 rounded border-input"
@@ -1501,11 +1760,16 @@ export default function NewsletterAdmin({
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        onClick={() => setEditGroupsSubscriber(null)}
+                                        onClick={() =>
+                                            setEditGroupsSubscriber(null)
+                                        }
                                     >
                                         Cancel
                                     </Button>
-                                    <Button type="submit" disabled={editSubGroupsForm.processing}>
+                                    <Button
+                                        type="submit"
+                                        disabled={editSubGroupsForm.processing}
+                                    >
                                         Save Groups
                                     </Button>
                                 </DialogFooter>
@@ -1520,8 +1784,8 @@ export default function NewsletterAdmin({
                         <DialogHeader>
                             <DialogTitle>Bulk Tag Subscribers</DialogTitle>
                             <DialogDescription>
-                                Add or remove a group tag for {selectedIds.length} selected
-                                subscriber(s).
+                                Add or remove a group tag for{' '}
+                                {selectedIds.length} selected subscriber(s).
                             </DialogDescription>
                         </DialogHeader>
                         <form
@@ -1547,8 +1811,12 @@ export default function NewsletterAdmin({
                                         )
                                     }
                                 >
-                                    <option value="add">Add tag to selected</option>
-                                    <option value="remove">Remove tag from selected</option>
+                                    <option value="add">
+                                        Add tag to selected
+                                    </option>
+                                    <option value="remove">
+                                        Remove tag from selected
+                                    </option>
                                 </NativeSelect>
                             </FormField>
 
@@ -1557,7 +1825,10 @@ export default function NewsletterAdmin({
                                     id="bulk_group"
                                     value={bulkGroupForm.data.group_slug}
                                     onChange={(e) =>
-                                        bulkGroupForm.setData('group_slug', e.target.value)
+                                        bulkGroupForm.setData(
+                                            'group_slug',
+                                            e.target.value,
+                                        )
                                     }
                                 >
                                     {groups.map((g) => (
@@ -1576,7 +1847,10 @@ export default function NewsletterAdmin({
                                 >
                                     Cancel
                                 </Button>
-                                <Button type="submit" disabled={bulkGroupForm.processing}>
+                                <Button
+                                    type="submit"
+                                    disabled={bulkGroupForm.processing}
+                                >
                                     Apply to {selectedIds.length} Subscribers
                                 </Button>
                             </DialogFooter>
@@ -1585,7 +1859,10 @@ export default function NewsletterAdmin({
                 </Dialog>
 
                 {/* MODAL: CREATE CUSTOM GROUP */}
-                <Dialog open={createGroupOpen} onOpenChange={setCreateGroupOpen}>
+                <Dialog
+                    open={createGroupOpen}
+                    onOpenChange={setCreateGroupOpen}
+                >
                     <DialogContent className="sm:max-w-md">
                         <DialogHeader>
                             <DialogTitle>Create Audience Group</DialogTitle>
@@ -1612,7 +1889,10 @@ export default function NewsletterAdmin({
                                     required
                                     value={createGroupForm.data.name}
                                     onChange={(e) =>
-                                        createGroupForm.setData('name', e.target.value)
+                                        createGroupForm.setData(
+                                            'name',
+                                            e.target.value,
+                                        )
                                     }
                                     placeholder="e.g. VIP Club, Summer Sale, Newsletter Elite"
                                 />
@@ -1627,22 +1907,30 @@ export default function NewsletterAdmin({
                                     id="grp_description"
                                     value={createGroupForm.data.description}
                                     onChange={(e) =>
-                                        createGroupForm.setData('description', e.target.value)
+                                        createGroupForm.setData(
+                                            'description',
+                                            e.target.value,
+                                        )
                                     }
                                     placeholder="Criteria or purpose for this segment"
                                 />
                             </FormField>
 
                             <div>
-                                <Label className="mb-2 block">Badge Accent Color</Label>
+                                <Label className="mb-2 block">
+                                    Badge Accent Color
+                                </Label>
                                 <div className="flex items-center gap-3">
                                     <input
                                         type="color"
                                         value={createGroupForm.data.color}
                                         onChange={(e) =>
-                                            createGroupForm.setData('color', e.target.value)
+                                            createGroupForm.setData(
+                                                'color',
+                                                e.target.value,
+                                            )
                                         }
-                                        className="h-9 w-12 rounded border p-1 cursor-pointer"
+                                        className="h-9 w-12 cursor-pointer rounded border p-1"
                                     />
                                     <div className="flex gap-1.5">
                                         {[
@@ -1657,7 +1945,10 @@ export default function NewsletterAdmin({
                                                 key={c}
                                                 type="button"
                                                 onClick={() =>
-                                                    createGroupForm.setData('color', c)
+                                                    createGroupForm.setData(
+                                                        'color',
+                                                        c,
+                                                    )
                                                 }
                                                 className="h-6 w-6 rounded-full border border-black/10 transition-transform hover:scale-110"
                                                 style={{ backgroundColor: c }}
@@ -1676,7 +1967,10 @@ export default function NewsletterAdmin({
                                 >
                                     Cancel
                                 </Button>
-                                <Button type="submit" disabled={createGroupForm.processing}>
+                                <Button
+                                    type="submit"
+                                    disabled={createGroupForm.processing}
+                                >
                                     Create Group
                                 </Button>
                             </DialogFooter>
@@ -1685,14 +1979,20 @@ export default function NewsletterAdmin({
                 </Dialog>
 
                 {/* MODAL: CAMPAIGN EDITOR */}
-                <Dialog open={campaignModalOpen} onOpenChange={setCampaignModalOpen}>
-                    <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+                <Dialog
+                    open={campaignModalOpen}
+                    onOpenChange={setCampaignModalOpen}
+                >
+                    <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
                         <DialogHeader>
                             <DialogTitle>
-                                {editingCampaign ? 'Edit Campaign' : 'Compose Email Campaign'}
+                                {editingCampaign
+                                    ? 'Edit Campaign'
+                                    : 'Compose Email Campaign'}
                             </DialogTitle>
                             <DialogDescription>
-                                Set the subject, preview preheader, audience target, and responsive HTML body.
+                                Set the subject, preview preheader, audience
+                                target, and responsive HTML body.
                             </DialogDescription>
                         </DialogHeader>
 
@@ -1734,12 +2034,17 @@ export default function NewsletterAdmin({
                             onSubmit={(e) => {
                                 e.preventDefault();
                                 if (editingCampaign) {
-                                    campaignForm.put(editingCampaign.update_url, {
-                                        onSuccess: () => setCampaignModalOpen(false),
-                                    });
+                                    campaignForm.put(
+                                        editingCampaign.update_url,
+                                        {
+                                            onSuccess: () =>
+                                                setCampaignModalOpen(false),
+                                        },
+                                    );
                                 } else {
                                     campaignForm.post(urls.store_campaign, {
-                                        onSuccess: () => setCampaignModalOpen(false),
+                                        onSuccess: () =>
+                                            setCampaignModalOpen(false),
                                     });
                                 }
                             }}
@@ -1757,7 +2062,10 @@ export default function NewsletterAdmin({
                                         required
                                         value={campaignForm.data.title}
                                         onChange={(e) =>
-                                            campaignForm.setData('title', e.target.value)
+                                            campaignForm.setData(
+                                                'title',
+                                                e.target.value,
+                                            )
                                         }
                                         placeholder="e.g. November Mid-Season Launch"
                                     />
@@ -1779,10 +2087,12 @@ export default function NewsletterAdmin({
                                         }
                                     >
                                         <option value="all">
-                                            All Active Subscribers ({counts.active})
+                                            All Active Subscribers (
+                                            {counts.active})
                                         </option>
                                         <option value="customers">
-                                            Store Customers Only ({counts.customers})
+                                            Store Customers Only (
+                                            {counts.customers})
                                         </option>
                                         <option value="leads">
                                             Storefront Leads Only
@@ -1806,13 +2116,19 @@ export default function NewsletterAdmin({
                                         id="camp_target_group"
                                         value={campaignForm.data.target_group}
                                         onChange={(e) =>
-                                            campaignForm.setData('target_group', e.target.value)
+                                            campaignForm.setData(
+                                                'target_group',
+                                                e.target.value,
+                                            )
                                         }
                                     >
-                                        <option value="">Select a group...</option>
+                                        <option value="">
+                                            Select a group...
+                                        </option>
                                         {groups.map((g) => (
                                             <option key={g.id} value={g.slug}>
-                                                {g.name} ({g.subscribers_count} subscribers)
+                                                {g.name} ({g.subscribers_count}{' '}
+                                                subscribers)
                                             </option>
                                         ))}
                                     </NativeSelect>
@@ -1831,7 +2147,10 @@ export default function NewsletterAdmin({
                                         required
                                         value={campaignForm.data.subject}
                                         onChange={(e) =>
-                                            campaignForm.setData('subject', e.target.value)
+                                            campaignForm.setData(
+                                                'subject',
+                                                e.target.value,
+                                            )
                                         }
                                         placeholder="Discover what is new this week"
                                     />
@@ -1847,7 +2166,10 @@ export default function NewsletterAdmin({
                                         id="camp_preview_text"
                                         value={campaignForm.data.preview_text}
                                         onChange={(e) =>
-                                            campaignForm.setData('preview_text', e.target.value)
+                                            campaignForm.setData(
+                                                'preview_text',
+                                                e.target.value,
+                                            )
                                         }
                                         placeholder="Limited edition releases now live."
                                     />
@@ -1867,7 +2189,10 @@ export default function NewsletterAdmin({
                                     className="font-mono text-xs"
                                     value={campaignForm.data.content_html}
                                     onChange={(e) =>
-                                        campaignForm.setData('content_html', e.target.value)
+                                        campaignForm.setData(
+                                            'content_html',
+                                            e.target.value,
+                                        )
                                     }
                                 />
                             </FormField>
@@ -1882,7 +2207,7 @@ export default function NewsletterAdmin({
                                 ].map((tag) => (
                                     <code
                                         key={tag}
-                                        className="rounded bg-muted px-1.5 py-0.5 text-foreground font-mono"
+                                        className="rounded bg-muted px-1.5 py-0.5 font-mono text-foreground"
                                     >
                                         {tag}
                                     </code>
@@ -1897,7 +2222,10 @@ export default function NewsletterAdmin({
                                 >
                                     Cancel
                                 </Button>
-                                <Button type="submit" disabled={campaignForm.processing}>
+                                <Button
+                                    type="submit"
+                                    disabled={campaignForm.processing}
+                                >
                                     {campaignForm.processing
                                         ? 'Saving...'
                                         : editingCampaign
@@ -1914,7 +2242,7 @@ export default function NewsletterAdmin({
                     open={previewCampaign !== null}
                     onOpenChange={(open) => !open && setPreviewCampaign(null)}
                 >
-                    <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto">
+                    <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
                         <DialogHeader>
                             <DialogTitle>Email Preview</DialogTitle>
                             <DialogDescription>
@@ -1926,14 +2254,16 @@ export default function NewsletterAdmin({
                         </DialogHeader>
 
                         {previewCampaign && (
-                            <div className="rounded-lg border bg-white text-zinc-900 p-6 shadow-xs space-y-4">
+                            <div className="space-y-4 rounded-lg border bg-white p-6 text-zinc-900 shadow-xs">
                                 <div className="border-b pb-3 text-xs text-zinc-500">
                                     <div>
-                                        <strong>From:</strong> {smtp.from_name} &lt;
+                                        <strong>From:</strong> {smtp.from_name}{' '}
+                                        &lt;
                                         {smtp.from_address}&gt;
                                     </div>
                                     <div>
-                                        <strong>Subject:</strong> {previewCampaign.subject}
+                                        <strong>Subject:</strong>{' '}
+                                        {previewCampaign.subject}
                                     </div>
                                     {previewCampaign.preview_text && (
                                         <div>
@@ -1945,17 +2275,30 @@ export default function NewsletterAdmin({
                                 <iframe
                                     title="Email Preview"
                                     srcDoc={`<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;margin:20px;color:#27272a;line-height:1.6;font-size:14px;}a{color:#0ea5e9;}</style></head><body>${previewCampaign.content_html
-                                        .replace(/\{\{name\}\}/g, 'Valued Customer')
-                                        .replace(/\{\{email\}\}/g, 'customer@example.com')
-                                        .replace(/\{\{store_name\}\}/g, smtp.from_name || 'Our Store')
-                                        .replace(/\{\{unsubscribe_url\}\}/g, '#')}</body></html>`}
+                                        .replace(
+                                            /\{\{name\}\}/g,
+                                            'Valued Customer',
+                                        )
+                                        .replace(
+                                            /\{\{email\}\}/g,
+                                            'customer@example.com',
+                                        )
+                                        .replace(
+                                            /\{\{store_name\}\}/g,
+                                            smtp.from_name || 'Our Store',
+                                        )
+                                        .replace(
+                                            /\{\{unsubscribe_url\}\}/g,
+                                            '#',
+                                        )}</body></html>`}
                                     sandbox="allow-same-origin"
-                                    className="w-full h-80 rounded-md border bg-white"
+                                    className="h-80 w-full rounded-md border bg-white"
                                 />
                                 <div className="border-t pt-4 text-center text-xs text-zinc-400">
-                                    You received this email because you subscribed to updates from{' '}
+                                    You received this email because you
+                                    subscribed to updates from{' '}
                                     {smtp.from_name || 'Our Store'}.<br />
-                                    <span className="text-zinc-500 underline cursor-pointer">
+                                    <span className="cursor-pointer text-zinc-500 underline">
                                         Unsubscribe from marketing emails
                                     </span>
                                 </div>
@@ -1994,9 +2337,13 @@ export default function NewsletterAdmin({
                             <form
                                 onSubmit={(e) => {
                                     e.preventDefault();
-                                    testCampaignForm.post(testCampaign.send_test_url, {
-                                        onSuccess: () => setTestCampaign(null),
-                                    });
+                                    testCampaignForm.post(
+                                        testCampaign.send_test_url,
+                                        {
+                                            onSuccess: () =>
+                                                setTestCampaign(null),
+                                        },
+                                    );
                                 }}
                                 className="space-y-4"
                             >
@@ -2046,12 +2393,15 @@ export default function NewsletterAdmin({
                 {/* MODAL: BROADCAST CONFIRMATION */}
                 <Dialog
                     open={broadcastConfirmCampaign !== null}
-                    onOpenChange={(open) => !open && setBroadcastConfirmCampaign(null)}
+                    onOpenChange={(open) =>
+                        !open && setBroadcastConfirmCampaign(null)
+                    }
                 >
                     <DialogContent className="sm:max-w-md">
                         <DialogHeader>
                             <DialogTitle className="flex items-center gap-2">
-                                <Send className="h-5 w-5 text-primary" /> Confirm Campaign Broadcast
+                                <Send className="h-5 w-5 text-primary" />{' '}
+                                Confirm Campaign Broadcast
                             </DialogTitle>
                             <DialogDescription>
                                 You are about to broadcast "
@@ -2062,9 +2412,11 @@ export default function NewsletterAdmin({
                             </DialogDescription>
                         </DialogHeader>
 
-                        <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 p-3 text-xs text-amber-700 dark:text-amber-300">
-                            <strong>Note:</strong> Delivery will proceed immediately via your
-                            App Core SMTP connection. Each recipient will receive an email with their personal unsubscribe link.
+                        <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-300">
+                            <strong>Note:</strong> Delivery will proceed
+                            immediately via your App Core SMTP connection. Each
+                            recipient will receive an email with their personal
+                            unsubscribe link.
                         </div>
 
                         {broadcastConfirmCampaign && (
@@ -2075,7 +2427,10 @@ export default function NewsletterAdmin({
                                         broadcastConfirmCampaign.send_url,
                                         {},
                                         {
-                                            onSuccess: () => setBroadcastConfirmCampaign(null),
+                                            onSuccess: () =>
+                                                setBroadcastConfirmCampaign(
+                                                    null,
+                                                ),
                                         },
                                     );
                                 }}
@@ -2084,12 +2439,18 @@ export default function NewsletterAdmin({
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        onClick={() => setBroadcastConfirmCampaign(null)}
+                                        onClick={() =>
+                                            setBroadcastConfirmCampaign(null)
+                                        }
                                     >
                                         Cancel
                                     </Button>
-                                    <Button type="submit" className="bg-primary text-primary-foreground">
-                                        <Send className="mr-1.5 h-3.5 w-3.5" /> Send Broadcast Now
+                                    <Button
+                                        type="submit"
+                                        className="bg-primary text-primary-foreground"
+                                    >
+                                        <Send className="mr-1.5 h-3.5 w-3.5" />{' '}
+                                        Send Broadcast Now
                                     </Button>
                                 </DialogFooter>
                             </form>

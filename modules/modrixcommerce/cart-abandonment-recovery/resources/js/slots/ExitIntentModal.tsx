@@ -41,7 +41,9 @@ export default function ExitIntentModal({
         const handleMouseLeave = (e: MouseEvent) => {
             // Trigger when cursor leaves through the top of viewport
             if (e.clientY <= 10) {
-                if (sessionStorage.getItem('cart_exit_intent_shown') !== 'true') {
+                if (
+                    sessionStorage.getItem('cart_exit_intent_shown') !== 'true'
+                ) {
                     setOpen(true);
                     sessionStorage.setItem('cart_exit_intent_shown', 'true');
                 }
@@ -70,8 +72,11 @@ export default function ExitIntentModal({
 
         try {
             const csrfToken =
-                (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content ||
-                '';
+                (
+                    document.querySelector(
+                        'meta[name="csrf-token"]',
+                    ) as HTMLMetaElement
+                )?.content || '';
 
             const response = await fetch(captureUrl, {
                 method: 'POST',
@@ -88,7 +93,9 @@ export default function ExitIntentModal({
                 setSubmitted(true);
             } else {
                 const data = await response.json();
-                setErrorMessage(data.message || 'Unable to save cart. Please try again.');
+                setErrorMessage(
+                    data.message || 'Unable to save cart. Please try again.',
+                );
             }
         } catch {
             setErrorMessage('Connection error. Please try again.');
@@ -107,16 +114,16 @@ export default function ExitIntentModal({
     if (!open) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex animate-in items-center justify-center bg-black/60 p-4 backdrop-blur-sm duration-200 fade-in">
             <div
-                className="relative w-full max-w-md overflow-hidden rounded-xl border bg-background p-6 shadow-2xl animate-in zoom-in-95 duration-200 text-foreground"
+                className="relative w-full max-w-md animate-in overflow-hidden rounded-xl border bg-background p-6 text-foreground shadow-2xl duration-200 zoom-in-95"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="exit-modal-title"
             >
                 <button
                     onClick={handleClose}
-                    className="absolute right-4 top-4 rounded-full p-1 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                    className="absolute top-4 right-4 rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                     aria-label="Close"
                 >
                     <X className="size-5" />
@@ -127,26 +134,40 @@ export default function ExitIntentModal({
                         <ShoppingBag className="size-6" />
                     </div>
 
-                    <h2 id="exit-modal-title" className="text-xl font-bold tracking-tight">
+                    <h2
+                        id="exit-modal-title"
+                        className="text-xl font-bold tracking-tight"
+                    >
                         {headline}
                     </h2>
 
                     <p className="mt-2 text-sm text-muted-foreground">
-                        You have {cartCount} {cartCount === 1 ? 'item' : 'items'} saved in your cart. Enter your email and we'll save your items so you won't lose them!
+                        You have {cartCount}{' '}
+                        {cartCount === 1 ? 'item' : 'items'} saved in your cart.
+                        Enter your email and we'll save your items so you won't
+                        lose them!
                     </p>
 
                     {discountCode && (
-                        <div className="mt-3.5 flex items-center justify-center gap-2 rounded-lg border border-dashed border-amber-300 bg-amber-50 dark:bg-amber-950/30 p-2.5 text-xs text-amber-900 dark:text-amber-200">
-                            <Tag className="size-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                        <div className="mt-3.5 flex items-center justify-center gap-2 rounded-lg border border-dashed border-amber-300 bg-amber-50 p-2.5 text-xs text-amber-900 dark:bg-amber-950/30 dark:text-amber-200">
+                            <Tag className="size-4 shrink-0 text-amber-600 dark:text-amber-400" />
                             <span>
-                                Use coupon code <strong className="font-mono font-bold text-amber-800 dark:text-amber-300">{discountCode}</strong> for an extra discount!
+                                Use coupon code{' '}
+                                <strong className="font-mono font-bold text-amber-800 dark:text-amber-300">
+                                    {discountCode}
+                                </strong>{' '}
+                                for an extra discount!
                             </span>
                             <button
                                 type="button"
                                 onClick={copyCode}
-                                className="ml-1 rounded px-1.5 py-0.5 text-[11px] font-semibold bg-amber-200/80 hover:bg-amber-300 dark:bg-amber-800/80 transition-colors inline-flex items-center gap-1"
+                                className="ml-1 inline-flex items-center gap-1 rounded bg-amber-200/80 px-1.5 py-0.5 text-[11px] font-semibold transition-colors hover:bg-amber-300 dark:bg-amber-800/80"
                             >
-                                {copied ? <Check className="size-3" /> : <Copy className="size-3" />}
+                                {copied ? (
+                                    <Check className="size-3" />
+                                ) : (
+                                    <Copy className="size-3" />
+                                )}
                                 {copied ? 'Copied' : 'Copy'}
                             </button>
                         </div>
@@ -176,7 +197,7 @@ export default function ExitIntentModal({
                         </div>
 
                         {errorMessage && (
-                            <p className="text-xs text-destructive font-medium">
+                            <p className="text-xs font-medium text-destructive">
                                 {errorMessage}
                             </p>
                         )}
@@ -184,35 +205,43 @@ export default function ExitIntentModal({
                         <Button
                             type="submit"
                             disabled={loading}
-                            className="w-full h-10 font-semibold"
+                            className="h-10 w-full font-semibold"
                         >
-                            {loading ? 'Saving your cart...' : 'Save My Cart & Send Link'}
+                            {loading
+                                ? 'Saving your cart...'
+                                : 'Save My Cart & Send Link'}
                         </Button>
 
                         <button
                             type="button"
                             onClick={handleClose}
-                            className="w-full text-center text-xs text-muted-foreground hover:underline mt-2"
+                            className="mt-2 w-full text-center text-xs text-muted-foreground hover:underline"
                         >
                             No thanks, I'll continue browsing
                         </button>
                     </form>
                 ) : (
-                    <div className="mt-5 text-center space-y-3">
-                        <div className="rounded-lg bg-emerald-500/10 p-4 text-emerald-800 dark:text-emerald-300 text-sm">
-                            <p className="font-semibold flex items-center justify-center gap-1.5">
-                                <Check className="size-4" /> Cart Saved Successfully!
+                    <div className="mt-5 space-y-3 text-center">
+                        <div className="rounded-lg bg-emerald-500/10 p-4 text-sm text-emerald-800 dark:text-emerald-300">
+                            <p className="flex items-center justify-center gap-1.5 font-semibold">
+                                <Check className="size-4" /> Cart Saved
+                                Successfully!
                             </p>
                             <p className="mt-1 text-xs opacity-90">
-                                We've recorded your cart. A recovery link has been sent to your email.
+                                We've recorded your cart. A recovery link has
+                                been sent to your email.
                             </p>
                         </div>
 
-                        <div className="pt-2 flex flex-col gap-2">
+                        <div className="flex flex-col gap-2 pt-2">
                             <Button asChild className="w-full">
                                 <a href="/checkout">Proceed to Checkout</a>
                             </Button>
-                            <Button variant="outline" onClick={handleClose} className="w-full">
+                            <Button
+                                variant="outline"
+                                onClick={handleClose}
+                                className="w-full"
+                            >
                                 Continue Shopping
                             </Button>
                         </div>

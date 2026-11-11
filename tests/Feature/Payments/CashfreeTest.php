@@ -11,7 +11,6 @@ use App\Domains\Payments\Gateway\PaymentUpdateKind;
 use App\Domains\Payments\Gateway\RefundUpdate;
 use App\Domains\Payments\Models\Payment;
 use App\Domains\Payments\PaymentMethods;
-use App\Domains\Pricing\Money;
 use EcoModular\Cashfree\CashfreeGateway;
 use EcoModular\Cashfree\CashfreeSettings;
 use EcoModular\Cashfree\CashfreeSignature;
@@ -145,8 +144,8 @@ class CashfreeTest extends TestCase
 
         $session = $this->gateway->createSession($order, $payment, 'https://example.com/return', 'https://example.com/cancel');
 
-        $this->assertStringStartsWith('CF-' . $payment->id, $session->reference);
-        $this->assertStringContainsString('/m/modrixcommerce/cashfree/pay/' . $payment->id, $session->redirectUrl);
+        $this->assertStringStartsWith('CF-'.$payment->id, $session->reference);
+        $this->assertStringContainsString('/m/modrixcommerce/cashfree/pay/'.$payment->id, $session->redirectUrl);
 
         $cached = Cache::get("cashfree:handoff:{$payment->id}");
         $this->assertIsArray($cached);

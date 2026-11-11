@@ -63,7 +63,7 @@ class TieredPricingStep implements PricingStep
 
             $lineTotalDiscount = $unitDiscount->multipliedBy($line->quantity)->rounded();
             if ($lineTotalDiscount->isPositive()) {
-                $label = 'Volume Discount (' . $tier['min_qty'] . '+)';
+                $label = 'Volume Discount ('.$tier['min_qty'].'+)';
                 $line->applyOfferDiscount($priced, $lineTotalDiscount, $label);
             }
         }

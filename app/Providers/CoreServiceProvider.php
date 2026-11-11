@@ -6,8 +6,11 @@ use App\Core\Admin\AdminNavigation;
 use App\Core\Audit\AuditLogger;
 use App\Core\Authorization\CorePermissions;
 use App\Core\Authorization\PermissionRegistry;
+use App\Core\Localization\InterfaceTranslations;
+use App\Core\Localization\Locales;
 use App\Core\Settings\DisplayRateSources;
 use App\Core\Settings\SettingsRepository;
+use App\Core\Settings\StoreSettings;
 use App\Core\Storefront\AccountMenu;
 use App\Core\Updates\CoreUpdateLauncher;
 use App\Models\User;
@@ -37,10 +40,10 @@ class CoreServiceProvider extends ServiceProvider
 
         $this->app->scoped(SettingsRepository::class);
         // Storefront texts are looked up many times per page: load them once per request.
-        $this->app->scoped(\App\Core\Localization\InterfaceTranslations::class);
+        $this->app->scoped(InterfaceTranslations::class);
         // Thin readers over the settings above, used by every product card and translated field.
-        $this->app->scoped(\App\Core\Settings\StoreSettings::class);
-        $this->app->scoped(\App\Core\Localization\Locales::class);
+        $this->app->scoped(StoreSettings::class);
+        $this->app->scoped(Locales::class);
 
         $this->app->singleton(CoreUpdateLauncher::class);
         $this->app->singleton(AccountMenu::class);

@@ -83,15 +83,15 @@ final class PhonePeGateway implements PaymentGateway
             throw new GatewayException('PhonePe Merchant ID is missing.');
         }
 
-        $txnId = 'PHONEPE-' . $payment->id . '-' . substr(hash_hmac('sha256', (string) $payment->id, (string) config('app.key')), 0, 16);
+        $txnId = 'PHONEPE-'.$payment->id.'-'.substr(hash_hmac('sha256', (string) $payment->id, (string) config('app.key')), 0, 16);
         $amountInPaise = (int) round((float) $payment->money()->toDisplayDecimal() * 100);
-        $redirectUrl = route('modrixcommerce.phonepe.response') . '?txn=' . $txnId;
+        $redirectUrl = route('modrixcommerce.phonepe.response').'?txn='.$txnId;
         $callbackUrl = route('webhooks.payments', self::CODE);
 
         $payload = [
             'merchantId' => $merchantId,
             'merchantTransactionId' => $txnId,
-            'merchantUserId' => 'CUST_' . ($order->user_id ?? 'GUEST_' . $order->id),
+            'merchantUserId' => 'CUST_'.($order->user_id ?? 'GUEST_'.$order->id),
             'amount' => $amountInPaise,
             'redirectUrl' => $redirectUrl,
             'redirectMode' => 'REDIRECT',
@@ -104,7 +104,7 @@ final class PhonePeGateway implements PaymentGateway
         try {
             $response = $this->api->pay($payload);
         } catch (Throwable $e) {
-            throw new GatewayException('Failed to initiate PhonePe payment: ' . $e->getMessage());
+            throw new GatewayException('Failed to initiate PhonePe payment: '.$e->getMessage());
         }
 
         $checkoutUrl = $response['data']['instrumentResponse']['redirectInfo']['url'] ?? null;
@@ -133,7 +133,7 @@ final class PhonePeGateway implements PaymentGateway
         try {
             $response = $this->api->checkStatus($sessionRef);
         } catch (Throwable $e) {
-            throw new GatewayException('Could not retrieve payment status from PhonePe: ' . $e->getMessage());
+            throw new GatewayException('Could not retrieve payment status from PhonePe: '.$e->getMessage());
         }
 
         return $this->buildPaymentUpdate($response, $sessionRef);
@@ -222,7 +222,7 @@ final class PhonePeGateway implements PaymentGateway
     {
         $merchantId = $this->settings->merchantId() ?? throw new GatewayException('PhonePe Merchant ID is missing.');
         $originalTxnId = (string) $payment->provider_reference;
-        $refundTxnId = 'REF-' . substr($idempotencyKey, 0, 20);
+        $refundTxnId = 'REF-'.substr($idempotencyKey, 0, 20);
         $amountInPaise = (int) round((float) $amount->toDisplayDecimal() * 100);
 
         $payload = [
@@ -236,7 +236,7 @@ final class PhonePeGateway implements PaymentGateway
         try {
             $response = $this->api->refund($payload);
         } catch (Throwable $e) {
-            throw new GatewayException('PhonePe refund request failed: ' . $e->getMessage());
+            throw new GatewayException('PhonePe refund request failed: '.$e->getMessage());
         }
 
         $code = strtoupper((string) ($response['code'] ?? ''));

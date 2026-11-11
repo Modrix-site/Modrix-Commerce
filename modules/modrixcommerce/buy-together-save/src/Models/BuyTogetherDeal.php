@@ -102,6 +102,7 @@ class BuyTogetherDeal extends Model
 
         if ($this->discount_type === 'percent') {
             $pct = (int) round((float) $this->discount_value);
+
             return "Save {$pct}%";
         }
 

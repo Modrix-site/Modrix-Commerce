@@ -90,12 +90,12 @@ final class InstamojoApi
                     'X-Api-Key' => $apiKey,
                     'X-Auth-Token' => $authToken,
                 ])
-                ->get($this->baseUrl() . '/payment-requests/?limit=1');
+                ->get($this->baseUrl().'/payment-requests/?limit=1');
 
             if ($response->successful()) {
                 return [
                     'success' => true,
-                    'message' => 'Connected successfully to Instamojo (' . ($this->settings->testMode() ? 'Test' : 'Live') . ').',
+                    'message' => 'Connected successfully to Instamojo ('.($this->settings->testMode() ? 'Test' : 'Live').').',
                 ];
             }
 
@@ -108,7 +108,7 @@ final class InstamojoApi
 
             return [
                 'success' => false,
-                'error' => 'Instamojo returned HTTP ' . $response->status(),
+                'error' => 'Instamojo returned HTTP '.$response->status(),
             ];
         } catch (Throwable $e) {
             return [
@@ -133,7 +133,7 @@ final class InstamojoApi
             throw new GatewayException('Instamojo credentials are not configured.');
         }
 
-        $url = $this->baseUrl() . $path;
+        $url = $this->baseUrl().$path;
 
         try {
             $client = Http::asForm()
@@ -153,13 +153,13 @@ final class InstamojoApi
             throw new GatewayException('Network error connecting to Instamojo API.', 0, $e);
         } catch (Throwable $e) {
             Log::error('Instamojo unexpected error', ['url' => $url, 'error' => $e->getMessage()]);
-            throw new GatewayException('Failed to communicate with Instamojo: ' . $e->getMessage(), 0, $e);
+            throw new GatewayException('Failed to communicate with Instamojo: '.$e->getMessage(), 0, $e);
         }
 
         if ($response->failed()) {
             $status = $response->status();
             $body = $response->json();
-            $msg = $body['message'] ?? (is_array($body) ? json_encode($body) : ('HTTP ' . $status . ' error'));
+            $msg = $body['message'] ?? (is_array($body) ? json_encode($body) : ('HTTP '.$status.' error'));
             Log::warning('Instamojo API error response', ['path' => $path, 'status' => $status, 'body' => $body]);
             throw new GatewayException("Instamojo API request failed ({$status}): {$msg}");
         }

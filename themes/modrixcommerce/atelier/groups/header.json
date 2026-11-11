@@ -61,7 +61,5 @@
             ]
         }
     },
-    "order": [
-        "header"
-    ]
+    "order": ["header"]
 }

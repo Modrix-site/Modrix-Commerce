@@ -159,7 +159,7 @@ export default function NordCatalog({
                 </nav>
             )}
             <div className="nd-filter-bar">
-                {(catalogSettings.filters && show('catalog_filters')) && (
+                {catalogSettings.filters && show('catalog_filters') && (
                     <>
                         <button
                             type="button"

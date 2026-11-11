@@ -10,16 +10,16 @@ return new class extends Migration
     {
         if (Schema::hasTable('newsletter_subscribers')) {
             Schema::table('newsletter_subscribers', function (Blueprint $table) {
-                if (!Schema::hasColumn('newsletter_subscribers', 'name')) {
+                if (! Schema::hasColumn('newsletter_subscribers', 'name')) {
                     $table->string('name')->nullable()->after('email');
                 }
-                if (!Schema::hasColumn('newsletter_subscribers', 'groups')) {
+                if (! Schema::hasColumn('newsletter_subscribers', 'groups')) {
                     $table->json('groups')->nullable()->after('source');
                 }
             });
         }
 
-        if (!Schema::hasTable('newsletter_groups')) {
+        if (! Schema::hasTable('newsletter_groups')) {
             Schema::create('newsletter_groups', function (Blueprint $table) {
                 $table->id();
                 $table->string('name', 100);
@@ -30,7 +30,7 @@ return new class extends Migration
             });
         }
 
-        if (!Schema::hasTable('newsletter_campaigns')) {
+        if (! Schema::hasTable('newsletter_campaigns')) {
             Schema::create('newsletter_campaigns', function (Blueprint $table) {
                 $table->id();
                 $table->string('title');
