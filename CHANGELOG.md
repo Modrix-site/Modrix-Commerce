@@ -4,6 +4,13 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [1.0.0-rc.2] - 2026-11-11
+
+### Added (core updates)
+
+- **Core updates from Modrix Cloud:** Settings → System status checks Modrix Cloud for new core releases and installs them (signed packages, backup and rollback).
+- **Core update required:** a module that needs a newer core shows a clear "Core update required" message and can't be installed or enabled until the core is updated.
+
 ### Added (extension blocks)
 
 - **Extension blocks in the customizer:** each page tab lists the extension blocks that can show on that page. Turn each on or off, choose where it shows and in which order. The same for every theme.
