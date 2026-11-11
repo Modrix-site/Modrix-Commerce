@@ -1,9 +1,9 @@
 {
     "$schema": "../../../docs/extensions/module.schema.json",
     "name": "modrixcommerce/newsletter",
-    "display_name": "Newsletter Sign-up",
-    "description": "Collects newsletter subscribers with recorded consent on the home page and the order confirmation, with one-click unsubscribe and a CSV export for your email tool.",
-    "version": "1.0.0",
+    "display_name": "Newsletter & Email Marketing",
+    "description": "Complete email marketing system with audience segmentation, customer grouping, targeted broadcast campaigns, App Core SMTP integration, and compliant storefront sign-ups.",
+    "version": "2.0.0",
     "type": "module",
     "icon": "mail",
     "accent": "#0ea5e9",
