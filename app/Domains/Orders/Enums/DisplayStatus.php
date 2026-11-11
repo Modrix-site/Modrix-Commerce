@@ -28,6 +28,8 @@ enum DisplayStatus: string
     case Returned = 'returned';
     case Refunded = 'refunded';
     case PartiallyRefunded = 'partially_refunded';
+    case ReadyForPickup = 'ready_for_pickup';
+    case PickedUp = 'picked_up';
 
     public function label(): string
     {
@@ -52,6 +54,8 @@ enum DisplayStatus: string
             self::Returned => 'Returned',
             self::Refunded => 'Refunded',
             self::PartiallyRefunded => 'Partially refunded',
+            self::ReadyForPickup => 'Ready for pickup',
+            self::PickedUp => 'Picked up',
         };
     }
 

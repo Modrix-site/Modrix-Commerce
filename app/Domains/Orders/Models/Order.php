@@ -199,6 +199,11 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function pickup(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(\EcoModular\StorePickup\Models\OrderPickup::class);
+    }
+
     public function money(string $attribute): Money
     {
         return Money::of((string) $this->getAttribute($attribute), $this->currency);

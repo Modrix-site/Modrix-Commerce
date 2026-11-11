@@ -36,6 +36,8 @@ const variants: Record<string, Variant> = {
     delivered: 'secondary',
     active: 'default',
     inactive: 'outline',
+    ready_for_pickup: 'default',
+    picked_up: 'secondary',
 };
 
 /**
@@ -72,6 +74,8 @@ export function StatusBadge({ status }: { status: string }) {
         partially_refunded: t('Partially refunded'),
         refunded: t('Refunded'),
         unfulfilled: t('Unfulfilled'),
+        ready_for_pickup: t('Ready for pickup'),
+        picked_up: t('Picked up'),
     };
     const label =
         labels[status] ??
@@ -84,6 +88,8 @@ export function StatusBadge({ status }: { status: string }) {
         'approved',
         'published',
         'active',
+        'ready_for_pickup',
+        'picked_up',
     ].includes(status)
         ? 'success'
         : [
