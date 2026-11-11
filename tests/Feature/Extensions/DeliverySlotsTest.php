@@ -5,13 +5,13 @@ namespace Tests\Feature\Extensions;
 use App\Core\Extensions\Models\Extension;
 use App\Core\Extensions\ModuleManager;
 use App\Core\Extensions\ModuleState;
-use App\Domains\Cart\Models\Cart;
+use App\Domains\Checkout\CheckoutData;
+use App\Domains\Checkout\Pricing\PricedCart;
 use App\Domains\Orders\Enums\FulfillmentStatus;
 use App\Domains\Orders\Enums\OrderStatus;
 use App\Domains\Orders\Enums\PaymentStatus;
 use App\Domains\Orders\Events\CartCheckedOut;
 use App\Domains\Orders\Models\Order;
-use Carbon\Carbon;
 use EcoModular\DeliverySlots\DeliverySlotCheckoutValidator;
 use EcoModular\DeliverySlots\DeliverySlotResolver;
 use EcoModular\DeliverySlots\DeliverySlotsSettings;
@@ -20,7 +20,6 @@ use EcoModular\DeliverySlots\Models\DeliverySlot;
 use EcoModular\DeliverySlots\Models\OrderDeliverySchedule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\Support\CommerceFixtures;
 use Tests\Support\ModuleFixtures;
@@ -39,7 +38,10 @@ class DeliverySlotsTest extends TestCase
         parent::setUp();
         $this->installPlatform();
         $this->setUpModules();
-        File::copyDirectory(base_path('modules'), $this->modulesPath);
+        File::copyDirectory(
+            base_path('modules/modrixcommerce/delivery-slots'),
+            $this->modulesPath.'/modrixcommerce/delivery-slots'
+        );
         $this->modules = app(ModuleManager::class);
         $this->modules->install(self::MODULE);
         $this->modules->enable(self::MODULE, true);
@@ -55,7 +57,7 @@ class DeliverySlotsTest extends TestCase
     private function createTestOrder(): Order
     {
         return Order::query()->forceCreate([
-            'number' => 'ORD-' . str_pad((string) (Order::query()->count() + 1), 6, '0', STR_PAD_LEFT),
+            'number' => 'ORD-'.str_pad((string) (Order::query()->count() + 1), 6, '0', STR_PAD_LEFT),
             'email' => 'customer@example.com',
             'phone' => '+1234567890',
             'currency' => 'USD',
@@ -217,7 +219,7 @@ class DeliverySlotsTest extends TestCase
             'is_active' => true,
         ]);
 
-        $targetDate = now()->addDays(2)->toDateString();
+        $targetDate = now()->addDay()->toDateString();
 
         // 1. Fetch available slots for date
         $fetchResponse = $this->getJson(route('modrixcommerce.delivery-slots.slots-for-date', ['date' => $targetDate]));
@@ -241,6 +243,63 @@ class DeliverySlotsTest extends TestCase
         // 3. Clear slot
         $this->postJson(route('modrixcommerce.delivery-slots.clear'))->assertOk();
         $this->assertNull(session('delivery_slots_selection'));
+    }
+
+    public function test_instant_delivery_restricts_to_1_day_without_time_slots_and_standard_delivery_allows_2_days(): void
+    {
+        DeliverySlot::create([
+            'name' => 'Morning Delivery',
+            'start_time' => '09:00',
+            'end_time' => '13:00',
+            'cutoff_hours' => 1,
+            'max_orders' => 15,
+            'fee' => 0,
+            'days_of_week' => [0, 1, 2, 3, 4, 5, 6],
+            'is_active' => true,
+        ]);
+
+        /** @var DeliverySlotsSettings $settings */
+        $settings = app(DeliverySlotsSettings::class);
+        /** @var DeliverySlotResolver $resolver */
+        $resolver = app(DeliverySlotResolver::class);
+
+        $instantRule = $settings->ruleForMethod('instant_delivery');
+        $this->assertTrue($instantRule['enabled']);
+        $this->assertSame(1, $instantRule['max_days']);
+        $this->assertFalse($instantRule['show_time_slots']);
+
+        $standardRule = $settings->ruleForMethod('standard_delivery');
+        $this->assertTrue($standardRule['enabled']);
+        $this->assertSame(2, $standardRule['max_days']);
+        $this->assertTrue($standardRule['show_time_slots']);
+
+        // Default available dates returns 2 days (Today and Tomorrow)
+        $dates = $resolver->getAvailableDates();
+        $this->assertCount(2, $dates);
+        $this->assertCount(1, $resolver->getAvailableDates(1));
+
+        // Instant delivery can select Today without a time slot
+        $today = now()->toDateString();
+        $tomorrow = now()->addDay()->toDateString();
+
+        $this->postJson(route('modrixcommerce.delivery-slots.select'), [
+            'date' => $today,
+            'delivery_slot_id' => null,
+            'shipping_method' => 'instant_delivery',
+        ])->assertOk()->assertJson(['success' => true]);
+
+        // Instant delivery rejects Tomorrow (next day)
+        $this->postJson(route('modrixcommerce.delivery-slots.select'), [
+            'date' => $tomorrow,
+            'delivery_slot_id' => null,
+            'shipping_method' => 'instant_delivery',
+        ])->assertStatus(422);
+
+        // Checkout validator does not require a time slot for instant_delivery
+        session()->forget('delivery_slots_selection');
+        $validator = app(DeliverySlotCheckoutValidator::class);
+        $cart = $this->createPricedCartMock();
+        $this->assertNull($validator->validate($cart, $this->createCheckoutDataMock('instant_delivery')));
     }
 
     public function test_checkout_validator_blocks_order_when_slot_is_required_and_missing(): void
@@ -284,6 +343,26 @@ class DeliverySlotsTest extends TestCase
         $this->assertNull($validator->validate($cart, $checkoutData));
     }
 
+    /** A store pickup order is collected, so a required delivery slot must not block it. */
+    public function test_checkout_validator_skips_store_pickup_orders(): void
+    {
+        /** @var DeliverySlotsSettings $settings */
+        $settings = app(DeliverySlotsSettings::class);
+        $settings->save([
+            'enabled' => true,
+            'is_required' => true,
+        ]);
+
+        session()->forget('delivery_slots_selection');
+
+        $validator = app(DeliverySlotCheckoutValidator::class);
+        $cart = $this->createPricedCartMock();
+
+        $this->assertNull($validator->validate($cart, $this->createCheckoutDataMock('store_pickup')));
+        $this->assertNull($validator->validate($cart, $this->createCheckoutDataMock('pickup_mall_branch')));
+        $this->assertNotNull($validator->validate($cart, $this->createCheckoutDataMock()));
+    }
+
     public function test_order_completion_records_delivery_schedule(): void
     {
         $slot = DeliverySlot::create([
@@ -320,19 +399,19 @@ class DeliverySlotsTest extends TestCase
         $this->assertNull(session('delivery_slots_selection'));
     }
 
-    private function createPricedCartMock(): \App\Domains\Checkout\Pricing\PricedCart
+    private function createPricedCartMock(): PricedCart
     {
-        return new \App\Domains\Checkout\Pricing\PricedCart('USD', []);
+        return new PricedCart('USD', []);
     }
 
-    private function createCheckoutDataMock(): \App\Domains\Checkout\CheckoutData
+    private function createCheckoutDataMock(string $shippingMethod = 'standard'): CheckoutData
     {
-        return new \App\Domains\Checkout\CheckoutData(
+        return new CheckoutData(
             email: 'shopper@example.com',
             phone: '+1234567890',
             shippingAddress: ['first_name' => 'Jane', 'last_name' => 'Doe', 'country_code' => 'US', 'line_1' => '123 Main St', 'city' => 'City', 'postal_code' => '12345'],
             billingAddress: ['first_name' => 'Jane', 'last_name' => 'Doe', 'country_code' => 'US', 'line_1' => '123 Main St', 'city' => 'City', 'postal_code' => '12345'],
-            shippingMethod: 'standard',
+            shippingMethod: $shippingMethod,
             paymentMethod: 'manual',
             customerNote: null,
             idempotencyKey: 'test-idem-key',
