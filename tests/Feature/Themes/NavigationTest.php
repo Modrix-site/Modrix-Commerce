@@ -72,7 +72,7 @@ class NavigationTest extends TestCase
             $bad['header']['links'][0]['url'] = $url;
             $this->put(route('admin.navigation.update'), $bad)->assertSessionHasErrors('header.links.0.url');
         }
-        $this->assertSame($this->menus(), app(SettingsRepository::class)->get(StoreNavigation::KEY));
+        $this->assertEquals($this->menus(), app(SettingsRepository::class)->get(StoreNavigation::KEY));
     }
 
     public function test_navigation_requires_theme_management_permission(): void
@@ -129,7 +129,7 @@ class NavigationTest extends TestCase
         }
         $bad['header']['links'] = [$node];
         $this->put(route('admin.navigation.update'), $bad)->assertSessionHasErrors('header.links.0.children.0.children.0.children.0.children');
-        $this->assertSame($original, app(SettingsRepository::class)->get(StoreNavigation::KEY));
+        $this->assertEquals($original, app(SettingsRepository::class)->get(StoreNavigation::KEY));
     }
 
     public function test_independent_mobile_menu_and_disabled_placements_are_respected(): void

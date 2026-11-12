@@ -9,6 +9,7 @@ use App\Core\Authorization\SystemRoles;
 use App\Core\Installation\InstallationState;
 use App\Models\User;
 use Illuminate\Database\Events\MigrationsEnded;
+use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\DB;
 use Laravel\Fortify\Features;
@@ -36,6 +37,9 @@ abstract class TestCase extends BaseTestCase
 
             if ($connection->getDriverName() === 'mysql' && $connection->transactionLevel() > 0 && ! $connection->getPdo()->inTransaction()) {
                 (fn () => $this->transactions = 0)->call($connection);
+                // What the test writes from here on is committed, so the next
+                // test starts from a freshly migrated database.
+                RefreshDatabaseState::$migrated = false;
             }
         });
     }
