@@ -1,0 +1,73 @@
+{
+    "name": "Popular picks",
+    "enabled_on": {
+        "templates": ["*"]
+    },
+    "settings": [
+        {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Popular Picks"
+        },
+        {
+            "type": "collection",
+            "id": "collection",
+            "label": "Products from",
+            "info": "Empty: featured products.",
+            "products": 8,
+            "fallback": "featured"
+        },
+        {
+            "type": "text",
+            "id": "view_all_label",
+            "label": "\"View all\" link label",
+            "default": "View All"
+        },
+        {
+            "type": "header",
+            "content": "Centre card"
+        },
+        {
+            "type": "text",
+            "id": "picks_eyebrow",
+            "label": "Eyebrow",
+            "default": "Best offer deal"
+        },
+        {
+            "type": "text",
+            "id": "picks_heading",
+            "label": "Heading",
+            "default": "Tablet Pro Ultra 15.6\""
+        },
+        {
+            "type": "text",
+            "id": "picks_text",
+            "label": "Text",
+            "default": "Starts at: $779.99"
+        },
+        {
+            "type": "image",
+            "id": "picks_image",
+            "label": "Image",
+            "default": "asset:assets/campaign-tablet.jpg"
+        },
+        {
+            "type": "text",
+            "id": "picks_button",
+            "label": "Button label",
+            "default": "Shop Save"
+        },
+        {
+            "type": "url",
+            "id": "picks_link",
+            "label": "Button link",
+            "default": "/search?q=tablet"
+        }
+    ],
+    "presets": [
+        {
+            "name": "Popular picks"
+        }
+    ]
+}

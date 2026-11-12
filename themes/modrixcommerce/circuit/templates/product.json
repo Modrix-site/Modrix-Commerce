@@ -1,0 +1,72 @@
+{
+    "sections": {
+        "main-product_hym4l1": {
+            "type": "main-product",
+            "settings": {},
+            "blocks": {
+                "delivery_vfz3zf": {
+                    "type": "delivery",
+                    "settings": {
+                        "icon": "truck",
+                        "text": "Estimate delivery times: 3-5 days International."
+                    }
+                },
+                "delivery_kkibj3": {
+                    "type": "delivery",
+                    "settings": {
+                        "icon": "ticket",
+                        "text": "Use code \"WELCOME15\" for discount 15% on your first order."
+                    }
+                },
+                "delivery_j4wj99": {
+                    "type": "delivery",
+                    "settings": {
+                        "icon": "package",
+                        "text": "Free shipping & returns: On all orders over $150."
+                    }
+                }
+            },
+            "block_order": [
+                "delivery_vfz3zf",
+                "delivery_kkibj3",
+                "delivery_j4wj99"
+            ]
+        },
+        "services_ibag7i": {
+            "type": "services",
+            "settings": {},
+            "blocks": {
+                "service_1mnbqn": {
+                    "type": "service",
+                    "settings": {
+                        "icon": "truck",
+                        "title": "Free Shipping",
+                        "text": "Enjoy free worldwide shipping and returns, with customs and duties taxes included."
+                    }
+                },
+                "service_s6puq8": {
+                    "type": "service",
+                    "settings": {
+                        "icon": "returns",
+                        "title": "Free Returns",
+                        "text": "Free returns within 15 days, please make sure the items are in undamaged condition."
+                    }
+                },
+                "service_0idw37": {
+                    "type": "service",
+                    "settings": {
+                        "icon": "support",
+                        "title": "Support Online",
+                        "text": "We support customers 24/7, send questions we will solve for you immediately."
+                    }
+                }
+            },
+            "block_order": [
+                "service_1mnbqn",
+                "service_s6puq8",
+                "service_0idw37"
+            ]
+        }
+    },
+    "order": ["main-product_hym4l1", "services_ibag7i"]
+}

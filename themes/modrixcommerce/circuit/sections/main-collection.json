@@ -1,0 +1,208 @@
+{
+    "name": "Product grid",
+    "enabled_on": {
+        "templates": ["collection", "search"]
+    },
+    "limit": 1,
+    "settings": [
+        {
+            "type": "select",
+            "id": "catalog_grid",
+            "label": "Default grid",
+            "options": [
+                {
+                    "value": "2",
+                    "label": "2"
+                },
+                {
+                    "value": "3",
+                    "label": "3"
+                },
+                {
+                    "value": "4",
+                    "label": "4"
+                },
+                {
+                    "value": "list",
+                    "label": "List"
+                }
+            ],
+            "default": "3"
+        },
+        {
+            "type": "header",
+            "content": "Coupon card"
+        },
+        {
+            "type": "checkbox",
+            "id": "coupon_show",
+            "label": "Show the coupon card under the filters",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "coupon_eyebrow",
+            "label": "Coupon card eyebrow",
+            "default": "Top sale"
+        },
+        {
+            "type": "text",
+            "id": "coupon_heading",
+            "label": "Coupon card heading",
+            "default": "Here's Your 15% Coupon"
+        },
+        {
+            "type": "image",
+            "id": "coupon_image",
+            "label": "Coupon card image",
+            "default": "asset:assets/coupon-card.jpg"
+        },
+        {
+            "type": "text",
+            "id": "coupon_button",
+            "label": "Coupon card button",
+            "default": "Discover Now"
+        },
+        {
+            "type": "url",
+            "id": "coupon_link",
+            "label": "Coupon card link",
+            "default": "/search?sort=price_asc"
+        },
+        {
+            "type": "header",
+            "content": "Filters"
+        },
+        {
+            "type": "text",
+            "id": "filter_heading",
+            "label": "Filter heading",
+            "default": "Filter"
+        },
+        {
+            "type": "text",
+            "id": "category_filter_label",
+            "label": "Categories filter",
+            "default": "Products Category"
+        },
+        {
+            "type": "text",
+            "id": "availability_label",
+            "label": "Availability filter",
+            "default": "Availability"
+        },
+        {
+            "type": "text",
+            "id": "in_stock_label",
+            "label": "In stock option",
+            "default": "In stock"
+        },
+        {
+            "type": "text",
+            "id": "price_label",
+            "label": "Price filter",
+            "default": "Price"
+        },
+        {
+            "type": "text",
+            "id": "brand_filter_label",
+            "label": "Brand filter",
+            "default": "Brand"
+        },
+        {
+            "type": "text",
+            "id": "all_brands_label",
+            "label": "All brands option",
+            "default": "All brands"
+        },
+        {
+            "type": "text",
+            "id": "apply_filters_label",
+            "label": "Apply button",
+            "default": "Apply filters"
+        },
+        {
+            "type": "text",
+            "id": "clear_all_label",
+            "label": "Clear all link",
+            "default": "Clear all filters"
+        },
+        {
+            "type": "header",
+            "content": "Sorting"
+        },
+        {
+            "type": "text",
+            "id": "sort_label",
+            "label": "Sort label",
+            "default": "Sort by:"
+        },
+        {
+            "type": "text",
+            "id": "sort_newest",
+            "label": "Newest",
+            "default": "Newest"
+        },
+        {
+            "type": "text",
+            "id": "sort_price_asc",
+            "label": "Price low to high",
+            "default": "Price: low to high"
+        },
+        {
+            "type": "text",
+            "id": "sort_price_desc",
+            "label": "Price high to low",
+            "default": "Price: high to low"
+        },
+        {
+            "type": "text",
+            "id": "sort_name",
+            "label": "Name",
+            "default": "Name"
+        },
+        {
+            "type": "header",
+            "content": "No results"
+        },
+        {
+            "type": "text",
+            "id": "empty_heading",
+            "label": "Heading",
+            "default": "No products found"
+        },
+        {
+            "type": "text",
+            "id": "empty_text",
+            "label": "Text",
+            "default": "Try another search or change your filters."
+        },
+        {
+            "type": "text",
+            "id": "clear_label",
+            "label": "Clear filters button",
+            "default": "Clear filters"
+        },
+        {
+            "type": "text",
+            "id": "browse_label",
+            "label": "Browse link",
+            "default": "Browse all products"
+        },
+        {
+            "type": "header",
+            "content": "Breadcrumb"
+        },
+        {
+            "type": "text",
+            "id": "home_label",
+            "label": "Home link label",
+            "default": "Home"
+        }
+    ],
+    "presets": [
+        {
+            "name": "Product grid"
+        }
+    ]
+}

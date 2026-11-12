@@ -1,0 +1,88 @@
+{
+    "name": "Support banner",
+    "enabled_on": {
+        "templates": ["*"]
+    },
+    "settings": [
+        {
+            "type": "text",
+            "id": "support_eyebrow",
+            "label": "Eyebrow",
+            "default": "Help center"
+        },
+        {
+            "type": "text",
+            "id": "support_heading",
+            "label": "Heading",
+            "default": "Online Support 24/7"
+        },
+        {
+            "type": "text",
+            "id": "trusted_text",
+            "label": "Line under the cards",
+            "default": "Trusted by thousands of shoppers. We always try to bring the best experience when shopping with us."
+        }
+    ],
+    "blocks": [
+        {
+            "type": "card",
+            "name": "Support card",
+            "settings": [
+                {
+                    "type": "select",
+                    "id": "icon",
+                    "label": "Icon",
+                    "default": "phone",
+                    "options": [
+                        {
+                            "value": "phone",
+                            "label": "Phone"
+                        },
+                        {
+                            "value": "chat",
+                            "label": "Chat"
+                        },
+                        {
+                            "value": "mail",
+                            "label": "Email"
+                        }
+                    ]
+                },
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Title",
+                    "default": "Call Us"
+                },
+                {
+                    "type": "text",
+                    "id": "text",
+                    "label": "Text"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Link",
+                    "default": "/account"
+                }
+            ]
+        }
+    ],
+    "max_blocks": 6,
+    "presets": [
+        {
+            "name": "Support banner",
+            "blocks": [
+                {
+                    "type": "card"
+                },
+                {
+                    "type": "card"
+                },
+                {
+                    "type": "card"
+                }
+            ]
+        }
+    ]
+}

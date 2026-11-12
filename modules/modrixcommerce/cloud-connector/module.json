@@ -1,0 +1,44 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/cloud-connector",
+    "display_name": "Modrix Cloud Connector",
+    "description": "Connects this store to Modrix Cloud: browse every theme and extension, install free and owned ones in one click, keep license keys in sync, and update with signature verification and rollback.",
+    "version": "1.0.0",
+    "type": "module",
+    "platform_version": "^1.0",
+    "author": "Eleydo",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\CloudConnector\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\CloudConnector\\CloudConnectorServiceProvider",
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "console.commands",
+        "scheduled.tasks",
+        "content_security"
+    ],
+    "content_security": {
+        "img-src": ["https://cloud-apps.modrixcommerce.com"]
+    },
+    "routes": {
+        "admin": "routes/admin.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages"
+    },
+    "admin_navigation": [
+        {
+            "key": "cloud",
+            "title": "Modrix Cloud",
+            "route": "index",
+            "icon": "store",
+            "group": "Administration",
+            "permission": "extensions.view",
+            "order": 926
+        }
+    ]
+}

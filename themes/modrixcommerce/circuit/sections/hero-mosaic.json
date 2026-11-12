@@ -1,0 +1,116 @@
+{
+    "name": "Campaign mosaic",
+    "enabled_on": {
+        "templates": ["index"]
+    },
+    "settings": [
+        {
+            "type": "header",
+            "content": "Large campaigns slide; tall tiles fill the middle; small tiles stack on the right."
+        },
+        {
+            "type": "text",
+            "id": "shop_button",
+            "label": "Button label on tiles",
+            "default": "Shop Now"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "campaign",
+            "name": "Campaign",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "eyebrow",
+                    "label": "Eyebrow"
+                },
+                {
+                    "type": "text",
+                    "id": "heading",
+                    "label": "Heading",
+                    "default": "New campaign"
+                },
+                {
+                    "type": "textarea",
+                    "id": "body",
+                    "label": "Text"
+                },
+                {
+                    "type": "image",
+                    "id": "image",
+                    "label": "Image"
+                },
+                {
+                    "type": "color",
+                    "id": "background",
+                    "label": "Background",
+                    "default": "#1c2a24"
+                },
+                {
+                    "type": "color",
+                    "id": "foreground",
+                    "label": "Text color",
+                    "default": "#ffffff"
+                },
+                {
+                    "type": "text",
+                    "id": "button_label",
+                    "label": "Button label"
+                },
+                {
+                    "type": "url",
+                    "id": "button_link",
+                    "label": "Button link",
+                    "default": "/search"
+                },
+                {
+                    "type": "select",
+                    "id": "size",
+                    "label": "Size",
+                    "default": "large",
+                    "options": [
+                        {
+                            "value": "large",
+                            "label": "Large (slider)"
+                        },
+                        {
+                            "value": "medium",
+                            "label": "Tall tile"
+                        },
+                        {
+                            "value": "small",
+                            "label": "Small tile"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "max_blocks": 12,
+    "presets": [
+        {
+            "name": "Campaign mosaic",
+            "blocks": [
+                {
+                    "type": "campaign",
+                    "settings": {
+                        "size": "large"
+                    }
+                },
+                {
+                    "type": "campaign",
+                    "settings": {
+                        "size": "medium"
+                    }
+                },
+                {
+                    "type": "campaign",
+                    "settings": {
+                        "size": "small"
+                    }
+                }
+            ]
+        }
+    ]
+}

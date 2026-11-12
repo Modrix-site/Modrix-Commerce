@@ -1,0 +1,307 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int\<0, max\>,string\|false\>\:\:map\(\) expects callable\(string\|false, int\<0, max\>\)\: non\-falsy\-string, Closure\(string\)\: non\-falsy\-string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Core/Content/RichText.php
+
+		-
+			message: '#^Parameter \#1 \$value of function collect expects Illuminate\\Contracts\\Support\\Arrayable\<int\<0, max\>, string\>\|iterable\<int\<0, max\>, string\>\|null, non\-empty\-list\<string\>\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Core/Content/RichText.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Core/Localization/ContentTranslations.php
+
+		-
+			message: '#^Method App\\Core\\Localization\\ContentTranslations\:\:automaticState\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Core/Localization/ContentTranslations.php
+
+		-
+			message: '#^Method App\\Core\\Localization\\ContentTranslations\:\:state\(\) should return array\{editor\: array\<string, array\<string, string\>\>, stored\: array\<string, array\<string, string\>\>, budget\: int\|null, deadline\: float\|null, attempted\: array\<string, true\>\} but returns array\<mixed\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Core/Localization/ContentTranslations.php
+
+		-
+			message: '#^Parameter \#1 \$state of method App\\Core\\Localization\\ContentTranslations\:\:putState\(\) expects array\{editor\: array\<string, array\<string, string\>\>, stored\: array\<string, array\<string, string\>\>, budget\: int\|null, deadline\: float\|null, attempted\: array\<string, true\>\}, non\-empty\-array given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Core/Localization/ContentTranslations.php
+
+		-
+			message: '#^Offset ''encryption_method'' on array\{name\: string, index\: int, crc\: int, size\: int, mtime\: int, comp_size\: int, comp_method\: int, encryption_method\: int\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Core/Operations/Backups.php
+
+		-
+			message: '#^Parameter \#1 \$array \(list\<string\>\) of array_values is already a list, call has no effect\.$#'
+			identifier: arrayValues.list
+			count: 2
+			path: app/Core/Operations/Backups.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 2
+			path: app/Core/Settings/DisplayRateSources.php
+
+		-
+			message: '#^Property App\\Core\\Settings\\MailSettings\:\:\$original type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Core/Settings/MailSettings.php
+
+		-
+			message: '#^Method App\\Core\\Storefront\\AccountMenu\:\:links\(\) should return list\<array\{key\: string, title\: string, href\: string, after\: string\}\> but returns array\<int, array\{key\: string, title\: string, href\: string, after\: string\}\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Core/Storefront/AccountMenu.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Core/Themes/ResolvedTheme.php
+
+		-
+			message: '#^Call to function array_is_list\(\) with array\<string, mixed\> will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: app/Core/Themes/Sections/SectionPackage.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\<string, mixed\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Core/Themes/Sections/SectionPackage.php
+
+		-
+			message: '#^Parameter \#1 \$definitions of static method App\\Core\\Themes\\Sections\\SectionPackage\:\:checkSettings\(\) expects list\<array\<string, mixed\>\>, array\<mixed, mixed\> given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Core/Themes/Sections/SectionPackage.php
+
+		-
+			message: '#^Parameter \#1 \$settings of static method App\\Core\\Themes\\Sections\\SectionSettings\:\:byId\(\) expects list\<array\<string, mixed\>\>, array\<array\<mixed, mixed\>\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Core/Themes/Sections/SectionPackage.php
+
+		-
+			message: '#^Parameter \#2 \$definitions of method App\\Core\\Themes\\Sections\\SectionPresenter\:\:resolve\(\) expects list\<array\<string, mixed\>\>, array\<mixed, mixed\> given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Core/Themes/Sections/SectionPresenter.php
+
+		-
+			message: '#^Method App\\Core\\Themes\\Sections\\ThemeTemplates\:\:package\(\) should return array\{schemas\: array\<string, array\<string, mixed\>\>, templates\: array\<string, mixed\>, groups\: array\<string, mixed\>\} but returns array\<string, mixed\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Core/Themes/Sections/ThemeTemplates.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between array\<int\<0, max\>\|string, mixed\> and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Core/Themes/Sections/ThemeTemplates.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between array\<int\<0, max\>\|string, mixed\> and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Core/Themes/Sections/ThemeTemplates.php
+
+		-
+			message: '#^Method App\\Core\\Themes\\StorefrontLinks\:\:content\(\) has parameter \$content with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Core/Themes/StorefrontLinks.php
+
+		-
+			message: '#^Method App\\Core\\Themes\\StorefrontLinks\:\:content\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Core/Themes/StorefrontLinks.php
+
+		-
+			message: '#^Property App\\Core\\Themes\\StorefrontLinks\:\:\$categories type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Core/Themes/StorefrontLinks.php
+
+		-
+			message: '#^Property App\\Core\\Themes\\StorefrontLinks\:\:\$pages type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Core/Themes/StorefrontLinks.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between Illuminate\\Support\\Carbon and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Core/Updates/CoreUpdateRun.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Core/Updates/CoreUpdater.php
+
+		-
+			message: '#^Parameter \#1 \$array \(array\{0\: ''maintenance mode is…'', 1\?\: non\-falsy\-string\}\) of array_values is already a list, call has no effect\.$#'
+			identifier: arrayValues.list
+			count: 1
+			path: app/Core/Updates/CoreUpdater.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-empty\-list\<non\-falsy\-string\> and array\{\} will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Core/Updates/CoreUpdater.php
+
+		-
+			message: '#^Ternary operator condition is always true\.$#'
+			identifier: ternary.alwaysTrue
+			count: 1
+			path: app/Core/Updates/CoreUpdater.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between App\\Domains\\Catalog\\Models\\ProductVariant and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Domains/Cart/CartManager.php
+
+		-
+			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: app/Domains/Content/Models/Page.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 1
+			path: app/Domains/Content/Models/Page.php
+
+		-
+			message: '#^Class EcoModular\\StorePickup\\Models\\OrderPickup not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Domains/Orders/Models/Order.php
+
+		-
+			message: '#^Method App\\Domains\\Orders\\Models\\Order\:\:pickup\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Domains/Orders/Models/Order.php
+
+		-
+			message: '#^Parameter \#1 \$related of method Illuminate\\Database\\Eloquent\\Model\:\:hasOne\(\) expects class\-string\<Illuminate\\Database\\Eloquent\\Model\>, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Domains/Orders/Models/Order.php
+
+		-
+			message: '#^Unable to resolve the template type TRelatedModel in call to method Illuminate\\Database\\Eloquent\\Model\:\:hasOne\(\)$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Domains/Orders/Models/Order.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\|stdClass\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Domains/Orders/OrderDisplayStatus.php
+
+		-
+			message: '#^Call to function is_object\(\) with Illuminate\\Database\\Eloquent\\Model\|stdClass will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Domains/Orders/OrderDisplayStatus.php
+
+		-
+			message: '#^Offset ''status'' on \*NEVER\* on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Domains/Orders/OrderDisplayStatus.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Admin\\Catalog\\ProductController\:\:tagSuggestions\(\) should return list\<string\> but returns array\<mixed\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Http/Controllers/Admin/Catalog/ProductController.php
+
+		-
+			message: '#^Cannot cast App\\Domains\\Catalog\\Enums\\ProductStatus to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: app/Http/Controllers/Admin/Catalog/ProductVariantController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>on_hand" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Admin/Catalog/ProductVariantController.php
+
+		-
+			message: '#^Parameter \#1 \$variantIds of method App\\Domains\\Inventory\\CommittedStock\:\:forVariants\(\) expects list\<int\>, array\<mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Admin/InventoryController.php
+
+		-
+			message: '#^Unable to resolve the template type TBuilder in call to static method App\\Support\\Like\:\:where\(\)$#'
+			identifier: argument.templateType
+			count: 2
+			path: app/Http/Controllers/Admin/InventoryController.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: app/Http/Controllers/Admin/InvoiceController.php
+
+		-
+			message: '#^Ternary operator condition is always true\.$#'
+			identifier: ternary.alwaysTrue
+			count: 2
+			path: app/Http/Controllers/Admin/InvoiceController.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Domains\\Orders\\Models\\Order\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Admin/InvoiceController.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Support\\Carbon\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Admin/SystemStatusController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Admin\\ThemeController\:\:imageOptions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Controllers/Admin/ThemeController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Admin\\ThemeController\:\:summary\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Controllers/Admin/ThemeController.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Http/Presenters/HomeSectionsPresenter.php

@@ -1,0 +1,152 @@
+/*
+ * Page settings from the customizer (Header and Catalog tabs), keyed on the
+ * storefront root's data attributes (pageSettingAttributes). Only settings
+ * the merchant set have an attribute, so themes keep their look otherwise.
+ * Themes with their own pages map the same attributes in their own CSS.
+ */
+
+/* Header */
+/* Hides a theme element its own CSS would otherwise show (account link). */
+.storefront .store-hidden {
+    display: none !important;
+}
+
+.storefront[data-logo-height] header a[href='/'] > img,
+.storefront[data-logo-height] .store-logo img {
+    height: var(--header-logo-height) !important;
+    max-height: none !important;
+    width: auto !important;
+    max-width: none !important;
+}
+
+.storefront[data-header-bg] header {
+    background-color: var(--header-bg) !important;
+}
+
+.storefront[data-header-fg] header,
+.storefront[data-header-fg] header a,
+.storefront[data-header-fg] header button {
+    color: var(--header-fg) !important;
+}
+
+.store-search-icon {
+    display: none;
+}
+
+.storefront[data-header-search='icon'] header form[role='search'] {
+    display: none !important;
+}
+
+.storefront[data-header-search='icon'] .store-search-icon {
+    display: inline-flex;
+}
+
+.storefront[data-menu-align='left'] header nav,
+.storefront[data-menu-align='left'] header nav > ul {
+    justify-content: flex-start !important;
+}
+
+.storefront[data-menu-align='center'] header nav,
+.storefront[data-menu-align='center'] header nav > ul {
+    justify-content: center !important;
+}
+
+.storefront[data-menu-align='right'] header nav,
+.storefront[data-menu-align='right'] header nav > ul {
+    justify-content: flex-end !important;
+}
+
+/* Catalog grid */
+@media (min-width: 1024px) {
+    .storefront[data-catalog-columns='2'] .store-product-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .storefront[data-catalog-columns='3'] .store-product-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+
+    .storefront[data-catalog-columns='4'] .store-product-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    }
+
+    .storefront[data-catalog-columns='5'] .store-product-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (max-width: 639px) {
+    .storefront[data-catalog-columns-mobile='1'] .store-product-grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+}
+
+/* Product card images */
+.storefront[data-image-ratio='square'] .store-card-image {
+    aspect-ratio: 1 / 1 !important;
+}
+
+.storefront[data-image-ratio='portrait'] .store-card-image {
+    aspect-ratio: 3 / 4 !important;
+}
+
+.storefront[data-image-ratio='landscape'] .store-card-image {
+    aspect-ratio: 4 / 3 !important;
+}
+
+.store-card-image {
+    position: relative;
+}
+
+.store-card-image .store-card-hover {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+/* Hovering the card (shared cards use .group) or the image itself. */
+.storefront[data-hover-image] .group:hover .store-card-image .store-card-hover,
+.storefront[data-hover-image]
+    .group:focus-within
+    .store-card-image
+    .store-card-hover,
+.storefront[data-hover-image] .store-card-image:hover .store-card-hover {
+    opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .store-card-image .store-card-hover {
+        transition: none;
+    }
+}
+
+/* Product image zoom in themes with their own gallery (.store-zoom). */
+.storefront[data-product-zoom] .store-zoom {
+    overflow: hidden;
+}
+
+.storefront[data-product-zoom] .store-zoom img {
+    transition: transform 0.3s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .storefront[data-product-zoom] .store-zoom:hover img {
+        transform: scale(1.6);
+        cursor: zoom-in;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .storefront[data-product-zoom] .store-zoom img {
+        transition: none;
+    }
+}
+
+/* Extension blocks placed inside a product grid take the whole row. */
+.store-product-grid > .store-place {
+    grid-column: 1 / -1;
+}

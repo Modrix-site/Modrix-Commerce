@@ -1,0 +1,114 @@
+{
+    "name": "Footer",
+    "limit": 1,
+    "enabled_on": {
+        "groups": ["footer"]
+    },
+    "settings": [
+        {
+            "type": "header",
+            "content": "About"
+        },
+        {
+            "type": "text",
+            "id": "about_heading",
+            "label": "About heading",
+            "default": "About The Store"
+        },
+        {
+            "type": "textarea",
+            "id": "about_text",
+            "label": "About text",
+            "default": "Find a location nearest you to reduce shipping costs and make shopping easier."
+        },
+        {
+            "type": "text",
+            "id": "map_label",
+            "label": "Map link label",
+            "default": "Show on google maps."
+        },
+        {
+            "type": "url",
+            "id": "map_link",
+            "label": "Map link"
+        },
+        {
+            "type": "text",
+            "id": "phone",
+            "label": "Phone",
+            "default": "+1 (973) 435-3638"
+        },
+        {
+            "type": "text",
+            "id": "email",
+            "label": "Email",
+            "default": "hello@circuit.example"
+        },
+        {
+            "type": "header",
+            "content": "Social media"
+        },
+        {
+            "type": "url",
+            "id": "social_facebook",
+            "label": "Facebook link"
+        },
+        {
+            "type": "url",
+            "id": "social_instagram",
+            "label": "Instagram link"
+        },
+        {
+            "type": "url",
+            "id": "social_tiktok",
+            "label": "Tiktok link"
+        },
+        {
+            "type": "url",
+            "id": "social_youtube",
+            "label": "Youtube link"
+        },
+        {
+            "type": "url",
+            "id": "social_pinterest",
+            "label": "Pinterest link"
+        },
+        {
+            "type": "header",
+            "content": "Newsletter"
+        },
+        {
+            "type": "text",
+            "id": "newsletter_heading",
+            "label": "Newsletter heading",
+            "default": "Sign Up to Newsletter"
+        },
+        {
+            "type": "text",
+            "id": "newsletter_text",
+            "label": "Newsletter text",
+            "default": "Sign up for 10% off your first purchase and free shipping. Updates information on Sales and Offers."
+        },
+        {
+            "type": "header",
+            "content": "Bottom bar"
+        },
+        {
+            "type": "text",
+            "id": "payment_labels",
+            "label": "Payment badges (separated by commas)",
+            "default": "Amex, Klarna, Bank, Mastercard, Wallet, Visa, PayPal"
+        },
+        {
+            "type": "text",
+            "id": "copyright",
+            "label": "Copyright line",
+            "default": "© 2026 Circuit store. All rights reserved."
+        }
+    ],
+    "presets": [
+        {
+            "name": "Footer"
+        }
+    ]
+}

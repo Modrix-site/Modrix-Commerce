@@ -1,0 +1,63 @@
+{
+    "name": "Campaign banner",
+    "enabled_on": {
+        "templates": ["*"]
+    },
+    "settings": [
+        {
+            "type": "text",
+            "id": "eyebrow",
+            "label": "Eyebrow"
+        },
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "New campaign"
+        },
+        {
+            "type": "textarea",
+            "id": "body",
+            "label": "Text"
+        },
+        {
+            "type": "image",
+            "id": "image",
+            "label": "Image"
+        },
+        {
+            "type": "color",
+            "id": "background",
+            "label": "Background",
+            "default": "#1c2a24"
+        },
+        {
+            "type": "color",
+            "id": "foreground",
+            "label": "Text color",
+            "default": "#ffffff"
+        },
+        {
+            "type": "text",
+            "id": "button_label",
+            "label": "Button label"
+        },
+        {
+            "type": "url",
+            "id": "button_link",
+            "label": "Button link",
+            "default": "/search"
+        },
+        {
+            "type": "text",
+            "id": "shop_button",
+            "label": "Button label on tiles",
+            "default": "Shop Now"
+        }
+    ],
+    "presets": [
+        {
+            "name": "Campaign banner"
+        }
+    ]
+}

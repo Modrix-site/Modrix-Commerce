@@ -1,0 +1,369 @@
+<?php
+
+namespace App\Domains\Catalog;
+
+use App\Core\Catalog\ProductLabels;
+use App\Core\Settings\StorefrontCurrencies;
+use App\Domains\Catalog\Contracts\SearchProvider;
+use App\Domains\Catalog\Models\Brand;
+use App\Domains\Catalog\Models\Category;
+use App\Domains\Catalog\Models\Product;
+use App\Domains\Catalog\Models\ProductAttributeValue;
+use App\Domains\Catalog\Models\ProductImage;
+use App\Domains\Catalog\Models\ProductTag;
+use App\Domains\Catalog\Models\ProductVariant;
+use App\Domains\Catalog\Pricing\SalePrices;
+use App\Domains\Pricing\Money;
+use App\Support\Like;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
+/**
+ * Read model for the storefront: visible products, search, sorting and
+ * product-card data. Matching is delegated to the bound SearchProvider
+ * (LIKE search by default; modules can replace it).
+ */
+final class StorefrontCatalog
+{
+    public const SORTS = ['newest', 'price_asc', 'price_desc', 'name'];
+
+    public function __construct(
+        private readonly SearchProvider $search,
+        private readonly ProductLabels $labels,
+    ) {}
+
+    /**
+     * @param  array<string, mixed>  $filters
+     * @return LengthAwarePaginator<int, array<string, mixed>>
+     */
+    public function listing(string $currency, ?Category $category = null, ?string $search = null, string $sort = 'newest', int $perPage = 24, ?Brand $brand = null, array $filters = []): LengthAwarePaginator
+    {
+        $displayCurrency = request()->attributes->get('storefront.display_currency');
+        if (is_string($displayCurrency) && $displayCurrency !== $currency) {
+            foreach (['min_price', 'max_price'] as $key) {
+                if (filled($filters[$key] ?? null)) {
+                    $filters[$key] = app(StorefrontCurrencies::class)->display(Money::of((string) $filters[$key], $displayCurrency), $currency)->toDisplayDecimal();
+                }
+            }
+        }
+        $query = $this->visibleWithPrice($currency);
+        if ($filters['on_sale'] ?? false) {
+            $query->whereHas('variants', fn ($variant) => $variant->where('is_active', true)
+                ->whereHas('prices', fn ($price) => $price->where('currency', $currency)
+                    ->whereColumn('compare_at_amount', '>', 'amount')));
+        }
+        if ($filters['in_stock'] ?? false) {
+            $query->whereHas('variants', fn ($variant) => $variant->where('is_active', true)
+                ->whereHas('prices', fn ($price) => $price->where('currency', $currency))
+                ->where(fn ($stock) => $stock->where('track_inventory', false)
+                    ->orWhereRaw('(SELECT COALESCE(SUM(on_hand), 0) FROM inventory_stocks WHERE inventory_stocks.variant_id = product_variants.id) > 0')));
+        }
+
+        if (filled($filters['brand_id'] ?? null)) {
+            $query->where('products.brand_id', (int) $filters['brand_id']);
+        }
+        if (is_string($filters['tag'] ?? null) && ProductTag::normalise($filters['tag']) !== '') {
+            // Exact (normalised) match: % and _ in a tag are literal.
+            $query->whereHas('tags', fn ($t) => $t->where('tag', ProductTag::normalise($filters['tag'])));
+        }
+        if (filled($filters['min_price'] ?? null) || filled($filters['max_price'] ?? null)) {
+            $query->whereHas('variants', fn ($variant) => $variant->where('is_active', true)->whereHas('prices', function ($prices) use ($currency, $filters) {
+                $prices->where('currency', $currency);
+                if (filled($filters['min_price'] ?? null)) {
+                    $prices->where('amount', '>=', $filters['min_price']);
+                }
+                if (filled($filters['max_price'] ?? null)) {
+                    $prices->where('amount', '<=', $filters['max_price']);
+                }
+            }));
+        }
+        if (($filters['options'] ?? []) !== []) {
+            $groups = ProductAttributeValue::query()->whereIn('id', $filters['options'])->get()->groupBy('attribute_id');
+            $query->whereHas('variants', function ($variant) use ($groups) {
+                $variant->where('is_active', true);
+                foreach ($groups as $values) {
+                    $variant->whereHas('options', fn ($option) => $option->whereIn('product_attribute_values.id', $values->pluck('id')));
+                }
+            });
+        }
+
+        if ($brand !== null) {
+            $query->where('products.brand_id', $brand->id);
+        }
+
+        if ($category !== null) {
+            $ids = $category->descendantIdsAndSelf();
+            $query->whereHas('categories', fn ($q) => $q->whereIn('categories.id', $ids));
+        }
+
+        if ($search !== null && trim($search) !== '') {
+            // Wrapped so a provider's OR conditions cannot escape the visibility constraints.
+            $query->where(fn (Builder $q) => $this->search->apply($q, trim($search)));
+        }
+
+        match ($sort) {
+            'price_asc' => $query->orderBy('min_price')->orderBy('products.id'),
+            'price_desc' => $query->orderByDesc('min_price')->orderBy('products.id'),
+            'name' => $query->orderBy('products.name')->orderBy('products.id'),
+            default => $query->orderByDesc('products.published_at')->orderByDesc('products.id'),
+        };
+
+        $page = $query->paginate($perPage)->withQueryString();
+        // One sale-price lookup for the whole page.
+        app(SalePrices::class)->preload($page->getCollection()->pluck('id'));
+
+        return $page->through(fn (Product $product) => $this->card($product, $currency));
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    public function latest(string $currency, int $limit = 8): array
+    {
+        $products = $this->visibleWithPrice($currency)
+            ->orderByDesc('products.published_at')
+            ->orderByDesc('products.id')
+            ->limit($limit)
+            ->get();
+        app(SalePrices::class)->preload($products->pluck('id'));
+
+        return array_values(array_map(fn (Product $p) => $this->card($p, $currency), $products->all()));
+    }
+
+    /**
+     * Products the merchant marked as featured, newest first.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function featured(string $currency, int $limit = 8): array
+    {
+        $products = $this->visibleWithPrice($currency)
+            ->where('products.is_featured', true)
+            ->orderByDesc('products.published_at')
+            ->orderByDesc('products.id')
+            ->limit($limit)
+            ->get();
+        app(SalePrices::class)->preload($products->pluck('id'));
+
+        return array_values(array_map(fn (Product $p) => $this->card($p, $currency), $products->all()));
+    }
+
+    /**
+     * Tags on visible products, with how many visible products carry each:
+     * the most used first, or in the given order when $only names tags.
+     * Tags with no visible products are left out.
+     *
+     * @param  list<string>|null  $only  normalised tags to keep, in display order
+     * @return list<array{name: string, label: string, slug: string, url: string, count: int}>
+     */
+    public function tags(int $limit = 50, ?array $only = null): array
+    {
+        if ($only === []) {
+            return [];
+        }
+
+        $rows = ProductTag::query()
+            ->whereIn('product_tags.product_id', Product::query()->visible()->select('products.id'))
+            ->when($only !== null, fn ($q) => $q->whereIn('product_tags.tag', $only))
+            ->groupBy('product_tags.tag')
+            ->selectRaw('product_tags.tag as tag, count(*) as uses')
+            ->orderByDesc('uses')
+            ->orderBy('product_tags.tag')
+            ->limit($only === null ? max(1, min(200, $limit)) : count($only))
+            ->toBase()
+            ->get()
+            ->mapWithKeys(fn (object $row) => [(string) $row->tag => (int) $row->uses]);
+
+        $order = $only ?? $rows->keys()->all();
+        $tags = [];
+
+        foreach ($order as $tag) {
+            if ($rows->has($tag) && count($tags) < $limit) {
+                $tags[] = self::tag($tag, $rows[$tag]);
+            }
+        }
+
+        return $tags;
+    }
+
+    /**
+     * How a tag is shown to themes: the stored (lowercase) tag, a title-cased
+     * label, a slug for keys and anchors, and the tag-filtered catalog URL.
+     *
+     * @return array{name: string, label: string, slug: string, url: string, count: int}
+     */
+    public static function tag(string $tag, int $count = 0): array
+    {
+        return [
+            'name' => $tag,
+            'label' => mb_convert_case($tag, MB_CASE_TITLE, 'UTF-8'),
+            'slug' => Str::slug($tag) ?: md5($tag),
+            'url' => '/search?'.http_build_query(['tag' => $tag], '', '&', PHP_QUERY_RFC3986),
+            'count' => $count,
+        ];
+    }
+
+    public function findVisible(string $slug): ?Product
+    {
+        $product = Product::query()
+            ->visible()
+            ->where('slug', $slug)
+            ->with([
+                'variants' => fn ($q) => $q->where('is_active', true),
+                'variants.prices',
+                'variants.stocks',
+                'variants.options.attribute',
+                'images',
+                'brand:id,name,slug',
+                'categories' => fn ($q) => $q->where('is_active', true),
+                'categories.translations' => fn ($q) => $q->where('locale', app()->getLocale()),
+                'translations' => fn ($q) => $q->where('locale', app()->getLocale()),
+            ])
+            ->first();
+
+        $product?->variants->each(fn (ProductVariant $v) => $v->setRelation('product', $product));
+
+        return $product;
+    }
+
+    /**
+     * Card data for listings (never includes cost or internal fields).
+     *
+     * @return array<string, mixed>
+     */
+    public function card(Product $product, string $currency): array
+    {
+        // Reuse the loaded parent instead of querying it again per variant.
+        $variants = $product->variants->each(fn (ProductVariant $v) => $v->setRelation('product', $product));
+        $sales = app(SalePrices::class);
+        // Sale prices (from modules such as flash sales) replace the regular price.
+        $prices = $variants->map(function (ProductVariant $v) use ($currency, $sales, $product) {
+            $price = $v->priceIn($currency);
+
+            return $price === null ? null : ($sales->apply($product->id, $price)['price'] ?? $price);
+        })->filter();
+        $from = $prices->reduce(fn (?Money $carry, Money $m) => $carry === null || $m->lessThan($carry) ? $m : $carry);
+        $default = $variants->first();
+        $compareAt = $default?->compareAtPriceIn($currency);
+        $sale = $default === null ? null : $sales->forVariant($default, $currency);
+        if ($sale !== null) {
+            // The price before the sale is shown crossed out (or the compare-at price, if higher).
+            $compareAt = $compareAt !== null && $compareAt->greaterThan($sale['original']) ? $compareAt : $sale['original'];
+        }
+        $image = $product->images->first();
+
+        return [
+            'id' => $product->id,
+            'name' => $product->localized('name'),
+            'slug' => $product->slug,
+            'short_description' => $product->localized('short_description'),
+            'image' => $image instanceof ProductImage ? ['url' => $image->url(), 'alt' => $image->alt] : null,
+            'swatches' => $variants->flatMap(fn (ProductVariant $v) => $v->options)
+                ->filter(fn ($option) => is_string($option->color) && preg_match('/^#[0-9a-fA-F]{6}$/', $option->color))
+                ->unique('id')->values()->map(fn ($option) => ['id' => $option->id, 'value' => $option->value, 'color' => $option->color])->all(),
+            'hover_image' => ($second = $product->images->get(1)) instanceof ProductImage ? ['url' => $second->url(), 'alt' => $second->alt] : null,
+            'brand' => $product->relationLoaded('brand') && $product->brand !== null ? ['name' => $product->brand->name, 'slug' => $product->brand->slug] : null,
+            'price' => $from,
+            'compare_at_price' => $variants->count() === 1 ? $compareAt : null,
+            'sale' => $this->saleBadge($product, $variants, $currency),
+            'has_variants' => $variants->count() > 1,
+            'variant_id' => $variants->count() === 1 ? $default?->id : null,
+            'in_stock' => $variants->contains(fn (ProductVariant $v) => VariantAvailability::of($v, $currency)->purchasable),
+            // Per-product override for the Buy button (null follows the theme).
+            'show_buy_button' => $product->show_buy_button,
+            // Badges contributed by modules (the core has none of its own).
+            'labels' => $this->labels->labels($product),
+        ];
+    }
+
+    /**
+     * Cards for these products (visible ones only, in the given order), e.g. a
+     * module's own product list.
+     *
+     * @param  list<int>  $productIds
+     * @return list<array<string, mixed>>
+     */
+    public function cardsFor(array $productIds, string $currency, int $limit = 12): array
+    {
+        if ($productIds === []) {
+            return [];
+        }
+
+        // Only the first $limit visible products (in the given order) are loaded.
+        $visible = array_map('intval', $this->visibleWithPrice($currency)->whereIn('products.id', $productIds)->pluck('products.id')->all());
+        $ids = array_slice(array_values(array_intersect($productIds, $visible)), 0, $limit);
+
+        if ($ids === []) {
+            return [];
+        }
+
+        app(SalePrices::class)->preload($ids);
+        $products = $this->visibleWithPrice($currency)->whereIn('products.id', $ids)->get()->keyBy('id');
+        $cards = [];
+
+        foreach ($ids as $id) {
+            if ($products->has($id)) {
+                $cards[] = $this->card($products->get($id), $currency);
+            }
+        }
+
+        return $cards;
+    }
+
+    /**
+     * The sale shown on a card ("−20%" badge and end time), if any variant is on sale.
+     *
+     * @param  iterable<ProductVariant>  $variants
+     * @return array{badge: string, name: string, label: string, ends_at: string|null, countdown: bool}|null
+     */
+    private function saleBadge(Product $product, iterable $variants, string $currency): ?array
+    {
+        $sales = app(SalePrices::class);
+
+        foreach ($variants as $variant) {
+            $sale = $sales->forVariant($variant, $currency);
+
+            if ($sale !== null) {
+                return $sale['offer']->toProps();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Visible products that have at least one active variant priced in the currency,
+     * with a `min_price` column for sorting.
+     *
+     * @return Builder<Product>
+     */
+    private function visibleWithPrice(string $currency): Builder
+    {
+        $minPrice = DB::table('product_prices')
+            ->join('product_variants', 'product_variants.id', '=', 'product_prices.variant_id')
+            ->whereColumn('product_variants.product_id', 'products.id')
+            ->where('product_prices.currency', $currency)
+            ->where('product_variants.is_active', true)
+            ->whereNull('product_variants.deleted_at')
+            ->selectRaw('MIN(product_prices.amount)');
+
+        return Product::query()
+            ->visible()
+            ->select('products.*')
+            ->selectSub($minPrice, 'min_price')
+            ->whereHas('variants', fn ($q) => $q->where('is_active', true)
+                ->whereHas('prices', fn ($p) => $p->where('currency', $currency)))
+            ->with([
+                'variants' => fn ($q) => $q->where('is_active', true),
+                'variants.options',
+                'variants.prices',
+                'variants.stocks',
+                // Two: the second shows on hover when the merchant turns it on.
+                'images' => fn ($q) => $q->limit(2),
+                'brand:id,name,slug',
+                'translations' => fn ($q) => $q->where('locale', app()->getLocale()),
+            ]);
+    }
+}

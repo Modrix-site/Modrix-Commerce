@@ -1,0 +1,56 @@
+/* OverflowMenuLinks: one-line header menu with a "See more" dropdown. */
+.storefront .store-overflow-menu {
+    display: flex;
+    align-items: center;
+    justify-content: inherit;
+    flex: 1 1 0;
+    min-width: 0;
+    gap: inherit;
+}
+.storefront .store-overflow-menu > .store-menu-tree {
+    flex-wrap: nowrap;
+    gap: inherit;
+    white-space: nowrap;
+}
+.storefront .store-overflow-menu > .store-menu-tree > .store-menu-item {
+    flex-shrink: 0;
+}
+.storefront .store-overflow-more {
+    position: relative;
+    flex-shrink: 0;
+}
+.storefront .store-overflow-more > button {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding-block: 10px;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    white-space: nowrap;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+}
+.storefront .store-overflow-more > button[aria-expanded='true'] > svg {
+    transform: rotate(180deg);
+}
+.storefront .store-overflow-list {
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline-end: 0;
+    z-index: 60;
+    min-width: 220px;
+    max-width: min(320px, 90vw);
+    padding: 8px 14px;
+    color: var(--foreground);
+    text-align: start;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: 0 12px 28px #0002;
+}
+.storefront .store-overflow-list[hidden] {
+    display: none;
+}

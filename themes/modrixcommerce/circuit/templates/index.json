@@ -1,0 +1,427 @@
+{
+    "sections": {
+        "hero-mosaic_ujzde8": {
+            "type": "hero-mosaic",
+            "settings": {},
+            "blocks": {
+                "campaign_gxd6nc": {
+                    "type": "campaign",
+                    "settings": {
+                        "eyebrow": "Buy 1 get 1 watch",
+                        "heading": "Save! 30-50%",
+                        "body": "Starting at $175. Hurry up! Do not miss out.",
+                        "image": "asset:assets/hero-watch.jpg",
+                        "background": "#1c2a24",
+                        "foreground": "#ffffff",
+                        "button_label": "Shop Sale",
+                        "button_link": "/search?sort=price_asc",
+                        "size": "large"
+                    }
+                },
+                "campaign_f10epf": {
+                    "type": "campaign",
+                    "settings": {
+                        "eyebrow": "New arrivals",
+                        "heading": "Colour your screen",
+                        "body": "Laptops with vivid displays, from $499.",
+                        "image": "asset:assets/cat-laptop.jpg",
+                        "background": "#160f24",
+                        "foreground": "#ffffff",
+                        "button_label": "Shop Laptops",
+                        "button_link": "/search?q=laptop",
+                        "size": "large"
+                    }
+                },
+                "campaign_91dhod": {
+                    "type": "campaign",
+                    "settings": {
+                        "eyebrow": "Save 30-60% electronics",
+                        "heading": "Toaster ovens save up to $159",
+                        "body": "",
+                        "image": "asset:assets/tile-kitchen.jpg",
+                        "background": "#b9937a",
+                        "foreground": "#ffffff",
+                        "button_label": "Shop Now",
+                        "button_link": "/search?q=kitchen",
+                        "size": "medium"
+                    }
+                },
+                "campaign_zdoc9i": {
+                    "type": "campaign",
+                    "settings": {
+                        "eyebrow": "Audio brand",
+                        "heading": "Buy 1 Get 1 Earbuds",
+                        "body": "Starting at $135",
+                        "image": "asset:assets/tile-earbuds.jpg",
+                        "background": "#14111f",
+                        "foreground": "#ffffff",
+                        "button_label": "",
+                        "button_link": "/search?q=earbuds",
+                        "size": "small"
+                    }
+                },
+                "campaign_s0j8ht": {
+                    "type": "campaign",
+                    "settings": {
+                        "eyebrow": "Studio sound",
+                        "heading": "Sale 30% Headphones",
+                        "body": "Starting at $95",
+                        "image": "asset:assets/tile-headphones.jpg",
+                        "background": "#0d0d12",
+                        "foreground": "#ffffff",
+                        "button_label": "",
+                        "button_link": "/search?q=headphones",
+                        "size": "small"
+                    }
+                }
+            },
+            "block_order": [
+                "campaign_gxd6nc",
+                "campaign_f10epf",
+                "campaign_91dhod",
+                "campaign_zdoc9i",
+                "campaign_s0j8ht"
+            ]
+        },
+        "category-circles_9lgmxg": {
+            "type": "category-circles",
+            "settings": {
+                "title": ""
+            },
+            "blocks": {
+                "tile_9edn58": {
+                    "type": "tile",
+                    "settings": {
+                        "title": "Daily Deals",
+                        "text": "Daily deals",
+                        "image": "",
+                        "link": "/search?sort=price_asc"
+                    }
+                },
+                "tile_1u33xt": {
+                    "type": "tile",
+                    "settings": {
+                        "title": "Laptops/PCs",
+                        "text": "",
+                        "image": "asset:assets/cat-laptop.jpg",
+                        "link": "/search?q=laptop"
+                    }
+                },
+                "tile_plpft7": {
+                    "type": "tile",
+                    "settings": {
+                        "title": "Phone/Mobile",
+                        "text": "",
+                        "image": "asset:assets/cat-phone.jpg",
+                        "link": "/search?q=phone"
+                    }
+                },
+                "tile_5v2seh": {
+                    "type": "tile",
+                    "settings": {
+                        "title": "Tablets",
+                        "text": "",
+                        "image": "asset:assets/cat-tablet.jpg",
+                        "link": "/search?q=tablet"
+                    }
+                },
+                "tile_60kvj5": {
+                    "type": "tile",
+                    "settings": {
+                        "title": "Camera/Photo",
+                        "text": "",
+                        "image": "asset:assets/cat-camera.jpg",
+                        "link": "/search?q=camera"
+                    }
+                },
+                "tile_0ce9uv": {
+                    "type": "tile",
+                    "settings": {
+                        "title": "Home/Electronics",
+                        "text": "",
+                        "image": "asset:assets/cat-home.jpg",
+                        "link": "/search?q=home"
+                    }
+                },
+                "tile_w53efr": {
+                    "type": "tile",
+                    "settings": {
+                        "title": "Clearance Sale",
+                        "text": "Big sale",
+                        "image": "",
+                        "link": "/search?sort=price_asc"
+                    }
+                },
+                "tile_4edt2s": {
+                    "type": "tile",
+                    "settings": {
+                        "title": "Sale 50% Off",
+                        "text": "Sale 50",
+                        "image": "",
+                        "link": "/search?sort=price_asc"
+                    }
+                }
+            },
+            "block_order": [
+                "tile_9edn58",
+                "tile_1u33xt",
+                "tile_plpft7",
+                "tile_5v2seh",
+                "tile_60kvj5",
+                "tile_0ce9uv",
+                "tile_w53efr",
+                "tile_4edt2s"
+            ]
+        },
+        "product-deals_ywb3wk": {
+            "type": "product-deals",
+            "settings": {
+                "title": "Today's Best Deals",
+                "countdown": true
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "voucher-banner_h5dnsi": {
+            "type": "voucher-banner",
+            "settings": {
+                "text": "Big Promotion Grab Your Vouchers!",
+                "subtext": "Up to 35% off everything with this code. Limited time only. Excludes selected lines.",
+                "button_label": "Shop Sale",
+                "button_link": "/search?sort=price_asc",
+                "tone": "primary"
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "popular-picks_pzz5fk": {
+            "type": "popular-picks",
+            "settings": {
+                "title": "Popular Picks"
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "editorial-mosaic_2z9ri1": {
+            "type": "editorial-mosaic",
+            "settings": {
+                "title": ""
+            },
+            "blocks": {
+                "tile_9r0wyo": {
+                    "type": "tile",
+                    "settings": {
+                        "title": "Laptops from $1,579",
+                        "text": "Pro series",
+                        "image": "asset:assets/promo-laptop.jpg",
+                        "link": "/search?q=laptop"
+                    }
+                },
+                "tile_jfljoo": {
+                    "type": "tile",
+                    "settings": {
+                        "title": "Limited Edition",
+                        "text": "Save 30-60% electronics",
+                        "image": "asset:assets/promo-appliance.jpg",
+                        "link": "/search?q=kitchen"
+                    }
+                },
+                "tile_a5lqsa": {
+                    "type": "tile",
+                    "settings": {
+                        "title": "Speaker save up to $178",
+                        "text": "Limited time: online only",
+                        "image": "asset:assets/promo-speaker.jpg",
+                        "link": "/search?q=speaker"
+                    }
+                },
+                "tile_j08xui": {
+                    "type": "tile",
+                    "settings": {
+                        "title": "Limited Edition",
+                        "text": "Choose the right laptop screen for the best experience.",
+                        "image": "asset:assets/promo-limited.jpg",
+                        "link": "/search?q=laptop"
+                    }
+                }
+            },
+            "block_order": [
+                "tile_9r0wyo",
+                "tile_jfljoo",
+                "tile_a5lqsa",
+                "tile_j08xui"
+            ]
+        },
+        "product-deals_6d39zz": {
+            "type": "product-deals",
+            "settings": {
+                "title": "Best Selling",
+                "countdown": false
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "brand-logos_zzg4zd": {
+            "type": "brand-logos",
+            "settings": {
+                "title": "Featured Brands"
+            },
+            "blocks": {
+                "tile_men2kh": {
+                    "type": "tile",
+                    "settings": {
+                        "title": "Northwave",
+                        "text": "",
+                        "image": "",
+                        "link": "/search?q=northwave"
+                    }
+                },
+                "tile_vdgaj8": {
+                    "type": "tile",
+                    "settings": {
+                        "title": "LUMIO",
+                        "text": "",
+                        "image": "",
+                        "link": "/search?q=lumio"
+                    }
+                },
+                "tile_gxbeny": {
+                    "type": "tile",
+                    "settings": {
+                        "title": "Aerotek",
+                        "text": "",
+                        "image": "",
+                        "link": "/search?q=aerotek"
+                    }
+                },
+                "tile_jqwx4h": {
+                    "type": "tile",
+                    "settings": {
+                        "title": "PIXELON",
+                        "text": "",
+                        "image": "",
+                        "link": "/search?q=pixelon"
+                    }
+                },
+                "tile_h5344t": {
+                    "type": "tile",
+                    "settings": {
+                        "title": "Soundcraft",
+                        "text": "",
+                        "image": "",
+                        "link": "/search?q=soundcraft"
+                    }
+                }
+            },
+            "block_order": [
+                "tile_men2kh",
+                "tile_vdgaj8",
+                "tile_gxbeny",
+                "tile_jqwx4h",
+                "tile_h5344t"
+            ]
+        },
+        "spotlight_fjgvq4": {
+            "type": "spotlight",
+            "settings": {
+                "heading": "Small Size Big Sound",
+                "body": "A mini speaker with powerful and dynamic sound. Compact and portable, perfect for any space and easy to carry anywhere.",
+                "image": "asset:assets/spotlight-speaker.jpg",
+                "image_position": "left",
+                "button_label": "Portable wireless speakers",
+                "button_link": "/search?q=speaker"
+            },
+            "blocks": {},
+            "block_order": []
+        },
+        "services_k7bn7x": {
+            "type": "services",
+            "settings": {},
+            "blocks": {
+                "service_j8b7tf": {
+                    "type": "service",
+                    "settings": {
+                        "icon": "truck",
+                        "title": "Free Shipping",
+                        "text": "Enjoy free worldwide shipping and returns, with customs and duties taxes included."
+                    }
+                },
+                "service_q7xkwo": {
+                    "type": "service",
+                    "settings": {
+                        "icon": "returns",
+                        "title": "Free Returns",
+                        "text": "Free returns within 15 days, please make sure the items are in undamaged condition."
+                    }
+                },
+                "service_886vom": {
+                    "type": "service",
+                    "settings": {
+                        "icon": "support",
+                        "title": "Support Online",
+                        "text": "We support customers 24/7, send questions we will solve for you immediately."
+                    }
+                }
+            },
+            "block_order": [
+                "service_j8b7tf",
+                "service_q7xkwo",
+                "service_886vom"
+            ]
+        },
+        "support_pzom75": {
+            "type": "support",
+            "settings": {},
+            "blocks": {
+                "card_wbbr4q": {
+                    "type": "card",
+                    "settings": {
+                        "icon": "phone",
+                        "title": "Call Us",
+                        "text": "Call now +1 (973) 435-3638",
+                        "link": "/account"
+                    }
+                },
+                "card_mw2wxf": {
+                    "type": "card",
+                    "settings": {
+                        "icon": "chat",
+                        "title": "Chat with Us",
+                        "text": "Chat now with an expert",
+                        "link": "/account"
+                    }
+                },
+                "card_ogo4mv": {
+                    "type": "card",
+                    "settings": {
+                        "icon": "mail",
+                        "title": "Email Us",
+                        "text": "hello@circuit.example",
+                        "link": "/account"
+                    }
+                }
+            },
+            "block_order": ["card_wbbr4q", "card_mw2wxf", "card_ogo4mv"]
+        },
+        "apps_n4a4wf": {
+            "type": "apps",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        }
+    },
+    "order": [
+        "hero-mosaic_ujzde8",
+        "category-circles_9lgmxg",
+        "product-deals_ywb3wk",
+        "voucher-banner_h5dnsi",
+        "popular-picks_pzz5fk",
+        "editorial-mosaic_2z9ri1",
+        "product-deals_6d39zz",
+        "brand-logos_zzg4zd",
+        "spotlight_fjgvq4",
+        "services_k7bn7x",
+        "support_pzom75",
+        "apps_n4a4wf"
+    ]
+}

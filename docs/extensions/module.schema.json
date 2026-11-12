@@ -1,0 +1,351 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://github.com/eleydo/modrixcommerce/docs/extensions/module.schema.json",
+    "title": "Modrix Commerce module manifest",
+    "description": "module.json of an Modrix Commerce module. Data only; never executed. The platform validator (App\\Core\\Extensions\\ManifestValidator) is authoritative and additionally checks paths, files, conflicts and dependencies.",
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["name", "display_name", "version", "type", "platform_version"],
+    "properties": {
+        "$schema": {
+            "type": "string"
+        },
+        "name": {
+            "type": "string",
+            "pattern": "^[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?/[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?$"
+        },
+        "display_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+        },
+        "description": {
+            "type": "string",
+            "maxLength": 500
+        },
+        "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?$"
+        },
+        "type": {
+            "const": "module"
+        },
+        "platform_version": {
+            "type": "string",
+            "maxLength": 100
+        },
+        "author": {
+            "type": "string",
+            "maxLength": 120
+        },
+        "license": {
+            "type": "string",
+            "maxLength": 60
+        },
+        "autoload": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["psr-4"],
+            "properties": {
+                "psr-4": {
+                    "type": "object",
+                    "minProperties": 1,
+                    "maxProperties": 1,
+                    "propertyNames": {
+                        "pattern": "^[A-Z][A-Za-z0-9_]*(\\\\[A-Z][A-Za-z0-9_]*)+\\\\$"
+                    },
+                    "additionalProperties": {
+                        "$ref": "#/$defs/relativePath"
+                    }
+                }
+            }
+        },
+        "provider": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Za-z0-9_]*(\\\\[A-Z][A-Za-z0-9_]*)+$"
+        },
+        "requires": {
+            "type": "object",
+            "propertyNames": {
+                "$ref": "#/properties/name"
+            },
+            "additionalProperties": {
+                "type": "string"
+            }
+        },
+        "permissions": {
+            "type": "array",
+            "maxItems": 50,
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["name", "label", "group"],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "pattern": "^[a-z][a-z0-9_-]*(\\.[a-z][a-z0-9_-]*)+$"
+                    },
+                    "label": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                    },
+                    "group": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 60
+                    }
+                }
+            }
+        },
+        "capabilities": {
+            "type": "array",
+            "maxItems": 30,
+            "uniqueItems": true,
+            "items": {
+                "enum": [
+                    "admin.routes",
+                    "admin.navigation",
+                    "storefront.routes",
+                    "storefront.slots",
+                    "dashboard.widgets",
+                    "database.migrations",
+                    "settings",
+                    "permissions",
+                    "events.listen",
+                    "scheduled.tasks",
+                    "console.commands",
+                    "notifications",
+                    "checkout.validators",
+                    "pricing.steps",
+                    "catalog.sale_prices",
+                    "catalog.image_urls",
+                    "payment.gateway",
+                    "shipping.rates",
+                    "tax.provider",
+                    "search.provider",
+                    "sitemap.provider",
+                    "product.labels",
+                    "content_security"
+                ]
+            }
+        },
+        "migrations": {
+            "$ref": "#/$defs/relativePath"
+        },
+        "routes": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "admin": {
+                    "$ref": "#/$defs/relativePath"
+                },
+                "storefront": {
+                    "$ref": "#/$defs/relativePath"
+                }
+            }
+        },
+        "assets": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "pages": {
+                    "$ref": "#/$defs/relativePath"
+                },
+                "slots": {
+                    "$ref": "#/$defs/relativePath"
+                }
+            }
+        },
+        "settings": {
+            "type": "array",
+            "maxItems": 50,
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["key", "type", "label"],
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "pattern": "^[a-z][a-z0-9_]{0,59}$"
+                    },
+                    "type": {
+                        "enum": [
+                            "boolean",
+                            "string",
+                            "text",
+                            "integer",
+                            "select",
+                            "email"
+                        ]
+                    },
+                    "label": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                    },
+                    "help": {
+                        "type": "string",
+                        "maxLength": 300
+                    },
+                    "tab": {
+                        "description": "Also show this setting in this customizer tab.",
+                        "enum": [
+                            "general",
+                            "header",
+                            "home",
+                            "catalog",
+                            "product",
+                            "cart",
+                            "checkout",
+                            "footer"
+                        ]
+                    },
+                    "default": {},
+                    "required": {
+                        "type": "boolean"
+                    },
+                    "min": {
+                        "type": "integer"
+                    },
+                    "max": {
+                        "type": "integer"
+                    },
+                    "max_length": {
+                        "type": "integer"
+                    },
+                    "suggestions": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 50,
+                        "items": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 200
+                        }
+                    },
+                    "visible_when": {
+                        "type": "object",
+                        "minProperties": 1,
+                        "additionalProperties": {
+                            "oneOf": [
+                                {
+                                    "type": ["string", "number", "boolean"]
+                                },
+                                {
+                                    "type": "array",
+                                    "minItems": 1,
+                                    "items": {
+                                        "type": ["string", "number", "boolean"]
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "options": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 100,
+                        "items": {
+                            "type": "object",
+                            "required": ["value", "label"],
+                            "properties": {
+                                "value": {
+                                    "type": ["string", "number", "boolean"]
+                                },
+                                "label": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "icon": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]{1,40}$",
+            "description": "Lucide icon name shown for the module in the admin extensions list and menu (default \"puzzle\")."
+        },
+        "accent": {
+            "type": "string",
+            "pattern": "^#[0-9a-fA-F]{6}$",
+            "description": "Optional brand colour (6-digit hex) used as the module's accent, e.g. the vendor's brand colour."
+        },
+        "content_security": {
+            "type": "object",
+            "maxProperties": 5,
+            "propertyNames": {
+                "enum": [
+                    "script-src",
+                    "frame-src",
+                    "connect-src",
+                    "img-src",
+                    "form-action"
+                ]
+            },
+            "additionalProperties": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 10,
+                "items": {
+                    "type": "string",
+                    "pattern": "^https:\\/\\/(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]{2,63}(?::\\d{1,5})?$"
+                }
+            }
+        },
+        "admin_navigation": {
+            "type": "array",
+            "maxItems": 10,
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["key", "title", "route", "permission"],
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "pattern": "^[a-z0-9-]{1,40}$"
+                    },
+                    "title": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 60
+                    },
+                    "route": {
+                        "type": "string",
+                        "pattern": "^[a-z0-9_.-]{1,80}$"
+                    },
+                    "icon": {
+                        "type": "string",
+                        "pattern": "^[a-z0-9-]{1,40}$"
+                    },
+                    "group": {
+                        "type": "string",
+                        "maxLength": 60
+                    },
+                    "permission": {
+                        "type": "string"
+                    },
+                    "order": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "logo": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "Package-relative PNG, JPEG or WebP logo, at most 256 KB."
+        }
+    },
+    "$defs": {
+        "relativePath": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "not": {
+                "pattern": "(^[/\\\\])|(^[a-zA-Z]:)|(^|[/\\\\])\\.\\.([/\\\\]|$)"
+            }
+        }
+    }
+}

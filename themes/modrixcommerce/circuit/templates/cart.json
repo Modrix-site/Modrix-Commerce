@@ -1,0 +1,11 @@
+{
+    "sections": {
+        "main-cart_lj4h9d": {
+            "type": "main-cart",
+            "settings": {},
+            "blocks": {},
+            "block_order": []
+        }
+    },
+    "order": ["main-cart_lj4h9d"]
+}

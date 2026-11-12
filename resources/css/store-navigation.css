@@ -1,0 +1,210 @@
+.storefront .store-menu-tree {
+    display: flex;
+    align-items: stretch;
+    gap: inherit;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+    flex-wrap: wrap;
+}
+.storefront .store-menu-tree[data-orientation='vertical'] {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 2px;
+}
+.storefront .store-menu-tree .store-menu-item {
+    position: relative;
+    list-style: none;
+    min-width: 0;
+}
+.storefront .store-menu-tree .store-menu-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.storefront .store-menu-tree .store-menu-row > .store-menu-link {
+    display: block;
+    padding: 10px 0;
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    text-transform: inherit;
+    text-decoration: none;
+    min-width: 0;
+}
+.storefront .store-menu-tree .store-menu-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+.storefront .store-menu-tree .store-menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    min-height: 36px;
+    padding: 5px;
+    color: inherit;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+}
+.storefront .store-menu-toggle[aria-expanded='true'] > svg {
+    transform: rotate(180deg);
+}
+.storefront .store-menu-tree .store-menu-submenu {
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline-start: 0;
+    width: max-content;
+    min-width: 210px;
+    max-width: min(320px, 90vw);
+    margin: 0;
+    padding: 8px;
+    background: var(--background);
+    color: var(--foreground);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: 0 12px 28px #0002;
+    z-index: 60;
+    list-style: none;
+    text-align: start;
+    text-transform: none;
+}
+.storefront .store-menu-tree .store-menu-submenu .store-menu-link {
+    padding: 9px 10px;
+    white-space: normal;
+}
+.storefront .store-menu-tree .store-menu-submenu .store-menu-submenu {
+    inset-block-start: 0;
+    inset-inline-start: 100%;
+}
+.storefront .store-menu-tree .store-menu-submenu[hidden] {
+    display: none;
+}
+.storefront nav:has(> .store-menu-tree[data-orientation='horizontal']) {
+    overflow: visible !important;
+}
+.storefront
+    .store-menu-tree[data-orientation='horizontal']
+    > .store-menu-item:last-child
+    > .store-menu-submenu {
+    inset-inline-start: auto;
+    inset-inline-end: 0;
+}
+.storefront
+    .store-menu-tree[data-orientation='horizontal']
+    > .store-menu-item:last-child
+    .store-menu-submenu
+    .store-menu-submenu {
+    inset-inline-start: auto;
+    inset-inline-end: 100%;
+}
+.storefront .store-menu-tree[data-orientation='vertical'] .store-menu-submenu {
+    position: static;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+    margin-inline-start: 10px;
+    padding: 0 0 0 10px;
+    border: 0;
+    border-inline-start: 1px solid var(--border);
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+    color: inherit;
+}
+.storefront .store-menu-tree[data-orientation='vertical'] .store-menu-link {
+    white-space: normal;
+}
+.storefront .store-menu-tree[data-orientation='vertical'] .store-menu-item {
+    width: 100%;
+}
+.storefront .store-menu-tree :is(a, button):focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+@media (hover: hover) and (pointer: fine) {
+    .storefront
+        .store-menu-tree[data-orientation='horizontal']
+        .store-menu-item:hover
+        > .store-menu-submenu {
+        display: block;
+    }
+}
+.storefront .store-navigation-shell {
+    width: 100%;
+    min-width: 0;
+    flex: 1;
+}
+.storefront .store-sidebar-navigation {
+    padding: 22px;
+    border: 1px solid var(--border);
+    background: var(--background);
+    color: var(--foreground);
+    min-width: 0;
+}
+.storefront .store-sidebar-navigation h2 {
+    margin-bottom: 16px;
+    font-size: 16px;
+    font-weight: 600;
+}
+.storefront .store-sidebar-mobile {
+    display: none;
+}
+@media (min-width: 1024px) {
+    .storefront .store-navigation-shell[data-sidebar='true'] {
+        display: grid;
+        grid-template-columns: 250px minmax(0, 1fr);
+        align-items: start;
+        gap: 24px;
+        padding: 24px;
+        max-width: 1800px;
+        margin-inline: auto;
+    }
+    .storefront .store-sidebar-navigation {
+        position: sticky;
+        top: 80px;
+        max-height: calc(100dvh - 100px);
+        overflow-y: auto;
+    }
+    .storefront .store-sidebar-navigation[data-layout='horizontal'] {
+        grid-column: 1/-1;
+        position: static;
+    }
+    .storefront
+        .store-navigation-shell:has(
+            > .store-sidebar-navigation[data-layout='horizontal']
+        ) {
+        grid-template-columns: 1fr;
+    }
+    .storefront .store-navigation-shell > main#main {
+        min-width: 0;
+    }
+    .storefront .store-navigation-shell[data-sidebar='true'] > main#main {
+        width: 100%;
+    }
+}
+@media (max-width: 1023px) {
+    .storefront .store-sidebar-navigation {
+        display: none;
+    }
+    .storefront .store-sidebar-mobile {
+        display: block;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+    }
+    .storefront .store-sidebar-mobile summary {
+        cursor: pointer;
+        font-weight: 600;
+    }
+    .storefront .store-sidebar-mobile .store-menu-tree {
+        margin-top: 12px;
+    }
+    .storefront
+        .store-menu-tree[data-orientation='horizontal']
+        .store-menu-submenu {
+        max-width: 80vw;
+    }
+}

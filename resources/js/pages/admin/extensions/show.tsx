@@ -1,0 +1,868 @@
+import { Form, Head } from '@inertiajs/react';
+import { AlertTriangle, ShieldAlert } from 'lucide-react';
+import { useState } from 'react';
+import type { ComponentProps, SyntheticEvent } from 'react';
+import ExtensionController from '@/actions/App/Http/Controllers/Admin/ExtensionController';
+import { ExtensionIcon } from '@/components/admin/extension-icon';
+import { ExtensionStateBadge } from '@/components/admin/extension-state-badge';
+import { FormField, NativeSelect } from '@/components/admin/form-field';
+import { AdminPage, PageHeader } from '@/components/admin/page-header';
+import { SuggestedInput } from '@/components/admin/suggested-input';
+import InputError from '@/components/input-error';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
+import { Textarea } from '@/components/ui/textarea';
+import { useCan } from '@/hooks/use-can';
+import { index } from '@/routes/admin/extensions';
+import type { ExtensionSettingField, ExtensionSummary } from '@/types';
+
+type Extension = ExtensionSummary & {
+    license: string | null;
+    platform_version: string | null;
+    /** Set when the module needs a newer core than this store runs. */
+    core_update: {
+        required: string;
+        current: string;
+        message: string;
+        url: string;
+    } | null;
+    permissions: { name: string; label: string; group: string }[];
+    routes: string[];
+    has_migrations: boolean;
+    dependents: { name: string; state: string }[];
+    protected: boolean;
+    installed_at: string | null;
+    enabled_at: string | null;
+};
+
+type LifecycleEvent = {
+    id: number;
+    action: string;
+    from_state: string | null;
+    to_state: string | null;
+    version: string | null;
+    success: boolean;
+    message: string | null;
+    actor: string | null;
+    created_at: string;
+};
+
+type Props = {
+    extension: Extension;
+    settings: {
+        fields: ExtensionSettingField[];
+        values: Record<string, unknown>;
+    } | null;
+    events: LifecycleEvent[];
+};
+
+export default function ExtensionShow({ extension, settings, events }: Props) {
+    const can = useCan();
+    const installed = extension.version !== null;
+    const state = extension.state;
+    const sameVersion = extension.version === extension.available_version;
+
+    // A module built for a newer core can't be installed, enabled or updated here.
+    const coreTooOld = extension.core_update !== null;
+    // The platform-version error is shown as the "Core update required" banner instead.
+    const otherErrors = coreTooOld
+        ? extension.errors.filter(
+              (error) => !error.startsWith('Requires platform version'),
+          )
+        : extension.errors;
+    const canInstall =
+        !coreTooOld &&
+        !installed &&
+        (state === 'discovered' || state === 'failed');
+    const canEnable =
+        !coreTooOld &&
+        installed &&
+        sameVersion &&
+        ['installed', 'disabled', 'failed'].includes(state);
+    const canDisable = ['enabled', 'failed', 'update_pending'].includes(state);
+    const canUpdate = !coreTooOld && installed && extension.update_available;
+    const canUninstall =
+        installed &&
+        ['installed', 'disabled', 'failed', 'update_pending'].includes(state);
+    // Anything that is not running can be deleted; the server re-checks
+    // dependents and a module that is waiting to be re-enabled.
+    const canDelete = !extension.protected && state !== 'enabled';
+
+    return (
+        <>
+            <Head title={extension.display_name} />
+            <AdminPage>
+                <div className="mb-4 flex items-center gap-3">
+                    <ExtensionIcon
+                        logo={extension.logo}
+                        icon={extension.icon}
+                        accent={extension.accent}
+                        className="size-16"
+                    />
+                    <span className="text-sm text-muted-foreground">
+                        {extension.name}
+                    </span>
+                </div>
+                <PageHeader
+                    title={extension.display_name}
+                    description={extension.description ?? extension.name}
+                    actions={
+                        <ExtensionStateBadge
+                            state={extension.state}
+                            label={extension.state_label}
+                        />
+                    }
+                />
+
+                {extension.core_update && (
+                    <Alert>
+                        <AlertTriangle />
+                        <AlertTitle>Core update required</AlertTitle>
+                        <AlertDescription>
+                            <p>
+                                This module needs Modrix Commerce core{' '}
+                                <strong>
+                                    {extension.core_update.required}
+                                </strong>
+                                , but this store runs{' '}
+                                <strong>{extension.core_update.current}</strong>
+                                . Update the core, then enable the module.
+                            </p>
+                            <Button asChild size="sm" className="mt-2">
+                                <a href={extension.core_update.url}>
+                                    Go to core update
+                                </a>
+                            </Button>
+                        </AlertDescription>
+                    </Alert>
+                )}
+
+                {otherErrors.length > 0 && (
+                    <Alert variant="destructive">
+                        <AlertTriangle />
+                        <AlertTitle>The package is invalid</AlertTitle>
+                        <AlertDescription>
+                            <ul className="list-disc pl-4">
+                                {otherErrors.map((error, i) => (
+                                    <li key={i}>{error}</li>
+                                ))}
+                            </ul>
+                        </AlertDescription>
+                    </Alert>
+                )}
+
+                {extension.failure && (
+                    <Alert variant="destructive">
+                        <AlertTriangle />
+                        <AlertTitle>This module is not running</AlertTitle>
+                        <AlertDescription>{extension.failure}</AlertDescription>
+                    </Alert>
+                )}
+
+                <div className="flex flex-wrap gap-2">
+                    {canInstall && can('extensions.install') && (
+                        <Form
+                            {...ExtensionController.install.form(extension.id)}
+                        >
+                            {({ processing, errors }) => (
+                                <>
+                                    <Button type="submit" disabled={processing}>
+                                        Install
+                                    </Button>
+                                    <InputError message={errors.module} />
+                                </>
+                            )}
+                        </Form>
+                    )}
+                    {canEnable && can('extensions.enable') && (
+                        <EnableDialog extension={extension} />
+                    )}
+                    {canUpdate && can('extensions.update') && (
+                        <Form
+                            {...ExtensionController.update.form(extension.id)}
+                        >
+                            {({ processing }) => (
+                                <Button type="submit" disabled={processing}>
+                                    Update to v{extension.available_version}
+                                </Button>
+                            )}
+                        </Form>
+                    )}
+                    {canDisable && can('extensions.disable') && (
+                        <Form
+                            {...ExtensionController.disable.form(extension.id)}
+                        >
+                            {({ processing }) => (
+                                <Button
+                                    type="submit"
+                                    variant="outline"
+                                    disabled={processing}
+                                >
+                                    Disable
+                                </Button>
+                            )}
+                        </Form>
+                    )}
+                    {canUninstall && can('extensions.install') && (
+                        <UninstallDialog extension={extension} />
+                    )}
+                    {canDelete && can('extensions.install') && (
+                        <DeleteDialog extension={extension} />
+                    )}
+                </div>
+
+                <div className="grid gap-6 lg:grid-cols-2">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Package</CardTitle>
+                        </CardHeader>
+                        <CardContent className="grid gap-2 text-sm">
+                            <Row label="Name" value={extension.name} mono />
+                            <Row
+                                label="Installed version"
+                                value={extension.version ?? 'Not installed'}
+                            />
+                            <Row
+                                label="Version on disk"
+                                value={extension.available_version ?? '—'}
+                            />
+                            <Row
+                                label="Platform"
+                                value={extension.platform_version ?? '—'}
+                            />
+                            <Row
+                                label="Author"
+                                value={extension.author ?? '—'}
+                            />
+                            <Row
+                                label="License"
+                                value={extension.license ?? '—'}
+                            />
+                            <Row
+                                label="Requires"
+                                value={
+                                    Object.keys(extension.requires).length > 0
+                                        ? Object.entries(extension.requires)
+                                              .map(([n, c]) => `${n} ${c}`)
+                                              .join(', ')
+                                        : 'Nothing'
+                                }
+                            />
+                            <Row
+                                label="Required by"
+                                value={
+                                    extension.dependents.length > 0
+                                        ? extension.dependents
+                                              .map((d) => d.name)
+                                              .join(', ')
+                                        : 'Nothing'
+                                }
+                            />
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>What it can do</CardTitle>
+                            <CardDescription>
+                                Declared by the package. Its PHP code runs with
+                                the same privileges as the store.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="grid gap-3 text-sm">
+                            {extension.capabilities.length === 0 ? (
+                                <p className="text-muted-foreground">
+                                    No capabilities declared.
+                                </p>
+                            ) : (
+                                <ul className="grid gap-1">
+                                    {extension.capabilities.map((c) => (
+                                        <li key={c.key}>
+                                            {c.label}{' '}
+                                            <span className="font-mono text-xs text-muted-foreground">
+                                                {c.key}
+                                            </span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                            {extension.permissions.length > 0 && (
+                                <div className="grid gap-1">
+                                    <span className="font-medium">
+                                        Staff permissions
+                                    </span>
+                                    <div className="flex flex-wrap gap-1">
+                                        {extension.permissions.map((p) => (
+                                            <Badge
+                                                key={p.name}
+                                                variant="outline"
+                                                title={p.name}
+                                            >
+                                                {p.label}
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {settings &&
+                    settings.fields.length > 0 &&
+                    can('extensions.configure') && (
+                        <SettingsCard
+                            extensionId={extension.id}
+                            fields={settings.fields}
+                            values={settings.values}
+                        />
+                    )}
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Lifecycle log</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        {events.length === 0 ? (
+                            <p className="text-sm text-muted-foreground">
+                                Nothing recorded yet.
+                            </p>
+                        ) : (
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>When</TableHead>
+                                        <TableHead>Action</TableHead>
+                                        <TableHead>By</TableHead>
+                                        <TableHead>Details</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {events.map((e) => (
+                                        <TableRow key={e.id}>
+                                            <TableCell className="whitespace-nowrap">
+                                                {new Date(
+                                                    e.created_at,
+                                                ).toLocaleString()}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge
+                                                    variant={
+                                                        e.success
+                                                            ? 'secondary'
+                                                            : 'destructive'
+                                                    }
+                                                >
+                                                    {e.action.replace('_', ' ')}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell>
+                                                {e.actor ?? 'System'}
+                                            </TableCell>
+                                            <TableCell className="max-w-md text-xs whitespace-normal text-muted-foreground">
+                                                {e.version && `v${e.version} `}
+                                                {e.from_state &&
+                                                    e.to_state &&
+                                                    e.from_state !==
+                                                        e.to_state &&
+                                                    `${e.from_state} → ${e.to_state}. `}
+                                                {e.message}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        )}
+                    </CardContent>
+                </Card>
+            </AdminPage>
+        </>
+    );
+}
+
+function Row({
+    label,
+    value,
+    mono = false,
+}: {
+    label: string;
+    value: string;
+    mono?: boolean;
+}) {
+    return (
+        <div className="flex justify-between gap-4">
+            <span className="text-muted-foreground">{label}</span>
+            <span className={mono ? 'font-mono text-xs' : undefined}>
+                {value}
+            </span>
+        </div>
+    );
+}
+
+function EnableDialog({ extension }: { extension: Extension }) {
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button>Enable</Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogTitle>Enable {extension.display_name}?</DialogTitle>
+                <DialogDescription>
+                    Enabling runs this module's PHP code with the same access as
+                    the store itself: your database, files, customers and
+                    orders. Only enable modules from sources you trust.
+                </DialogDescription>
+                {extension.capabilities.length > 0 && (
+                    <ul className="list-disc pl-5 text-sm">
+                        {extension.capabilities.map((c) => (
+                            <li key={c.key}>{c.label}</li>
+                        ))}
+                    </ul>
+                )}
+                <Form
+                    {...ExtensionController.enable.form(extension.id)}
+                    className="grid gap-4"
+                >
+                    {({ processing, errors }) => (
+                        <>
+                            <label className="flex items-start gap-2 text-sm">
+                                <Checkbox
+                                    name="trusted"
+                                    value="1"
+                                    className="mt-0.5"
+                                />
+                                I trust the author of this module and want to
+                                run its code.
+                            </label>
+                            <InputError
+                                message={errors.trusted ?? errors.module}
+                            />
+                            <DialogFooter className="gap-2">
+                                <DialogClose asChild>
+                                    <Button variant="secondary">Cancel</Button>
+                                </DialogClose>
+                                <Button type="submit" disabled={processing}>
+                                    Enable module
+                                </Button>
+                            </DialogFooter>
+                        </>
+                    )}
+                </Form>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+function UninstallDialog({ extension }: { extension: Extension }) {
+    const [typed, setTyped] = useState('');
+
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button variant="destructive">Uninstall</Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogTitle>Uninstall {extension.display_name}?</DialogTitle>
+                <DialogDescription>
+                    This permanently deletes the module's database tables,
+                    settings and staff permissions. Disable the module instead
+                    if you want to keep its data.
+                </DialogDescription>
+                <Alert variant="destructive">
+                    <ShieldAlert />
+                    <AlertTitle>This cannot be undone</AlertTitle>
+                    <AlertDescription>
+                        Back up your database first if you might need this data
+                        again.
+                    </AlertDescription>
+                </Alert>
+                <Form
+                    {...ExtensionController.uninstall.form(extension.id)}
+                    className="grid gap-4"
+                >
+                    {({ processing, errors }) => (
+                        <>
+                            <div className="grid gap-2">
+                                <Label htmlFor="confirmation">
+                                    Type{' '}
+                                    <span className="font-mono">
+                                        {extension.name}
+                                    </span>{' '}
+                                    to confirm
+                                </Label>
+                                <Input
+                                    id="confirmation"
+                                    name="confirmation"
+                                    autoComplete="off"
+                                    value={typed}
+                                    onChange={(e) => setTyped(e.target.value)}
+                                />
+                                <InputError
+                                    message={
+                                        errors.confirmation ?? errors.module
+                                    }
+                                />
+                            </div>
+                            <DialogFooter className="gap-2">
+                                <DialogClose asChild>
+                                    <Button variant="secondary">Cancel</Button>
+                                </DialogClose>
+                                <Button
+                                    type="submit"
+                                    variant="destructive"
+                                    disabled={
+                                        processing || typed !== extension.name
+                                    }
+                                >
+                                    Uninstall and delete data
+                                </Button>
+                            </DialogFooter>
+                        </>
+                    )}
+                </Form>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+function DeleteDialog({ extension }: { extension: Extension }) {
+    const [typed, setTyped] = useState('');
+    const installedDependents = extension.dependents.filter(
+        (d) => d.state !== 'discovered' && d.state !== 'invalid',
+    );
+    const blocked = installedDependents.length > 0;
+
+    return (
+        <Dialog onOpenChange={(open) => !open && setTyped('')}>
+            <DialogTrigger asChild>
+                <Button variant="outline" className="text-destructive">
+                    Delete
+                </Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogTitle>Delete {extension.display_name}?</DialogTitle>
+                <DialogDescription>
+                    This removes the module's files from{' '}
+                    <span className="font-mono">modules/{extension.name}</span>
+                    {extension.version !== null
+                        ? ', runs its uninstall migrations and deletes its database tables, settings and staff permissions.'
+                        : '.'}{' '}
+                    To use it again you have to upload or reinstall the package.
+                </DialogDescription>
+                {blocked ? (
+                    <Alert variant="destructive">
+                        <AlertTriangle />
+                        <AlertTitle>Required by other modules</AlertTitle>
+                        <AlertDescription>
+                            Uninstall or delete{' '}
+                            {installedDependents.map((d) => d.name).join(', ')}{' '}
+                            first.
+                        </AlertDescription>
+                    </Alert>
+                ) : (
+                    <Alert variant="destructive">
+                        <ShieldAlert />
+                        <AlertTitle>This cannot be undone</AlertTitle>
+                        <AlertDescription>
+                            Back up your database and files first if you might
+                            need this module again.
+                        </AlertDescription>
+                    </Alert>
+                )}
+                <Form
+                    {...ExtensionController.destroy.form(extension.id)}
+                    className="grid gap-4"
+                >
+                    {({ processing, errors }) => (
+                        <>
+                            <div className="grid gap-2">
+                                <Label htmlFor="delete-confirmation">
+                                    Type{' '}
+                                    <span className="font-mono">
+                                        {extension.name}
+                                    </span>{' '}
+                                    to confirm
+                                </Label>
+                                <Input
+                                    id="delete-confirmation"
+                                    name="confirmation"
+                                    autoComplete="off"
+                                    value={typed}
+                                    onChange={(e) => setTyped(e.target.value)}
+                                    disabled={blocked}
+                                />
+                                <InputError
+                                    message={
+                                        errors.confirmation ?? errors.module
+                                    }
+                                />
+                            </div>
+                            <DialogFooter className="gap-2">
+                                <DialogClose asChild>
+                                    <Button variant="secondary">Cancel</Button>
+                                </DialogClose>
+                                <Button
+                                    type="submit"
+                                    variant="destructive"
+                                    disabled={
+                                        blocked ||
+                                        processing ||
+                                        typed !== extension.name
+                                    }
+                                >
+                                    Delete module
+                                </Button>
+                            </DialogFooter>
+                        </>
+                    )}
+                </Form>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+function SettingsCard({
+    extensionId,
+    fields,
+    values,
+}: {
+    extensionId: number;
+    fields: ExtensionSettingField[];
+    values: Record<string, unknown>;
+}) {
+    // Current form values, read back from the form so visible_when reacts as the merchant edits.
+    const [current, setCurrent] = useState<Record<string, string>>(() =>
+        Object.fromEntries(
+            fields.map((field) => [
+                field.key,
+                settingString(values[field.key]),
+            ]),
+        ),
+    );
+    const sync = (event: SyntheticEvent<HTMLDivElement>) => {
+        const form = event.currentTarget.closest('form');
+
+        if (!form) {
+            return;
+        }
+
+        const data = new FormData(form);
+        setCurrent(
+            Object.fromEntries(
+                fields.map((field) => [
+                    field.key,
+                    lastString(data.getAll(`settings[${field.key}]`)),
+                ]),
+            ),
+        );
+    };
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>Settings</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <Form
+                    {...ExtensionController.configure.form(extensionId)}
+                    options={{ preserveScroll: true }}
+                    className="grid gap-4"
+                >
+                    {({ processing, errors }) => (
+                        <>
+                            <div
+                                className="grid gap-4"
+                                onChange={sync}
+                                onClick={sync}
+                            >
+                                {fields.map((field) => {
+                                    const visible = isVisible(field, current);
+
+                                    return (
+                                        <div key={field.key} hidden={!visible}>
+                                            <SettingInput
+                                                field={field}
+                                                value={values[field.key]}
+                                                error={errors[field.key]}
+                                                hidden={!visible}
+                                            />
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                            <InputError message={errors.module} />
+                            <div>
+                                <Button type="submit" disabled={processing}>
+                                    Save settings
+                                </Button>
+                            </div>
+                        </>
+                    )}
+                </Form>
+            </CardContent>
+        </Card>
+    );
+}
+
+function lastString(entries: FormDataEntryValue[]): string {
+    const last = entries.at(-1);
+
+    return typeof last === 'string' ? last : '';
+}
+
+function settingString(value: unknown): string {
+    if (typeof value === 'boolean') {
+        return value ? '1' : '0';
+    }
+
+    return typeof value === 'string' || typeof value === 'number'
+        ? String(value)
+        : '';
+}
+
+function isVisible(
+    field: ExtensionSettingField,
+    current: Record<string, string>,
+): boolean {
+    return Object.entries(field.visible_when ?? {}).every(([key, expected]) =>
+        (Array.isArray(expected) ? expected : [expected])
+            .map(settingString)
+            .includes(current[key] ?? ''),
+    );
+}
+
+function SettingInput({
+    field,
+    value,
+    error,
+    hidden = false,
+}: {
+    field: ExtensionSettingField;
+    value: unknown;
+    error?: string;
+    hidden?: boolean;
+}) {
+    const id = `setting-${field.key}`;
+    const name = `settings[${field.key}]`;
+    // Setting values are always scalars (the server coerces them by type).
+    const text =
+        typeof value === 'string' || typeof value === 'number'
+            ? String(value)
+            : '';
+
+    if (field.type === 'boolean') {
+        return (
+            <div className="grid gap-1">
+                <input type="hidden" name={name} value="0" />
+                <label className="flex items-center gap-2 text-sm">
+                    <Checkbox
+                        id={id}
+                        name={name}
+                        value="1"
+                        defaultChecked={value === true}
+                    />
+                    {field.label}
+                </label>
+                {field.help && (
+                    <p className="text-xs text-muted-foreground">
+                        {field.help}
+                    </p>
+                )}
+                <InputError message={error} />
+            </div>
+        );
+    }
+
+    return (
+        <FormField id={id} label={field.label} hint={field.help} error={error}>
+            {field.type === 'text' ? (
+                <Textarea
+                    id={id}
+                    name={name}
+                    rows={4}
+                    defaultValue={text}
+                    maxLength={field.max_length}
+                    required={field.required && !hidden}
+                />
+            ) : field.type === 'select' ? (
+                <NativeSelect id={id} name={name} defaultValue={text}>
+                    {!field.required && <option value="">—</option>}
+                    {field.options?.map((o) => (
+                        <option key={String(o.value)} value={String(o.value)}>
+                            {o.label}
+                        </option>
+                    ))}
+                </NativeSelect>
+            ) : field.type === 'string' && field.suggestions?.length ? (
+                <SuggestedSetting
+                    id={id}
+                    name={name}
+                    initial={text}
+                    suggestions={field.suggestions}
+                    required={field.required && !hidden}
+                    maxLength={field.max_length}
+                />
+            ) : (
+                <Input
+                    id={id}
+                    name={name}
+                    type={
+                        field.type === 'integer'
+                            ? 'number'
+                            : field.type === 'email'
+                              ? 'email'
+                              : 'text'
+                    }
+                    min={field.min}
+                    max={field.max}
+                    maxLength={field.max_length}
+                    defaultValue={text}
+                    required={field.required && !hidden}
+                />
+            )}
+        </FormField>
+    );
+}
+
+function SuggestedSetting({
+    initial,
+    ...props
+}: Omit<ComponentProps<typeof SuggestedInput>, 'value' | 'onValueChange'> & {
+    initial: string;
+}) {
+    const [value, setValue] = useState(initial);
+
+    return <SuggestedInput {...props} value={value} onValueChange={setValue} />;
+}
+
+ExtensionShow.layout = {
+    breadcrumbs: [{ title: 'Extensions', href: index() }],
+};

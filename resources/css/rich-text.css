@@ -1,0 +1,73 @@
+/* Formatted text from the admin editor (product descriptions). Themes can
+   override these in their own stylesheet. */
+@layer components {
+    .rich-text {
+        overflow-wrap: anywhere;
+    }
+
+    .rich-text > * + * {
+        margin-top: 0.75em;
+    }
+
+    .rich-text h2 {
+        font-size: 1.25em;
+        font-weight: 600;
+        line-height: 1.3;
+        margin-top: 1.25em;
+    }
+
+    .rich-text h3 {
+        font-size: 1.1em;
+        font-weight: 600;
+        line-height: 1.35;
+        margin-top: 1em;
+    }
+
+    .rich-text > :first-child {
+        margin-top: 0;
+    }
+
+    .rich-text ul,
+    .rich-text ol {
+        padding-inline-start: 1.5em;
+    }
+
+    .rich-text ul {
+        list-style: disc;
+    }
+
+    .rich-text ol {
+        list-style: decimal;
+    }
+
+    .rich-text li + li {
+        margin-top: 0.25em;
+    }
+
+    .rich-text li > p {
+        margin: 0;
+    }
+
+    .rich-text blockquote {
+        border-inline-start: 3px solid currentColor;
+        padding-inline-start: 1em;
+        opacity: 0.8;
+        font-style: italic;
+    }
+
+    .rich-text a {
+        text-decoration: underline;
+        text-underline-offset: 2px;
+    }
+
+    .rich-text hr {
+        border: 0;
+        border-top: 1px solid currentColor;
+        opacity: 0.2;
+        margin-block: 1.25em;
+    }
+
+    .rich-text strong {
+        font-weight: 600;
+    }
+}

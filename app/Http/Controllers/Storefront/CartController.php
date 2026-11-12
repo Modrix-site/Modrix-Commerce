@@ -1,0 +1,138 @@
+<?php
+
+namespace App\Http\Controllers\Storefront;
+
+use App\Core\Extensions\StorefrontSlots;
+use App\Core\Themes\PageSettingFields;
+use App\Core\Themes\ThemeResolver;
+use App\Domains\Cart\CartManager;
+use App\Domains\Cart\Models\CartItem;
+use App\Domains\Catalog\CartCrossSells;
+use App\Domains\Catalog\Models\ProductVariant;
+use App\Domains\Checkout\FreeShippingProgress;
+use App\Domains\Checkout\Pricing\CartPricer;
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
+
+class CartController extends Controller
+{
+    public function __construct(
+        private readonly CartManager $carts,
+        private readonly CartPricer $pricer,
+    ) {}
+
+    public function show(Request $request, StorefrontSlots $slots): Response
+    {
+        $cart = $this->carts->current($request->session(), $this->user($request));
+        $priced = $cart ? $this->pricer->price($cart) : null;
+        $settings = PageSettingFields::resolve(app(ThemeResolver::class)->forRequest($request)->design)['cart'];
+
+        if ($priced !== null) {
+            // Notices are computed above; from now on the current prices count as seen.
+            $this->pricer->acknowledgePrices($priced);
+        }
+
+        return Inertia::render('storefront/cart', [
+            'cart' => $priced?->toArray(),
+            'placeSlots' => $priced === null ? [] : app(StorefrontSlots::class)->renderMany(['cart.after_lines'], ['cart' => $priced]),
+            // Cart page settings (customizer): free-shipping progress and cross-sells.
+            'freeShipping' => $priced !== null && $settings['free_shipping_bar'] ? FreeShippingProgress::for($priced, ...FreeShippingProgress::destinationFor($this->user($request))) : null,
+            'crossSells' => $priced !== null && $settings['cross_sells'] ? app(CartCrossSells::class)->for($priced) : [],
+            'slots' => $priced === null ? [] : $slots->render('cart.after_totals', ['cart' => $priced]),
+        ]);
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'variant_id' => ['required', 'integer'],
+            'quantity' => ['required', 'integer', 'min:1', 'max:'.CartManager::MAX_LINE_QUANTITY],
+        ]);
+
+        // Only active variants of visible products can be added; anything else is a 404.
+        $variant = ProductVariant::query()
+            ->whereKey($data['variant_id'])
+            ->whereHas('product', fn ($q) => $q->visible())
+            ->firstOrFail();
+
+        $cart = $this->carts->current($request->session(), $this->user($request), create: true);
+        abort_if($cart === null, 500);
+        $this->carts->add($cart, $variant, (int) $data['quantity']);
+        // For "added to cart" pop-ups from modules on the next page.
+        $request->session()->flash('cart.just_added', ['variant_id' => $variant->id, 'quantity' => (int) $data['quantity']]);
+
+        // "Buy now" on the product page: straight to checkout.
+        if ($request->boolean('buy_now')) {
+            return redirect()->route('checkout.show');
+        }
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => st('Added to your cart.')]);
+
+        return back();
+    }
+
+    public function update(Request $request, CartItem $item): RedirectResponse
+    {
+        $data = $request->validate(['quantity' => ['required', 'integer', 'min:0', 'max:'.CartManager::MAX_LINE_QUANTITY]]);
+        $cart = $this->carts->current($request->session(), $this->user($request));
+        abort_if($cart === null, 404);
+
+        $this->carts->update($cart, $item, (int) $data['quantity']);
+
+        return redirect()->route('cart.show');
+    }
+
+    public function destroy(Request $request, CartItem $item): RedirectResponse
+    {
+        $cart = $this->carts->current($request->session(), $this->user($request));
+        abort_if($cart === null, 404);
+
+        $this->carts->remove($cart, $item);
+        Inertia::flash('toast', ['type' => 'success', 'message' => st('Item removed.')]);
+
+        return redirect()->route('cart.show');
+    }
+
+    public function applyCoupon(Request $request): RedirectResponse
+    {
+        $data = $request->validate(['code' => ['required', 'string', 'max:64']]);
+        $cart = $this->carts->current($request->session(), $this->user($request));
+        abort_if($cart === null, 404);
+
+        $this->carts->setCoupon($cart, $data['code']);
+        $priced = $this->pricer->price($cart->fresh() ?? $cart);
+
+        if ($priced->couponError !== null) {
+            // Keep invalid codes off the cart so they never block checkout silently.
+            $this->carts->setCoupon($cart, null);
+
+            return back()->withErrors(['code' => $priced->couponError]);
+        }
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => st('Coupon applied.')]);
+
+        return back();
+    }
+
+    public function removeCoupon(Request $request): RedirectResponse
+    {
+        $cart = $this->carts->current($request->session(), $this->user($request));
+
+        if ($cart !== null) {
+            $this->carts->setCoupon($cart, null);
+        }
+
+        return back();
+    }
+
+    private function user(Request $request): ?User
+    {
+        $user = $request->user();
+
+        return $user instanceof User ? $user : null;
+    }
+}

@@ -1,0 +1,61 @@
+{
+    "name": "Voucher banner",
+    "enabled_on": {
+        "templates": ["*"]
+    },
+    "settings": [
+        {
+            "type": "text",
+            "id": "text",
+            "label": "Heading",
+            "default": "Big Promotion"
+        },
+        {
+            "type": "text",
+            "id": "subtext",
+            "label": "Text"
+        },
+        {
+            "type": "text",
+            "id": "voucher_code",
+            "label": "Voucher code",
+            "default": "GET35PSL"
+        },
+        {
+            "type": "text",
+            "id": "button_label",
+            "label": "Button label"
+        },
+        {
+            "type": "url",
+            "id": "button_link",
+            "label": "Button link",
+            "default": "/search"
+        },
+        {
+            "type": "select",
+            "id": "tone",
+            "label": "Style",
+            "default": "primary",
+            "options": [
+                {
+                    "value": "primary",
+                    "label": "Primary"
+                },
+                {
+                    "value": "accent",
+                    "label": "Accent"
+                },
+                {
+                    "value": "muted",
+                    "label": "Muted"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Voucher banner"
+        }
+    ]
+}

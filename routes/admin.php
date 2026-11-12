@@ -1,0 +1,385 @@
+<?php
+
+/*
+| Admin routes. Registered in bootstrap/app.php under the "admin." name prefix
+| and the web, installed, auth, verified and staff middleware.
+| Every route below additionally declares the permission it requires.
+| Mutations of users and roles require a recent password confirmation.
+*/
+
+use App\Http\Controllers\Admin\AuditLogController;
+use App\Http\Controllers\Admin\BackupSettingsController;
+use App\Http\Controllers\Admin\Catalog\AttributeController;
+use App\Http\Controllers\Admin\Catalog\BrandController;
+use App\Http\Controllers\Admin\Catalog\CategoryController;
+use App\Http\Controllers\Admin\Catalog\ProductBulkController;
+use App\Http\Controllers\Admin\Catalog\ProductController;
+use App\Http\Controllers\Admin\Catalog\ProductCsvController;
+use App\Http\Controllers\Admin\Catalog\ProductFileController;
+use App\Http\Controllers\Admin\Catalog\ProductImageController;
+use App\Http\Controllers\Admin\Catalog\ProductVariantController;
+use App\Http\Controllers\Admin\Catalog\TranslationController;
+use App\Http\Controllers\Admin\CoreUpdateController;
+use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\CustomerCartController;
+use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DocumentSettingsController;
+use App\Http\Controllers\Admin\DownloadGrantController;
+use App\Http\Controllers\Admin\DownloadSettingsController;
+use App\Http\Controllers\Admin\ExtensionBlocksController;
+use App\Http\Controllers\Admin\ExtensionController;
+use App\Http\Controllers\Admin\GeneralSettingsController;
+use App\Http\Controllers\Admin\InterfaceTextController;
+use App\Http\Controllers\Admin\InventoryController;
+use App\Http\Controllers\Admin\InvoiceController;
+use App\Http\Controllers\Admin\LanguageSettingsController;
+use App\Http\Controllers\Admin\MarketplaceAdminController;
+use App\Http\Controllers\Admin\MarketplaceSellerController;
+use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\NavigationController;
+use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\OrderBulkController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\OrderDocumentController;
+use App\Http\Controllers\Admin\PackageUploadController;
+use App\Http\Controllers\Admin\PageController;
+use App\Http\Controllers\Admin\PaymentSettingsController;
+use App\Http\Controllers\Admin\PaymentWebhookEventController;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\ShippingMethodController;
+use App\Http\Controllers\Admin\StoreSettingsController;
+use App\Http\Controllers\Admin\StripeSettingsController;
+use App\Http\Controllers\Admin\SystemStatusController;
+use App\Http\Controllers\Admin\TaxController;
+use App\Http\Controllers\Admin\ThemeController;
+use App\Http\Controllers\Admin\ThemeEditorController;
+use App\Http\Controllers\Admin\ThemeTextTranslationController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Marketplace\MarketplaceReviewController;
+use Illuminate\Support\Facades\Route;
+
+// Numeric ids only, so named paths such as extensions/marketplace are never captured.
+Route::pattern('extension', '[0-9]+');
+
+Route::get('/', DashboardController::class)->name('dashboard');
+
+// Every staff member's own notifications (no extra permission).
+Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+// Polled every 30 s per open admin tab.
+Route::get('notifications/feed', [NotificationController::class, 'feed'])->middleware('throttle:60,1')->name('notifications.feed');
+Route::get('notifications/settings', [NotificationController::class, 'settings'])->name('notifications.settings');
+Route::put('notifications/settings', [NotificationController::class, 'updateSettings'])->name('notifications.settings.update');
+Route::post('notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
+Route::post('notifications/{id}/open', [NotificationController::class, 'open'])->whereUuid('id')->name('notifications.open');
+Route::post('notifications/{id}/read', [NotificationController::class, 'markRead'])->whereUuid('id')->name('notifications.read');
+Route::delete('notifications/{id}', [NotificationController::class, 'destroy'])->whereUuid('id')->name('notifications.destroy');
+
+Route::middleware('can:users.view')->group(function () {
+    Route::get('users', [UserController::class, 'index'])->name('users.index');
+});
+
+Route::middleware(['can:users.manage', 'password.confirm'])->group(function () {
+    Route::get('users/create', [UserController::class, 'create'])->name('users.create');
+    Route::post('users', [UserController::class, 'store'])->name('users.store');
+    Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::put('users/{user}/roles', [UserController::class, 'updateRoles'])->name('users.roles.update');
+    Route::put('users/{user}/status', [UserController::class, 'updateStatus'])->name('users.status.update');
+});
+
+Route::middleware(['can:roles.manage', 'password.confirm'])->group(function () {
+    Route::get('roles', [RoleController::class, 'index'])->name('roles.index');
+    Route::get('roles/create', [RoleController::class, 'create'])->name('roles.create');
+    Route::post('roles', [RoleController::class, 'store'])->name('roles.store');
+    Route::get('roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit');
+    Route::put('roles/{role}', [RoleController::class, 'update'])->name('roles.update');
+    Route::delete('roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+});
+
+// Settings → Backups. Downloading, deleting and restoring need a recent password confirmation.
+Route::middleware('can:backups.manage')->group(function () {
+    Route::get('settings/backups', [BackupSettingsController::class, 'index'])->middleware('password.confirm')->name('settings.backups.index');
+    Route::get('settings/backups/status', [BackupSettingsController::class, 'status'])->name('settings.backups.status');
+    Route::put('settings/backups/schedule', [BackupSettingsController::class, 'schedule'])->name('settings.backups.schedule');
+    Route::post('settings/backups', [BackupSettingsController::class, 'store'])->middleware('throttle:6,1')->name('settings.backups.store');
+    Route::middleware('password.confirm')->group(function () {
+        Route::get('settings/backups/{name}/download', [BackupSettingsController::class, 'download'])->name('settings.backups.download');
+        Route::delete('settings/backups/{name}', [BackupSettingsController::class, 'destroy'])->name('settings.backups.destroy');
+        Route::post('settings/backups/{name}/restore', [BackupSettingsController::class, 'restore'])->name('settings.backups.restore');
+    });
+});
+
+Route::middleware('can:settings.manage')->group(function () {
+    Route::get('settings/store', [StoreSettingsController::class, 'edit'])->name('settings.store.edit');
+    Route::put('settings/store', [StoreSettingsController::class, 'update'])->name('settings.store.update');
+    Route::get('settings/documents', [DocumentSettingsController::class, 'edit'])->name('settings.documents.edit');
+    Route::put('settings/documents', [DocumentSettingsController::class, 'update'])->name('settings.documents.update');
+    Route::put('settings/downloads', [DownloadSettingsController::class, 'update'])->name('settings.downloads.update');
+    Route::get('settings/languages', [LanguageSettingsController::class, 'edit'])->name('settings.languages.edit');
+    Route::put('settings/languages', [LanguageSettingsController::class, 'update'])->name('settings.languages.update');
+    // Settings → General (security and custom code need settings.advanced).
+    Route::get('settings/general', [GeneralSettingsController::class, 'edit'])->name('settings.general.edit');
+    Route::post('settings/general/branding', [GeneralSettingsController::class, 'branding'])->name('settings.general.branding');
+    Route::put('settings/general/mail', [GeneralSettingsController::class, 'mail'])->name('settings.general.mail');
+    Route::post('settings/general/mail/test', [GeneralSettingsController::class, 'testMail'])->middleware('throttle:5,1')->name('settings.general.mail.test');
+    Route::put('settings/general/maintenance', [GeneralSettingsController::class, 'maintenance'])->name('settings.general.maintenance');
+    Route::put('settings/general/social', [GeneralSettingsController::class, 'social'])->name('settings.general.social');
+    Route::put('settings/general/security', [GeneralSettingsController::class, 'security'])->middleware('can:settings.advanced')->name('settings.general.security');
+    Route::put('settings/general/scripts', [GeneralSettingsController::class, 'scripts'])->middleware('can:settings.advanced')->name('settings.general.scripts');
+    Route::get('settings/languages/texts', [InterfaceTextController::class, 'index'])->name('settings.interface-text.index');
+    Route::put('settings/languages/texts/{locale}', [InterfaceTextController::class, 'update'])->where('locale', '[a-z]{2}')->name('settings.interface-text.update');
+});
+
+// Media library (Admin → Catalog → Media library).
+Route::middleware('can:media.manage')->group(function () {
+    Route::get('media', [MediaController::class, 'index'])->name('media.index');
+    Route::get('media/picker', [MediaController::class, 'picker'])->name('media.picker');
+    Route::post('media', [MediaController::class, 'store'])->middleware('throttle:30,1')->name('media.store');
+    Route::get('media/{media}', [MediaController::class, 'show'])->whereNumber('media')->name('media.show');
+    Route::put('media/{media}', [MediaController::class, 'update'])->whereNumber('media')->name('media.update');
+    Route::delete('media/{media}', [MediaController::class, 'destroy'])->whereNumber('media')->name('media.destroy');
+});
+Route::post('products/{product}/images/from-library', [MediaController::class, 'attach'])
+    ->middleware(['can:products.update', 'can:media.manage'])
+    ->name('products.images.from-library');
+
+// Catalog
+Route::middleware('can:products.view')->group(function () {
+    Route::get('products', [ProductController::class, 'index'])->name('products.index');
+    Route::get('products/export', [ProductCsvController::class, 'export'])->name('products.export');
+    // Each action checks its own permission (update, delete or view).
+    Route::post('products/bulk', ProductBulkController::class)->middleware('throttle:30,1')->name('products.bulk');
+});
+Route::post('products/import', [ProductCsvController::class, 'import'])
+    ->middleware(['can:products.create', 'can:products.update', 'throttle:10,1'])
+    ->name('products.import');
+Route::middleware('can:products.create')->group(function () {
+    Route::get('products/create', [ProductController::class, 'create'])->name('products.create');
+    Route::post('products', [ProductController::class, 'store'])->name('products.store');
+    Route::post('products/{product}/duplicate', [ProductController::class, 'duplicate'])->name('products.duplicate');
+});
+Route::middleware('can:products.update')->group(function () {
+    Route::get('products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
+    Route::get('products/related-search', [ProductController::class, 'relatedSearch'])->name('products.related-search');
+    Route::put('products/{product}', [ProductController::class, 'update'])->name('products.update');
+    // One variant, Shopify-style (price, inventory per location, shipping).
+    Route::get('products/{product}/variants/{variant}', [ProductVariantController::class, 'show'])->name('products.variants.show');
+    Route::put('products/{product}/variants/{variant}', [ProductVariantController::class, 'update'])->name('products.variants.update');
+    Route::post('products/{product}/images', [ProductImageController::class, 'store'])->name('products.images.store');
+    Route::put('products/{product}/images/order', [ProductImageController::class, 'reorder'])->name('products.images.reorder');
+    Route::put('products/{product}/images/{image}', [ProductImageController::class, 'update'])->name('products.images.update')->scopeBindings();
+    Route::delete('products/{product}/images/{image}', [ProductImageController::class, 'destroy'])->name('products.images.destroy')->scopeBindings();
+    Route::post('products/{product}/files', [ProductFileController::class, 'store'])->name('products.files.store');
+    Route::put('products/{product}/files/{file}', [ProductFileController::class, 'update'])->name('products.files.update')->scopeBindings();
+    Route::delete('products/{product}/files/{file}', [ProductFileController::class, 'destroy'])->name('products.files.destroy')->scopeBindings();
+
+    // Storefront translations.
+    Route::get('translations', [TranslationController::class, 'index'])->name('translations.index');
+    Route::get('products/{product}/translations', [TranslationController::class, 'editProduct'])->name('products.translations.edit');
+    Route::put('products/{product}/translations/{locale}', [TranslationController::class, 'updateProduct'])->where('locale', '[a-z]{2}')->name('products.translations.update');
+    Route::get('categories/{category}/translations', [TranslationController::class, 'editCategory'])->name('categories.translations.edit');
+    Route::put('categories/{category}/translations/{locale}', [TranslationController::class, 'updateCategory'])->where('locale', '[a-z]{2}')->name('categories.translations.update');
+
+    Route::get('brands', [BrandController::class, 'index'])->name('brands.index');
+    Route::post('brands', [BrandController::class, 'store'])->name('brands.store');
+    Route::put('brands/{brand}', [BrandController::class, 'update'])->name('brands.update');
+    Route::delete('brands/{brand}', [BrandController::class, 'destroy'])->name('brands.destroy');
+
+    Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::get('categories/create', [CategoryController::class, 'create'])->name('categories.create');
+    Route::post('categories', [CategoryController::class, 'store'])->name('categories.store');
+    Route::get('categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+    Route::put('categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+    Route::delete('categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+
+    Route::get('attributes', [AttributeController::class, 'index'])->name('attributes.index');
+    Route::get('attributes/create', [AttributeController::class, 'create'])->name('attributes.create');
+    Route::post('attributes', [AttributeController::class, 'store'])->name('attributes.store');
+    Route::get('attributes/{attribute}/edit', [AttributeController::class, 'edit'])->name('attributes.edit');
+    Route::put('attributes/{attribute}', [AttributeController::class, 'update'])->name('attributes.update');
+    Route::delete('attributes/{attribute}', [AttributeController::class, 'destroy'])->name('attributes.destroy');
+});
+Route::delete('products/{product}', [ProductController::class, 'destroy'])->middleware('can:products.delete')->name('products.destroy');
+
+// Inventory
+Route::middleware('can:inventory.view')->group(function () {
+    Route::get('inventory', [InventoryController::class, 'index'])->name('inventory.index');
+    Route::get('inventory/movements', [InventoryController::class, 'movements'])->name('inventory.movements');
+});
+Route::post('inventory/{variant}/adjust', [InventoryController::class, 'adjust'])->middleware('can:inventory.manage')->name('inventory.adjust');
+
+// Orders
+Route::middleware('can:orders.view')->group(function () {
+    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+    // Orders -> Invoices and Customer carts (lists only).
+    Route::get('invoices', [InvoiceController::class, 'index'])->name('invoices.index');
+    Route::get('carts', [CustomerCartController::class, 'index'])->name('carts.index');
+    Route::get('orders/export', [OrderBulkController::class, 'export'])->middleware('throttle:10,1')->name('orders.export');
+    Route::get('orders/bulk/documents', [OrderBulkController::class, 'documents'])->middleware('throttle:10,1')->name('orders.bulk.documents');
+    Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::get('orders/{order}/invoice.pdf', [OrderDocumentController::class, 'invoice'])->name('orders.documents.invoice');
+    Route::get('orders/{order}/payments/{payment}/receipt.pdf', [OrderDocumentController::class, 'receipt'])->scopeBindings()->name('orders.documents.receipt');
+    Route::get('orders/{order}/packing-slip.pdf', [OrderDocumentController::class, 'packingSlip'])->name('orders.documents.packing-slip');
+    Route::get('orders/{order}/invoice.pdf', [OrderDocumentController::class, 'invoice'])->name('orders.documents.invoice');
+    Route::get('orders/{order}/payments/{payment}/receipt.pdf', [OrderDocumentController::class, 'receipt'])->scopeBindings()->name('orders.documents.receipt');
+    Route::get('orders/{order}/packing-slip.pdf', [OrderDocumentController::class, 'packingSlip'])->name('orders.documents.packing-slip');
+});
+Route::middleware('can:orders.manage')->group(function () {
+    Route::post('orders/{order}/payments', [OrderController::class, 'recordPayment'])->name('orders.payments.store');
+    Route::post('orders/{order}/ship', [OrderController::class, 'ship'])->name('orders.ship');
+    Route::post('orders/{order}/deliver', [OrderController::class, 'deliver'])->name('orders.deliver');
+    Route::post('orders/{order}/invoice', [OrderController::class, 'issueInvoice'])->name('orders.invoice.store');
+    Route::post('orders/bulk/fulfillment', [OrderBulkController::class, 'fulfillment'])->name('orders.bulk.fulfillment');
+    Route::post('orders/{order}/confirm', [OrderController::class, 'confirm'])->name('orders.confirm');
+    Route::post('orders/{order}/fulfillment', [OrderController::class, 'advance'])->name('orders.fulfillment');
+    Route::post('orders/{order}/delivery-failed', [OrderController::class, 'deliveryFailed'])->name('orders.delivery-failed');
+    Route::post('orders/{order}/returned', [OrderController::class, 'returned'])->name('orders.returned');
+    Route::post('orders/{order}/hold', [OrderController::class, 'hold'])->name('orders.hold');
+    Route::post('orders/{order}/release', [OrderController::class, 'release'])->name('orders.release');
+    Route::post('orders/{order}/pack', [OrderController::class, 'pack'])->name('orders.pack');
+    Route::post('orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+    Route::post('orders/{order}/notes', [OrderController::class, 'note'])->name('orders.notes.store');
+    Route::post('orders/{order}/downloads/{grant}/reset', [DownloadGrantController::class, 'reset'])->name('orders.downloads.reset');
+    Route::post('orders/{order}/downloads/{grant}/extend', [DownloadGrantController::class, 'extend'])->name('orders.downloads.extend');
+    Route::post('orders/{order}/downloads/{grant}/revoke', [DownloadGrantController::class, 'revoke'])->name('orders.downloads.revoke');
+});
+Route::post('orders/{order}/refunds', [OrderController::class, 'refund'])->middleware('can:orders.refund')->name('orders.refunds.store');
+
+// Customers
+Route::middleware('can:customers.view')->group(function () {
+    Route::get('customers', [CustomerController::class, 'index'])->name('customers.index');
+    Route::get('customers/{customer}', [CustomerController::class, 'show'])->name('customers.show');
+});
+Route::put('customers/{customer}', [CustomerController::class, 'update'])->middleware('can:customers.manage')->name('customers.update');
+
+// Discounts
+Route::get('coupons', [CouponController::class, 'index'])->middleware('can:discounts.view')->name('coupons.index');
+Route::middleware('can:discounts.manage')->group(function () {
+    Route::get('coupons/create', [CouponController::class, 'create'])->name('coupons.create');
+    Route::post('coupons', [CouponController::class, 'store'])->name('coupons.store');
+    Route::get('coupons/{coupon}/edit', [CouponController::class, 'edit'])->name('coupons.edit');
+    Route::put('coupons/{coupon}', [CouponController::class, 'update'])->name('coupons.update');
+    Route::delete('coupons/{coupon}', [CouponController::class, 'destroy'])->name('coupons.destroy');
+});
+
+// Shipping, taxes, payments
+Route::middleware('can:shipping.manage')->group(function () {
+    Route::get('shipping-methods', [ShippingMethodController::class, 'index'])->name('shipping-methods.index');
+    Route::post('shipping-methods', [ShippingMethodController::class, 'store'])->name('shipping-methods.store');
+    Route::put('shipping-methods/{method}', [ShippingMethodController::class, 'update'])->name('shipping-methods.update');
+    Route::delete('shipping-methods/{method}', [ShippingMethodController::class, 'destroy'])->name('shipping-methods.destroy');
+});
+Route::middleware('can:settings.manage')->group(function () {
+    Route::get('tax-rates', [TaxController::class, 'index'])->name('tax-rates.index');
+    Route::put('tax-rates/settings', [TaxController::class, 'updateSettings'])->name('tax-rates.settings');
+    Route::post('tax-rates', [TaxController::class, 'store'])->name('tax-rates.store');
+    Route::put('tax-rates/{rate}', [TaxController::class, 'update'])->name('tax-rates.update');
+    Route::delete('tax-rates/{rate}', [TaxController::class, 'destroy'])->name('tax-rates.destroy');
+});
+Route::middleware('can:payments.manage')->group(function () {
+    Route::get('payments', [PaymentSettingsController::class, 'edit'])->name('payments.settings');
+    Route::put('payments', [PaymentSettingsController::class, 'update'])->name('payments.settings.update');
+    Route::get('payments/webhooks', [PaymentWebhookEventController::class, 'index'])->name('payments.webhooks.index');
+    Route::post('payments/webhooks/{event}/retry', [PaymentWebhookEventController::class, 'retry'])->middleware('throttle:20,1')->name('payments.webhooks.retry');
+});
+// Gateway credentials decide where customers' money goes.
+Route::middleware(['can:payments.manage', 'password.confirm'])->group(function () {
+    Route::get('payments/stripe', [StripeSettingsController::class, 'edit'])->name('payments.stripe.edit');
+    Route::put('payments/stripe', [StripeSettingsController::class, 'update'])->name('payments.stripe.update');
+    Route::post('payments/stripe/test', [StripeSettingsController::class, 'test'])->middleware('throttle:10,1')->name('payments.stripe.test');
+});
+
+// Reports
+Route::get('reports', [ReportController::class, 'index'])->middleware('can:reports.view')->name('reports.index');
+
+// Appearance (themes). Themes are data-only, so no password confirmation is needed.
+Route::middleware('can:themes.manage')->group(function () {
+    Route::resource('pages', PageController::class)->except('show');
+    Route::post('pages/{page}/restore', [PageController::class, 'restore'])->whereNumber('page')->name('pages.restore');
+    Route::post('pages/{page}/duplicate', [PageController::class, 'duplicate'])->whereNumber('page')->name('pages.duplicate');
+    Route::get('navigation', [NavigationController::class, 'index'])->name('navigation.index');
+    Route::put('navigation', [NavigationController::class, 'update'])->name('navigation.update');
+    Route::get('themes', [ThemeController::class, 'index'])->name('themes.index');
+    Route::post('themes/packages', [PackageUploadController::class, 'theme'])->middleware('throttle:10,1')->name('themes.packages.store');
+    Route::post('themes/preview/exit', [ThemeController::class, 'exitPreview'])->name('themes.preview.exit');
+    Route::post('themes/uploads', [ThemeController::class, 'upload'])->middleware('throttle:30,1')->name('themes.uploads.store');
+    Route::get('themes/{theme}/customize', [ThemeController::class, 'customize'])->name('themes.customize');
+    // Theme editor for themes built from sections (Shopify-style).
+    Route::get('themes/{theme}/editor', [ThemeEditorController::class, 'show'])->name('themes.editor');
+    Route::put('themes/{theme}/editor/draft', [ThemeEditorController::class, 'draft'])->middleware('throttle:240,1')->name('themes.editor.draft');
+    Route::put('themes/{theme}/editor', [ThemeEditorController::class, 'save'])->middleware('throttle:60,1')->name('themes.editor.save');
+    Route::post('themes/{theme}/activate', [ThemeController::class, 'activate'])->name('themes.activate');
+    Route::post('themes/{theme}/enable', [ThemeController::class, 'enable'])->name('themes.enable');
+    Route::post('themes/{theme}/disable', [ThemeController::class, 'disable'])->name('themes.disable');
+    Route::delete('themes/{theme}', [ThemeController::class, 'destroy'])->name('themes.destroy');
+    Route::post('themes/{theme}/preview', [ThemeController::class, 'preview'])->name('themes.preview');
+    Route::post('themes/{theme}/update', [ThemeController::class, 'update'])->name('themes.update');
+    Route::put('themes/{theme}/design', [ThemeController::class, 'design'])->name('themes.design');
+    Route::post('themes/{theme}/text-translations', [ThemeTextTranslationController::class, 'handle'])->middleware('throttle:30,1')->name('themes.text-translations');
+    Route::put('themes/{theme}/sections', [ThemeController::class, 'sections'])->name('themes.sections');
+    // Extension blocks and extension settings shown in the customizer tabs.
+    Route::put('themes/blocks', [ExtensionBlocksController::class, 'update'])->name('themes.blocks.update');
+    Route::put('themes/extension-settings/{module}', [ExtensionBlocksController::class, 'settings'])
+        ->where('module', '[a-z0-9][a-z0-9-]*/[a-z0-9][a-z0-9-]*')
+        ->middleware('throttle:30,1')
+        ->name('themes.extension-settings.update');
+    Route::post('themes/{theme}/reset', [ThemeController::class, 'reset'])->name('themes.reset');
+    Route::post('themes/{theme}/demo', [ThemeController::class, 'demo'])->middleware('throttle:5,1')->name('themes.demo');
+});
+
+// Modrix Cloud (licenses, installs, updates) is provided by the Modrix Cloud Connector module.
+// The former address keeps working: to the module when it is enabled, else to Extensions.
+Route::get('extensions/marketplace', function () {
+    return Route::has('admin.modrixcommerce.cloud-connector.index')
+        ? redirect()->route('admin.modrixcommerce.cloud-connector.index')
+        : redirect()->route('admin.extensions.index');
+})->middleware('can:extensions.view')->name('marketplace-client.index');
+
+// Marketplace server administration (platform owner's marketplace instance only).
+Route::middleware(['marketplace.server', 'can:marketplace.manage'])->prefix('marketplace')->name('marketplace.')->group(function () {
+    Route::get('products', [MarketplaceAdminController::class, 'products'])->name('products.index');
+    Route::get('products/create', [MarketplaceAdminController::class, 'create'])->name('products.create');
+    Route::post('products', [MarketplaceAdminController::class, 'store'])->name('products.store');
+    Route::get('products/{product}/edit', [MarketplaceAdminController::class, 'edit'])->name('products.edit');
+    Route::put('products/{product}', [MarketplaceAdminController::class, 'update'])->name('products.update');
+    Route::post('products/{product}/releases', [MarketplaceAdminController::class, 'upload'])->middleware('throttle:10,1')->name('releases.store');
+    Route::post('releases/{release}/review', [MarketplaceAdminController::class, 'review'])->middleware('password.confirm')->name('releases.review');
+    Route::post('products/{product}/advisories', [MarketplaceAdminController::class, 'advisory'])->name('advisories.store');
+    Route::post('releases/{release}/withdraw', [MarketplaceAdminController::class, 'withdraw'])->name('releases.withdraw');
+    Route::get('reviews', [MarketplaceReviewController::class, 'index'])->name('reviews.index');
+    Route::post('reviews/{review}', [MarketplaceReviewController::class, 'moderate'])->name('reviews.moderate');
+    Route::get('sellers', [MarketplaceSellerController::class, 'index'])->name('sellers.index');
+    Route::post('sellers/applications/{application}/approve', [MarketplaceSellerController::class, 'approve'])->name('sellers.approve');
+    Route::post('sellers/applications/{application}/reject', [MarketplaceSellerController::class, 'reject'])->name('sellers.reject');
+    Route::put('sellers/{publisher}', [MarketplaceSellerController::class, 'update'])->name('sellers.update');
+    Route::post('sellers/{publisher}/payouts', [MarketplaceSellerController::class, 'payout'])->middleware('password.confirm')->name('sellers.payouts.store');
+    Route::get('orders', [MarketplaceAdminController::class, 'orders'])->name('orders.index');
+    Route::post('orders/{order}/refund', [MarketplaceAdminController::class, 'refund'])->middleware('password.confirm')->name('orders.refund');
+});
+Route::middleware(['marketplace.server', 'can:licenses.manage'])->prefix('marketplace')->name('marketplace.')->group(function () {
+    Route::get('licenses', [MarketplaceAdminController::class, 'licenses'])->name('licenses.index');
+    Route::post('licenses/{license}/status', [MarketplaceAdminController::class, 'licenseStatus'])->name('licenses.status');
+});
+
+// Extensions. Actions that run, change or remove code and data need a recent password confirmation.
+Route::post('extensions/packages', [PackageUploadController::class, 'module'])->middleware(['can:extensions.install', 'password.confirm', 'throttle:10,1'])->name('extensions.packages.store');
+Route::middleware('can:extensions.view')->group(function () {
+    Route::get('extensions', [ExtensionController::class, 'index'])->name('extensions.index');
+    Route::get('extensions/{extension}', [ExtensionController::class, 'show'])->name('extensions.show');
+});
+Route::middleware('throttle:30,1')->group(function () {
+    Route::post('extensions/{extension}/install', [ExtensionController::class, 'install'])->middleware(['can:extensions.install', 'password.confirm'])->name('extensions.install');
+    Route::post('extensions/{extension}/enable', [ExtensionController::class, 'enable'])->middleware(['can:extensions.enable', 'password.confirm'])->name('extensions.enable');
+    Route::post('extensions/{extension}/disable', [ExtensionController::class, 'disable'])->middleware('can:extensions.disable')->name('extensions.disable');
+    Route::post('extensions/{extension}/update', [ExtensionController::class, 'update'])->middleware(['can:extensions.update', 'password.confirm'])->name('extensions.update');
+    Route::put('extensions/{extension}/settings', [ExtensionController::class, 'configure'])->middleware('can:extensions.configure')->name('extensions.settings');
+    Route::delete('extensions/{extension}/package', [ExtensionController::class, 'destroy'])->middleware(['can:extensions.install', 'password.confirm'])->name('extensions.destroy');
+    Route::delete('extensions/{extension}', [ExtensionController::class, 'uninstall'])->middleware(['can:extensions.install', 'password.confirm'])->name('extensions.uninstall');
+});
+
+Route::get('audit-logs', AuditLogController::class)->middleware('can:audit.view')->name('audit-logs.index');
+Route::get('system', SystemStatusController::class)->middleware('can:system.view')->name('system.status');
+Route::post('system/core-update/check', [CoreUpdateController::class, 'check'])->middleware(['can:system.view', 'throttle:10,1'])->name('system.core-update.check');
+Route::post('system/core-update', [CoreUpdateController::class, 'start'])->middleware(['can:system.update', 'password.confirm', 'throttle:10,1'])->name('system.core-update.start');
+Route::get('system/core-update/{run}', [CoreUpdateController::class, 'show'])->middleware('can:system.view')->whereNumber('run')->name('system.core-update.show');
