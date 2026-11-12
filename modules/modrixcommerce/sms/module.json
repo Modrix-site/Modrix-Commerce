@@ -1,0 +1,56 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/sms",
+    "display_name": "SMS Notifications & Phone Verification",
+    "description": "Asks new customers for a mobile number and confirms it with a one-time code, then texts order updates. Works with Twilio, Vonage, MSG91, Fast2SMS, Semaphore, AWS SNS, Plivo or your own HTTP SMS gateway.",
+    "version": "1.0.0",
+    "type": "module",
+    "icon": "message-square",
+    "accent": "#16a34a",
+    "platform_version": "^1.0",
+    "author": "Modrix team",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "ModrixCommerce\\Sms\\": "src/"
+        }
+    },
+    "provider": "ModrixCommerce\\Sms\\SmsServiceProvider",
+    "permissions": [
+        {
+            "name": "sms.manage",
+            "label": "Manage SMS providers and message templates",
+            "group": "Marketing"
+        }
+    ],
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "storefront.slots",
+        "database.migrations",
+        "permissions",
+        "events.listen",
+        "notifications"
+    ],
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "assets": {
+        "pages": "resources/js/pages",
+        "slots": "resources/js/slots"
+    },
+    "admin_navigation": [
+        {
+            "key": "sms",
+            "title": "SMS",
+            "route": "index",
+            "icon": "message-square",
+            "group": "Marketing",
+            "permission": "sms.manage",
+            "order": 310
+        }
+    ]
+}

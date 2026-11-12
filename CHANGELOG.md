@@ -4,6 +4,11 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added (SMS)
+
+- **SMS Notifications & Phone Verification module** (`modrixcommerce/sms` 1.0.0): new customers give a mobile number at registration and confirm it with a texted 6-digit code; confirmed customers get order updates by text (placed, paid, shipped, delivered, cancelled, refunded) with editable templates. Providers: Twilio, Vonage, MSG91, Fast2SMS, Semaphore, Amazon SNS, Plivo, a custom HTTP gateway, and providers from other modules. See `docs/extensions/sms.md`.
+- **Registration form place:** a new storefront slot (`auth.register`) inside the registration form, so modules can add fields.
+
 ## [1.0.0-rc.3] - 2026-11-11
 
 ### Added (checkout)

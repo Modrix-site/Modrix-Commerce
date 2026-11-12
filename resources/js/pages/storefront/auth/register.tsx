@@ -1,4 +1,6 @@
 import { Form, Head } from '@inertiajs/react';
+import type { SlotItem } from '@/components/extensions/extension-slot';
+import { ExtensionSlot } from '@/components/extensions/extension-slot';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
 import TextLink from '@/components/text-link';
@@ -12,9 +14,13 @@ import { store } from '@/routes/register';
 
 type Props = {
     passwordRules: string;
+    registerSlots?: SlotItem[];
 };
 
-export default function StorefrontRegister({ passwordRules }: Props) {
+export default function StorefrontRegister({
+    passwordRules,
+    registerSlots = [],
+}: Props) {
     const t = useT();
 
     return (
@@ -99,6 +105,11 @@ export default function StorefrontRegister({ passwordRules }: Props) {
                                         message={errors.password_confirmation}
                                     />
                                 </div>
+
+                                <ExtensionSlot
+                                    items={registerSlots}
+                                    className="grid gap-5"
+                                />
 
                                 <Button
                                     type="submit"

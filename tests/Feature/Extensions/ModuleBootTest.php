@@ -70,4 +70,22 @@ class ModuleBootTest extends TestCase
             ->run([PHP_BINARY, 'artisan', 'route:list', '--name=acme.hello', '--json']);
         $this->assertStringNotContainsString('admin.acme.hello.index', $safe->output());
     }
+
+    public function test_the_sms_module_boots_and_adds_its_gate_to_web_routes()
+    {
+        File::copyDirectory(base_path('modules/modrixcommerce/sms'), $this->modulesPath.'/modrixcommerce/sms');
+
+        $this->runArtisan(['migrate', '--force']);
+        $this->runArtisan(['ecomodular:sync-permissions']);
+        $this->runArtisan(['ecomodular:modules', 'install', 'modrixcommerce/sms']);
+        $this->runArtisan(['ecomodular:modules', 'enable', 'modrixcommerce/sms', '--trust']);
+
+        $routes = $this->runArtisan(['route:list', '--name=sms', '--json']);
+        $this->assertStringContainsString('admin.modrixcommerce.sms.index', $routes);
+        $this->assertStringContainsString('modrixcommerce.sms.verify', $routes);
+
+        // The provider booted (not quarantined) and its middleware joined the web group.
+        $web = $this->runArtisan(['tinker', '--execute', 'echo json_encode(app("router")->getMiddlewareGroups()["web"]);']);
+        $this->assertStringContainsString('RequireVerifiedPhone', $web);
+    }
 }
