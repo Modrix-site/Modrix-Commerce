@@ -122,13 +122,6 @@ class SampleModulesTest extends TestCase
         // Configure: moderation on, short minimum length.
         $this->modules->configure('modrixcommerce/product-reviews', ['auto_approve' => '0', 'min_length' => '5'], $owner);
 
-        // A guest sees the slot asking to sign in.
-        $this->get(route('storefront.product', $product->slug))
-            ->assertInertia(fn (Assert $page) => $page
-                ->where('slots.0.component', 'modrixcommerce/product-reviews/ProductReviews')
-                ->where('slots.0.props.reason', 'login')
-                ->where('slots.0.props.count', 0));
-
         // A review written while v1.0.0 was running (its schema has no verified_purchase column).
         $earlierId = DB::table('product_reviews')->insertGetId([
             'product_id' => $product->id, 'author_name' => 'Ben', 'rating' => 2, 'body' => 'Written under 1.0.0',
@@ -160,12 +153,17 @@ class SampleModulesTest extends TestCase
         $this->modules->enable('modrixcommerce/product-reviews', true, $owner);
         $this->assertSame(ModuleState::Enabled, $this->state('modrixcommerce/product-reviews'));
 
-        // The review from 1.0.0 has no verified purchase: it stays in the admin but is not shown.
+        // A guest sees the slot asking to sign in. The review from 1.0.0 has no
+        // verified purchase: it stays in the admin but is not shown. (Checked only
+        // after the update: these files are 1.1.0 code, which reads verified_purchase.)
+        $this->app['auth']->forgetGuards();
         $this->get(route('storefront.product', $product->slug))
-            ->assertInertia(fn (Assert $page) => $page->where('slots.0.props.count', 0));
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('slots.0.component', 'modrixcommerce/product-reviews/ProductReviews')
+                ->where('slots.0.props.reason', 'login')
+                ->where('slots.0.props.count', 0));
 
         // A verified buyer reviews; it waits for moderation; one review per customer.
-        $this->app['auth']->forgetGuards();
         $this->post('/m/modrixcommerce/product-reviews/products/'.$product->slug.'/reviews')->assertRedirect(route('login'));
         $this->enableCheckout();
         $this->actingAs($customer);

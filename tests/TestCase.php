@@ -26,14 +26,16 @@ abstract class TestCase extends BaseTestCase
         config(['ecomodular.installer.lock_file' => $this->installLockFile]);
 
         // MySQL commits implicitly on DDL, which ends the transaction that
-        // RefreshDatabase wraps each test in. When a test installs a module
-        // (its migrations run CREATE TABLE), reopen that transaction so later
-        // savepoints and rollbacks behave as they do on SQLite.
+        // RefreshDatabase wraps each test in (writes after it are committed,
+        // as they always were). When a test installs a module (CREATE TABLE),
+        // tell the connection there is no open transaction any more, so code
+        // under test uses real transactions instead of a savepoint that no
+        // longer exists ("SAVEPOINT trans2 does not exist").
         $this->app['events']->listen(MigrationsEnded::class, function (): void {
             $connection = DB::connection();
 
             if ($connection->getDriverName() === 'mysql' && $connection->transactionLevel() > 0 && ! $connection->getPdo()->inTransaction()) {
-                $connection->getPdo()->beginTransaction();
+                (fn () => $this->transactions = 0)->call($connection);
             }
         });
     }

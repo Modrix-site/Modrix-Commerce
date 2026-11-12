@@ -117,7 +117,7 @@ final class Backups
 
             @chmod($path, 0600);
             if ($prune) {
-                $this->prune();
+                $this->prune($path);
             }
 
             return ['name' => $name, 'path' => $path, 'size' => (int) filesize($path), 'encrypted' => $password !== null];
@@ -695,11 +695,16 @@ final class Backups
         rename($aside, $to);
     }
 
-    private function prune(): void
+    /**
+     * Keeps the newest backups, always including the one just made: several
+     * backups in the same second sort by their random name suffix.
+     */
+    private function prune(string $justCreated): void
     {
         $keep = app(BackupSettings::class)->keep();
+        $others = array_values(array_filter($this->all(), fn (array $backup) => $backup['path'] !== $justCreated));
 
-        foreach (array_slice($this->all(), $keep) as $old) {
+        foreach (array_slice($others, max(0, $keep - 1)) as $old) {
             @unlink($old['path']);
         }
     }
