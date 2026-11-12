@@ -3,6 +3,15 @@ import type { SlotItem } from '@/components/extensions/extension-slot';
 import { Head, Link } from '@inertiajs/react';
 import { TriangleAlert } from 'lucide-react';
 import { AuditTable } from '@/components/admin/audit-table';
+import {
+    ModrixCloudPrompt,
+    type ModrixCloudPromptData,
+} from '@/components/admin/modrix-cloud-prompt';
+import {
+    SetupGuide,
+    setSetupGuideHidden,
+    type SetupGuideData,
+} from '@/components/admin/setup-guide';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { StatusBadge } from '@/components/admin/status-badge';
 import { formatDate } from '@/components/storefront/order-view';
@@ -39,6 +48,8 @@ type Props = {
     recentActivity: AuditLogEntry[] | null;
     warnings: string[];
     widgets: (SlotItem & { title: string })[];
+    cloudPrompt?: ModrixCloudPromptData | null;
+    setupGuide?: SetupGuideData | null;
 };
 
 export default function AdminDashboard({
@@ -49,6 +60,8 @@ export default function AdminDashboard({
     recentActivity,
     warnings,
     widgets,
+    cloudPrompt = null,
+    setupGuide = null,
 }: Props) {
     return (
         <>
@@ -57,7 +70,21 @@ export default function AdminDashboard({
                 <PageHeader
                     title={store.store_name}
                     description={`Currency ${store.default_currency} · Timezone ${store.timezone}`}
+                    actions={
+                        setupGuide?.hidden && (
+                            <Button
+                                variant="outline"
+                                onClick={() => setSetupGuideHidden(false)}
+                            >
+                                Show setup guide
+                            </Button>
+                        )
+                    }
                 />
+
+                <SetupGuide guide={setupGuide} />
+
+                <ModrixCloudPrompt prompt={cloudPrompt} />
 
                 {warnings.map((warning) => (
                     <Alert key={warning}>

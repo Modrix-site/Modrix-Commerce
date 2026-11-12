@@ -6,10 +6,13 @@ import {
     Puzzle,
     CheckCircle2,
     RefreshCw,
-    Cloud,
 } from 'lucide-react';
 import { useState } from 'react';
 import { ExtensionIcon } from '@/components/admin/extension-icon';
+import {
+    ModrixCloudPrompt,
+    type ModrixCloudPromptData,
+} from '@/components/admin/modrix-cloud-prompt';
 import { AdminPage, PageHeader } from '@/components/admin/page-header';
 import { PackageUpload } from '@/components/admin/package-upload';
 import { ExtensionStateBadge } from '@/components/admin/extension-state-badge';
@@ -28,12 +31,12 @@ export default function ExtensionsIndex({
     extensions,
     safeMode,
     licensedExtensions = [],
-    cloudConnector = null,
+    cloudPrompt = null,
 }: {
     extensions: ExtensionSummary[];
     safeMode: boolean;
     licensedExtensions?: string[];
-    cloudConnector?: { id: number; enabled: boolean } | null;
+    cloudPrompt?: ModrixCloudPromptData | null;
 }) {
     const can = useCan();
     const [category, setCategory] = useState('All extensions');
@@ -93,25 +96,7 @@ export default function ExtensionsIndex({
                         </AlertDescription>
                     </Alert>
                 )}
-                {cloudConnector && !cloudConnector.enabled && (
-                    <Alert className="mb-5">
-                        <Cloud />
-                        <AlertTitle>Connect to Modrix Cloud</AlertTitle>
-                        <AlertDescription>
-                            <p>
-                                Install and enable the Modrix Cloud Connector to
-                                browse every theme and extension and install
-                                your free and purchased ones in one click.
-                            </p>
-                            <Link
-                                href={show(cloudConnector.id)}
-                                className="font-medium underline"
-                            >
-                                Open Modrix Cloud Connector
-                            </Link>
-                        </AlertDescription>
-                    </Alert>
-                )}
+                <ModrixCloudPrompt prompt={cloudPrompt} className="mb-5" />
                 <div className="mb-6 grid gap-3 sm:grid-cols-3">
                     {stats.map(({ label, value, Icon }) => (
                         <div

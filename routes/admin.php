@@ -48,6 +48,7 @@ use App\Http\Controllers\Admin\PaymentSettingsController;
 use App\Http\Controllers\Admin\PaymentWebhookEventController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\SetupGuideController;
 use App\Http\Controllers\Admin\ShippingMethodController;
 use App\Http\Controllers\Admin\StoreSettingsController;
 use App\Http\Controllers\Admin\StripeSettingsController;
@@ -64,6 +65,10 @@ use Illuminate\Support\Facades\Route;
 Route::pattern('extension', '[0-9]+');
 
 Route::get('/', DashboardController::class)->name('dashboard');
+Route::middleware('can:settings.manage')->group(function () {
+    Route::put('setup-guide/steps/{step}', [SetupGuideController::class, 'skip'])->where('step', '[a-z]+')->name('setup-guide.skip');
+    Route::put('setup-guide/visibility', [SetupGuideController::class, 'visibility'])->name('setup-guide.visibility');
+});
 
 // Every staff member's own notifications (no extra permission).
 Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
