@@ -4,6 +4,7 @@ import {
     type DocumentSettingsProps,
 } from '@/components/admin/document-settings-fields';
 import { Tabs } from '@/components/admin/tabs';
+import InputError from '@/components/input-error';
 import { useState } from 'react';
 import { StoreExtraSettings } from '@/components/admin/store-extra-settings';
 import {
@@ -24,10 +25,13 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { edit as generalSettings } from '@/routes/admin/settings/general';
 import { edit } from '@/routes/admin/settings/store';
 import type { CurrencyOption } from '@/types';
 
 type Props = {
+    customerAccounts: 'optional' | 'required';
+    registrationEnabled: boolean;
     documents: DocumentSettingsProps;
     profile: Record<string, string | null>;
     delivery: DeliveryAreaSettings;
@@ -48,6 +52,8 @@ type Props = {
 };
 
 export default function StoreSettings({
+    customerAccounts,
+    registrationEnabled,
     documents,
     profile,
     delivery,
@@ -62,6 +68,7 @@ export default function StoreSettings({
     const [rates, setRates] = useState(displayCurrencies);
     const [baseCurrency, setBaseCurrency] = useState(settings.default_currency);
     const [section, setSection] = useState('general');
+    const [accounts, setAccounts] = useState(customerAccounts);
     return (
         <>
             <Head title="Store settings" />
@@ -99,52 +106,199 @@ export default function StoreSettings({
                                         label: 'General',
                                         hasError: Boolean(
                                             errors.store_name ||
-                                            errors.store_email,
+                                            errors.store_email ||
+                                            errors.customer_accounts,
                                         ),
                                         content: (
-                                            <Card>
-                                                <CardHeader>
-                                                    <CardTitle>
-                                                        General
-                                                    </CardTitle>
-                                                </CardHeader>
-                                                <CardContent className="grid gap-4 sm:grid-cols-2">
-                                                    <FormField
-                                                        id="store_name"
-                                                        label="Store name"
-                                                        error={
-                                                            errors.store_name
-                                                        }
-                                                    >
-                                                        <Input
+                                            <div className="grid gap-6">
+                                                <Card>
+                                                    <CardHeader>
+                                                        <CardTitle>
+                                                            General
+                                                        </CardTitle>
+                                                    </CardHeader>
+                                                    <CardContent className="grid gap-4 sm:grid-cols-2">
+                                                        <FormField
                                                             id="store_name"
-                                                            name="store_name"
-                                                            defaultValue={
-                                                                settings.store_name
+                                                            label="Store name"
+                                                            error={
+                                                                errors.store_name
                                                             }
-                                                            required
-                                                        />
-                                                    </FormField>
-                                                    <FormField
-                                                        id="store_email"
-                                                        label="Store contact email"
-                                                        error={
-                                                            errors.store_email
-                                                        }
-                                                        hint="Used as the reply-to address for customer emails."
-                                                    >
-                                                        <Input
+                                                        >
+                                                            <Input
+                                                                id="store_name"
+                                                                name="store_name"
+                                                                defaultValue={
+                                                                    settings.store_name
+                                                                }
+                                                                required
+                                                            />
+                                                        </FormField>
+                                                        <FormField
                                                             id="store_email"
-                                                            name="store_email"
-                                                            type="email"
-                                                            defaultValue={
-                                                                settings.store_email ??
-                                                                ''
+                                                            label="Store contact email"
+                                                            error={
+                                                                errors.store_email
                                                             }
-                                                        />
-                                                    </FormField>
-                                                </CardContent>
-                                            </Card>
+                                                            hint="Used as the reply-to address for customer emails."
+                                                        >
+                                                            <Input
+                                                                id="store_email"
+                                                                name="store_email"
+                                                                type="email"
+                                                                defaultValue={
+                                                                    settings.store_email ??
+                                                                    ''
+                                                                }
+                                                            />
+                                                        </FormField>
+                                                    </CardContent>
+                                                </Card>
+                                                <Card>
+                                                    <CardHeader>
+                                                        <CardTitle>
+                                                            Customer accounts
+                                                        </CardTitle>
+                                                        <CardDescription>
+                                                            Choose whether
+                                                            shoppers can order
+                                                            as a guest or must
+                                                            have an account.
+                                                        </CardDescription>
+                                                    </CardHeader>
+                                                    <CardContent>
+                                                        <fieldset className="grid gap-3">
+                                                            <legend className="sr-only">
+                                                                Customer
+                                                                accounts
+                                                            </legend>
+                                                            <label className="flex items-start gap-2 text-sm">
+                                                                <input
+                                                                    type="radio"
+                                                                    name="customer_accounts"
+                                                                    value="optional"
+                                                                    className="mt-0.5"
+                                                                    checked={
+                                                                        accounts ===
+                                                                        'optional'
+                                                                    }
+                                                                    onChange={() =>
+                                                                        setAccounts(
+                                                                            'optional',
+                                                                        )
+                                                                    }
+                                                                />
+                                                                <span className="grid gap-0.5">
+                                                                    <span className="font-medium">
+                                                                        Guests
+                                                                        can
+                                                                        order
+                                                                        without
+                                                                        an
+                                                                        account
+                                                                    </span>
+                                                                    <span className="text-muted-foreground">
+                                                                        Shoppers
+                                                                        check
+                                                                        out with
+                                                                        an email
+                                                                        address.
+                                                                        They can
+                                                                        still
+                                                                        sign in
+                                                                        or
+                                                                        create
+                                                                        an
+                                                                        account
+                                                                        if they
+                                                                        want
+                                                                        one.
+                                                                    </span>
+                                                                </span>
+                                                            </label>
+                                                            <label className="flex items-start gap-2 text-sm">
+                                                                <input
+                                                                    type="radio"
+                                                                    name="customer_accounts"
+                                                                    value="required"
+                                                                    className="mt-0.5"
+                                                                    checked={
+                                                                        accounts ===
+                                                                        'required'
+                                                                    }
+                                                                    onChange={() =>
+                                                                        setAccounts(
+                                                                            'required',
+                                                                        )
+                                                                    }
+                                                                />
+                                                                <span className="grid gap-0.5">
+                                                                    <span className="font-medium">
+                                                                        Customers
+                                                                        need an
+                                                                        account
+                                                                        to order
+                                                                    </span>
+                                                                    <span className="text-muted-foreground">
+                                                                        Shoppers
+                                                                        can
+                                                                        browse
+                                                                        and fill
+                                                                        their
+                                                                        cart,
+                                                                        then
+                                                                        sign in
+                                                                        or
+                                                                        create
+                                                                        an
+                                                                        account
+                                                                        before
+                                                                        checkout.
+                                                                        Their
+                                                                        cart is
+                                                                        kept.
+                                                                    </span>
+                                                                </span>
+                                                            </label>
+                                                            <InputError
+                                                                message={
+                                                                    errors.customer_accounts
+                                                                }
+                                                            />
+                                                            {accounts ===
+                                                                'required' &&
+                                                                !registrationEnabled && (
+                                                                    <p
+                                                                        role="alert"
+                                                                        className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-100"
+                                                                    >
+                                                                        Customer
+                                                                        sign-up
+                                                                        is
+                                                                        turned
+                                                                        off, so
+                                                                        new
+                                                                        shoppers
+                                                                        will not
+                                                                        be able
+                                                                        to
+                                                                        order.
+                                                                        Turn it
+                                                                        on in{' '}
+                                                                        <Link
+                                                                            href={generalSettings()}
+                                                                            className="font-medium underline"
+                                                                        >
+                                                                            General
+                                                                            settings
+                                                                        </Link>
+                                                                        .
+                                                                    </p>
+                                                                )}
+                                                        </fieldset>
+                                                    </CardContent>
+                                                </Card>
+                                            </div>
                                         ),
                                     },
                                     {

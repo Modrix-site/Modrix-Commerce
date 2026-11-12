@@ -59,7 +59,7 @@ class CheckoutController extends Controller
         }
 
         if ($user === null && ! $placeOrder->guestCheckoutEnabled()) {
-            return redirect()->guest(route('login'));
+            return redirect()->guest(route('login'))->with('login_reason', 'checkout');
         }
 
         // Destination and method are only used to quote; amounts always come from the server.

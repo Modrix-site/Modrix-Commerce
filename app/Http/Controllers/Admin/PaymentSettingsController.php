@@ -21,7 +21,7 @@ use Inertia\Response;
  */
 class PaymentSettingsController extends Controller
 {
-    public function edit(Request $request, AdminNavigation $navigation, PaymentMethods $methods, SettingsRepository $settings, StripeSettings $stripe): Response
+    public function edit(Request $request, AdminNavigation $navigation, PaymentMethods $methods, StripeSettings $stripe): Response
     {
         $manual = [];
 
@@ -32,7 +32,6 @@ class PaymentSettingsController extends Controller
         return Inertia::render('admin/payments/settings', [
             'methods' => $manual,
             'gatewayExtensions' => $navigation->paymentGatewaysForUser($request->user()),
-            'guestCheckout' => (bool) $settings->get('checkout.guest_enabled', true),
             'currency' => app(StoreSettings::class)->currency(),
             'stripe' => [
                 'enabled' => $stripe->enabled(),
@@ -44,7 +43,7 @@ class PaymentSettingsController extends Controller
 
     public function update(Request $request, SettingsRepository $settings, AuditLogger $audit): RedirectResponse
     {
-        $rules = ['guest_checkout' => ['boolean']];
+        $rules = [];
         $attributes = [];
 
         foreach (array_keys(PaymentMethods::MANUAL) as $code) {
@@ -60,7 +59,7 @@ class PaymentSettingsController extends Controller
         $attributes['methods.cash_on_delivery.fee_amount'] = 'courier fee';
 
         $data = $request->validate($rules, [], $attributes);
-        $values = ['checkout.guest_enabled' => (bool) ($data['guest_checkout'] ?? false)];
+        $values = [];
 
         foreach (array_keys(PaymentMethods::MANUAL) as $code) {
             $values["payments.{$code}.enabled"] = (bool) ($data['methods'][$code]['enabled'] ?? false);

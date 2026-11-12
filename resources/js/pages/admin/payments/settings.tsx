@@ -42,7 +42,6 @@ function OnOff({ on, extra }: { on: boolean; extra?: string }) {
 
 export default function PaymentSettings({
     methods,
-    guestCheckout,
     gatewayExtensions,
     stripe,
     currency,
@@ -54,7 +53,6 @@ export default function PaymentSettings({
         icon: string;
     }[];
     methods: Method[];
-    guestCheckout: boolean;
     currency: string;
     stripe: { enabled: boolean; configured: boolean; mode: string | null };
 }) {
@@ -168,38 +166,6 @@ export default function PaymentSettings({
                                             </Card>
                                         ),
                                     })),
-                                    {
-                                        id: 'checkout',
-                                        label: 'Checkout',
-                                        hasError: Boolean(
-                                            errors.guest_checkout,
-                                        ),
-                                        content: (
-                                            <Card>
-                                                <CardHeader>
-                                                    <CardTitle>
-                                                        Checkout
-                                                    </CardTitle>
-                                                    <CardDescription>
-                                                        How shoppers check out.
-                                                    </CardDescription>
-                                                </CardHeader>
-                                                <CardContent>
-                                                    <label className="flex items-center gap-2 text-sm">
-                                                        <Checkbox
-                                                            name="guest_checkout"
-                                                            value="1"
-                                                            defaultChecked={
-                                                                guestCheckout
-                                                            }
-                                                        />
-                                                        Allow checkout without
-                                                        an account
-                                                    </label>
-                                                </CardContent>
-                                            </Card>
-                                        ),
-                                    },
                                     ...methods.map((m) => ({
                                         id: m.code,
                                         label: (
