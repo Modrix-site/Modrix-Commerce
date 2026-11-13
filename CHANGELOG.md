@@ -1,0 +1,375 @@
+# Changelog
+
+All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
+
+## [1.2.0] - 2026-11-13
+
+One core for the development store and production. Production ships only the Modrix Cloud Connector module and the Circuit starter theme; everything else installs from Modrix Cloud. Modules and themes that declare `^1.0` run on 1.2.0 unchanged.
+
+### Added
+
+- **Prebuilt module and theme screens:** `php artisan ecomodular:module:build` prebuilds a package's screens into `dist/`; the store loads them at runtime, so packages installed from Modrix Cloud or a ZIP work without rebuilding the store's assets.
+- **`php artisan ecomodular:modules:prune`:** lists modules whose files are missing, damaged or older than the installed version; `--force` removes them so they can be installed again.
+- **Dashboard setup guide** and a prompt to connect Modrix Cloud.
+- **Store settings:** choose guest checkout or required customer accounts.
+- **Email verification:** customers verify their email before the account area opens; changing the address asks again.
+- **Registration form place:** a new storefront slot (`auth.register`) inside the registration form, so modules can add fields.
+
+### Changed
+
+- Circuit is the default theme for new stores.
+
+### Modules (installed from Modrix Cloud)
+
+- **SMS Notifications & Phone Verification** (`modrixcommerce/sms` 1.0.0): phone verification at registration and order updates by text.
+- **Multi-Vendor** (`modrixcommerce/multi-vendor` 1.2.0).
+
+## [1.1.1] and [1.1.0] - 2026-11-13
+
+Production releases from the `Modrix-site/Modrix-Commerce` repository; their changes are listed under 1.2.0.
+
+## [1.0.0-rc.3] - 2026-11-11
+
+### Added (checkout)
+
+- **Under the shipping methods:** a new checkout place (`checkout.after_shipping`) for delivery scheduling and pickup widgets, right under the shipping method choice.
+- Ships the Delivery Date & Time Slots (2.0.1) and Store & Branch Pickup (1.1.1) storefront screens, which are compiled with the core.
+
+## [1.0.0-rc.2] - 2026-11-11
+
+### Added (core updates)
+
+- **Core updates from Modrix Cloud:** Settings → System status checks Modrix Cloud for new core releases and installs them (signed packages, backup and rollback).
+- **Core update required:** a module that needs a newer core shows a clear "Core update required" message and can't be installed or enabled until the core is updated.
+
+### Added (extension blocks)
+
+- **Extension blocks in the customizer:** each page tab lists the extension blocks that can show on that page. Turn each on or off, choose where it shows and in which order. The same for every theme.
+- **More places for extensions:** header icons, above catalog products, on product cards, under the price, under add to cart, below the description, under the cart items and above "Place order", in all themes.
+- **Extension settings in the tabs:** extensions can show their page settings in the matching tab (for example the bundle heading on the Product tab).
+- Product reviews, Tabby, Tamara, Frequently bought together, Newsletter and Flash sales use them.
+- ADR-052.
+
+### Added (page settings)
+
+- **Customizer page tabs with their own settings**, followed by every theme and kept when the theme changes:
+    - **Header:** logo height, header colours, search as a bar or an icon, menu alignment, cart icon and count, account link.
+    - **Catalog:** columns on desktop and phones, products per page, default sort, filters, image shape, second image on hover, quick add, badges, brand on cards.
+    - **Product:** gallery thumbnails at the side or below, image zoom, SKU, stock note, description as open, tabs or accordion, related products (and how many), upsells, quantity selector.
+    - **Cart:** free-shipping progress bar, cross-sells, coupon field, trust badges, continue-shopping link.
+    - **Checkout (new tab):** summary left or right and kept in view, company, address line 2, phone (hidden, optional or required), order note, required terms checkbox, trust badges, heading and button text, product images, coupon field.
+- Required and hidden checkout fields are enforced on the server.
+- ADR-051.
+
+### Added (notifications)
+
+- **Admin bell:** a bell in the admin header with the unread count and the latest 10 notifications; opening one marks it read and goes to the order, product or customer.
+    - New orders, payments received, failed payments, cancellations, refunds, low stock and new customers, for staff whose role can see them (owners get all).
+    - **Live alerts:** while the admin is open, new notifications pop up every 30 seconds (at most 3, then "+N more").
+    - **Notifications page:** all or unread, mark read, mark all read, delete.
+    - **Settings:** each staff member chooses, per kind, "In the bell" and "By email".
+- **Customer bell:** signed-in customers see their order updates (confirmed, shipped, out for delivery, delivered, cancelled, refunded, payment failed, downloads ready) in the storefront header and under Account → Notifications, in English, Spanish, French and German.
+- Old notifications are cleaned up daily (read after 90 days, all after a year).
+- ADR-050.
+
+### Added (storefront and theme customizer)
+
+- **Theme customizer tabs:** General, Header, Homepage, Catalog, Product, Cart and Footer. Every theme's settings are sorted into them, and switching tabs keeps unsaved edits.
+- **Fonts and buttons per page:** headings (font, size, colour, weight), text (font, size, colour), buttons (background, text, hover, font, size, corners) and prices (size, colour, sale colour).
+    - They can be set store-wide and overridden per page (Homepage, Catalog, Product, Cart).
+    - Nothing changes until a value is set.
+- **Phone header:** ☰ menu, logo, search, account and cart, in every theme.
+    - **Full-width menu:** shows "Shop by category" with expandable subcategories, every desktop menu link, language, currency and account.
+    - **Shrinking:** the header shrinks and stays at the top while scrolling.
+- **Sticky add-to-cart bar on phones** (theme setting, on by default) and a **Buy now** button on product pages that goes straight to checkout.
+- ADR-049.
+
+### Added (product tools and digital products)
+
+- **Duplicate product:** from the editor or the product list. The copy is a hidden draft ("Copy of …") with new slug and SKUs, the same details, variants, prices, images, categories, tags, translations, related products and files, and no stock.
+- **Bulk actions** on the product list (up to 200 selected products):
+    - publish, draft, archive;
+    - add to or remove from a category, set brand, add or remove tags, featured on or off;
+    - raise or lower prices by % or a fixed amount, never below the currency's smallest amount;
+    - set the stock quantity;
+    - delete, and export the selection to CSV.
+
+    Products that cannot change are listed in the result.
+
+- **Related products and upsells:** picked in the editor (up to 12 each). The product page shows "Customers also bought" and "You may also like", falling back to products from the same category.
+- **Digital products:**
+    - **Editor:** a "Digital product (no shipping)" switch, with files (up to 10, 500 MB each) stored privately.
+    - **Checkout:** a cart of digital products only has no shipping step.
+    - **After payment:** customers get download links in the payment email, on the order page and in their account. Links are limited to 5 downloads and 30 days by default (Settings → Store → Digital downloads), are counted and logged, and stop when the order is cancelled or fully refunded.
+    - **Delivery:** digital-only orders complete automatically.
+    - **Admin:** staff can reset, extend or revoke a link from the order page.
+- ADR-048.
+
+### Added (flash sales)
+
+- **Flash Sales module** (Marketing → Flash Sales):
+    - time-limited sales with a percentage or fixed-amount discount;
+    - pick products on the sale page, or switch on **Flash sale** in the product editor, with an optional per-product discount;
+    - shoppers see the sale price and the original price crossed out, with a "⚡ Flash sale −20%" tag on product cards and a notice under the product price ("Weekend Flash Sale · Ends in 02:14:09"), in every theme, plus an optional home page banner;
+    - the cart and checkout charge the sale price, and coupons apply on top.
+- **Sale prices extension point** for modules (`SalePriceProvider`, capability `catalog.sale_prices`) and an **admin product-editor panel slot** (`admin.product.sidebar`).
+- ADR-047.
+
+### Added (product editor and product options)
+
+- Redesigned product editor:
+    - one page with a section menu (General, Media, Pricing or Variants, Shipping, Search listing);
+    - a sidebar for status, visibility and organisation;
+    - images on the same page;
+    - a compact variants table;
+    - a sticky save bar that warns about unsaved changes.
+- **Cost per item** with live margin and profit (only staff see it).
+- **Dimensions:** length, width and height per variant.
+- **Brands** (Admin → Catalog → Brands). The brand shows on the product page and links to a brand page listing its products.
+- **Tags** with autocomplete, for filtering products in the admin and for storefront search.
+- **Featured** flag, plus a "featured" source for the home page Featured products section.
+- **Product list filters** by brand, tag and featured, plus a brand column.
+- ADR-046.
+
+### Added (payments panel and bulk order actions)
+
+- **Payments panel** on the order page:
+    - total, paid, refunded and **balance due**;
+    - every payment and refund with method, reference, who recorded it, and a receipt download.
+- **Record payment** now takes an amount (partial payments), a method (cash, bank transfer, card terminal, other) and the date received. It works on any order that still owes money, and closes any open online checkout for that order.
+- **Partly paid orders** show the new **Partially paid** status. They ship once fully paid, or straight away for cash on delivery.
+- **Order list:** select orders to:
+    - move them to a fulfilment step (orders that can't move are skipped and listed);
+    - print **packing slips** or **invoices** as one PDF;
+    - **export CSV**.
+- **Export CSV** button for everything matching the current filters.
+- ADR-045.
+
+### Added (detailed order statuses)
+
+- Orders show one of 19 statuses:
+    1. Pending Payment
+    2. Payment Failed
+    3. Pending
+    4. Confirmed
+    5. On Hold
+    6. Processing
+    7. Picking
+    8. Packing
+    9. Packed
+    10. Ready for Dispatch
+    11. Shipped
+    12. In Transit
+    13. Out for Delivery
+    14. Delivered
+    15. Delivery Failed
+    16. Cancelled
+    17. Returned
+    18. Refunded
+    19. Partially Refunded
+- **Fulfilment steps:** they move forward only, and optional steps can be skipped. Shipping keeps carrier and tracking.
+- **Failed deliveries** can be retried. **Returns** can put items back in stock.
+- **Confirmation:** paid and cash-on-delivery orders are confirmed automatically. An optional "review new orders" setting keeps orders in Pending until staff confirm them.
+- **Customer emails:**
+    - for confirmed, payment failed, shipped, out for delivery, delivered, delivery failed and returned;
+    - each can be switched off under Admin → Orders & documents;
+    - each action has an "Email the customer" box for one-off choices.
+- **Order list:** a status filter with counts. The dashboard's "Ready to fulfil" link now lists exactly the orders it counts.
+- **What customers see:** never holds or warehouse steps (those show as Processing).
+- **Existing orders** are migrated automatically.
+- ADR-044.
+
+### Added (order documents and statuses)
+
+- PDF invoices with gap-free sequential numbers (for example `INV-2026-00042`), issued automatically when an order is paid and frozen once issued.
+- PDF payment receipts (with balance due) and packing slips (no prices).
+- Staff download all three from the order page; customers download their invoice and receipts from their account.
+- The invoice is attached to the payment email.
+- Admin → Invoices & documents: number prefix and digits, next number (can only go up), business address, tax ID, footer and logo.
+- Orders can be put **on hold**: a held order cannot be packed or shipped until released, and customers do not see the hold.
+- Orders can be marked **packed** before shipping.
+- "Email the customer" option on hold, release, pack and ship.
+- Redesigned admin order page:
+    - progress steps (placed, paid, packed, shipped, delivered);
+    - one action bar;
+    - Documents card;
+    - activity timeline.
+- ADR-043.
+
+### Added (storefront interface translations)
+
+- The storefront's wording (header, product, cart, checkout, order, account and sign-in pages, server messages) is translatable.
+- Spanish, French and German are shipped, including Laravel validation, sign-in and password-reset messages.
+- Admin → Languages → Storefront text: change any text or translate other languages (search, "not translated" and "changed" filters).
+- `php artisan ecomodular:storefront-strings` rebuilds the source catalogue. A test keeps code and catalogue in sync and checks placeholders.
+- Country names follow the shopper's language; dates on order pages follow the page language.
+- Sign-in and registration pages follow the shopper's language.
+- ADR-042.
+
+### Added (media library and translations)
+
+- Media library (Catalog → Media library):
+    - multi-image upload, re-encoded like every other upload;
+    - search and filters (source, unused);
+    - alt text editing, copy URL, "used by" (products and theme settings);
+    - deletion blocked while an image is in use.
+
+    Product images can be chosen from the library, and library images can be used in theme image settings. Existing product and theme images are registered automatically. New `media.manage` permission (store and catalog managers).
+
+- Storefront translations:
+    - Admin → Languages: default language plus additional languages.
+    - Product and category translation editors that show the default text next to each field, reached from the product page, the category list and Catalog → Translations (progress and missing items per language).
+    - A storefront language switcher; the language is detected from the link, a cookie or the browser.
+    - Translated names and descriptions on product, listing, category, home and cart pages, and in search, with fallback to the default language.
+- ADRs 040–041.
+
+### Added (Phase 8: post-launch ecosystem)
+
+- Developer SDK:
+    - `ecomodular:make:module` and `ecomodular:make:theme` scaffolders;
+    - `ecomodular:package`, which validates, scans and builds the marketplace archive;
+    - getting-started guide for extension developers.
+- Package security scanner (code execution, shell, obfuscation, dynamic includes, raw SQL, network, environment, forbidden files) on every marketplace upload and in the CLI.
+- Signed security advisories for marketplace products, shown to affected stores in the admin and the health check.
+- Third-party sellers:
+    - applications and verification by the owner;
+    - vendor-name enforcement and a seller portal (products, releases, statement);
+    - owner review and signing;
+    - commission and payout ledger;
+    - suspension.
+- Marketplace product reviews by license holders, with moderation, and support contacts on product pages.
+- Harvest theme (food and grocery) and the newsletter sign-up module (consent, unsubscribe, export, erasure).
+- Personal data export for customers (My account → Download my data), with `PersonalDataExport::contribute()` for modules.
+- ADRs 038 (sellers) and 039 (multi-store deferred).
+
+## [1.0.0-rc.1] - 2026-10-13
+
+### Added (Phase 7: production hardening)
+
+- Health monitoring:
+    - `/health` readiness endpoint (overall status, details with `ECOMODULAR_HEALTH_TOKEN`, 503 on failure);
+    - `ecomodular:health` command;
+    - health card on System status, checking database, migrations, cache, storage, disk, queue, scheduler heartbeat, backup age, webhook failures and production configuration.
+- Backups:
+    - `ecomodular:backup` and `ecomodular:restore`: database dump (SQLite, MySQL/MariaDB, PostgreSQL), media, private files, modules and themes;
+    - SHA-256 manifest, optional AES-256 encryption, retention, daily schedule;
+    - verified, path-safe restores with file rollback on failure.
+- `SecurityHeaders` middleware: nonce-based Content-Security-Policy, frame denial, `nosniff`, referrer and permissions policies, COOP, HSTS on HTTPS (`ECOMODULAR_CSP`, `ECOMODULAR_CSP_IMG_SOURCES`, `ECOMODULAR_HSTS`).
+- Installer: setup tokens expire after 24 hours (`ECOMODULAR_INSTALLER_TOKEN_HOURS`); `ECOMODULAR_WEB_INSTALLER=false` for CLI-only installs.
+- Docs:
+    - production deployment, monitoring, troubleshooting and backup guides;
+    - `SECURITY.md` with the incident and extension takedown process;
+    - security review report; ADRs 036–037.
+- Tests: process-level fresh-install, upgrade-path and restore drills; query budgets; security headers. CI runs a MySQL backup and restore drill and audits build tooling.
+
+### Changed
+
+- Nginx sample: no duplicate application security headers; `/storage/` served with `nosniff` and a sandbox CSP; long-lived caching for `/build/`.
+- Lazy loading and silently discarded attributes now throw outside production.
+
+### Security
+
+- Per-IP rate limit on password reset, reset submission and registration.
+- The last active owner can no longer delete their own account.
+- `tinypool` pinned to 2.1.2 (GHSA-5gmw-xhrv-c9v3, GHSA-85c8-ppgw-ccpr; build tooling only).
+
+### Fixed
+
+- Account deletion for users with marketplace licenses or orders shows a message instead of failing.
+- Cart pages no longer write every line on each view.
+- Destructive alert text contrast (WCAG AA); wide tables are keyboard-scrollable; long values wrap in alerts on phones.
+
+### Added (Phase 6: official marketplace and licensing)
+
+- Marketplace server role (`ECOMODULAR_MARKETPLACE_SERVER`, off by default): product admin, release upload with archive scanning and manifest validation, review and Ed25519-signed release metadata, withdrawal; `ecomodular:marketplace:keygen`.
+- Marketplace checkout with separate Stripe credentials and webhook, idempotent fulfilment, free products, refunds.
+- Licenses with hashed and encrypted keys, states, activation limits and update entitlement; append-only license history; license admin (suspend, revoke, reinstate, extend).
+- License API v1 (catalog, activate, check, deactivate, updates, downloads) with signed tokens and single-use download links.
+- Customer portal: licenses, keys, activations, downloads and orders.
+- Store client (Admin → Extensions → Marketplace): catalog, license activation, verified install and update with backup, rollback, update history, daily `ecomodular:marketplace:check` with a grace-period warning; installed extensions are never disabled.
+- Licensing guide rewritten; ADRs 033–035.
+
+### Changed
+
+- Stripe REST calls and webhook verification moved into a shared `StripeApi`, used by the merchant gateway and the marketplace.
+
+### Added (Phase 5: theme engine)
+
+- Data-only themes (`themes/<vendor>/<name>/theme.json` with images and WOFF2 fonts). The validator rejects code or markup files, path escapes, unsafe links and unknown values (JSON Schema in `docs/extensions/theme.schema.json`).
+- Design settings (colors, fonts, radius, spacing, width, logo, favicon, announcement, footer text), layout variants (header, footer, product card, grid, product page) and typed home sections, all rendered by core components.
+- Admin → Appearance: preview (staff session only), activate, customize (design, image library, home section editor), apply updates with changelog, reset, demo content import.
+- Merchant customizations stored apart from theme defaults; the storefront renders the applied theme version; fallbacks to the default and built-in designs.
+- Bundled themes: Essence (default, activated on install), Noir and Bloom (premium-ready samples with demo content).
+- Theme developer guide; ADRs 031–032.
+
+### Changed
+
+- The storefront home page is now built from theme sections.
+- Product images and theme uploads share one image sanitizer.
+
+### Added (Phase 4: module engine)
+
+- Module packages under `modules/<vendor>/<name>/` with a validated, data-only `module.json` (JSON Schema in `docs/extensions/module.schema.json`).
+- Lifecycle: discover, install (migrations with rollback on failure), enable (trust confirmation, dependency checks, trial boot), configure (typed settings), disable (keeps data), update (update-pending files are not loaded until migrated), uninstall (typed confirmation); dependency and version resolution with `composer/semver`; lifecycle log and audit.
+- Guarded loading: a module that throws while booting is quarantined and the store keeps running; `ECOMODULAR_SAFE_MODE`; `ecomodular:modules` command.
+- Module routes under fixed prefixes and middleware; module admin routes must declare a permission; permissions, navigation and settings from the manifest.
+- Extension points: checkout validators, search provider, storefront slots, dashboard widgets; module React pages and components compiled with the app.
+- Admin → Extensions: list, detail, lifecycle actions, generated settings form, lifecycle log.
+- Sample modules: Product Reviews, Sales Trend Widget, Paid Order Alerts.
+- Module developer guide, recovery guide, ADRs 028–030.
+
+### Added (Phase 3: payment integrations)
+
+- `PaymentGateway` contract with provider-neutral payment and refund facts; gateway registry.
+- Stripe Checkout (hosted page): idempotent session creation, signed webhook verification, server-side reconciliation, refunds, Stripe minor-unit handling.
+- Encrypted, write-only gateway credentials behind password confirmation; connection test.
+- Webhook inbox with per-event deduplication, queued retrying processing, and an admin payment event log with retry.
+- Customer flow: redirect to payment, "confirming"/"processing"/"complete your payment" states, retry with session reuse, cancellation of abandoned payments with stock release.
+- Gateway refunds from the order page; refund webhooks confirm, fail or import refunds.
+- `ecomodular:payments:reconcile` command, scheduled every five minutes.
+- Stripe setup guide (`docs/payments/stripe.md`), ADRs 025–027.
+
+### Changed
+
+- Card orders send the order confirmation and staff notification when payment is confirmed, not when the order is placed.
+- Manual payment recording is no longer offered for orders paid through a gateway.
+
+### Added (Phase 2: commerce core)
+
+- Catalog: nested categories, products with variants and options, per-currency prices, SEO fields, re-encoded image uploads, admin search/filter/sort.
+- Inventory: per-variant stock, immutable movement ledger, row-locked all-or-nothing allocation, backorder policy, low-stock events and store alerts.
+- Customers and address book; profile on registration; guest orders linked after email verification.
+- Storefront: home, category, search, product pages; session/user carts with merge on login; price-change and availability notices.
+- Server-side pricing pipeline: coupons (percentage/fixed, dates, limits, minimum subtotal, product/category scope), flat-rate shipping with free-over threshold and country restrictions, rate-table tax (inclusive or exclusive, optional shipping tax).
+- Checkout with idempotency token and changed-total detection; order snapshots (items, money, addresses); human-readable order numbers.
+- Order workflow: record manual payment, ship with tracking, deliver, cancel with restock, partial/full refunds with restock; order history and notes.
+- Manual payment methods (bank transfer, cash on delivery), guest checkout toggle.
+- Queued, idempotent order emails and new-order notification to the store.
+- Reports (sales over time, orders by status, top products, AOV, refunds) and dashboard metrics in the store timezone.
+- Product CSV export and all-or-nothing import keyed by SKU, with a row-level error report and CSV-injection protection.
+- Admin: orders, customers, discounts, shipping, taxes, payments, reports.
+
+## [0.1.0] - 2026-10-12
+
+### Added
+
+- Phase 0 documentation: architecture overview, ADRs 001–011, database schema, testing strategy, roadmap and third-party notices.
+- Laravel 13 / React 19 / TypeScript / Inertia 3 / Vite 8 application scaffold (from `laravel/react-starter-kit`).
+- Installer: the `ecomodular:install` command and a token-gated `/install` web installer that locks itself after installation. `ecomodular:installer-token` command.
+- RBAC: `roles`, `permissions`, `permission_role` and `role_user` tables, a `PermissionRegistry`, seven system roles, custom roles, `EscalationGuard`, and the `ecomodular:sync-permissions` command.
+- Staff user management (invite by password-setup link, role assignment, disable/enable) behind password re-confirmation.
+- Append-only audit log with secret redaction. Authentication events are audited.
+- Store settings (name, email, currency, timezone, units) with a cached settings repository.
+- Admin shell: permission-filtered server navigation, dashboard, users, roles, store settings, audit log and system status pages.
+- Disabled-account enforcement at login and on every request.
+- Docker Compose development stack (PHP-FPM 8.4, Nginx, MySQL 8.4, Redis, Mailpit, queue worker, scheduler).
+- CI: PHP 8.3/8.4 matrix, MySQL 8.4 test job, dependency audit.
+
+### Changed
+
+- `/dashboard` now sends staff to `/admin` and customers to their account settings.
+- `/settings` now uses an explicit GET redirect instead of `Route::redirect`, which fixes the Wayfinder TypeScript error (ADR-011).
+
+### Removed
+
+- Unused starter-kit placeholder dashboard, header layout and external starter-kit links.
