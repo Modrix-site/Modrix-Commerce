@@ -1,0 +1,157 @@
+{
+    "$schema": "../../../docs/extensions/module.schema.json",
+    "name": "modrixcommerce/multi-vendor",
+    "display_name": "Multi-Vendor Marketplace (Vendors, KYB Verification, Seller Catalog & Payouts)",
+    "description": "Transform your store into a full Multi-Vendor Marketplace with public vendor registration, KYB/KYC business verification badges, dedicated vendor product catalogs and storefronts, automatic order commission splitting, and store-to-vendor payouts.",
+    "version": "1.2.0",
+    "type": "module",
+    "icon": "store",
+    "accent": "#059669",
+    "platform_version": "^0.4 || ^1.0",
+    "author": "Modrix Commerce",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EcoModular\\MultiVendor\\": "src/"
+        }
+    },
+    "provider": "EcoModular\\MultiVendor\\MultiVendorServiceProvider",
+    "capabilities": [
+        "admin.routes",
+        "admin.navigation",
+        "storefront.routes",
+        "storefront.slots",
+        "dashboard.widgets",
+        "database.migrations",
+        "settings",
+        "permissions",
+        "events.listen",
+        "product.labels"
+    ],
+    "permissions": [
+        {
+            "name": "multi_vendor.manage",
+            "label": "Manage multi-vendor marketplace, business verifications, seller products & payouts",
+            "group": "Sales"
+        }
+    ],
+    "assets": {
+        "pages": "resources/js/pages",
+        "slots": "resources/js/slots"
+    },
+    "migrations": "database/migrations",
+    "routes": {
+        "admin": "routes/admin.php",
+        "storefront": "routes/storefront.php"
+    },
+    "settings": [
+        {
+            "key": "enabled",
+            "type": "boolean",
+            "label": "Enable Multi-Vendor Marketplace",
+            "help": "Activate marketplace vendor storefronts, seller badges, commission splitting, and vendor payouts.",
+            "default": true
+        },
+        {
+            "key": "allow_vendor_registration",
+            "type": "boolean",
+            "label": "Allow Public Vendor Registration & KYB Onboarding",
+            "help": "Allow prospective sellers to apply and submit business verification credentials at /m/modrixcommerce/multi-vendor/register.",
+            "default": true
+        },
+        {
+            "key": "auto_approve_vendors",
+            "type": "boolean",
+            "label": "Automatically Approve New Vendor Applications",
+            "help": "When disabled, new vendor registrations start in Pending status until approved by an administrator.",
+            "default": false
+        },
+        {
+            "key": "require_business_verification",
+            "type": "boolean",
+            "label": "Require KYB Business Verification for Vendor Products",
+            "help": "Require sellers to pass business verification (Trade License / Tax ID / Legal Entity check) before their products auto-publish.",
+            "default": true
+        },
+        {
+            "key": "auto_approve_products",
+            "type": "boolean",
+            "label": "Automatically Approve Vendor Catalog Products",
+            "help": "Automatically publish products created by approved (and verified, if required) marketplace sellers.",
+            "default": true
+        },
+        {
+            "key": "default_commission_rate",
+            "type": "integer",
+            "label": "Default Marketplace Commission Rate (%)",
+            "help": "Percentage retained by the marketplace store on each vendor order item (can be overridden per vendor or per product).",
+            "default": 10,
+            "min": 0,
+            "max": 90
+        },
+        {
+            "key": "payout_mode",
+            "type": "select",
+            "label": "Vendor Payout Mode",
+            "help": "Choose how vendors receive their net earnings from the marketplace store.",
+            "default": "vendor_request",
+            "options": [
+                {
+                    "value": "vendor_request",
+                    "label": "Vendor Payout Request (Seller requests payout from Seller Portal)"
+                },
+                {
+                    "value": "automatic_on_order",
+                    "label": "Automatic Payout on Order (Automatically generate payout when balance reaches threshold)"
+                },
+                {
+                    "value": "admin_batch",
+                    "label": "Admin Batch Payouts (Store admin generates scheduled batch payouts)"
+                }
+            ]
+        },
+        {
+            "key": "min_payout_amount",
+            "type": "integer",
+            "label": "Minimum Payout Threshold Amount",
+            "help": "Minimum available vendor balance required before a payout can be requested or automatically generated.",
+            "default": 50,
+            "min": 1,
+            "max": 100000
+        },
+        {
+            "key": "payout_fee_percent",
+            "type": "integer",
+            "label": "Payout Transfer Processing Fee (%)",
+            "help": "Optional percentage fee deducted from vendor payout disbursements.",
+            "default": 0,
+            "min": 0,
+            "max": 20
+        },
+        {
+            "key": "show_vendor_on_cards",
+            "type": "boolean",
+            "label": "Show Seller Badge on Storefront Product Cards",
+            "help": "Displays the seller name and Verified Business checkmark on product cards across all storefront themes.",
+            "default": true
+        },
+        {
+            "key": "show_vendor_box_on_product",
+            "type": "boolean",
+            "label": "Show 'Sold & Fulfilled by Seller' Box on Product Detail Pages",
+            "help": "Renders the seller profile card, Verified Business badge, rating, and store link on product pages.",
+            "default": true
+        }
+    ],
+    "admin_navigation": [
+        {
+            "key": "multi-vendor",
+            "title": "Multi-Vendor",
+            "route": "index",
+            "icon": "store",
+            "group": "Sales",
+            "permission": "multi_vendor.manage",
+            "order": 145
+        }
+    ]
+}
