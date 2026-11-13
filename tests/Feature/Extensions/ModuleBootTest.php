@@ -40,7 +40,7 @@ class ModuleBootTest extends TestCase
                 'DB_CONNECTION' => 'sqlite',
                 'DB_DATABASE' => $this->database,
                 'CACHE_STORE' => 'database',
-                'ECOMODULAR_MODULES_PATH' => $this->modulesPath,
+                'ECOMODULAR_MODULES_PATH' => $this->modulesPath, 'ECOMODULAR_BUNDLED_MODULES_PATH' => '',
             ])
             ->timeout(120)
             ->run([PHP_BINARY, 'artisan', ...$arguments]);
@@ -66,7 +66,7 @@ class ModuleBootTest extends TestCase
 
         // Safe mode boots without it.
         $safe = Process::path(base_path())
-            ->env(['APP_ENV' => 'local', 'DB_CONNECTION' => 'sqlite', 'DB_DATABASE' => $this->database, 'ECOMODULAR_MODULES_PATH' => $this->modulesPath, 'ECOMODULAR_SAFE_MODE' => 'true'])
+            ->env(['APP_ENV' => 'local', 'DB_CONNECTION' => 'sqlite', 'DB_DATABASE' => $this->database, 'ECOMODULAR_MODULES_PATH' => $this->modulesPath, 'ECOMODULAR_BUNDLED_MODULES_PATH' => '', 'ECOMODULAR_SAFE_MODE' => 'true'])
             ->run([PHP_BINARY, 'artisan', 'route:list', '--name=acme.hello', '--json']);
         $this->assertStringNotContainsString('admin.acme.hello.index', $safe->output());
     }

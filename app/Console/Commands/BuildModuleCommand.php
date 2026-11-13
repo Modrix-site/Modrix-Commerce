@@ -24,7 +24,7 @@ class BuildModuleCommand extends Command
 
         foreach ((array) $this->argument('module') as $module) {
             $dir = preg_match('#^[a-z0-9-]+/[a-z0-9-]+$#', $module) === 1
-                ? ModuleRepository::path().DIRECTORY_SEPARATOR.$module
+                ? ModuleRepository::packageDir($module)
                 : $module;
 
             if (! is_file($dir.DIRECTORY_SEPARATOR.'module.json')) {

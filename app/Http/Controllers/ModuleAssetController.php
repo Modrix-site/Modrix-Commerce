@@ -34,7 +34,7 @@ class ModuleAssetController extends Controller
         $record = $modules->find("{$vendor}/{$module}");
         abort_unless($record !== null && $record->state === ModuleState::Enabled, 404);
 
-        $packageDir = ModuleRepository::path().DIRECTORY_SEPARATOR.$vendor.DIRECTORY_SEPARATOR.$module;
+        $packageDir = ModuleRepository::packageDir("{$vendor}/{$module}");
         $dist = ManifestValidator::resolvePath($packageDir, self::DIST, directory: true);
         $file = ManifestValidator::resolvePath($packageDir, self::DIST.'/'.$path, directory: false);
         $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));

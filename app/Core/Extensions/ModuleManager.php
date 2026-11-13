@@ -315,14 +315,13 @@ final class ModuleManager
             throw new ModuleException("Refusing to delete an unexpected package path: {$extension->path}.");
         }
 
-        $root = realpath(ModuleRepository::path());
         $dir = realpath(ModuleRepository::packageDir($extension));
 
         if ($dir === false) {
             return null; // Files already gone; only the record remains.
         }
 
-        if ($root === false || dirname($dir, 2) !== $root || is_link(ModuleRepository::packageDir($extension))) {
+        if (PackageRoots::rootOf(PackageRoots::MODULES, $dir) === null || is_link(ModuleRepository::packageDir($extension))) {
             throw new ModuleException("Refusing to delete modules/{$extension->path}: it is outside the modules directory.");
         }
 

@@ -25,12 +25,16 @@ return [
 
     /*
     | Modules (docs/extensions/module-development.md). Packages live in
-    | `path/<vendor>/<name>/module.json`, outside the public web root.
+    | `<root>/<vendor>/<name>/module.json`, outside the public web root.
+    | `path`: where installs from Modrix Cloud or a ZIP go. It is under
+    | storage/ so installed modules survive a redeploy from Git.
+    | `bundled_path`: modules that ship with the code (read as well).
     | Safe mode boots without loading any module: use it to recover when a
     | module breaks every request (docs/extensions/recovery.md).
     */
     'modules' => [
-        'path' => env('ECOMODULAR_MODULES_PATH', base_path('modules')),
+        'path' => env('ECOMODULAR_MODULES_PATH', storage_path('app/packages/modules')),
+        'bundled_path' => env('ECOMODULAR_BUNDLED_MODULES_PATH', base_path('modules')),
         'safe_mode' => (bool) env('ECOMODULAR_SAFE_MODE', false),
         // First-party modules the core relies on: they can be disabled, never deleted.
         // The cloud connector is how packages are reinstalled from Modrix Cloud.
@@ -127,12 +131,18 @@ return [
             'database/migrations', 'database/seeders', 'database/factories', 'lang',
             'public/build', 'public/index.php', 'resources', 'routes', 'vendor', 'artisan',
             'composer.json', 'composer.lock', 'package.json',
+            // The packages that ship with the core. Everything else in modules/
+            // and themes/ (and all of storage/) is the store's and is never touched.
+            'modules/modrixcommerce/cloud-connector', 'themes/modrixcommerce/circuit',
         ],
         'max_mb' => 300,
     ],
 
+    // Themes follow the modules: `path` (under storage/) holds installed
+    // themes and survives redeploys; `bundled_path` holds the starter theme.
     'themes' => [
-        'path' => env('ECOMODULAR_THEMES_PATH', base_path('themes')),
+        'path' => env('ECOMODULAR_THEMES_PATH', storage_path('app/packages/themes')),
+        'bundled_path' => env('ECOMODULAR_BUNDLED_THEMES_PATH', base_path('themes')),
         'default' => env('ECOMODULAR_DEFAULT_THEME', 'modrixcommerce/circuit'),
     ],
 

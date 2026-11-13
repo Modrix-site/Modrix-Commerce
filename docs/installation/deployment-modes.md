@@ -47,7 +47,13 @@ php artisan optimize
 
 You also need:
 
-- A persistent volume for `storage/`. Uploads, logs, the install lock and backups live there, and they must survive redeploys.
+- A persistent volume for `storage/`. Uploads, logs, the install lock, backups and the modules and themes installed from Modrix Cloud (`storage/app/packages/`) live there, and they must survive redeploys.
+
+### Redeploying
+
+A redeploy updates the code and runs the new migrations. It does not reset the store: the database, uploads, settings and installed modules and themes stay as they are. Only the packages that ship with the code (`modules/modrixcommerce/cloud-connector` and `themes/modrixcommerce/circuit`) come from the repository.
+
+If the platform cannot keep `storage/`, or packages were lost before 1.2.2, the store reinstalls them itself: after `php artisan migrate` and every five minutes (scheduler), the Modrix Cloud Connector downloads again every installed module and the active theme whose files are missing, and restores its state. Run `php artisan modrix:cloud:restore` to do it at once. Uploads and backups in `storage/` cannot be recovered this way, so use a persistent volume.
 - A queue worker (`php artisan queue:work --tries=3`) and the scheduler (`php artisan schedule:run` every minute, or `php artisan schedule:work` as a long-running process).
 
 ### Finishing the install

@@ -5,6 +5,7 @@ namespace Tests\Feature\Marketplace;
 use App\Core\Extensions\Models\Extension;
 use App\Core\Extensions\ModuleManager;
 use App\Core\Extensions\ModuleState;
+use App\Core\Extensions\PackageRoots;
 use App\Core\Marketplace\Client\StoreLicense;
 use App\Core\Marketplace\Client\UpdateHistory;
 use App\Core\Marketplace\PackageException;
@@ -110,6 +111,37 @@ class MarketplaceClientTest extends TestCase
 
         $this->assertSame(['install', 'update', 'rollback'], UpdateHistory::query()->orderBy('id')->pluck('action')->all());
         $this->assertDatabaseHas('license_events', ['action' => 'downloaded']);
+    }
+
+    public function test_a_redeploy_that_removed_the_files_is_restored_from_modrix_cloud()
+    {
+        $admin = $this->owner();
+        app(StoreLicenses::class)->activate($this->buyKey(), $admin);
+        $manager = app(ModuleManager::class);
+        $manager->install('acme/hello', $admin);
+        $manager->enable('acme/hello', true, $admin);
+        $this->publish($this->product, $this->packageModule('1.1.0', withSecondMigration: true));
+
+        // A redeploy replaced the folder: the files are gone, the record stays.
+        File::deleteDirectory($this->modulesPath.'/acme/hello');
+        PackageRoots::forget();
+
+        $this->artisan('modrix:cloud:restore')
+            ->expectsOutputToContain('acme/hello: restored from Modrix Cloud.')
+            ->assertSuccessful();
+
+        // The newest release came back, its update ran and the module is enabled again.
+        $this->assertFileExists($this->modulesPath.'/acme/hello/module.json');
+        $module = Extension::query()->where('name', 'acme/hello')->firstOrFail();
+        $this->assertSame(ModuleState::Enabled, $module->state);
+        $this->assertSame('1.1.0', $module->version);
+
+        // Nothing left to do; an uninstalled module is never brought back.
+        $this->artisan('modrix:cloud:restore')->expectsOutput('Nothing to restore.')->assertSuccessful();
+        $manager->disable('acme/hello', $admin);
+        $manager->delete('acme/hello', 'acme/hello', $admin);
+        $this->artisan('modrix:cloud:restore')->expectsOutput('Nothing to restore.')->assertSuccessful();
+        $this->assertDirectoryDoesNotExist($this->modulesPath.'/acme/hello');
     }
 
     public function test_a_tampered_package_is_refused_and_the_store_is_untouched()

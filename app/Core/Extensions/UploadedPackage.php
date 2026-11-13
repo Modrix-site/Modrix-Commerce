@@ -45,7 +45,8 @@ final class UploadedPackage
             $package = PackageArchive::extract($file->getPathname(), $type, $name);
             $dir = $package['dir'];
             try {
-                $root = (string) config('ecomodular.'.($type === 'theme' ? 'themes' : 'modules').'.path');
+                $kind = $type === 'theme' ? PackageRoots::THEMES : PackageRoots::MODULES;
+                $root = PackageRoots::installRoot($kind);
                 File::ensureDirectoryExists($root);
                 $root = realpath($root);
                 if ($root === false) {
@@ -53,7 +54,8 @@ final class UploadedPackage
                 }
                 [$vendor] = explode('/', $name);
                 $target = $root.'/'.$name;
-                if (is_link($root.'/'.$vendor) || file_exists($target) || is_link($target)) {
+                $existing = PackageRoots::locate($kind, $name);
+                if (is_link($root.'/'.$vendor) || file_exists($target) || is_link($target) || is_dir($existing)) {
                     throw new PackageException('This package already exists or its destination is unavailable. Existing packages are never overwritten by uploads.');
                 }
                 File::ensureDirectoryExists(dirname($target));
@@ -80,6 +82,7 @@ final class UploadedPackage
                         throw new PackageException('The package could not be saved. Try uploading again.');
                     }
                 }
+                PackageRoots::forget();
                 if ($type === 'theme') {
                     app(ThemeRepository::class)->sync($actor);
                 } else {

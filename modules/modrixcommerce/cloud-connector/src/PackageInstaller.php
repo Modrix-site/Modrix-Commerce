@@ -4,6 +4,7 @@ namespace EcoModular\CloudConnector;
 
 use App\Core\Audit\AuditLogger;
 use App\Core\Extensions\ModuleRepository;
+use App\Core\Extensions\PackageRoots;
 use App\Core\Marketplace\Client\StoreLicense;
 use App\Core\Marketplace\Client\UpdateHistory;
 use App\Core\Marketplace\PackageArchive;
@@ -179,14 +180,17 @@ final class PackageInstaller
      */
     private function replace(StoreLicense $license, string $extracted, bool $backup = true): ?string
     {
-        $target = $this->targetDir($license);
+        // Installs and updates always land in the install root (under storage/),
+        // which survives redeploys; a copy shipped with the code stays where it is.
+        $current = $this->targetDir($license);
+        $target = PackageRoots::installDir($license->type === 'theme' ? PackageRoots::THEMES : PackageRoots::MODULES, $license->extension_name);
         $backupPath = null;
 
-        if ($backup && is_dir($target)) {
+        if ($backup && is_dir($current)) {
             $version = $this->installedVersion($license) ?? 'unknown';
             $backupPath = storage_path('app/private/marketplace/backups/'.str_replace('/', '-', $license->extension_name)."-{$version}-".now()->format('YmdHis').'.zip');
             File::ensureDirectoryExists(dirname($backupPath));
-            PackageArchive::create($target, $backupPath);
+            PackageArchive::create($current, $backupPath);
         }
 
         File::ensureDirectoryExists(dirname($target));
@@ -210,6 +214,8 @@ final class PackageInstaller
         if ($old !== null) {
             File::deleteDirectory($old);
         }
+
+        PackageRoots::forget();
 
         return $backupPath;
     }

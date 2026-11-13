@@ -6,6 +6,7 @@ use App\Core\Audit\AuditLogger;
 use App\Core\Extensions\Models\Extension;
 use App\Core\Extensions\ModuleRepository;
 use App\Core\Extensions\ModuleState;
+use App\Core\Extensions\PackageRoots;
 use App\Core\Marketplace\PackageArchive;
 use App\Models\User;
 use Closure;
@@ -192,9 +193,8 @@ final class ThemeManager
             if ($theme->state === ModuleState::Enabled) {
                 throw new ThemeException('Disable this theme before deleting it.');
             }
-            $root = realpath(ThemeRepository::path());
             $dir = realpath(ThemeRepository::packageDir($name));
-            if ($root === false || $dir === false || ! str_starts_with($dir, $root.DIRECTORY_SEPARATOR) || is_link(ThemeRepository::packageDir($name))) {
+            if ($dir === false || PackageRoots::rootOf(PackageRoots::THEMES, $dir) === null || is_link(ThemeRepository::packageDir($name))) {
                 throw new ThemeException('The theme package directory is unavailable.');
             }
             $backup = storage_path('app/private/theme-archives/'.str_replace('/', '-', $name).'-'.now()->format('YmdHis').'-'.Str::random(8).'.zip');

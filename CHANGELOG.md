@@ -2,6 +2,19 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.2.2] - 2026-11-14
+
+### Fixed
+
+- **A redeploy no longer resets the store.** Modules and themes installed from Modrix Cloud or a ZIP were written into the code folders (`modules/`, `themes/`), which a deploy from Git replaces, so the store lost them on every redeploy (themes showed "Files missing" and the storefront fell back to the starter theme). They are now installed under `storage/app/packages/`, next to uploads and backups, which deployments keep. Packages that ship with the code (the Modrix Cloud Connector and the Circuit theme) stay in `modules/` and `themes/`; the store reads both, and the newer copy of a package wins.
+- **Missing packages come back by themselves.** After every `php artisan migrate` (part of every deploy) and every five minutes, the Modrix Cloud Connector reinstalls, from Modrix Cloud, any installed module or active theme whose files are missing, and returns it to the state it had. Packages the owner uninstalled are never brought back. Run it on demand with `php artisan modrix:cloud:restore`.
+- **A module whose files return is usable again:** it goes back to enabled (or applies its update first when the files are newer) instead of staying failed.
+- **Core updates now update the bundled Cloud Connector and Circuit theme** as well; every other module and theme stays untouched.
+
+### Upgrading
+
+Nothing to move by hand: packages already in `modules/` and `themes/` keep working. On a Git platform, packages lost in an earlier redeploy are reinstalled from Modrix Cloud after the next deploy or within five minutes (the scheduler must run). Keep `storage/` on a persistent volume.
+
 ## [1.2.1] - 2026-11-13
 
 ### Fixed

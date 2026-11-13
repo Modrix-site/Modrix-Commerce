@@ -80,11 +80,7 @@ chmod -R ug+rwX storage bootstrap/cache
 chmod 600 .env
 ```
 
-The PHP-FPM user needs write access to `storage/` and `bootstrap/cache/` only. Installing modules and themes from the marketplace also needs write access to `modules/` and `themes/`. Grant it only if you use the marketplace client:
-
-```bash
-chmod -R g+w modules themes
-```
+The PHP-FPM user needs write access to `storage/` and `bootstrap/cache/` only. Modules and themes installed from Modrix Cloud or a ZIP go to `storage/app/packages/`, so `modules/` and `themes/` (the packages that ship with the code) can stay read-only.
 
 ## 5. Nginx and HTTPS
 

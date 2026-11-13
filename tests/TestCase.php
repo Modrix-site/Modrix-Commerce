@@ -6,6 +6,7 @@ use App\Core\Authorization\Models\Permission;
 use App\Core\Authorization\Models\Role;
 use App\Core\Authorization\PermissionSynchronizer;
 use App\Core\Authorization\SystemRoles;
+use App\Core\Extensions\PackageRoots;
 use App\Core\Installation\InstallationState;
 use App\Models\User;
 use Illuminate\Database\Events\MigrationsEnded;
@@ -25,6 +26,17 @@ abstract class TestCase extends BaseTestCase
         // Tests share storage/ with the dev server: never create the real install lock.
         $this->installLockFile = sys_get_temp_dir().'/ecomodular-installed-'.bin2hex(random_bytes(6));
         config(['ecomodular.installer.lock_file' => $this->installLockFile]);
+
+        // One package folder per type, as the suite was written for. Tests that
+        // need their own point `path` at a scratch directory; the two-root
+        // layout (storage/ + bundled) has its own tests.
+        config([
+            'ecomodular.modules.path' => base_path('modules'),
+            'ecomodular.modules.bundled_path' => null,
+            'ecomodular.themes.path' => base_path('themes'),
+            'ecomodular.themes.bundled_path' => null,
+        ]);
+        PackageRoots::forget();
 
         // MySQL commits implicitly on DDL, which ends the transaction that
         // RefreshDatabase wraps each test in (writes after it are committed,

@@ -5,6 +5,7 @@ namespace App\Core\Themes;
 use App\Core\Extensions\Models\Extension;
 use App\Core\Extensions\Models\ExtensionEvent;
 use App\Core\Extensions\ModuleState;
+use App\Core\Extensions\PackageRoots;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -23,14 +24,16 @@ final class ThemeRepository
 {
     public function __construct(private readonly ThemeManifestValidator $validator) {}
 
+    /** Where themes installed from Modrix Cloud or a ZIP are written. */
     public static function path(): string
     {
-        return rtrim((string) config('ecomodular.themes.path', base_path('themes')), '/\\');
+        return PackageRoots::installRoot(PackageRoots::THEMES);
     }
 
+    /** The folder holding a theme, in the install root or the bundled one. */
     public static function packageDir(string $name): string
     {
-        return self::path().DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $name);
+        return PackageRoots::locate(PackageRoots::THEMES, $name);
     }
 
     /**
@@ -53,14 +56,7 @@ final class ThemeRepository
 
     public function sync(?User $actor = null): void
     {
-        $scanned = [];
-
-        foreach (glob(self::path().'/*/*/'.ThemeManifest::FILE) ?: [] as $file) {
-            $dir = dirname($file);
-            $scanned[basename(dirname($dir)).'/'.basename($dir)] = $dir;
-        }
-
-        ksort($scanned);
+        $scanned = PackageRoots::scan(PackageRoots::THEMES, ThemeManifest::FILE);
 
         DB::transaction(function () use ($scanned, $actor) {
             foreach ($scanned as $name => $dir) {

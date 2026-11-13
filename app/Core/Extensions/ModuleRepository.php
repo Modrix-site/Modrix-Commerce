@@ -32,16 +32,20 @@ final class ModuleRepository
         private readonly PermissionRegistry $permissions,
     ) {}
 
+    public const FILES_MISSING = 'The package files are missing';
+
+    /** Where modules installed from Modrix Cloud or a ZIP are written. */
     public static function path(): string
     {
-        return rtrim((string) config('ecomodular.modules.path', base_path('modules')), '/\\');
+        return PackageRoots::installRoot(PackageRoots::MODULES);
     }
 
+    /** The folder holding a module, in the install root or the bundled one. */
     public static function packageDir(Extension|string $extension): string
     {
         $relative = $extension instanceof Extension ? $extension->path : $extension;
 
-        return self::path().DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $relative);
+        return PackageRoots::locate(PackageRoots::MODULES, (string) $relative);
     }
 
     /**
@@ -175,9 +179,8 @@ final class ModuleRepository
     {
         $packages = [];
 
-        foreach (glob(self::path().'/*/*/'.Manifest::FILE) ?: [] as $file) {
-            $dir = dirname($file);
-            $name = basename(dirname($dir)).'/'.basename($dir);
+        foreach (PackageRoots::scan(PackageRoots::MODULES, Manifest::FILE) as $name => $dir) {
+            $file = $dir.DIRECTORY_SEPARATOR.Manifest::FILE;
 
             if (filesize($file) > Manifest::MAX_BYTES) {
                 $packages[$name] = ['dir' => $dir, 'data' => null, 'error' => 'module.json is larger than 64 KB.'];
@@ -319,6 +322,19 @@ final class ModuleRepository
             }
         } elseif (! $result->isValid()) {
             $this->fail($extension, 'The package files on disk are invalid: '.implode(' ', $result->errors));
+        } elseif ($manifest !== null && $extension->state === ModuleState::Failed
+            && str_starts_with((string) $extension->failure, self::FILES_MISSING)
+            && ! Comparator::lessThan($manifest->version, (string) $extension->version)) {
+            // The files are back (reinstalled from Modrix Cloud or restored).
+            if (Comparator::greaterThan($manifest->version, (string) $extension->version)) {
+                $extension->forceFill(['state' => ModuleState::UpdatePending, 'failure' => null]);
+            } else {
+                $extension->forceFill([
+                    'state' => $extension->enabled_before_update ? ModuleState::Enabled : ModuleState::Disabled,
+                    'failure' => null,
+                    'enabled_before_update' => false,
+                ]);
+            }
         } elseif ($manifest !== null && Comparator::greaterThan($manifest->version, (string) $extension->version)) {
             if ($extension->state !== ModuleState::UpdatePending && $extension->state !== ModuleState::Failed) {
                 $extension->enabled_before_update = $extension->state === ModuleState::Enabled;
@@ -349,7 +365,7 @@ final class ModuleRepository
 
         if ($extension->state !== ModuleState::Failed) {
             $from = $extension->state;
-            $this->fail($extension, "The package files are missing from modules/{$extension->path}. Restore them to enable, update or uninstall the module.");
+            $this->fail($extension, self::FILES_MISSING." for {$extension->path}. Reinstall it from Modrix Cloud (or restore its files) to enable, update or uninstall the module.");
             $extension->save();
             $this->record($extension, 'files_missing', $from, false, $extension->failure, $actor);
         }
