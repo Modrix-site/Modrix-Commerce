@@ -10,6 +10,7 @@ import AuthLayout from '@/layouts/auth-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import StorefrontLayout from '@/layouts/storefront-layout';
 import { isModulePage, modulePagePath, resolveModulePage } from '@/lib/modules';
+import { ensureTheme } from '@/lib/theme-prebuilt';
 import { withThemePage } from '@/lib/theme-runtime';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Modrix Commerce';
@@ -53,18 +54,31 @@ const corePages = import.meta.glob<{ default: ComponentType }>(
 
 void createInertiaApp({
     title: (title, page) => documentTitle(title, page),
-    resolve: (name) => {
+    resolve: async (name, page) => {
+        // A theme installed after the assets were built brings prebuilt files;
+        // load the active (or previewed, or customized) theme's before rendering.
+        const props = page?.props as
+            | {
+                  storefront?: { theme?: { name?: string } | null };
+                  theme?: { name?: string };
+              }
+            | undefined;
+        const theme =
+            props?.storefront?.theme?.name ??
+            (name.startsWith('admin/themes/') ? props?.theme?.name : undefined);
+        await ensureTheme(theme);
+
         if (isModulePage(name)) {
             return resolveModulePage(name).then((module) => module.default);
         }
 
-        const page = corePages[`./pages/${name}.tsx`];
+        const loader = corePages[`./pages/${name}.tsx`];
 
-        if (!page) {
+        if (!loader) {
             throw new Error(`Page not found: ${name}`);
         }
 
-        return page().then((module) => withThemePage(name, module.default));
+        return loader().then((module) => withThemePage(name, module.default));
     },
     layout: (pageName) => {
         // Module pages pick their layout from their path inside the module.

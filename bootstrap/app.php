@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\HealthController;
+use App\Http\Controllers\ModuleAssetController;
 use App\Http\Controllers\ThemeAssetController;
+use App\Http\Controllers\ThemeBuildController;
 use App\Http\Middleware\BlockAfterInstallation;
 use App\Http\Middleware\EnsureMarketplaceServer;
 use App\Http\Middleware\EnsureRegistrationEnabled;
@@ -34,6 +36,14 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::get('theme-assets/{vendor}/{theme}/{path}', ThemeAssetController::class)
                 ->where(['vendor' => '[a-z0-9-]+', 'theme' => '[a-z0-9-]+', 'path' => '[A-Za-z0-9_./-]+'])
                 ->name('theme.asset');
+            // Prebuilt module screens (dist/): no session or cookies needed.
+            Route::get('module-assets/{vendor}/{module}/{path}', ModuleAssetController::class)
+                ->where(['vendor' => '[a-z0-9-]+', 'module' => '[a-z0-9-]+', 'path' => '[A-Za-z0-9_./-]+'])
+                ->name('module.asset');
+            // Prebuilt theme screens (dist/).
+            Route::get('theme-build/{vendor}/{theme}/{path}', ThemeBuildController::class)
+                ->where(['vendor' => '[a-z0-9-]+', 'theme' => '[a-z0-9-]+', 'path' => '[A-Za-z0-9_./-]+'])
+                ->name('theme.build');
             // Readiness for monitors: overall status only, details with ECOMODULAR_HEALTH_TOKEN.
             Route::get('health', HealthController::class)->middleware('throttle:60,1')->name('health');
             require base_path('routes/marketplace.php');

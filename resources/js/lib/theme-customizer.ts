@@ -4,6 +4,7 @@ import type {
     ThemeCustomizerControls,
     ThemeCustomizerPageProps,
 } from '@/pages/admin/themes/customize';
+import { prebuiltThemeEntry } from '@/lib/theme-prebuilt';
 
 export type ThemeCustomizerProps = ThemeCustomizerPageProps & {
     DefaultCustomizer: ComponentType<ThemeCustomizerPageProps>;
@@ -23,6 +24,9 @@ export function themeCustomizer(
     entry: string | null | undefined,
 ) {
     return entry === 'src/customizer.tsx'
-        ? components[`../../../themes/${name}/${entry}`]
+        ? (components[`../../../themes/${name}/${entry}`] ??
+              prebuiltThemeEntry<{
+                  default: ComponentType<ThemeCustomizerProps>;
+              }>(name, entry)?.default)
         : undefined;
 }

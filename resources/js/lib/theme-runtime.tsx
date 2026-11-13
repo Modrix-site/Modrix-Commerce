@@ -1,6 +1,7 @@
 import { usePage } from '@inertiajs/react';
 import { lazy, Suspense } from 'react';
 import type { ComponentType, ReactNode } from 'react';
+import { prebuiltThemeEntry } from '@/lib/theme-prebuilt';
 import type { StorefrontTheme } from '@/types/storefront';
 
 export type ThemePageProps = Record<string, unknown> & {
@@ -47,7 +48,14 @@ function packagePath(
 
 /** Only the server-resolved active/preview theme may supply overrides. */
 export function themeLayout(theme: StorefrontTheme | undefined) {
-    return layouts[packagePath(theme, theme?.frontend?.layout)]?.default;
+    return (
+        layouts[packagePath(theme, theme?.frontend?.layout)]?.default ??
+        (theme?.frontend?.layout
+            ? prebuiltThemeEntry<{
+                  default: ComponentType<ThemeLayoutProps>;
+              }>(theme.name, theme.frontend.layout)?.default
+            : undefined)
+    );
 }
 
 export function ThemeStyles({ theme }: { theme: StorefrontTheme | undefined }) {
@@ -74,7 +82,13 @@ export function withThemePage(
         const { storefront } = usePage().props;
         const theme = storefront?.theme;
         const path = theme?.frontend?.pages?.[name];
-        const Page = pageComponents[packagePath(theme, path)];
+        const Page =
+            pageComponents[packagePath(theme, path)] ??
+            (theme && path
+                ? prebuiltThemeEntry<{
+                      default: ComponentType<ThemePageProps>;
+                  }>(theme.name, path)?.default
+                : undefined);
 
         return Page ? (
             <Suspense fallback={<CorePage {...props} />}>
