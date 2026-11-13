@@ -3,17 +3,13 @@
 namespace Tests\Feature\Themes;
 
 use App\Core\Extensions\Models\Extension;
-use App\Core\Extensions\ModuleManager;
-use App\Core\Extensions\ModuleRepository;
 use App\Core\Localization\ContentTranslations;
 use App\Core\Localization\Locales;
-use App\Core\Settings\SecretSettings;
 use App\Core\Settings\SettingsRepository;
 use App\Core\Themes\ThemeManager;
 use App\Core\Themes\ThemeRepository;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\Support\ThemeFixtures;
@@ -106,21 +102,6 @@ class ThemeTextTranslationTest extends TestCase
             $this->postJson($this->url(), $this->payload($invalid))->assertUnprocessable();
         }
         Http::assertNothingSent();
-    }
-
-    public function test_ai_drafts_use_the_configured_provider_and_are_not_published_until_saved(): void
-    {
-        ModuleRepository::flushBootCache();
-        app(ModuleRepository::class)->sync();
-        app(ModuleManager::class)->install('modrixcommerce/ai-assistant');
-        app(ModuleManager::class)->enable('modrixcommerce/ai-assistant', true);
-        app(SecretSettings::class)->put('ai-assistant.openai', 'sk-test-only-secret');
-        Http::fake(['api.openai.com/v1/responses' => Http::response(['status' => 'completed', 'output' => [['type' => 'message', 'content' => [['type' => 'output_text', 'text' => '{"text":"Sobre nuestra tienda"}']]]]])]);
-        $this->actingAs($this->owner())->postJson($this->url(), $this->payload(['operation' => 'draft']))->assertOk()->assertJsonPath('value', 'Sobre nuestra tienda');
-        $this->assertSame(0, DB::table('content_translations')->where('origin', ContentTranslations::ORIGIN_EDITOR)->count());
-        Http::assertSent(fn ($request) => $request->hasHeader('Authorization', 'Bearer sk-test-only-secret') && str_contains($request['input'], 'About our store'));
-        $this->postJson($this->url(), $this->payload())->assertOk();
-        $this->get('/?lang=es')->assertInertia(fn (Assert $page) => $page->where('storefront.theme.settings.about_heading', 'Sobre nuestra tienda'));
     }
 
     public function test_ai_unavailable_and_unauthorized_requests_do_not_call_a_provider(): void

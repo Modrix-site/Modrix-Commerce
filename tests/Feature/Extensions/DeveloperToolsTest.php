@@ -75,13 +75,13 @@ class DeveloperToolsTest extends TestCase
 
     public function test_a_scaffolded_theme_validates_and_activates()
     {
-        $this->artisan('ecomodular:make:theme', ['name' => 'acme/harbor', '--from' => 'modrixcommerce/prism'])
-            ->expectsOutputToContain('created from modrixcommerce/prism')
+        $this->artisan('ecomodular:make:theme', ['name' => 'acme/harbor', '--from' => 'modrixcommerce/circuit'])
+            ->expectsOutputToContain('created from modrixcommerce/circuit')
             ->assertSuccessful();
 
         $manifest = json_decode((string) File::get($this->themesPath.'/acme/harbor/theme.json'), true);
         $this->assertSame(['acme/harbor', '0.1.0', '^1.0'], [$manifest['name'], $manifest['version'], $manifest['platform_version']]);
-        $this->assertFileExists($this->themesPath.'/acme/harbor/assets/images/hero.webp');
+        $this->assertFileExists($this->themesPath.'/acme/harbor/assets/hero-watch.jpg');
         $this->assertSame('settings.json', $manifest['customizer_file']);
         $this->assertSame('src/customizer.tsx', $manifest['frontend']['customizer']);
         $this->assertFileExists($this->themesPath.'/acme/harbor/src/customizer.tsx');
@@ -99,9 +99,9 @@ class DeveloperToolsTest extends TestCase
             ->assertSuccessful();
         $this->assertFileExists($this->output.'/acme-gift-notes-0.1.0.zip');
 
-        $this->artisan('ecomodular:package', ['name' => 'modrixcommerce/nord', '--type' => 'theme', '--output' => $this->output])->assertSuccessful();
-        $nord = json_decode(File::get($this->themesPath.'/modrixcommerce/nord/theme.json'), true);
-        $this->assertFileExists($this->output.'/modrixcommerce-nord-'.$nord['version'].'.zip');
+        $this->artisan('ecomodular:package', ['name' => 'modrixcommerce/circuit', '--type' => 'theme', '--output' => $this->output])->assertSuccessful();
+        $nord = json_decode(File::get($this->themesPath.'/modrixcommerce/circuit/theme.json'), true);
+        $this->assertFileExists($this->output.'/modrixcommerce-circuit-'.$nord['version'].'.zip');
     }
 
     public function test_package_command_reports_invalid_and_dangerous_packages()

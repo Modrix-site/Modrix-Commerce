@@ -6,6 +6,7 @@ use App\Core\Audit\AuditLogger;
 use App\Core\Localization\Locales;
 use App\Core\Settings\Countries;
 use App\Core\Settings\Currencies;
+use App\Core\Settings\GeneralSettings;
 use App\Core\Settings\SettingsRepository;
 use App\Core\Settings\StoreSettings;
 use App\Domains\Downloads\DownloadSettings;
@@ -26,6 +27,8 @@ class StoreSettingsController extends Controller
     {
         return Inertia::render('admin/settings/store', [
             'settings' => $store->toArray(),
+            'customerAccounts' => $repository->get('checkout.guest_enabled', true) ? 'optional' : 'required',
+            'registrationEnabled' => app(GeneralSettings::class)->registrationEnabled(),
             'downloads' => ['limit' => app(DownloadSettings::class)->limit(), 'expiry_days' => app(DownloadSettings::class)->expiryDays()],
             'documents' => app(DocumentPreferences::class)->props(),
             'profile' => array_combine(['phone', 'address', 'country', 'region', 'city', 'business_hours', 'tagline', 'meta_title', 'meta_description'], array_map(fn ($key) => $repository->get('store.'.$key, ''), ['phone', 'address', 'country', 'region', 'city', 'business_hours', 'tagline', 'meta_title', 'meta_description'])),
@@ -41,7 +44,7 @@ class StoreSettingsController extends Controller
 
     public function update(Request $request, StoreSettings $store, AuditLogger $audit, SettingsRepository $repository, Locales $locales): RedirectResponse
     {
-        /** @var array{store_name: string, store_email: string|null, default_currency: string, timezone: string, weight_unit: string, dimension_unit: string, profile?: array<string, string|null>, delivery?: array{mode: string, countries?: list<string>}, display_currencies?: list<array{code: string, rate: string}>, language_default?: string, language_additional?: list<string>} $data */
+        /** @var array{store_name: string, store_email: string|null, default_currency: string, timezone: string, weight_unit: string, dimension_unit: string, profile?: array<string, string|null>, delivery?: array{mode: string, countries?: list<string>}, display_currencies?: list<array{code: string, rate: string}>, language_default?: string, language_additional?: list<string>, customer_accounts?: string} $data */
         $data = $request->validate([
             'profile' => ['sometimes', 'array:phone,address,country,region,city,business_hours,tagline,meta_title,meta_description'],
             'profile.phone' => ['nullable', 'string', 'max:50'],
@@ -64,6 +67,7 @@ class StoreSettingsController extends Controller
             'language_default' => ['sometimes', 'required', Rule::in(array_keys(Locales::AVAILABLE))],
             'language_additional' => ['sometimes', 'array'],
             'language_additional.*' => [Rule::in(array_keys(Locales::AVAILABLE))],
+            'customer_accounts' => ['sometimes', Rule::in(['optional', 'required'])],
             'store_name' => ['required', 'string', 'max:120'],
             'store_email' => ['nullable', 'string', 'email', 'max:255'],
             'default_currency' => ['required', 'string', Rule::in(Currencies::codes())],
@@ -81,8 +85,16 @@ class StoreSettingsController extends Controller
                 if ($before['default_currency'] !== $data['default_currency'] && ! array_key_exists('display_currencies', $data)) {
                     $data['display_currencies'] = [];
                 }
-                $store->update($data);
                 $extraChanges = [];
+                $store->update($data);
+                if (isset($data['customer_accounts'])) {
+                    $guests = $data['customer_accounts'] === 'optional';
+                    $wereAllowed = (bool) $repository->get('checkout.guest_enabled', true);
+                    if ($guests !== $wereAllowed) {
+                        $extraChanges['customer_accounts'] = ['from' => $wereAllowed ? 'optional' : 'required', 'to' => $data['customer_accounts']];
+                        $repository->set('checkout.guest_enabled', $guests);
+                    }
+                }
                 foreach ($data['profile'] ?? [] as $key => $value) {
                     $beforeValue = $repository->get('store.'.$key);
                     $repository->set('store.'.$key, $value);

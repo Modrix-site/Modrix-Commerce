@@ -28,6 +28,7 @@ modules/<vendor>/<name>/
   routes/storefront.php          storefront routes (optional)
   resources/js/pages/            Inertia pages (optional)
   resources/js/slots/            storefront slot and dashboard widget components (optional)
+  dist/                          prebuilt pages and slots (made by ecomodular:module:build; ship it)
 ```
 
 The directory must be exactly two levels deep, and its path must equal the manifest `name`. Packages live outside the public web root.
@@ -160,7 +161,14 @@ php artisan ecomodular:modules uninstall vendor/package --confirm=vendor/package
 
 ## Pages and components
 
-Module React code is compiled with the application, so **adding or updating a module with UI requires an asset rebuild** (`npm run build`).
+A module's screens reach a store in one of two ways:
+
+- **Prebuilt (how Modrix Cloud and ZIP installs work).** Before you package or release a module, run `php artisan ecomodular:module:build <vendor/package or path>` from a Modrix Commerce checkout (needs Node and `npm install`). It compiles the pages and slots into the module's `dist/` folder, with one stylesheet holding the Tailwind classes the module uses, and writes `dist/module-ui.json`. Ship `dist/` in the package. A store loads these files at runtime from `/module-assets/<vendor>/<package>/…` (enabled modules only), so no store ever rebuilds its assets. Rebuild `dist/` whenever the module's UI changes, and bump the version so stores receive it as an update.
+- **Compiled with the store.** Modules that are in the repository when the store's assets are built (`npm run build`) are bundled directly; `dist/` is then not needed.
+
+If neither is available, the store shows a "This screen is not available yet" page instead of the screen.
+
+Prebuilt modules do not bundle React, Inertia or the store's components. Imports of `react`, `react-dom`, `@inertiajs/react` and the store's own files under `@/components`, `@/hooks`, `@/lib` and `@/routes` are answered by the store at runtime, so the module shares React state, contexts and styles with the page. Other npm packages (for example `lucide-react` icons) are bundled into `dist/`.
 
 - **Pages:** `Inertia::render('module/<vendor>/<package>/<page>')` resolves to `modules/<vendor>/<package>/resources/js/pages/<page>.tsx`. Pages under `storefront/` use the storefront layout; others use the admin layout.
 - **Slot and widget components:** `resources/js/slots/<Component>.tsx`, default export, receiving the props built on the server. They render inside an error boundary, so a crashing component disappears instead of breaking the page.

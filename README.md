@@ -1,100 +1,58 @@
 # Modrix Commerce
 
-A self-hosted, modular, open-source eCommerce platform built on **Laravel 13**, **React 19**, **TypeScript**, **Inertia 3** and **Vite**.
+Modular, open-source e-commerce built on Laravel 13, Inertia and React.
 
-The core is MIT-licensed and fully usable on its own. The platform is designed for free and premium themes, modules and integrations, distributed later through an official marketplace (see [docs/marketplace/licensing.md](docs/marketplace/licensing.md)). Premium extensions are never required to run a store.
+The core is a complete store: catalog, cart and checkout, orders, invoices, customers, staff roles and permissions, multi-language storefronts, backups and one-click core updates. Everything else, such as payment gateways, marketing tools and extra themes, is added as a module or theme from **Modrix Cloud**.
 
-> **Status: release candidate 1.0.0-rc.1 (Phase 7 of 8).** Commerce core, Stripe payments, modules, themes, the official marketplace client and production hardening are implemented and tested. Before running a live store, complete the Stripe test-mode purchase in [docs/payments/stripe.md](docs/payments/stripe.md) and the [hardening checklist](docs/installation/production.md#post-install-hardening-checklist). See [docs/roadmap.md](docs/roadmap.md).
+## What's in this repository
 
-## Features
+| Part                                                             | What it is                                                                                                          |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Core platform (`app/`, `resources/`, `routes/`)                  | The store and its admin                                                                                             |
+| [Modrix Cloud Connector](modules/modrixcommerce/cloud-connector) | Connects your store to Modrix Cloud: browse and install modules and themes, sync license keys, update with rollback |
+| [Circuit Market](themes/modrixcommerce/circuit)                  | The starter theme, active by default                                                                                |
 
-- **Installation:** CLI (`php artisan ecomodular:install`) or a token-gated web installer with expiring tokens that disables itself after installation.
-- **Accounts and access:** Fortify authentication (email verification, password reset, two-factor, passkeys); server-enforced RBAC with seven system roles, custom roles and escalation guards; append-only audit log.
-- **Catalog:** products with variants and options, categories, a media library shared by products and themes, translations of products and categories for a multilingual storefront, prices per currency, CSV import and export, inventory ledger with locations and low-stock alerts.
-- **Storefront:** search, categories, cart, guest and account checkout with concurrency-safe stock reservation, discounts and coupons, shipping methods and tax rates, order emails, customer accounts.
-- **Orders and payments:** order workflow (payment, fulfilment, shipments, refunds), Stripe Checkout with verified and deduplicated webhooks, reconciliation, manual payment methods, reports.
-- **Modules:** validated manifests, a full lifecycle with dependencies, quarantine and safe mode; extension points (checkout validators, search, storefront slots, dashboard widgets, personal data export); sample modules for reviews, a sales widget, order alerts and a newsletter sign-up with consent.
-- **Themes:** data-only themes (they cannot run code) with design settings, layout variants and home sections, preview, customizations that survive updates; Essence, Noir, Bloom and Harvest (food and grocery) included.
-- **Official marketplace:** buy or claim licenses, activate them on a store, install and update packages after Ed25519 signature and checksum verification, roll back. The marketplace server role is in the same codebase.
-- **Operations:** health checks (`/health`, `ecomodular:health`, the status page), encrypted and checksummed backups with tested restore, security headers with a nonce-based CSP, rate limits, a deployment and recovery guide.
+Every other module and theme lives on the Modrix Cloud marketplace. Install them from **Admin → Extensions** once the Cloud Connector is enabled, or upload a package ZIP there.
 
 ## Requirements
 
-- PHP **8.3 or 8.4**, with these extensions: `bcmath`, `ctype`, `curl`, `dom`, `fileinfo`, `filter`, `intl`, `mbstring`, `openssl`, `pdo_mysql` (or `pdo_sqlite`), `session`, `tokenizer`, `xml`, `zip`
-- Composer 2
-- Node.js 22+ and npm (to build the frontend)
-- MySQL 8.0+ / 8.4 LTS (production) or SQLite (evaluation and tests)
-- Redis (optional; recommended for cache, queues and sessions)
-
-> Windows note: make sure `php -v` reports 8.3 or newer. If several PHP versions are installed, put the 8.4 directory first on `PATH`.
+- PHP 8.3 or 8.4 with `bcmath ctype curl dom fileinfo intl mbstring openssl pdo session tokenizer xml zip gd`
+- Composer 2 and Node 22+
+- MySQL 8 (8.4 LTS recommended) or MariaDB for production; SQLite works for local development
 
 ## Quick start (local)
 
 ```bash
-composer install
-cp .env.example .env
-php artisan key:generate
-php artisan migrate
-npm install
-npm run build
-php artisan ecomodular:install
-npm run serve
+git clone https://github.com/Modrix-site/Modrix-Commerce.git
+cd Modrix-Commerce
+composer setup
+composer dev
 ```
 
-Set `APP_URL=http://127.0.0.1:8017` in your local `.env`, then open http://127.0.0.1:8017 and sign in with the owner account you created. For frontend hot reload, run `npm run dev` in a separate terminal (Vite listens on port 5187).
+`composer setup` installs dependencies, creates `.env`, generates the app key, runs the migrations and builds the frontend. `composer dev` starts the app. Then open `/install` to create the owner account and the store.
 
-To use the web installer instead, skip `ecomodular:install`, visit `/install`, and paste the setup token printed by `php artisan ecomodular:installer-token`.
+## Deploying
 
-### Demo data (development only)
+- **Git platforms** (Uplary and similar): the database comes from the platform and the installer only creates the owner. See [deployment modes](docs/installation/deployment-modes.md).
+- **Shared hosting** (cPanel, Plesk, DirectAdmin and others, no SSH needed): the web installer at `/install` walks you through the database and store setup.
+- **VPS:** see [production deployment](docs/installation/production.md).
+
+Operations guides: [backups](docs/operations/backup-and-restore.md), [core updates](docs/operations/core-updates.md), [monitoring](docs/operations/monitoring.md), [troubleshooting](docs/operations/troubleshooting.md).
+
+## Building modules and themes
+
+- [Getting started with extensions](docs/extensions/getting-started.md)
+- [Module development](docs/extensions/module-development.md)
+- [Theme development](docs/extensions/theme-development.md). Start a new theme from Circuit with `php artisan ecomodular:make:theme acme/my-theme`.
+
+## Development
 
 ```bash
-php artisan migrate:fresh
-php artisan db:seed --class=DevelopmentSeeder
+composer ci:check   # lint, formatting, types, PHPStan and the test suite
 ```
 
-This creates `<role>@example.test` accounts for every system role, plus `customer@example.test`. All of them use the password `password`. The seeder refuses to run in production.
-
-### Docker Compose
-
-```bash
-docker compose up -d --build
-docker compose exec app composer install
-docker compose exec app php artisan key:generate
-docker compose exec app php artisan migrate
-docker compose exec app php artisan ecomodular:install
-```
-
-The site runs at http://127.0.0.1:8080 and Mailpit at http://127.0.0.1:8025. MySQL and Redis are not exposed to the host.
-
-## Quality gates
-
-```bash
-composer test          # pint --test, larastan (level 7), phpunit
-npm run types:check    # tsc
-npm run check          # format + lint
-npm run build          # production assets
-```
-
-CI runs these on PHP 8.3 and 8.4, runs the full suite against MySQL 8.4, and runs `composer audit` and `npm audit`.
-
-## Documentation
-
-| Topic                     | Document                                                                                       |
-| ------------------------- | ---------------------------------------------------------------------------------------------- |
-| Architecture              | [docs/architecture/overview.md](docs/architecture/overview.md)                                 |
-| Decisions (ADRs)          | [docs/architecture/decisions.md](docs/architecture/decisions.md)                               |
-| Database schema           | [docs/database/schema.md](docs/database/schema.md)                                             |
-| Production deployment     | [docs/installation/production.md](docs/installation/production.md)                             |
-| Backup and restore        | [docs/operations/backup-and-restore.md](docs/operations/backup-and-restore.md)                 |
-| Monitoring                | [docs/operations/monitoring.md](docs/operations/monitoring.md)                                 |
-| Troubleshooting           | [docs/operations/troubleshooting.md](docs/operations/troubleshooting.md)                       |
-| Security policy           | [SECURITY.md](SECURITY.md), [docs/security/phase-7-review.md](docs/security/phase-7-review.md) |
-| Module development        | [docs/extensions/module-development.md](docs/extensions/module-development.md)                 |
-| Theme development         | [docs/extensions/theme-development.md](docs/extensions/theme-development.md)                   |
-| Licensing and marketplace | [docs/marketplace/licensing.md](docs/marketplace/licensing.md)                                 |
-| Testing strategy          | [docs/testing/strategy.md](docs/testing/strategy.md)                                           |
-| Roadmap and progress      | [docs/roadmap.md](docs/roadmap.md)                                                             |
+Tests run on SQLite by default and in CI on MySQL 8.4 too. See [CONTRIBUTING.md](CONTRIBUTING.md) for the ground rules and [SECURITY.md](SECURITY.md) to report a vulnerability.
 
 ## License
 
-The Modrix Commerce core is released under the [MIT License](LICENSE), Copyright (c) 2026 Orlando Eleydo. Third-party components keep their own licenses; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Commercial themes and modules sold through the official marketplace may carry separate license terms. Those terms never apply to this core.
+[MIT](LICENSE) © Orlando Eleydo

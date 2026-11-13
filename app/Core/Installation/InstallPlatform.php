@@ -94,7 +94,7 @@ final class InstallPlatform
     private function activateDefaultTheme(User $owner): void
     {
         try {
-            app(ThemeManager::class)->activate((string) config('ecomodular.themes.default', 'modrixcommerce/essence'), $owner);
+            app(ThemeManager::class)->activate((string) config('ecomodular.themes.default', 'modrixcommerce/circuit'), $owner);
         } catch (Throwable $e) {
             report($e);
         }

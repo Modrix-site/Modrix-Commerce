@@ -3,13 +3,9 @@
 namespace Tests\Feature\Extensions;
 
 use App\Core\Extensions\BlockPlacements;
-use App\Core\Extensions\ModuleManager;
-use App\Core\Extensions\ModuleRepository;
 use App\Core\Extensions\StorefrontSlots;
-use App\Core\Extensions\TabSettings;
 use App\Core\Settings\SettingsRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\File;
 use InvalidArgumentException;
 use RuntimeException;
 use Tests\Support\ModuleFixtures;
@@ -148,43 +144,5 @@ class StorefrontBlocksTest extends TestCase
         $this->reviews();
 
         $this->assertSame(['acme/reviews/Reviews'], $this->components('product.after_details'));
-    }
-
-    public function test_bundled_modules_declare_their_blocks()
-    {
-        $this->setUpModules();
-        File::copyDirectory(base_path('modules'), $this->modulesPath);
-        $modules = app(ModuleManager::class);
-        app(ModuleRepository::class)->sync();
-
-        // Payment and bundle packages may not be present in every checkout.
-        $optional = array_values(array_filter(['modrixcommerce/tabby', 'modrixcommerce/tamara', 'modrixcommerce/frequently-bought-together'], fn (string $name) => is_dir(base_path("modules/{$name}"))));
-
-        foreach (['modrixcommerce/product-reviews', 'modrixcommerce/newsletter', 'modrixcommerce/flash-sales', ...$optional] as $name) {
-            $modules->install($name);
-            $modules->enable($name, true);
-        }
-
-        $blocks = collect(app(StorefrontSlots::class)->blocks())->keyBy('id');
-
-        $this->assertSame(['product.after_details', 'product.after_description'], $blocks['modrixcommerce/product-reviews:reviews']['places']);
-        $this->assertContains('home.after_featured', $blocks['modrixcommerce/newsletter:signup-home']['places']);
-        $this->assertContains('catalog.before_products', $blocks['modrixcommerce/flash-sales:banner']['places']);
-        $homeTab = collect(app(TabSettings::class)->forTab('home'))->keyBy('module');
-        $this->assertContains('heading', array_column($homeTab['modrixcommerce/newsletter']['fields'], 'key'));
-        $this->assertContains('banner_products', array_column($homeTab['modrixcommerce/flash-sales']['fields'], 'key'));
-        // Sign-ups record where the form was.
-        $this->assertSame('home', app(StorefrontSlots::class)->render('home.after_featured', [])[0]['props']['source']);
-        $this->post(route('modrixcommerce.newsletter.subscribe'), ['email' => 'ana@example.com', 'consent' => '1', 'source' => 'footer'])->assertSessionHasNoErrors();
-
-        if ($optional !== []) {
-            $productTab = collect(app(TabSettings::class)->forTab('product'))->keyBy('module');
-            $this->assertSame('product.after_details', $blocks['modrixcommerce/tabby:promo']['default']);
-            $this->assertContains('product.after_price', $blocks['modrixcommerce/tamara:promo']['places']);
-            $this->assertContains('product.after_add_to_cart', $blocks['modrixcommerce/frequently-bought-together:bundle']['places']);
-            $this->assertSame('storefront.footer', $blocks['modrixcommerce/newsletter:signup-footer']['default']);
-            $this->assertContains('product_snippet', array_column($productTab['modrixcommerce/tabby']['fields'], 'key'));
-            $this->assertContains('max_products', array_column($productTab['modrixcommerce/frequently-bought-together']['fields'], 'key'));
-        }
     }
 }

@@ -14,12 +14,14 @@ import { request } from '@/routes/password';
 
 type Props = {
     status?: string;
+    reason?: string | null;
     canResetPassword: boolean;
     canRegister: boolean;
 };
 
 export default function StorefrontLogin({
     status,
+    reason,
     canResetPassword,
     canRegister,
 }: Props) {
@@ -38,6 +40,15 @@ export default function StorefrontLogin({
                             {t('Sign in to track orders and check out faster.')}
                         </p>
                     </div>
+
+                    {reason === 'checkout' && (
+                        <div
+                            role="status"
+                            className="mb-4 rounded-md bg-muted px-3 py-2 text-center text-sm font-medium"
+                        >
+                            {t('Sign in or create an account to check out.')}
+                        </div>
+                    )}
 
                     {status && (
                         <div className="mb-4 rounded-md bg-muted px-3 py-2 text-center text-sm font-medium">

@@ -162,8 +162,10 @@ final class ThemeManifestValidator
             if ($file->isLink()) {
                 $this->errors[] = "Symbolic links are not allowed ({$relative}).";
             } elseif (! in_array(strtolower($file->getExtension()), self::PACKAGE_EXTENSIONS, true)
-                && ! ($frontend && str_starts_with($relative, 'src/') && in_array(strtolower($file->getExtension()), ['tsx', 'ts', 'css'], true))) {
-                $this->errors[] = "Themes may only contain data files or declared browser source under src/; {$relative} is not allowed.";
+                && ! ($frontend && str_starts_with($relative, 'src/') && in_array(strtolower($file->getExtension()), ['tsx', 'ts', 'css'], true))
+                // Prebuilt screens (ecomodular:module:build), served only by /theme-build.
+                && ! ($frontend && str_starts_with($relative, 'dist/') && in_array(strtolower($file->getExtension()), ['js', 'css', 'json'], true))) {
+                $this->errors[] = "Themes may only contain data files, declared browser source under src/ and its prebuilt dist/; {$relative} is not allowed.";
             }
         }
     }

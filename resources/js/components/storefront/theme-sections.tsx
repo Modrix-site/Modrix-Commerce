@@ -1,6 +1,7 @@
 import { router, usePage } from '@inertiajs/react';
 import { Component, useEffect } from 'react';
 import type { ComponentType, ErrorInfo, ReactNode } from 'react';
+import { prebuiltThemeEntry } from '@/lib/theme-prebuilt';
 
 /** A section as the server renders it: settings already resolved for display. */
 export type ThemeSectionData<S = Record<string, unknown>> = {
@@ -47,8 +48,12 @@ function sectionComponent(
     theme: string,
     type: string,
 ): ComponentType<ThemeSectionProps<never, never>> | undefined {
-    return modules[`../../../../themes/${theme}/src/sections/${type}.tsx`]
-        ?.default;
+    return (
+        modules[`../../../../themes/${theme}/src/sections/${type}.tsx`]
+            ?.default ??
+        prebuiltThemeEntry<SectionModule>(theme, `src/sections/${type}.tsx`)
+            ?.default
+    );
 }
 
 /** Attributes a theme spreads on a block's root element so the editor can select it. */

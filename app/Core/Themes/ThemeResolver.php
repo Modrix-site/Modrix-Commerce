@@ -81,7 +81,7 @@ final class ThemeResolver
 
     private function defaultTheme(): ?ThemeManifest
     {
-        $name = (string) config('ecomodular.themes.default', 'modrixcommerce/essence');
+        $name = (string) config('ecomodular.themes.default', 'modrixcommerce/circuit');
         if ($this->repository->find($name)?->state === ModuleState::Disabled) {
             return null;
         }

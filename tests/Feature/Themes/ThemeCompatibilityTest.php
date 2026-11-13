@@ -45,13 +45,7 @@ class ThemeCompatibilityTest extends TestCase
     public static function bundledThemes(): array
     {
         return [
-            'Prism' => ['modrixcommerce/prism'],
-            'Nord' => ['modrixcommerce/nord'],
-            'Atelier' => ['modrixcommerce/atelier'],
-            'Relay' => ['modrixcommerce/relay'],
-            'Linden' => ['modrixcommerce/linden'],
-            'Baby Lane' => ['modrixcommerce/babylane'],
-            'Volt Market' => ['modrixcommerce/voltmarket'],
+            'Circuit Market' => ['modrixcommerce/circuit'],
         ];
     }
 
@@ -113,29 +107,29 @@ class ThemeCompatibilityTest extends TestCase
     {
         $owner = $this->owner();
         // Existing content with a colliding slug and SKU must be left alone.
-        $existing = $this->sellable('99.00', 1, ['sku' => 'PRISM-BAG-01'], ['name' => 'My own bag', 'slug' => 'my-bag']);
-        $manifest = app(ThemeManager::class)->renderedManifest(tap(app(ThemeRepository::class))->sync()->find('modrixcommerce/prism'));
+        $existing = $this->sellable('99.00', 1, ['sku' => 'CIRCUIT-DEMO-1'], ['name' => 'My own bag', 'slug' => 'my-bag']);
+        $manifest = app(ThemeManager::class)->renderedManifest(tap(app(ThemeRepository::class))->sync()->find('modrixcommerce/circuit'));
 
         $first = app(ThemeDemoImporter::class)->import($manifest, $owner);
         $second = app(ThemeDemoImporter::class)->import($manifest, $owner);
 
-        $this->assertSame(['categories' => 4, 'products' => 4], $first);
+        $this->assertSame(['categories' => 6, 'products' => 7], $first);
         $this->assertSame(['categories' => 0, 'products' => 0], $second);
         $this->assertSame('My own bag', $existing->product->fresh()->name);
-        $this->assertSame('99.00', ProductVariant::query()->where('sku', 'PRISM-BAG-01')->firstOrFail()->priceIn('USD')?->toDisplayDecimal());
-        $this->assertSame(1, Product::query()->where('slug', 'prism-writing-journal')->firstOrFail()->images()->count());
+        $this->assertSame('99.00', ProductVariant::query()->where('sku', 'CIRCUIT-DEMO-1')->firstOrFail()->priceIn('USD')?->toDisplayDecimal());
+        $this->assertSame(1, Product::query()->where('slug', 'circuit-demo-2')->firstOrFail()->images()->count());
         $this->assertDatabaseHas('audit_logs', ['action' => 'theme.demo_imported']);
     }
 
     public function test_demo_import_through_the_admin_requires_confirmation()
     {
         app(ThemeRepository::class)->sync();
-        $nord = Extension::query()->where('type', 'theme')->where('name', 'modrixcommerce/nord')->firstOrFail();
+        $circuit = Extension::query()->where('type', 'theme')->where('name', 'modrixcommerce/circuit')->firstOrFail();
 
-        $this->actingAs($this->owner())->post(route('admin.themes.demo', $nord))->assertSessionHasErrors('confirmed');
+        $this->actingAs($this->owner())->post(route('admin.themes.demo', $circuit))->assertSessionHasErrors('confirmed');
         $this->assertSame(0, Product::query()->count());
 
-        $this->actingAs($this->owner())->post(route('admin.themes.demo', $nord), ['confirmed' => '1'])->assertSessionHasNoErrors();
-        $this->assertSame(6, Product::query()->count());
+        $this->actingAs($this->owner())->post(route('admin.themes.demo', $circuit), ['confirmed' => '1'])->assertSessionHasNoErrors();
+        $this->assertSame(8, Product::query()->count());
     }
 }

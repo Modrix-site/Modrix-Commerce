@@ -2,12 +2,37 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.2.1] - 2026-11-13
 
-### Added (SMS)
+### Fixed
 
-- **SMS Notifications & Phone Verification module** (`modrixcommerce/sms` 1.0.0): new customers give a mobile number at registration and confirm it with a texted 6-digit code; confirmed customers get order updates by text (placed, paid, shipped, delivered, cancelled, refunded) with editable templates. Providers: Twilio, Vonage, MSG91, Fast2SMS, Semaphore, Amazon SNS, Plivo, a custom HTTP gateway, and providers from other modules. See `docs/extensions/sms.md`.
+- **Admin sidebar missing on module pages:** a module installed from Modrix Cloud brings its own copy of the Tailwind classes it uses, and its plain `.hidden` overrode the store's responsive classes, hiding the sidebar and the New product button. The store now adds only the classes it does not already have. Existing module packages need no rebuild.
+
+## [1.2.0] - 2026-11-13
+
+One core for the development store and production. Production ships only the Modrix Cloud Connector module and the Circuit starter theme; everything else installs from Modrix Cloud. Modules and themes that declare `^1.0` run on 1.2.0 unchanged.
+
+### Added
+
+- **Prebuilt module and theme screens:** `php artisan ecomodular:module:build` prebuilds a package's screens into `dist/`; the store loads them at runtime, so packages installed from Modrix Cloud or a ZIP work without rebuilding the store's assets.
+- **`php artisan ecomodular:modules:prune`:** lists modules whose files are missing, damaged or older than the installed version; `--force` removes them so they can be installed again.
+- **Dashboard setup guide** and a prompt to connect Modrix Cloud.
+- **Store settings:** choose guest checkout or required customer accounts.
+- **Email verification:** customers verify their email before the account area opens; changing the address asks again.
 - **Registration form place:** a new storefront slot (`auth.register`) inside the registration form, so modules can add fields.
+
+### Changed
+
+- Circuit is the default theme for new stores.
+
+### Modules (installed from Modrix Cloud)
+
+- **SMS Notifications & Phone Verification** (`modrixcommerce/sms` 1.0.0): phone verification at registration and order updates by text.
+- **Multi-Vendor** (`modrixcommerce/multi-vendor` 1.2.0).
+
+## [1.1.1] and [1.1.0] - 2026-11-13
+
+Production releases from the `Modrix-site/Modrix-Commerce` repository; their changes are listed under 1.2.0.
 
 ## [1.0.0-rc.3] - 2026-11-11
 

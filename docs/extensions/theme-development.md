@@ -61,7 +61,7 @@ Themes can opt into compiled browser code by declaring `frontend` in `theme.json
 }
 ```
 
-Export a default React component from each page. The index receives `HomeProps`; the catalog receives `ListingProps`. Shared storefront layout, commerce data, checkout and permissions stay in the platform. Put supporting TypeScript and scoped CSS under `src/`. PHP, server scripts and arbitrary entry paths are rejected. Review theme browser code before running the application build; ZIP upload itself never executes it. Run `npm run build` after installing a theme with browser code. Themes without frontend entries retain the platform renderer.
+Export a default React component from each page. The index receives `HomeProps`; the catalog receives `ListingProps`. Shared storefront layout, commerce data, checkout and permissions stay in the platform. Put supporting TypeScript and scoped CSS under `src/`. PHP, server scripts and arbitrary entry paths are rejected. Review theme browser code before running the application build; ZIP upload itself never executes it. A theme with browser code needs either its prebuilt `dist/` (see "Override any storefront page or layout" below) or an `npm run build` after installing it. Themes without frontend entries retain the platform renderer.
 
 Declare theme-owned controls in `customizer.fields` with `custom.*` keys, labels, groups, types and defaults. Valid types are string, text, color, integer, boolean, select, link and image. Saved values override defaults and are exposed through `storefront.theme.settings` without the `custom.` prefix. The Marketplace catalog demonstrates heading, heading alignment, columns, image height, filters and result count. Use `hide_core_fields` to hide unused core controls while retaining their defaults. Styling must be scoped to your theme to avoid changing other storefronts.
 
@@ -156,10 +156,25 @@ page, so checkout and account pages do not depend on visiting the home page.
 Scope CSS to `[data-theme="vendor/name"]`, including when importing it directly
 from a component.
 
-Package discovery happens during the frontend build. Run `npm run build` after
-adding or changing browser entries; rebuilding assets does not require editing
-core or Vite configuration. This is not a runtime loader for prebuilt external
-JavaScript bundles.
+A theme's screens reach a store in one of two ways:
+
+- **Prebuilt (how Modrix Cloud and ZIP installs work).** Before you package or
+  release a theme, run `php artisan ecomodular:module:build <path to the theme>`
+  from a Modrix Commerce checkout. It compiles every `src/**/*.tsx` file and the
+  declared stylesheet into `dist/` and writes `dist/theme-ui.json`. Ship `dist/`
+  in the package; it may only hold `.js`, `.css` and `.json` files. Before a
+  storefront page or the customizer renders, the store loads the active
+  theme's prebuilt files from `/theme-build/<vendor>/<name>/…`, so no store
+  rebuilds its assets. Rebuild `dist/` whenever the screens change, and bump
+  the version so stores receive it as an update. React, Inertia and the
+  store's own files (`@/…`) are shared with the store, not bundled (see
+  [Module Development](module-development.md#pages-and-components)).
+- **Compiled with the store.** Themes in the repository when the store's assets
+  are built (`npm run build`) are bundled directly; `dist/` is then not needed.
+
+Import the store's files with `@/…`, never by a relative path that leaves the
+theme package (`../../../../resources/…`): such a path only works while the
+theme sits inside the store's own `themes/` folder.
 
 For extensions, keep PHP, routes, migrations and UI in `modules/<vendor>/<name>`.
 The module loader handles declared providers, autoloading and routes; the browser
@@ -175,6 +190,7 @@ from a module or from core; themes consume the shared platform components.
 themes/<vendor>/<name>/
   theme.json            manifest (required)
   src/                  optional declared browser components and scoped CSS
+  dist/                 prebuilt src/ (made by ecomodular:module:build; ship it)
   assets/               images and WOFF2 fonts (only files in here are served)
   demo.json             optional demo categories and products
   README.md, LICENSE    optional

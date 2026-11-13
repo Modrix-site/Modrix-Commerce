@@ -91,7 +91,6 @@ class CommerceSettingsTest extends TestCase
     {
         $admin = $this->userWithRole('administrator');
         $payload = [
-            'guest_checkout' => '1',
             'methods' => [
                 'bank_transfer' => ['enabled' => '1', 'label' => 'Bank deposit', 'instructions' => 'Pay to account 123.'],
                 'cash_on_delivery' => ['label' => 'COD', 'instructions' => 'Pay the courier.'],

@@ -41,9 +41,9 @@ class NavigationTest extends TestCase
             ->where('storefront.navigation.header.links.0.label', 'Browse')
             ->where('storefront.navigation.header.links.1.url', '/account')
             ->where('storefront.navigation.footer.1.links.0.label', 'Orders'));
-        app(ThemeManager::class)->activate('modrixcommerce/nord');
+        app(ThemeManager::class)->activate('modrixcommerce/circuit');
         $this->get('/search')->assertInertia(fn (Assert $page) => $page
-            ->where('storefront.theme.name', 'modrixcommerce/nord')
+            ->where('storefront.theme.name', 'modrixcommerce/circuit')
             ->where('storefront.navigation.header.links.0.label', 'Browse')
             ->where('storefront.navigation.footer.1.links.0.label', 'Orders'));
         $menus = $this->menus();
@@ -106,7 +106,7 @@ class NavigationTest extends TestCase
             ->where('storefront.navigation.header.links.0.children.0.children.0.url', '/pages/our-story')
             ->where('storefront.navigation.mobile.links.0.children.0.url', '/c/new-collection')
             ->where('storefront.navigation.footer.0.links.0.children.0.children.0.url', '/pages/our-story'));
-        app(ThemeManager::class)->activate('modrixcommerce/tempo');
+        app(ThemeManager::class)->activate('modrixcommerce/circuit');
         $this->get('/')->assertInertia(fn (Assert $view) => $view->where('storefront.navigation.sidebar.links.0.children.0.url', '/c/new-collection'));
         $category->update(['is_active' => false]);
         $this->get('/search')->assertInertia(fn (Assert $view) => $view->missing('storefront.navigation.header.links.0.children'));

@@ -129,7 +129,7 @@ class MediaLibraryTest extends TestCase
         $values = array_column(app(ThemeCustomizations::class)->uploads(), 'value');
         $this->assertContains($media->themeValue(), $values);
 
-        app(SettingsRepository::class)->set('theme.modrixcommerce.prism.design', ['logo' => $media->themeValue()]);
+        app(SettingsRepository::class)->set('theme.modrixcommerce.circuit.design', ['logo' => $media->themeValue()]);
         $this->delete(route('admin.media.destroy', $media))->assertSessionHasErrors('media');
         $this->getJson(route('admin.media.show', $media))->assertJsonPath('usage.themes', true);
     }

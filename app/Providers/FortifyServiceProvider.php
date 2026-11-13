@@ -68,6 +68,8 @@ class FortifyServiceProvider extends ServiceProvider
             'canResetPassword' => Features::enabled(Features::resetPasswords()),
             'canRegister' => rescue(fn () => app(GeneralSettings::class)->registrationEnabled(), true, false),
             'status' => $request->session()->get('status'),
+            // Why the shopper was sent here, e.g. 'checkout' when the store requires an account.
+            'reason' => $request->session()->get('login_reason'),
         ]));
 
         Fortify::resetPasswordView(fn (Request $request) => Inertia::render($request->routeIs('admin.*') ? 'auth/reset-password' : 'storefront/auth/reset-password', [

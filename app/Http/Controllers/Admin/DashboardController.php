@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Core\Audit\AuditLog;
 use App\Core\Extensions\DashboardWidgets;
+use App\Core\Marketplace\ModrixCloudPrompt;
+use App\Core\Onboarding\SetupGuide;
 use App\Core\Settings\StoreSettings;
 use App\Domains\Inventory\InventoryService;
 use App\Domains\Orders\Models\Order;
@@ -54,6 +56,8 @@ class DashboardController extends Controller
                 : null,
             'warnings' => $warnings,
             'widgets' => $widgets->forUser($user),
+            'cloudPrompt' => app(ModrixCloudPrompt::class)->forUser($user),
+            'setupGuide' => app(SetupGuide::class)->forUser($user),
         ]);
     }
 

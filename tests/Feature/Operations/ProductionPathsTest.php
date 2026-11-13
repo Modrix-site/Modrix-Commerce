@@ -135,7 +135,7 @@ class ProductionPathsTest extends TestCase
 
         $this->assertSame('1', $this->php("echo App\\Domains\\Catalog\\Models\\Product::query()->where('name', 'Precious Bowl')->count();"));
         $this->assertSame('original-image', File::get($this->dir.'/root/storage/app/public/products/bowl.webp'));
-        $this->assertFileExists($this->dir.'/root/themes/modrixcommerce/prism/theme.json');
+        $this->assertFileExists($this->dir.'/root/themes/modrixcommerce/circuit/theme.json');
         $this->assertSame('1', $this->php("echo App\\Models\\User::query()->where('email', 'owner@drill.test')->count();"));
     }
 }

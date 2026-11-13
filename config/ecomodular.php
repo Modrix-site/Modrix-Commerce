@@ -133,7 +133,7 @@ return [
 
     'themes' => [
         'path' => env('ECOMODULAR_THEMES_PATH', base_path('themes')),
-        'default' => env('ECOMODULAR_DEFAULT_THEME', 'modrixcommerce/essence'),
+        'default' => env('ECOMODULAR_DEFAULT_THEME', 'modrixcommerce/circuit'),
     ],
 
 ];
