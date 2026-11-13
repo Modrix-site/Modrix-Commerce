@@ -29,13 +29,15 @@ const shared: Record<string, Namespace> = {
     '@inertiajs/react': Inertia,
 };
 
+// Root-relative patterns, so every key reads "/resources/js/<dir>/...".
+// (Relative patterns key this file's own folder as "./..." not "../lib/...".)
 const host = import.meta.glob<Namespace>([
-    '../components/**/*.{ts,tsx}',
-    '../hooks/*.{ts,tsx}',
-    '../lib/*.{ts,tsx}',
-    '../routes/**/*.ts',
-    '../actions/**/*.ts',
-    '../pages/**/*.tsx',
+    '/resources/js/components/**/*.{ts,tsx}',
+    '/resources/js/hooks/*.{ts,tsx}',
+    '/resources/js/lib/*.{ts,tsx}',
+    '/resources/js/routes/**/*.ts',
+    '/resources/js/actions/**/*.ts',
+    '/resources/js/pages/**/*.tsx',
 ]);
 
 const SPECIFIER =
@@ -49,7 +51,7 @@ export function loadShared(specifier: string): Promise<Namespace> {
     }
 
     if (SPECIFIER.test(specifier) && !specifier.includes('..')) {
-        const path = `../${specifier.slice(2)}`;
+        const path = `/resources/js/${specifier.slice(2)}`;
         const loader =
             host[`${path}.tsx`] ??
             host[`${path}.ts`] ??
