@@ -45,7 +45,7 @@ class CoreUpdateAdminTest extends TestCase
     }
 
     /** @return array<string, mixed> the raw signed item */
-    private function storeAvailable(string $version = '1.1.0'): array
+    private function storeAvailable(string $version = '1.3.0'): array
     {
         $item = $this->signedItem($version, str_repeat('a', 64), 1000);
         $verified = app(CoreReleaseVerifier::class)->verify($item);
@@ -73,7 +73,7 @@ class CoreUpdateAdminTest extends TestCase
 
         $this->actingAs($this->owner())->get(route('admin.system.status'))
             ->assertOk()->assertInertia(fn (Assert $page) => $page
-            ->where('coreUpdate.available.version', '1.1.0')
+            ->where('coreUpdate.available.version', '1.3.0')
             ->where('coreUpdate.active_run', null)
             ->where('coreUpdate.runs', [])
             ->where('coreUpdate.can_install', false));
@@ -86,7 +86,7 @@ class CoreUpdateAdminTest extends TestCase
 
         $this->actingAs($this->owner())->get(route('admin.system.status'))
             ->assertOk()->assertInertia(fn (Assert $page) => $page
-            ->where('coreUpdate.available.version', '1.1.0')
+            ->where('coreUpdate.available.version', '1.3.0')
             ->where('coreUpdate.available.min_php', '8.3')
             ->missing('coreUpdate.available.item')
             ->missing('coreUpdate.available.verification')
@@ -134,7 +134,7 @@ class CoreUpdateAdminTest extends TestCase
 
         $run = CoreUpdateRun::query()->sole();
         $this->assertSame(CoreUpdateRun::QUEUED, $run->status);
-        $this->assertSame('1.1.0', $run->to_version);
+        $this->assertSame('1.3.0', $run->to_version);
         $this->assertSame(Platform::VERSION, $run->from_version);
         // Key order may differ (MySQL JSON); signatures use sorted keys.
         $this->assertEquals($item, $run->release);
@@ -172,7 +172,7 @@ class CoreUpdateAdminTest extends TestCase
     {
         $item = $this->storeAvailable();
         $item['verification']['metadata']['sha256'] = str_repeat('0', 64);
-        app(SettingsRepository::class)->set('core_update.available', ['version' => '1.1.0', 'item' => $item]);
+        app(SettingsRepository::class)->set('core_update.available', ['version' => '1.3.0', 'item' => $item]);
 
         $this->confirmed($this->owner())->post(route('admin.system.core-update.start'))
             ->assertSessionHasErrors('core_update');
@@ -185,7 +185,7 @@ class CoreUpdateAdminTest extends TestCase
         $this->storeAvailable();
         $this->connect();
         CoreUpdateRun::query()->forceCreate([
-            'from_version' => '1.0.0', 'to_version' => '1.1.0', 'release' => [], 'status' => CoreUpdateRun::DOWNLOADING,
+            'from_version' => '1.0.0', 'to_version' => '1.3.0', 'release' => [], 'status' => CoreUpdateRun::DOWNLOADING,
         ]);
 
         $this->confirmed($this->owner())->post(route('admin.system.core-update.start'))
@@ -200,7 +200,7 @@ class CoreUpdateAdminTest extends TestCase
         $this->storeAvailable();
         $this->connect();
         $stale = CoreUpdateRun::query()->forceCreate([
-            'from_version' => '1.0.0', 'to_version' => '1.1.0', 'release' => [], 'status' => CoreUpdateRun::INSTALLING,
+            'from_version' => '1.0.0', 'to_version' => '1.3.0', 'release' => [], 'status' => CoreUpdateRun::INSTALLING,
         ]);
         CoreUpdateRun::query()->whereKey($stale->id)->update(['updated_at' => now()->subMinutes(CoreUpdateRun::STALE_MINUTES + 5)]);
 
@@ -224,11 +224,11 @@ class CoreUpdateAdminTest extends TestCase
     public function test_show_returns_run_status_as_json(): void
     {
         $run = CoreUpdateRun::query()->forceCreate([
-            'from_version' => '1.0.0', 'to_version' => '1.1.0', 'release' => [], 'status' => CoreUpdateRun::MIGRATING, 'message' => 'working',
+            'from_version' => '1.0.0', 'to_version' => '1.3.0', 'release' => [], 'status' => CoreUpdateRun::MIGRATING, 'message' => 'working',
         ]);
 
         $this->actingAs($this->owner())->getJson(route('admin.system.core-update.show', $run))
-            ->assertOk()->assertExactJson(['status' => 'migrating', 'message' => 'working', 'to_version' => '1.1.0', 'hint' => null]);
+            ->assertOk()->assertExactJson(['status' => 'migrating', 'message' => 'working', 'to_version' => '1.3.0', 'hint' => null]);
 
         $this->actingAs(User::factory()->create())->getJson(route('admin.system.core-update.show', $run))->assertForbidden();
     }
@@ -236,7 +236,7 @@ class CoreUpdateAdminTest extends TestCase
     public function test_a_queued_run_that_never_started_shows_a_hint(): void
     {
         $run = CoreUpdateRun::query()->forceCreate([
-            'from_version' => '1.0.0', 'to_version' => '1.1.0', 'release' => [], 'status' => CoreUpdateRun::QUEUED,
+            'from_version' => '1.0.0', 'to_version' => '1.3.0', 'release' => [], 'status' => CoreUpdateRun::QUEUED,
         ]);
         $hint = "The update did not start. Run php artisan ecomodular:core-update {$run->id} on the server.";
 
@@ -252,7 +252,7 @@ class CoreUpdateAdminTest extends TestCase
     public function test_active_run_offers_the_maintenance_bypass_to_installers_only(): void
     {
         $run = CoreUpdateRun::query()->forceCreate([
-            'from_version' => '1.0.0', 'to_version' => '1.1.0', 'release' => [], 'status' => CoreUpdateRun::INSTALLING,
+            'from_version' => '1.0.0', 'to_version' => '1.3.0', 'release' => [], 'status' => CoreUpdateRun::INSTALLING,
         ]);
         $secret = app(CoreUpdater::class)->bypassSecret($run);
 
@@ -284,7 +284,7 @@ class CoreUpdateAdminTest extends TestCase
     public function test_runs_that_need_attention_are_flagged_on_the_card(): void
     {
         CoreUpdateRun::query()->forceCreate([
-            'from_version' => '1.0.0', 'to_version' => '1.1.0', 'release' => [], 'status' => CoreUpdateRun::FAILED,
+            'from_version' => '1.0.0', 'to_version' => '1.3.0', 'release' => [], 'status' => CoreUpdateRun::FAILED,
             'message' => 'could NOT be fully undone', 'needs_attention' => true,
         ]);
 
@@ -298,11 +298,11 @@ class CoreUpdateAdminTest extends TestCase
         $this->connect();
         foreach (range(1, 6) as $i) {
             CoreUpdateRun::query()->forceCreate([
-                'from_version' => '1.0.0', 'to_version' => '1.1.0', 'release' => [], 'status' => CoreUpdateRun::FAILED, 'message' => "m{$i}",
+                'from_version' => '1.0.0', 'to_version' => '1.3.0', 'release' => [], 'status' => CoreUpdateRun::FAILED, 'message' => "m{$i}",
             ]);
         }
         $active = CoreUpdateRun::query()->forceCreate([
-            'from_version' => '1.0.0', 'to_version' => '1.1.0', 'release' => [], 'status' => CoreUpdateRun::BACKING_UP,
+            'from_version' => '1.0.0', 'to_version' => '1.3.0', 'release' => [], 'status' => CoreUpdateRun::BACKING_UP,
         ]);
 
         $this->actingAs($this->owner())->get(route('admin.system.status'))

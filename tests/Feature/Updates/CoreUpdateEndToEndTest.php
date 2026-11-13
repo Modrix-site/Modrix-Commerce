@@ -47,22 +47,22 @@ class CoreUpdateEndToEndTest extends TestCase
     public function test_check_then_install_from_admin(): void
     {
         $this->connect();
-        $zip = $this->releaseZip('1.1.0', $this->probeMigration());
-        $item = $this->signedItem('1.1.0', hash_file('sha256', $zip), filesize($zip));
+        $zip = $this->releaseZip('1.3.0', $this->probeMigration());
+        $item = $this->signedItem('1.3.0', hash_file('sha256', $zip), filesize($zip));
         $this->fakeCoreCloud($zip, [$item]);
         $owner = $this->owner();
 
         $this->actingAs($owner)->post(route('admin.system.core-update.check'))->assertRedirect();
-        $this->assertSame('1.1.0', app(CoreUpdateCheck::class)->available()['version']);
+        $this->assertSame('1.3.0', app(CoreUpdateCheck::class)->available()['version']);
 
         $this->actingAs($owner)->withSession(['auth.password_confirmed_at' => time()])->post(route('admin.system.core-update.start'))
             ->assertRedirect()->assertSessionHasNoErrors();
 
         $run = CoreUpdateRun::query()->sole();
         $this->actingAs($owner)->getJson(route('admin.system.core-update.show', $run))
-            ->assertOk()->assertJson(['status' => 'completed', 'to_version' => '1.1.0']);
+            ->assertOk()->assertJson(['status' => 'completed', 'to_version' => '1.3.0']);
 
-        $this->assertSame('1.1.0', $this->platformVersion());
+        $this->assertSame('1.3.0', $this->platformVersion());
         $this->assertTrue(Schema::hasTable('core_probe'));
         $this->assertFalse(app()->isDownForMaintenance());
         $this->assertTrue(UpdateHistory::query()->where('type', 'core')->sole()->success);
