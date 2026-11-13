@@ -46,3 +46,10 @@ yarn-error.log
 
 # Modrix Cloud marketplace: its own repository (github.com/oeleydo-ship-it/ModrixCloud)
 /marketplace-catalog/
+
+# Production ships only the Modrix Cloud Connector and the Circuit starter theme;
+# every other module and theme is installed from Modrix Cloud.
+/modules/*/*
+!/modules/modrixcommerce/cloud-connector/
+/themes/*/*
+!/themes/modrixcommerce/circuit/
