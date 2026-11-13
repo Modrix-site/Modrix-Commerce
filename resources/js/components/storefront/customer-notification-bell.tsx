@@ -17,7 +17,10 @@ export function CustomerNotificationBell({
     const { auth } = usePage().props;
     const t = useT();
 
-    if (!auth.user || auth.isStaff) {
+    // The feed sits behind email verification; nothing to show until then.
+    const user = auth.user as { email_verified_at?: string | null } | null;
+
+    if (!user || auth.isStaff || !user.email_verified_at) {
         return null;
     }
 

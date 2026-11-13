@@ -46,6 +46,10 @@ final class StorefrontSlots
         'storefront.overlay' => [],
         // Optional content rendered by theme-owned footer components.
         'storefront.footer' => [],
+        // Inside the customer registration form, above "Create account". Inputs a
+        // component renders are submitted with the form; the module validates them
+        // by decorating Laravel\Fortify\Contracts\CreatesNewUsers.
+        'auth.register' => [],
     ];
 
     /**

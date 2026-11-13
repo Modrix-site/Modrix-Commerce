@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
+use App\Core\Extensions\StorefrontSlots;
 use App\Core\Settings\GeneralSettings;
 use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -88,6 +89,7 @@ class FortifyServiceProvider extends ServiceProvider
 
         Fortify::registerView(fn () => Inertia::render('storefront/auth/register', [
             'passwordRules' => Password::defaults()->toPasswordRulesString(),
+            'registerSlots' => app(StorefrontSlots::class)->render('auth.register', []),
         ]));
 
         Fortify::twoFactorChallengeView(fn () => Inertia::render('auth/two-factor-challenge'));
