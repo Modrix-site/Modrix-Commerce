@@ -66,3 +66,13 @@ Lifecycle operations clear the route and event caches. In production, run `php a
 ## Uninstalling a module that is failing
 
 Uninstall works on modules that are **Failed**, **Disabled** or **Update pending**, but it needs the package files: its migrations are rolled back from them. Uninstalling deletes the module's tables and data. Back up first.
+
+## Clearing out broken modules after a deploy
+
+A deploy can leave modules the server can no longer run: their files are missing or only partly there ("Autoload path src/ is not inside the package"), or older than the version recorded as installed. To list them, run:
+
+```bash
+php artisan ecomodular:modules:prune
+```
+
+To remove them, run it again with `--force`. Each listed module loses its record, its files and its data (its tables are dropped when the migrations are still on disk). Working modules and protected modules such as the Modrix Cloud Connector are left alone. Back up first, then install the modules you need again from Modrix Cloud.
