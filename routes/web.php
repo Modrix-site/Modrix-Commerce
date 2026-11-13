@@ -66,7 +66,8 @@ Route::middleware(['installed', ShareStorefrontData::class])->group(function () 
     Route::post('checkout/orders/{order}/pay', [CheckoutController::class, 'pay'])->middleware('throttle:checkout')->name('checkout.pay');
     Route::get('checkout/orders/{order}/payment/return', [CheckoutController::class, 'paymentReturn'])->middleware('throttle:30,1')->name('checkout.payment.return');
 
-    Route::middleware('auth')->prefix('account')->name('account.')->group(function () {
+    // Customers verify their email once, right after registering, before the account area opens.
+    Route::middleware(['auth', 'verified'])->prefix('account')->name('account.')->group(function () {
         Route::get('pages/{slug}', function (string $slug) {
             return Inertia::render('storefront/page', ['page' => Page::query()->where('slug', $slug)->where('status', 'published')->firstOrFail()->forStorefront()]);
         })->name('storefront.page');
@@ -78,10 +79,10 @@ Route::middleware(['installed', ShareStorefrontData::class])->group(function () 
         Route::delete('addresses/{address}', [AccountController::class, 'destroyAddress'])->name('addresses.destroy');
         Route::get('profile', [ProfileController::class, 'edit'])->name('profile');
         Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
-        Route::get('security', [SecurityController::class, 'edit'])->middleware(['verified', RequirePassword::using('account.password.confirm')])->name('security');
+        Route::get('security', [SecurityController::class, 'edit'])->middleware(RequirePassword::using('account.password.confirm'))->name('security');
         Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])->name('password.confirm');
-        Route::get('password', [SecurityController::class, 'password'])->middleware('verified')->name('password');
-        Route::put('password', [SecurityController::class, 'update'])->middleware(['verified', 'throttle:6,1'])->name('password.update');
+        Route::get('password', [SecurityController::class, 'password'])->name('password');
+        Route::put('password', [SecurityController::class, 'update'])->middleware('throttle:6,1')->name('password.update');
         Route::get('orders', [AccountOrderController::class, 'index'])->name('orders');
         Route::get('orders/{order}', [AccountOrderController::class, 'show'])->name('orders.show');
         Route::get('notifications', [AccountNotificationController::class, 'index'])->name('notifications');
