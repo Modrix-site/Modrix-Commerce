@@ -1,6 +1,7 @@
 import type { ComponentType } from 'react';
 import { moduleUnavailable } from '@/components/module-unavailable';
 import { installModuleSdk } from '@/lib/module-sdk';
+import { addModuleStylesheet } from '@/lib/module-styles';
 
 /**
  * Module UI comes from one of two places:
@@ -87,10 +88,7 @@ function addStyles(vendor: string, pkg: string, css: string[]): void {
         }
 
         stylesheets.add(href);
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = href;
-        document.head.appendChild(link);
+        void addModuleStylesheet(href);
     }
 }
 

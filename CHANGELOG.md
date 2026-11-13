@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.2.1] - 2026-11-13
+
+### Fixed
+
+- **Admin sidebar missing on module pages:** a module installed from Modrix Cloud brings its own copy of the Tailwind classes it uses, and its plain `.hidden` overrode the store's responsive classes, hiding the sidebar and the New product button. The store now adds only the classes it does not already have. Existing module packages need no rebuild.
+
 ## [1.2.0] - 2026-11-13
 
 One core for the development store and production. Production ships only the Modrix Cloud Connector module and the Circuit starter theme; everything else installs from Modrix Cloud. Modules and themes that declare `^1.0` run on 1.2.0 unchanged.
